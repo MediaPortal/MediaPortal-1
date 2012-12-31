@@ -75,7 +75,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Author
     {
-        get { return "michael_t (based on PowerScheduler by micheloe)"; }
+        get { return "michael_t (based on the work of micheloe and others)"; }
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Name
     {
-      get { return "PowerScheduler++"; }
+      get { return "PowerScheduler"; }
     }
 
     /// <summary>

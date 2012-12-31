@@ -67,7 +67,7 @@ namespace MediaPortal.Plugins.Process
 
     public string Author()
     {
-        return "michael_t (based on PowerScheduler by micheloe)";
+        return "michael_t (based on the work of micheloe and others)";
     }
 
     public bool CanEnable()
@@ -108,7 +108,7 @@ namespace MediaPortal.Plugins.Process
 
     public string PluginName()
     {
-      return "PowerScheduler++";
+      return "PowerScheduler";
     }
 
     public void ShowPlugin()

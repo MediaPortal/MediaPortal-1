@@ -46,7 +46,7 @@ namespace TvEngine.PowerScheduler.Interfaces
   }
 
   /// <summary>
-  /// PowerScheduler++ standby mode enumeration
+  /// PowerScheduler standby mode enumeration
   /// </summary>  
   public enum StandbyMode
   {
@@ -56,7 +56,7 @@ namespace TvEngine.PowerScheduler.Interfaces
   }
 
   /// <summary>
-  /// Extension to the IStandbyHandler interface for PowerScheduler++
+  /// Extension to the IStandbyHandler interface
   /// </summary>
   public interface IStandbyHandlerEx : IStandbyHandler
   {

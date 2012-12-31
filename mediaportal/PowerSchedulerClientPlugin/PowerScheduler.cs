@@ -46,7 +46,7 @@ using TvEngine.PowerScheduler.Interfaces;
 namespace MediaPortal.Plugins.Process
 {
   /// <summary>
-  /// PowerScheduler++ Client Plugin: process plugin which controls power management
+  /// PowerScheduler Client Plugin: process plugin which controls power management
   /// </summary>
   public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IStandbyHandlerEx, IWakeupHandler
   {
@@ -270,7 +270,7 @@ namespace MediaPortal.Plugins.Process
     /// <param name="force">Force the system to suspend (XP only)</param>
     public void SuspendSystem(string source, bool force)
     {
-      Log.Info("PS: System suspend requested by {0}", string.IsNullOrEmpty(source) ? "PS++" : source);
+      Log.Info("PS: System suspend requested by {0}", string.IsNullOrEmpty(source) ? "PowerScheduler" : source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -637,12 +637,12 @@ namespace MediaPortal.Plugins.Process
     #region Public methods
 
     /// <summary>
-    /// Start the PowerScheduler++ plugin
+    /// Start the PowerScheduler plugin
     /// </summary>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Start()
     {
-      Log.Info("PS: Starting PowerScheduler++ client plugin...");
+      Log.Info("PS: Starting PowerScheduler client plugin...");
 
       try
       {
@@ -711,7 +711,7 @@ namespace MediaPortal.Plugins.Process
         Log.Debug("PS: StandbyWakeupThread started");
 
         SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
-        Log.Info("PS: PowerScheduler++ client plugin started");
+        Log.Info("PS: PowerScheduler client plugin started");
       }
       catch (Exception ex)
       {
@@ -721,12 +721,12 @@ namespace MediaPortal.Plugins.Process
     }
 
     /// <summary>
-    /// Stop the PowerScheduler++ plugin
+    /// Stop the PowerScheduler plugin
     /// </summary>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Stop()
     {
-      Log.Info("PS: Stopping PowerScheduler++ client plugin...");
+      Log.Info("PS: Stopping PowerScheduler client plugin...");
 
       try
       {
@@ -796,7 +796,7 @@ namespace MediaPortal.Plugins.Process
         GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
 
         SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
-        Log.Info("PS: PowerScheduler++ client plugin stopped");
+        Log.Info("PS: PowerScheduler client plugin stopped");
       }
       catch (Exception ex)
       {
@@ -1104,7 +1104,7 @@ namespace MediaPortal.Plugins.Process
           if (_settings.ShutdownEnabled != boolSetting)
           {
             _settings.ShutdownEnabled = boolSetting;
-            Log.Debug("PS: Server plugin setting - PowerScheduler++ forces system to go to standby when idle: {0}", boolSetting);
+            Log.Debug("PS: Server plugin setting - PowerScheduler forces system to go to standby when idle: {0}", boolSetting);
             changed = true;
           }
 

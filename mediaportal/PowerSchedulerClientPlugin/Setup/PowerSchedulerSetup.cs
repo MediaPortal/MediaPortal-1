@@ -42,7 +42,7 @@ using MediaPortal.UserInterface.Controls;
 namespace PowerScheduler.Setup
 {
   /// <summary>
-  /// Setup for the PowerScheduler++ plugin (common code for client and server)
+  /// Setup for the PowerScheduler plugin (common code for client and server)
   /// </summary>
 #if SERVER
   public partial class PowerSchedulerSetup : SetupTv.SectionSettings
@@ -212,23 +212,23 @@ namespace PowerScheduler.Setup
           if (hostName != String.Empty && PowerManager.IsLocal(hostName))
           {
             _singleSeat = true;
-            Text = "PowerScheduler++ Client Plugin (TV-Server on local system)";
+            Text = "PowerScheduler Client Plugin (TV-Server on local system)";
           }
           else if (hostName == String.Empty)
           {
             _singleSeat = false;
-            Text = "PowerScheduler++ Client Plugin (No TV-Server configured)";
+            Text = "PowerScheduler Client Plugin (No TV-Server configured)";
           }
           else
           {
             _singleSeat = false;
-            Text = "PowerScheduler++ Client Plugin (TV-Server on " + hostName + ")";
+            Text = "PowerScheduler Client Plugin (TV-Server on " + hostName + ")";
           }
         }
         else
         {
           _singleSeat = false;
-          Text = "PowerScheduler++ Client Plugin (No TV-plugin installed)";
+          Text = "PowerScheduler Client Plugin (No TV-plugin installed)";
         }
 
         if (_singleSeat)
@@ -781,7 +781,7 @@ namespace PowerScheduler.Setup
         labelWakeupTimeValue.Text = "";
 
       if (Convert.ToBoolean(GetSetting("ShutdownEnabled", "false")))
-        labelStandbyStatus.Text = "Standby is handled by PowerScheduler++";
+        labelStandbyStatus.Text = "Standby is handled by PowerScheduler";
       else
         labelStandbyStatus.Text = "Standby is handled by Windows";
 

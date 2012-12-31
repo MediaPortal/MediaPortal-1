@@ -122,8 +122,8 @@
   </metadata>
   <data name="textBoxEPGCommand.ToolTip" xml:space="preserve">
     <value>The command entered here must have no arguments. The argument "epg" 
-will be added by PowerScheduler++ at the time the command  is executed.
-PowerScheduler++ waits for the command to finish before continuing.
+will be added by PowerScheduler at the time the command  is executed.
+PowerScheduler waits for the command to finish before continuing.
 
 Example:
 The command: "C:\Program Files\MyFiles\MyBatch.bat"
@@ -132,13 +132,13 @@ will be called as: "C:\Program Files\MyFiles\MyBatch.bat epg"
   </data>
   <data name="checkBoxShutdownEnabled.ToolTip" xml:space="preserve">
     <value>On some systems Windows standby does not work reliably, e.g. because
-of driver problems. In this case, PowerScheduler++ can force the system
+of driver problems. In this case, PowerScheduler can force the system
 to go to standby, when it is idle. This option is not recommended.</value>
   </data>
   <data name="textBoxRebootCommand.ToolTip" xml:space="preserve">
     <value>The command entered here must have no arguments. The argument "reboot" 
-will be added by PowerScheduler++ at the time the command  is executed.
-PowerScheduler++ waits for the command to finish before rebooting.
+will be added by PowerScheduler at the time the command  is executed.
+PowerScheduler waits for the command to finish before rebooting.
 
 Example:
 The command: "C:\Program Files\MyFiles\MyBatch.bat"
@@ -148,7 +148,7 @@ will be called as: "C:\Program Files\MyFiles\MyBatch.bat reboot"
   </data>
   <data name="buttonExpertMode.ToolTip" xml:space="preserve">
     <value>Switch between "Plug&amp;Play Mode" and "Expert Mode".
-"Plug&amp;Play Mode" will set all PowerScheduler++ options
+"Plug&amp;Play Mode" will set all PowerScheduler options
 to some reasonable value for the selected profile.
 In "Expert Mode" you can check all options in detail and
 change them individually.</value>

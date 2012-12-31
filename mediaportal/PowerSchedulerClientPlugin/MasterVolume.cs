@@ -32,7 +32,7 @@ namespace MediaPortal.Plugins.Process
           // the MP volume handler will control the wave volume. Thus we use our own master volume helper. 
           if (reader.GetValueAsBool("volume", "digital", false))
           {
-            Log.Debug("PS: Use the PS++ master volume helper, since MP's volume handler is set to control the wave volume");
+            Log.Debug("PS: Use the PowerScheduler master volume helper, since MP's volume handler is set to control the wave volume");
             try
             {
               _masterVolumeHelper = new MasterVolumeHelper();
@@ -54,7 +54,7 @@ namespace MediaPortal.Plugins.Process
         catch (TypeLoadException)
         {
           // "MediaPortal.Mixer.AEDev" class does not exist, so use own master volume helper
-          Log.Debug("PS:Use the PS++ master volume helper, since MP's volume handler cannot control the master volume");
+          Log.Debug("PS:Use the PowerScheduler master volume helper, since MP's volume handler cannot control the master volume");
           try
           {
             _masterVolumeHelper = new MasterVolumeHelper();

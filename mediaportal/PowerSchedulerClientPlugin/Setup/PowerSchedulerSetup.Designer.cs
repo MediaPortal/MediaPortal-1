@@ -174,7 +174,7 @@ namespace PowerScheduler.Setup
       this.textBoxCommand.Size = new System.Drawing.Size(329, 20);
       this.textBoxCommand.TabIndex = 2;
       this.toolTip.SetToolTip(this.textBoxCommand, "The command is executed on each system power state change. The\r\nargument (\"standb" +
-              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler++ at the" +
+              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the" +
               " time the command is executed.");
       this.textBoxCommand.TextChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -402,7 +402,7 @@ namespace PowerScheduler.Setup
       this.buttonApply.Size = new System.Drawing.Size(75, 23);
       this.buttonApply.TabIndex = 2;
       this.buttonApply.Text = "Apply";
-      this.toolTip.SetToolTip(this.buttonApply, "Apply PowerScheduler++ settings, but do not leave TV-Server Configuration.");
+      this.toolTip.SetToolTip(this.buttonApply, "Apply PowerScheduler settings, but do not leave TV-Server Configuration.");
       this.buttonApply.UseVisualStyleBackColor = true;
       this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
       // 
@@ -418,7 +418,7 @@ namespace PowerScheduler.Setup
       this.comboBoxShutdownMode.Name = "comboBoxShutdownMode";
       this.comboBoxShutdownMode.Size = new System.Drawing.Size(137, 21);
       this.comboBoxShutdownMode.TabIndex = 21;
-      this.toolTip.SetToolTip(this.comboBoxShutdownMode, "Select standby mode (only for standby forced by PowerScheduler++). ");
+      this.toolTip.SetToolTip(this.comboBoxShutdownMode, "Select standby mode (only for standby forced by PowerScheduler). ");
       this.comboBoxShutdownMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxShutdownMode_SelectedIndexChanged);
       // 
       // checkBoxShutdownEnabled
@@ -428,7 +428,7 @@ namespace PowerScheduler.Setup
       this.checkBoxShutdownEnabled.Name = "checkBoxShutdownEnabled";
       this.checkBoxShutdownEnabled.Size = new System.Drawing.Size(310, 17);
       this.checkBoxShutdownEnabled.TabIndex = 20;
-      this.checkBoxShutdownEnabled.Text = "PowerScheduler++ forces system to go to standby when idle";
+      this.checkBoxShutdownEnabled.Text = "PowerScheduler forces system to go to standby when idle";
       this.toolTip.SetToolTip(this.checkBoxShutdownEnabled, resources.GetString("checkBoxShutdownEnabled.ToolTip"));
       this.checkBoxShutdownEnabled.UseVisualStyleBackColor = true;
       this.checkBoxShutdownEnabled.CheckedChanged += new System.EventHandler(this.checkBoxShutdownEnabled_CheckedChanged);
@@ -443,7 +443,7 @@ namespace PowerScheduler.Setup
       this.checkBoxAutoPowerSettings.Size = new System.Drawing.Size(390, 17);
       this.checkBoxAutoPowerSettings.TabIndex = 13;
       this.checkBoxAutoPowerSettings.Text = "Apply recommended windows power settings for selected profile automatically";
-      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler++ will set the Windows Power Settings\r\nto some reasona" +
+      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasona" +
               "ble values depending on the selected profile.\r\nUncheck this option to configure " +
               "the Windows Power Settings manually.");
       this.checkBoxAutoPowerSettings.UseVisualStyleBackColor = true;

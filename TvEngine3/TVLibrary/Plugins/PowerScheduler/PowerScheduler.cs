@@ -44,7 +44,7 @@ using TvLibrary.Log;
 namespace TvEngine.PowerScheduler
 {
   /// <summary>
-  /// PowerScheduler++ Server Plugin: tvservice plugin which controls power management
+  /// PowerScheduler Server Plugin: tvservice plugin which controls power management
   /// </summary>
   public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IPowerController
   {
@@ -333,7 +333,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="force">Force the system to suspend (XP only)</param>
     public void SuspendSystem(string source, bool force)
     {
-      Log.Info("PS: System suspend requested by {0}", string.IsNullOrEmpty(source) ? "PS++" : source);
+      Log.Info("PS: System suspend requested by {0}", string.IsNullOrEmpty(source) ? "PowerScheduler" : source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -848,13 +848,13 @@ namespace TvEngine.PowerScheduler
     #region Public methods
 
     /// <summary>
-    /// Start the PowerScheduler++ plugin
+    /// Start the PowerScheduler plugin
     /// </summary>
     /// <param name="controller">TVController from the tvservice</param>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Start(IController controller)
     {
-      Log.Info("PS: Starting PowerScheduler++ server plugin...");
+      Log.Info("PS: Starting PowerScheduler server plugin...");
 
       try
       {
@@ -899,7 +899,7 @@ namespace TvEngine.PowerScheduler
         Log.Debug("PS: StandbyWakeupThread started");
 
         SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
-        Log.Info("PS: PowerScheduler++ server plugin started");
+        Log.Info("PS: PowerScheduler server plugin started");
       }
       catch (Exception ex)
       {
@@ -910,12 +910,12 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// Stop the PowerScheduler++ plugin
+    /// Stop the PowerScheduler plugin
     /// </summary>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Stop()
     {
-      Log.Info("PS: Stopping PowerScheduler++ server plugin...");
+      Log.Info("PS: Stopping PowerScheduler server plugin...");
 
       try
       {
@@ -972,7 +972,7 @@ namespace TvEngine.PowerScheduler
         }
 
         SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
-        Log.Info("PS: PowerScheduler++ server plugin stopped");
+        Log.Info("PS: PowerScheduler server plugin stopped");
       }
       catch (Exception ex)
       {
@@ -1073,7 +1073,7 @@ namespace TvEngine.PowerScheduler
       if (_settings.ShutdownEnabled != boolSetting)
       {
         _settings.ShutdownEnabled = boolSetting;
-        Log.Debug("PS: PowerScheduler++ forces system to go to standby when idle: {0}", boolSetting);
+        Log.Debug("PS: PowerScheduler forces system to go to standby when idle: {0}", boolSetting);
         changed = true;
       }
 
