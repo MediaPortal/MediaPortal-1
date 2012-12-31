@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -49,7 +49,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -193,4 +193,14 @@
   <ItemGroup>
     <Content Include="TheAlgorithm.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Setup\PowerSchedulerSetup.resx">
+      <DependentUpon>PowerSchedulerSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(ProjectDir)..\..\..\..\mediaportal\PowerSchedulerClientPlugin\Setup\*" "$(ProjectDir)Setup" /D /Y
+xcopy "$(ProjectDir)Setup\*" "$(ProjectDir)..\..\..\..\mediaportal\PowerSchedulerClientPlugin\Setup" /D /Y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

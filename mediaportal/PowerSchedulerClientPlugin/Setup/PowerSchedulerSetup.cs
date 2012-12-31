@@ -18,8 +18,6 @@
 
 #endregion
 
-#define CLIENT
-
 #region Usings
 
 using System;

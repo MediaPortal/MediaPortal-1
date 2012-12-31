@@ -18,8 +18,6 @@
 
 #endregion
 
-#define SERVER
-
 #region Usings
 
 using System;
