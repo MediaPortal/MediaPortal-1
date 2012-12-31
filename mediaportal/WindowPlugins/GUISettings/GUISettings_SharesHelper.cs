@@ -227,8 +227,9 @@ namespace MediaPortal.GUI.Settings
         }
 
         DefaultShare = xmlreader.GetValueAsString(section, "default", "");
-        _addOpticalDiskDrives = xmlreader.GetValueAsBool("movies", "AddOpticalDiskDrives", true);
-        _autoSwitchRemovableDrives = xmlreader.GetValueAsBool("movies", "SwitchRemovableDrives", true);
+        _addOpticalDiskDrives = xmlreader.GetValueAsBool(section, "AddOpticalDiskDrives", true);
+        _autoSwitchRemovableDrives = xmlreader.GetValueAsBool(section, "SwitchRemovableDrives", true);
+        _rememberLastFolder = xmlreader.GetValueAsBool(section, "rememberlastfolder", false);
 
         // Shares
         for (int index = 0; index < 128; index++)
