@@ -1,7 +1,9 @@
 #region Usings
 
 using System;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.Mixer;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 
@@ -10,13 +12,13 @@ using MediaPortal.Profile;
 namespace MediaPortal.Plugins.Process
 {
   /// <summary>
-  /// Wrapper class for the master volume handling (dependent on OS, configuration and MP version) 
+  /// Wrapper class for the master volume handling (dependent on OS and configuration) 
   /// </summary>
   public class MasterVolume : IDisposable
   {
     #region Variables
 
-    private MasterVolumeHelper _masterVolumeHelper = null;
+    private AEDev _audioDefaultDevice = null;
 
     #endregion
 
@@ -24,58 +26,34 @@ namespace MediaPortal.Plugins.Process
 
     public MasterVolume()
     {
-      if (Environment.OSVersion.Version.Major >= 6)
+      bool useWaveVolume;
+
+      // If "Upmix stereo to 5.1/7.1" is enabled or the MP volume control is set to "Wave", the setting
+      // "digital" is true and the MP volume handler will control the wave volume (not on Windows XP).
+      using (Settings reader = new MPSettings())
       {
-        using (Settings reader = new MPSettings())
-        {
-          // If "Upmix stereo to 5.1/7.1" is enabled or MP volume control is set to "Wave" (MP 1.3 only),
-          // the MP volume handler will control the wave volume. Thus we use our own master volume helper. 
-          if (reader.GetValueAsBool("volume", "digital", false))
-          {
-            Log.Debug("PS: Use the PowerScheduler master volume helper, since MP's volume handler is set to control the wave volume");
-            try
-            {
-              _masterVolumeHelper = new MasterVolumeHelper();
-              Log.Debug("PS: Default audio device is \"{0}\" (state: {1})", _masterVolumeHelper.FriendlyName, _masterVolumeHelper.State);
-            }
-            catch (Exception ex)
-            {
-              Log.Error("PS: Exception in creating MasterVolumehelper: {0}", ex);
-            }
-            return;
-          }
-        }
-        try
-        {
-          // Since MP 1.3.x MP can control the master volume on its own ("MediaPortal.Mixer.AEDev" class exists)
-          Type.GetType("MediaPortal.Mixer.AEDev");
-          Log.Debug("PS: Use MP's volume handler, since it controls the master volume");
-        }
-        catch (TypeLoadException)
-        {
-          // "MediaPortal.Mixer.AEDev" class does not exist, so use own master volume helper
-          Log.Debug("PS:Use the PowerScheduler master volume helper, since MP's volume handler cannot control the master volume");
-          try
-          {
-            _masterVolumeHelper = new MasterVolumeHelper();
-            Log.Debug("PS: Default audio device is \"{0}\" (state: {1})", _masterVolumeHelper.FriendlyName, _masterVolumeHelper.State);
-          }
-          catch (Exception ex)
-          {
-            Log.Error("PS: Exception in creating MasterVolumehelper: {0}", ex);
-          }
-        }
-        return;
+        useWaveVolume = Environment.OSVersion.Version.Major >= 6 && reader.GetValueAsBool("volume", "digital", false);
       }
-      Log.Debug("PS: Use MP's volume handler, since we are running Windows XP");
+
+      if (useWaveVolume)
+      {
+        // Since MP's volume handler controls the wave volume, we have to access the Audio Endpoint Device directly
+        Log.Debug("PS: Control the master volume by accessing the Audio Endpoint Device directly");
+        _audioDefaultDevice = new AEDev();
+      }
+      else
+      {
+        // We use MP's volume handler, since it controls the master volume
+        Log.Debug("PS: Control the master volume by using MP's volume handler");
+      }
     }
 
     public void Dispose()
     {
-      if (_masterVolumeHelper != null)
+      if (_audioDefaultDevice != null)
       {
-        _masterVolumeHelper.Dispose();
-        _masterVolumeHelper = null;
+        _audioDefaultDevice.SafeDispose();          
+        _audioDefaultDevice = null;
       }
     }
 
@@ -89,9 +67,9 @@ namespace MediaPortal.Plugins.Process
       {
         try
         {
-          if (_masterVolumeHelper != null)
+          if (_audioDefaultDevice != null)
           {
-            return _masterVolumeHelper.Muted;
+            return _audioDefaultDevice.Muted;
           }
           else
           {
@@ -108,9 +86,9 @@ namespace MediaPortal.Plugins.Process
       {
         try
         {
-          if (_masterVolumeHelper != null)
+          if (_audioDefaultDevice != null)
           {
-            _masterVolumeHelper.Muted = value;
+            _audioDefaultDevice.Muted = value;
           }
           else
           {

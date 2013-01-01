@@ -764,7 +764,7 @@ namespace MediaPortal.Mixer
     private AudioEndpointVolumeCallback _CallBack;
     public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
 
-    internal AEDev()
+    public AEDev()
     {
       IMMDevice _Device = null;
       Marshal.ThrowExceptionForHR(((IMMDeviceEnumerator)_realEnumerator).GetDefaultAudioEndpoint(0, 1, out _Device));
