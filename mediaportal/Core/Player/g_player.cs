@@ -93,6 +93,7 @@ namespace MediaPortal.Player
     private static string _currentTitle = ""; //actual program metadata - usefull for tv - avoids extra DB lookups
     private static bool _pictureSlideShow = false;
     private static bool _picturePlaylist = false;
+    private static bool _isExtTS = false;
 
     private static string _currentDescription = "";
     //actual program metadata - usefull for tv - avoids extra DB Lookups. 
@@ -1239,18 +1240,18 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
-      return Play(strFile, type, (TextReader)null, false);
+      return Play(strFile, type, (TextReader)null, false, false);
     }
 
     public static bool Play(string strFile, MediaType type, string chapters)
     {
       using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
       {
-        return Play(strFile, type, stream, false);
+        return Play(strFile, type, stream, false, false);
       }
     }
 
-    public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures)
+    public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures, bool fromExtTS)
     {
       try
       {
@@ -1261,6 +1262,7 @@ namespace MediaPortal.Player
         }
 
         IsPicture = false;
+        IsExtTS = false;
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
         string extension = Util.Utils.GetFileExtension(strFile).ToLower();
         bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
@@ -1313,6 +1315,11 @@ namespace MediaPortal.Player
             {
               return true;
             }
+          }
+          // Set bool to know if we want to use video codec for .ts files
+          if (fromExtTS)
+          {
+            IsExtTS = true;
           }
         }
 
@@ -1518,6 +1525,18 @@ namespace MediaPortal.Player
       set
       {
         _picturePlaylist = value;
+      }
+    }
+
+    public static bool IsExtTS
+    {
+      get
+      {
+        return _isExtTS;
+      }
+      set
+      {
+        _isExtTS = value;
       }
     }
 
