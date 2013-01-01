@@ -5386,7 +5386,7 @@ namespace MediaPortal.Video.Database
               else
               {
                 string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
-                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (mc.Count > 0)
                 {
                   foreach (Match m in mc)
@@ -5403,7 +5403,7 @@ namespace MediaPortal.Video.Database
                 else
                 {
                   regex = @"\d*\s*min.";
-                  if (Regex.Match(nodeDuration.InnerText, regex).Success)
+                  if (Regex.Match(nodeDuration.InnerText, regex, RegexOptions.IgnoreCase).Success)
                   {
                     regex = @"\d*";
                     int minutes = 0;
@@ -5525,7 +5525,7 @@ namespace MediaPortal.Video.Database
             string thumbFolderTbnFile = string.Empty;
             string titleExt = movie.Title + "{" + id + "}";
             string jpgExt = @".jpg";
-            string tbnExt = @".jpg";
+            string tbnExt = @".tbn";
             string folderJpg = @"\folder.jpg";
             string folderTbn = @"\folder.tbn";
 

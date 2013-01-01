@@ -819,12 +819,14 @@ namespace MediaPortal.GUI.Video
       {
         string imageUrl = _currentMovie.ThumbURL;
         string titleExt = string.Empty;
-
+        string imageExt = string.Empty;
+        
         if (imageUrl.Length > 7 && 
           !imageUrl.Substring(0, 7).Equals("file://") &&
           !imageUrl.Substring(0, 7).Equals("http://"))
         {
-          if (Util.Utils.IsPicture(imageUrl) && File.Exists(imageUrl))
+          imageExt = Util.Utils.GetFileExtension(imageUrl);
+          if ((Util.Utils.IsPicture(imageUrl) || imageExt.ToLowerInvariant() == ".tbn") && File.Exists(imageUrl))
           {
             imageUrl = "file://" + imageUrl;
           }
