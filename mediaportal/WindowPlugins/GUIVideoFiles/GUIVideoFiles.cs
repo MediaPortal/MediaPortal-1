@@ -978,6 +978,18 @@ namespace MediaPortal.GUI.Video
         }
         else if (!Win32API.IsConnectedToInternet())
         {
+          if(File.Exists(movieDetails.MovieNfoFile))
+          {
+            // Try nfo file
+            VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
+            // Refresh movie info
+            VideoDatabase.GetMovieInfo(movieDetails.VideoFileName, ref movieDetails);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage msgNfo = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msgNfo);
+            return;
+          }
+
           GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(257);
           dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
@@ -986,31 +998,41 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
-
-          if (isDedicatedMovieFolder)
+          if (File.Exists(movieDetails.MovieNfoFile))
           {
-            if (pItem.IsBdDvdFolder)
-            {
-              movieDetails.SearchString = pItem.Label;
-            }
-            else
-            {
-              movieDetails.SearchString = Path.GetFileName(movieDetails.VideoFilePath);
-            }
+            // Try nfo file
+            VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
+            // Refresh movie info
+            VideoDatabase.GetMovieInfo(movieDetails.VideoFileName, ref movieDetails);
           }
           else
           {
-            movieDetails.SearchString = pItem.Label;
-          }
+            bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
 
-          movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
-          Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
-                   movieDetails.Path);
+            if (isDedicatedMovieFolder)
+            {
+              if (pItem.IsBdDvdFolder)
+              {
+                movieDetails.SearchString = pItem.Label;
+              }
+              else
+              {
+                movieDetails.SearchString = Path.GetFileName(movieDetails.VideoFilePath);
+              }
+            }
+            else
+            {
+              movieDetails.SearchString = pItem.Label;
+            }
 
-          if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
-          {
-            return;
+            movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
+            Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
+                     movieDetails.Path);
+
+            if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
+            {
+              return;
+            }
           }
         }
         // Send global message that movie is refreshed/scanned

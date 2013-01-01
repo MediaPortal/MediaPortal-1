@@ -246,7 +246,7 @@ namespace MediaPortal.GUI.Video
           }
 
           // Check for everymovieinitsownfolder only once for all items (defined share is the same for all)
-          if (!dedicatedMovieFolderChecked)
+          if (!dedicatedMovieFolderChecked && !string.IsNullOrEmpty(pItem.Path))
           {
             if (!pItem.IsRemote && !VirtualDirectories.Instance.Movies.IsRootShare(pItem.Path))
             {
@@ -285,9 +285,9 @@ namespace MediaPortal.GUI.Video
               {
                 for (int i = 0; i < strFiles.Length; ++i)
                 {
-                  string extensionension = Path.GetExtension(strFiles[i]);
+                  string extension = Path.GetExtension(strFiles[i]);
 
-                  if (VirtualDirectory.IsImageFile(extensionension))
+                  if (VirtualDirectory.IsImageFile(extension))
                   {
                     if (DaemonTools.IsEnabled)
                     {
@@ -353,16 +353,19 @@ namespace MediaPortal.GUI.Video
               string path = pItem.Path;
               Util.Utils.RemoveStackEndings(ref path);
               Util.Utils.RemoveStackEndings(ref file);
+              string jpgExt = ".jpg";
+              string tbnExt = ".tbn";
+              string folderJpg = @"\folder.jpg";
 
               if (pItem.IsBdDvdFolder)
               {
-                fPic = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
-                fPicTbn = pItem.Path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
+                fPic = string.Concat(pItem.Path,@"\", Path.GetFileNameWithoutExtension(path), jpgExt);
+                fPicTbn = string.Concat(pItem.Path, @"\", Path.GetFileNameWithoutExtension(path), tbnExt);
               }
               else
               {
-                fPic = Path.ChangeExtension(file, ".jpg");
-                fPicTbn = Path.ChangeExtension(file, ".tbn");
+                fPic = Path.ChangeExtension(file, jpgExt);
+                fPicTbn = Path.ChangeExtension(file, tbnExt);
               }
 
               if (File.Exists(fPic))
@@ -377,7 +380,7 @@ namespace MediaPortal.GUI.Video
               {
                 if (!pItem.IsFolder && isDedicatedMovieFolder)
                 {
-                  fPic = Path.GetDirectoryName(pItem.Path) + @"\folder.jpg";
+                  fPic = Path.GetDirectoryName(pItem.Path) + folderJpg;
 
                   if (File.Exists(fPic))
                   {
@@ -394,7 +397,7 @@ namespace MediaPortal.GUI.Video
                 }
               }
             }
-
+            
             pItem.ThumbnailImage = strThumb;
             pItem.IconImageBig = strThumb;
             pItem.IconImage = strThumb;
@@ -405,7 +408,7 @@ namespace MediaPortal.GUI.Video
             {
               pItem.ThumbnailImage = strThumb;
             }
-
+            
             movie = null;
           } // <-- file == empty
         } // of for (int x = 0; x < items.Count; ++x)
