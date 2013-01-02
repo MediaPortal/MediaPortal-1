@@ -229,6 +229,15 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnSearchNew()
     {
+      if (_doNotUseDatabase)
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(string.Empty);
+        dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+        return;
+      }
+
       int maximumShares = 128;
       ArrayList availablePaths = new ArrayList();
 
@@ -1286,6 +1295,15 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 102: //Scan
+          if (_doNotUseDatabase)
+          {
+            GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            dlgOk.SetHeading(string.Empty);
+            dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            return;
+          }
+
           if (facadeLayout.Focus)
           {
             if (item.IsFolder)
@@ -1305,52 +1323,74 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-
+          
           int currentIndex = facadeLayout.SelectedListItemIndex;
-          ArrayList availablePaths = new ArrayList();
-          availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+
+          if (_useOnlyNfoScraper)
+          {
+            ArrayList scanNfoFiles = new ArrayList();
+            GetNfoFiles(item.Path, ref scanNfoFiles);
+            IMDBFetcher scanFetcher = new IMDBFetcher(this);
+            scanFetcher.FetchNfo(scanNfoFiles, true, false);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage scanNfoMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(scanNfoMsg);
+            LoadDirectory(_currentFolder);
+            facadeLayout.SelectedListItemIndex = currentIndex;
+          }
+          else
+          {
+            ArrayList availablePaths = new ArrayList();
+            availablePaths.Add(item.Path);
+            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(scanMsg);
+            LoadDirectory(_currentFolder);
+            facadeLayout.SelectedListItemIndex = currentIndex;
+          }
+          break;
+
+        case 1280: //Scan using nfo files
+          if (_doNotUseDatabase)
+          {
+            GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            dlgOk.SetHeading(string.Empty);
+            dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            return;
+          }
+
+          if (facadeLayout.Focus)
+          {
+            if (item.IsFolder)
+            {
+              if (item.Label == "..")
+              {
+                return;
+              }
+              if (item.IsRemote)
+              {
+                return;
+              }
+            }
+          }
+
+          if (!_virtualDirectory.RequestPin(item.Path))
+          {
+            return;
+          }
+          
+          currentIndex = facadeLayout.SelectedListItemIndex;
+          ArrayList nfoFiles = new ArrayList();
+          GetNfoFiles(item.Path, ref nfoFiles);
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
           // Send global message that movie is refreshed/scanned
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
           LoadDirectory(_currentFolder);
           facadeLayout.SelectedListItemIndex = currentIndex;
-          break;
-
-        case 1280: //Scan using nfo files
-          if (facadeLayout.Focus)
-          {
-            if (item.IsFolder)
-            {
-              if (item.Label == "..")
-              {
-                return;
-              }
-              if (item.IsRemote)
-              {
-                return;
-              }
-            }
-          }
-
-          if (!_virtualDirectory.RequestPin(item.Path))
-          {
-            return;
-          }
-
-          currentIndex = facadeLayout.SelectedListItemIndex;
-
-          ArrayList nfoFiles = new ArrayList();
-          GetNfoFiles(item.Path, ref nfoFiles);
-
-          IMDBFetcher fetcher = new IMDBFetcher(this);
-          fetcher.FetchNfo(nfoFiles, true, false);
-          // Send global message that movie is refreshed/scanned
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
-          LoadDirectory(_currentFolder);
-          facadeLayout.SelectedListItemIndex = currentIndex;
-
           break;
 
         case 830: // Reset watched status
