@@ -6,8 +6,7 @@
   <define>#header.label:897</define>
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
-	<import>common.time.settings.xml</import>
-	<import>settings.menu.xml</import>
+	<import>settings_General.xml</import>
   <import>common.settings.xml</import>
 	
 	<control>
@@ -39,7 +38,6 @@
 				<id>2</id>
 				<posX>350</posX>
 				<posY>150</posY>
-				<onleft>10</onleft>
 				<onright>10</onright>
 				<align>right</align>
 				<label>300112</label>
@@ -51,7 +49,6 @@
 				<id>3</id>
 				<posX>350</posX>
 				<posY>195</posY>
-				<onleft>10</onleft>
 				<onright>10</onright>
 				<align>right</align>
 				<label>300113</label>

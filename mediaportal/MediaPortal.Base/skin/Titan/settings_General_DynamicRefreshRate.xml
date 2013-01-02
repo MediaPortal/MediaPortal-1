@@ -4,12 +4,10 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<define>#header.label:897</define>		
-	<rememberLastFocusedControl>yes</rememberLastFocusedControl>
-  <controls>
-  
-	<import>settings.menu.xml</import>	
-	<import>common.settings.xml</import>	
-	<import>common.time.settings.xml</import>  
+	<rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>  
+	<import>settings_General.xml</import>
+	<import>common.settings.xml</import>	 
 	
 	<control>
 		<type>label</type>
@@ -32,7 +30,6 @@
 		<id>2</id>
 		<posX>655</posX>
 		<posY>321</posY>
-		<onleft>2</onleft>
 		<onright>4</onright>
 		<onup>17</onup>
 		<ondown>3</ondown>
@@ -48,7 +45,6 @@
 		<id>3</id>
 		<posX>655</posX>
 		<posY>387</posY>
-		<onleft>3</onleft>
 		<onright>5</onright>
 		<onup>2</onup>
 		<ondown>7</ondown>

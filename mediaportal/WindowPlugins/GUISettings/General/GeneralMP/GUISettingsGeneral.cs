@@ -20,10 +20,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.GUI.Settings;
 using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -34,13 +34,7 @@ namespace WindowPlugins.GUISettings
   /// </summary>
   public class GUISettingsGeneralMain : GUIInternalWindow
   {
-    [SkinControl(2)] protected GUIButtonControl btnGeneral = null;
-    [SkinControl(3)] protected GUIButtonControl btnStartup = null;
-    [SkinControl(4)] protected GUIButtonControl btnResume = null;
-    [SkinControl(5)] protected GUIButtonControl btnVolume = null;
-    [SkinControl(6)] protected GUIButtonControl btnRefreshRate = null;
-    [SkinControl(7)] protected GUIButtonControl btnAutoplay = null;
-    
+    [SkinControl(105)] protected GUIButtonControl btnAutoplay = null;
 
     private int _selectedOption;
 
@@ -109,30 +103,28 @@ namespace WindowPlugins.GUISettings
       }
 
       base.OnPageDestroy(new_windowId);
+
+      // Window history cleanup for back to Settings window
+      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        GUIWindowManager.RemoveWindowFromHistory(GetID);
+      }
+      else
+      {
+        // Exit to Home or to a nonGuiSettingsWindow
+        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
+        foreach (int guiWindow in guiWindows)
+        {
+          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
+          {
+            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
+          }
+        }
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == btnGeneral)
-      {
-        OnGeneral();
-      }
-      if (control == btnStartup)
-      {
-        OnStartup();
-      }
-      if (control == btnResume)
-      {
-        OnResume();
-      }
-      if (control == btnVolume)
-      {
-        OnVolume();
-      }
-      if (control == btnRefreshRate)
-      {
-        OnRefreshRate();
-      }
       if (control == btnAutoplay)
       {
         _selectedOption = -1;
@@ -153,56 +145,6 @@ namespace WindowPlugins.GUISettings
     }
 
     #endregion
-
-    private void OnGeneral()
-    {
-      GUISettingsGeneralMP dlg = (GUISettingsGeneralMP)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_GENERALMP);
-      if (dlg == null)
-      {
-        return;
-      }
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_GENERALMP);
-    }
-
-    private void OnStartup()
-    {
-      GUISettingsGeneralStartup dlg = (GUISettingsGeneralStartup)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_GENERALSTARTUP);
-      if (dlg == null)
-      {
-        return;
-      }
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_GENERALSTARTUP);
-    }
-
-    private void OnResume()
-    {
-      GUISettingsGeneralResume dlg = (GUISettingsGeneralResume)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_GENERALRESUME);
-      if (dlg == null)
-      {
-        return;
-      }
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_GENERALRESUME);
-    }
-
-    private void OnVolume()
-    {
-      GUISettingsGeneralVolume dlg = (GUISettingsGeneralVolume)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_GENERALVOLUME);
-      if (dlg == null)
-      {
-        return;
-      }
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_GENERALVOLUME);
-    }
-
-    private void OnRefreshRate()
-    {
-      GUISettingsGeneralRefreshRate dlg = (GUISettingsGeneralRefreshRate)GUIWindowManager.GetWindow((int)Window.WINDOW_SETTINGS_GENERALREFRESHRATE);
-      if (dlg == null)
-      {
-        return;
-      }
-      GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_GENERALREFRESHRATE);
-    }
 
     private void OnAutoPlay()
     {

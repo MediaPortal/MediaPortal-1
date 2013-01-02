@@ -20,11 +20,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX.Direct3D;
+using WindowPlugins.GUISettings;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Settings
@@ -32,7 +34,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUISettingsGeneralResume : GUIInternalWindow
+  public class GUISettingsGeneralResume : GUISettingsGeneralMain
   {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public class DISPLAY_DEVICE
@@ -174,6 +176,24 @@ namespace MediaPortal.GUI.Settings
       }
 
       base.OnPageDestroy(new_windowId);
+
+      // Window history cleanup for back to Settings window
+      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        GUIWindowManager.RemoveWindowFromHistory(GetID);
+      }
+      else
+      {
+        // Exit to Home or to a nonGuiSettingsWindow
+        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
+        foreach (int guiWindow in guiWindows)
+        {
+          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
+          {
+            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
+          }
+        }
+      }
     }
 
     public override void OnAction(Action action)

@@ -19,9 +19,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
+using WindowPlugins.GUISettings;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Settings
@@ -29,7 +31,7 @@ namespace MediaPortal.GUI.Settings
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUISettingsGeneralStartup : GUIInternalWindow
+  public class GUISettingsGeneralStartup : GUISettingsGeneralMain
   {
     [SkinControl(10)] protected GUICheckButton cmStartfullscreen = null;
     [SkinControl(11)] protected GUICheckButton cmUsefullscreensplash = null;
@@ -147,6 +149,24 @@ namespace MediaPortal.GUI.Settings
       }
 
       base.OnPageDestroy(new_windowId);
+
+      // Window history cleanup for back to Settings window
+      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        GUIWindowManager.RemoveWindowFromHistory(GetID);
+      }
+      else
+      {
+        // Exit to Home or to a nonGuiSettingsWindow
+        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
+        foreach (int guiWindow in guiWindows)
+        {
+          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
+          {
+            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
+          }
+        }
+      }
     }
 
     public override void OnAction(Action action)

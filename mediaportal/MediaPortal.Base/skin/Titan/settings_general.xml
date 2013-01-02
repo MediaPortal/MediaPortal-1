@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1016</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>9992</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <define>#header.label:897</define>
-  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
 	<import>common.time.settings.xml</import>
 	
@@ -56,50 +56,54 @@
 		<posY>321</posY>
 		<dimColor>ffffffff</dimColor>
 		<layout>StackLayout(7, Vertical, true)</layout>
-     
+     		
 			<control Style="SettingsButton">
-        <description>General MP Settings</description>
-        <type>button</type>
-        <id>2</id>
-        <label>300080</label>
-        <onup>7</onup>
-      </control>
+				<description>General MP settings</description>
+				<type>button</type>
+				<id>9992</id>
+				<label>300080</label>
+				<hyperlink>1018</hyperlink>
+			</control>
 			
 			<control Style="SettingsButton">
-        <description>Startup settings</description>
-        <type>button</type>
-        <id>3</id>
-        <label>300081</label>
-      </control>
-			
+				<description>Startup</description>
+				<type>button</type>
+				<id>9993</id>
+				<label>300081</label>
+				<hyperlink>1019</hyperlink>
+			</control>
+	
 			<control Style="SettingsButton">
-        <description>Resume settings</description>
-        <type>button</type>
-        <id>4</id>
-        <label>300082</label>
-      </control>
-			
+				<description>Resume</description>
+				<type>button</type>
+				<id>9994</id>
+				<label>300082</label>
+				<hyperlink>1017</hyperlink>
+			</control>
+	
 			<control Style="SettingsButton">
-        <description>Volume settings</description>
-        <type>button</type>
-        <id>5</id>
-        <label>101007</label>
-      </control>
-			
+				<description>Volume</description>
+				<type>button</type>
+				<id>9995</id>
+				<label>101007</label>
+				<hyperlink>1007</hyperlink>
+			</control>
+	
 			<control Style="SettingsButton">
-        <description>RefreshRate settings</description>
-        <type>button</type>
-        <id>6</id>
-        <label>300083</label>
-      </control>
-			
+				<description>Refresh</description>
+				<type>button</type>
+				<id>9996</id>
+				<label>300083</label>
+				<hyperlink>1008</hyperlink>
+			</control>
+	
 			<control Style="SettingsButton">
-        <description>AUtoplay</description>
-        <type>button</type>
-        <id>7</id>
-        <label>713</label>
-				<ondown>2</ondown>
-      </control>
+				<description>Autoplay</description>
+				<type>button</type>
+				<id>105</id>
+				<label>713</label>
+			</control>
+			
     </control>
   </controls>
 </window>

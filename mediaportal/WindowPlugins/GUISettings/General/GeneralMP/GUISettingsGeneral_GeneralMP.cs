@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -31,7 +32,7 @@ namespace WindowPlugins.GUISettings
   /// <summary>
   /// Summary description for GUISettingsMovies.
   /// </summary>
-  public class GUISettingsGeneralMP: GUIInternalWindow
+  public class GUISettingsGeneralMP : GUISettingsGeneralMain
   {
     [SkinControl(2)] protected GUIButtonControl btnLog = null;
     [SkinControl(3)] protected GUIButtonControl btnProcess = null;
@@ -177,6 +178,24 @@ namespace WindowPlugins.GUISettings
       }
 
       base.OnPageDestroy(new_windowId);
+
+      // Window history cleanup for back to Settings window
+      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        GUIWindowManager.RemoveWindowFromHistory(GetID);
+      }
+      else
+      {
+        // Exit to Home or to a nonGuiSettingsWindow
+        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
+        foreach (int guiWindow in guiWindows)
+        {
+          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
+          {
+            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
+          }
+        }
+      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

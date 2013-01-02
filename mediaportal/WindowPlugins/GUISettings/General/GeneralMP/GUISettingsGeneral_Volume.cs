@@ -20,12 +20,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings
@@ -33,7 +33,7 @@ namespace WindowPlugins.GUISettings
   /// <summary>
   /// Summary description for GUISettingsGeneral.
   /// </summary>
-  public class GUISettingsGeneralVolume : GUIInternalWindow
+  public class GUISettingsGeneralVolume : GUISettingsGeneralMain
   {
     [SkinControl(2)] protected GUICheckButton btnMasterVolume = null;
     [SkinControl(3)] protected GUICheckButton btnWave= null;
@@ -274,12 +274,31 @@ namespace WindowPlugins.GUISettings
     {
       SaveSettings();
 
-      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged &&
+          !MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
       {
         MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
       }
 
       base.OnPageDestroy(new_windowId);
+
+      // Window history cleanup for back to Settings window
+      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        GUIWindowManager.RemoveWindowFromHistory(GetID);
+      }
+      else
+      {
+        // Exit to Home or to a nonGuiSettingsWindow
+        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
+        foreach (int guiWindow in guiWindows)
+        {
+          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
+          {
+            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
+          }
+        }
+      }
     }
 
     public override void OnAction(Action action)

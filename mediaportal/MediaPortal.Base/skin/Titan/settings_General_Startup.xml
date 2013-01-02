@@ -6,8 +6,7 @@
 	<define>#header.label:897</define>
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
-	<import>common.time.settings.xml</import>
-	<import>settings.menu.xml</import>
+	<import>settings_General.xml</import>
   <import>common.settings.xml</import>
 	
 	<control>
