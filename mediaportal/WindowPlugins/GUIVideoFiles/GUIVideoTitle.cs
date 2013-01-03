@@ -815,7 +815,7 @@ namespace MediaPortal.GUI.Video
                      "movieinfo.studios," +
                      "movieinfo.country," +
                      "movieinfo.language," +
-                     "movieinfo.lastupdate " +
+                     "movieinfo.lastupdate, " +
 			               "movieinfo.strSortTitle " +
                      "FROM movieinfo " +
                      "INNER JOIN actorlinkmovie ON actorlinkmovie.idMovie = movieinfo.idMovie " +

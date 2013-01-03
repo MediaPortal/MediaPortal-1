@@ -94,6 +94,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (GUISettings.SettingsChanged && !Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
+    }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_HOME || action.wID == Action.ActionType.ACTION_SWITCH_HOME)
