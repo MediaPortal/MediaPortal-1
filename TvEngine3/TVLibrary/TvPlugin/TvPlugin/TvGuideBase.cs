@@ -2374,76 +2374,54 @@ namespace TvPlugin
             iWidth = 1;
           }
 
-          img.TextOffsetX1 = 5;
-          img.TextOffsetY1 = 5;
-          img.FontName1 = "font13";
-          img.TextColor1 = 0xffffffff;
           img.Label1 = strTitle;
-          GUILabelControl labelTemplate;
-          if (program.IsRunningAt(dt))
-          {
-            labelTemplate = _titleDarkTemplate;
-          }
-          else
-          {
-            labelTemplate = _titleTemplate;
-          }
 
+          GUILabelControl labelTemplate = program.IsRunningAt(dt) ? _titleDarkTemplate : _titleTemplate;
           if (labelTemplate != null)
           {
             img.FontName1 = labelTemplate.FontName;
             img.TextColor1 = labelTemplate.TextColor;
             img.TextColor2 = labelTemplate.TextColor;
-            img.TextOffsetX1 = labelTemplate.XPosition;
-            img.TextOffsetY1 = labelTemplate.YPosition;
-            img.SetShadow1(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
 
             // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
             // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
             // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
-            // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
+            // legacy values (5).  This check is necessary because the x,y position (without skin file changes) will be taken
             // from either the references.xml control template or the controls coded defaults.
-            if (img.TextOffsetY1 > img.Height)
-            {
-              // Set legacy values.
-              img.TextOffsetX1 = 5;
-              img.TextOffsetY1 = 5;
-            }
-          }
-          img.TextOffsetX2 = 5;
-          img.TextOffsetY2 = img.Height / 2;
-          img.FontName2 = "font13";
-          img.TextColor2 = 0xffffffff;
-
-          if (program.IsRunningAt(dt))
-          {
-            labelTemplate = _genreDarkTemplate;
+            img.TextOffsetX1 = labelTemplate.YPosition > img.Height ? 5 : labelTemplate.XPosition;
+            img.TextOffsetY1 = labelTemplate.YPosition > img.Height ? 5 : labelTemplate.YPosition;
+            img.SetShadow1(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
           }
           else
           {
-            labelTemplate = _genreTemplate;
+            img.FontName1 = "font13";
+            img.TextColor1 = 0xffffffff;
+            img.TextOffsetX1 = 5;
+            img.TextOffsetY1 = 5;
           }
 
+          labelTemplate = program.IsRunningAt(dt) ? this._genreDarkTemplate : this._genreTemplate;
           if (labelTemplate != null)
           {
+            img.Label2 = program.Genre;
             img.FontName2 = labelTemplate.FontName;
             img.TextColor2 = labelTemplate.TextColor;
-            img.Label2 = program.Genre;
-            img.TextOffsetX2 = labelTemplate.XPosition;
-            img.TextOffsetY2 = labelTemplate.YPosition;
-            img.SetShadow2(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
 
             // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
             // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
             // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
-            // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
+            // legacy values (5).  This check is necessary because the x,y position (without skin file changes) will be taken
             // from either the references.xml control template or the controls coded defaults.
-            if (img.TextOffsetY2 > img.Height)
-            {
-              // Set legacy values.
-              img.TextOffsetX2 = 5;
-              img.TextOffsetY2 = 5;
-            }
+            img.TextOffsetX2 = labelTemplate.YPosition > img.Height ? 5 : labelTemplate.XPosition;
+            img.TextOffsetY2 = labelTemplate.YPosition > img.Height ? 5 : labelTemplate.YPosition;
+            img.SetShadow2(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
+          }
+          else
+          {
+            img.FontName2 = "font13";
+            img.TextColor2 = 0xffffffff;
+            img.TextOffsetX2 = 5;
+            img.TextOffsetY2 = img.Height / 2;
           }
 
           if (program.IsRunningAt(dt))
