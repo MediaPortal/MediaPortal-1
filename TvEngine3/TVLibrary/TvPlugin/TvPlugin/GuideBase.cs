@@ -390,7 +390,7 @@ namespace TvPlugin
 
           if (_showChannelLogos)
           {
-            imgBut.TexutureIcon = cntlChannelImg.FileName;
+            // imgBut.TexutureIcon = cntlChannelImg.FileName; // removed to avoid rerendering on each ChannelRendering
             imgBut.IconOffsetX = cntlChannelImg.XPosition;
             imgBut.IconOffsetY = cntlChannelImg.YPosition;
             imgBut.IconWidth = cntlChannelImg.RenderWidth;
