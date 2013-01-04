@@ -171,31 +171,7 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int new_windowId)
     {
       SaveSettings();
-
-      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
-      {
-        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
-      }
-
       base.OnPageDestroy(new_windowId);
-
-      // Window history cleanup for back to Settings window
-      if (MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
-      {
-        GUIWindowManager.RemoveWindowFromHistory(GetID);
-      }
-      else
-      {
-        // Exit to Home or to a nonGuiSettingsWindow
-        List<int> guiWindows = GUIWindowManager.GetWindowHistory();
-        foreach (int guiWindow in guiWindows)
-        {
-          if (MediaPortal.Util.Utils.IsGUISettingsWindow(guiWindow))
-          {
-            GUIWindowManager.RemoveWindowFromHistory(guiWindow);
-          }
-        }
-      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

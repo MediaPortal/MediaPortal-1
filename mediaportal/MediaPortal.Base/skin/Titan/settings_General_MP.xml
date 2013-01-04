@@ -4,7 +4,7 @@
   <defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<define>#header.label:897</define>
-	<rememberLastFocusedControl>yes</rememberLastFocusedControl>
+	<rememberLastFocusedControl>no</rememberLastFocusedControl>
 	<controls>
 	<import>settings_General.xml</import>
   <import>common.settings.xml</import>
