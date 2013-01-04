@@ -48,7 +48,7 @@
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
       <textYOff>0</textYOff>
-			<onright>4</onright>
+			<onright>6</onright>
 			<onleft>4</onleft>
 			<ondown>1001</ondown>
 			<onup>1004</onup>
@@ -70,7 +70,7 @@
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
       <textYOff>0</textYOff>
-			<onright>4</onright>
+			<onright>6</onright>
 			<onleft>4</onleft>
 			<ondown>1002</ondown>
 			<onup>1000</onup>
@@ -92,7 +92,7 @@
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
       <textYOff>0</textYOff>
-			<onright>4</onright>
+			<onright>6</onright>
 			<onleft>4</onleft>
 			<onup>1001</onup>
 			<ondown>1003</ondown>
@@ -114,7 +114,7 @@
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
       <textYOff>0</textYOff>
-			<onright>4</onright>
+			<onright>6</onright>
 			<onleft>4</onleft>
 			<onup>1002</onup>
 			<ondown>1004</ondown>
@@ -136,7 +136,7 @@
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
       <textYOff>0</textYOff>
-			<onright>4</onright>
+			<onright>6</onright>
 			<onleft>4</onleft>
 			<onup>1003</onup>
 			<ondown>1000</ondown>
@@ -177,7 +177,7 @@
     <dimColor>0xffffffff</dimColor>
 		<posX>728</posX>
 	  <posY>378</posY>
-		
+				
 		<control>
   		<description>Categories</description>
       <type>button</type>
@@ -209,8 +209,8 @@
       <height>40</height>
       <textureFocus>-</textureFocus>
       <textureNoFocus>-</textureNoFocus>
-      <hyperlink>96742</hyperlink>
-			<hyperlinkParameter>categoryname:${AllMovies}</hyperlinkParameter>
+      <hyperlink>504</hyperlink>
+			<hyperlinkParameter>135</hyperlinkParameter>
       <label>All Movies</label>
       <font>fontB12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -234,7 +234,7 @@
       <textureFocus>-</textureFocus>
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>96742</hyperlink>
-			<hyperlinkParameter>categoryname:${RecentlyAddedMovies}</hyperlinkParameter>
+			<hyperlinkParameter>categoryname:#skin.basichome.submenu.movies1</hyperlinkParameter>
       <label>4558</label>
       <font>fontB12</font>
       <textcolor>FFFFFFFF</textcolor>
