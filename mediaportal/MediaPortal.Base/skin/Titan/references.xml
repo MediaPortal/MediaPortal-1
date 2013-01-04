@@ -348,13 +348,13 @@
     <font2>font2</font2>
     <shadedColor>ffffffff</shadedColor>
     <selectedColor>ffffffff</selectedColor>
-    <textcolor>FF85CFFF</textcolor>
-    <textcolor2>FF85CFFF</textcolor2>
-    <textcolor3>FF85CFFF</textcolor3>
+    <textcolor>FFFFFFFF</textcolor>
+    <textcolor2>FFFFFFFF</textcolor2>
+    <textcolor3>FFFFFFFF</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
-    <playedColor>FFFFFFFF</playedColor>
+    <playedColor>FF85CFFF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
 		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
