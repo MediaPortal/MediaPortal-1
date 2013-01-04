@@ -819,12 +819,14 @@ namespace MediaPortal.GUI.Video
       {
         string imageUrl = _currentMovie.ThumbURL;
         string titleExt = string.Empty;
-
+        string imageExt = string.Empty;
+        
         if (imageUrl.Length > 7 && 
           !imageUrl.Substring(0, 7).Equals("file://") &&
           !imageUrl.Substring(0, 7).Equals("http://"))
         {
-          if (Util.Utils.IsPicture(imageUrl) && File.Exists(imageUrl))
+          imageExt = Util.Utils.GetFileExtension(imageUrl);
+          if ((Util.Utils.IsPicture(imageUrl) || imageExt.ToLowerInvariant() == ".tbn") && File.Exists(imageUrl))
           {
             imageUrl = "file://" + imageUrl;
           }
@@ -1170,7 +1172,7 @@ namespace MediaPortal.GUI.Video
 
       if (actor != null)
       {
-        string restriction = "7"; // Refresh every week actor info and movies
+        string restriction = "30"; // Refresh every week actor info and movies
 
         TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
         DateTime searchDate = DateTime.Today - ts;
