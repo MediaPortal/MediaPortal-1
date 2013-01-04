@@ -177,7 +177,7 @@
     <dimColor>0xffffffff</dimColor>
 		<posX>728</posX>
 	  <posY>378</posY>
-				
+		
 		<control>
   		<description>Categories</description>
       <type>button</type>
@@ -209,8 +209,8 @@
       <height>40</height>
       <textureFocus>-</textureFocus>
       <textureNoFocus>-</textureNoFocus>
-      <hyperlink>504</hyperlink>
-			<hyperlinkParameter>135</hyperlinkParameter>
+      <hyperlink>96742</hyperlink>
+			<hyperlinkParameter>categoryname:${AllMovies}</hyperlinkParameter>
       <label>All Movies</label>
       <font>fontB12</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -234,7 +234,7 @@
       <textureFocus>-</textureFocus>
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>96742</hyperlink>
-			<hyperlinkParameter>categoryname:#skin.basichome.submenu.movies1</hyperlinkParameter>
+			<hyperlinkParameter>categoryname:${RecentlyAddedMovies}</hyperlinkParameter>
       <label>4558</label>
       <font>fontB12</font>
       <textcolor>FFFFFFFF</textcolor>
