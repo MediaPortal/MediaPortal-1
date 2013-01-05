@@ -168,16 +168,10 @@ namespace MediaPortal.GUI.Video
           if (sortby == null)
           {
             sortby = new VideoSort.SortMethod[handler.Views.Count,50];
-
+            // !!!!!!!!Sort items must be the same as in VideoSort.cs -> public enum SortMethod
             ArrayList sortStrings = new ArrayList();
-            sortStrings.Add("Name");
-            sortStrings.Add("NameAll");
-            sortStrings.Add("Date");
-            sortStrings.Add("Size");
-            sortStrings.Add("Year");
-            sortStrings.Add("Rating");
-            sortStrings.Add("Label");
-
+            sortStrings.AddRange(Enum.GetNames(typeof(VideoSort.SortMethod)));
+            
             for (int i = 0; i < handler.Views.Count; ++i)
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
