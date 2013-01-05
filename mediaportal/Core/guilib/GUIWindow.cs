@@ -1454,8 +1454,9 @@ namespace MediaPortal.GUI.Library
 
           UpdateOverlayAllowed();
           _hasWindowVisibilityUpdated = true;
-          foreach (GUIControl control in Children)
+          for (int i = 0; i < Children.Count; i++)
           {
+            GUIControl control = Children[i];
             control.UpdateVisibility();
             control.DoRender(timePassed, currentTime);
           }
