@@ -1592,7 +1592,15 @@ namespace Mediaportal.TV.Server.TVLibrary
       if (ValidateTvControllerParams(user))
       {
         RefreshUserFromSpecificContext(ref user);
-        isRecording = _cards[user.CardId].Recorder.IsRecording(user.Name); 
+        if (user.CardId > 0)
+        {
+          ITvCardHandler tvCardhandler;
+          bool hasCard = _cards.TryGetValue(user.CardId, out tvCardhandler);
+          if (hasCard)
+          {
+           isRecording = tvCardhandler.Recorder.IsRecording(user.Name);   
+          }                    
+        }        
       }      
       return isRecording;
     }
