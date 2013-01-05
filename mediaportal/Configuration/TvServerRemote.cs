@@ -29,7 +29,6 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.Xml;
 using MediaPortal.GUI.Library;
-using TvLibrary.Epg;
 
 namespace MediaPortal.Configuration
 {
@@ -87,52 +86,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    /// <summary>
-    /// Retrieve a list of MediaPortal genres from the TV server (calls TvBusinessLayer.GetMpGenres()).
-    /// </summary>
-    /// <returns>List of MediaPortal genre objects</returns>
-    public static List<MpGenre> GetMpGenres()
-    {
-      List<MpGenre> genres = null;
-      try
-      {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
-        if (assem != null)
-        {
-          Type[] types = assem.GetExportedTypes();
-          foreach (Type exportedType in types)
-          {
-            try
-            {
-              if (exportedType.Name == "TvServer")
-              {
-                // Execute the remote method call to the tv server.
-                Object exportedObject = null;
-                exportedObject = Activator.CreateInstance(exportedType);
-                MethodInfo methodInfo = exportedType.GetMethod("GetMpGenres",
-                                                                BindingFlags.Public | BindingFlags.Instance);
-                genres = methodInfo.Invoke(exportedObject, null) as List<MpGenre>;
-                break;
-              }
-            }
-            catch (TargetInvocationException ex)
-            {
-              Log.Error("DlgSkinSettings: Failed to load program genres {0}", ex.ToString());
-            }
-            catch (Exception gex)
-            {
-              Log.Error("DlgSkinSettings: Failed to load settings {0}", gex.Message);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Configuration: Loading TvControl assembly");
-        Log.Error("Configuration: Exception: {0}", ex);
-      }
-      return genres;
-    }
+   
 
     /// <summary>
     /// Retrieves a list of available languages and language codes from the TvServer.

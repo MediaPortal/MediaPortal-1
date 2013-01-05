@@ -7,12 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Cache;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using ThreadState = System.Threading.ThreadState;
 

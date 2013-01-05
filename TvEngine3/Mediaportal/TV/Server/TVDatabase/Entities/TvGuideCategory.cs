@@ -18,102 +18,112 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(Program))]
-    public partial class ProgramCredit: IObjectWithChangeTracker, INotifyPropertyChanged
+    [KnownType(typeof(ProgramCategory))]
+    public partial class TvGuideCategory: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdProgramCredit
+        public int IdTvGuideCategory
         {
-            get { return _idProgramCredit; }
+            get { return _idTvGuideCategory; }
             set
             {
-                if (_idProgramCredit != value)
+                if (_idTvGuideCategory != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdProgramCredit' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdTvGuideCategory' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idProgramCredit = value;
-                    OnPropertyChanged("IdProgramCredit");
+                    _idTvGuideCategory = value;
+                    OnPropertyChanged("IdTvGuideCategory");
                 }
             }
         }
-        private int _idProgramCredit;
+        private int _idTvGuideCategory;
     
         [DataMember]
-        public int IdProgram
+        public string Name
         {
-            get { return _idProgram; }
+            get { return _name; }
             set
             {
-                if (_idProgram != value)
+                if (_name != value)
                 {
-                    ChangeTracker.RecordOriginalValue("IdProgram", _idProgram);
-                    if (!IsDeserializing)
-                    {
-                        if (Program != null && Program.IdProgram != value)
-                        {
-                            Program = null;
-                        }
-                    }
-                    _idProgram = value;
-                    OnPropertyChanged("IdProgram");
+                    _name = value;
+                    OnPropertyChanged("Name");
                 }
             }
         }
-        private int _idProgram;
+        private string _name;
     
         [DataMember]
-        public string Person
+        public bool IsMovie
         {
-            get { return _person; }
+            get { return _isMovie; }
             set
             {
-                if (_person != value)
+                if (_isMovie != value)
                 {
-                    _person = value;
-                    OnPropertyChanged("Person");
+                    _isMovie = value;
+                    OnPropertyChanged("IsMovie");
                 }
             }
         }
-        private string _person;
+        private bool _isMovie;
     
         [DataMember]
-        public string Role
+        public bool IsEnabled
         {
-            get { return _role; }
+            get { return _isEnabled; }
             set
             {
-                if (_role != value)
+                if (_isEnabled != value)
                 {
-                    _role = value;
-                    OnPropertyChanged("Role");
+                    _isEnabled = value;
+                    OnPropertyChanged("IsEnabled");
                 }
             }
         }
-        private string _role;
+        private bool _isEnabled;
 
         #endregion
         #region Navigation Properties
     
         [DataMember]
-        public Program Program
+        public TrackableCollection<ProgramCategory> ProgramCategories
         {
-            get { return _program; }
+            get
+            {
+                if (_programCategories == null)
+                {
+                    _programCategories = new TrackableCollection<ProgramCategory>();
+                    _programCategories.CollectionChanged += FixupProgramCategories;
+                }
+                return _programCategories;
+            }
             set
             {
-                if (!ReferenceEquals(_program, value))
+                if (!ReferenceEquals(_programCategories, value))
                 {
-                    var previousValue = _program;
-                    _program = value;
-                    FixupProgram(previousValue);
-                    OnNavigationPropertyChanged("Program");
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_programCategories != null)
+                    {
+                        _programCategories.CollectionChanged -= FixupProgramCategories;
+                    }
+                    _programCategories = value;
+                    if (_programCategories != null)
+                    {
+                        _programCategories.CollectionChanged += FixupProgramCategories;
+                    }
+                    OnNavigationPropertyChanged("ProgramCategories");
                 }
             }
         }
-        private Program _program;
+        private TrackableCollection<ProgramCategory> _programCategories;
 
         #endregion
         #region ChangeTracking
@@ -176,16 +186,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        // This entity type is the dependent end in at least one association that performs cascade deletes.
-        // This event handler will process notifications that occur when the principal end is deleted.
-        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-        {
-            if (e.NewState == ObjectState.Deleted)
-            {
-                this.MarkAsDeleted();
-            }
-        }
-    
         protected bool IsDeserializing { get; private set; }
     
         [OnDeserializing]
@@ -203,47 +203,47 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            Program = null;
+            ProgramCategories.Clear();
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupProgram(Program previousValue)
+        private void FixupProgramCategories(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
                 return;
             }
     
-            if (previousValue != null && previousValue.ProgramCredits.Contains(this))
+            if (e.NewItems != null)
             {
-                previousValue.ProgramCredits.Remove(this);
+                foreach (ProgramCategory item in e.NewItems)
+                {
+                    item.TvGuideCategory = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("ProgramCategories", item);
+                    }
+                }
             }
     
-            if (Program != null)
+            if (e.OldItems != null)
             {
-                if (!Program.ProgramCredits.Contains(this))
+                foreach (ProgramCategory item in e.OldItems)
                 {
-                    Program.ProgramCredits.Add(this);
-                }
-    
-                IdProgram = Program.IdProgram;
-            }
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("Program")
-                    && (ChangeTracker.OriginalValues["Program"] == Program))
-                {
-                    ChangeTracker.OriginalValues.Remove("Program");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("Program", previousValue);
-                }
-                if (Program != null && !Program.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    Program.StartTracking();
+                    if (ReferenceEquals(item.TvGuideCategory, this))
+                    {
+                        item.TvGuideCategory = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("ProgramCategories", item);
+                    }
                 }
             }
         }

@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Xml;
@@ -33,7 +34,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.WinCustomControls;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -94,7 +95,7 @@ namespace MediaPortal.Configuration.Sections
     protected long _guideColorProgramEnded = 0;
     protected long _guideColorProgramSelected = 0;
     protected long _guideColorBorderHighlight = 0;
-    protected List<MpGenre> _mpGenres = null;
+    protected List<TvGuideCategory> _mpGenres = null;
     protected IDictionary<string, long> _genreColorsOnNow = new Dictionary<string, long>();
     protected IDictionary<string, long> _genreColorsOnLater = new Dictionary<string, long>();
     private Button mpButtonOk;
@@ -950,7 +951,7 @@ namespace MediaPortal.Configuration.Sections
 
         ListViewItem item = new ListViewItem(new string[] { genre.Name, colorOnNow, colorOnLater });
         item.Name = genre.Name;
-        if (!genre.Enabled)
+        if (!genre.IsEnabled)
         {
           item.ForeColor = SystemColors.GrayText;  // Dim disabled mp genres.
         }
@@ -981,7 +982,9 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Get the MediaPortal genres from the TV server.
-      _mpGenres = TvServerRemote.GetMpGenres();
+      _mpGenres =
+        Mediaportal.TV.Server.TVControl.ServiceAgents.ServiceAgents.Instance.ProgramCategoryServiceAgent.
+          ListAllTvGuideCategories().ToList();
 
       // Load tv guide colors.
       using (Settings xmlreader = new SKSettings())

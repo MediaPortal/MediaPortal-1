@@ -1,13 +1,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mediaportal.TV.Server.TVDatabase.Entities.Cache
+namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache
 {
   public class EntityCache<T, K> where T : class
   {
     private readonly Dictionary<K, T> _cache = new Dictionary<K, T>();
     private readonly object _cacheLock = new object();
     private bool _dataFetchedAtleastOnce;
+
+    public EntityCache()
+    {
+      
+    }
+
+    public EntityCache(Dictionary<K, T> cache)
+    {
+      _cache = cache;
+    }
 
     public int CacheCount()
     {
@@ -22,6 +32,25 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Cache
       {
         return _cache.Count;
       }      
+    }
+
+    public void AddOrUpdateCache (K key, T value)
+    {
+      lock (_cacheLock)
+      {
+       _cache[key] = value;
+      }
+    }
+
+    public T GetFromCache(K key)
+    {
+      T type;
+      lock (_cacheLock)
+      {
+        T typeValue;
+        _cache.TryGetValue(key, out type);
+      }
+      return type;
     }
 
     public T GetOrUpdateFromCache (K key, Func<K, T> fetchFunc)

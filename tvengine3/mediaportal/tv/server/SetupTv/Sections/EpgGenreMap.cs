@@ -20,9 +20,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls;
-using TvLibrary.Epg;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 
 namespace Mediaportal.TV.Server.SetupTV.Sections
 {
@@ -31,8 +34,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     #region variables
 
-    protected List<MpGenre> _mpGenres;
-    protected List<string> _allProgramGenres = new List<string>();
+    protected List<TvGuideCategory> _mpGenres;
+    protected List<ProgramCategory> _allProgramGenres = new List<ProgramCategory>();
 
     #endregion
 
@@ -52,15 +55,20 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Load the list of all EPG provided program genres.
       //_allProgramGenres = (List<string>)layer.GetProgramGenres();
 
-      _allProgramGenres = new List<string>();
+      /*_allProgramGenres = new List<TvGuideCategory>();
       _allProgramGenres.Add("genre_static0");
       _allProgramGenres.Add("genre_static1");
+      */
 
       // Load the list of MP genres.
       //_mpGenres = layer.GetMpGenres();
-      _mpGenres = new List<MpGenre>();
+      /*_mpGenres = new List<MpGenre>();
       _mpGenres.Add(new MpGenre("mpgenre_static0", 0));
       _mpGenres.Add(new MpGenre("mpgenre_static1", 1));
+      */
+
+      _allProgramGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllProgramCategories().ToList();
+      _mpGenres = ServiceAgents.Instance.ProgramCategoryServiceAgent.ListAllTvGuideCategories().ToList();
 
       // Populate the guide genre and program genre lists.
       PopulateGuideGenreList();
@@ -88,7 +96,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
 
         string valueEnabled = "";
-        if (_mpGenres[i].Enabled)
+        if (_mpGenres[i].IsEnabled)
         {
           valueEnabled = "x";
         }
@@ -98,13 +106,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         item.SubItems.Add(valueMovie);    // Movie subitem(1)
         item.SubItems.Add(valueEnabled);  // Enabled subitem(2)
         listViewGuideGenres.Items.Add(item);
+        item.Tag = _mpGenres[i];
       }
 
       listViewGuideGenres.EndUpdate();
 
       // Select the first guide genre in the list.
       // This forces (generates an event for) the mapped genre list to be populated.
-      listViewGuideGenres.Items[0].Selected = true;
+      if (listViewGuideGenres.Items.Count > 0)
+      {
+        listViewGuideGenres.Items[0].Selected = true;
+      }
     }
 
     private void PopulateMappedGenreList()
@@ -113,20 +125,27 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       listViewMappedGenres.Items.Clear();
 
       // Find the selected mp genre.
-      int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre selectedMpGenre = _mpGenres.Find(x => x.Id == selectedGenreId);
+      int selectedGenreId = (listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory).IdTvGuideCategory;
+      TvGuideCategory selectedMpGenre = _mpGenres.Find(x => x.IdTvGuideCategory == selectedGenreId);
+
+      if (selectedMpGenre != null)
+      {
+        
+      }
 
       // Populate the list of mapped genres.
-      foreach (var mappedProgramGenre in selectedMpGenre.MappedProgramGenres)
+      foreach (ProgramCategory mappedProgramGenre in selectedMpGenre.ProgramCategories)
       {
         // Provide an indication that the mapped program genre may be obsolete.  There is no way to know for sure.
         if (!_allProgramGenres.Contains(mappedProgramGenre))
         {
-          listViewMappedGenres.Items.Add(mappedProgramGenre, 0);
+          ListViewItem item = listViewMappedGenres.Items.Add(mappedProgramGenre.Category, 0);
+          item.Tag = mappedProgramGenre;
         }
         else
         {
-          listViewMappedGenres.Items.Add(mappedProgramGenre);
+          ListViewItem item = listViewMappedGenres.Items.Add(mappedProgramGenre.Category);
+          item.Tag = mappedProgramGenre;
         }
       }
 
@@ -136,10 +155,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void PopulateProgramGenreList()
     {
       // Remove program genres already mapped to mp genres.
-      List<string> unmappedProgramGenres = new List<string>(_allProgramGenres);
+      var unmappedProgramGenres = new List<ProgramCategory>(_allProgramGenres);
       foreach (var mpGenre in _mpGenres)
       {
-        foreach (var mappedProgramGenre in mpGenre.MappedProgramGenres)
+        foreach (ProgramCategory mappedProgramGenre in mpGenre.ProgramCategories)
         {
           unmappedProgramGenres.Remove(mappedProgramGenre);
         }
@@ -147,9 +166,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       // Add all unmapped genres to the list view.
       listViewProgramGenres.BeginUpdate();
-      foreach (string programGenre in unmappedProgramGenres)
+      foreach (ProgramCategory programGenre in unmappedProgramGenres)
       {
-        listViewProgramGenres.Items.Add(programGenre);
+        ListViewItem item = listViewProgramGenres.Items.Add(programGenre.Category);
+        item.Tag = programGenre;
       }
       listViewProgramGenres.EndUpdate();
     }
@@ -157,8 +177,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     protected void MapProgramGenres()
     {
       // Find the selected mp genre.
-      int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre selectedMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Id == selectedGenreId);
+      TvGuideCategory programCategory = listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory;
+      TvGuideCategory selectedMpGenre = ((List<TvGuideCategory>)_mpGenres).Find(x => x.IdTvGuideCategory == programCategory.IdTvGuideCategory);
 
       listViewMappedGenres.BeginUpdate();
       listViewProgramGenres.BeginUpdate();
@@ -168,7 +188,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewProgramGenres.Items.Remove(programGenre);
 
         // Provide an indication that the mapped program genre may be obsolete.  There is no way to know for sure.
-        if (!_allProgramGenres.Contains(programGenre.Text))
+        var programCategoryItem = programGenre.Tag as ProgramCategory;
+        if (!_allProgramGenres.Contains(programCategoryItem))
         {
           listViewMappedGenres.Items.Add(programGenre.Text, 0);
         }
@@ -178,7 +199,19 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
 
         // Update the genre map.
-        selectedMpGenre.MapToProgramGenre(programGenre.Text);
+        bool hasProgramCategoryAlready = false;
+        foreach (ProgramCategory category in selectedMpGenre.ProgramCategories)
+        {
+          if (category.IdProgramCategory == programCategoryItem.IdProgramCategory)
+          {
+            hasProgramCategoryAlready = true;
+            break;
+          }
+        }
+        if (!hasProgramCategoryAlready)
+        {
+          selectedMpGenre.ProgramCategories.Add(programCategoryItem);          
+        }        
       }
 
       listViewMappedGenres.EndUpdate();
@@ -188,8 +221,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     protected void UnmapProgramGenres()
     {
       // Find the selected mp genre.
-      int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre selectedMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Id == selectedGenreId);
+      TvGuideCategory programCategory = listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory;
+      TvGuideCategory selectedMpGenre = ((List<TvGuideCategory>)_mpGenres).Find(x => x.IdTvGuideCategory == programCategory.IdTvGuideCategory);
 
       listViewMappedGenres.BeginUpdate();
       listViewProgramGenres.BeginUpdate();
@@ -200,7 +233,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         listViewProgramGenres.Items.Add(mappedGenre);
 
         // Update the genre map.
-        selectedMpGenre.UnmapProgramGenre(mappedGenre.Text);
+
+        ProgramCategory categoryFoundToDelete = null;
+
+        foreach (ProgramCategory category in selectedMpGenre.ProgramCategories)
+        {
+          if (category.IdTvGuideCategory == programCategory.IdTvGuideCategory)
+          {
+            categoryFoundToDelete = category;
+            break;
+          }
+        }
+
+        if (categoryFoundToDelete != null)
+        {
+          selectedMpGenre.ProgramCategories.Remove(categoryFoundToDelete);
+        }
+
       }
 
       listViewMappedGenres.EndUpdate();
@@ -230,14 +279,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
 
       // Find the edited mp genre.
-      // Find the selected mp genre.
-      int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre editedMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Id == selectedGenreId);
+      // Find the selected mp genre.      
+      TvGuideCategory programCategory = listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory;      
+      TvGuideCategory editedMpGenre = ((List<TvGuideCategory>)_mpGenres).Find(x => x.IdTvGuideCategory == programCategory.IdTvGuideCategory);
 
       // Check for and disallow duplicate genre names.
-      MpGenre testMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Name == e.Label);
+      TvGuideCategory testMpGenre = _mpGenres.Find(x => x.Name == e.Label);
 
-      if (testMpGenre != null && testMpGenre.Id != editedMpGenre.Id)
+      if (testMpGenre != null && testMpGenre.IdTvGuideCategory != editedMpGenre.IdTvGuideCategory)
       {
         if (e.Label.Equals(testMpGenre.Name))
         {
@@ -278,7 +327,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private void mpButtonGenreIsMovie_Click(object sender, EventArgs e)
     {
       int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre selectedMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Id == selectedGenreId);
+      TvGuideCategory programCategory = listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory;
+      TvGuideCategory selectedMpGenre = _mpGenres.Find(x => x.IdTvGuideCategory == programCategory.IdTvGuideCategory);
 
       // Set the only selected mp genre as the movie genre.  Toggle current value.
       bool oldValue = selectedMpGenre.IsMovie;
@@ -299,7 +349,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       // Set the selected genre as the movie genre if it's been selected.
       if (selectedMpGenre.IsMovie)
       {
-        listViewGuideGenres.Items[selectedMpGenre.Id].SubItems[1].Text = "x";
+        listViewGuideGenres.Items[selectedGenreId].SubItems[1].Text = "x";
       }
     }
 
@@ -307,8 +357,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       // Toggle the state.
       int selectedGenreId = listViewGuideGenres.SelectedItems[0].Index;
-      MpGenre selectedMpGenre = ((List<MpGenre>)_mpGenres).Find(x => x.Id == selectedGenreId);
-      selectedMpGenre.Enabled = !selectedMpGenre.Enabled;
+      TvGuideCategory programCategory = listViewGuideGenres.SelectedItems[0].Tag as TvGuideCategory;
+      TvGuideCategory selectedMpGenre = _mpGenres.Find(x => x.IdTvGuideCategory == programCategory.IdTvGuideCategory);
+      selectedMpGenre.IsEnabled = !selectedMpGenre.IsEnabled;
 
       if ("".Equals(listViewGuideGenres.Items[selectedGenreId].SubItems[2].Text))
       {

@@ -10,11 +10,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Data.Common;
+using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
-using System.Data.Objects;
 using System.Data.Objects.DataClasses;
+using System.Data.Objects;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -896,7 +897,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             private AddHelper(ObjectContext context)
             {
                 _context = context;
-                _context.ObjectStateManager.ObjectStateManagerChanged += HandleStateManagerChange;
+                _context.ObjectStateManager.ObjectStateManagerChanged += this.HandleStateManagerChange;
     
                 _entityIndex = new EntityIndex(context);
                 _entitiesToAdd = new Queue<Tuple<string, IObjectWithChangeTracker>>();
@@ -905,7 +906,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             private void Detach()
             {
-                _context.ObjectStateManager.ObjectStateManagerChanged -= HandleStateManagerChange;
+                _context.ObjectStateManager.ObjectStateManagerChanged -= this.HandleStateManagerChange;
             }
     
             private void HandleStateManagerChange(object sender, CollectionChangeEventArgs args)
@@ -1182,12 +1183,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
             internal ReadOnlyMetadataCollection<AssociationEndMember> AssociationEndMembers
             {
-                get { return AssociationSet.ElementType.AssociationEndMembers; }
+                get { return this.AssociationSet.ElementType.AssociationEndMembers; }
             }
     
             public override int GetHashCode()
             {
-                return AssociationSet.Name.GetHashCode() ^ (End0.GetHashCode() + End1.GetHashCode());
+                return this.AssociationSet.Name.GetHashCode() ^ (this.End0.GetHashCode() + this.End1.GetHashCode());
             }
     
             public override bool Equals(object obj)
@@ -1199,9 +1200,9 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             {
                 return (Object.ReferenceEquals(this, wrapper) ||
                         ((null != wrapper) &&
-                         Object.ReferenceEquals(AssociationSet, wrapper.AssociationSet) &&
-                         Object.ReferenceEquals(End0, wrapper.End0) &&
-                         Object.ReferenceEquals(End1, wrapper.End1)));
+                         Object.ReferenceEquals(this.AssociationSet, wrapper.AssociationSet) &&
+                         Object.ReferenceEquals(this.End0, wrapper.End0) &&
+                         Object.ReferenceEquals(this.End1, wrapper.End1)));
             }
         }
     }

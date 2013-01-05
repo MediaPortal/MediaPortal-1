@@ -71,6 +71,8 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       channel.AcceptChanges();
       return channel.ChannelMaps.FirstOrDefault(chMap => chMap.IdCard == card.IdCard);
     }
+
+    
   
   }
 }

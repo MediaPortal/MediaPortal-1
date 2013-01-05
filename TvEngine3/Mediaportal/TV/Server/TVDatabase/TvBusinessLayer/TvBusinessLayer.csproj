@@ -71,6 +71,8 @@
     <Compile Include="CanceledScheduleManagement.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="ConflictManagement.cs" />
+    <Compile Include="Entities\Cache\EntityCache.cs" />
+    <Compile Include="Entities\Cache\EntityCacheHelper.cs" />
     <Compile Include="Entities\ChannelBLL.cs" />
     <Compile Include="Entities\ProgramBLL.cs" />
     <Compile Include="Entities\ScheduleBLL.cs" />

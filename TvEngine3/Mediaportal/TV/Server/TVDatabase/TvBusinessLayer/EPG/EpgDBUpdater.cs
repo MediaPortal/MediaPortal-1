@@ -26,10 +26,10 @@ using System.Threading;
 using MediaPortal.Common.Utils;
 using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Cache;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -524,8 +524,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
                      };
       title = EvalTemplate(TitleTemplate, values);
       description = EvalTemplate(DescriptionTemplate, values);
+      
 
       ProgramCategory programCategory = GetProgramCategoryByName(genre);
+
+      if (programCategory == null && !string.IsNullOrWhiteSpace(genre))
+      {
+        programCategory = new ProgramCategory {Category = genre};
+        programCategory = ProgramCategoryManagement.SaveProgramCategory(programCategory);
+        EntityCacheHelper.Instance.ProgramCategoryCache.AddOrUpdateCache(programCategory.Category, programCategory);
+      }
 
       if (dbProg == null)
       {
@@ -568,14 +576,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     private static ProgramCategory GetProgramCategoryByName(string genre)
     {
-      bool dataFetchedAtleastOnce;
-      int count = EntityCacheHelper.Instance.ProgramCategoryCache.CacheCount(out dataFetchedAtleastOnce);
-
-      if (dataFetchedAtleastOnce && count == 0)
-      {
-        return null;
-      }
-      return ProgramManagement.GetProgramCategoryByName(genre);
+      return EntityCacheHelper.Instance.ProgramCategoryCache.GetFromCache(genre);            
     }
 
     #endregion

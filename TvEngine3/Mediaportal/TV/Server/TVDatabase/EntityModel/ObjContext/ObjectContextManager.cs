@@ -34,6 +34,44 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
       public static void SetupStaticValues(Model ctx)
       {
+        SetupLnbTypes(ctx);
+        SetupTvGuideCategories(ctx);
+      }
+
+      private static void SetupTvGuideCategories(Model ctx)
+      {
+        var tvGuideCategory = new TvGuideCategory {Name = "Documentary", IsEnabled = true, IsMovie = false};
+        ctx.TvGuideCategories.AddObject(tvGuideCategory);
+        ctx.SaveChanges();
+
+        var tvGuideCategory2 = new TvGuideCategory { Name = "Kids", IsEnabled = true, IsMovie = false };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory2);
+        ctx.SaveChanges();
+
+        var tvGuideCategory3 = new TvGuideCategory { Name = "Movie", IsEnabled = true, IsMovie = false };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory3);
+        ctx.SaveChanges();
+
+        var tvGuideCategory4 = new TvGuideCategory { Name = "Music", IsEnabled = true, IsMovie = false };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory4);
+        ctx.SaveChanges();
+
+        var tvGuideCategory5 = new TvGuideCategory { Name = "News", IsEnabled = true, IsMovie = true };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory5);
+        ctx.SaveChanges();
+
+        var tvGuideCategory6 = new TvGuideCategory { Name = "Special", IsEnabled = true, IsMovie = false };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory6);
+        ctx.SaveChanges();
+
+        var tvGuideCategory7 = new TvGuideCategory { Name = "Sports", IsEnabled = true, IsMovie = false };
+        ctx.TvGuideCategories.AddObject(tvGuideCategory7);
+        ctx.SaveChanges();
+
+      }
+
+      private static void SetupLnbTypes(Model ctx)
+      {
         LnbType lnbtype = new LnbType();
         lnbtype.IdLnbType = 1;
         lnbtype.Name = "Universal";
