@@ -64,9 +64,6 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs">
-      <Link>SolutionInfo.cs</Link>
-    </Compile>
     <Compile Include="EPGWakeupConfig.cs" />
     <Compile Include="Interfaces\IEpgHandler.cs" />
     <Compile Include="Interfaces\IPowerController.cs" />
