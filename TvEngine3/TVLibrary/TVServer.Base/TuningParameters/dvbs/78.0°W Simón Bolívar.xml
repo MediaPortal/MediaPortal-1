@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Transponder>
-    <CarrierFrequency>3888000</CarrierFrequency>
+    <CarrierFrequency>3885000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>23000</SymbolRate>
     <Modulation>ModNotSet</Modulation>
@@ -73,6 +73,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>11535000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>4340</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>11624000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>3000</SymbolRate>
@@ -93,7 +102,7 @@
   <Transponder>
     <CarrierFrequency>11380000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
-    <SymbolRate>42351</SymbolRate>
+    <SymbolRate>42355</SymbolRate>
     <Modulation>ModQpsk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>Off</Pilot>
