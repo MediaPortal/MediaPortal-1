@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>3005</id>
+<defaultcontrol>21</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<autohidetopbar>yes</autohidetopbar>
+<controls>
+
+	<control>
+		<type>image</type>
+		<id>1</id>
+    <posX>32</posX>
+    <posY>0</posY>
+		<width>1861</width>
+		<height>107</height>
+		<texture>topbar_bg.png</texture>
+	</control>
+
+	<control>
+		<description>group element</description>
+		<type>group</type>
+		<posX>360</posX>
+		<posY>0</posY>
+		<layout>StackLayout(2, Horizontal)</layout>
+		<control>
+			<description>Back button</description>
+			<type>button</type>
+			<id>21</id>
+			<posX>80</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_back_focus.png</textureFocus>
+			<textureNoFocus>topbar_back.png</textureNoFocus>
+			<action>10</action>
+			<label>-</label>
+			<action>10</action>
+			<onleft>31</onleft>
+			<onright>172</onright>
+			<onup>21</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>Minimize button</description>
+			<type>button</type>
+			<id>172</id>
+			<posX>1050</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_fullscreen_focus.png</textureFocus>
+			<textureNoFocus>topbar_fullscreen.png</textureNoFocus>
+			<label>-</label>
+			<action>18</action>
+			<onleft>21</onleft>
+			<onright>22</onright>
+			<onup>30</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>back button</description>
+			<type>button</type>
+			<id>22</id>
+			<posX>320</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_skipback_focus.png</textureFocus>
+			<textureNoFocus>topbar_skipback.png</textureNoFocus>
+			<action>15</action>
+			<label>-</label>
+			<onleft>172</onleft>
+			<onright>23</onright>
+			<onup>22</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>rewind button</description>
+			<type>button</type>
+			<id>23</id>
+			<posX>408</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_rew_focus.png</textureFocus>
+			<textureNoFocus>topbar_rew.png</textureNoFocus>
+			<action>78</action>
+			<label>-</label>
+			<onleft>22</onleft>
+			<onright>24</onright>
+			<onup>23</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>play button</description>
+			<type>button</type>
+			<id>24</id>
+			<posX>497</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_play_focus.png</textureFocus>
+			<textureNoFocus>topbar_play.png</textureNoFocus>
+			<action>79</action>
+			<label>-</label>
+			<onleft>23</onleft>
+			<onright>25</onright>
+			<onup>24</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>pause button</description>
+			<type>button</type>
+			<id>25</id>
+			<posX>586</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_pause_focus.png</textureFocus>
+			<textureNoFocus>topbar_pause.png</textureNoFocus>
+			<action>12</action>
+			<label>-</label>
+			<onleft>24</onleft>
+			<onright>27</onright>
+			<onup>25</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>stop button</description>
+			<type>button</type>
+			<id>27</id>
+			<posX>675</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_stop_focus.png</textureFocus>
+			<textureNoFocus>topbar_stop.png</textureNoFocus>
+			<action>13</action>
+			<label>-</label>
+			<onleft>25</onleft>
+			<onright>28</onright>
+			<onup>27</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>fast forward button</description>
+			<type>button</type>
+			<id>28</id>
+			<posX>764</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_FF_focus.png</textureFocus>
+			<textureNoFocus>topbar_FF.png</textureNoFocus>
+			<action>77</action>
+			<label>-</label>
+			<onleft>27</onleft>
+			<onright>29</onright>
+			<onup>28</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>next button</description>
+			<type>button</type>
+			<id>29</id>
+			<posX>853</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_skipforward_focus.png</textureFocus>
+			<textureNoFocus>topbar_skipforward.png</textureNoFocus>
+			<action>14</action>
+			<label>-</label>
+			<onleft>28</onleft>
+			<onright>26</onright>
+			<onup>29</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>basichome button</description>
+			<type>button</type>
+			<id>26</id>
+			<posX>1050</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_home_focus.png</textureFocus>
+			<textureNoFocus>topbar_home.png</textureNoFocus>
+			<label>-</label>
+			<action>115</action>
+			<onleft>29</onleft>
+			<onright>31</onright>
+			<onup>26</onup>
+			<ondown>2</ondown>
+		</control>
+
+		<control>
+			<description>Exit button</description>
+			<type>button</type>
+			<id>31</id>
+			<posX>1139</posX>
+			<posY>0</posY>
+			<width>107</width>
+			<height>80</height>
+			<textureFocus>topbar_exit_focus.png</textureFocus>
+			<textureNoFocus>topbar_exit.png</textureNoFocus>
+			<action>97</action>
+			<label>-</label>
+			<action>97</action>
+			<onleft>26</onleft>
+			<onright>21</onright>
+			<onup>31</onup>
+			<ondown>2</ondown>
+		</control>
+
+	</control>
+
+</controls>
+</window>

@@ -160,6 +160,11 @@ namespace WindowPlugins.GUISettings
     {
       SaveSettings();
 
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 

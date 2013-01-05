@@ -126,6 +126,16 @@ namespace WindowPlugins.GUISettings.TV
       }
     }
 
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(new_windowId);
+    }
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == btnVideo)

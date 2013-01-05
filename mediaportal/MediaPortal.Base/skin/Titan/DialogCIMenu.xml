@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <id>2018</id>
+    <defaultcontrol>3</defaultcontrol>
+    <allowoverlay>no</allowoverlay>
+    <controls>
+		<control>
+            <description>group element</description>
+            <type>group</type>
+            <animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="zoom" delay="100" tween="elastic" easing="out" start="95,95" end="100,100" center="683,384" time="550">WindowOpen</animation>
+			
+        <control>
+            <id>0</id>
+            <type>image</type>
+            <posX>409</posX>
+            <posY>164</posY>
+            <width>548</width>
+            <height>440</height>
+            <texture>context_background.png</texture>
+        </control>
+		
+        <control>
+            <id>4</id>
+            <description>Heading text label</description>
+            <type>label</type>
+            <posX>469</posX>
+            <posY>212</posY>
+			<width>426</width>
+            <font>Segoe Light18</font>
+            <textcolor>ff85cffe</textcolor>
+            <label>-</label>
+        </control>
+		
+        <control>
+            <id>5</id>
+            <description>Subtitle text label</description>
+            <type>label</type>
+            <posX>469</posX>
+            <posY>249</posY>
+            <width>426</width>
+            <font>font12</font>
+            <label/>
+        </control>
+		
+        <control>
+            <id>6</id>
+            <description>bottom text label</description>
+            <type>label</type>
+            <posX>469</posX>
+            <posY>536</posY>
+            <width>426</width>
+            <font>font12</font>
+            <label/>
+        </control>
+		
+	        <control>
+                <id>3</id>
+                <description>options listcontrol</description>
+                <type>listcontrol</type>
+                <onleft>3</onleft>
+                <onright>3</onright>
+                <posX>409</posX>
+                <posY>277</posY>
+                <width>548</width>
+                <height>300</height>
+                <textXOff2>460</textXOff2>
+                <textYOff2>10</textYOff2>
+                <spinPosX>902</spinPosX>
+                <spinPosY>535</spinPosY>
+                <textXOff>48</textXOff>
+                <textYOff>8</textYOff>
+                <textureFocus>context_item_selected.png</textureFocus>
+                <textureNoFocus>context_item.png</textureNoFocus>
+                <textureHeight>49</textureHeight>
+                <spaceBetweenItems>1</spaceBetweenItems>
+				<PinIconWidth>15</PinIconWidth>
+				<PinIconHeight>15</PinIconHeight>
+                <PinIconXOff>39</PinIconXOff>
+                <PinIconYOff>15</PinIconYOff>
+            </control>
+			
+        </control>
+    </controls>
+</window>

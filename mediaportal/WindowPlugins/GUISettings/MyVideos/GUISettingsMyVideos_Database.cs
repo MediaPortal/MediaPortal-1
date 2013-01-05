@@ -136,7 +136,17 @@ namespace MediaPortal.GUI.Settings
           GUIControl.DisableControl(GetID, (int)Controls.CONTROL_FANARTCOUNT);
         }
         
-        m_iCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 0);
+        int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+        
+        if (faCount < 1)
+        {
+          m_iCount = 1;
+        }
+        else
+        {
+          m_iCount = faCount;
+        }
+
         _actorsFetchSize = xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short");
         
         // Folder names as title
@@ -284,10 +294,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

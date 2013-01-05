@@ -84,7 +84,7 @@ namespace MediaPortal.Video.Database
         //
         UpgradeDatabase();
         // Clean trash from tables
-        CleanUpDatabase();
+        //CleanUpDatabase();
         // Update latest movies
         SetLatestMovieProperties();
       }
@@ -4878,6 +4878,7 @@ namespace MediaPortal.Video.Database
         string nfoFile = string.Empty;
         string path = string.Empty;
         bool isbdDvd = false;
+        string nfoExt = ".nfo";
 
         if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
@@ -4897,13 +4898,13 @@ namespace MediaPortal.Video.Database
           string cleanFile = string.Empty;
           cleanFile = Path.GetFileNameWithoutExtension(videoFile);
           Util.Utils.RemoveStackEndings(ref cleanFile);
-          nfoFile = path + @"\" + cleanFile + ".nfo";
+          nfoFile = path + @"\" + cleanFile + nfoExt;
 
           if (!File.Exists(nfoFile))
           {
             cleanFile = Path.GetFileNameWithoutExtension(path);
             Util.Utils.RemoveStackEndings(ref cleanFile);
-            nfoFile = path + @"\" + cleanFile + ".nfo";
+            nfoFile = path + @"\" + cleanFile + nfoExt;
           }
         }
         else
@@ -4914,7 +4915,7 @@ namespace MediaPortal.Video.Database
           cleanFile = strFilename;
           Util.Utils.RemoveStackEndings(ref cleanFile);
           cleanFile = strPath + cleanFile;
-          nfoFile = Path.ChangeExtension(cleanFile, ".nfo");
+          nfoFile = Path.ChangeExtension(cleanFile, nfoExt);
         }
 
         Log.Debug("Importing nfo:{0} using video file:{1}", nfoFile, videoFile);
@@ -4977,7 +4978,7 @@ namespace MediaPortal.Video.Database
             string genre = string.Empty;
             string cast = string.Empty;
             string path = string.Empty;
-            string fileName = string.Empty;
+            string nfofileName = string.Empty;
             
             #region nodes
 
@@ -5011,9 +5012,9 @@ namespace MediaPortal.Video.Database
             #region Moviefiles
 
             // Get path from *.nfo file)
-            Util.Utils.Split(nfoFile, out path, out fileName);
+            Util.Utils.Split(nfoFile, out path, out nfofileName);
             // Movie filename to search from gathered files from nfo path
-            fileName = Util.Utils.GetFilename(fileName, true);
+            nfofileName = Util.Utils.GetFilename(nfofileName, true);
             // Get all video files from nfo path
             ArrayList files = new ArrayList();
             GetVideoFiles(path, ref files);
@@ -5091,10 +5092,10 @@ namespace MediaPortal.Video.Database
                 tmpFile = Util.Utils.GetFilename(tmpFile, true);
                 // Remove stack endings (CD1...)
                 Util.Utils.RemoveStackEndings(ref tmpFile);
-                Util.Utils.RemoveStackEndings(ref fileName);
+                Util.Utils.RemoveStackEndings(ref nfofileName);
                 
                 // Check and add to vdb and get movieId
-                if (tmpFile.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                if (tmpFile.Equals(nfofileName, StringComparison.InvariantCultureIgnoreCase))
                 {
                   Log.Debug("Import nfo-Adding file: {0}", logFilename);
                   id = VideoDatabase.AddMovie(file, true);
@@ -5106,7 +5107,7 @@ namespace MediaPortal.Video.Database
                   {
                     tmpPath = tmpPath.Substring(tmpPath.LastIndexOf(@"\") + 1).Trim();
 
-                    if (tmpPath.Equals(fileName, StringComparison.InvariantCultureIgnoreCase))
+                    if (tmpPath.Equals(nfofileName, StringComparison.InvariantCultureIgnoreCase) || nfofileName.ToLowerInvariant() == "movie")
                     {
                       Log.Debug("Import nfo-Adding file: {0}", logFilename);
                       id = VideoDatabase.AddMovie(file, true);
@@ -5385,7 +5386,7 @@ namespace MediaPortal.Video.Database
               else
               {
                 string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
-                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (mc.Count > 0)
                 {
                   foreach (Match m in mc)
@@ -5396,6 +5397,17 @@ namespace MediaPortal.Video.Database
                     Int32.TryParse(m.Groups["m"].Value, out minutes);
                     hours = hours*60;
                     minutes = hours + minutes;
+                    movie.RunTime = minutes;
+                  }
+                }
+                else
+                {
+                  regex = @"\d*\s*min.";
+                  if (Regex.Match(nodeDuration.InnerText, regex, RegexOptions.IgnoreCase).Success)
+                  {
+                    regex = @"\d*";
+                    int minutes = 0;
+                    Int32.TryParse(Regex.Match(nodeDuration.InnerText, regex).Value, out minutes);
                     movie.RunTime = minutes;
                   }
                 }
@@ -5456,7 +5468,7 @@ namespace MediaPortal.Video.Database
             {
               if (nodeWatched != null)
               {
-                if (nodeWatched.InnerText == "true" || nodeWatched.InnerText == "1")
+                if (nodeWatched.InnerText.ToLowerInvariant() == "true" || nodeWatched.InnerText == "1")
                 {
                   movie.Watched = 1;
                   VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
@@ -5473,6 +5485,16 @@ namespace MediaPortal.Video.Database
                 watchedCount = 0;
                 Int32.TryParse(nodePlayCount.InnerText, out watchedCount);
                 SetMovieWatchedCount(movie.ID, watchedCount);
+                
+                if (watchedCount > 0 && movie.Watched == 0)
+                {
+                  movie.Watched = 1;
+                  VideoDatabase.SetMovieWatchedStatus(movie.ID, true, 100);
+                }
+                else if (watchedCount == 0 && movie.Watched > 0)
+                {
+                  SetMovieWatchedCount(movie.ID, 1);
+                }
               }
             }
             else
@@ -5497,56 +5519,63 @@ namespace MediaPortal.Video.Database
             #region poster
 
             // Poster
+            string thumbJpgFile = string.Empty;
+            string thumbTbnFile = string.Empty;
+            string thumbFolderJpgFile = string.Empty;
+            string thumbFolderTbnFile = string.Empty;
+            string titleExt = movie.Title + "{" + id + "}";
+            string jpgExt = @".jpg";
+            string tbnExt = @".tbn";
+            string folderJpg = @"\folder.jpg";
+            string folderTbn = @"\folder.tbn";
+
+            if (isDvdBdFolder)
+            {
+              thumbJpgFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + jpgExt;
+              thumbTbnFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + tbnExt;
+              thumbFolderJpgFile = path + @"\" + folderJpg;
+              thumbFolderTbnFile = path + @"\" + folderTbn;
+            }
+            else
+            {
+              thumbJpgFile = path + @"\" + nfofileName + jpgExt;
+              thumbTbnFile = path + @"\" + nfofileName + tbnExt;
+
+              if (isMovieFolder)
+              {
+                thumbFolderJpgFile = path + @"\" + folderJpg;
+                thumbFolderTbnFile = path + @"\" + folderTbn;
+              }
+            }
+
             if (nodePoster != null)
             {
-              string thumbJpgFile = string.Empty;
-              string thumbTbnFile = string.Empty;
-              
-              if (isDvdBdFolder)
-              {
-                thumbJpgFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
-                thumbTbnFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
-              }
-              else
-              {
-                thumbJpgFile = path + @"\" + fileName + ".jpg";
-                thumbTbnFile = path + @"\" + fileName + ".tbn";
-              }
-                
-              if (!File.Exists(thumbJpgFile) && !File.Exists(thumbTbnFile) && nodePoster.InnerText != string.Empty)
-              {
-                thumbJpgFile = path + @"\" + nodePoster.InnerText;
-                thumbTbnFile = path + @"\" + nodePoster.InnerText;
-              }
-              
-              string titleExt = movie.Title + "{" + id + "}";
-              
+              // Local source cover
               if (File.Exists(thumbJpgFile))
               {
-                movie.ThumbURL = thumbJpgFile;
-                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-
-                if (Util.Picture.CreateThumbnail(thumbJpgFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
-                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Util.Picture.CreateThumbnail(thumbJpgFile, coverArt, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
+                CreateCovers(titleExt, thumbJpgFile, movie);
               }
               else if (File.Exists(thumbTbnFile))
               {
-                movie.ThumbURL = thumbTbnFile;
-                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-                
-                if (Util.Picture.CreateThumbnail(thumbTbnFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
-                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Util.Picture.CreateThumbnail(thumbTbnFile, coverArt, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
+                CreateCovers(titleExt, thumbTbnFile, movie);
               }
+              else if (!string.IsNullOrEmpty(thumbFolderJpgFile) && File.Exists(thumbFolderJpgFile))
+              {
+                CreateCovers(titleExt, thumbFolderJpgFile, movie);
+              }
+              else if (!string.IsNullOrEmpty(thumbFolderTbnFile) && File.Exists(thumbFolderTbnFile))
+              {
+                CreateCovers(titleExt, thumbFolderTbnFile, movie);
+              }
+              else if (!nodePoster.InnerText.StartsWith("http:") && File.Exists(nodePoster.InnerText))
+              {
+                CreateCovers(titleExt, nodePoster.InnerText, movie);
+              }
+              else if (!nodePoster.InnerText.StartsWith("http:") && File.Exists(path + @"\" + nodePoster.InnerText))
+              {
+                CreateCovers(titleExt, path + @"\" + nodePoster.InnerText, movie);
+              }
+              // web source cover
               else if (nodePoster.InnerText.StartsWith("http:"))
               {
                 try
@@ -5561,7 +5590,7 @@ namespace MediaPortal.Video.Database
                       string imageExtension = Path.GetExtension(imageUrl);
                       if (imageExtension == string.Empty)
                       {
-                        imageExtension = ".jpg";
+                        imageExtension = jpgExt;
                       }
                       string temporaryFilename = "MPTempImage";
                       temporaryFilename += imageExtension;
@@ -5589,6 +5618,7 @@ namespace MediaPortal.Video.Database
                 }
                 movie.ThumbURL = nodePoster.InnerText;
               }
+              // MP scrapers cover
               else
               {
                 if (movie.ThumbURL == string.Empty && !useInternalNfoScraper)
@@ -5646,49 +5676,23 @@ namespace MediaPortal.Video.Database
                 }
               }
             }
-            else
+            else // Node thumb not exist
             {
-              string thumbJpgFile = string.Empty;
-              string thumbTbnFile = string.Empty;
-
-              if (isDvdBdFolder)
-              {
-                thumbJpgFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".jpg";
-                thumbTbnFile = path + @"\" + Path.GetFileNameWithoutExtension(path) + ".tbn";
-              }
-              else
-              {
-                thumbJpgFile = path + @"\" + fileName + ".jpg";
-                thumbTbnFile = path + @"\" + fileName + ".tbn";
-              }
-              
-              string titleExt = movie.Title + "{" + id + "}";
-
               if (File.Exists(thumbJpgFile))
               {
-                movie.ThumbURL = thumbJpgFile;
-                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-
-                if (Util.Picture.CreateThumbnail(thumbJpgFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
-                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Util.Picture.CreateThumbnail(thumbJpgFile, coverArt, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
+                CreateCovers(titleExt, thumbJpgFile, movie);
               }
               else if (File.Exists(thumbTbnFile))
               {
-                movie.ThumbURL = thumbTbnFile;
-                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-
-                if (Util.Picture.CreateThumbnail(thumbTbnFile, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
-                                                 (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Util.Picture.CreateThumbnail(thumbTbnFile, coverArt, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
-                }
+                CreateCovers(titleExt, thumbTbnFile, movie);
+              }
+              else if (!string.IsNullOrEmpty(thumbFolderJpgFile) && File.Exists(thumbFolderJpgFile))
+              {
+                CreateCovers(titleExt, thumbFolderJpgFile, movie);
+              }
+              else if (!string.IsNullOrEmpty(thumbFolderTbnFile) && File.Exists(thumbFolderTbnFile))
+              {
+                CreateCovers(titleExt, thumbFolderTbnFile, movie);
               }
               else if (movie.ThumbURL == string.Empty && !useInternalNfoScraper)
               {
@@ -5782,9 +5786,9 @@ namespace MediaPortal.Video.Database
             {
               List<string> localFanart = new List<string>(); 
               faIndex = 0;
-              faFile = path + @"\" + Path.GetFileNameWithoutExtension(fileName) + "-fanart.jpg";
+              faFile = path + @"\" + nfofileName + "-fanart.jpg";
               localFanart.Add(faFile);
-              faFile = path + @"\" + Path.GetFileNameWithoutExtension(fileName) + "-backdrop.jpg";
+              faFile = path + @"\" + nfofileName + "-backdrop.jpg";
               localFanart.Add(faFile);
               faFile= path + @"\" + "backdrop.jpg";
               localFanart.Add(faFile);
@@ -6028,6 +6032,7 @@ namespace MediaPortal.Video.Database
 
           //  movie IMDB number
           CreateXmlNode(mainNode, doc, "imdb", movieDetails.IMDBNumber);
+          CreateXmlNode(mainNode, doc, "id", movieDetails.IMDBNumber);
           //  Language
           CreateXmlNode(mainNode, doc, "language", movieDetails.Language);
           //  Country
@@ -6216,6 +6221,20 @@ namespace MediaPortal.Video.Database
       XmlNode subNode = doc.CreateElement(element);
       subNode.InnerText = innerTxt;
       mainNode.AppendChild(subNode);
+    }
+
+    private void CreateCovers(string titleExt, string coverImage, IMDBMovie movie)
+    {
+      movie.ThumbURL = coverImage;
+      string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+      string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+
+      if (Util.Picture.CreateThumbnail(coverImage, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
+                                       (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+      {
+        Util.Picture.CreateThumbnail(coverImage, coverArt, (int)Thumbs.ThumbResolution,
+                                     (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+      }
     }
 
     public void GetVideoFiles(string path, ref ArrayList availableFiles)

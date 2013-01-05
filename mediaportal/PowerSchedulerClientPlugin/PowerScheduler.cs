@@ -668,7 +668,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
         bool basicHome;
         using (Settings xmlreader = new MPSettings())
         {
-          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         }
 
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;

@@ -113,6 +113,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int AddPicture(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       if (String.IsNullOrEmpty(strPicture))
       {
         return -1;
@@ -204,6 +208,10 @@ namespace MediaPortal.Picture.Database
 
     private bool GetExifDetails(string strPicture, ref int iRotation, ref string strDateTaken)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return false;
+
       using (ExifMetadata extractor = new ExifMetadata())
       {
         ExifMetadata.Metadata metaData = extractor.GetExifMetadata(strPicture);
@@ -281,6 +289,10 @@ namespace MediaPortal.Picture.Database
     {
       lock (typeof (PictureDatabase))
       {
+        // Continue only if it's a picture files
+        if (!Util.Utils.IsPicture(strPicture))
+          return;
+
         if (m_db == null)
         {
           return;
@@ -307,6 +319,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int GetRotation(string strPicture)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       if (m_db == null)
       {
         return -1;
@@ -340,6 +356,10 @@ namespace MediaPortal.Picture.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void SetRotation(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return;
+
       if (m_db == null)
       {
         return;

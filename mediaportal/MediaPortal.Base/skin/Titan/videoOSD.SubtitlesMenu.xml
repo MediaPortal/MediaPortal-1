@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>   
+	  <control>
+			<description>Subtitles label</description>
+			<type>label</type>
+			<id>1</id>
+			<width>400</width>
+			<posX>880</posX>
+			<posY>498</posY>
+			<label>1029</label>
+			<font>font12</font>
+			<textcolor>ff393939</textcolor>
+			<visible>Control.IsVisible(850)</visible>
+	  </control>
+	  <control>
+	  	<description>Subtitle Delay label</description>
+	   	<type>label</type>
+	   	<id>850</id>
+	    <posX>269</posX>
+	    <posY>652</posY>
+		 	<align>left</align>
+		  <font>TitanLight12</font>
+		  <textcolor>ff393939</textcolor>
+	    <label>303</label>
+	    <visible>no</visible>
+	  </control>
+	  <control>
+	    <description>Subtitle Delay Slider</description>
+	    <type>slider</type>
+	    <id>800</id>
+	    <posX>485</posX>
+	    <posY>647</posY>
+	    <spintype>float</spintype>
+	    <showrange>no</showrange>
+	    <textureSliderBar>osd_slider_bg.png</textureSliderBar>
+	    <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+	    <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+	    <onup>802</onup>
+	    <ondown>218</ondown>
+	    <onleft>800</onleft>
+	    <onright>800</onright>
+	    <visible>no</visible>
+	  </control>
+ 		<control>
+			<description>Subtitles checkmark on/off BG (focused)</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>485</posX>
+			<posY>484</posY>
+      <width>352</width>
+      <height>58</height>
+			<texture>osd_checkmark_focus.png</texture>
+			<visible>Control.HasFocus(801)+Control.IsVisible(801)</visible>
+		</control>  
+ 		<control>
+			<description>Subtitles checkmark on/off BG (unfocused)</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>485</posX>
+			<posY>485</posY>
+      <width>352</width>
+      <height>58</height>
+			<texture>osd_checkmark_nofocus.png</texture>
+			<visible>!Control.HasFocus(801)+Control.IsVisible(801)</visible>
+		</control>
+	  <control>
+	    <description>Subtitles delay On/Off Checkbox</description>
+	    <type>checkmark</type>
+	    <id>801</id>
+			<posX>518</posX>
+			<posY>496</posY>
+	    <label>305</label>
+      <font>font12</font>
+	    <onup>800</onup>
+	    <ondown>803</ondown>
+	    <onleft>801</onleft>
+	    <onright>802</onright>
+	    <visible>no</visible>
+	  </control>		
+ 		<control>
+			<description>Subtitles checkmark forced on/off BG (focused)</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>485</posX>
+			<posY>553</posY>
+      <width>352</width>
+      <height>58</height>
+			<texture>osd_checkmark_focus.png</texture>
+			<visible>Control.HasFocus(803)+Control.IsVisible(803)</visible>
+		</control>   
+ 		<control>
+			<description>Subtitles checkmark forced on/off BG (unfocused)</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>485</posX>
+			<posY>553</posY>
+      <width>352</width>
+      <height>58</height>
+			<texture>osd_checkmark_nofocus.png</texture>
+			<visible>!Control.HasFocus(803)+Control.IsVisible(803)</visible>
+		</control>   
+    <control>
+      <description>SubTitles Forced On/Off Checkbox</description>
+      <type>checkmark</type>
+      <id>803</id>
+			<posX>518</posX>
+			<posY>565</posY>
+      <label>200092</label>
+      <font>font12</font>
+      <onup>801</onup>
+      <ondown>800</ondown>
+      <onleft>803</onleft>
+      <onright>802</onright>
+      <visible>no</visible>
+    </control>   
+	  <control>
+			<description>Subtitles List Control</description>
+			<type>listcontrol</type>
+			<id>802</id>
+			<posX>1243</posX>
+			<posY>485</posY>
+			<width>352</width>
+			<height>200</height>
+			<textureHeight>58</textureHeight>
+      <spaceBetweenItems>10</spaceBetweenItems>
+			<onleft>801</onleft>
+			<onright>802</onright>
+			<onup>800</onup>
+			<ondown>800</ondown>
+			<font>font12</font>
+			<textcolor>ff000000</textcolor>
+			<colordiffuse>ffffffff</colordiffuse>
+			<textureFocus>osd_checkmark_focus.png</textureFocus>
+			<textureNoFocus>osd_checkmark_nofocus.png</textureNoFocus>
+			<visible>no</visible>
+	    <dimColor>ffffffff</dimColor>
+	  	<unfocusedAlpha>255</unfocusedAlpha>
+	  </control>	
+ 		<control>
+			<description>osd logo subtitles</description>
+			<type>image</type>
+			<id>0</id>
+			<posX>257</posX>
+			<posY>484</posY>
+			<width>187</width>
+			<height>127</height>
+			<texture>osd_logo_subtitles.png</texture>
+			<visible>Control.IsVisible(801)</visible>
+		</control>
+</controls>
+</window>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>1012</id>
+	<defaultcontrol>3</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>		
+	<rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+  
+	<import>settings.menu.xml</import>	
+	<import>common.settings.xml</import>	
+	<import>common.time.settings.xml</import>  
+
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>#(L(300152))/#(L(300161))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+
+  <control>
+    <description>Scan picture folder label</description>
+    <type>label</type>
+    <id>1</id>
+		<posX>685</posX>
+		<posY>333</posY>
+		<width>600</width>			
+    <label>300181</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>					
+  </control>
+	
+	<control>
+    <description>Folder BG label</description>
+    <type>label</type>
+    <id>1</id>
+		<posX>1335</posX>
+		<posY>333</posY>
+		<width>600</width>	
+    <label>300071</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>					
+  </control>
+		
+		<control>
+      <description>Scan database</description>
+      <type>button</type>
+      <id>3</id>
+      <label>300164</label>
+      <posX>655</posX>
+      <posY>386</posY>
+			<width>616</width>
+			<height>58</height>
+			<textXOff>33</textXOff>
+			<textYOff>11</textYOff>
+			<textureFocus>settings_button_database_large_focus.png</textureFocus>
+			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
+			<textcolor>ff000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
+			<textalign>left</textalign>	
+      <onright>2</onright>
+			<onup>4</onup>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>					
+    </control>
+	
+    <control>
+      <description>Reset database</description>
+      <type>button</type>
+      <id>4</id>
+      <label>300182</label>
+      <posX>655</posX>
+      <posY>451</posY>
+			<width>616</width>
+			<height>58</height>
+			<textXOff>33</textXOff>
+			<textYOff>11</textYOff>
+			<textureFocus>settings_button_database_large_focus.png</textureFocus>
+			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
+			<textcolor>ff000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
+			<textalign>left</textalign>		
+      <onup>3</onup>
+			<ondown>3</ondown>
+      <onright>2</onright>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>					
+    </control>
+
+	<!--Scan Folderlist-->
+	
+	<control>
+		<type>image</type>
+		<id>0</id>
+		<posX>1304</posX>
+		<posY>386</posY>
+		<width>489</width>
+		<height>188</height>
+		<texture>settings_dark_background7.png</texture>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+		<control>
+      <description>Scan status</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>780</posX>
+      <posY>150</posY>
+      <font>font10</font>
+      <width>600</width>
+      <label>#scanstatus</label>
+    </control>
+	
+    <control>
+      <description>Scan folders listcontrol</description>
+      <type>listcontrol</type>
+      <id>2</id>
+      <posX>1327</posX>
+      <posY>412</posY>
+      <width>330</width>
+      <height>200</height>
+      <scrollOffset>2</scrollOffset>
+      <textXOff>15</textXOff>
+      <textYOff>-6</textYOff>
+      <textXOff2>440</textXOff2>
+      <textYOff2>-6</textYOff2>
+      <textXOff3>710</textXOff3>
+      <textYOff3>-6</textYOff3>
+      <onleft>3</onleft>
+      <textureHeight>25</textureHeight>
+      <textureFocus>settings_listcontrol_wide_focus.png</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+			<font>TitanLight12</font>
+			<font2>TitanLight12</font2>
+			<font3>TitanLight12</font3>
+			<textcolor>FF00b7ff</textcolor>
+			<textcolor2>FF00b7ff</textcolor2>
+			<textcolor3>FF00b7ff</textcolor3>	
+      <selectedColor>FF00b7ff</selectedColor>
+      <selectedColor2>FF00b7ff</selectedColor2>
+      <selectedColor3>FF00b7ff</selectedColor3>		
+			<spinPosX>-2000</spinPosX>
+			<spinPosY>500</spinPosY>
+      <dimColor>ffffffff</dimColor>
+      <unfocusedAlpha>255</unfocusedAlpha>
+      <spaceBetweenItems>16</spaceBetweenItems>
+			<animation effect="fade" time="150">WindowOpen</animation>
+			<animation effect="fade" time="150">WindowClose</animation>			
+    </control>
+    
+  </controls>
+</window>

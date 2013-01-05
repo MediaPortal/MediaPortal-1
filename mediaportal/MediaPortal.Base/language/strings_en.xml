@@ -1089,6 +1089,7 @@
     <String id="1317">Downloading internal scripts...</String>
     <String id="1318">Save subtitle</String>
     <String id="1319">Save modified subtitle file?</String>
+    <String id="1320">{0} as {1} &#10;</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1946,9 +1947,9 @@
     <String id="101007">Volume</String>
     <String id="101008">General - Dynamic refresh rate</String>
     <String id="101010">Videos - Database</String>
-    <String id="101011">Music- Database</String>
-    <String id="101012">Pictures- Database</String>
-    <String id="101013">Music- Now Playing</String>
+    <String id="101011">Music - Database</String>
+    <String id="101012">Pictures - Database</String>
+    <String id="101013">Music - Now Playing</String>
     <String id="101014">Playlist</String>
     <String id="101015">Pictures - Slideshow</String>
     <String id="101016">General</String>
@@ -2277,8 +2278,8 @@
     <String id="300174">Create missing folder.jpg</String>
     <String id="300175">Dynamic content</String>
     <String id="300176">Disable Internet lookup for cover art</String>
-    <String id="300177">Disable Interent lookups for best albums tracks</String>
-    <String id="300178">Disable Interent lookups for track suggestions</String>
+    <String id="300177">Disable Internet lookups for best albums tracks</String>
+    <String id="300178">Disable Internet lookups for track suggestions</String>
     <String id="300179">Switch artists on Internet lookup</String>
     <String id="300180">VUMeter (BASS player only)</String>
     <String id="300181">Scan picture folders</String>

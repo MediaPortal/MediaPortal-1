@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.Video
 
         if (actor != null)
         {
-          string restriction = "7"; // Refresh every week actor info and movies
+          string restriction = "30"; // Refresh every month actor info and movies
 
           TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
           DateTime searchDate = DateTime.Today - ts;
@@ -815,7 +815,7 @@ namespace MediaPortal.GUI.Video
                      "movieinfo.studios," +
                      "movieinfo.country," +
                      "movieinfo.language," +
-                     "movieinfo.lastupdate " +
+                     "movieinfo.lastupdate, " +
 			               "movieinfo.strSortTitle " +
                      "FROM movieinfo " +
                      "INNER JOIN actorlinkmovie ON actorlinkmovie.idMovie = movieinfo.idMovie " +
