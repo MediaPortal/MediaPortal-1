@@ -999,8 +999,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
             img.ColourDiffuse = _guideColorProgramSelected;
           }
 
-          _currentProgram = new ProgramBLL(img.Data as Program);
-          SetProperties();
+          //_currentProgram = new ProgramBLL(img.Data as Program);
+          //SetProperties();
         }
         GUIControl.FocusControl(GetID, iControlId);
       }
@@ -2340,7 +2340,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
             }
           }
 
-
+          img.Data = ProgramFactory.Clone(program.Entity);
           iWidth = iEndXPos - iStartXPos;
           if (iWidth > 10)
           {
@@ -2993,7 +2993,7 @@ if (bEndsAfter)
       for (int i = 0; i < _mpGenres.Count; i++)
       {
         // If the genre is disabled then set the program colors to the default colors.
-        genreObj = _mpGenres.Find(x => x.IdTvGuideCategory == i);
+        genreObj = _mpGenres[i];//.Find(x => x.IdTvGuideCategory == i);
         if (!genreObj.IsEnabled)
         {
           _genreColorsOnNow.Add(_mpGenres[i].Name, _defaultGenreColorOnNow);
