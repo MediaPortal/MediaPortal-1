@@ -74,13 +74,25 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     public static int GetValue(string tagName, int defaultValue)
     {
       Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
-      return int.Parse(setting.Value);
+      int number;
+      bool parsed = int.TryParse(setting.Value, out number);
+      if (!parsed)
+      {
+        number = defaultValue;
+      }
+      return number;
     }
 
     public static double GetValue(string tagName, double defaultValue)
     {
       Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
-      return double.Parse(setting.Value);
+      double number;      
+      bool parsed = double.TryParse(setting.Value, out number);
+      if (!parsed)
+      {
+        number = defaultValue;
+      }
+      return number;
     }
 
     public static bool GetValue(string tagName, bool defaultValue)
