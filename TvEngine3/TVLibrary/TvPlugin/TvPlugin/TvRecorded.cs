@@ -1520,11 +1520,7 @@ namespace TvPlugin
         {
           return 0;
         }
-        if (item1 == null)
-        {
-          return -1;
-        }
-        if (item2 == null)
+        if (item1 == null || item2 == null)
         {
           return -1;
         }
@@ -1537,195 +1533,116 @@ namespace TvPlugin
           return -1;
         }
 
-        int iComp = 0;
-        TimeSpan ts;
         Recording rec1 = (Recording)item1.TVTag;
         Recording rec2 = (Recording)item2.TVTag;
 
-        switch (_currentSortMethod)
-        {
-          case SortMethod.Played:
-            item1.Label2 = string.Format("{0} {1}", rec1.TimesWatched, GUILocalizeStrings.Get(677)); //times
-            item2.Label2 = string.Format("{0} {1}", rec2.TimesWatched, GUILocalizeStrings.Get(677)); //times
-            if (rec1.TimesWatched == rec2.TimesWatched)
-            {
-              goto case SortMethod.Name;
-            }
-            else
-            {
-              if (m_bSortAscending)
-              {
-                return rec1.TimesWatched - rec2.TimesWatched;
-              }
-              else
-              {
-                return rec2.TimesWatched - rec1.TimesWatched;
-              }
-            }
-          case SortMethod.Name:
-            if (m_bSortAscending)
-            {
-              iComp = string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2), true);
-              if (iComp == 0)
-              {
-                goto case SortMethod.Channel;
-              }
-              else
-              {
-                return iComp;
-              }
-            }
-            else
-            {
-              iComp = string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1), true);
-              if (iComp == 0)
-              {
-                goto case SortMethod.Channel;
-              }
-              else
-              {
-                return iComp;
-              }
-            }
-          case SortMethod.Channel:
-            {
-              // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
-              // set channel name to unknown channel string (1507) to avoid null reference exceptions
-              Channel ch1 = rec1.ReferencedChannel();
-              Channel ch2 = rec2.ReferencedChannel();
-              string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
-              string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+        int iComp;
+        SortMethod cSortMethod = _currentSortMethod;
 
-              if (m_bSortAscending)
+        while (true) // starting with main sortmethod and sorting by secondary rules
+        {
+          switch (cSortMethod)
+          {
+            case SortMethod.Played:
               {
+                item1.Label2 = string.Format("{0} {1}", rec1.TimesWatched, GUILocalizeStrings.Get(677)); //times
+                item2.Label2 = string.Format("{0} {1}", rec2.TimesWatched, GUILocalizeStrings.Get(677)); //times
+                if (rec1.TimesWatched != rec2.TimesWatched)
+                {
+                  return m_bSortAscending ? rec1.TimesWatched - rec2.TimesWatched : rec2.TimesWatched - rec1.TimesWatched;
+                }
+
+                cSortMethod = SortMethod.Name;
+                break;
+              }
+
+            case SortMethod.Name:
+              {
+                iComp = string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2), true);
+                if (iComp != 0)
+                {
+                  return m_bSortAscending ? iComp : -iComp;
+                }
+
+                cSortMethod = SortMethod.Channel;
+                break;
+              }
+
+            case SortMethod.Channel:
+              {
+                // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+                // set channel name to unknown channel string (1507) to avoid null reference exceptions
+                Channel ch1 = rec1.ReferencedChannel();
+                Channel ch2 = rec2.ReferencedChannel();
+                string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+                string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+
                 iComp = string.Compare(ch1Name, ch2Name, true);
-                if (iComp == 0)
+                if (iComp != 0)
                 {
-                  goto case SortMethod.Date;
+                  return m_bSortAscending ? iComp : -iComp;
                 }
-                else
-                {
-                  return iComp;
-                }
+
+                cSortMethod = SortMethod.Date;
+                break;
               }
-              else
+            case SortMethod.Duration:
               {
-                iComp = string.Compare(ch2Name, ch1Name, true);
-                if (iComp == 0)
+                TimeSpan duration1 = (rec1.EndTime - rec1.StartTime);
+                TimeSpan duration2 = rec2.EndTime - rec2.StartTime;
+                if (duration1 != duration2)
                 {
-                  goto case SortMethod.Date;
+                  return duration1 > duration2 ? 1 : -1;
                 }
-                else
-                {
-                  return iComp;
-                }
+
+                cSortMethod = SortMethod.Date;
+                break;
               }
-            }
-          case SortMethod.Duration:
-            {
-              TimeSpan duration1 = (rec1.EndTime - rec1.StartTime);
-              TimeSpan duration2 = rec2.EndTime - rec2.StartTime;
-              if (m_bSortAscending)
+            case SortMethod.Date:
               {
-                if (duration1 == duration2)
+                if (rec1.StartTime != rec2.StartTime)
                 {
-                  goto case SortMethod.Date;
+                  return m_bSortAscending ? (rec1.StartTime < rec2.StartTime ? 1 : -1) : (rec1.StartTime > rec2.StartTime ? 1 : -1);
                 }
-                if (duration1 > duration2)
-                {
-                  return 1;
-                }
-                return -1;
-              }
-              else
-              {
-                if (duration1 == duration2)
-                {
-                  goto case SortMethod.Date;
-                }
-                if (duration1 < duration2)
-                {
-                  return 1;
-                }
-                return -1;
-              }
-            }
-          case SortMethod.Date:
-            if (m_bSortAscending)
-            {
-              if (rec1.StartTime == rec2.StartTime)
-              {
                 return 0;
               }
-              if (rec1.StartTime < rec2.StartTime)
+
+            case SortMethod.Genre:
               {
-                return 1;
+                item1.Label2 = rec1.Genre;
+                item2.Label2 = rec2.Genre;
+
+                if (rec1.Genre != rec2.Genre)
+                {
+                  return m_bSortAscending ? string.Compare(rec1.Genre, rec2.Genre, true) : string.Compare(rec2.Genre, rec1.Genre, true);
+                }
+
+                if (rec1.StartTime != rec2.StartTime)
+                {
+                  return m_bSortAscending ? (rec1.StartTime - rec2.StartTime).Minutes : (rec2.StartTime - rec1.StartTime).Minutes;
+                }
+
+                if (rec1.IdChannel != rec2.IdChannel)
+                {
+                  // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+                  // set channel name to unknown channel string (1507) to avoid null reference exceptions
+                  Channel ch1 = rec1.ReferencedChannel();
+                  Channel ch2 = rec2.ReferencedChannel();
+                  string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+                  string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+                  return m_bSortAscending ? string.Compare(ch1Name, ch2Name) : string.Compare(ch2Name, ch1Name);
+                }
+
+                if (TVUtil.GetDisplayTitle(rec1) != TVUtil.GetDisplayTitle(rec2))
+                {
+                  return m_bSortAscending ? string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2)) : string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1));
+                }
+
+                cSortMethod = SortMethod.Date;
+                break;
               }
-              return -1;
-            }
-            else
-            {
-              if (rec1.StartTime == rec2.StartTime)
-              {
-                return 0;
-              }
-              if (rec1.StartTime > rec2.StartTime)
-              {
-                return 1;
-              }
-              return -1;
-            }
-          case SortMethod.Genre:
-            item1.Label2 = rec1.Genre;
-            item2.Label2 = rec2.Genre;
-            if (rec1.Genre != rec2.Genre)
-            {
-              if (m_bSortAscending)
-              {
-                return string.Compare(rec1.Genre, rec2.Genre, true);
-              }
-              else
-              {
-                return string.Compare(rec2.Genre, rec1.Genre, true);
-              }
-            }
-            if (rec1.StartTime != rec2.StartTime)
-            {
-              if (m_bSortAscending)
-              {
-                ts = rec1.StartTime - rec2.StartTime;
-                return (int)(ts.Minutes);
-              }
-              else
-              {
-                ts = rec2.StartTime - rec1.StartTime;
-                return (int)(ts.Minutes);
-              }
-            }
-            if (rec1.IdChannel != rec2.IdChannel)
-            {
-              // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
-              // set channel name to unknown channel string (1507) to avoid null reference exceptions
-              Channel ch1 = rec1.ReferencedChannel();
-              Channel ch2 = rec2.ReferencedChannel();
-              string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
-              string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
-              return m_bSortAscending ? string.Compare(ch1Name, ch2Name) : string.Compare(ch2Name, ch1Name);
-            }
-            if (TVUtil.GetDisplayTitle(rec1) != TVUtil.GetDisplayTitle(rec2))
-            {
-              if (m_bSortAscending)
-              {
-                return string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2));
-              }
-              else
-              {
-                return string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1));
-              }
-            }
-            return 0;
+          }
         }
-        return 0;
       }
       catch (Exception ex)
       {
