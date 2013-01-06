@@ -20,7 +20,14 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
+
+#if MediaPortal
+using MediaPortal.Common.Utils;
+using MediaPortal.ServiceImplementations;
+
+#else
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+#endif
 
 
 namespace OSPrerequisites

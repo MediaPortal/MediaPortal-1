@@ -49,6 +49,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvService", "TvService\TvSe
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvControl", "TvControl\TvControl.csproj", "{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB} = {A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLibrary.Interfaces", "TvLibrary.Interfaces\TvLibrary.Interfaces.csproj", "{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}"
 EndProject

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -278,6 +278,9 @@
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSInfo.cs">
+      <Link>OSInfo.cs</Link>
     </Compile>
     <Compile Include="App.cs" />
     <Compile Include="AssemblyInfo.cs">

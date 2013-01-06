@@ -182,6 +182,10 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Configuration\MediaPortal.Configuration.csproj">
+      <Project>{68168FAA-A363-4F64-981C-32629A537900}</Project>
+      <Name>MediaPortal.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowPlugins\WindowPlugins.csproj">
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
       <Name>WindowPlugins</Name>

@@ -72,9 +72,7 @@
     <Compile Include="SelectProcessForm.designer.cs">
       <DependentUpon>SelectProcessForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PowerSchedulerMasterSetup.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="PowerSchedulerMasterSetup.cs" />
     <Compile Include="PowerSchedulerMasterSetup.Designer.cs">
       <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
     </Compile>

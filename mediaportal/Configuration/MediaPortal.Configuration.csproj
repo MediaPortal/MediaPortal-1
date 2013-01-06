@@ -269,6 +269,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSPrerequisites.cs">
+      <Link>Configuration\OSPrerequisites.cs</Link>
+    </Compile>
     <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
