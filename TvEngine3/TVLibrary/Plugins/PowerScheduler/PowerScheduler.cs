@@ -566,12 +566,34 @@ namespace TvEngine.PowerScheduler
           return standbyMode;
         }
 
-        // Then check whether the next event is almost due (within PreNoShutdownTime)
+        // Then check whether the next event is almost due (within pre-no-standby time)
         Log.Debug("PS: Check whether the next event is almost due");
         if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
         {
           Log.Debug("PS: Event is almost due ({0}): StandbyPrevented", _currentNextWakeupHandler);
           _currentStandbyHandler = "Event due";
+          _currentStandbyMode = StandbyMode.StandbyPrevented;
+          return StandbyMode.StandbyPrevented;
+        }
+
+        // Then check if standby is allowed at this moment
+        Log.Debug("PS: Check if standby is allowed at this moment");
+        int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
+        if ( // Stop time one day after start time (23:00 -> 07:00)
+          ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
+           && (Current24hHour < _settings.AllowedSleepStartTime)
+           && (Current24hHour >= _settings.AllowedSleepStopTime))
+          ||
+          // Start time and stop time on the same day (01:00 -> 17:00)
+          ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime)
+           &&
+          // 2 possibilities for the same day: before or after the timespan
+           ((Current24hHour < _settings.AllowedSleepStartTime) ||
+            (Current24hHour >= _settings.AllowedSleepStopTime))
+          ))
+        {
+          Log.Debug("PS: Standby is not allowed at this hour: StandbyPrevented");
+          _currentStandbyHandler = "NOT-ALLOWED-TIME";
           _currentStandbyMode = StandbyMode.StandbyPrevented;
           return StandbyMode.StandbyPrevented;
         }
@@ -1062,7 +1084,6 @@ namespace TvEngine.PowerScheduler
         // Set constant values (needed for backward compatibility)
         _settings.ForceShutdown = false;
         _settings.ExtensiveLogging = false;
-        _settings.PreNoShutdownTime = 300;
         _settings.CheckInterval = 15;
       }
 
@@ -1107,6 +1128,33 @@ namespace TvEngine.PowerScheduler
       {
         _settings.PreWakeupTime = intSetting;
         Log.Debug("PS: Pre-wakeup time: {0} seconds", intSetting);
+        changed = true;
+      }
+
+      // Check configured pre-no-standby time
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerPreNoStandbyTime", "300").Value);
+      if (_settings.PreNoShutdownTime != intSetting)
+      {
+        _settings.PreNoShutdownTime = intSetting;
+        Log.Debug("PS: Pre-no-standby time: {0} seconds", intSetting);
+        changed = true;
+      }
+
+      // Check allowed start time
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyHoursFrom", "0").Value);
+      if (_settings.AllowedSleepStartTime != intSetting)
+      {
+        _settings.AllowedSleepStartTime = intSetting;
+        Log.Debug("PS: Standby allowed from {0} o' clock", _settings.AllowedSleepStartTime);
+        changed = true;
+      }
+
+      // Check allowed stop time
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyHoursTo", "24").Value);
+      if (_settings.AllowedSleepStopTime != intSetting)
+      {
+        _settings.AllowedSleepStopTime = intSetting;
+        Log.Debug("PS: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
         changed = true;
       }
 

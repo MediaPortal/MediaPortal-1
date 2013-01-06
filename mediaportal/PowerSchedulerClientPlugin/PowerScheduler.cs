@@ -501,7 +501,7 @@ namespace MediaPortal.Plugins.Process
           return StandbyMode.StandbyPrevented;
         }
 
-        // Then check whether the next event is almost due (within PreNoShutdownTime)
+        // Then check whether the next event is almost due (within pre-no-standby time)
         Log.Debug("PS: Check whether the next event is almost due");
         if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
         {
@@ -1076,10 +1076,15 @@ namespace MediaPortal.Plugins.Process
               Log.Debug("PS: Standby after: {0} minutes", intSetting);
             }
 
-            // Check configured pre-wakeup time
+            // Check configured pre-wakeup time (can only be configured by editing MediaPortal.xml)
             intSetting = reader.GetValueAsInt("psclientplugin", "PreWakeupTime", 60);
             _settings.PreWakeupTime = intSetting;
             Log.Debug("PS: Pre-wakeup time: {0} seconds", intSetting);
+
+            // Check configured pre-no-standby time (can only be configured by editing MediaPortal.xml)
+            intSetting = reader.GetValueAsInt("psclientplugin", "PreNoStandbyTime", 300);
+            _settings.PreNoShutdownTime = intSetting;
+            Log.Debug("PS: Pre-no-standby time: {0} seconds", intSetting);
 
             // Check if PowerScheduler should wakeup the system automatically
             intSetting = reader.GetValueAsInt("psclientplugin", "Profile", 0);
@@ -1110,7 +1115,7 @@ namespace MediaPortal.Plugins.Process
 
           if (_settings.ShutdownEnabled)
           {
-            // Check configured shutdown mode
+            // Get configured shutdown mode from local tvservice
             intSetting = (int)RemotePowerControl.Instance.PowerSettings.ShutdownMode;
             if ((int)_settings.ShutdownMode != intSetting)
             {
@@ -1120,7 +1125,7 @@ namespace MediaPortal.Plugins.Process
             }
           }
 
-          // Get idle timeout
+          // Get idle timeout from local tvservice
           intSetting = RemotePowerControl.Instance.PowerSettings.IdleTimeout;
           if (_settings.IdleTimeout != intSetting)
           {
@@ -1129,7 +1134,7 @@ namespace MediaPortal.Plugins.Process
             changed = true;
           }
 
-          // Check configured pre-wakeup time
+          // Get configured pre-wakeup time from local tvservice
           intSetting = RemotePowerControl.Instance.PowerSettings.PreWakeupTime;
           if (_settings.PreWakeupTime != intSetting)
           {

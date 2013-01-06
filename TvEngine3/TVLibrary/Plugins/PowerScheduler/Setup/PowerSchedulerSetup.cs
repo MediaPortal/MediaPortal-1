@@ -151,9 +151,10 @@ namespace PowerScheduler.Setup
       buttonApply.Location = new Point(413, 300);      // Move 4 px (original pos is 409, 296)
       buttonApply.Size = new Size(75, 23);             // Reset to original size (undo autosize)
 
-      // Ok-Button, no EPG tab, no server only options and no status 
+      // Ok-Button, no EPG / Legacy tab, no server only options and no status 
       buttonApply.Text = "Ok";
       tabControl.Controls.Remove(tabPageEPG);
+      tabControl.Controls.Remove(tabPageLegacy);
       checkBoxMPClientRunning.Visible = false;
       checkBoxReinitializeController.Visible = false;
       groupBoxStatus.Visible = false;
@@ -300,6 +301,7 @@ namespace PowerScheduler.Setup
           tabControl.Controls.Remove(tabPageShares);
           tabControl.Controls.Remove(tabPageNetwork);
           tabControl.Controls.Remove(tabPageAdvanced);
+          tabControl.Controls.Remove(tabPageLegacy);
 
           buttonExpertMode.Text = "-> Expert Mode";
         }
@@ -490,7 +492,14 @@ namespace PowerScheduler.Setup
           shutdownMode = 0;
         comboBoxShutdownMode.SelectedIndex = shutdownMode;
 
+        // Legacy
         numericUpDownPreWakeupTime.Value = Convert.ToInt32(GetSetting("PreWakeupTime", "60"));
+
+        numericUpDownPreNoStandbyTime.Value = Convert.ToInt32(GetSetting("PreNoStandbyTime", "300"));
+
+        numericUpDownStandbyHoursFrom.Value = Convert.ToInt32(GetSetting("StandbyHoursFrom", "0"));
+        numericUpDownStandbyHoursTo.Value = Convert.ToInt32(GetSetting("StandbyHoursTo", "24"));
+
 
         buttonApply.Enabled = buttonApplyEnabled;
       }
@@ -638,7 +647,13 @@ namespace PowerScheduler.Setup
 
         SetSetting("ShutdownMode", comboBoxShutdownMode.SelectedIndex.ToString());
 
+        // Legacy
         SetSetting("PreWakeupTime", numericUpDownPreWakeupTime.Value.ToString());
+
+        SetSetting("PreNoStandbyTime", numericUpDownPreNoStandbyTime.Value.ToString());
+
+        SetSetting("StandbyHoursFrom", numericUpDownStandbyHoursFrom.Value.ToString());
+        SetSetting("StandbyHoursTo", numericUpDownStandbyHoursTo.Value.ToString());
 
         // Power settings
         if (checkBoxAutoPowerSettings.Checked)
@@ -849,8 +864,13 @@ namespace PowerScheduler.Setup
       textBoxCommand.Text = "";
       checkBoxAutoPowerSettings.Checked = true;
       checkBoxShutdownEnabled.Checked = false;
-      numericUpDownPreWakeupTime.Value = 60;
 
+      // Legacy
+      numericUpDownPreWakeupTime.Value = 60;
+      numericUpDownPreNoStandbyTime.Value = 300;
+      numericUpDownStandbyHoursFrom.Value = 0;
+      numericUpDownStandbyHoursTo.Value = 24;
+      
       // Power Settings
       _recommendedSettingsAC = _defaultSettingsDesktopAC;
       _recommendedSettingsDC = _defaultSettingsDesktopDC;
@@ -970,6 +990,7 @@ namespace PowerScheduler.Setup
         tabControl.Controls.Remove(tabPageShares);
         tabControl.Controls.Remove(tabPageNetwork);
         tabControl.Controls.Remove(tabPageAdvanced);
+        tabControl.Controls.Remove(tabPageLegacy);
 
         // Set default values
         comboBoxProfile_SelectedIndexChanged(null, (EventArgs)null);
@@ -996,6 +1017,7 @@ namespace PowerScheduler.Setup
         tabControl.Controls.Add(tabPageShares);
         tabControl.Controls.Add(tabPageNetwork);
         tabControl.Controls.Add(tabPageAdvanced);
+        tabControl.Controls.Add(tabPageLegacy);
       }
     }
 
@@ -1229,6 +1251,23 @@ namespace PowerScheduler.Setup
 
     #endregion
 
+    #region Legacy tab
+
+    private void numericUpDownStandbyHoursFrom_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStandbyHoursFrom.Value > numericUpDownStandbyHoursTo.Value)
+        numericUpDownStandbyHoursFrom.Value = numericUpDownStandbyHoursTo.Value;
+    }
+
+    private void numericUpDownStandbyHoursTo_ValueChanged(object sender, EventArgs e)
+    {
+      if (numericUpDownStandbyHoursTo.Value < numericUpDownStandbyHoursFrom.Value)
+        numericUpDownStandbyHoursTo.Value = numericUpDownStandbyHoursFrom.Value;
+    }
+
     #endregion
+
+    #endregion
+
   }
 }

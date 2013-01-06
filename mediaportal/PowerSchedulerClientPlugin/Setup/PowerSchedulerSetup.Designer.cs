@@ -28,9 +28,9 @@ namespace PowerScheduler.Setup
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerSchedulerSetup));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.textBoxCommand = new System.Windows.Forms.TextBox();
@@ -93,11 +93,11 @@ namespace PowerScheduler.Setup
       this.labelWakeupTimeValue = new System.Windows.Forms.Label();
       this.tabPageAdvanced = new System.Windows.Forms.TabPage();
       this.groupBoxAdvanced = new System.Windows.Forms.GroupBox();
-      this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-      this.labelPreWakeupTime = new System.Windows.Forms.Label();
-      this.numericUpDownPreWakeupTime = new System.Windows.Forms.NumericUpDown();
       this.buttonCommand = new System.Windows.Forms.Button();
       this.labelCommand = new System.Windows.Forms.Label();
+      this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+      this.label2 = new System.Windows.Forms.Label();
+      this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.flowLayoutPanelShutdownMode = new System.Windows.Forms.FlowLayoutPanel();
       this.labelShutdownMode = new System.Windows.Forms.Label();
       this.tabPageReboot = new System.Windows.Forms.TabPage();
@@ -134,6 +134,21 @@ namespace PowerScheduler.Setup
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageClient = new System.Windows.Forms.TabPage();
       this.groupBoxClient = new System.Windows.Forms.GroupBox();
+      this.tabPageLegacy = new System.Windows.Forms.TabPage();
+      this.groupBoxLegacy = new System.Windows.Forms.GroupBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this.flowLayoutPanelStandbyHours = new System.Windows.Forms.FlowLayoutPanel();
+      this.label5 = new System.Windows.Forms.Label();
+      this.numericUpDownStandbyHoursFrom = new System.Windows.Forms.NumericUpDown();
+      this.label6 = new System.Windows.Forms.Label();
+      this.numericUpDownStandbyHoursTo = new System.Windows.Forms.NumericUpDown();
+      this.label7 = new System.Windows.Forms.Label();
+      this.flowLayoutPanelPreNoStandbyTime = new System.Windows.Forms.FlowLayoutPanel();
+      this.label1 = new System.Windows.Forms.Label();
+      this.numericUpDownPreNoStandbyTime = new System.Windows.Forms.NumericUpDown();
+      this.flowLayoutPanelPreWakeupTime = new System.Windows.Forms.FlowLayoutPanel();
+      this.label3 = new System.Windows.Forms.Label();
+      this.numericUpDownPreWakeupTime = new System.Windows.Forms.NumericUpDown();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridShares)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNetworkIdleLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIdleTimeout)).BeginInit();
@@ -144,8 +159,7 @@ namespace PowerScheduler.Setup
       this.groupBoxStatus.SuspendLayout();
       this.tabPageAdvanced.SuspendLayout();
       this.groupBoxAdvanced.SuspendLayout();
-      this.flowLayoutPanel1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).BeginInit();
+      this.flowLayoutPanel3.SuspendLayout();
       this.flowLayoutPanelShutdownMode.SuspendLayout();
       this.tabPageReboot.SuspendLayout();
       this.groupBoxReboot.SuspendLayout();
@@ -165,6 +179,15 @@ namespace PowerScheduler.Setup
       this.tabControl.SuspendLayout();
       this.tabPageClient.SuspendLayout();
       this.groupBoxClient.SuspendLayout();
+      this.tabPageLegacy.SuspendLayout();
+      this.groupBoxLegacy.SuspendLayout();
+      this.flowLayoutPanelStandbyHours.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursFrom)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursTo)).BeginInit();
+      this.flowLayoutPanelPreNoStandbyTime.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreNoStandbyTime)).BeginInit();
+      this.flowLayoutPanelPreWakeupTime.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).BeginInit();
       this.SuspendLayout();
       // 
       // textBoxCommand
@@ -174,8 +197,8 @@ namespace PowerScheduler.Setup
       this.textBoxCommand.Size = new System.Drawing.Size(329, 20);
       this.textBoxCommand.TabIndex = 2;
       this.toolTip.SetToolTip(this.textBoxCommand, "The command is executed on each system power state change. The\r\nargument (\"standb" +
-              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the" +
-              " time the command is executed.");
+              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
+              "ime the command is executed.");
       this.textBoxCommand.TextChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
       // checkBoxRebootWakeup
@@ -196,40 +219,40 @@ namespace PowerScheduler.Setup
       this.dataGridShares.AllowUserToOrderColumns = true;
       this.dataGridShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
       this.dataGridShares.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
       this.dataGridShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sharename,
             this.Hostname,
             this.Username});
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle11;
       this.dataGridShares.EnableHeadersVisualStyles = false;
       this.dataGridShares.Location = new System.Drawing.Point(34, 66);
       this.dataGridShares.MaximumSize = new System.Drawing.Size(348, 231);
       this.dataGridShares.MinimumSize = new System.Drawing.Size(348, 48);
       this.dataGridShares.Name = "dataGridShares";
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
       this.dataGridShares.RowHeadersWidth = 30;
       this.dataGridShares.RowTemplate.Height = 24;
       this.dataGridShares.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -426,7 +449,7 @@ namespace PowerScheduler.Setup
       this.checkBoxShutdownEnabled.AutoSize = true;
       this.checkBoxShutdownEnabled.Location = new System.Drawing.Point(12, 162);
       this.checkBoxShutdownEnabled.Name = "checkBoxShutdownEnabled";
-      this.checkBoxShutdownEnabled.Size = new System.Drawing.Size(310, 17);
+      this.checkBoxShutdownEnabled.Size = new System.Drawing.Size(298, 17);
       this.checkBoxShutdownEnabled.TabIndex = 20;
       this.checkBoxShutdownEnabled.Text = "PowerScheduler forces system to go to standby when idle";
       this.toolTip.SetToolTip(this.checkBoxShutdownEnabled, resources.GetString("checkBoxShutdownEnabled.ToolTip"));
@@ -443,9 +466,9 @@ namespace PowerScheduler.Setup
       this.checkBoxAutoPowerSettings.Size = new System.Drawing.Size(390, 17);
       this.checkBoxAutoPowerSettings.TabIndex = 13;
       this.checkBoxAutoPowerSettings.Text = "Apply recommended windows power settings for selected profile automatically";
-      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasona" +
-              "ble values depending on the selected profile.\r\nUncheck this option to configure " +
-              "the Windows Power Settings manually.");
+      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasonabl" +
+              "e values depending on the selected profile.\r\nUncheck this option to configure th" +
+              "e Windows Power Settings manually.");
       this.checkBoxAutoPowerSettings.UseVisualStyleBackColor = true;
       this.checkBoxAutoPowerSettings.CheckedChanged += new System.EventHandler(this.checkBoxAutoPowerSettings_CheckedChanged);
       // 
@@ -909,13 +932,13 @@ namespace PowerScheduler.Setup
       // 
       this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxAdvanced.Controls.Add(this.flowLayoutPanel1);
       this.groupBoxAdvanced.Controls.Add(this.checkBoxAutoPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonCommand);
       this.groupBoxAdvanced.Controls.Add(this.textBoxCommand);
       this.groupBoxAdvanced.Controls.Add(this.labelCommand);
       this.groupBoxAdvanced.Controls.Add(this.checkBoxReinitializeController);
+      this.groupBoxAdvanced.Controls.Add(this.flowLayoutPanel3);
       this.groupBoxAdvanced.Controls.Add(this.flowLayoutPanelShutdownMode);
       this.groupBoxAdvanced.Controls.Add(this.checkBoxShutdownEnabled);
       this.groupBoxAdvanced.Location = new System.Drawing.Point(6, 6);
@@ -924,48 +947,6 @@ namespace PowerScheduler.Setup
       this.groupBoxAdvanced.TabIndex = 0;
       this.groupBoxAdvanced.TabStop = false;
       this.groupBoxAdvanced.Text = "Advanced settings";
-      // 
-      // flowLayoutPanel1
-      // 
-      this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.flowLayoutPanel1.AutoSize = true;
-      this.flowLayoutPanel1.Controls.Add(this.labelPreWakeupTime);
-      this.flowLayoutPanel1.Controls.Add(this.numericUpDownPreWakeupTime);
-      this.flowLayoutPanel1.Location = new System.Drawing.Point(6, 214);
-      this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-      this.flowLayoutPanel1.Size = new System.Drawing.Size(448, 26);
-      this.flowLayoutPanel1.TabIndex = 24;
-      // 
-      // labelPreWakeupTime
-      // 
-      this.labelPreWakeupTime.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.labelPreWakeupTime.AutoSize = true;
-      this.labelPreWakeupTime.Location = new System.Drawing.Point(3, 6);
-      this.labelPreWakeupTime.Name = "labelPreWakeupTime";
-      this.labelPreWakeupTime.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-      this.labelPreWakeupTime.Size = new System.Drawing.Size(143, 13);
-      this.labelPreWakeupTime.TabIndex = 0;
-      this.labelPreWakeupTime.Text = "Pre-wakeup time in seconds";
-      // 
-      // numericUpDownPreWakeupTime
-      // 
-      this.numericUpDownPreWakeupTime.Location = new System.Drawing.Point(152, 3);
-      this.numericUpDownPreWakeupTime.Maximum = new decimal(new int[] {
-            3600,
-            0,
-            0,
-            0});
-      this.numericUpDownPreWakeupTime.Name = "numericUpDownPreWakeupTime";
-      this.numericUpDownPreWakeupTime.Size = new System.Drawing.Size(47, 20);
-      this.numericUpDownPreWakeupTime.TabIndex = 3;
-      this.numericUpDownPreWakeupTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this.numericUpDownPreWakeupTime.Value = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-      this.numericUpDownPreWakeupTime.ValueChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
       // buttonCommand
       // 
@@ -986,6 +967,42 @@ namespace PowerScheduler.Setup
       this.labelCommand.Size = new System.Drawing.Size(226, 13);
       this.labelCommand.TabIndex = 1;
       this.labelCommand.Text = "Run command on system power state change:";
+      // 
+      // flowLayoutPanel3
+      // 
+      this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanel3.AutoSize = true;
+      this.flowLayoutPanel3.Controls.Add(this.label2);
+      this.flowLayoutPanel3.Controls.Add(this.comboBox1);
+      this.flowLayoutPanel3.Location = new System.Drawing.Point(28, 181);
+      this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+      this.flowLayoutPanel3.Size = new System.Drawing.Size(426, 27);
+      this.flowLayoutPanel3.TabIndex = 23;
+      // 
+      // label2
+      // 
+      this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(3, 7);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(75, 13);
+      this.label2.TabIndex = 22;
+      this.label2.Text = "Standby mode";
+      // 
+      // comboBox1
+      // 
+      this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.comboBox1.Enabled = false;
+      this.comboBox1.Items.AddRange(new object[] {
+            "(Hybrid) Sleep - S3",
+            "Hibernate - S4",
+            "Stay on - S0"});
+      this.comboBox1.Location = new System.Drawing.Point(84, 3);
+      this.comboBox1.Name = "comboBox1";
+      this.comboBox1.Size = new System.Drawing.Size(137, 21);
+      this.comboBox1.TabIndex = 21;
+      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBoxShutdownMode_SelectedIndexChanged);
       // 
       // flowLayoutPanelShutdownMode
       // 
@@ -1390,6 +1407,7 @@ namespace PowerScheduler.Setup
       this.tabControl.Controls.Add(this.tabPageShares);
       this.tabControl.Controls.Add(this.tabPageNetwork);
       this.tabControl.Controls.Add(this.tabPageAdvanced);
+      this.tabControl.Controls.Add(this.tabPageLegacy);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
       this.tabControl.Name = "tabControl";
       this.tabControl.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -1423,6 +1441,204 @@ namespace PowerScheduler.Setup
       this.groupBoxClient.TabStop = false;
       this.groupBoxClient.Text = "Client settings";
       // 
+      // tabPageLegacy
+      // 
+      this.tabPageLegacy.Controls.Add(this.groupBoxLegacy);
+      this.tabPageLegacy.Location = new System.Drawing.Point(4, 22);
+      this.tabPageLegacy.Name = "tabPageLegacy";
+      this.tabPageLegacy.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageLegacy.Size = new System.Drawing.Size(476, 264);
+      this.tabPageLegacy.TabIndex = 8;
+      this.tabPageLegacy.Text = "Legacy";
+      this.tabPageLegacy.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxLegacy
+      // 
+      this.groupBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLegacy.Controls.Add(this.label4);
+      this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelStandbyHours);
+      this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelPreNoStandbyTime);
+      this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelPreWakeupTime);
+      this.groupBoxLegacy.Location = new System.Drawing.Point(6, 7);
+      this.groupBoxLegacy.Name = "groupBoxLegacy";
+      this.groupBoxLegacy.Size = new System.Drawing.Size(464, 250);
+      this.groupBoxLegacy.TabIndex = 1;
+      this.groupBoxLegacy.TabStop = false;
+      this.groupBoxLegacy.Text = "Legacy settings";
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(9, 95);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(113, 13);
+      this.label4.TabIndex = 29;
+      this.label4.Text = "Allowed standby hours";
+      // 
+      // flowLayoutPanelStandbyHours
+      // 
+      this.flowLayoutPanelStandbyHours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelStandbyHours.AutoSize = true;
+      this.flowLayoutPanelStandbyHours.Controls.Add(this.label5);
+      this.flowLayoutPanelStandbyHours.Controls.Add(this.numericUpDownStandbyHoursFrom);
+      this.flowLayoutPanelStandbyHours.Controls.Add(this.label6);
+      this.flowLayoutPanelStandbyHours.Controls.Add(this.numericUpDownStandbyHoursTo);
+      this.flowLayoutPanelStandbyHours.Controls.Add(this.label7);
+      this.flowLayoutPanelStandbyHours.Location = new System.Drawing.Point(6, 114);
+      this.flowLayoutPanelStandbyHours.Name = "flowLayoutPanelStandbyHours";
+      this.flowLayoutPanelStandbyHours.Size = new System.Drawing.Size(448, 26);
+      this.flowLayoutPanelStandbyHours.TabIndex = 28;
+      // 
+      // label5
+      // 
+      this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(3, 6);
+      this.label5.Name = "label5";
+      this.label5.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label5.Size = new System.Drawing.Size(142, 13);
+      this.label5.TabIndex = 0;
+      this.label5.Text = "Only allow standby between";
+      // 
+      // numericUpDownStandbyHoursFrom
+      // 
+      this.numericUpDownStandbyHoursFrom.Location = new System.Drawing.Point(151, 3);
+      this.numericUpDownStandbyHoursFrom.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursFrom.Name = "numericUpDownStandbyHoursFrom";
+      this.numericUpDownStandbyHoursFrom.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownStandbyHoursFrom.TabIndex = 3;
+      this.numericUpDownStandbyHoursFrom.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownStandbyHoursFrom.ValueChanged += new System.EventHandler(this.numericUpDownStandbyHoursFrom_ValueChanged);
+      // 
+      // label6
+      // 
+      this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(204, 6);
+      this.label6.Name = "label6";
+      this.label6.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label6.Size = new System.Drawing.Size(28, 13);
+      this.label6.TabIndex = 4;
+      this.label6.Text = "and";
+      // 
+      // numericUpDownStandbyHoursTo
+      // 
+      this.numericUpDownStandbyHoursTo.Location = new System.Drawing.Point(238, 3);
+      this.numericUpDownStandbyHoursTo.Maximum = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursTo.Name = "numericUpDownStandbyHoursTo";
+      this.numericUpDownStandbyHoursTo.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownStandbyHoursTo.TabIndex = 5;
+      this.numericUpDownStandbyHoursTo.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownStandbyHoursTo.Value = new decimal(new int[] {
+            24,
+            0,
+            0,
+            0});
+      this.numericUpDownStandbyHoursTo.ValueChanged += new System.EventHandler(this.numericUpDownStandbyHoursTo_ValueChanged);
+      // 
+      // label7
+      // 
+      this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(291, 6);
+      this.label7.Name = "label7";
+      this.label7.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label7.Size = new System.Drawing.Size(47, 13);
+      this.label7.TabIndex = 6;
+      this.label7.Text = "o\' clock";
+      // 
+      // flowLayoutPanelPreNoStandbyTime
+      // 
+      this.flowLayoutPanelPreNoStandbyTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreNoStandbyTime.AutoSize = true;
+      this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.label1);
+      this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.numericUpDownPreNoStandbyTime);
+      this.flowLayoutPanelPreNoStandbyTime.Location = new System.Drawing.Point(6, 56);
+      this.flowLayoutPanelPreNoStandbyTime.Name = "flowLayoutPanelPreNoStandbyTime";
+      this.flowLayoutPanelPreNoStandbyTime.Size = new System.Drawing.Size(448, 26);
+      this.flowLayoutPanelPreNoStandbyTime.TabIndex = 27;
+      // 
+      // label1
+      // 
+      this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(3, 6);
+      this.label1.Name = "label1";
+      this.label1.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label1.Size = new System.Drawing.Size(157, 13);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Pre-no-standby time in seconds";
+      // 
+      // numericUpDownPreNoStandbyTime
+      // 
+      this.numericUpDownPreNoStandbyTime.Location = new System.Drawing.Point(166, 3);
+      this.numericUpDownPreNoStandbyTime.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownPreNoStandbyTime.Name = "numericUpDownPreNoStandbyTime";
+      this.numericUpDownPreNoStandbyTime.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownPreNoStandbyTime.TabIndex = 3;
+      this.numericUpDownPreNoStandbyTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownPreNoStandbyTime.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+      // 
+      // flowLayoutPanelPreWakeupTime
+      // 
+      this.flowLayoutPanelPreWakeupTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreWakeupTime.AutoSize = true;
+      this.flowLayoutPanelPreWakeupTime.Controls.Add(this.label3);
+      this.flowLayoutPanelPreWakeupTime.Controls.Add(this.numericUpDownPreWakeupTime);
+      this.flowLayoutPanelPreWakeupTime.Location = new System.Drawing.Point(6, 23);
+      this.flowLayoutPanelPreWakeupTime.Name = "flowLayoutPanelPreWakeupTime";
+      this.flowLayoutPanelPreWakeupTime.Size = new System.Drawing.Size(448, 26);
+      this.flowLayoutPanelPreWakeupTime.TabIndex = 26;
+      // 
+      // label3
+      // 
+      this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(3, 6);
+      this.label3.Name = "label3";
+      this.label3.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
+      this.label3.Size = new System.Drawing.Size(143, 13);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "Pre-wakeup time in seconds";
+      // 
+      // numericUpDownPreWakeupTime
+      // 
+      this.numericUpDownPreWakeupTime.Location = new System.Drawing.Point(152, 3);
+      this.numericUpDownPreWakeupTime.Maximum = new decimal(new int[] {
+            3600,
+            0,
+            0,
+            0});
+      this.numericUpDownPreWakeupTime.Name = "numericUpDownPreWakeupTime";
+      this.numericUpDownPreWakeupTime.Size = new System.Drawing.Size(47, 20);
+      this.numericUpDownPreWakeupTime.TabIndex = 3;
+      this.numericUpDownPreWakeupTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      this.numericUpDownPreWakeupTime.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+      // 
       // PowerSchedulerSetup
       // 
       this.Controls.Add(this.groupBoxStatus);
@@ -1447,9 +1663,8 @@ namespace PowerScheduler.Setup
       this.tabPageAdvanced.ResumeLayout(false);
       this.groupBoxAdvanced.ResumeLayout(false);
       this.groupBoxAdvanced.PerformLayout();
-      this.flowLayoutPanel1.ResumeLayout(false);
-      this.flowLayoutPanel1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).EndInit();
+      this.flowLayoutPanel3.ResumeLayout(false);
+      this.flowLayoutPanel3.PerformLayout();
       this.flowLayoutPanelShutdownMode.ResumeLayout(false);
       this.flowLayoutPanelShutdownMode.PerformLayout();
       this.tabPageReboot.ResumeLayout(false);
@@ -1480,6 +1695,19 @@ namespace PowerScheduler.Setup
       this.tabPageClient.ResumeLayout(false);
       this.groupBoxClient.ResumeLayout(false);
       this.groupBoxClient.PerformLayout();
+      this.tabPageLegacy.ResumeLayout(false);
+      this.groupBoxLegacy.ResumeLayout(false);
+      this.groupBoxLegacy.PerformLayout();
+      this.flowLayoutPanelStandbyHours.ResumeLayout(false);
+      this.flowLayoutPanelStandbyHours.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursFrom)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStandbyHoursTo)).EndInit();
+      this.flowLayoutPanelPreNoStandbyTime.ResumeLayout(false);
+      this.flowLayoutPanelPreNoStandbyTime.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreNoStandbyTime)).EndInit();
+      this.flowLayoutPanelPreWakeupTime.ResumeLayout(false);
+      this.flowLayoutPanelPreWakeupTime.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -1583,9 +1811,24 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.GroupBox groupBoxClient;
     private System.Windows.Forms.CheckBox checkBoxHomeOnly;
     private System.Windows.Forms.CheckBox checkBoxUmuteMasterVolume;
-    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-    private System.Windows.Forms.Label labelPreWakeupTime;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ComboBox comboBox1;
+    private System.Windows.Forms.TabPage tabPageLegacy;
+    private System.Windows.Forms.GroupBox groupBoxLegacy;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelStandbyHours;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursFrom;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPreNoStandbyTime;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.NumericUpDown numericUpDownPreNoStandbyTime;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelPreWakeupTime;
+    private System.Windows.Forms.Label label3;
     private System.Windows.Forms.NumericUpDown numericUpDownPreWakeupTime;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursTo;
+    private System.Windows.Forms.Label label7;
 
   }
 }
