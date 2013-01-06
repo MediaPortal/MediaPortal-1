@@ -59,5 +59,7 @@ void FontEngineSetRenderState(D3DRENDERSTATETYPE state, DWORD dwValue);
 void FontEngineSetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE d3dSamplerState, DWORD dwValue);
 void FontEngineSetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE d3dTextureStageState, DWORD dwValue);
 
+HRESULT FontEngineSetMaximumFrameLatency(UINT maxLatency);
+
 void PrintStatistics();
 void Cleanup();
