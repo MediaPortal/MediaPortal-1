@@ -34,6 +34,7 @@
     <EntitySet Name="Versions" EntityType="TVDatabaseModel.Store.Versions" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="LnbTypes" EntityType="TVDatabaseModel.Store.LnbTypes" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="RecordingCredits" EntityType="TVDatabaseModel.Store.RecordingCredits" store:Type="Tables" Schema="dbo" />    
+    <EntitySet Name="TvGuideCategories" EntityType="TVDatabaseModel.Store.TvGuideCategories" store:Type="Tables" Schema="dbo" />
     
     <AssociationSet Name="GroupMapChannelGroup" Association="TVDatabaseModel.Store.GroupMapChannelGroup">
       <End Role="GroupMap" EntitySet="GroupMaps" />
@@ -163,6 +164,14 @@
       <End Role="ProgramCategory" EntitySet="ProgramCategories" />
       <End Role="History" EntitySet="Histories" />
     </AssociationSet>
+        <AssociationSet Name="LnbTypeTuningDetail" Association="TVDatabaseModel.Store.LnbTypeTuningDetail">
+      <End Role="LnbType" EntitySet="LnbTypes" />
+      <End Role="TuningDetail" EntitySet="TuningDetails" />
+    </AssociationSet>
+    <AssociationSet Name="TvGuideCategoryProgramCategory" Association="TVDatabaseModel.Store.TvGuideCategoryProgramCategory">
+      <End Role="TvGuideCategory" EntitySet="TvGuideCategories" />
+      <End Role="ProgramCategory" EntitySet="ProgramCategories" />
+    </AssociationSet>
   </EntityContainer>
   <EntityType Name="CanceledSchedules">
     <Key>
@@ -229,6 +238,7 @@
     <Property Name="DisplayName" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="EpgHasGaps" Type="bit" Nullable="false" />
     <Property Name="MediaType" Type="int" Nullable="false" />
+    <Property Name="ChannelNumber" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="ChannelGroups">
     <Key>
@@ -374,6 +384,7 @@
     </Key>
     <Property Name="IdProgramCategory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Category" Type="varchar" Nullable="false" MaxLength="50" />
+    <Property Name="IdTvGuideCategory" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="ProgramCredits">
     <Key>
@@ -529,7 +540,7 @@
     <Property Name="AudioSource" Type="int" Nullable="false" />
     <Property Name="IsVCRSignal" Type="bit" Nullable="false" />
     <Property Name="MediaType" Type="int" Nullable="false" />
-    <Property Name="IdLnbType" Type="int" Nullable="false" />
+    <Property Name="IdLnbType" Type="int" Nullable="true" />
   </EntityType>
   <EntityType Name="TvMovieMappings">
     <Key>
@@ -556,6 +567,16 @@
     <Property Name="IdRecording" Type="int" Nullable="false" />
     <Property Name="Person" Type="varchar" Nullable="false" MaxLength="200" />
     <Property Name="Role" Type="varchar" Nullable="false" MaxLength="50" />
+  </EntityType>
+  
+  <EntityType Name="TvGuideCategories">
+    <Key>
+      <PropertyRef Name="IdTvGuideCategory" />
+    </Key>
+    <Property Name="IdTvGuideCategory" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" Nullable="false" />
+    <Property Name="IsMovie" Type="bit" Nullable="false" />
+    <Property Name="IsEnabled" Type="bit" Nullable="false" />
   </EntityType>
   
   <EntityType Name="LnbTypes">
@@ -997,6 +1018,30 @@
       </Principal>
       <Dependent Role="History">
         <PropertyRef Name="IdProgramCategory" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="LnbTypeTuningDetail">
+    <End Role="LnbType" Type="TVDatabaseModel.Store.LnbTypes" Multiplicity="0..1" />
+    <End Role="TuningDetail" Type="TVDatabaseModel.Store.TuningDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="LnbType">
+        <PropertyRef Name="IdLnbType" />
+      </Principal>
+      <Dependent Role="TuningDetail">
+        <PropertyRef Name="IdLnbType" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="TvGuideCategoryProgramCategory">
+    <End Role="TvGuideCategory" Type="TVDatabaseModel.Store.TvGuideCategories" Multiplicity="0..1" />
+    <End Role="ProgramCategory" Type="TVDatabaseModel.Store.ProgramCategories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TvGuideCategory">
+        <PropertyRef Name="IdTvGuideCategory" />
+      </Principal>
+      <Dependent Role="ProgramCategory">
+        <PropertyRef Name="IdTvGuideCategory" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

@@ -165,6 +165,18 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\Entities\Entities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="WinCustomControls\WinCustomControls.csproj">
       <Project>{49DFF256-09FD-4598-A3E8-855753E2A1FC}</Project>
       <Name>WinCustomControls</Name>
@@ -248,6 +260,7 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -256,6 +269,10 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSPrerequisites.cs">
+      <Link>Configuration\OSPrerequisites.cs</Link>
+    </Compile>
+    <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
     </Compile>

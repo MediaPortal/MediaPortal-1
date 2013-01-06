@@ -548,11 +548,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-    protected override void OnSelectItem(bool isItemSelected)
+    protected override bool OnSelectItem(bool isItemSelected)
     {
+      bool tuneAttempted = false;
+      TVHome.Navigator.UpdateCurrentChannel();
+
       if (_currentProgram == null)
       {
-        return;
+        return tuneAttempted;
       }
       Radio.Radio.CurrentChannel = _currentChannel;
       if (isItemSelected)
@@ -587,7 +590,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
-                return;
+                return tuneAttempted;
               }
 
               dlg.Reset();
@@ -598,7 +601,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
               if (dlg.SelectedLabel == -1)
               {
-                return;
+                return tuneAttempted;
               }
               if (_recordingList != null)
               {
@@ -625,7 +628,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                         TVUtil.PlayRecording(recDB, 0, g_Player.MediaType.Radio);
                       }
                     }
-                    return;
+                    return tuneAttempted;
 
                   case 1213: // listen to this station
                     {
@@ -635,7 +638,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
                         g_Player.ShowFullScreenWindow();
                       }
                     }
-                    return;
+                    tuneAttempted = true;
+                    return tuneAttempted;
+
                 }
               }
               else
@@ -651,6 +656,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 {
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
               }
             }
             else //not recording
@@ -663,7 +669,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 dlg.Reset();
@@ -674,7 +680,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
                 if (dlg.SelectedLabel == -1)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 switch (dlg.SelectedId)
@@ -686,8 +692,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
                   case 1213:
                     this.LogDebug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    Radio.Radio.Play();
-                    GUIWaitCursor.Hide();
+                    try
+                    {
+                      Radio.Radio.Play();
+                    }
+                    finally
+                    {
+                      GUIWaitCursor.Hide();
+                    }                                        
                     if (g_Player.Playing)
                     {
                       g_Player.ShowFullScreenWindow();
@@ -696,6 +708,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     {
                       this.LogDebug("RadioGuide: no show currently running to switch to fullscreen");
                     }
+                    tuneAttempted = true;
                     break;
                 }
               }
@@ -706,13 +719,20 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                Radio.Radio.Play();
-                GUIWaitCursor.Hide();
+                try
+                {
+                  Radio.Radio.Play();
+                }
+                finally
+                {
+                  GUIWaitCursor.Hide();
+                }       
                 if (g_Player.Playing)
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
               }
             } //end of not recording
           }
@@ -723,13 +743,13 @@ namespace Mediaportal.TV.TvPlugin.EPG
               VMR9Util.g_vmr9.Enable(true);
             }
           }
-
-          return;
+          return tuneAttempted;
         }
         ShowProgramInfo();
-        return;
+        return tuneAttempted;
       }
       ShowProgramInfo();
+      return tuneAttempted;
     }
 
     /// <summary>

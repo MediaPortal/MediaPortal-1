@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>2</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:1</define>
+<controls>
+
+	<import>common.window.pictures.xml</import>
+    
+  <control>
+		<id>0</id>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>36</posY>
+    <width>60</width>
+		<height>57</height>
+    <texture>icon_pictures.png</texture>
+    <visible>control.isvisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+    
+  <control>
+   	<id>0</id>
+    <type>label</type>
+    <posX>144</posX>
+    <posY>38</posY>
+    <width>855</width>
+    <font>fontB22</font>
+    <textcolor>ffffff</textcolor>
+    <label>#header.label</label>
+		<align>left</align>
+		<visible>Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+      
+	<control>
+  	<id>0</id>
+    <type>label</type>
+    <posX>1848</posX>
+    <posY>36</posY>
+    <width>555</width>
+    <font>fontB22</font>
+    <textcolor>ffffff</textcolor>
+    <label>#time</label>
+		<align>right</align>
+		<visible>Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+		
+	<control>
+  	<description>Date / Weather</description>
+    <id>0</id>
+    <type>label</type>
+    <posX>1845</posX>
+    <posY>96</posY>
+    <font>fontB12</font>
+    <textcolor>ffffff</textcolor>
+    <label>#date / #WorldWeather.TodayTemperature</label>
+		<align>right</align>
+		<visible>!facadeview.smallicons + !facadeview.largeicons + plugin.isenabled(World Weather)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+ 	</control>
+      
+	<control>
+  	<description>Date</description>
+    <id>0</id>
+    <type>label</type>
+    <posX>1845</posX>
+    <posY>96</posY>
+    <font>fontB12</font>
+    <textcolor>ffffff</textcolor>
+    <label>#date</label>
+		<align>right</align>
+		<visible>!facadeview.smallicons + !facadeview.largeicons + !plugin.isenabled(World Weather)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+		
+	<control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>500</id>
+		<posX>121</posX>
+		<posY>362</posY>
+		<width>556</width>
+		<height>371</height>
+		<texture>#selectedthumb</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<visible>facadeview.list+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+    
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>440</posY>
+		<width>64</width>
+		<height>199</height>
+		<texture>hiddenmenu_tab.png</texture>
+		<visible>[facadeview.list | facadeview.smallicons | facadeview.largeicons]+Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
+		<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+	</control>
+		
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>858</posX>
+		<posY>0</posY>
+		<texture>hiddenmenu_tab_up.png</texture>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
+		<animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
+	</control>
+	
+	<import>common.facade.pictures.xml</import>
+	<import>mypics.hiddenmenu.xml</import>
+	<import>common.overlay.xml</import>
+</controls>
+</window>

@@ -7,6 +7,14 @@
     <control>
       <type>image</type>
       <id>0</id>
+      <width>1280</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
       <posX>391</posX>
       <posY>198</posY>
       <width>595</width>
@@ -33,7 +41,7 @@
       <labelOffX>0</labelOffX>
       <labelOffY>2</labelOffY>
       <labelFont>font10</labelFont>
-      <labelColor>FFFFFFFF</labelColor>
+      <labelColor>lightgray</labelColor>
       <labelShadowAngle>0</labelShadowAngle>
       <labelShadowDistance>0</labelShadowDistance>
       <labelShadowColor>FF000000</labelShadowColor>
@@ -42,7 +50,7 @@
       <labelBoxWidth>200</labelBoxWidth>
       <labelBoxHeight>30</labelBoxHeight>
       <labelBoxTexture>-</labelBoxTexture>
-      <showLabelAsInitialText>no</showLabelAsInitialText>
+      <showLabelAsInitialText>yes</showLabelAsInitialText>
       <inputTextBoxPosX>403</inputTextBoxPosX>
       <inputTextBoxPosY>213</inputTextBoxPosY>
       <inputTextBoxWidth>-1</inputTextBoxWidth>

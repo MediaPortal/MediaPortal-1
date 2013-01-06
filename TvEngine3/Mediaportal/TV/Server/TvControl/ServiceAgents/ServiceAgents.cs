@@ -30,11 +30,11 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       GetOrCreateServiceAgent<ISettingService>();
       GetOrCreateServiceAgent<IControllerService>();
-      GetOrCreateServiceAgent<IProgramCategoryService>();
+      
 
       // most WCF agents have a specific agent that does additional stuff like stripping away unneeded data before sending it over the wire.
       // this is often done on save related methods.
-
+      GetOrCreateCustomServiceAgent<IProgramCategoryService, ProgramCategoryAgent>();
       GetOrCreateCustomServiceAgent<ICardService, CardServiceAgent>();
       GetOrCreateCustomServiceAgent<IProgramService, ProgramServiceAgent>();
       GetOrCreateCustomServiceAgent<IRecordingService, RecordingServiceAgent>();
@@ -53,7 +53,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {     
       AddGenericService<ISettingService>();
       AddGenericService<IControllerService>();
-      AddGenericService<IProgramCategoryService>();
+      AddCustomService<IProgramCategoryService, ProgramCategoryAgent>();
 
       // most WCF agents have a specific agent that does additional stuff like stripping away unneeded data before sending it over the wire.
       // this is often done on save related methods.
@@ -249,7 +249,7 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
     {
       get
       {
-        return GetOrCreateServiceAgent<IProgramCategoryService>();
+        return GetOrCreateCustomServiceAgent<IProgramCategoryService, ProgramCategoryAgent>();
       }
     }
 
@@ -414,7 +414,8 @@ namespace Mediaportal.TV.Server.TVControl.ServiceAgents
       DisposeCustomServiceProxy<IScheduleService>();
       DisposeCustomServiceProxy<ICanceledScheduleService>();
       DisposeCustomServiceProxy<IConflictService>();
-      DisposeGenericServiceProxy<IProgramCategoryService>();
+      DisposeCustomServiceProxy<IProgramCategoryService>();
+
       DisposeGenericServiceProxy<ISettingService>();
       DisposeGenericServiceProxy<IControllerService>();
       

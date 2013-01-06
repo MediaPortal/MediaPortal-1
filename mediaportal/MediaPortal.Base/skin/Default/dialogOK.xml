@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2002</id>
@@ -10,13 +10,13 @@
       <description>OK button</description>
       <type>button</type>
       <id>10</id>
-      <posX>498</posX>
-      <posY>210</posY>
-      <textYOff>6</textYOff>
-      <width>28</width>
-      <height>40</height>
-      <textureFocus>dialogue_ok_focus.png</textureFocus>
-      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <posX>686</posX>
+      <posY>275</posY>
+      <textYOff>8</textYOff>
+      <width>22</width>
+      <height>22</height>
+      <textureFocus>top_exit_enabled.png</textureFocus>
+      <textureNoFocus>top_exit_disabled.png</textureNoFocus>
       <label>-</label>
       <onleft>10</onleft>
       <onright>10</onright>

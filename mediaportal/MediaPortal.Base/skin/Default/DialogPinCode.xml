@@ -12,10 +12,10 @@
       <description>Lock</description>
       <type>image</type>
       <id>1</id>
-      <posX>478</posX>
-      <posY>212</posY>
-      <width>27</width>
-      <height>38</height>
+      <posX>637</posX>
+      <posY>266</posY>
+      <width>36</width>
+      <height>48</height>
       <texture>lock.png</texture>
     </control>
     <!-- Star Controls -->
@@ -23,10 +23,10 @@
       <description>PinCode Item 1</description>
       <type>image</type>
       <id>1</id>
-      <posX>309</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>412</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <texture>UserRatingStarOff.png</texture>
     </control>
@@ -34,10 +34,10 @@
       <description>PinCode Item 1</description>
       <type>image</type>
       <id>100</id>
-      <posX>309</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>412</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <texture>UserRatingStarOn.png</texture>
     </control>
@@ -45,10 +45,10 @@
       <description>PinCode Item 2</description>
       <type>image</type>
       <id>1</id>
-      <posX>331</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>442</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <texture>UserRatingStarOff.png</texture>
     </control>
@@ -56,10 +56,10 @@
       <description>PinCode Item 2</description>
       <type>image</type>
       <id>101</id>
-      <posX>331</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>442</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>102</onup>
       <texture>UserRatingStarOn.png</texture>
     </control>
@@ -67,10 +67,10 @@
       <description>PinCode Item 3</description>
       <type>image</type>
       <id>1</id>
-      <posX>354</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>472</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <texture>UserRatingStarOff.png</texture>
     </control>
@@ -78,10 +78,10 @@
       <description>PinCode Item 3</description>
       <type>image</type>
       <id>102</id>
-      <posX>354</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>472</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>103</onup>
       <texture>UserRatingStarOn.png</texture>
     </control>
@@ -89,10 +89,10 @@
       <description>PinCode Item 4</description>
       <type>image</type>
       <id>1</id>
-      <posX>376</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>502</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>101</onup>
       <texture>UserRatingStarOff.png</texture>
     </control>
@@ -100,10 +100,10 @@
       <description>PinCode Item 4</description>
       <type>image</type>
       <id>103</id>
-      <posX>376</posX>
-      <posY>305</posY>
-      <width>18</width>
-      <height>25</height>
+      <posX>502</posX>
+      <posY>382</posY>
+      <width>24</width>
+      <height>32</height>
       <onup>104</onup>
       <texture>UserRatingStarOn.png</texture>
     </control>
@@ -111,9 +111,9 @@
       <description>Feedback</description>
       <type>label</type>
       <id>6</id>
-      <posX>478</posX>
-      <posY>352</posY>
-      <width>168</width>
+      <posX>637</posX>
+      <posY>440</posY>
+      <width>225</width>
       <align>right</align>
     </control>
   </controls>

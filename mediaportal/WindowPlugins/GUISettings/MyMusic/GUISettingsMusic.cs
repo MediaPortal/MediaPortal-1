@@ -80,10 +80,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    protected override void  OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
- 	    base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)
@@ -158,13 +164,13 @@ namespace MediaPortal.GUI.Settings
 
     private void OnDeleteAlbum ()
     {
-      MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
+      var dbreorg = new MusicDatabaseReorg(GetID);
       dbreorg.DeleteSingleAlbum();
     }
 
     private void OnDeleteAlbumInfo()
     {
-      MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
+      var dbreorg = new MusicDatabaseReorg(GetID);
       dbreorg.DeleteAlbumInfo();
     }
 

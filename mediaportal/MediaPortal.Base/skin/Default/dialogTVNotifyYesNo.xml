@@ -8,27 +8,41 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>371</posX>
-      <posY>340</posY>
-      <width>337</width>
-      <height>228</height>
+      <posX>495</posX>
+      <posY>425</posY>
+      <width>450</width>
+      <height>285</height>
       <texture>dialog_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>495</posX>
+      <posY>425</posY>
+      <width>450</width>
+      <height>285</height>
+      <texture>dialog_background.png</texture>
+      <colordiffuse>bbffffff</colordiffuse>
+      <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>dialog Heading</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>399</posX>
-      <posY>372</posY>
-      <width>275</width>
+      <posX>532</posX>
+      <posY>465</posY>
+      <width>367</width>
       <label>0</label>
       <font>font13</font>
       <textcolor>ffffffff</textcolor>
@@ -37,9 +51,9 @@
       <description>dialog line 1</description>
       <type>fadelabel</type>
       <id>2</id>
-      <posX>399</posX>
-      <posY>408</posY>
-      <width>222</width>
+      <posX>532</posX>
+      <posY>510</posY>
+      <width>296</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -47,10 +61,10 @@
       <description>dialog line 2</description>
       <type>label</type>
       <id>3</id>
-      <posX>399</posX>
-      <posY>428</posY>
+      <posX>532</posX>
+      <posY>535</posY>
       <label>0</label>
-      <width>222</width>
+      <width>296</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -58,10 +72,10 @@
       <description>dialog line 3</description>
       <type>label</type>
       <id>4</id>
-      <posX>399</posX>
-      <posY>448</posY>
+      <posX>532</posX>
+      <posY>560</posY>
       <label>0</label>
-      <width>222</width>
+      <width>296</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -69,10 +83,10 @@
       <description>dialog line 4</description>
       <type>label</type>
       <id>5</id>
-      <posX>399</posX>
-      <posY>468</posY>
+      <posX>532</posX>
+      <posY>585</posY>
       <label>0</label>
-      <width>222</width>
+      <width>296</width>
       <font>font11</font>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -80,13 +94,13 @@
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>556</posX>
-      <posY>496</posY>
+      <posX>742</posX>
+      <posY>620</posY>
       <textalign>center</textalign>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
-      <width>104</width>
-      <height>37</height>
+      <width>139</width>
+      <height>47</height>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>106</label>
@@ -101,13 +115,13 @@
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>423</posX>
-      <posY>496</posY>
+      <posX>564</posX>
+      <posY>620</posY>
       <textXOff>0</textXOff>
       <textYOff>0</textYOff>
       <textalign>center</textalign>
-      <width>104</width>
-      <height>37</height>
+      <width>139</width>
+      <height>47</height>
       <textureFocus>button_focus.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>107</label>
@@ -122,10 +136,10 @@
       <description>logo</description>
       <type>image</type>
       <id>12</id>
-      <posX>627</posX>
-      <posY>412</posY>
-      <width>32</width>
-      <height>46</height>
+      <posX>836</posX>
+      <posY>515</posY>
+      <width>43</width>
+      <height>58</height>
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>

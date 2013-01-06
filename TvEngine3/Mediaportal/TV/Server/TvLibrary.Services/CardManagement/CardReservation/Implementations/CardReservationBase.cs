@@ -451,7 +451,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
     {
       var cardAlloc = new AdvancedCardAllocation();
       cardAlloc.CheckTransponder(user, tvcard, tuningDetail);
-    } */     
+    }*/
 
     #endregion
 

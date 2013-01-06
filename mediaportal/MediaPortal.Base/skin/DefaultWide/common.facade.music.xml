@@ -15,12 +15,7 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <posY>170</posY>
-          <height>530</height>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <scrollOffset>2</scrollOffset>
-          <unfocusedAlpha>160</unfocusedAlpha>
+          
         </control>
         <control>
           <description>album view listcontrol</description>
@@ -57,9 +52,9 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>60</posX>
-          <posY>110</posY>
+          <posY>190</posY>
           <width>1200</width>
-          <height>640</height>
+          <height>480</height>
           <scrollOffset>0</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
@@ -83,7 +78,7 @@
           <zoomYPixels>40</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>yes</renderUnfocusText>
+          <renderUnfocusText>no</renderUnfocusText>
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
@@ -104,7 +99,7 @@
           <id>50</id>
           <scrollOffset>2</scrollOffset>
           <posX>60</posX>
-          <posY>280</posY>
+          <posY>260</posY>
           <width>1180</width>
           <height>720</height>
           <onup>2</onup>
@@ -187,7 +182,7 @@
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1>#selecteditem</label1>
+          <label1></label1>
           <label2></label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
@@ -204,7 +199,7 @@
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>435</scrollbarYOff>
+          <scrollbarYOff>380</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
           <cards mask="Picturethumbmask.png">Picturethumbmask.png</cards>
           <subitems>
@@ -407,8 +402,7 @@
         <description>playlist listcontrol</description>
         <type>playlistcontrol</type>
         <id>50</id>
-        <posY>170</posY>
-        <height>530</height>
+        
         <upBtnXOffset>660</upBtnXOffset>
         <downBtnXOffset>700</downBtnXOffset>
         <deleteBtnXOffset>740</deleteBtnXOffset>
@@ -417,8 +411,8 @@
         <scrollOffset>2</scrollOffset>
         <itemWidth>32</itemWidth>
         <itemHeight>32</itemHeight>
-        <IconXOff>12</IconXOff>
-        <IconYOff>4</IconYOff>
+        <IconXOff>4</IconXOff>
+        <IconYOff>2</IconYOff>
       </control>
     </control>
   </control>

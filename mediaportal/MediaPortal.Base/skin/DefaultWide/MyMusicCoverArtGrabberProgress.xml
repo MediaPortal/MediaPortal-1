@@ -39,7 +39,7 @@
       <posX>488</posX>
       <posY>482</posY>
       <width>613</width>
-      <texture>osd_progress_background.png</texture>
+      <texture>osd_progress_BH Music.jpg</texture>
     </control>
     <control>
       <type>image</type>
@@ -47,7 +47,7 @@
       <posX>488</posX>
       <posY>566</posY>
       <width>613</width>
-      <texture>osd_progress_background.png</texture>
+      <texture>osd_progress_BH Music.jpg</texture>
     </control>
     <control>
       <type>fadelabel</type>

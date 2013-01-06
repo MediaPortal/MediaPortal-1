@@ -71,6 +71,8 @@
     <Compile Include="CanceledScheduleManagement.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="ConflictManagement.cs" />
+    <Compile Include="Entities\Cache\EntityCache.cs" />
+    <Compile Include="Entities\Cache\EntityCacheHelper.cs" />
     <Compile Include="Entities\ChannelBLL.cs" />
     <Compile Include="Entities\ProgramBLL.cs" />
     <Compile Include="Entities\ScheduleBLL.cs" />
@@ -79,6 +81,9 @@
     <Compile Include="EPG\EpgHoleCollection.cs" />
     <Compile Include="LinqKit\PredicateBuilder.cs" />
     <Compile Include="LnbTypeManagement.cs" />
+    <Compile Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSInfo.cs">
+      <Link>OSInfo.cs</Link>
+    </Compile>
     <Compile Include="ScheduleManagement.cs" />
     <Compile Include="RecordingManagement.cs" />
     <Compile Include="ProgramCategoryManagement.cs" />

@@ -13,5 +13,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       var listAllProgramCategories = ProgramCategoryManagement.ListAllProgramCategories();
       return listAllProgramCategories;
     }
+
+    public IList<TvGuideCategory> ListAllTvGuideCategories()
+    {
+      var listAllProgramCategories = ProgramCategoryManagement.ListAllTvGuideCategories();
+      return listAllProgramCategories;
+    }
+
+    public TvGuideCategory SaveTvGuideCategory(TvGuideCategory tvGuideCategory)
+    {
+      return ProgramCategoryManagement.AddTvGuideCategory(tvGuideCategory);      
+    }
+
+    public ProgramCategory SaveProgramCategory(ProgramCategory programCategory)
+    {
+      return ProgramCategoryManagement.SaveProgramCategory(programCategory);
+    }
+
   }
 }

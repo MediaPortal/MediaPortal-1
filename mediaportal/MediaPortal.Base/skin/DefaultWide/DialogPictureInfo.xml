@@ -9,30 +9,19 @@
       <id>1</id>
       <width>1366</width>
       <height>768</height>
-      <texture>black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
-    </control>
-    <control>
-      <description>background shadow</description>
-      <type>image</type>
-      <id>1</id>
-      <posX>161</posX>
-      <posY>22</posY>
-      <width>1050</width>
-      <height>700</height>
-      <texture mask="picturethumbmask.png">black.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <description>background image</description>
       <type>image</type>
       <id>1</id>
       <posX>163</posX>
-      <posY>24</posY>
+      <posY>25</posY>
       <width>1040</width>
-      <height>690</height>
-      <texture mask="picturethumbmask.png">blue.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
+      <height>680</height>
+      <texture>context_background.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
     </control>
     <control>
       <description>GFX-Heading "menu" text label</description>
@@ -333,7 +322,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
     </control>
-    <control>
+    <!--control>
       <type>image</type>
       <id>1</id>
       <posX>680</posX>
@@ -341,6 +330,6 @@
       <width>470</width>
       <height>420</height>
       <texture>Picturethumbframe.png</texture>
-    </control>
+    </control-->
   </controls>
 </window>

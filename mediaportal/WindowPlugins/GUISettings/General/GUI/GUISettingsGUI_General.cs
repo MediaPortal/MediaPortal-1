@@ -94,7 +94,7 @@ namespace WindowPlugins.GUISettings
         cmEnableguisounds.Selected = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
         cmMousesupport.Selected = xmlreader.GetValueAsBool("gui", "mousesupport", false);
 
-        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
         _homeSelectedIndex = (int)((useOnlyOneHome ? HomeUsageEnum.UseOnlyOne : HomeUsageEnum.UseBoth) |
                                            (startWithBasicHome ? HomeUsageEnum.PreferBasic : HomeUsageEnum.PreferClassic));
@@ -182,6 +182,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 

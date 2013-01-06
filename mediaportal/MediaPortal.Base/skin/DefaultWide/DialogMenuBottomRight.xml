@@ -9,8 +9,9 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
+      <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
       <type>group</type>
@@ -23,6 +24,18 @@
         <height>345</height>
         <posY>193</posY>
         <texture>dialog_schedule_rec.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>186</posX>
+        <width>970</width>
+        <height>345</height>
+        <posY>193</posY>
+        <texture>dialog_schedule_rec.png</texture>
+        <colordiffuse>bbffffff</colordiffuse>
       </control>
       <control>
         <description>Heading text label</description>
@@ -62,8 +75,8 @@
         <posY>232</posY>
         <width>50</width>
         <height>50</height>
-        <textureFocus>dialogue_shutdown_focus.png</textureFocus>
-        <textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
         <label>-</label>
         <onleft>3</onleft>
         <onright>3</onright>

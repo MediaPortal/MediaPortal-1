@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1016</id>
@@ -7,69 +7,69 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
       <id>1</id>
-      <posX>244</posX>
-      <posY>96</posY>
-      <height>416</height>
-      <width>244</width>
+      <posX>326</posX>
+      <posY>120</posY>
+      <height>520</height>
+      <width>326</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>261</posX>
-      <posY>128</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>348</posX>
+      <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>General MP Settings</description>
         <type>button</type>
         <id>2</id>
         <label>300080</label>
-        <width>196</width>
-        <onup>42</onup>
+        <width>262</width>
+        <onup>21</onup>
       </control>
       <control>
         <description>Startup settings</description>
         <type>button</type>
         <id>3</id>
         <label>300081</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>Resume settings</description>
         <type>button</type>
         <id>4</id>
         <label>300082</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>Volume settings</description>
         <type>button</type>
         <id>5</id>
         <label>101007</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>RefreshRate settings</description>
         <type>button</type>
         <id>6</id>
         <label>300083</label>
-        <width>196</width>
+        <width>262</width>
       </control>
       <control>
         <description>AUtoplay</description>
         <type>button</type>
         <id>7</id>
         <label>713</label>
-        <width>196</width>
+        <width>262</width>
+        <ondown>2</ondown>
       </control>
     </control>
   </controls>

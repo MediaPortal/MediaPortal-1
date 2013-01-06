@@ -54,6 +54,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +101,9 @@
     <Compile Include="EventDispatchers\HeartbeatUser.cs" />
     <Compile Include="EventDispatchers\TvServerEventDispatcher.cs" />
     <Compile Include="Interfaces\ITvCardContext.cs" />
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSPrerequisites.cs">
+      <Link>OSPrerequisites.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Scheduler\RecordingDetail.cs" />
@@ -157,6 +161,10 @@
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>

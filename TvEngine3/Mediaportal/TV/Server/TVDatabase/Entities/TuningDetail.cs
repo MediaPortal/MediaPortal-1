@@ -8,7 +8,11 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
@@ -513,7 +517,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _mediaType;
     
         [DataMember]
-        public int IdLnbType
+        public Nullable<int> IdLnbType
         {
             get { return _idLnbType; }
             set
@@ -533,7 +537,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                 }
             }
         }
-        private int _idLnbType;
+        private Nullable<int> _idLnbType;
 
         #endregion
         #region Navigation Properties
@@ -706,7 +710,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        private void FixupLnbType(LnbType previousValue)
+        private void FixupLnbType(LnbType previousValue, bool skipKeys = false)
         {
             if (IsDeserializing)
             {
@@ -727,6 +731,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
                 IdLnbType = LnbType.IdLnbType;
             }
+            else if (!skipKeys)
+            {
+                IdLnbType = null;
+            }
+    
             if (ChangeTracker.ChangeTrackingEnabled)
             {
                 if (ChangeTracker.OriginalValues.ContainsKey("LnbType")

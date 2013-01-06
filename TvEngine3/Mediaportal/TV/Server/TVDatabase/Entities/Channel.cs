@@ -8,8 +8,11 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
@@ -197,6 +200,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private int _mediaType;
+    
+        [DataMember]
+        public int ChannelNumber
+        {
+            get { return _channelNumber; }
+            set
+            {
+                if (_channelNumber != value)
+                {
+                    _channelNumber = value;
+                    OnPropertyChanged("ChannelNumber");
+                }
+            }
+        }
+        private int _channelNumber;
 
         #endregion
         #region Navigation Properties

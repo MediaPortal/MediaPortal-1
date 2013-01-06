@@ -332,8 +332,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
           {
             int idcard = ticket.CardId;
             CancelCardReservation(cards[idcard], ticket); 
-          }          
-        }          
+          }
+        }
       }
     }
 
@@ -443,7 +443,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
           }
           cardIds.Add(idCard);
         }
-        tickets.Add(cardDetail, ticket);        
+        tickets.Add(cardDetail, ticket);
       }
       return tickets;
     }
@@ -468,9 +468,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
         bool isCardAvail = (isCardIdle || isCardTuned || isCardTunePending || isCardTuneCancelled) && (isCardStopped || isCardStopIdle);
 
         if (isCardAvail)
-        {          
+        {
           tvcard.Tuner.CardStopState = CardStopState.StopPending;
-          cardStopReservation = new CardStopReservationTicket();          
+          cardStopReservation = new CardStopReservationTicket();
           tvcard.Tuner.ReservationsForStop.Add(cardStopReservation);
         }
 
@@ -517,7 +517,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
           Log.Debug("CardTuner.Stop: ticket id={0}, found={1}", ticket.Id, ticketFound);
           if (ticketFound)
           {
-            tvcard.Tuner.CardStopState = CardStopState.Stopping;            
+            tvcard.Tuner.CardStopState = CardStopState.Stopping;
           }
           else
           {
@@ -538,21 +538,21 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
           {
             if (result)
             {              
-              tvcard.Tuner.CardStopState = CardStopState.Stopped;              
+              tvcard.Tuner.CardStopState = CardStopState.Stopped;
               ResetCardTuneStateToIdle(tvcard);
             }
             else
             {              
               if (tvcard.Tuner.ReservationsForStop.Count > 1)
               {
-                tvcard.Tuner.CardStopState = CardStopState.StopPending;                
+                tvcard.Tuner.CardStopState = CardStopState.StopPending;
               }
               else
               {
-                tvcard.Tuner.CardStopState = CardStopState.StopFailed;                
+                tvcard.Tuner.CardStopState = CardStopState.StopFailed;
               }
               
-            }            
+            }
           }
         }
         else // state is not tuning, some other card tune session is busy.

@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
     <import>common.time.xml</import>
     <!--     *******************************************************************************************  -->
     <!--     *************************     BUTTONS ADD, REMOVE ETC.     ********************************  -->
@@ -64,6 +64,7 @@
       <posY>103</posY>
       <width>400</width>
       <height>290</height>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Folders label</description>
@@ -74,6 +75,7 @@
       <width>300</width>
       <label>300071</label>
       <font>font13</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Share folders listcontrol</description>
@@ -129,8 +131,9 @@
       <texture>context_background.png</texture>
       <posX>680</posX>
       <posY>103</posY>
-      <width>530</width>
+      <width>600</width>
       <height>290</height>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Folder info label</description>
@@ -141,6 +144,7 @@
       <width>500</width>
       <label>300072</label>
       <font>font13</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <!--Labels for values-->
     <control>
@@ -156,7 +160,7 @@
         <width>245</width>
         <label>853</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Share folder label</description>
@@ -165,7 +169,7 @@
         <width>245</width>
         <label>300073</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Default layout label</description>
@@ -174,7 +178,7 @@
         <width>245</width>
         <label>300074</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
       <control>
         <description>Pincode label</description>
@@ -183,7 +187,7 @@
         <width>245</width>
         <label>300075</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
 			<control>
         <description>Thumbs</description>
@@ -192,7 +196,7 @@
         <width>245</width>
         <label>300222</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
 			<control>
         <description>Each folder is movie</description>
@@ -201,7 +205,7 @@
         <width>245</width>
         <label>300223</label>
         <font>font11</font>
-        <textcolor>ffffffff</textcolor>
+        <textcolor>ff6FAFE1</textcolor>
       </control>
     </control>
     <!-- Values-->
@@ -224,7 +228,7 @@
         <description>Share folder label</description>
         <type>fadelabel</type>
         <id>1</id>
-        <width>345</width>
+        <width>360</width>
         <label>#folder</label>
         <font>font11</font>
         <textcolor>ffffffff</textcolor>
@@ -233,7 +237,7 @@
         <description>Default layout label</description>
         <type>label</type>
         <id>1</id>
-        <width>345</width>
+        <width>360</width>
         <label>#layout</label>
         <font>font11</font>
         <textcolor>ffffffff</textcolor>
@@ -242,7 +246,7 @@
         <description>Pincode label</description>
         <type>label</type>
         <id>1</id>
-        <width>345</width>
+        <width>360</width>
         <label>#pinCode</label>
         <font>font11</font>
         <textcolor>ffffffff</textcolor>
@@ -251,7 +255,7 @@
         <description>Thumbs</description>
         <type>label</type>
         <id>1</id>
-        <width>345</width>
+        <width>360</width>
         <label>#createThumb</label>
         <font>font11</font>
         <textcolor>ffffffff</textcolor>
@@ -260,7 +264,7 @@
         <description>Movie folder</description>
         <type>label</type>
         <id>1</id>
-        <width>345</width>
+        <width>360</width>
         <label>#eachFolderIsMovie</label>
         <font>font11</font>
         <textcolor>ffffffff</textcolor>
@@ -275,9 +279,10 @@
       <id>1</id>
       <texture>context_background.png</texture>
       <posX>250</posX>
-      <posY>402</posY>
+      <posY>392</posY>
       <width>400</width>
       <height>250</height>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Options group label</description>
@@ -288,6 +293,7 @@
       <width>500</width>
       <label>496</label>
       <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Remeber last folder On/Off</description>

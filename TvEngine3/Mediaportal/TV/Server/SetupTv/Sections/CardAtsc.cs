@@ -77,10 +77,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void Init()
     {
-      if (checkBoxQAM.Enabled != true || checkBoxQAM.Checked == false)
-      {
-        mpComboBoxFrequencies.Enabled = false;
-      }
+      checkBoxQAM_CheckedChanged(null, null);
       mpComboBoxFrequencies.Items.Clear();
       try
       {
@@ -101,6 +98,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       base.OnSectionActivated();
       UpdateStatus();
       checkBoxQAM.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _cardNumber + "supportsqam", false);
+      checkBoxQAM_CheckedChanged(null, null);
       checkBoxQAM_CheckedChanged(null, null);
     }
 

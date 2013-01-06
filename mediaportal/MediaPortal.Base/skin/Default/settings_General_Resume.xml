@@ -7,36 +7,35 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <!-- Mask-->
     <control>
       <description>rectangle image</description>
       <type>image</type>
       <id>1</id>
-      <posX>90</posX>
-      <posY>88</posY>
-      <width>534</width>
-      <height>448</height>
+      <posX>120</posX>
+      <posY>110</posY>
+      <width>712</width>
+      <height>560</height>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <!-- Startup resume-->
     <!--Right part-->
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>112</posX>
-      <posY>120</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>150</posX>
+      <posY>150</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
       <control>
         <description>Turn off monitor blank screen</description>
         <type>checkbutton</type>
         <id>17</id>
         <label>300095</label>
-        <width>478</width>
+        <width>637</width>
         <onup>123</onup>
       </control>
       <control>
@@ -44,59 +43,59 @@
         <type>checkbutton</type>
         <id>18</id>
         <label>300096</label>
-        <width>478</width>
+        <width>637</width>
       </control>
       <control>
         <description>S3 standby</description>
         <type>checkbutton</type>
         <id>19</id>
         <label>300097</label>
-        <width>478</width>
+        <width>637</width>
       </control>
       <control>
         <description>Workaround ifx</description>
         <type>checkbutton</type>
         <id>20</id>
         <label>300098</label>
-        <width>478</width>
+        <width>637</width>
       </control>
       <control>
         <description>Restart on resume</description>
         <type>checkbutton</type>
         <id>21</id>
         <label>300099</label>
-        <width>478</width>
+        <width>637</width>
       </control>
       <control>
         <description>Show last module</description>
         <type>checkbutton</type>
         <id>22</id>
         <label>300100</label>
-        <width>478</width>
+        <width>637</width>
       </control>
       <control>
         <description>Screen selector</description>
         <type>checkbutton</type>
         <id>23</id>
         <label>300101</label>
-        <width>478</width>
+        <width>637</width>
       </control>
     </control>
     <control>
       <description>Screen button</description>
       <type>button</type>
       <id>24</id>
-      <posX>112</posX>
-      <posY>372</posY>
-      <width>22</width>
+      <posX>150</posX>
+      <posY>465</posY>
+      <width>30</width>
       <textureFocus>osd_play_focus.png</textureFocus>
       <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>label</type>
       <id>1</id>
-      <posX>132</posX>
-      <posY>374</posY>
+      <posX>176</posX>
+      <posY>468</posY>
       <label>#defScreen</label>
       <align>left</align>
       <font>font11</font>
@@ -108,16 +107,16 @@
       <description>Delay button</description>
       <type>button</type>
       <id>30</id>
-      <posX>112</posX>
-      <posY>416</posY>
-      <width>236</width>
+      <posX>150</posX>
+      <posY>520</posY>
+      <width>315</width>
       <label>300102</label>
     </control>
     <control>
       <type>label</type>
       <id>1</id>
-      <posX>270</posX>
-      <posY>422</posY>
+      <posX>360</posX>
+      <posY>528</posY>
       <label>#delayStartup</label>
       <align>left</align>
       <font>font11</font>
@@ -126,20 +125,20 @@
       <description>Delay on MP start</description>
       <type>checkbutton</type>
       <id>31</id>
-      <posX>112</posX>
-      <posY>448</posY>
+      <posX>150</posX>
+      <posY>560</posY>
       <label>300103</label>
-      <width>236</width>
+      <width>315</width>
       <onup>30</onup>
     </control>
     <control>
       <description>Delay on MP resume</description>
       <type>checkbutton</type>
       <id>32</id>
-      <posX>112</posX>
-      <posY>484</posY>
+      <posX>150</posX>
+      <posY>605</posY>
       <label>300104</label>
-      <width>236</width>
+      <width>315</width>
       <onup>31</onup>
     </control>
   </controls>

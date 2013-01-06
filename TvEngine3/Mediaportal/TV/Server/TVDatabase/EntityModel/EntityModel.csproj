@@ -71,6 +71,7 @@
     <Compile Include="DBaseContext\DbContextInitializer.cs" />
     <Compile Include="DBaseContext\DbContextManager.cs" />
     <Compile Include="Interfaces\ICardRepository.cs" />
+    <Compile Include="Interfaces\IProgramCategoryRepository.cs" />
     <Compile Include="Interfaces\IRecordingRepository.cs" />
     <Compile Include="Interfaces\IScheduleRepository.cs" />
     <Compile Include="Model.Designer.cs">
@@ -90,6 +91,7 @@
     <Compile Include="Interfaces\IProgramRepository.cs" />
     <Compile Include="Interfaces\ISettingsRepository.cs" />
     <Compile Include="Repositories\CardRepository.cs" />
+    <Compile Include="Repositories\ProgramCategoryRepository.cs" />
     <Compile Include="Repositories\LnbTypeRepository.cs" />
     <Compile Include="Repositories\ScheduleRepository.cs" />
     <Compile Include="Repositories\RecordingRepository.cs" />

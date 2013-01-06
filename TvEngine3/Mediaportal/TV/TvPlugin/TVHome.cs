@@ -1177,7 +1177,7 @@ namespace Mediaportal.TV.TvPlugin
       set
       {
         if (_card != null)
-        {          
+        {
           _card = value;
         }
       }

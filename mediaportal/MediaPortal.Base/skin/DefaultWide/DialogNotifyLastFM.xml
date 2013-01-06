@@ -9,14 +9,12 @@
       <id>0</id>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <type>group</type>
       <description>group element</description>
-      
-      
       <control>
         <type>image</type>
         <id>0</id>
@@ -42,10 +40,10 @@
         <id>4</id>
         <posX>1093</posX>
         <posY>522</posY>
-        <width>50</width>
-        <height>40</height>
-        <textureFocus>dialogue_ok_focus.png</textureFocus>
-        <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+        <width>30</width>
+        <height>30</height>
+        <textureFocus>top_exit_enabled.png</textureFocus>
+        <textureNoFocus>top_exit_disabled.png</textureNoFocus>
         <label>-</label>
         <onleft>4</onleft>
         <onright>4</onright>

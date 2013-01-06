@@ -36,13 +36,13 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
-using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
+
 namespace Mediaportal.TV.TvPlugin.Radio
 {
-  public class RadioRecorded : WindowPluginBase, IComparer<GUIListItem>
+  public class RadioRecorded : RecordedBase, IComparer<GUIListItem>
   {
 
 
@@ -597,45 +597,6 @@ namespace Mediaportal.TV.TvPlugin.Radio
       {
         Log.Error(ex, "RadioRecorded: Error in ShowUpcomingEpisodes");
       }
-    }
-
-    /// <summary>
-    /// Build an Outlook / Thunderbird like view grouped by date
-    /// </summary>
-    /// <param name="aStartTime">A recordings start time</param>
-    /// <returns>The spoken date label</returns>
-    private string GetSpokenViewDate(DateTime aStartTime)
-    {
-      DateTime compareDate = DateTime.Now.Subtract(DateTime.Now.Subtract(aStartTime));
-      if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(24, 0, 0))
-        return GUILocalizeStrings.Get(6030); // "Today"
-      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(48, 0, 0))
-        return GUILocalizeStrings.Get(6040); // "Yesterday"
-      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(72, 0, 0))
-        return GUILocalizeStrings.Get(6041); // "Two days ago"
-      //else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(168, 0, 0)) // current week
-      //{
-      //  switch (compareDate.DayOfWeek)
-      //  {
-      //    case DayOfWeek.Monday: return GUILocalizeStrings.Get(11);
-      //    case DayOfWeek.Tuesday: return GUILocalizeStrings.Get(12);
-      //    case DayOfWeek.Wednesday: return GUILocalizeStrings.Get(13);
-      //    case DayOfWeek.Thursday: return GUILocalizeStrings.Get(14);
-      //    case DayOfWeek.Friday: return GUILocalizeStrings.Get(15);
-      //    case DayOfWeek.Saturday: return GUILocalizeStrings.Get(16);
-      //    case DayOfWeek.Sunday: return GUILocalizeStrings.Get(12);
-      //    default: return "Current week";
-      //  }
-      //}
-      //else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(336, 0, 0)) // last week
-      //  return "Last week";
-      else if (DateTime.Now.Subtract(aStartTime) < new TimeSpan(672, 0, 0)) // current month
-        return GUILocalizeStrings.Get(6060); // "Current month";
-      else if (DateTime.Now.Year.Equals(compareDate.Year))
-        return GUILocalizeStrings.Get(6070); // "Current year";
-      else if (DateTime.Now.Year.Equals(compareDate.AddYears(1).Year))
-        return GUILocalizeStrings.Get(6080); // "Last year";
-      else return GUILocalizeStrings.Get(6090); // "Older";
     }
 
     private void LoadDirectory()

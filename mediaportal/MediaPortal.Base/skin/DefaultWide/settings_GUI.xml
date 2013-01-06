@@ -6,7 +6,6 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
 		<import>common.time.xml</import>
     <control>
       <description>background</description>
@@ -17,13 +16,13 @@
       <height>520</height>
       <width>435</width>
       <texture>backslide.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
       <posX>465</posX>
       <posY>160</posY>
       <layout>StackLayout(0, Horizontal, True)</layout>
@@ -33,12 +32,13 @@
         <id>3</id>
         <label>300120</label>
         <width>350</width>
-        <onup>17</onup>
+        <onup>21</onup>
       </control>
       <control>
         <description>General</description>
         <type>button</type>
         <id>2</id>
+        <width>350</width>
         <label>101016</label>
       </control>
       <control>
@@ -84,6 +84,7 @@
         <posY>368</posY>
         <width>350</width>
         <label>500</label>
+        <ondown>18</ondown>
       </control>
       <control>
         <description>File menu pin button</description>

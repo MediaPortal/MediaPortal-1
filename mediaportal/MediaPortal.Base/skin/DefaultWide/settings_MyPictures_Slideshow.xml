@@ -6,7 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		<import>common.window.xml</import>
+		
 		<import>common.time.xml</import>
     <!--Slideshow transition group-->
     <control>
@@ -18,7 +18,7 @@
       <height>205</height>
       <width>430</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Slideshow transition label</description>
@@ -27,6 +27,7 @@
       <posX>100</posX>
       <posY>120</posY>
       <label>300183</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Ken Buns transitions</description>
@@ -72,7 +73,7 @@
       <height>170</height>
       <width>430</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Rotation settings</description>
@@ -81,6 +82,7 @@
       <posX>100</posX>
       <posY>350</posY>
       <label>300184</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>EXIF rotation</description>
@@ -115,7 +117,7 @@
       <height>320</height>
       <width>660</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>Slideshow settings</description>
@@ -124,6 +126,7 @@
       <posX>580</posX>
       <posY>120</posY>
       <label>300187</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Speed label</description>
@@ -132,7 +135,7 @@
       <posX>590</posX>
       <posY>160</posY>
       <label>224</label>
-      
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Speed select</description>
@@ -153,6 +156,7 @@
       <posX>590</posX>
       <posY>205</posY>
       <label>225</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Transition time select</description>
@@ -172,7 +176,7 @@
       <id>102</id>
       <posX>590</posX>
       <posY>250</posY>
-      <label>13011</label>
+      <label>13011</label><textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>ken burns speed select</description>
@@ -219,7 +223,7 @@
       <height>210</height>
       <width>660</width>
       <texture>backslide2.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
     </control>
     <control>
       <description>View settings</description>
@@ -228,6 +232,7 @@
       <posX>580</posX>
       <posY>450</posY>
       <label>300188</label>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <description>Group by day</description>

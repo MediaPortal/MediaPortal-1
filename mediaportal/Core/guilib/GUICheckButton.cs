@@ -444,13 +444,22 @@ namespace MediaPortal.GUI.Library
       // Handle the GUI_MSG_LABEL_SET message
       if (message.TargetControlId == GetID)
       {
-        if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
+        switch (message.Message)
         {
-          if (message.Label != null)
-          {
-            Label = message.Label;
-          }
-          return true;
+          case GUIMessage.MessageType.GUI_MSG_LABEL_SET:
+            if (message.Label != null)
+            {
+              Label = message.Label;
+            }
+            return true;
+          case GUIMessage.MessageType.GUI_MSG_SELECTED:
+            base.Selected = true;
+            checkMark.Selected = true;
+            return true;
+          case GUIMessage.MessageType.GUI_MSG_DESELECTED:
+            base.Selected = false;
+            checkMark.Selected = false;
+            return true;
         }
       }
       // Let the base class handle the other messages

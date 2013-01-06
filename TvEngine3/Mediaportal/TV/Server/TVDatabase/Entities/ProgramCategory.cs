@@ -8,8 +8,11 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
@@ -18,6 +21,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     [KnownType(typeof(Program))]
     [KnownType(typeof(Recording))]
     [KnownType(typeof(History))]
+    [KnownType(typeof(TvGuideCategory))]
     public partial class ProgramCategory: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -55,6 +59,29 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private string _category;
+    
+        [DataMember]
+        public Nullable<int> IdTvGuideCategory
+        {
+            get { return _idTvGuideCategory; }
+            set
+            {
+                if (_idTvGuideCategory != value)
+                {
+                    ChangeTracker.RecordOriginalValue("IdTvGuideCategory", _idTvGuideCategory);
+                    if (!IsDeserializing)
+                    {
+                        if (TvGuideCategory != null && TvGuideCategory.IdTvGuideCategory != value)
+                        {
+                            TvGuideCategory = null;
+                        }
+                    }
+                    _idTvGuideCategory = value;
+                    OnPropertyChanged("IdTvGuideCategory");
+                }
+            }
+        }
+        private Nullable<int> _idTvGuideCategory;
 
         #endregion
         #region Navigation Properties
@@ -163,6 +190,23 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<History> _histories;
+    
+        [DataMember]
+        public TvGuideCategory TvGuideCategory
+        {
+            get { return _tvGuideCategory; }
+            set
+            {
+                if (!ReferenceEquals(_tvGuideCategory, value))
+                {
+                    var previousValue = _tvGuideCategory;
+                    _tvGuideCategory = value;
+                    FixupTvGuideCategory(previousValue);
+                    OnNavigationPropertyChanged("TvGuideCategory");
+                }
+            }
+        }
+        private TvGuideCategory _tvGuideCategory;
 
         #endregion
         #region ChangeTracking
@@ -245,10 +289,55 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             Programs.Clear();
             Recordings.Clear();
             Histories.Clear();
+            TvGuideCategory = null;
         }
 
         #endregion
         #region Association Fixup
+    
+        private void FixupTvGuideCategory(TvGuideCategory previousValue, bool skipKeys = false)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (previousValue != null && previousValue.ProgramCategories.Contains(this))
+            {
+                previousValue.ProgramCategories.Remove(this);
+            }
+    
+            if (TvGuideCategory != null)
+            {
+                if (!TvGuideCategory.ProgramCategories.Contains(this))
+                {
+                    TvGuideCategory.ProgramCategories.Add(this);
+                }
+    
+                IdTvGuideCategory = TvGuideCategory.IdTvGuideCategory;
+            }
+            else if (!skipKeys)
+            {
+                IdTvGuideCategory = null;
+            }
+    
+            if (ChangeTracker.ChangeTrackingEnabled)
+            {
+                if (ChangeTracker.OriginalValues.ContainsKey("TvGuideCategory")
+                    && (ChangeTracker.OriginalValues["TvGuideCategory"] == TvGuideCategory))
+                {
+                    ChangeTracker.OriginalValues.Remove("TvGuideCategory");
+                }
+                else
+                {
+                    ChangeTracker.RecordOriginalValue("TvGuideCategory", previousValue);
+                }
+                if (TvGuideCategory != null && !TvGuideCategory.ChangeTracker.ChangeTrackingEnabled)
+                {
+                    TvGuideCategory.StartTracking();
+                }
+            }
+        }
     
         private void FixupPrograms(object sender, NotifyCollectionChangedEventArgs e)
         {

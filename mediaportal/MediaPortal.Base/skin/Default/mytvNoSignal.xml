@@ -9,28 +9,28 @@
       <type>image</type>
       <description>bar</description>
       <id>0</id>
-      <posX>59</posX>
-      <posY>429</posY>
-      <width>607</width>
-      <height>149</height>
+      <posX>79</posX>
+      <posY>537</posY>
+      <width>810</width>
+      <height>187</height>
       <texture>dialog_background.png</texture>
     </control>
     <control>
       <type>progress</type>
       <description>Progress Bar</description>
       <id>1</id>
-      <posX>223</posX>
-      <posY>480</posY>
-      <width>199</width>
-      <height>4</height>
+      <posX>298</posX>
+      <posY>600</posY>
+      <width>266</width>
+      <height>6</height>
       <texturebg>osd_progress_background.png</texturebg>
     </control>
     <control>
       <type>label</type>
       <description>Quality</description>
       <id>101</id>
-      <posX>127</posX>
-      <posY>472</posY>
+      <posX>170</posX>
+      <posY>590</posY>
       <label>988</label>
       <align>left</align>
     </control>
@@ -38,18 +38,18 @@
       <type>label</type>
       <description>notify</description>
       <id>102</id>
-      <posX>127</posX>
-      <posY>448</posY>
+      <posX>170</posX>
+      <posY>560</posY>
       <label>-</label>
     </control>
     <control>
       <description>TV Logo</description>
       <type>image</type>
       <id>10</id>
-      <posX>519</posX>
-      <posY>454</posY>
-      <width>69</width>
-      <height>69</height>
+      <posX>693</posX>
+      <posY>568</posY>
+      <width>93</width>
+      <height>87</height>
       <texture>#TV.View.thumb</texture>
       <centered>yes</centered>
       <keepaspectratio>yes</keepaspectratio>

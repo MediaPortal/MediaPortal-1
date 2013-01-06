@@ -7,30 +7,29 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>calibration image</description>
       <type>image</type>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
       <texture>settingsUICalibration.png</texture>
     </control>
     <control>
       <description>rectangle image</description>
       <type>image</type>
       <id>1</id>
-      <posX>236</posX>
-      <posY>253</posY>
+      <posX>315</posX>
+      <posY>317</posY>
       <texture>list_sub_focus.png</texture>
     </control>
     <control>
       <description>coordinates label</description>
       <type>label</type>
       <id>2</id>
-      <posX>309</posX>
-      <posY>278</posY>
+      <posX>412</posX>
+      <posY>348</posY>
       <label>5</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>

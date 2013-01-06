@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>703</id>
+<defaultcontrol>24</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#defaultcontrol.onleft:9996</define>
+<define>#header.label:897</define>
+<controls>
+	<import>settings.menu.xml</import>
+		
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>252</posY>
+		<width>500</width>
+		<label>3</label>
+		<textcolor>85cffe</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>740</posX>
+		<posY>353</posY>
+		<layout>GridLayout(1, 0, 1, 0, 1)</layout>
+        
+	   <control Style="SettingsButtonLarge">
+			<description>MPEG-2 Video Codecs</description>
+			<type>button</type>
+			<id>24</id>
+			<label>6000</label>
+			<onup>28</onup>
+            <onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>H.264 Video Codecs</description>
+			<type>button</type>
+			<id>29</id>
+			<label>6036</label>
+            <onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>Audio Codecs</description>
+			<type>button</type>
+			<id>25</id>
+			<label>6001</label>
+            <onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>Audio Renderer</description>
+			<type>button</type>
+			<id>27</id>
+			<label>6002</label>
+            <onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	   <control Style="SettingsButtonLarge">
+			<description>Aspect Ratio</description>
+			<type>button</type>
+			<id>28</id>
+			<label>6004</label>
+			<ondown>24</ondown>
+            <onleft>#defaultcontrol.onleft</onleft>
+		</control>
+
+	</control>
+<import>common.time.xml</import>
+<import>titan.version.xml</import>
+</controls>
+</window>

@@ -46,7 +46,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
   /// </summary>
   public class TvGuideBase : GuideBase, IMDB.IProgress
   {
-  
+
 
     #region constants
 
@@ -101,14 +101,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
         TVHome.Navigator.SetCurrentGroup(newIndex);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
-        _cursorY = 1; // cursor should be on the program guide item
-        ChannelOffset = 0;
-        // reset to top; otherwise focus could be out of screen if new group has less then old position
-        _cursorX = 0; // first channel
         GetChannels(true);
+        PositionGuideCursorToCurrentChannel();
         Update(false);
         SetFocus();
         GUIWaitCursor.Hide();
+
       }
     }
 
@@ -250,27 +248,29 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
         if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {
-          GUIWaitCursor.Show();          
+          GUIWaitCursor.Show();
           _cursorY = 1; // cursor should be on the program guide item
           ChannelOffset = 0;
           // reset to top; otherwise focus could be out of screen if new group has less then old position
           _cursorX = 0; // set to top, otherwise index could be out of range in new group
           // group has been changed
           GetChannels(true);
+          PositionGuideCursorToCurrentChannel();
           Update(false);
-
           SetFocus();
           GUIWaitCursor.Hide();
         }
       }
     }
 
+    
+
+
     public override void Process()
     {
       TVHome.UpdateProgressPercentageBar();
 
-      OnKeyTimeout();
-      UpdateRecStateOnExpectedRecordings();
+      OnKeyTimeout();      
 
       if (_needUpdate)
       {
@@ -343,11 +343,23 @@ namespace Mediaportal.TV.TvPlugin.EPG
       }
     }
 
-    protected override void OnSelectItem(bool isItemSelected)
+    /// <summary>
+    /// Handle the selection of a guide entry.
+    /// </summary>
+    /// <param name="isItemSelected"></param>
+    /// <returns>true if a channel was attempted to be tuned; that the channel is or is not playing is not indicated</returns>
+    protected override bool OnSelectItem(bool isItemSelected)
     {
+      bool tuneAttempted = false;
+      TVHome.Navigator.UpdateCurrentChannel();
       if (_currentProgram == null)
       {
-        return;
+        return tuneAttempted;
+      }
+
+      if (_currentProgram == null)
+      {
+        return tuneAttempted;
       }
       if (isItemSelected)
       {
@@ -380,7 +392,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
               var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
               {
-                return;
+                return tuneAttempted;
               }
 
               dlg.Reset();
@@ -391,7 +403,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
               if (dlg.SelectedLabel == -1)
               {
-                return;
+                return tuneAttempted;
               }
               if (_recordingList != null)
               {
@@ -406,7 +418,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
                         TVUtil.PlayRecording(recDB);
                       }
                     }
-                    return;
+                    return tuneAttempted;
+
 
                   case 938: // View this channel
                     {
@@ -416,7 +429,9 @@ namespace Mediaportal.TV.TvPlugin.EPG
                         g_Player.ShowFullScreenWindow();
                       }
                     }
-                    return;
+                    tuneAttempted = true;
+                    return tuneAttempted;
+
                 }
               }
               else
@@ -432,6 +447,8 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 {
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
+
               }
             }
             else //not recording
@@ -444,7 +461,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
                 if (dlg == null)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 dlg.Reset();
@@ -455,7 +472,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
                 if (dlg.SelectedLabel == -1)
                 {
-                  return;
+                  return tuneAttempted;
                 }
 
                 switch (dlg.SelectedId)
@@ -467,7 +484,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
                   case 938:
                     this.LogDebug("TVGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
+                    try
+                    {
+                      TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
+                    }
+                    finally
+                    {
+                      GUIWaitCursor.Hide();
+                    }                    
                     GUIWaitCursor.Hide();
                     if (g_Player.Playing)
                     {
@@ -477,6 +501,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
                     {
                       this.LogDebug("TVGuide: no show currently running to switch to fullscreen");
                     }
+                    tuneAttempted = true;
                     break;
                 }
               }
@@ -487,13 +512,22 @@ namespace Mediaportal.TV.TvPlugin.EPG
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
+                try
+                {
+                  TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
+                }
+                finally
+                {
+                  GUIWaitCursor.Hide();
+                }
+                
                 GUIWaitCursor.Hide();
                 if (g_Player.Playing)
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
                   g_Player.ShowFullScreenWindow();
                 }
+                tuneAttempted = true;
               }
             } //end of not recording
           }
@@ -505,12 +539,14 @@ namespace Mediaportal.TV.TvPlugin.EPG
             }
           }
 
-          return;
+          return tuneAttempted;
+
         }
         ShowProgramInfo();
-        return;
+        return tuneAttempted;
       }
       ShowProgramInfo();
+      return tuneAttempted;
     }
 
     /// <summary>
@@ -529,34 +565,25 @@ namespace Mediaportal.TV.TvPlugin.EPG
         GUIWindow tvHome = GUIWindowManager.GetWindow((int)Window.WINDOW_TV);
         if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
         {
+          //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
           bool didRecStart = TVHome.ManualRecord(new ChannelBLL(_currentProgram.Entity.Channel), GetID);
-          _currentProgram.IsRecordingOncePending = didRecStart;
           //refresh view.
           if (didRecStart)
           {
             lock (_recordingsExpectedLock)
             {
               _recordingsExpected.Add(_currentProgram.Entity.Channel);
-            }
+            }            
           }
-          else
-          {
-            lock (_recordingsExpectedLock)
-            {
-              if (_recordingsExpected.Contains(_currentProgram.Entity.Channel))
-              {
-                _recordingsExpected.Remove(_currentProgram.Entity.Channel);
-              }
-            }
-          }
-          _needUpdate = true;
         }
       }
       else
       {
         ShowProgramInfo();
       }
+
     }
+    
 
     protected override bool IsChannelTypeCorrect(Channel channel)
     {
@@ -566,7 +593,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
     protected override IList<Channel> GetGuideChannelsForGroup()
     {
       return
-        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV).ToList();      
+        ServiceAgents.Instance.ChannelServiceAgent.GetAllChannelsByGroupIdAndMediaType(TVHome.Navigator.CurrentGroup.IdGroup, MediaTypeEnum.TV).ToList();
     }
 
     protected override bool HasSelectedGroup()
@@ -663,7 +690,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           case 938: // view channel
 
             this.LogDebug("viewch channel:{0}", _currentChannel);
-            if (_currentProgram != null) 
+            if (_currentProgram != null)
             {
               TVHome.ViewChannelAndCheck(_currentProgram.Entity.Channel, 0);
               if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.Entity.IdChannel)
@@ -680,7 +707,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
           case 629: //stop recording
             if (_currentProgram != null)
             {
-              Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(_currentProgram.Entity.IdChannel);              
+              Schedule schedule = ServiceAgents.Instance.ScheduleServiceAgent.GetScheduleWithNoEPG(_currentProgram.Entity.IdChannel);
               TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule);
             }
             Update(true); //remove RED marker
@@ -707,45 +734,15 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     #region private methods
 
-    private void UpdateRecStateOnExpectedRecordings()
-    {
-      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
-      bool wasAnyRecordingExpectedStarted = false;
-      lock (_recordingsExpectedLock)
-      {
-        if (_recordingsExpected.Count > 0)
-        {
-          TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
-          if (ts.TotalMilliseconds > 1000)
-          {
-            _updateTimerRecExpected = DateTime.Now;
-            IList<Channel> recordingsExpectedToRemove = new List<Channel>();
-            foreach (Channel recordingExpected in _recordingsExpected)
-            {
-              IVirtualCard card;
-              if (ServiceAgents.Instance.ControllerServiceAgent.IsRecording(recordingExpected.IdChannel, out card))
-              {
-                wasAnyRecordingExpectedStarted = true;
-                recordingsExpectedToRemove.Add(recordingExpected);
-              }
-            }
-            _recordingsExpected.RemoveAll(recordingsExpectedToRemove.Contains);
-          }
-        }
-      }
+    
 
-      if (wasAnyRecordingExpectedStarted)
-      {
-        GetChannels(true);
-        LoadSchedules(true);
-        _needUpdate = true;
-      }
-    }
+   
+
 
     private void OnGetIMDBInfo()
     {
-      var movieDetails = new IMDBMovie {SearchString = _currentProgram.Entity.Title};
-      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
+      var movieDetails = new IMDBMovie { SearchString = _currentProgram.Entity.Title };
+      if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         IList<Program> progs = ServiceAgents.Instance.ProgramServiceAgent.GetProgramsByChannelAndStartEndTimes(_currentProgram.Entity.IdChannel,
           _currentProgram.Entity.StartTime, _currentProgram.Entity.EndTime).ToList();
@@ -754,12 +751,12 @@ namespace Mediaportal.TV.TvPlugin.EPG
         {
           Program prog = progs[0];
           prog.Description = movieDetails.Plot;
-          
+
           //todo gibman: handle new genre here.. simply add it.
           prog.ProgramCategory.Category = movieDetails.Genre;
 
 
-          prog.StarRating = (int)movieDetails.Rating;          
+          prog.StarRating = (int)movieDetails.Rating;
           ServiceAgents.Instance.ProgramServiceAgent.SaveProgram(prog);
         }
         var videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
@@ -946,6 +943,16 @@ namespace Mediaportal.TV.TvPlugin.EPG
       return true;
     }
 
+
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      // won't occure
+      selected = 0;
+      return true;
+    }
+
+
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       // won't occure
@@ -958,12 +965,7 @@ namespace Mediaportal.TV.TvPlugin.EPG
       return true;
     }
 
-    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
-    {
-      // won't occure
-      selected = 0;
-      return true;
-    }
+    
 
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
@@ -980,16 +982,47 @@ namespace Mediaportal.TV.TvPlugin.EPG
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      // won't occure
-      movieName = "";
-      return true;
+      movieName = fetcher.MovieName;
+      if (GetKeyboard(ref movieName))
+      {
+        if (movieName == string.Empty)
+        {
+          return false;
+        }
+        return true;
+      }
+      movieName = string.Empty;
+      return false;
+
     }
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
-      // won't occure
-      selectedMovie = 0;
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
+      // more then 1 movie found
+      // ask user to select 1
+      pDlgSelect.Reset();
+      pDlgSelect.SetHeading(196); //select movie
+      for (int i = 0; i < fetcher.Count; ++i)
+      {
+        pDlgSelect.Add(fetcher[i].Title);
+      }
+      pDlgSelect.EnableButton(true);
+      pDlgSelect.SetButtonLabel(413); // manual
+      pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+      // and wait till user selects one
+      selectedMovie = pDlgSelect.SelectedLabel;
+      if (pDlgSelect.IsButtonPressed)
+      {
+        return true;
+      }
+      if (selectedMovie == -1)
+      {
+        return false;
+      }
       return true;
+
     }
 
     public bool OnScanStart(int total)

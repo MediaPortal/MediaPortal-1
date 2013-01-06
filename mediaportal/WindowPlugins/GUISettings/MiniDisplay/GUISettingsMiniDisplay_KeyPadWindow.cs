@@ -83,12 +83,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
       base.OnClicked(controlId, control, actionType);
     }
 
-    protected override void OnPageDestroy(int newWindowId)
-    {
-      this.SaveSettings();
-      base.OnPageDestroy(newWindowId);
-    }
-
     public override bool OnMessage(GUIMessage message)
     {
       if (!base.OnMessage(message))
@@ -119,6 +113,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
           GUIWindowManager.CloseCurrentWindow();
         }
       }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)

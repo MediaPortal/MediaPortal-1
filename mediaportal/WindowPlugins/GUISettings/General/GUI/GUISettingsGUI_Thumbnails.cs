@@ -23,7 +23,9 @@ using System.Collections;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Services;
 using MediaPortal.Util;
+using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings
@@ -40,6 +42,7 @@ namespace WindowPlugins.GUISettings
     [SkinControl(6)] protected GUICheckButton btnEnableVideosThumbs= null;
     [SkinControl(7)] protected GUICheckButton btnEnableLeaveThumbInFolder = null;
     [SkinControl(8)] protected GUIButtonControl btnDeleteVideosThumbs = null;
+    [SkinControl(20)] protected GUIButtonControl btnClearBlacklistedThumbs = null;
     
     private enum Controls
     {
@@ -217,6 +220,10 @@ namespace WindowPlugins.GUISettings
         Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Utils.GetThumbExtension()));
         Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()));
       }
+      if (control == btnClearBlacklistedThumbs)
+      {
+        ClearBlacklistedThumbs();
+      }
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -241,6 +248,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -328,6 +341,25 @@ namespace WindowPlugins.GUISettings
     private void SettingsChanged(bool settingsChanged)
     {
       MediaPortal.GUI.Settings.GUISettings.SettingsChanged = settingsChanged;
+    }
+
+    private void ClearBlacklistedThumbs()
+    {
+      IVideoThumbBlacklist blacklist;
+      if (GlobalServiceProvider.IsRegistered<IVideoThumbBlacklist>())
+      {
+        blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      }
+      else
+      {
+        blacklist = new VideoThumbBlacklistDBImpl();
+        GlobalServiceProvider.Add<IVideoThumbBlacklist>(blacklist);
+      }
+
+      if (blacklist != null)
+      {
+        blacklist.Clear();
+      }
     }
 
   }

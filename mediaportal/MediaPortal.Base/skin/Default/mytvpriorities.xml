@@ -14,14 +14,14 @@
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>59</posX>
-      <posY>9</posY>
+      <posX>79</posX>
+      <posY>12</posY>
       <texture>television_logo.png</texture>
     </control>
     <!--     <control>
@@ -114,24 +114,24 @@
         <description>scheduler recordings listcontrol</description>
         <type>updownlistcontrol</type>
         <id>10</id>
-        <height>369</height>
-        <textXOff>59</textXOff>
-        <textYOff>1</textYOff>
-        <textXOff2>419</textXOff2>
-        <textYOff2>28</textYOff2>
-        <textXOff3>99</textXOff3>
-        <textYOff3>28</textYOff3>
-        <IconXOff>11</IconXOff>
-        <PinIconXOff>50</PinIconXOff>
+        <height>462</height>
+        <textXOff>79</textXOff>
+        <textYOff>2</textYOff>
+        <textXOff2>559</textXOff2>
+        <textYOff2>36</textYOff2>
+        <textXOff3>132</textXOff3>
+        <textYOff3>36</textYOff3>
+        <IconXOff>15</IconXOff>
+        <PinIconXOff>37</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
-        <spinPosX>605</spinPosX>
-        <spinPosY>417</spinPosY>
-        <itemWidth>34</itemWidth>
-        <itemHeight>34</itemHeight>
+        <spinPosX>807</spinPosX>
+        <spinPosY>522</spinPosY>
+        <itemWidth>46</itemWidth>
+        <itemHeight>43</itemHeight>
         <textureFocus>list_sub_focus.png</textureFocus>
         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-        <spaceBetweenItems>4</spaceBetweenItems>
-        <textureHeight>49</textureHeight>
+        <spaceBetweenItems>6</spaceBetweenItems>
+        <textureHeight>62</textureHeight>
         <keepaspectratio>no</keepaspectratio>
         <font2>font10</font2>
         <font3>font10</font3>
@@ -145,9 +145,9 @@
       <description>Current program title</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>259</posX>
-      <posY>440</posY>
-      <width>249</width>
+      <posX>346</posX>
+      <posY>550</posY>
+      <width>333</width>
       <label>#TV.Scheduled.Title</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -156,8 +156,8 @@
       <description>Current program time</description>
       <type>label</type>
       <id>14</id>
-      <posX>259</posX>
-      <posY>460</posY>
+      <posX>346</posX>
+      <posY>575</posY>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
       <font>font13</font>
@@ -167,10 +167,10 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>259</posX>
-      <posY>484</posY>
-      <width>429</width>
-      <height>64</height>
+      <posX>346</posX>
+      <posY>606</posY>
+      <width>573</width>
+      <height>81</height>
       <label>#TV.Scheduled.Description</label>
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
@@ -179,8 +179,8 @@
       <description>genre</description>
       <type>label</type>
       <id>17</id>
-      <posX>659</posX>
-      <posY>460</posY>
+      <posX>879</posX>
+      <posY>575</posY>
       <label>#TV.Scheduled.Genre</label>
       <align>right</align>
       <font>font13</font>

@@ -218,6 +218,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities
     }
 
     /// <summary>
+    /// Checks if the program ended prior to the specified date/time
+    /// </summary>
+    /// <param name="tCurTime">date and time</param>
+    /// <returns>true if program ended prior to tCurTime</returns>
+    public bool EndedBefore(DateTime tCurTime)
+    {
+      bool bEndedBefore = _entity.EndTime <= tCurTime;
+      return bEndedBefore;
+    }
+
+    /// <summary>
     /// Checks if the program is running between the specified start and end time/dates, i.e. whether the intervals overlap
     /// </summary>
     /// <param name="tStartTime">Start date and time</param>

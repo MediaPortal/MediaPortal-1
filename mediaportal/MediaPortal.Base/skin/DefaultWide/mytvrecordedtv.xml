@@ -15,107 +15,151 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <id>500</id>
       <type>image</type>
-      <posX>76</posX>
-      <posY>333</posY>
+      <posX>990</posX>
+      <posY>180</posY>
       <width>245</width>
       <height>138</height>
       <texture mask="Picturethumbmask.png">#selectedthumb</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+      <visible>[facadeview.list|facadeview.album]</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>76</posX>
-      <posY>333</posY>
+      <posX>990</posX>
+      <posY>180</posY>
       <width>245</width>
       <height>138</height>
       <texture>Picturethumbframe.png</texture>
-      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+      <visible>[facadeview.list|facadeview.album]+Control.HasThumb(500)</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>136</posX>
-      <posY>500</posY>
-      <width>286</width>
-      <height>197</height>
+      <posX>990</posX>
+      <posY>180</posY>
       <texture>-</texture>
     </control>
     <control>
-      <type>group</type>
-      <description>group element</description>
-      <id>24</id>
-      <posX>71</posX>
-      <posY>121</posY>
-      <layout>StackLayout</layout>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>2</defaultcontrol>
+      <onexit>0</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>-60</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>275</width>
+      <height>720</height>
+      <dimColor>00ffffff</dimColor>
       <control>
-        <type>menubutton</type>
-        <description>View-As button</description>
-        <id>2</id>
-        <onleft>2</onleft>
-        <onright>50</onright>
-        <onup>17</onup>
-        <ondown>3</ondown>
-        <label></label>
-        <mode>dialoglist</mode>
-        <dialogTitle>792</dialogTitle>
-        <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>95</valuePrefixText>
+        <type>image</type>
+        <id>0</id>
+        <width>1280</width>
+        <height>720</height>
+        <texture>white.png</texture>
+        <colordiffuse>201e90ff</colordiffuse>
       </control>
       <control>
-        <type>sortbutton</type>
-        <id>3</id>
-        <onleft>3</onleft>
-        <onright>50</onright>
-        <onup>2</onup>
-        <ondown>5</ondown>
-        <label>620</label>
+        <type>image</type>
+        <posX>26</posX>
+        <posY>78</posY>
+        <width>320</width>
+        <height>591</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
       </control>
       <control>
-        <type>menubutton</type>
-        <description>All,Genre,Channel button</description>
-        <id>5</id>
-        <onleft>5</onleft>
-        <onright>50</onright>
-        <onup>3</onup>
-        <ondown>6</ondown>
-        <label></label>
-        <mode>dialoglist</mode>
-        <dialogTitle>499</dialogTitle>
-        <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>97</valuePrefixText>
-      </control>
-      <control>
-        <type>button</type>
-        <description>cleanup button</description>
-        <id>6</id>
-        <onleft>6</onleft>
-        <onright>50</onright>
-        <onup>5</onup>
-        <ondown>99</ondown>
-        <label>624</label>
+        <description>group element</description>
+        <type>group</type>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>50</posX>
+        <posY>121</posY>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <type>menubutton</type>
+          <description>View-As button</description>
+          <id>2</id>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          <onup>17</onup>
+          <ondown>3</ondown>
+          <label></label>
+          <mode>dialoglist</mode>
+          <dialogTitle>792</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>95</valuePrefixText>
+        </control>
+        <control>
+          <type>sortbutton</type>
+          <id>3</id>
+          <onleft>3</onleft>
+          <onright>50</onright>
+          <onup>2</onup>
+          <ondown>5</ondown>
+          <label>620</label>
+        </control>
+        <control>
+          <type>menubutton</type>
+          <description>All,Genre,Channel button</description>
+          <id>5</id>
+          <onleft>5</onleft>
+          <onright>50</onright>
+          <onup>3</onup>
+          <ondown>6</ondown>
+          <label></label>
+          <mode>dialoglist</mode>
+          <dialogTitle>499</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>97</valuePrefixText>
+        </control>
+        <control>
+          <type>button</type>
+          <description>cleanup button</description>
+          <id>6</id>
+          <onleft>6</onleft>
+          <onright>50</onright>
+          <onup>5</onup>
+          <ondown>99</ondown>
+          <label>624</label>
+        </control>
       </control>
     </control>
     <control>
       <description>Seperator</description>
       <type>image</type>
       <id>1</id>
-      <posX>462</posX>
-      <posY>505</posY>
-      <width>780</width>
+      <posX>80</posX>
+      <posY>425</posY>
+      <width>1140</width>
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
       <type>image</type>
-      <posX>462</posX>
-      <posY>515</posY>
-      <width>80</width>
-      <height>73</height>
+      <posX>80</posX>
+      <posY>440</posY>
+      <width>60</width>
+      <height>60</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
@@ -125,21 +169,20 @@
       <description>channel</description>
       <id>0</id>
       <type>fadelabel</type>
-      <posX>552</posX>
-      <posY>510</posY>
-      <align>left</align>
-      <width>680</width>
+      <posX>160</posX>
+      <posY>440</posY>
+      <width>1060</width>
       <textcolor>ff6FAFE1</textcolor>
-      <label>#TV.RecordedTV.Channel      #TV.RecordedTV.Time</label>
+      <label>#TV.RecordedTV.Channel  |  #TV.RecordedTV.Time  |  #TV.RecordedTV.Genre</label>
       <font>font12</font>
     </control>
     <control>
       <description>Program Title</description>
       <id>14</id>
       <type>fadelabel</type>
-      <posX>552</posX>
-      <posY>534</posY>
-      <width>680</width>
+      <posX>160</posX>
+      <posY>465</posY>
+      <width>1060</width>
       <label>#TV.RecordedTV.Title</label>
       <align>left</align>
       <font>font14</font>
@@ -149,7 +192,7 @@
       <description>Current program Genre</description>
       <type>fadelabel</type>
       <id>13</id>
-      <posX>552</posX>
+      <posX>2552</posX>
       <posY>566</posY>
       <width>680</width>
       <label>#TV.RecordedTV.Genre</label>
@@ -161,10 +204,10 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>462</posX>
-      <posY>600</posY>
-      <height>95</height>
-      <width>800</width>
+      <posX>160</posX>
+      <posY>505</posY>
+      <width>1060</width>
+      <height>105</height>
       <label>#TV.RecordedTV.Description</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>

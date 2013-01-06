@@ -4,95 +4,93 @@
   <id>510</id>
   <defaultcontrol>33</defaultcontrol>
   <allowoverlay>no</allowoverlay>
+  <define>#usePlayFanart:Yes</define>
   <define>#selecteditem:</define>
   <controls>
     <control>
       <type>label</type>
       <description>Dummy label</description>
       <id>1</id>
-      <posX>1158</posX>
+      <posX>1545</posX>
+      <label>-</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Dummy button</description>
+      <id>30</id>
+      <posX>1545</posX>
+      <label>-</label>
+    </control>
+    <control>
+      <type>button</type>
+      <description>Dummy button</description>
+      <id>31</id>
+      <posX>1545</posX>
       <label>-</label>
     </control>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>0</id>
-      <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <texture>BH Music.jpg</texture>
+      <posX>-240</posX>
+      <posY>0</posY>
+      <width>1440</width>
+      <height>720</height>
     </control>
+    <import>common.music.play.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <import>common.music.play.fanart.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <control>
       <id>0</id>
       <description>album/artist/genre etc info label</description>
       <type>fadelabel</type>
       <posX>0</posX>
-      <posY>44</posY>
-      <width>720</width>
-      <font>font16</font>
+      <posY>80</posY>
+      <width>960</width>
+      <font>font12</font>
       <align>center</align>
-      <label>#(L(179)): #Play.Current.Title\r#(L(171)) #Play.Current.Artist\r#(L(170)) #Play.Current.Album\r#(L(435)) #Play.Current.Track\r#(L(436)) #Play.Current.Year</label>
+      <label>#(L(179)): #Play.Current.Title  |  #(L(171)) #Play.Current.Artist</label>
+      <textcolor>ff6FAFE1</textcolor>
+    </control>
+    <control>
+      <id>0</id>
+      <description>album/artist/genre etc info label</description>
+      <type>fadelabel</type>
+      <posX>0</posX>
+      <posY>110</posY>
+      <width>960</width>
+      <font>font12</font>
+      <align>center</align>
+      <label>#(L(170)) #Play.Current.Album  |  #(L(435)) #Play.Current.Track  |  #(L(436)) #Play.Current.Year</label>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control>
       <type>label</type>
       <description>Dummy label to cause focus on top tracks / related tracks</description>
       <id>888</id>
-      <posX>1158</posX>
+      <posX>1545</posX>
       <label>-</label>
-    </control>
-    <control>
-      <type>image</type>
-      <description>CD Shadow</description>
-      <id>0</id>
-      <posX>509</posX>
-      <posY>124</posY>
-      <width>180</width>
-      <height>180</height>
-      <texture>playing_mask.png</texture>
-      <colordiffuse>40ffffff</colordiffuse>
-    </control>
-    <control>
-      <type>image</type>
-      <description>CD Image when no thumb</description>
-      <id>0</id>
-      <posX>523</posX>
-      <posY>112</posY>
-      <width>180</width>
-      <height>180</height>
-      <texture>playing_back.png</texture>
-    </control>
-    <control>
-      <description>current thumb</description>
-      <type>image</type>
-      <id>600</id>
-      <posX>523</posX>
-      <posY>112</posY>
-      <width>180</width>
-      <height>180</height>
-      <texture mask="playing_mask.png">#Play.Current.Thumb</texture>
-    </control>
-    <control>
-      <type>image</type>
-      <description>Overlay CD Center for current thumb</description>
-      <id>0</id>
-      <posX>523</posX>
-      <posY>112</posY>
-      <width>180</width>
-      <height>180</height>
-      <texture>playing_front.png</texture>
     </control>
     <control>
       <type>image</type>
       <description>album art image</description>
       <id>112</id>
-      <posX>416</posX>
-      <posY>104</posY>
-      <width>185</width>
-      <height>185</height>
-      <texture mask="picturethumbmask.png">-</texture>
+      <posX>708</posX>
+      <posY>240</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture mask="cdthumbmask.png">#play.current.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>yes</zoom>
@@ -101,69 +99,72 @@
       <type>image</type>
       <description>CD Cover</description>
       <id>0</id>
-      <posX>416</posX>
-      <posY>104</posY>
-      <width>185</width>
-      <height>185</height>
-      <texture>picturethumbframe.png</texture>
+      <posX>708</posX>
+      <posY>240</posY>
+      <width>195</width>
+      <height>195</height>
+      <texture>cdthumbframe.png</texture>
     </control>
     <control>
-      <description>Progress background</description>
       <type>image</type>
       <id>117</id>
-      <posX>1510</posX>
-      <posY>388</posY>
-      <width>189</width>
-      <height>21</height>
-      <visible>player.hasmedia</visible>
-      <texture>osd_progress_background.png</texture>
+      <posX>711</posX>
+      <posY>452</posY>
+      <width>190</width>
+      <height>18</height>
+      <texture>osd_progress_background_medium.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
-      <description>Progress Bar</description>
+      <description>progress bar</description>
       <type>progress</type>
       <id>118</id>
-      <posX>459</posX>
-      <posY>389</posY>
-      <width>189</width>
-      <height>20</height>
+      <posX>701</posX>
+      <posY>453</posY>
+      <width>205</width>
+      <height>16</height>
       <label>#percentage</label>
-      <texturebg>osd_progress_background.png</texturebg>
-      <onlymidtexture>yes</onlymidtexture>
-      <midwidth>189</midwidth>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>205</midwidth>
       <midheight>16</midheight>
       <midoffsetX>0</midoffsetX>
-      <midoffsetY>2</midoffsetY>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_left.png</lefttexture>
       <midtexture>osd_progress_mid.png</midtexture>
-      <visible>player.hasmedia</visible>
+      <righttexture>osd_progress_right.png</righttexture>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <type>label</type>
       <description>track progress label</description>
-      <id>0</id>
-      <posX>451</posX>
-      <posY>386</posY>
+      <id>119</id>
+      <posX>704</posX>
+      <posY>445</posY>
       <label>#currentplaytime</label>
       <font>font14</font>
       <align>right</align>
-      <visible>player.hasmedia</visible>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <type>label</type>
       <description>track duration label</description>
-      <id>0</id>
-      <posX>652</posX>
-      <posY>386</posY>
-      <label>#duration</label>
+      <id>110</id>
+      <posX>909</posX>
+      <posY>445</posY>
+      <label>#currentremaining</label>
       <font>font14</font>
       <align>left</align>
-      <visible>player.hasmedia</visible>
+      <textcolor>ivory</textcolor>
+      <visible>Player.HasAudio+!Player.HasVideo+string.equals(#duration)</visible>
     </control>
     <control>
       <type>label</type>
       <description>up next label</description>
       <id>20</id>
-      <posX>22</posX>
-      <posY>232</posY>
+      <posX>30</posX>
+      <posY>170</posY>
       <label>4541</label>
       <font>font12</font>
       <align>left</align>
@@ -173,30 +174,30 @@
       <description>music logo</description>
       <type>image</type>
       <id>600</id>
-      <posX>22</posX>
-      <posY>260</posY>
-      <width>39</width>
-      <height>39</height>
-      <texture mask="Picturethumbmask.png">#Play.Next.Thumb</texture>
+      <posX>30</posX>
+      <posY>202</posY>
+      <width>52</width>
+      <height>52</height>
+      <texture mask="cdthumbmask.png">#Play.Next.Thumb</texture>
     </control>
     <control>
       <description>music rectangle</description>
       <type>image</type>
       <id>0</id>
-      <posX>22</posX>
-      <posY>260</posY>
-      <width>39</width>
-      <height>39</height>
-      <texture>Picturethumbframe.png</texture>
+      <posX>30</posX>
+      <posY>202</posY>
+      <width>52</width>
+      <height>52</height>
+      <texture>cdthumbframe.png</texture>
       <visible>player.hasmedia</visible>
     </control>
     <control>
       <type>fadelabel</type>
       <description>next track label</description>
       <id>121</id>
-      <posX>73</posX>
-      <posY>256</posY>
-      <width>331</width>
+      <posX>97</posX>
+      <posY>200</posY>
+      <width>442</width>
       <label>#(L(179)): #Play.Next.Title</label>
       <align>left</align>
       <font>font12</font>
@@ -206,9 +207,9 @@
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>123</id>
-      <posX>73</posX>
-      <posY>276</posY>
-      <width>331</width>
+      <posX>97</posX>
+      <posY>225</posY>
+      <width>442</width>
       <label>#(L(171)) #Play.Next.Artist</label>
       <align>left</align>
       <font>font12</font>
@@ -218,9 +219,9 @@
       <type>fadelabel</type>
       <description>next artist label</description>
       <id>0</id>
-      <posX>73</posX>
-      <posY>296</posY>
-      <width>331</width>
+      <posX>97</posX>
+      <posY>250</posY>
+      <width>442</width>
       <label>#(L(170)) #Play.Next.Album</label>
       <align>left</align>
       <font>font12</font>
@@ -230,30 +231,16 @@
     <!-- *************************** Here are the top tracks / related tracks  ***************************** -->
     <!-- *************************************************************************************************** -->
     <control>
-      <type>image</type>
-      <id>334</id>
-      <posX>-20</posX>
-      <posY>328</posY>
-      <width>326</width>
-      <height>240</height>
-      <texture>menubg.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
-      <visible>control.hasFocus(9879)|control.hasFocus(155)|control.hasFocus(166)</visible>
-    </control>
-    <control>
       <type>group</type>
       <description>group element</description>
-      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
-      <visible>control.hasFocus(9879)|control.isvisible(334)</visible>
       <control>
         <type>listcontrol</type>
         <description>list of best album tracks</description>
         <id>166</id>
-        <posX>22</posX>
-        <posY>360</posY>
-        <width>227</width>
-        <height>144</height>
+        <posX>30</posX>
+        <posY>330</posY>
+        <width>378</width>
+        <height>180</height>
         <onright>9876</onright>
         <ondown>155</ondown>
         <onleft>333</onleft>
@@ -264,20 +251,20 @@
         <textureDown>-</textureDown>
         <textureUpFocus>-</textureUpFocus>
         <textureDownFocus>-</textureDownFocus>
-        <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>
         <shadedColor>ffffffff</shadedColor>
-        <textureHeight>24</textureHeight>
+        <textureHeight>30</textureHeight>
         <font>font11</font>
+        <textXOff>0</textXOff>
       </control>
       <control>
         <type>listcontrol</type>
         <description>list of best tag tracks</description>
         <id>155</id>
-        <posX>22</posX>
-        <posY>476</posY>
-        <width>278</width>
-        <height>144</height>
+        <posX>30</posX>
+        <posY>475</posY>
+        <width>378</width>
+        <height>180</height>
         <onup>166</onup>
         <onleft>333</onleft>
         <onright>333</onright>
@@ -289,22 +276,22 @@
         <textureDown>-</textureDown>
         <textureUpFocus>-</textureUpFocus>
         <textureDownFocus>-</textureDownFocus>
-        <textureFocus>list_sub_focus_arrow_small.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>
         <shadedColor>ffffffff</shadedColor>
-        <textureHeight>24</textureHeight>
+        <textureHeight>30</textureHeight>
         <font>font11</font>
+        <textXOff>0</textXOff>
       </control>
       <control>
         <description>unknown rating1</description>
         <type>imagelist</type>
         <id>77</id>
-        <posX>258</posX>
-        <posY>365</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>337</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -318,12 +305,12 @@
         <description>unknown rating2</description>
         <type>imagelist</type>
         <id>78</id>
-        <posX>258</posX>
-        <posY>390</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>368</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -337,12 +324,12 @@
         <description>unknown rating3</description>
         <type>imagelist</type>
         <id>79</id>
-        <posX>258</posX>
-        <posY>415</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>399</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -356,12 +343,12 @@
         <description>existent rating1</description>
         <type>imagelist</type>
         <id>80</id>
-        <posX>258</posX>
-        <posY>365</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>337</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -375,12 +362,12 @@
         <description>existent rating2</description>
         <type>imagelist</type>
         <id>81</id>
-        <posX>258</posX>
-        <posY>390</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>368</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -394,12 +381,12 @@
         <description>existent rating3</description>
         <type>imagelist</type>
         <id>82</id>
-        <posX>258</posX>
-        <posY>415</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>399</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -413,12 +400,12 @@
         <description>known rating1</description>
         <type>imagelist</type>
         <id>83</id>
-        <posX>258</posX>
-        <posY>365</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>337</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -432,12 +419,12 @@
         <description>known rating2</description>
         <type>imagelist</type>
         <id>84</id>
-        <posX>258</posX>
-        <posY>390</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>368</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -451,12 +438,12 @@
         <description>known rating3</description>
         <type>imagelist</type>
         <id>85</id>
-        <posX>258</posX>
-        <posY>415</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>399</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -470,12 +457,12 @@
         <description>famous rating1</description>
         <type>imagelist</type>
         <id>87</id>
-        <posX>258</posX>
-        <posY>365</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>337</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -489,12 +476,12 @@
         <description>famous rating2</description>
         <type>imagelist</type>
         <id>88</id>
-        <posX>258</posX>
-        <posY>390</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>368</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -508,12 +495,12 @@
         <description>famous rating3</description>
         <type>imagelist</type>
         <id>89</id>
-        <posX>258</posX>
-        <posY>415</posY>
-        <width>56</width>
-        <height>25</height>
-        <textureWidth>9</textureWidth>
-        <textureHeight>14</textureHeight>
+        <posX>345</posX>
+        <posY>399</posY>
+        <width>75</width>
+        <height>32</height>
+        <textureWidth>12</textureWidth>
+        <textureHeight>18</textureHeight>
         <subitems>
           <subitem>greystar.png</subitem>
           <subitem>stargood.png</subitem>
@@ -527,9 +514,9 @@
         <type>fadelabel</type>
         <description>best album tracks label</description>
         <id>29</id>
-        <posX>22</posX>
-        <posY>336</posY>
-        <width>292</width>
+        <posX>30</posX>
+        <posY>300</posY>
+        <width>390</width>
         <label>33030</label>
         <font>font12</font>
         <textcolor>ff6FAFE1</textcolor>
@@ -538,9 +525,9 @@
         <type>fadelabel</type>
         <description>best tag tracks label</description>
         <id>28</id>
-        <posX>22</posX>
-        <posY>452</posY>
-        <width>292</width>
+        <posX>30</posX>
+        <posY>445</posY>
+        <width>390</width>
         <font>font12</font>
         <label>Top tracks for tag</label>
         <textcolor>ff6FAFE1</textcolor>

@@ -7,8 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.Common;
 using System.Data.EntityClient;
+using System.Data.Metadata.Edm;
+using System.Data.Objects.DataClasses;
 using System.Data.Objects;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
@@ -264,6 +274,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             get { return _recordingCredits  ?? (_recordingCredits = CreateObjectSet<RecordingCredit>("RecordingCredits")); }
         }
         private ObjectSet<RecordingCredit> _recordingCredits;
+    
+        public ObjectSet<TvGuideCategory> TvGuideCategories
+        {
+            get { return _tvGuideCategories  ?? (_tvGuideCategories = CreateObjectSet<TvGuideCategory>("TvGuideCategories")); }
+        }
+        private ObjectSet<TvGuideCategory> _tvGuideCategories;
 
         #endregion
     }

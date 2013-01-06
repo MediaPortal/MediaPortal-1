@@ -14,14 +14,25 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
       <description>Channel name label</description>
       <type>label</type>
       <id>12</id>
-      <posX>462</posX>
-      <posY>10</posY>
+      <posX>0</posX>
+      <posY>50</posY>
       <label>-</label>
       <font>font14</font>
-      <align>left</align>
+      <align>center</align>
+      <width>1280</width>
       <textcolor>ivory</textcolor>
     </control>
     <control>
@@ -32,7 +43,7 @@
         <type>button</type>
         <id>4</id>
         <posX>50</posX>
-        <posY>118</posY>
+        <posY>170</posY>
         <label>706</label>
         <onleft>4</onleft>
         <onright>50</onright>
@@ -44,24 +55,35 @@
         <type>button</type>
         <id>2</id>
         <posX>50</posX>
-        <posY>162</posY>
+        <posY>215</posY>
         <label>184</label>
         <onleft>2</onleft>
         <onright>50</onright>
         <onup>4</onup>
         <ondown>4</ondown>
       </control>
-      <control>
-        <description>Site Logo</description>
-        <type>image</type>
-        <id>101</id>
-        <posX>106</posX>
-        <posY>212</posY>
-        <width>227</width>
-        <height>160</height>
-        <texture>news.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
-      </control>
+    </control>
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>101</id>
+      <posX>2106</posX>
+      <posY>270</posY>
+      <width>227</width>
+      <height>160</height>
+      <texture>news.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+    <control>
+      <description>Site Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>50</posX>
+      <posY>270</posY>
+      <width>227</width>
+      <height>140</height>
+      <texture>news.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <type>group</type>
@@ -71,7 +93,7 @@
         <type>listcontrol</type>
         <id>50</id>
         <posX>350</posX>
-        <width>900</width>
+        <width>820</width>
         <height>300</height>
         <onleft>2</onleft>
         <onright>2</onright>
@@ -79,15 +101,24 @@
         <ondown>50</ondown>
         <textXOff>2</textXOff>
         <itemWidth>0</itemWidth>
-        <spinPosY>382</spinPosY>
-        <spinColor>FFFFFFFF</spinColor>
         <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Seperator</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>80</posX>
+        <posY>425</posY>
+        <width>1140</width>
+        <height>1</height>
+        <texture>hbar1white.png</texture>
+        <colordiffuse>60ffffff</colordiffuse>
       </control>
       <control>
         <description>Chosen Story description</description>
         <type>textboxscrollup</type>
         <id>506</id>
-        <posX>120</posX>
+        <posX>90</posX>
         <posY>437</posY>
         <width>1164</width>
         <height>225</height>

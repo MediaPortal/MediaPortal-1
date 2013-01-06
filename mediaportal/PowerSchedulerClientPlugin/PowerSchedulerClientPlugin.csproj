@@ -63,9 +63,6 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="Mediaportal.TV.Server.TVService.ServiceAgents">
-      <HintPath>..\..\TvEngine3\Mediaportal\TV\Server\ServiceAgents\bin\Debug\Mediaportal.TV.Server.TVService.ServiceAgents.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -99,6 +96,10 @@
     <ProjectReference Include="..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
       <Name>PowerScheduler.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TvControl\TvControl.csproj">
+      <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
+      <Name>TvControl</Name>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>

@@ -38,7 +38,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
 using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVService.ServiceAgents;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using TvEngine.PowerScheduler.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
@@ -314,7 +314,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
 
           if (RemotePowerControl.Isconnected)
           {
-            ServiceAgents.PluginService<IPowerController>().SuspendSystemWithOptions("PowerSchedulerClientPlugin", (int)how, force);
+            ServiceAgents.Instance.PluginService<IPowerController>().SuspendSystemWithOptions("PowerSchedulerClientPlugin", (int)how, force);
           }
         }
         catch (Exception e)
@@ -493,7 +493,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
       {
         if (RemotePowerControl.Isconnected)
         {
-          ServiceAgents.PluginService<IPowerController>().GetCurrentState(refresh, out unattended, out disAllowShutdown,
+          ServiceAgents.Instance.PluginService<IPowerController>().GetCurrentState(refresh, out unattended, out disAllowShutdown,
                                                       out disAllowShutdownHandler, out nextWakeupTime,
                                                       out nextWakeupHandler);
           return;
@@ -668,7 +668,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
         bool basicHome;
         using (Settings xmlreader = new MPSettings())
         {
-          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         }
 
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
@@ -884,7 +884,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
           bool dummy = Unattended; // this will update _lastUserTime in case a player was running
           if (RemotePowerControl.Isconnected)
           {
-            ServiceAgents.PluginService<IPowerController>().UserActivityDetected(_lastUserTime);
+            ServiceAgents.Instance.PluginService<IPowerController>().UserActivityDetected(_lastUserTime);
           }
         }
         else
@@ -892,7 +892,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
           try
           {
             Log.Info("PowerScheduler: Keep server alive");
-            ServiceAgents.PluginService<IPowerController>().UserActivityDetected(DateTime.Now);
+            ServiceAgents.Instance.PluginService<IPowerController>().UserActivityDetected(DateTime.Now);
           }
           catch (Exception ex)
           {
@@ -1218,7 +1218,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
         // (re-)register with the TVServer
         try
         {
-          int newTag = ServiceAgents.PluginService<IPowerController>().RegisterRemote(_remotingURI, _remotingURI);
+          int newTag = ServiceAgents.Instance.PluginService<IPowerController>().RegisterRemote(_remotingURI, _remotingURI);
           if (_remotingTag != newTag)
           {
             if (_remotingTag != 0)
@@ -1289,7 +1289,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
           LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);
           if (RemotePowerControl.Isconnected)
           {
-            ServiceAgents.PluginService<IPowerController>().UnregisterRemote(_remotingTag);
+            ServiceAgents.Instance.PluginService<IPowerController>().UnregisterRemote(_remotingTag);
           }
           _remotingTag = 0;
         }

@@ -13,22 +13,29 @@
       <width>1280</width>
       <height>720</height>
     </control>
+    <import>common.music.fanart.xml</import>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <import>common.music.fanart.xml</import>
     <control>
-      <description>Overlay to darken FanArt</description>
+      <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
       <posX>0</posX>
-      <posY>0</posY>
+      <posY>30</posY>
       <width>1280</width>
       <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>aaffffff</colordiffuse>
-      <visible>control.isvisible(91919293)</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
+      <texture>general_overlay.png</texture>
+    </control>
+    <control>
+      <description>Overlay artist info</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>265</posX>
+      <posY>156</posY>
+      <width>720</width>
+      <height>465</height>
+      <texture mask="cdthumbmask.png">black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control Style="NoShadow">
       <description>Album value</description>
@@ -46,74 +53,74 @@
       <description>Artist</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>123</posY>
+      <posX>285</posX>
+      <posY>180</posY>
       <label>171</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Date of Release</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>150</posY>
+      <posX>285</posX>
+      <posY>205</posY>
       <label>201</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Rating</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>176</posY>
+      <posX>285</posX>
+      <posY>230</posY>
       <label>173</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genre</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>203</posY>
+      <posX>285</posX>
+      <posY>255</posY>
       <label>174</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Tones</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>230</posY>
+      <posX>285</posX>
+      <posY>280</posY>
       <label>175</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Styles</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>256</posY>
+      <posX>285</posX>
+      <posY>305</posY>
       <label>176</label>
       <font>font13</font>
-      <align>right</align>
+      <align>left</align>
       <textcolor>ff6FAFE1</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Artist value</description>
       <type>label</type>
       <id>21</id>
-      <posX>332</posX>
-      <posY>123</posY>
+      <posX>485</posX>
+      <posY>180</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -122,8 +129,8 @@
       <description>Date of Release value</description>
       <type>label</type>
       <id>22</id>
-      <posX>332</posX>
-      <posY>150</posY>
+      <posX>485</posX>
+      <posY>205</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -132,8 +139,8 @@
       <description>Rating value</description>
       <type>label</type>
       <id>23</id>
-      <posX>332</posX>
-      <posY>176</posY>
+      <posX>485</posX>
+      <posY>230</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -142,8 +149,8 @@
       <description>Genre value</description>
       <type>label</type>
       <id>24</id>
-      <posX>332</posX>
-      <posY>203</posY>
+      <posX>485</posX>
+      <posY>255</posY>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -152,9 +159,9 @@
       <description>Tones value</description>
       <type>fadelabel</type>
       <id>25</id>
-      <posX>332</posX>
-      <posY>230</posY>
-      <width>900</width>
+      <posX>485</posX>
+      <posY>280</posY>
+      <width>480</width>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
@@ -163,85 +170,85 @@
       <description>Styles value</description>
       <type>fadelabel</type>
       <id>26</id>
-      <posX>332</posX>
-      <posY>256</posY>
-      <width>900</width>
+      <posX>485</posX>
+      <posY>305</posY>
+      <width>480</width>
       <label>-</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textbox</type>
+      <id>4</id>
+      <posX>285</posX>
+      <posY>350</posY>
+      <width>680</width>
+      <height>250</height>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font12</font>
+      <spinPosX>880</spinPosX>
+      <spinPosY>590</spinPosY>
+    </control>
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>50</posX>
-      <posY>303</posY>
+      <posX>1000</posX>
+      <posY>180</posY>
       <width>240</width>
       <height>240</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="picturethumbmask.png">missing_coverart.png</texture>
-      <zoom>yes</zoom>      
+      <texture mask="cdthumbmask.png">missing_coverart.png</texture>
+      <zoom>yes</zoom>
     </control>
     <control>
       <description>Album art (Thumb)</description>
       <type>image</type>
       <id>1</id>
-      <posX>50</posX>
-      <posY>303</posY>
+      <posX>1000</posX>
+      <posY>180</posY>
       <width>240</width>
       <height>240</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="picturethumbmask.png">#selectedthumb</texture>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
       <zoom>yes</zoom>
-      <colorkey>FFFFFFFF</colorkey>      
+      <colorkey>FFFFFFFF</colorkey>
     </control>
     <control>
       <description>CD-Case</description>
       <type>image</type>
-      <id>1</id>      
-      <posX>50</posX>
-      <posY>303</posY>
+      <id>1</id>
+      <posX>1000</posX>
+      <posY>180</posY>
       <width>240</width>
-      <height>240</height>          
-      <texture>picturethumbframe.png</texture>                 
-    </control>    
-    <control Style="NoShadow">
-      <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
-      <posX>332</posX>
-      <posY>300</posY>
-      <width>900</width>
-      <height>400</height>      
-      <onleft>5</onleft>
-      <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      <font>font13</font>
-      <spinPosX>1150</spinPosX>
-      <spinPosY>680</spinPosY>
+      <height>240</height>
+      <texture>cdthumbframe.png</texture>
     </control>
     <control Style="NoShadow">
       <description>Tracks/Review</description>
       <type>button</type>
       <id>5</id>
       <posX>50</posX>
-      <posY>573</posY>
-      <width>220</width>
+      <posY>180</posY>
+      <width>200</width>
       <label>182</label>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>6</onup>
-      <ondown>6</ondown>      
+      <ondown>6</ondown>
     </control>
     <control Style="NoShadow">
       <description>Refresh</description>
       <type>button</type>
       <id>6</id>
       <posX>50</posX>
-      <posY>621</posY>
-      <width>220</width>
+      <posY>220</posY>
+      <width>200</width>
       <label>182</label>
       <label>184</label>
       <font>font13</font>
@@ -250,9 +257,7 @@
       <onup>5</onup>
       <ondown>5</ondown>
     </control>
-
     <!-- NOT USED -->
-
     <control>
       <description>Album Art (Not Use)</description>
       <type>image</type>
@@ -261,7 +266,7 @@
       <posY>313</posY>
       <width>10</width>
       <height>10</height>
-      <visible>no</visible>      
-    </control>    
+      <visible>no</visible>
+    </control>
   </controls>
 </window>

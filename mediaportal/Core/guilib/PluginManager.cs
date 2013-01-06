@@ -466,16 +466,34 @@ namespace MediaPortal.GUI.Library
                     {
                       if (newObj == null)
                       {
-                        newObj = (object)Activator.CreateInstance(t);
+                        newObj = (object) Activator.CreateInstance(t);
                       }
-                      ISetupForm setup = (ISetupForm)newObj;
+                      ISetupForm setup = (ISetupForm) newObj;
                       // don't activate plugins that have NO entry at all in 
                       // MediaPortal.xml
-                      if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
+                      if (!PluginEntryExists(setup.PluginName()))
+                      {
+                        Log.Info("PluginManager:  {0} {1} not found in Mediaportal.xml so adding it now",
+                                 setup.PluginName(), t.Assembly.ManifestModule.Name);
+                        AddPluginEntry(setup.PluginName(), t.Assembly.ManifestModule.Name);
+                        MPSettings.Instance.SetValueAsBool("home", setup.PluginName(), false);
+                        MPSettings.Instance.SetValueAsBool("myplugins", setup.PluginName(), true);
+                        MPSettings.Instance.SetValueAsBool("pluginswindows", t.ToString(), true);
+                      }
+                      if (IsPluginNameEnabled(setup.PluginName()))
                       {
                         _setupForms.Add(setup);
                         _nonGuiPlugins.Add(plugin);
                       }
+                    }
+                    else
+                    {
+                      //IPlugin without ISetupForm, adding anyway
+                      if (!PluginEntryExists(t.Name))
+                      {
+                        AddPluginEntry(t.Name, t.Assembly.ManifestModule.Name);
+                      }
+                      _nonGuiPlugins.Add(plugin);
                     }
                   }
                   catch (Exception iSetupFormException)
@@ -619,9 +637,15 @@ namespace MediaPortal.GUI.Library
                         newObj = (object)Activator.CreateInstance(t);
                       }
                       ISetupForm setup = (ISetupForm)newObj;
-                      if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
+                      if (!PluginEntryExists(setup.PluginName()))
                       {
-                        _setupForms.Add(setup);
+                        Log.Info("PluginManager:  {0} {1} not found in Mediaportal.xml so adding it now",
+                                 setup.PluginName(), t.Assembly.ManifestModule.Name);
+                        AddPluginEntry(setup.PluginName(), t.Assembly.ManifestModule.Name);
+                      }
+                      if (IsPluginNameEnabled(setup.PluginName()))
+                      {
+                          _setupForms.Add(setup);
                       }
                     }
                   }
@@ -745,6 +769,12 @@ namespace MediaPortal.GUI.Library
       {
         return (xmlreader.GetValueAsString("plugins", strPluginName, string.Empty) != string.Empty);
       }
+    }
+
+    public static void AddPluginEntry(string strPluginName, string DllName)
+    {
+      MPSettings.Instance.SetValueAsBool("plugins", strPluginName, true);
+      MPSettings.Instance.SetValueAsBool("pluginsdlls", DllName, true);
     }
 
     public static bool WndProc(ref Message msg)

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
     <control>
@@ -29,10 +30,10 @@
       <description>FANART IMAGE 1</description>
       <id>0</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
-      <width>720</width>
-      <height>576</height>
+      <posX>-240</posX>
+      <posY>0</posY>
+      <width>1440</width>
+      <height>720</height>
       <texture>#fanarthandler.movie.backdrop1.selected</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>control.isvisible(91919291)</visible>
@@ -43,44 +44,28 @@
       <description>FANART IMAGE 2</description>
       <id>0</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
-      <width>720</width>
-      <height>576</height>
+      <posX>-240</posX>
+      <posY>0</posY>
+      <width>1440</width>
+      <height>720</height>
       <texture>#fanarthandler.movie.backdrop2.selected</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>control.isvisible(91919292)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
-    <!--control>
-      <description>Overlay for FanArt</description>
-      <id>0</id>
-      <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
-      <width>1280</width>
-      <height>720</height>
-      <texture>black.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-      <visible>control.isvisible(91919293)</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
-    </control-->
     <control>
-      <description>Overlay for FanArt</description>
+      <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
-      <posx>0</posx>
-      <posy>0</posy>
-      <width>720</width>
-      <height>576</height>
-      <texture>backgroundthumbsview.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <visible>control.isvisible(91919293)</visible>
-      <animation effect="fade" time="70">visible</animation>
-      <animation effect="fade" time="300" delay="500">hidden</animation>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+      <colordiffuse>99ffffff</colordiffuse>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
     </control>
-    
   </controls>
 </window>

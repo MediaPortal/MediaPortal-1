@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>9</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>
+  <rememberLastFocusedControl>yes</rememberLastFocusedControl>
+  <controls>
+	<import>common.time.settings.xml</import>
+	
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background_settings.png</texture>
+	</control>
+
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>5</posX>
+		<posY>140</posY>
+		<width>618</width>
+		<height>940</height>
+		<texture>panel_settings_left.png</texture>
+	</control>
+	
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>68</posX>
+    <posY>36</posY>
+    <width>58</width>
+    <height>58</height>
+    <texture>icon_settings.png</texture>
+  </control>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>152</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>131</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+		<layout>StackLayout(7, Vertical, true)</layout>
+				
+					<control Style="SettingsButton">
+						<description>UI Calibration button</description>
+						<type>button</type>
+						<id>2</id>
+						<label>213</label>
+						<hyperlink>10</hyperlink>
+						<onup>4</onup>
+					</control>
+					
+					<control Style="SettingsButton">
+						<description>Screen Calibration button</description>
+						<type>button</type>
+						<id>3</id>
+						<label>214</label>
+						<hyperlink>11</hyperlink>
+					</control>
+					
+					<control Style="SettingsButton">
+						<description>Scroll speed button</description>
+						<type>button</type>
+						<id>4</id>
+						<label>673</label>
+						<hyperlink>31</hyperlink>
+						<ondown>2</ondown>
+					</control>
+			</control>
+  </controls>
+</window>

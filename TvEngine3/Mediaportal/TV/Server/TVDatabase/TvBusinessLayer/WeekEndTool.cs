@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       return index == 5 || index == 6;
     }
 
-    private static DayOfWeek GetFirstWorkingDay()
+    public static DayOfWeek GetFirstWorkingDay()
     {
       if (!_startDayLoaded)
       {

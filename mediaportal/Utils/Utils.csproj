@@ -118,12 +118,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
-      <Link>Configuration\OSInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
-      <Link>Configuration\OSPrerequisites.cs</Link>
-    </Compile>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>

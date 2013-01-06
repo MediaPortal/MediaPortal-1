@@ -51,7 +51,7 @@ using Log = Mediaportal.TV.Server.TVLibrary.Interfaces.Logging.Log;
 
 namespace Mediaportal.TV.TvPlugin
 {
-  public class TvRecorded : WindowPluginBase, IComparer<GUIListItem>
+  public class TvRecorded : RecordedBase, IComparer<GUIListItem>
   {
   
 

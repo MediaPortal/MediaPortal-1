@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -238,8 +239,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     }
 
 
-    public static IList<Schedule> GetConflictingSchedules(Schedule sched)
-    {      
+    public static IList<Schedule> GetConflictingSchedules(Schedule sched, out List<Schedule> notViewableSchedules)
+    {
+      notViewableSchedules = new List<Schedule>();
       sched.Channel = ChannelManagement.GetChannel(sched.IdChannel);
       Log.Info("GetConflictingSchedules: Schedule = " + sched);
       var conflicts = new List<Schedule>();
@@ -262,6 +264,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       // as he decided to keep them before. That's why they are in the db
       foreach (Schedule schedule in schedulesList)
       {
+        
+
         List<Schedule> episodes = GetRecordingTimes(schedule);
         foreach (Schedule episode in episodes)
         {
@@ -274,8 +278,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           {
             continue;
           }
-          List<Schedule> overlapping;
-          AssignSchedulesToCard(episode, cardSchedules, out overlapping);
+          IList<Schedule> overlapping;
+          AssignSchedulesToCard(episode, cardSchedules, out overlapping, out notViewableSchedules);
         }
       }
 
@@ -291,29 +295,33 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         {
           continue;
         }
-        List<Schedule> overlapping;
-        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
+        IList<Schedule> overlapping;
+        List<Schedule> notViewable;
+        if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping, out notViewable))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflicts.AddRange(overlapping);
+          notViewableSchedules.AddRange(notViewable);
         }
       }
       return conflicts;
     }
 
-    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
-                                             out List<Schedule> overlappingSchedules)
+    private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules, out IList<Schedule> overlappingSchedules, out List<Schedule> notViewabledSchedules)
     {
       overlappingSchedules = new List<Schedule>();
+      notViewabledSchedules = new List<Schedule>();
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
       IEnumerable<Card> cards = CardManagement.ListAllCards(CardIncludeRelationEnum.None); //SEB
       bool assigned = false;
+      bool canView = false;
       int count = 0;
       foreach (Card card in cards)
       {        
         ScheduleBLL scheduleBll = new ScheduleBLL(schedule);
         if (card.Enabled && CardManagement.CanViewTvChannel(card, schedule.IdChannel))
         {
+          canView = true;
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
           foreach (Schedule assignedSchedule in cardSchedules[count])
@@ -343,12 +351,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
         count++;
       }
-      if (!assigned)
+      if (!canView)
       {
-        return false;
+        notViewabledSchedules.Add(schedule);
       }
-
-      return true;
+      return (canView && assigned);
     }
 
     public static List<Schedule> GetRecordingTimes(Schedule rec)

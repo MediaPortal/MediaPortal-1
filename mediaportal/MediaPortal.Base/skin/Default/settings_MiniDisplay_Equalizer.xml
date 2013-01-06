@@ -11,21 +11,20 @@
   <define>#selecteditem:-</define>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>279</posX>
-      <posY>164</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>372</posX>
+      <posY>206</posY>
       <layout>StackLayout</layout>
       <control>
         <description>Use Equalizer</description>
         <type>togglebutton</type>
         <id>20</id>
-        <width>168</width>
+        <width>225</width>
         <label>9132</label>
         <onup>17</onup>
       </control>
@@ -33,49 +32,49 @@
         <description>Equalizer Style</description>
         <type>selectbutton</type>
         <id>21</id>
-        <width>168</width>
+        <width>225</width>
         <label>9133</label>
       </control>
       <control>
         <description>Use Equalizer Smoothing</description>
         <type>togglebutton</type>
         <id>22</id>
-        <width>168</width>
+        <width>225</width>
         <label>9134</label>
       </control>
       <control>
         <description>Delay Start</description>
         <type>togglebutton</type>
         <id>23</id>
-        <width>168</width>
+        <width>225</width>
         <label>9135</label>
       </control>
       <control>
         <description>Delay Time</description>
         <type>selectbutton</type>
         <id>24</id>
-        <width>168</width>
+        <width>225</width>
         <label>9136</label>
       </control>
       <control>
         <description>Show Title</description>
         <type>togglebutton</type>
         <id>25</id>
-        <width>168</width>
+        <width>225</width>
         <label>9137</label>
       </control>
       <control>
         <description>Title Time</description>
         <type>selectbutton</type>
         <id>26</id>
-        <width>168</width>
+        <width>225</width>
         <label>9138</label>
       </control>
       <control>
         <description>Title Frequency</description>
         <type>selectbutton</type>
         <id>27</id>
-        <width>168</width>
+        <width>225</width>
         <label>9139</label>
       </control>
     </control>

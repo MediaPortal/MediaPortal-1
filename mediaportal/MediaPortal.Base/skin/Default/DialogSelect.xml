@@ -8,18 +8,18 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <width>720</width>
-      <height>576</height>
-      <texture>black.png</texture>
-      <colordiffuse>60ffffff</colordiffuse>
+      <width>960</width>
+      <height>720</height>
+      <texture>white.png</texture>
+      <colordiffuse>201e90ff</colordiffuse>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>115</posX>
-      <posY>64</posY>
-      <width>545</width>
-      <height>424</height>
+      <posX>154</posX>
+      <posY>80</posY>
+      <width>727</width>
+      <height>530</height>
       <texture>context_background.png</texture>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -28,9 +28,9 @@
       <description>Select text label</description>
       <type>label</type>
       <id>4</id>
-      <posX>151</posX>
-      <posY>88</posY>
-      <width>239</width>
+      <posX>202</posX>
+      <posY>110</posY>
+      <width>319</width>
       <label>181</label>
       <font>font16</font>
       <align>left</align>
@@ -40,11 +40,11 @@
       <description>Selected item Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>354</posX>
-      <posY>92</posY>
+      <posX>472</posX>
+      <posY>116</posY>
       <label>#selecteditem</label>
       <font>font13</font>
-      <width>270</width>
+      <width>360</width>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -52,10 +52,10 @@
       <description>albums listcontrol</description>
       <type>listcontrol</type>
       <id>3</id>
-      <posX>159</posX>
-      <posY>149</posY>
-      <width>450</width>
-      <height>260</height>
+      <posX>213</posX>
+      <posY>187</posY>
+      <width>600</width>
+      <height>325</height>
       <onleft>5</onleft>
       <onright>5</onright>
     </control>
@@ -65,8 +65,8 @@
       <id>5</id>
       <textalign>center</textalign>
       <textYOff>0</textYOff>
-      <posX>320</posX>
-      <posY>412</posY>
+      <posX>427</posX>
+      <posY>515</posY>
       <label>368</label>
       <onleft>3</onleft>
       <onright>3</onright>

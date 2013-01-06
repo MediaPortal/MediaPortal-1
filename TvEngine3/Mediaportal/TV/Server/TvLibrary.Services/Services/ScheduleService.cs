@@ -100,9 +100,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       ScheduleManagement.UnCancelSerie(schedule, startTime, idChannel);
     }
 
-    public IList<Schedule> GetConflictingSchedules(Schedule schedule)
+    public IList<Schedule> GetConflictingSchedules(Schedule schedule, out List<Schedule> notViewabledSchedules)
     {
-      var conflictingSchedules = ScheduleManagement.GetConflictingSchedules(schedule);
+      var conflictingSchedules = ScheduleManagement.GetConflictingSchedules(schedule, out notViewabledSchedules);
       return conflictingSchedules;
     }
 

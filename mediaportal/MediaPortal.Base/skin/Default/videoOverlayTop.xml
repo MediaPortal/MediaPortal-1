@@ -8,10 +8,10 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>169</posX>
-      <posY>456</posY>
-      <width>29</width>
-      <height>41</height>
+      <posX>225</posX>
+      <posY>570</posY>
+      <width>39</width>
+      <height>52</height>
       <texture>pause_enabled.png</texture>
       <visible>player.paused</visible>
     </control>
@@ -19,10 +19,10 @@
       <description>FF logo</description>
       <type>image</type>
       <id>5</id>
-      <posX>169</posX>
-      <posY>456</posY>
-      <width>29</width>
-      <height>41</height>
+      <posX>225</posX>
+      <posY>570</posY>
+      <width>39</width>
+      <height>52</height>
       <texture>fastforward_enabled.png</texture>
       <visible>player.forwarding</visible>
     </control>
@@ -30,10 +30,10 @@
       <description>RW logo</description>
       <type>image</type>
       <id>6</id>
-      <posX>169</posX>
-      <posY>456</posY>
-      <width>29</width>
-      <height>41</height>
+      <posX>225</posX>
+      <posY>570</posY>
+      <width>39</width>
+      <height>52</height>
       <texture>rew_enabled.png</texture>
       <visible>player.rewinding</visible>
     </control>

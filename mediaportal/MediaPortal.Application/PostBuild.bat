@@ -22,6 +22,7 @@ REM Configuration
 xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
 xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
+xcopy %1\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\%2\TvLibrary.Interfaces.* . /Y /D
 
 REM Core
 xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	
+    <!--            :: Play ::            -->
+	
+	<control>
+		<description>progressbar bg</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>588</posX>
+		<posY>904</posY>
+		<width>737</width>
+		<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+		<visible>window.isosdvisible</visible>
+	</control>
+	
+	<control>
+		<type>progress</type>
+		<description>Track Progress</description>
+		<id>996</id>
+		<posX>578</posX>
+		<posY>906</posY>
+		<width>758</width>
+		<height>15</height>
+		<label>#percentage</label>
+		<texturebg>-</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>window.isosdvisible</visible>
+	</control>
+
+	<control>
+		<description>Start Time Info</description>
+		<type>label</type>
+		<id>997</id>
+		<posX>487</posX>
+		<posY>895</posY>
+		<label>#currentplaytime</label>
+		<align>left</align>
+		<font>font11</font>
+		<visible>window.isosdvisible</visible>
+	</control>
+
+	<control>
+		<description>End Time Info</description>
+		<type>label</type>
+		<id>998</id>
+		<posX>1435</posX>
+		<posY>895</posY>
+		<label>#currentremaining</label>
+		<align>right</align>
+		<font>font11</font>
+		<visible>window.isosdvisible</visible>
+	</control>
+	
+    <!--            :: Pause ::            -->
+	
+	<control>
+		<description>progressbar bg</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>588</posX>
+		<posY>964</posY>
+		<width>737</width>
+		<height>18</height>
+		<texture>osd_progress_bg.png</texture>
+		<visible>[player.paused|player.forwarding|player.rewinding|control.isvisible(10)|control.isvisible(11)|control.isvisible(12)]+!window.isosdvisible</visible>
+	</control>
+	
+	<control>
+		<type>progress</type>
+		<description>Track Progress</description>
+		<id>996</id>
+		<posX>578</posX>
+		<posY>966</posY>
+		<width>758</width>
+		<height>15</height>
+		<label>#percentage</label>
+		<texturebg>-</texturebg>
+		<lefttexture>osd_progress_left.png</lefttexture>
+		<midtexture>osd_progress_mid.png</midtexture>
+		<righttexture>osd_progress_right.png</righttexture>
+		<visible>[player.paused|player.forwarding|player.rewinding|control.isvisible(10)|control.isvisible(11)|control.isvisible(12)]+!window.isosdvisible</visible>
+	</control>
+	
+	<control>
+		<description>Start Time Info</description>
+		<type>label</type>
+		<id>997</id>
+		<posX>484</posX>
+		<posY>955</posY>
+		<label>#currentplaytime</label>
+		<align>left</align>
+		<font>font11</font>
+		<visible>[player.paused|player.forwarding|player.rewinding|control.isvisible(10)|control.isvisible(11)|control.isvisible(12)]+!window.isosdvisible</visible>
+	</control>
+	
+	<control>
+		<description>End Time Info</description>
+		<type>label</type>
+		<id>998</id>
+		<posX>1415</posX>
+		<posY>955</posY>
+		<label>#currentremaining</label>
+		<align>right</align>
+		<font>font11</font>
+		<visible>[player.paused|player.forwarding|player.rewinding|control.isvisible(10)|control.isvisible(11)|control.isvisible(12)]+!window.isosdvisible</visible>
+	</control>
+	
+	<!-- FFW labels -->
+    <control>
+		<description>2x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.forwarding2x</visible>
+		<label>FFW 2x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>4x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.forwarding4x</visible>
+		<label>FFW 4x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>8x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.forwarding8x</visible>
+		<label>FFW 8x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>16x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.forwarding16x</visible>
+		<label>FFW 16x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>32x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.forwarding32x</visible>
+		<label>FFW 32x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+	<!-- REW labels -->
+    <control>
+		<description>2x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.rewinding2x</visible>
+		<label>REW 2x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>4x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.rewinding4x</visible>
+		<label>REW 4x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>8x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.rewinding8x</visible>
+		<label>REW 8x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>16x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.rewinding16x</visible>
+		<label>REW 16x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+	
+    <control>
+		<description>32x label</description>
+		<type>label</type>
+		<posX>1502</posX>
+		<posY>973</posY>
+		<width>144</width>
+		<font>fontB14</font>
+		<align>center</align>
+		<textcolor>ffffffff</textcolor>
+		<visible>player.rewinding32x</visible>
+		<label>REW 32x</label>
+		<animation effect="fade" time="250">visiblechange</animation>
+    </control>
+</controls>
+</window>

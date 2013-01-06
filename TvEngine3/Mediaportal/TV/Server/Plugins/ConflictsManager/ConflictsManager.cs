@@ -267,7 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.ConflictsManager
       return false;
     }
 
-    /// <summary>Assign all shedules to cards</summary>
+    /// <summary>Assign all schedules to cards</summary>
     /// <param name="Schedules">An IList containing all scheduled recordings</param>
     /// <returns>Array of List<Schedule> : one per card, index [0] contains unassigned schedules</returns>
     private List<Schedule>[] AssignSchedulesToCards(IList<Schedule> Schedules)

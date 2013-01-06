@@ -11,21 +11,20 @@
   <define>#selecteditem:-</define>
   <controls>
     <import>common.settings.xml</import>
-    <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
       <description>buttons</description>
       <type>group</type>
-      <animation effect="slide" time="70" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="70" end="-300,0">WindowClose</animation>
-      <posX>279</posX>
-      <posY>164</posY>
+      <animation effect="fade" start="0" end="100" time="200">WindowOpen</animation>
+      <animation effect="fade" start="100" end="0" time="200">WindowClose</animation>
+      <posX>372</posX>
+      <posY>206</posY>
       <layout>StackLayout</layout>
       <control>
         <description>Blank Display with Video</description>
         <type>togglebutton</type>
         <id>40</id>
-        <width>168</width>
+        <width>225</width>
         <label>9116</label>
         <onup>17</onup>
       </control>
@@ -33,28 +32,28 @@
         <description>Enable Display Actions</description>
         <type>togglebutton</type>
         <id>41</id>
-        <width>168</width>
+        <width>225</width>
         <label>9117</label>
       </control>
       <control>
         <description>Action Display Time</description>
         <type>selectbutton</type>
         <id>42</id>
-        <width>168</width>
+        <width>225</width>
         <label>9118</label>
       </control>
       <control>
         <description>Blank Display on Idle</description>
         <type>togglebutton</type>
         <id>43</id>
-        <width>168</width>
+        <width>225</width>
         <label>9119</label>
       </control>
       <control>
         <description>Idle Delay</description>
         <type>selectbutton</type>
         <id>44</id>
-        <width>168</width>
+        <width>225</width>
         <label>9120</label>
         <ondown>99</ondown>
       </control>

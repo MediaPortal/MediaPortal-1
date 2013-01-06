@@ -11,8 +11,8 @@
     <import>common.window.xml</import>
     <import>common.time.xml</import>
     <control>
-      <posX>79</posX>
-      <posY>149</posY>
+      <posX>106</posX>
+      <posY>187</posY>
       <type>label</type>
       <id>2</id>
       <label>40002</label>
@@ -20,8 +20,8 @@
       <textcolor>ivory</textcolor>
     </control>
     <control>
-      <posX>79</posX>
-      <posY>200</posY>
+      <posX>106</posX>
+      <posY>250</posY>
       <type>label</type>
       <id>2</id>
       <label>40003</label>

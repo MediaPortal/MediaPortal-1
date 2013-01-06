@@ -10,19 +10,29 @@
       <type>image</type>
       <id>1</id>
       <texture>background.png</texture>
-      <width>720</width>
-      <height>576</height>
+      <width>960</width>
+      <height>720</height>
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
+    <control>
+      <description>General Overlay</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>0</posX>
+      <posY>30</posY>
+      <width>960</width>
+      <height>720</height>
+      <texture>general_overlay.png</texture>
+    </control>
     <control>
       <type>group</type>
       <layout>StackLayout</layout>
       <description>group element</description>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <posX>39</posX>
-      <posY>96</posY>
+      <posX>37</posX>
+      <posY>170</posY>
       <control>
         <description>Quick Record</description>
         <type>button</type>
