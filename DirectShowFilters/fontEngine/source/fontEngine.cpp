@@ -123,7 +123,7 @@ struct TEXTURE_PLACE
 
 static FONT_DATA_T*            fontData = new FONT_DATA_T[MAX_FONTS];
 static TEXTURE_DATA_T*         textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
-static LPDIRECT3DDEVICE9       m_pDevice=NULL;	
+static LPDIRECT3DDEVICE9EX     m_pDevice = NULL;
 static CStateManagerInterface* m_pStateManager;
 static int                     textureZ[MAX_TEXTURES];
 static TEXTURE_PLACE*          texturePlace[MAX_TEXTURES];
@@ -239,7 +239,7 @@ void FontEngineSetDevice(void* device)
     return;
   }
   
-  m_pDevice = (LPDIRECT3DDEVICE9)device;
+  m_pDevice = (LPDIRECT3DDEVICE9EX)device;
   m_Filter = D3DTEXF_NONE;
 
   D3DCAPS9 caps;
@@ -254,6 +254,17 @@ void FontEngineSetDevice(void* device)
   m_pStateManager = CStateManagerInterface::Create(m_pDevice);
   m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
 }
+
+//*******************************************************************************************************************
+
+HRESULT FontEngineSetMaximumFrameLatency(UINT maxLatency)
+{
+  if (m_pDevice)
+    return m_pDevice->SetMaximumFrameLatency(maxLatency);
+  else
+    return S_FALSE;
+}
+
 
 //*******************************************************************************************************************
 
