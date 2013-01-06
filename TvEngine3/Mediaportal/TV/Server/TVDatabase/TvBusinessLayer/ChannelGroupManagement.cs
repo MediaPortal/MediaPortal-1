@@ -116,9 +116,19 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelGroupRepository channelGroupRepository = new ChannelGroupRepository(true))
       {
+        IQueryable <ChannelGroup> query = channelGroupRepository.GetQuery<ChannelGroup>(g => g.IdGroup == idGroup);
+        ChannelGroup group = channelGroupRepository.IncludeAllRelations(query).FirstOrDefault();
+        if (group.GroupMaps.Count > 0)
+        {
+          foreach (GroupMap groupmap in group.GroupMaps)
+          {
+            groupmap.ChangeTracker.State = ObjectState.Deleted;
+          }
+          channelGroupRepository.ApplyChanges(channelGroupRepository.ObjectContext.ChannelGroups, group);
+        }
         channelGroupRepository.Delete<ChannelGroup>(g => g.IdGroup == idGroup);
         channelGroupRepository.UnitOfWork.SaveChanges();
-      }      
+      }
     }
 
     public static IList<ChannelGroup> ListAllCustomChannelGroups(ChannelGroupIncludeRelationEnum includeRelations)
