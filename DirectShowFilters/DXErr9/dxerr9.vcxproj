@@ -59,6 +59,7 @@
       <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxerr.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -88,6 +89,7 @@
       <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>dxerr.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
