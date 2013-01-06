@@ -480,7 +480,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base"
   File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
   ; TvLibrary for Genre
-  File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
   ; MediaPortal.exe
 
   #---------------------------------------------------------------------------
@@ -626,7 +626,7 @@ SectionEnd
   ; MP Tray
   Delete "$MPdir.Base\MPTray.exe"
   ; TvLibrary for Genre
-  Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
+  Delete "$MPdir.Base\Mediaportal.TV.Server.TVLibrary.Interfaces.dll"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"
