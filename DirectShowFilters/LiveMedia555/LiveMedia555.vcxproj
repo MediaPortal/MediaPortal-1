@@ -49,13 +49,14 @@
       <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;../streamingserver/Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__MINGW32__;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <OutputFile>..\shared\$(ProjectName)D.lib</OutputFile>
@@ -73,6 +74,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <OutputFile>..\shared\$(ProjectName).lib</OutputFile>

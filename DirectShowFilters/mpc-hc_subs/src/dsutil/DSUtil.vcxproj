@@ -76,6 +76,7 @@
       <AdditionalIncludeDirectories>..\..\include;$(SolutionDir)baseclasses;$(DXSDK_DIR)Include;..\thirdparty\VirtualDub\h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_AFXDLL;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>vfw32.lib;Version.lib;%(AdditionalDependencies)</AdditionalDependencies>
