@@ -53,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTabPage tabPage1;
     private MPGroupBox groupBox1;
     private MPLabel labelPlayAll;
-    private MPCheckBox useBDInternalMenu;
+    private MPCheckBox useInternalBDPlayer;
     private PictureBox pictureBoxRegions;
     private NumericUpDown ParentalControlUpDown;
     private Label label2;
@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
         preferredAudioTypeComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "audiotype", "AC3");
         ParentalControlUpDown.Value = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
         SubsEnabled.Checked = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
-        useBDInternalMenu.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDMenu", true);
+        useInternalBDPlayer.Checked = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
       }
     }
 
@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         //Use Internel Menu
-        xmlwriter.SetValueAsBool("bdplayer", "useInternalBDMenu", useBDInternalMenu.Checked);
+        xmlwriter.SetValueAsBool("bdplayer", "useInternalBDPlayer", useInternalBDPlayer.Checked);
         xmlwriter.SetValue("bdplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
         xmlwriter.SetValue("bdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
         xmlwriter.SetValue("bdplayer", "audiotype", preferredAudioTypeComboBox.Text);
@@ -140,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       this.RegionCodeComboBox = new System.Windows.Forms.ComboBox();
       this.pictureBoxRegions = new System.Windows.Forms.PictureBox();
       this.labelPlayAll = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.useBDInternalMenu = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useInternalBDPlayer = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpTabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.preferredAudioTypeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -159,6 +159,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox4.SuspendLayout();
       this.SuspendLayout();
       // 
+      // fontDialog
+      // 
+      this.fontDialog.Color = System.Drawing.SystemColors.ControlText;
+      // 
       // tabControl1
       // 
       this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -175,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.groupBox1);
-      this.tabPage1.Controls.Add(this.useBDInternalMenu);
+      this.tabPage1.Controls.Add(this.useInternalBDPlayer);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Size = new System.Drawing.Size(464, 382);
@@ -267,16 +271,16 @@ namespace MediaPortal.Configuration.Sections
       this.labelPlayAll.Size = new System.Drawing.Size(100, 23);
       this.labelPlayAll.TabIndex = 0;
       // 
-      // useBDInternalMenu
+      // useInternalBDPlayer
       // 
-      this.useBDInternalMenu.AutoSize = true;
-      this.useBDInternalMenu.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useBDInternalMenu.Location = new System.Drawing.Point(19, 332);
-      this.useBDInternalMenu.Name = "useBDInternalMenu";
-      this.useBDInternalMenu.Size = new System.Drawing.Size(180, 17);
-      this.useBDInternalMenu.TabIndex = 6;
-      this.useBDInternalMenu.Text = "Use internal Blu-Ray menu player";
-      this.useBDInternalMenu.UseVisualStyleBackColor = true;
+      this.useInternalBDPlayer.AutoSize = true;
+      this.useInternalBDPlayer.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useInternalBDPlayer.Location = new System.Drawing.Point(19, 332);
+      this.useInternalBDPlayer.Name = "useInternalBDPlayer";
+      this.useInternalBDPlayer.Size = new System.Drawing.Size(180, 17);
+      this.useInternalBDPlayer.TabIndex = 6;
+      this.useInternalBDPlayer.Text = "Use internal Blu-Ray menu player";
+      this.useInternalBDPlayer.UseVisualStyleBackColor = true;
       // 
       // mpTabPage1
       // 
