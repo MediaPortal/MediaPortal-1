@@ -27,6 +27,7 @@ using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
@@ -65,7 +66,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TvNewScheduleSearch()
     {
-      this.LogInfo("newsearch ctor");
+      IntegrationProviderHelper.Register();
       GetID = (int)Window.WINDOW_TV_SEARCH;
     }
 

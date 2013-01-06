@@ -281,6 +281,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TVHome()
     {
+      IntegrationProviderHelper.Register();
       TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_TV;
       _notifyManager = new TvNotifyManager();
@@ -301,8 +302,8 @@ namespace Mediaportal.TV.TvPlugin
       {
         System.Diagnostics.Debugger.Launch();
       }
-#endif      
-      IntegrationProviderHelper.Register();
+#endif
+
       this.LogInfo("TVHome:OnAdded");
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
