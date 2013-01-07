@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>12</id>
+<defaultcontrol>5</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#defaultcontrol.onleft:9995</define>
+<define>#header.label:897</define>
+<controls>
+<import>common.window.xml</import>
+	<import>settings.menu.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>252</posY>
+		<width>500</width>
+		<label>1</label>
+		<textcolor>85cffe</textcolor>
+		<font>TitanLight20</font>
+	</control>
+	
+	<!--            :: Speed ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>353</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(2)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>353</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(2)</visible>
+	</control>
+	
+	<control>
+		<description>Speed label</description>
+		<type>label</type>
+		<id>100</id>
+		<posX>766</posX>
+		<posY>362</posY>
+		<label>224</label>
+	</control>
+
+	<control>
+		<description>Speed select</description>
+		<type>spincontrol</type>
+		<id>2</id>
+		<posX>1600</posX>
+		<posY>368</posY>
+		<align>right</align>
+		<onup>9</onup>
+		<ondown>3</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<textcolor>ffffffff</textcolor>		
+		<textXOff>54</textXOff>
+		<textYOff>5</textYOff>
+		<reverse>yes</reverse>
+	</control>
+		
+	<!--            :: Transition Time ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>405</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(3)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>405</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(3)</visible>
+	</control>
+		
+	<control>		
+		<description>Transition time label</description>
+		<type>label</type>
+		<id>101</id>
+		<posX>766</posX>
+		<posY>414</posY>
+		<label>225</label>
+	</control>
+
+	<control>
+		<description>Transition time select</description>
+		<type>spincontrol</type>
+		<id>3</id>
+		<posX>1600</posX>
+		<posY>420</posY>
+		<align>right</align>
+		<onup>2</onup>
+		<ondown>4</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<textcolor>ffffffff</textcolor>		
+		<textXOff>54</textXOff>
+		<textYOff>5</textYOff>
+		<reverse>yes</reverse>
+	</control>
+		
+	<!--            :: Ken Burns Speed ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>457</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(4)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>457</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(4)</visible>
+	</control>
+		
+	<control>
+		<description>ken burns speed label</description>
+		<type>label</type>
+		<id>102</id>
+		<posX>766</posX>
+		<posY>466</posY>
+		<label>13011</label>
+	</control>
+
+	<control>
+		<description>ken burns speed select</description>
+		<type>spincontrol</type>
+		<id>4</id>
+		<posX>1600</posX>
+		<posY>472</posY>
+		<align>right</align>
+		<onup>3</onup>
+		<ondown>5</ondown>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<textcolor>ffffffff</textcolor>		
+		<textXOff>54</textXOff>
+		<textYOff>5</textYOff>
+		<reverse>yes</reverse>
+	</control>
+
+	<!--            :: X-Fade Transitions ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>572</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(5)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>572</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(5)</visible>
+	</control>
+		
+	<control>
+		<description>X-fade transitions</description>
+		<type>checkmark</type>
+		<id>5</id>
+		<posX>1482</posX>
+		<posY>584</posY>
+		<label>-</label>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<onup>4</onup>
+		<ondown>6</ondown>
+		<align>right</align>
+	</control>
+		
+	<control>
+		<description>X-fade transitions label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>581</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>13010</label>
+	</control>
+		
+	<!--            :: Ken Burns Transitions ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>624</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(6)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>624</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(6)</visible>
+	</control>
+
+	<control>
+		<description>Ken Burns transitions</description>
+		<type>checkmark</type>
+		<id>6</id>
+		<posX>1482</posX>
+		<posY>636</posY>
+		<label>-</label>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<onup>5</onup>
+		<ondown>7</ondown>
+		<align>right</align>
+	</control>
+		
+	<control>
+		<description>Ken Burns label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>632</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>13008</label>
+	</control>
+	
+	<!--            :: Random Transitions ::            -->
+
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>676</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(7)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>676</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(7)</visible>
+	</control>
+	
+	<control>
+		<description>Random transitions</description>
+		<type>checkmark</type>
+		<id>7</id>
+		<posX>1482</posX>
+		<posY>688</posY>
+		<label>-</label>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<onup>6</onup>
+		<ondown>8</ondown>
+		<align>right</align>
+	</control>
+
+	
+	<control>
+		<description>Random transitions label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>684</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>13009</label>
+	</control>
+		
+	<!--            :: Repeat/loop Slideshows ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>728</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(8)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>728</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(8)</visible>
+	</control>
+
+	<control>
+		<description>Repeat/loop slideshows</description>
+		<type>checkmark</type>
+		<id>8</id>
+		<posX>1482</posX>
+		<posY>740</posY>
+		<label>-</label>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<onup>7</onup>
+		<ondown>9</ondown>
+		<align>right</align>
+	</control>
+		
+	<control>
+		<description>Repeat/loop slideshows label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>736</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>6020</label>
+	</control>
+	
+	<!--            :: Auto Shuffle Slideshow ::            -->
+		
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>780</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_focus.png</texture>
+		<visible>Control.HasFocus(9)</visible>
+	</control>
+	
+	<control>
+		<type>image</type>
+		<id>1</id>
+		<posX>740</posX>
+		<posY>780</posY>
+		<width>836</width>
+		<height>52</height>
+		<texture>settings_button_large_nofocus.png</texture>
+		<visible>!Control.HasFocus(9)</visible>
+	</control>
+
+	<control>
+		<description>Auto shuffle slideshow</description>
+		<type>checkmark</type>
+		<id>9</id>
+		<posX>1482</posX>
+		<posY>792</posY>
+		<label>-</label>
+		<onleft>#defaultcontrol.onleft</onleft>
+		<onright>10005</onright>
+		<onup>8</onup>
+		<ondown>2</ondown>
+		<align>right</align>
+	</control>
+		
+	<control>
+		<description>Auto shuffle slideshow label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>766</posX>
+		<posY>788</posY>
+		<textcolor>ffffffff</textcolor>
+		<label>6021</label>
+	</control>
+<import>common.time.xml</import>
+<import>titan.version.xml</import>
+</controls>
+</window>

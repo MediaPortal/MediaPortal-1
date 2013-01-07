@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>759</id>
+<defaultcontrol>2</defaultcontrol>
+<allowoverlay>no</allowoverlay>
+<define>#header.label:100748</define>
+<controls>
+
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background.png</texture>
+	</control>
+
+  <control>
+    <description>VIEWPORT</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>10</posX>
+		<posY>252</posY>
+		<width>1903</width>
+		<height>790</height>
+    <texture>panel_list_noinfo.png</texture>     
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+  <control>
+    <id>0</id>
+    <type>image</type>
+    <posX>66</posX>
+    <posY>34</posY>
+    <width>61</width>
+    <height>57</height>
+    <texture>icon_tv.png</texture>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+	<import>common.time.xml</import>
+
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+		<layout>StackLayout(7, Vertical, true)</layout>
+		
+		<control Style="SettingsButton">
+			<type>button</type>
+			<description>Keep</description>
+			<id>2</id>
+			<onright>10</onright>
+			<onup>2</onup>
+			<ondown>2</ondown>
+			<label>1042</label>
+		</control>
+
+	</control>
+	
+
+	<control>
+		<type>fadelabel</type>
+		<description>Current program title</description>
+		<id>13</id>
+		<posX>685</posX>
+  	<posY>332</posY>
+    <width>800</width>    
+		<label>#TV.RecordedTV.Title</label>
+    <font>fontB16</font>
+    <textcolor>FFFFFFFF</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+  
+  <control>
+	  <description>Current program channel</description>
+	  <type>fadelabel</type>
+		<id>0</id>
+		<posX>685</posX>
+  	<posY>432</posY>
+		<label>#TV.RecordedTV.Channel</label>
+		<font>TitanLight12</font>
+    <textcolor>FFFFFFFF</textcolor>
+  </control>
+
+	<control>
+	  <type>label</type>
+		<description>Current program time</description>
+		<id>14</id>
+		<posX>685</posX>
+  	<posY>382</posY>
+		<textcolor>FF00b7ff</textcolor>
+		<font>TitanLight12</font>
+  </control>
+
+	<control>
+	  <type>textboxscrollup</type>
+	  <description>Description</description>
+	  <id>15</id>
+	  <posX>685</posX>
+    <posY>482</posY>
+	  <width>1100</width>
+	  <height>400</height>
+	  <font>TitanLight12</font>
+	  <label>#TV.RecordedTV.Description</label>
+  </control>
+
+
+	<control>
+		<type>label</type>
+		<description>genre</description>
+		<id>17</id>
+		<posX>-2000</posX>
+		<posY>575</posY>
+		<label>#TV.RecordedTV.Genre</label>
+		<align>right</align>
+		<textcolor>ffb2d4f5</textcolor>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+<import>common.overlay.xml</import>
+</controls>
+</window>

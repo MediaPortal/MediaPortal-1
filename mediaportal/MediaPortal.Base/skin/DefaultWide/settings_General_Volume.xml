@@ -29,7 +29,7 @@
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>17</onup>
-      <ondown>2</ondown>
+      <ondown>3</ondown>
       <align>right</align>
       <label>300112</label>
       <width>500</width>
@@ -66,8 +66,8 @@
       <posY>295</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>3</onup>
+      <ondown>5</ondown>
       <align>right</align>
       <label>300115</label>
       <width>500</width>
@@ -80,8 +80,8 @@
       <posY>350</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>4</onup>
+      <ondown>6</ondown>
       <align>right</align>
       <label>300116</label>
       <width>500</width>
@@ -94,8 +94,8 @@
       <posY>395</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>5</onup>
+      <ondown>7</ondown>
       <align>right</align>
       <label>300117</label>
       <width>500</width>
@@ -108,8 +108,8 @@
       <posY>450</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>6</onup>
+      <ondown>8</ondown>
       <align>right</align>
       <label>300118</label>
       <width>500</width>
@@ -122,8 +122,8 @@
       <posY>495</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>7</onup>
+      <ondown>9</ondown>
       <align>right</align>
       <label>993</label>
       <width>500</width>
@@ -157,8 +157,8 @@
       <posY>590</posY>
       <onleft>10</onleft>
       <onright>10</onright>
-      <onup>2</onup>
-      <ondown>4</ondown>
+      <onup>8</onup>
+      <ondown>2</ondown>
       <align>right</align>
       <label>300119</label>
       <width>700</width>

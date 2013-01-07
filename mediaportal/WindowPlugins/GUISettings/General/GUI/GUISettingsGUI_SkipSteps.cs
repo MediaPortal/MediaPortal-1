@@ -155,6 +155,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       SaveSettings();
     }
     
@@ -286,8 +292,9 @@ namespace WindowPlugins.GUISettings
       {
         GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
         dlgSel.Reset();
+        dlgSel.SetHeading(200040); // Remove skip step
 
-        foreach (string token in labelCurrent.Label.Split(new char[] {',', ';', ' '}))
+        foreach (string token in labelCurrent.Label.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {
@@ -295,8 +302,7 @@ namespace WindowPlugins.GUISettings
           }
           dlgSel.Add(token);
         }
-
-        dlgSel.SetHeading(200040); // Remove skip step
+        
         dlgSel.DoModal(GetID);
         if (dlgSel.SelectedLabel != -1)
         {

@@ -1195,7 +1195,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (_textOffsetY1 != value)
+        if (_textOffsetY2 != value)
         {
           _textOffsetY2 = value;
           _reCalculate = true;

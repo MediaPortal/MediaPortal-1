@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>762</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:100762</define>
+<controls>
+
+    <import tag="TVGuideChannels">myradioguide.7rows.xml</import>
+	
+    <control>
+		<id>0</id>
+        <type>image</type>
+        <posX>66</posX>
+        <posY>10</posY>
+        <width>65</width>
+		<height>85</height>
+        <texture>icon_radio.png</texture>
+        <visible>control.isvisible(50)</visible>
+	    <animation effect="fade" time="250">WindowOpen</animation>
+	    <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+    <import>common.time.xml</import>
+    
+    <control>
+      <id>0</id>
+      <type>image</type>
+	  <posX>79</posX>
+	  <posY>201</posY>
+      <width>344</width>
+      <height>198</height>
+      <texture>tvguide_thumb_shadow.png</texture>
+		<visible>player.hasvideo</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+		<description>video preview window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>82</posX>
+		<posY>204</posY>
+		<width>336</width>
+		<height>190</height>
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus>
+		<visible>player.hasvideo</visible>
+	</control>
+  </controls>
+</window>

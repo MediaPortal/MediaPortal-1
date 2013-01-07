@@ -27,8 +27,11 @@ internal class Grabber : IIMDBScriptGrabber
     Regex rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
     Match match = rx.Match(strSearch);
 
-    if (match.Success)
-      year = int.Parse(match.Groups[2].Value);
+      if (match.Success)
+      {
+        year = int.Parse(match.Groups[2].Value);
+        strSearch = Regex.Replace(strSearch, @"\+[\[\(](19\d{2}|20\d{2})[\]\)]", string.Empty).Trim();
+      }
 
     // If year is empty try workaround
     if (year == 0)
@@ -55,132 +58,107 @@ internal class Grabber : IIMDBScriptGrabber
         match = rx.Match(strSearch);
       }
 
-      if (match.Success)
-      {
-        year = int.Parse(match.Groups[2].Value);
+        if (match.Success)
+        {
+          year = int.Parse(match.Groups[2].Value);
+          strSearch = Regex.Replace(strSearch, @"\+[\[\(](19\d{2}|20\d{2})[\]\)]", string.Empty).Trim();
+        }
       }
-    }
-    // If string contains tt number use it
-    if (Regex.Match(strSearch, @"tt\d{7}").Success)
-    {
-      strSearch = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
-    }
 
-    MediaPortal.GUI.Library.Log.Info("IMDB Script search for: {0}, year {1}", strSearch, year);
-
-    try
-    {
-      string absoluteUri;
-      string strUrl = "http://www.imdb.com/find?s=tt;q=" + strSearch;
-
-      string strBody = GetPage(strUrl, "utf-8", out absoluteUri);
-
-      string strBodyExactApprox = string.Empty;
-      string strBodyPopularPart = string.Empty;
-
-      bool bFoundExactApprox = false;
-      bool bFoundPopPart = false;
-
-      int iStartOfMovieExactApproxList = 0;
-      int iStartOfMoviePopPartList = 0;
-
-      //First try popular, if found try to find Exact matches for full list
-      iStartOfMoviePopPartList = strBody.IndexOf("Popular Titles");
-      if (iStartOfMoviePopPartList >= 0) // Pirppuli 6.1.2009: Popular titles found
+      // If string contains tt number use it
+      if (Regex.Match(strSearch, @"tt\d{7}").Success)
       {
-        strBodyPopularPart = strBody;
-        bFoundPopPart = true;
+        strSearch = Regex.Match(strSearch, @"(?<imdbID>tt\d{7})").Groups["imdbID"].Value;
       }
-      //No popular, then try Exact matches
-      iStartOfMovieExactApproxList = strBody.IndexOf("Titles (Exact Matches)");
-      if (iStartOfMovieExactApproxList >= 0)
+
+      MediaPortal.GUI.Library.Log.Info("IMDB Script search for: {0}, year {1}", strSearch, year);
+
+      try
       {
-        bFoundExactApprox = true;
-        strBodyExactApprox = strBody;
-      }
-      //No popular and Exact, try Partial and Approx matches (this can be huge list
-      //so it's why is this used after prevoius fails and it's small chance to get here)
-      if ((iStartOfMoviePopPartList <= 0) & (iStartOfMovieExactApproxList <= 0))
-      {
-        iStartOfMoviePopPartList = strBody.IndexOf("Titles (Partial Matches)");
-        if (iStartOfMoviePopPartList >= 0)
+        string absoluteUri;
+        string strUrl = "http://www.imdb.com/find?q=" + strSearch + "&s=tt";
+        string strBody = GetPage(strUrl, "utf-8", out absoluteUri);
+
+        string strBodyPopularPart = string.Empty;
+
+        bool bFoundPopPart = false;
+
+        int iStartOfMoviePopPartList = 0;
+
+        //First try popular, if found try to find Exact matches for full list
+        iStartOfMoviePopPartList = strBody.IndexOf("</a>Titles</h3>");
+        if (iStartOfMoviePopPartList >= 0) // Pirppuli 6.1.2009: Popular titles found
         {
           strBodyPopularPart = strBody;
           bFoundPopPart = true;
         }
-        iStartOfMovieExactApproxList = strBody.IndexOf("Titles (Approx Matches)");
-        if (iStartOfMovieExactApproxList >= 0)
-        {
-          bFoundExactApprox = true;
-          strBodyExactApprox = strBody;
-        }
-      }
+        
 
-      int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
+        int endOfTitleList = strBody.IndexOf("Suggestions For Improving Your Results");
 
-      //Direct find ttxxxxxx / xxxxxx-->IMDB Movie number
-      if ((iStartOfMoviePopPartList <= 0) & (iStartOfMovieExactApproxList <= 0))
-      {
-        //Check if direct find is true (film page)
-        // Title
-        string regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-        string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty).Trim();
-        // Year
-        string strYear = Regex.Match(strBody, regexPattern).Groups["movieYear"].Value;
-        if (strTitle != string.Empty && strYear != string.Empty)
+        //Direct find ttxxxxxx / xxxxxx-->IMDB Movie number
+        if ((iStartOfMoviePopPartList <= 0))// & (iStartOfMovieExactApproxList <= 0))
         {
-          HTMLUtil htmlUtil = new HTMLUtil();
-          htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
-          IMDB.IMDBUrl url = new IMDB.IMDBUrl(absoluteUri, strTitle, "IMDB");
-          elements.Add(url);
+          //Check if direct find is true (film page)
+          // Title
+          string regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+          string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty).Trim();
+          // Year
+          string strYear = Regex.Match(strBody, regexPattern).Groups["movieYear"].Value;
+          if (strTitle != string.Empty && strYear != string.Empty)
+          {
+            HTMLUtil htmlUtil = new HTMLUtil();
+            htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+            IMDB.IMDBUrl url = new IMDB.IMDBUrl(absoluteUri, strTitle, "IMDB_MP13x");
+            elements.Add(url);
+          }
+          //Film is found-exit
+          return;
         }
-        //Film is found-exit
-        return;
-      }
-      //Popular and Partial matches
-      if (bFoundPopPart)
-      {
-        iStartOfMoviePopPartList += "<table>".Length;
-        int iEndOfMovieList = strBodyPopularPart.IndexOf("</table>", iStartOfMoviePopPartList);
+        //Popular and Partial matches
+        if (bFoundPopPart)
+        {
+          iStartOfMoviePopPartList += @"</a>Titles</h3>".Length;
+          int iEndOfMovieList = strBodyPopularPart.IndexOf("</table>", iStartOfMoviePopPartList);
 
         if (iEndOfMovieList < 0) iEndOfMovieList = strBodyPopularPart.Length;
         if (endOfTitleList < iEndOfMovieList && endOfTitleList > iStartOfMoviePopPartList)
           iEndOfMovieList = endOfTitleList;
 
-        strBodyPopularPart = strBodyPopularPart.Substring(iStartOfMoviePopPartList, iEndOfMovieList - iStartOfMoviePopPartList);
-        while (true)
-        {
-          //Regular Expressions method for parsing HTML code and grouping relevant information
-          //Title, Options and AKA
-          Match imdbEntry = Regex.Match(strBodyPopularPart,
-                                        @"<tr>[\s]*<td[^>]*>.*?</td>[\s]*<td[^>]*>.*?</td>[\s]*<td[^>]*>.*?<a\shref=""
-                                       (?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)
-                                        </a>[\s]
-                                       (?<options>[(][^<]*)
-                                       (?<aka>.*?)
-                                        </td>[\s]*</tr>",
-                                        RegexOptions.IgnoreCase |
-                                        RegexOptions.IgnorePatternWhitespace |
-                                        RegexOptions.Singleline |
-                                        RegexOptions.Compiled);
-
-          while (imdbEntry.Success)
+          strBodyPopularPart = strBodyPopularPart.
+            Substring(iStartOfMoviePopPartList, iEndOfMovieList - iStartOfMoviePopPartList);
+          while (true)
           {
-            // Pirppuli 6.1.2009: Added HTML entity decoding
-            string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "").Replace("</a>", "");
-            string imdbURL = imdbEntry.Groups["tt"].Value;
-            //Aka names fix (Unicode chars as ASC) 5.4.2010 Deda -->HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value)
-            string imdbOptions =
-              Regex.Replace(HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value), @"<(.|\n)*?>", " ",
-                            RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
-            if (Regex.Match(imdbOptions, "\\(\\d{4}").Success)
+            //Regular Expressions method for parsing HTML code and grouping relevant information
+            //Title, Options and AKA
+            Match imdbEntry = Regex.Match(strBodyPopularPart,
+                                          @"<td\sclass=""result_text"">.<a\shref=""(?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)</a>[\s](?<options>[(][^<]*)",
+                                          RegexOptions.IgnoreCase |
+                                          RegexOptions.IgnorePatternWhitespace |
+                                          RegexOptions.Singleline |
+                                          RegexOptions.Compiled);
+
+            while (imdbEntry.Success)
             {
-              int bracket = imdbOptions.IndexOf(")") + 1;
-              string option = imdbOptions.Substring(bracket);
-              imdbOptions = imdbOptions.Substring(0, 5) + ")" + option;
-            }
-            //Do not show TV series or Shows and Video Games
-            bool bSkipThisEntry = imdbOptions.Contains("(TV series)") | imdbOptions.Contains("(VG)");
+              // Pirppuli 6.1.2009: Added HTML entity decoding
+              string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "").Replace(
+                "</a>", "");
+              string imdbURL = imdbEntry.Groups["tt"].Value;
+              //Aka names fix (Unicode chars as ASC) 5.4.2010 Deda -->HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value)
+              string imdbOptions =
+                Regex.Replace(HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value), @"<(.|\n)*?>", " ",
+                              RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
+              if (Regex.Match(imdbOptions, "\\(\\d{4}").Success)
+              {
+                int bracket = imdbOptions.IndexOf(")") + 1;
+                string option = imdbOptions.Substring(bracket);
+                imdbOptions = imdbOptions.Substring(0, 5) + ")" + option;
+              }
+              //Do not show TV series or Shows and Video Games
+              bool bSkipThisEntry = imdbOptions.Contains("(TV series)") |
+                                    imdbOptions.Contains("(VG)") |
+				    imdbOptions.Contains("(TV Episode)") |
+				    imdbOptions.Contains("(Video Game)");
 
             //Year accuracy check
             if (!bSkipThisEntry && year != 0 && imdbOptions != string.Empty)
@@ -198,109 +176,26 @@ internal class Grabber : IIMDBScriptGrabber
               }
             }
 
-            if (bSkipThisEntry == false)
-            {
-              //Original Movie title (Extension "IMDB")
-              IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions, "IMDB");
-              elements.Add(url);
-              iCount++;
+              if (bSkipThisEntry == false)
+              {
+                //Original Movie title (Extension "IMDB")
+                IMDB.IMDBUrl url = new IMDB.IMDBUrl
+                  ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions, "IMDB");
+                elements.Add(url);
+                iCount++;
+              }
+              imdbEntry = imdbEntry.NextMatch();
+              if (iCount > iLimit) break;
             }
-            imdbEntry = imdbEntry.NextMatch();
-            if (iCount > iLimit) break;
+            break;
           }
-          break;
         }
       }
-      //Exact and Approx matches found
-      if (bFoundExactApprox)
+      catch (Exception ex)
       {
-        iStartOfMovieExactApproxList += "<table>".Length;
-        int iEndOfMovieExactList = strBodyExactApprox.IndexOf("</table>", iStartOfMovieExactApproxList);
-
-        if (iEndOfMovieExactList < 0)
-        {
-          iEndOfMovieExactList = strBodyExactApprox.Length;
-        }
-        if (endOfTitleList < iEndOfMovieExactList && endOfTitleList > iStartOfMovieExactApproxList)
-        {
-          iEndOfMovieExactList = endOfTitleList;
-        }
-        strBodyExactApprox = strBodyExactApprox.
-          Substring(iStartOfMovieExactApproxList, iEndOfMovieExactList - iStartOfMovieExactApproxList);
-        while (true)
-        {
-          //Regular Expressions method for parsing HTML code and grouping relevant information
-          //Title, options and AKA
-          Match imdbEntry = Regex.Match(strBodyExactApprox,
-                                        @"<tr>[\s]*<td[^>]*>.*?</td>[\s]*<td[^>]*>.*?</td>[\s]*<td[^>]*>.*?<a\shref=""
-                                       (?<tt>/title/tt[0-9]*/)[^>]*>(?<title>.*?)
-                                        </a>[\s]
-                                       (?<options>[(][^<]*)
-                                       (?<aka>.*?)
-                                        </td>[\s]*</tr>",
-                                        RegexOptions.IgnoreCase |
-                                        RegexOptions.IgnorePatternWhitespace |
-                                        RegexOptions.Singleline |
-                                        RegexOptions.Compiled);
-
-          while (imdbEntry.Success)
-          {
-            // Pirppuli 6.1.2009: Added HTML entity decoding
-            string imdbTitle = HttpUtility.HtmlDecode(imdbEntry.Groups["title"].Value).Replace("\"", "").Replace("</a>", "");
-            string imdbURL = imdbEntry.Groups["tt"].Value;
-            //Aka names fix (Unicode chars as ASC) 5.4.2010 Deda -->HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value)
-            string imdbOptions =
-              Regex.Replace(HttpUtility.HtmlDecode(imdbEntry.Groups["options"].Value), @"<(.|\n)*?>", " ",
-                            RegexOptions.IgnoreCase | RegexOptions.Compiled).Trim();
-            if (Regex.Match(imdbOptions, "\\(\\d{4}").Success)
-            {
-              int bracket = imdbOptions.IndexOf(")") + 1;
-              string option = imdbOptions.Substring(bracket);
-              imdbOptions = imdbOptions.Substring(0, 5) + ")" + option;
-            }
-            //Do not show TV series or TVshows
-            bool bSkipThisEntry = imdbOptions.Contains("(TV series)") | imdbOptions.Contains("(VG)");
-
-            //Year accuracy check
-            if (!bSkipThisEntry && year != 0 && imdbOptions != string.Empty)
-            {
-              rx = new Regex(@"^(.*)?[\[\(](19\d{2}|20\d{2})[\]\)]");
-              match = rx.Match(imdbOptions);
-              if (match.Success)
-              {
-                yearIMDB = int.Parse(match.Groups[2].Value);
-
-                if (year != yearIMDB && (year - yAcc) != yearIMDB && (year + yAcc) != yearIMDB)
-                {
-                  bSkipThisEntry = true;
-                }
-              }
-            }
-
-            if (bSkipThisEntry == false)
-            {
-              //Original movie name (extension (" IMDB"))
-              IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://www.imdb.com" + imdbURL, "*" + imdbTitle + " " + imdbOptions, "IMDB");
-              elements.Add(url);
-              iCount++;
-            }
-            imdbEntry = imdbEntry.NextMatch();
-            if (iCount > iLimit)
-            {
-              break;
-            }
-          }
-          break;
-        }
+        MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message,
+                                          ex.StackTrace);
       }
-    }
-    catch (Exception ex)
-    {
-      MediaPortal.GUI.Library.Log.Error("exception for imdb lookup of {0} err:{1} stack:{2}", strSearch, ex.Message,
-                                        ex.StackTrace);
-    }
   }
 
   //Movie details

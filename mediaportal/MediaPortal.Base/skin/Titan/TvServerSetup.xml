@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>709</id>
+<defaultcontrol>24</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<define>#header.label:6014</define>
+<define>#header.hover:hover_my tv.png</define>
+<controls>
+
+	<control>
+		<description>BG</description>
+		<type>image</type>
+		<id>1</id>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>background_settings.png</texture>
+	</control>
+
+	<control>
+		<description>panel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>5</posX>
+		<posY>140</posY>
+		<width>618</width>
+		<height>940</height>
+		<texture>panel_settings_left.png</texture>
+	</control>
+
+	<import>common.settings.xml</import>
+	<import>common.time.settings.xml</import>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>122</posX>
+		<posY>321</posY>
+		<dimColor>ffffffff</dimColor>
+		<layout>StackLayout(7, Vertical, true)</layout>
+  	
+      <control Style="SettingsButton">
+  			<type>button</type>
+  			<id>24</id>
+  			<label>6029</label>
+  		</control>
+  		
+      <control Style="SettingsButton">
+  			<type>button</type>
+  			<id>25</id>
+  			<label>8008</label>
+  		</control>
+
+	</control>
+
+	<control>
+		<type>group</type>
+		<layout>GridLayout(2, 6, 52, 8, 1)</layout>
+		<posX>130</posX>
+		<posY>326</posY>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>Please specify the IP address or hostname</description>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>269</posY>
+		<label>6026</label>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>of the master TV-Server</description>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>415</posY>
+		<label>6027</label>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>Current setting:</description>
+		<id>1</id>
+		<posX>766</posX>
+		<posY>455</posY>
+		<label>6028</label>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<type>label</type>
+		<description>:</description>
+		<id>30</id>
+		<posX>766</posX>
+		<posY>495</posY>
+		<font>TitanLight14</font>
+		<textcolor>ff00b7ff</textcolor>
+		<label>-</label>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+</controls>
+</window>
