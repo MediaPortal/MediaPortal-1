@@ -40,6 +40,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.InputDevices;
 using MediaPortal.IR;
 using MediaPortal.Player;
@@ -2546,6 +2547,12 @@ public class MediaPortalApp : D3D, IRender
           }
           var homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           GUIWindowManager.SendThreadMessage(homeMsg);
+          // Stop Video for MyPictures when going to home
+          if (g_Player.IsPicture)
+          {
+            GUISlideShow._slideDirection = 0;
+            g_Player.Stop();
+          }
           break;
 
         case Action.ActionType.ACTION_MPRESTORE:
@@ -2736,6 +2743,9 @@ public class MediaPortalApp : D3D, IRender
 
       if (g_Player.Playing)
       {
+        string activeWindowName;
+        GUIWindow.Window activeWindow;
+
         switch (action.wID)
         {
           // show DVD menu
@@ -2757,8 +2767,11 @@ public class MediaPortalApp : D3D, IRender
               g_Player.OnAction(action);
               break;
             }
-
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) &&
+                (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
             {
               PlaylistPlayer.PlayPrevious();
             }
@@ -2774,8 +2787,11 @@ public class MediaPortalApp : D3D, IRender
               g_Player.OnAction(action);
               break;
             }
-
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) &&
+               (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
             {
               PlaylistPlayer.PlayNext();
             }
@@ -2784,7 +2800,9 @@ public class MediaPortalApp : D3D, IRender
           // stop playback
           case Action.ActionType.ACTION_STOP:
             // When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
-            if ((GUIWindow.Window)(Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture))) == GUIWindow.Window.WINDOW_SLIDESHOW)
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW &&  (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture))
             {
               break;
             }
@@ -2792,6 +2810,10 @@ public class MediaPortalApp : D3D, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
+              if (g_Player.IsPicture)
+              {
+                GUISlideShow._slideDirection = 0;
+              }
               g_Player.Stop();
             }
             break;
