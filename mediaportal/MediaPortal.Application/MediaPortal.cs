@@ -2366,8 +2366,9 @@ public class MediaPortalApp : D3D, IRender
           }
         }
       }
-    }
+
     #if !DEBUG
+    }
     catch (Exception ex)
     {
       Log.Error(ex);
