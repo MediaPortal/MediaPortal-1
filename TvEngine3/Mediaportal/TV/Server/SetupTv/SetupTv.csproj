@@ -680,9 +680,6 @@
     <PreBuildEvent>xcopy "$(SolutionDir)TVServer.Base\TuningParameters" "%25ProgramData%25\Team MediaPortal\\MediaPortal TV Server\TuningParameters\" /C/Y/S
 xcopy "$(SolutionDir)\..\ExternalBinaries\*castle*.*"  /s /i /y
 xcopy "$(SolutionDir)\..\ExternalBinaries\*log4net*.*"  /s /i /y
-xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S</PreBuildEvent>
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

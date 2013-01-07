@@ -81,7 +81,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "$(TargetDir)$(TargetName).dll"  "$(SolutionDir)\TvService\Bin\$(ConfigurationName)\"
+
 mkdir  "$(SolutionDir)\SetupTv\Bin\$(ConfigurationName)\Integration"
+
 xcopy /Y "$(TargetDir)$(TargetName).dll"  "$(SolutionDir)\SetupTv\Bin\$(ConfigurationName)\Integration\"
 </PostBuildEvent>
   </PropertyGroup>
