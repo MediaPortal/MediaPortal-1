@@ -111,6 +111,10 @@ namespace MediaPortal.GUI.Video
           {
             if (SortAscending)
             {
+              if (item1.IsFolder && item2.IsFolder)
+              {
+                return String.Compare(item1.Label, item2.Label, true);
+              }
               if (item1.Year > item2.Year)
               {
                 return 1;
@@ -122,6 +126,10 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
+              if (item1.IsFolder && item2.IsFolder)
+              {
+                return String.Compare(item2.Label, item1.Label, true);
+              }
               if (item1.Year > item2.Year)
               {
                 return -1;

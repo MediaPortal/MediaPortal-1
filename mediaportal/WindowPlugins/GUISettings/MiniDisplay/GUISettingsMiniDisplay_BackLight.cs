@@ -79,8 +79,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      SaveSettings();
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       base.OnPageDestroy(newWindowId);
-      this.SaveSettings();
     }
 
     protected override void OnPageLoad()

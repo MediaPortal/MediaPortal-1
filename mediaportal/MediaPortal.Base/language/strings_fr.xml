@@ -1089,6 +1089,7 @@
     <String id="1317">Téléchargement de scripts internes ...</String>
     <String id="1318">Enregistrer des sous-titres</String>
     <String id="1319">Enregistrer la modification du fichier sous-titre?</String>
+    <String id="1320">{0} comme {1} &#10;</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
     <String id="1442">Vitesse de défilement (hor.)</String>

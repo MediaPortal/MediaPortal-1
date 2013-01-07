@@ -32,7 +32,7 @@
         <dialogTitle>90</dialogTitle>
         <valueTextInButton>yes</valueTextInButton>
         <valuePrefixText>94</valuePrefixText>
-        <textXOff>7</textXOff>
+        <textXOff>10</textXOff>
         <onclick>#(skin.settheme(#selectedlabel15,15))</onclick>
         <binding>#skin.currenttheme</binding>
         <subitems>
@@ -85,6 +85,24 @@
         <selected>#(skin.hassetting('#skin.no.category.fanart'))</selected>
         <onclick>#(skin.togglesetting('#skin.no.category.fanart'))</onclick>
         <onup>31</onup>
+        <ondown>33</ondown>
+      </control>
+      <control>
+        <description>tvguide rows</description>
+        <type>menubutton</type>
+        <id>33</id>
+        <width>262</width>
+        <mode>dialoglist</mode>
+        <dialogTitle>#(L(600)) #(L(300160))</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>#(L(600)) #(L(300160)):</valuePrefixText>
+        <onclick>#(skin.setstring('#skin.tvguide.rows',#selectedlabel33))</onclick>
+        <binding>#skin.tvguide.rows</binding>
+        <subitems>
+          <subitem> 9</subitem>
+          <subitem> 11</subitem>
+        </subitems>
+        <onup>32</onup>
         <ondown>10</ondown>
       </control>
     </control>

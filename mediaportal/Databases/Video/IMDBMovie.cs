@@ -1154,22 +1154,34 @@ namespace MediaPortal.Video.Database
       try
       {
         string nfoFile = string.Empty;
+        string nfoExt = ".nfo";
+        string movienfoFile = @"\movie.nfo";
         
         if (filename.ToUpperInvariant().Contains("VIDEO_TS.IFO") || filename.ToUpperInvariant().Contains("INDEX.BDMV"))
         {
-          nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(filename) + ".nfo";
+          nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(filename) + nfoExt;
 
           if (!System.IO.File.Exists(nfoFile))
           {
             string noStackPath = path;
             Util.Utils.RemoveStackEndings(ref noStackPath);
-            nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(noStackPath) + ".nfo";
+            nfoFile = path + @"\" + System.IO.Path.GetFileNameWithoutExtension(noStackPath) + nfoExt;
+
+            if ((!System.IO.File.Exists(nfoFile)))
+            {
+              nfoFile = path + movienfoFile;
+            }
           }
         }
         else
         {
-          nfoFile = System.IO.Path.ChangeExtension(filename, ".nfo");
+          nfoFile = System.IO.Path.ChangeExtension(filename, nfoExt);
           Util.Utils.RemoveStackEndings(ref nfoFile);
+
+          if ((!System.IO.File.Exists(nfoFile)))
+          {
+            nfoFile = path + movienfoFile;
+          }
         }
         
         if (!System.IO.File.Exists(nfoFile))
@@ -1214,6 +1226,7 @@ namespace MediaPortal.Video.Database
             XmlNode nodeTagline = nodeMovie.SelectSingleNode("tagline");
             XmlNode nodeDirector = nodeMovie.SelectSingleNode("director");
             XmlNode nodeImdbNumber = nodeMovie.SelectSingleNode("imdb");
+            XmlNode nodeIdImdbNumber = nodeMovie.SelectSingleNode("id");
             XmlNode nodeMpaa = nodeMovie.SelectSingleNode("mpaa");
             XmlNode nodeTop250 = nodeMovie.SelectSingleNode("top250");
             XmlNode nodeVotes = nodeMovie.SelectSingleNode("votes");
@@ -1300,7 +1313,7 @@ namespace MediaPortal.Video.Database
               {
                 if (!string.IsNullOrEmpty(role))
                 {
-                  line = String.Format("{0} as {1}\n", name, role);
+                  line = String.Format(GUILocalizeStrings.Get(1320), name, role); // "{0} as {1}\n" = "Actor as role" string 
                 }
                 else
                 {
@@ -1394,6 +1407,14 @@ namespace MediaPortal.Video.Database
               if (VideoDatabase.CheckMovieImdbId(nodeImdbNumber.InnerText))
               {
                 movie.IMDBNumber = nodeImdbNumber.InnerText;
+              }
+            }
+
+            if (string.IsNullOrEmpty(movie.IMDBNumber) && nodeIdImdbNumber != null)
+            {
+              if (VideoDatabase.CheckMovieImdbId(nodeIdImdbNumber.InnerText))
+              {
+                movie.IMDBNumber = nodeIdImdbNumber.InnerText;
               }
             }
 
@@ -1497,7 +1518,7 @@ namespace MediaPortal.Video.Database
               else
               {
                 string regex = "(?<h>[0-9]*)h.(?<m>[0-9]*)";
-                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline);
+                MatchCollection mc = Regex.Matches(nodeDuration.InnerText, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 if (mc.Count > 0)
                 {
                   foreach (Match m in mc)
@@ -1508,6 +1529,17 @@ namespace MediaPortal.Video.Database
                     Int32.TryParse(m.Groups["m"].Value, out minutes);
                     hours = hours * 60;
                     minutes = hours + minutes;
+                    movie.RunTime = minutes;
+                  }
+                }
+                else
+                {
+                  regex = @"\d*\s*min.";
+                  if (Regex.Match(nodeDuration.InnerText, regex, RegexOptions.IgnoreCase).Success)
+                  {
+                    regex = @"\d*";
+                    int minutes = 0;
+                    Int32.TryParse(Regex.Match(nodeDuration.InnerText, regex).Value, out minutes);
                     movie.RunTime = minutes;
                   }
                 }
@@ -1576,6 +1608,10 @@ namespace MediaPortal.Video.Database
             string thumbTbnFile = string.Empty;
             string thumbJpgFileLocal = string.Empty;
             string thumbTbnFileLocal = string.Empty;
+            string jpgExt = @".jpg";
+            string tbnExt = @".tbn";
+            string folderJpg = @"\folder.jpg";
+            string folderJpgImage = path + folderJpg;
 
             if (nodePoster != null)
             {
@@ -1584,8 +1620,8 @@ namespace MediaPortal.Video.Database
 
               thumbJpgFile = path + @"\" + nodePoster.InnerText;
               thumbTbnFile = path + @"\" + nodePoster.InnerText;
-              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
-              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
+              thumbJpgFileLocal = path + @"\" + filename + jpgExt;
+              thumbTbnFileLocal = path + @"\" + filename + tbnExt;
 
               // local
               if (System.IO.File.Exists(thumbJpgFileLocal))
@@ -1611,8 +1647,8 @@ namespace MediaPortal.Video.Database
               filename = System.IO.Path.GetFileNameWithoutExtension(filename);
               Util.Utils.RemoveStackEndings(ref filename);
 
-              thumbJpgFileLocal = path + @"\" + filename + ".jpg";
-              thumbTbnFileLocal = path + @"\" + filename + ".tbn";
+              thumbJpgFileLocal = path + @"\" + filename + jpgExt;
+              thumbTbnFileLocal = path + @"\" + filename + tbnExt;
 
               if (System.IO.File.Exists(thumbJpgFileLocal))
               {
@@ -1621,6 +1657,15 @@ namespace MediaPortal.Video.Database
               else if (System.IO.File.Exists(thumbTbnFileLocal))
               {
                 movie.ThumbURL = thumbTbnFileLocal;
+              }
+            }
+
+            // Try folder.jpg
+            if (string.IsNullOrEmpty(movie.ThumbURL))
+            {
+              if (Util.Utils.IsFolderDedicatedMovieFolder(path) && System.IO.File.Exists(folderJpgImage))
+              {
+                movie.ThumbURL = folderJpgImage;
               }
             }
 
