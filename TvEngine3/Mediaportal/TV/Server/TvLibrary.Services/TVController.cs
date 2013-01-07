@@ -516,6 +516,8 @@ namespace Mediaportal.TV.Server.TVLibrary
 
         IList<Card> allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
 
+        bool oneOrMoreCardsFound = false;
+
         foreach (ITVCard itvCard in _localCardCollection.Cards)
         {
           //for each card, check if its already mentioned in the database
@@ -541,9 +543,13 @@ namespace Mediaportal.TV.Server.TVLibrary
               PidFilterMode = (int)PidFilterMode.Auto,
               IdleMode = (int)DeviceIdleMode.Stop
             };
-
+            oneOrMoreCardsFound = true;
             TVDatabase.TVBusinessLayer.CardManagement.SaveCard(newCard);
           }
+        }
+        if (oneOrMoreCardsFound)
+        {
+          allCards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
         }
         //notify log about cards from the database which are removed from the pc
         int cardsInstalled = _localCardCollection.Cards.Count;
