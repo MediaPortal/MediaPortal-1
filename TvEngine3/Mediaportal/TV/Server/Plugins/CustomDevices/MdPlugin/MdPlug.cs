@@ -208,6 +208,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
     private bool _isMdPlugin = false;
     private HashSet<String> _providers = new HashSet<String>();
+    private String _pluginFolder = PathManager.BuildAssemblyRelativePath("MDPLUGINS");
     private String _configurationFolderPrefix = String.Empty;
     private IFilterGraph2 _graph = null;
     private IBaseFilter _infTee = null;
@@ -558,7 +559,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         this.LogDebug("MD Plugin: identifying primary ECM PID");
 
         // Load configuration (if we have any).
-        String configFile = PathManager.BuildAssemblyRelativePath("MDPLUGINS\\MDAPIProvID.xml");
+        String configFile = Path.Combine(_pluginFolder, "MDAPIProvID.xml");
         XmlDocument doc = new XmlDocument();
         bool configFound = false;
         if (File.Exists(configFile))
@@ -847,7 +848,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       }
 
       // If there is no MD configuration folder then there is no softCAM plugin.
-      if (!Directory.Exists("MDPLUGINS"))
+      if (!Directory.Exists(_pluginFolder))
       {
         this.LogDebug("MD Plugin: plugin not configured");
         return false;
@@ -870,7 +871,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       try
       {
         // Look for a configuration file.
-        String configFile= PathManager.BuildAssemblyRelativePath("MDPLUGINS\\MDAPICards.xml");
+        String configFile = Path.Combine(_pluginFolder, "MDAPICards.xml");
         int slotCount = 1;
         String providerList = "all";
         XmlDocument doc = new XmlDocument();
