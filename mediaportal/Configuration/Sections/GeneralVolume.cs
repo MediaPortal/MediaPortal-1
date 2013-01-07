@@ -66,7 +66,6 @@ namespace MediaPortal.Configuration.Sections
       groupBoxScale.Enabled = true;
 
       base.OnSectionActivated();
-      LoadSettings();
     }
 
     public override void LoadSettings()
