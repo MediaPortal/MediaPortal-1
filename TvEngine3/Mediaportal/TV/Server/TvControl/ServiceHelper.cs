@@ -20,17 +20,17 @@ namespace Mediaportal.TV.Server.TVControl
     private const string NetTcpBindingName = "netTcpBinding";
     private const string DefaultBasicHttpBindingName = "defaultBasicHttpBinding";
 
-    private static readonly TimeSpan TcpReceiveTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan TcpSendTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan TcpCloseTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan TcpOpenTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan TcpInactivityTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan TcpReceiveTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan TcpSendTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan TcpCloseTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan TcpOpenTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan TcpInactivityTimeout = new TimeSpan(0, 0, 0, 300);
 
-    private static readonly TimeSpan HttpReceiveTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan HttpSendTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan HttpCloseTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan HttpOpenTimeout = new TimeSpan(0, 0, 0, 60);
-    private static readonly TimeSpan HttpInactivityTimeout = new TimeSpan(0, 0, 0, 60);
+    private static readonly TimeSpan HttpReceiveTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan HttpSendTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan HttpCloseTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan HttpOpenTimeout = new TimeSpan(0, 0, 0, 300);
+    private static readonly TimeSpan HttpInactivityTimeout = new TimeSpan(0, 0, 0, 300);
 
     /// <summary>
     /// 
