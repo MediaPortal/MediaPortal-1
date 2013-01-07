@@ -640,7 +640,8 @@ namespace MediaPortal.Util
     {
       if (item == null || String.IsNullOrEmpty(item.Path))
       {
-        Log.Debug("SetThumbnails: nothing to do.");
+        //Disable verbose logging
+        //Log.Debug("SetThumbnails: nothing to do.");
         return;
       }
 
@@ -650,7 +651,8 @@ namespace MediaPortal.Util
       {
         if (!IsVideo(item.Path))
         {
-          Log.Debug("SetThumbnails: nothing to do.");
+          //Disable verbose logging
+          //Log.Debug("SetThumbnails: nothing to do.");
           return;
         }
 
