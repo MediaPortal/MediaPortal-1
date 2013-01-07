@@ -21,6 +21,7 @@
 	
     <import>common.time.settings.xml</import>
 
+		<include condition="#(skin.hassetting('#skin.tvguide.usecolorsforbuttons'))">mytvguide.colors.xml</include>
 		<include condition="#(eq(#skin.tvguide.rows,' 11'))">common.overlay.xml</include>
   </controls>
 </window>

@@ -91,6 +91,8 @@ namespace MediaPortal.Player
     private static bool driveSpeedReduced = false;
     private static bool driveSpeedControlEnabled = false;
     private static string _currentTitle = ""; //actual program metadata - usefull for tv - avoids extra DB lookups
+    private static bool _pictureSlideShow = false;
+    private static bool _picturePlaylist = false;
 
     private static string _currentDescription = "";
     //actual program metadata - usefull for tv - avoids extra DB Lookups. 
@@ -1237,18 +1239,18 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
-      return Play(strFile, type, (TextReader)null);
+      return Play(strFile, type, (TextReader)null, false);
     }
 
     public static bool Play(string strFile, MediaType type, string chapters)
     {
       using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
       {
-        return Play(strFile, type, stream);
+        return Play(strFile, type, stream, false);
       }
     }
 
-    public static bool Play(string strFile, MediaType type, TextReader chapters)
+    public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures)
     {
       try
       {
@@ -1258,6 +1260,7 @@ namespace MediaPortal.Player
           return false;
         }
 
+        IsPicture = false;
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
         string extension = Util.Utils.GetFileExtension(strFile).ToLower();
         bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
@@ -1440,6 +1443,13 @@ namespace MediaPortal.Player
             }
             OnStarted();
           }
+
+          // Set bool to know if video if played from MyPictures
+          if (fromPictures)
+          {
+            IsPicture = true;
+          }
+
           return bResult;
         }
       }
@@ -1484,6 +1494,30 @@ namespace MediaPortal.Player
           return false;
         }
         return (_currentMedia == MediaType.Music);
+      }
+    }
+
+    public static bool IsPicture
+    {
+      get
+      {
+        return _pictureSlideShow;
+      }
+      set
+      {
+        _pictureSlideShow = value;
+      }
+    }
+
+    public static bool IsPicturePlaylist
+    {
+      get
+      {
+        return _picturePlaylist;
+      }
+      set
+      {
+        _picturePlaylist = value;
       }
     }
 

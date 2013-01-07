@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Settings
 
       if (_settingsChanged && !Util.Utils.IsGUISettingsWindow(new_windowId))
       {
-        OnRestartMP();
+        OnRestartMP(GetID);
       }
 
       if (!Util.Utils.IsGUISettingsWindow(new_windowId))
@@ -323,7 +323,7 @@ namespace MediaPortal.GUI.Settings
 
     #region RestartMP
 
-    private void OnRestartMP()
+    public static void OnRestartMP(int windowId)
     {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
@@ -334,7 +334,7 @@ namespace MediaPortal.GUI.Settings
 
       dlgYesNo.SetLine(1, "Settings changed!");
       dlgYesNo.SetLine(2, "Do you want to restart MediaPortal?");
-      dlgYesNo.DoModal(GetID);
+      dlgYesNo.DoModal(windowId);
 
       if (!dlgYesNo.IsConfirmed)
       {
@@ -384,7 +384,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void DisposeDBs()
+    private static void DisposeDBs()
     {
       string dbPath = FolderSettings.DatabaseName;
       bool isRemotePath = (!string.IsNullOrEmpty(dbPath) && PathIsNetworkPath(dbPath));
