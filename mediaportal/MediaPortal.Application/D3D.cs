@@ -82,7 +82,6 @@ namespace MediaPortal
     // ReSharper disable InconsistentNaming
     private const int SW_MINIMIZE          = 6;
     private const int D3DSWAPEFFECT_FLIPEX = 5;
-
     // ReSharper restore InconsistentNaming
 
     #endregion
@@ -476,6 +475,7 @@ namespace MediaPortal
         }
 
         _oldBounds      = Bounds;
+        WindowState     = FormWindowState.Normal;
         FormBorderStyle = FormBorderStyle.None;
         MaximizeBox     = false;
         MinimizeBox     = false;
@@ -483,10 +483,8 @@ namespace MediaPortal
 
         var newBounds = GUIGraphicsContext.currentScreen.Bounds;
         SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
-
         Update();
-        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
-                 GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height, newBounds.Width,newBounds.Height);
         UpdatePresentParams(false, false);
         Log.Info("D3D: Switching windowed mode to fullscreen done");
       }

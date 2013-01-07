@@ -1149,6 +1149,13 @@ public class MediaPortalApp : D3D, IRender
           int newWidth  = unchecked((short)msg.LParam.ToInt32());
           int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
           Log.Info("Main: Resolution changed to {0}x{1}x{2} or displays added/removed", newWidth, newHeight, newDepth);
+          if (!Windowed)
+          {
+            var newBounds = GUIGraphicsContext.currentScreen.Bounds;
+            SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
+            Update();
+            Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height, newBounds.Width, newBounds.Height);
+          }
           SavePlayerState();
           UpdatePresentParams(Windowed, true);
           ResumePlayer();
@@ -2469,7 +2476,7 @@ public class MediaPortalApp : D3D, IRender
           }
           break;
 
-        // toggle between directx windowed and exclusive mode
+        // toggle between windowed and fullscreen mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
           ToggleFullscreen();
           return;
