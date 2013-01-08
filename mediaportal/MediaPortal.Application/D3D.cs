@@ -153,7 +153,7 @@ namespace MediaPortal
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
     private string                     _currentFile;              //
-    private Rectangle                  _oldBounds;                // last size of the MP window
+    private Rectangle                  _oldClientRectangle;                // last size of the MP window
     private IContainer                 _components;               //
     private MainMenu                   _menuStripMain;            // menu
     private MenuItem                   _menuItemFile;             // sub menu
@@ -457,12 +457,9 @@ namespace MediaPortal
     {
       Log.Info("D3D: Fullscreen / windowed mode toggled");
 
-      // save player state
-      SavePlayerState();
-
       if (Windowed)
       {
-        Log.Debug("D3D: Switching from windowed mode to fullscreen");
+        Log.Info("D3D: Switching from windowed mode to fullscreen");
         if (AutoHideTaskbar)
         {
           HideTaskBar(true);
@@ -474,19 +471,17 @@ namespace MediaPortal
           ToggleMiniTV();
         }
 
-        _oldBounds      = Bounds;
-        WindowState     = FormWindowState.Normal;
-        FormBorderStyle = FormBorderStyle.None;
-        MaximizeBox     = false;
-        MinimizeBox     = false;
-        Menu            = null;
+        _oldClientRectangle.Location = Location;
+        _oldClientRectangle.Size     = ClientSize;
 
-        var newBounds = GUIGraphicsContext.currentScreen.Bounds;
-        SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
-        Update();
-        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height, newBounds.Width,newBounds.Height);
-        UpdatePresentParams(false, false);
-        Log.Info("D3D: Switching windowed mode to fullscreen done");
+        WindowState         = FormWindowState.Normal;
+        FormBorderStyle     = FormBorderStyle.None;
+        MaximizeBox         = false;
+        MinimizeBox         = false;
+        Menu                = null;
+        Windowed            = false;
+        Location            = new Point(0, 0);
+        ClientSize          = GUIGraphicsContext.currentScreen.Bounds.Size;
       }
       else
       {
@@ -501,33 +496,28 @@ namespace MediaPortal
         MaximizeBox     = true;
         MinimizeBox     = true;
         Menu            = _menuStripMain;
+        Windowed        = true;
 
-        if (_oldBounds.IsEmpty)
+        if (_oldClientRectangle.IsEmpty)
         {
+          Location   = new Point(0, 0);
           ClientSize = CalcMaxClientArea();
-          Location = new Point(0, 0);
         }
         else
         {
-          SetBounds(_oldBounds.X, _oldBounds.Y, _oldBounds.Width, _oldBounds.Height, BoundsSpecified.All);
+          Location   = _oldClientRectangle.Location;
+          ClientSize = _oldClientRectangle.Size;
         }
 
         LastRect.top    = Location.Y;
         LastRect.left   = Location.X;
         LastRect.bottom = Size.Height;
         LastRect.right  = Size.Width;
-
-        Update();
-        Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height,
-                 GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
-        UpdatePresentParams(true, false);
-        Log.Info("D3D: Switching fullscreen to windowed mode done");
       }
-      // reset device
-      OnDeviceReset(null, null);
 
-      // resume playback
-      ResumePlayer();
+      Update();
+      Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
+      Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
     }
 
 
@@ -1019,10 +1009,11 @@ namespace MediaPortal
     protected void BuildPresentParams(bool windowed)
     {
       Log.Debug("D3D: BuildPresentParams()");
-      Size windowBackBufferSize = CalcMaxClientArea();
-      
-      _presentParams.BackBufferWidth           = windowed ? windowBackBufferSize.Width  : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
-      _presentParams.BackBufferHeight          = windowed ? windowBackBufferSize.Height : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
+      //Size windowBackBufferSize = CalcMaxClientArea();
+      //_presentParams.BackBufferWidth           = windowed ? windowBackBufferSize.Width  : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+      //_presentParams.BackBufferHeight          = windowed ? windowBackBufferSize.Height : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
+      _presentParams.BackBufferWidth           = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+      _presentParams.BackBufferHeight          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
       _presentParams.BackBufferFormat          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Format;
       _presentParams.BackBufferCount           = 2;
       _presentParams.MultiSample               = MultiSampleType.None;
@@ -1031,7 +1022,8 @@ namespace MediaPortal
       _presentParams.DeviceWindow              = _renderTarget;
       _presentParams.Windowed                  = true;
       _presentParams.EnableAutoDepthStencil    = false;
-      _presentParams.AutoDepthStencilFormat    = windowed ? DepthFormat.Unknown : DepthFormat.D24S8;
+      //_presentParams.AutoDepthStencilFormat    = windowed ? DepthFormat.Unknown : DepthFormat.D24S8;
+      _presentParams.AutoDepthStencilFormat    = DepthFormat.D24S8;
       _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = 0;
       _presentParams.PresentationInterval      = PresentInterval.One;
@@ -1039,10 +1031,7 @@ namespace MediaPortal
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
 
-      Log.Info(windowed
-                  ? "D3D: Windowed Presentation Parameter Back Buffer Size set to: {0}x{1}"
-                  : "D3D: Fullscreen Presentation Parameter Back Buffer Size set to: {0}x{1}",
-                 _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
+      Log.Info("D3D: Windowed Parameter Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
 
       GUIGraphicsContext.MaxFPS = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.RefreshRate;
       Windowed = windowed;
@@ -1442,7 +1431,7 @@ namespace MediaPortal
             _alwaysOnTop  = xmlreader.GetValueAsBool("general", "alwaysontop", false);
           }
           size            = CalcMaxClientArea();
-          UpdatePresentParams(Windowed, false);
+          //TODO: UpdatePresentParams(Windowed, false);
         }
         ClientSize = size;
         TopMost    = _alwaysOnTop;

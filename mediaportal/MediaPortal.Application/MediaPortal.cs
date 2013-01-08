@@ -1044,7 +1044,7 @@ public class MediaPortalApp : D3D, IRender
         case WM_GETMINMAXINFO:
           Log.Debug("Main: WM_GETMINMAXINFO");
 
-          if (FormBorderStyle == FormBorderStyle.Sizable)
+          if (Windowed)
           {
             double ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
                                     (double)GUIGraphicsContext.currentScreen.WorkingArea.Height / Height);
@@ -1057,6 +1057,20 @@ public class MediaPortalApp : D3D, IRender
             mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 4;
             mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
             mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            Marshal.StructureToPtr(mmi, msg.LParam, true);
+            msg.Result = (IntPtr)0;
+          }
+          else
+          {
+            var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+            mmi.ptMaxSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+            mmi.ptMaxSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+            mmi.ptMaxPosition.x = 0;
+            mmi.ptMaxPosition.y = 0;
+            mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+            mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+            mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+            mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
             Marshal.StructureToPtr(mmi, msg.LParam, true);
             msg.Result = (IntPtr)0;
           }
@@ -1080,7 +1094,7 @@ public class MediaPortalApp : D3D, IRender
           msg.Result = (IntPtr)1;
           break;
         
-        // aspect ratio save window resizing (except when being in MiniTV Mode)
+        // aspect ratio save window resizing
         case WM_SIZING:
           Log.Debug("Main WM_SIZING");
           rc = (RECT) Marshal.PtrToStructure(msg.LParam, typeof(RECT));
@@ -1151,14 +1165,8 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Resolution changed to {0}x{1}x{2} or displays added/removed", newWidth, newHeight, newDepth);
           if (!Windowed)
           {
-            var newBounds = GUIGraphicsContext.currentScreen.Bounds;
-            SetBounds(newBounds.X, newBounds.Y, newBounds.Width, newBounds.Height, BoundsSpecified.All);
-            Update();
-            Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}", ClientSize.Width, ClientSize.Height, newBounds.Width, newBounds.Height);
+            SetBounds(0, 0, newWidth, newHeight);
           }
-          SavePlayerState();
-          UpdatePresentParams(Windowed, true);
-          ResumePlayer();
           msg.Result = (IntPtr)1;
           break;
         
@@ -3350,33 +3358,7 @@ public class MediaPortalApp : D3D, IRender
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
-          if (GUIGraphicsContext.IsDirectX9ExUsed() && UseEnhancedVideoRenderer)
-          {
-            return;
-          }
-
-          bool fullscreen = (message.Param1 != 0);
-          Log.Debug("Main: Received DX exclusive mode switch message. Fullscreen && Windowed == {0}", fullscreen && Windowed);
-          if (!Windowed || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-          {
-            return;
-          }
-
-          if (fullscreen)
-          {
-            // switch to fullscreen mode
-            Log.Debug("Main: Goto fullscreen: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
-            UpdatePresentParams(false, false);
-          }
-          else
-          {
-            // switch to windowed mode
-            Log.Debug("Main: Goto windowed mode: {0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
-            UpdatePresentParams(true, false);
-          }
-
-          // Must set the FVF after reset
-          GUIFontManager.SetDevice();
+          Log.Info("Main: GUI_MSG_SWITCH_FULL_WINDOWED message is obsolete.");
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
