@@ -81,7 +81,7 @@
 		    <texture>basichome_button_radio.png</texture>
 	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
  				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
-				<visible>![Control.IsVisible(3000)|Control.IsVisible(2000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible> 
+				<visible>![Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
 		  </control>
 		  
  	  	<control>

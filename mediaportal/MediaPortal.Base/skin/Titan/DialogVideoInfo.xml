@@ -123,7 +123,7 @@
     <animation effect="fade" time="250">WindowClose</animation>
   	<posX>571</posX>
 		<posY>360</posY>
-		<layout>StackLayout(7, Vertical, true)</layout>
+		<layout>StackLayout(6, Vertical, true)</layout>
         
 			<control>
 				<description>Play Button</description>
@@ -132,7 +132,7 @@
 				<label>208</label>
 				<onleft>24</onleft>
 				<onright>24</onright>
-				<onup>6</onup>
+				<onup>97270</onup>
 				<ondown>3</ondown>
 		    <textureFocus>myvideos_play_focus.png</textureFocus>
 		    <textureNoFocus>myvideos_play_nofocus.png</textureNoFocus>
@@ -237,7 +237,7 @@
 				<onleft>24</onleft>
 				<onright>24</onright>
 				<onup>26</onup>
-				<ondown>10</ondown>
+				<ondown>97270</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
         <textureFocus>button_tv_on_focus.png</textureFocus>
@@ -246,6 +246,19 @@
         <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 			
+			<control>
+        <description>Trakt Button</description>
+        <type>button</type>
+        <id>97270</id>
+        <label>Trakt</label>
+				<onleft>24</onleft>
+				<onright>24</onright>
+        <onup>6</onup>
+        <ondown>2</ondown>
+		    <textcolor>FF000000</textcolor>
+				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+				<visible>plugin.isenabled(Trakt)</visible>
+      </control>
 	</control>
 
 	<control>

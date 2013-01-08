@@ -7,7 +7,7 @@
         <posX>144</posX>
         <posY>38</posY>
         <width>855</width>
-        <font>fontB22</font>
+        <font>TitanLight22</font>
         <textcolor>ffffff</textcolor>
         <label>#header.label</label>
 				<align>left</align>
@@ -22,7 +22,7 @@
         <posX>1848</posX>
         <posY>36</posY>
         <width>555</width>
-        <font>fontB22</font>
+        <font>TitanLight22</font>
         <textcolor>ffffff</textcolor>
         <label>#time</label>
 				<align>right</align>
@@ -37,7 +37,7 @@
         <type>label</type>
         <posX>1845</posX>
         <posY>96</posY>
-        <font>fontB12</font>
+        <font>TitanLight12</font>
         <textcolor>ffffff</textcolor>
         <label>#date / #WorldWeather.TodayTemperature</label>
 				<align>right</align>
@@ -52,7 +52,7 @@
         <type>label</type>
         <posX>1845</posX>
         <posY>96</posY>
-        <font>fontB12</font>
+        <font>TitanLight12</font>
         <textcolor>ffffff</textcolor>
         <label>#date</label>
 				<align>right</align>
