@@ -63,6 +63,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static float _asioBalance;
 
+    private static bool _wasApiExclusiveMode = false;
+
     private static bool _softStop;
     private static bool _useSkipSteps;
     private static bool _enableReplaygain;
@@ -128,6 +130,11 @@ namespace MediaPortal.MusicPlayer.BASS
     public static float AsioBalance
     {
       get { return _asioBalance; }
+    }
+
+    public static bool WasApiExclusiveMode
+    {
+      get { return _wasApiExclusiveMode; }
     }
 
     public static bool SoftStop
@@ -267,6 +274,7 @@ namespace MediaPortal.MusicPlayer.BASS
         _enableAlbumReplaygain = xmlreader.GetValueAsBool("audioplayer", "enableAlbumReplayGain", false);
 
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
+        _wasApiExclusiveMode = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
 
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
@@ -280,7 +288,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (_crossFadeIntervalMs == 0)
           {
             _playBackType = PlayBackType.NORMAL;
-            _crossFadeIntervalMs = 100;
+            //_crossFadeIntervalMs = 100;
           }
           else
           {

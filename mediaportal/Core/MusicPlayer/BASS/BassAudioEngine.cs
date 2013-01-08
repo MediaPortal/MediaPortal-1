@@ -96,19 +96,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Variables
 
-    private const int Maxstreams = 10;
-    private List<MusicStream> _streams = new List<MusicStream>(10);
-
-    private ASIOPROC _asioProc = null;
-    private int _asioDeviceNumber = -1;
-
-    private int _wasapiDeviceNumber = -1;
-    private WASAPIPROC _wasapiProc = null;
-    private bool _wasApiExclusiveMode = false;
+    private MixerStream  _mixer = null;
+    private List<MusicStream> _streams = new List<MusicStream>();
+    private int _deviceNumber = -1;
+    
     private BASS_WASAPI_DEVICEINFO _wasapiDeviceInfo = null;
-    private bool _wasapiSwitchedToMixed = false;
-    private int _wasapiMixedChans = 0;
-    private int _wasapiMixedFreq = 0;
 
     private int _deviceOutputChannels = 2;
 
@@ -136,15 +128,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private bool NeedUpdate = true;
     private bool NotifyPlaying = true;
-
-
+    
     private bool _isCDDAFile = false;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
-
-    private int _mixer = 0;
-    private float[,] _mixingMatrix = null; 
-
+    
     private StreamCopy _streamcopy; // For Asio Channels
 
     // CUE Support
@@ -222,6 +210,22 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         return curPosition;
       }
+    }
+
+    /// <summary>
+    /// Returns the Devicenumber used
+    /// </summary>
+    public int DeviceNumber
+    {
+      get { return _deviceNumber; }  
+    }
+
+    /// <summary>
+    /// Returns the devices number of output channels
+    /// </summary>
+    public int DeviceChannels
+    {
+      get { return _deviceOutputChannels; }
     }
 
     /// <summary>
@@ -601,13 +605,23 @@ namespace MediaPortal.MusicPlayer.BASS
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
 
-          // Check, if PlaylistPlayer has to offer more files
+          lock (_streams)
+          {
+            if (_streams.Contains(musicStream))
+            {
+              _streams.Remove(musicStream);
+            }
+          }
+          BassMix.BASS_Mixer_ChannelRemove(musicStream.BassStream);
+          musicStream.Dispose();
+
+          // Check, if PlaylistPlayer has to offer more files)
           if (Playlists.PlayListPlayer.SingletonPlayer.GetNext() == string.Empty)
           {
-            // Reached the end of Playback so let's stop playback
             MusicStream currentStream = GetCurrentStream();
-            if (currentStream != null && !StreamIsPlaying(currentStream))
+            if (currentStream == null || !currentStream.IsPlaying)
             {
+              Log.Debug("BASS: Reached end of playlist.");
               Stop();
             }
           }
@@ -618,17 +632,6 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             InternetStreamSongChanged(this);
           }
-          break;
-
-        case MusicStream.StreamAction.Freed:
-          lock (_streams)
-          {
-            if (_streams.Contains(musicStream))
-            {
-              _streams.Remove(musicStream);
-            }
-          }
-          musicStream.Dispose();
           break;
       }
     }
@@ -836,14 +839,14 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         if (asioDevices[i].name == Config.SoundDevice && asioDevices[i].driver == Config.SoundDeviceID)
         {
-          _asioDeviceNumber = i;
+          _deviceNumber = i;
           break;
         }
       }
 
-      if (_asioDeviceNumber > -1)
+      if (_deviceNumber > -1)
       {
-        result = BassAsio.BASS_ASIO_Init(_asioDeviceNumber, BASSASIOInit.BASS_ASIO_THREAD);
+        result = BassAsio.BASS_ASIO_Init(_deviceNumber, BASSASIOInit.BASS_ASIO_THREAD);
         if (!result)
         {
           HandleBassError("InitAsio");
@@ -908,21 +911,19 @@ namespace MediaPortal.MusicPlayer.BASS
 
       Log.Info("BASS: Using WASAPI device: {0}", Config.SoundDevice);
       BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
-
-      _wasapiProc = new WASAPIPROC(WasApiCallback);
-
+      
       int i = 0;
       // Check if the WASAPI device read is amongst the one retrieved
       for (i = 0; i < wasapiDevices.Length; i++)
       {
         if (wasapiDevices[i].name == Config.SoundDevice && wasapiDevices[i].id == Config.SoundDeviceID)
         {
-          _wasapiDeviceNumber = i;
+          _deviceNumber = i;
           break;
         }
       }
 
-      if (_wasapiDeviceNumber > -1)
+      if (_deviceNumber > -1)
       {
         // Get some information about the Device
         _wasapiDeviceInfo = wasapiDevices[i];
@@ -953,44 +954,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       return result;
-    }
-
-    /// <summary>
-    /// Callback from Asio to deliver data from Decoding channel
-    /// </summary>
-    /// <param name="input"></param>
-    /// <param name="channel"></param>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    private int AsioCallback(bool input, int channel, IntPtr buffer, int length, IntPtr user)
-    {
-      return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length);
-    }
-
-    /// <summary>
-    /// Callback from WasApi to deliver data from Decoding channel
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <param name="user"></param>
-    /// <returns></returns>
-    private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
-    {
-      if (_mixer == 0)
-      {
-        return 0;
-      }
-      try
-      {
-        return Bass.BASS_ChannelGetData(_mixer, buffer, length);
-      }
-      catch (AccessViolationException)
-      {
-        // we get Exactly 1 exception, when last song of a playlist has ended
-      }
-      return 0;
     }
 
     /// <summary>
@@ -1071,8 +1034,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _wasApiExclusiveMode = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
-
         int vizType = xmlreader.GetValueAsInt("musicvisualization", "vizType", (int)VisualizationInfo.PluginType.None);
         string vizName = xmlreader.GetValueAsString("musicvisualization", "name", "");
         string vizPath = xmlreader.GetValueAsString("musicvisualization", "path", "");
@@ -1115,9 +1076,9 @@ namespace MediaPortal.MusicPlayer.BASS
         BassWasapi.BASS_WASAPI_Free();
       }
 
-      if (_mixer != 0)
+      if (_mixer != null)
       {
-        Bass.BASS_ChannelStop(_mixer);
+        _mixer.Dispose();
       }
 
       foreach (MusicStream stream in _streams)
@@ -1164,10 +1125,9 @@ namespace MediaPortal.MusicPlayer.BASS
           BassWasapi.BASS_WASAPI_Free();
         }
 
-        if (_mixer != 0)
+        if (_mixer != null)
         {
-          Bass.BASS_ChannelStop(_mixer);
-          _mixer = 0;
+          _mixer.Dispose();
         }
 
         Bass.BASS_Free();
@@ -1326,7 +1286,7 @@ namespace MediaPortal.MusicPlayer.BASS
         return _streamcopy.Stream;
       }
 
-      return _mixer;
+      return _mixer.BassStream;
     }
 
     /// <summary>
@@ -1367,7 +1327,7 @@ namespace MediaPortal.MusicPlayer.BASS
         return null;
       }
 
-      return _streams[0];
+      return _streams[_streams.Count - 1];
     }
 
     /// <summary>
@@ -1441,17 +1401,6 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     /// <summary>
-    /// Is stream Playing?
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private bool StreamIsPlaying(MusicStream stream)
-    {
-      return stream != null && (Bass.BASS_ChannelIsActive(stream.BassStream) == BASSActive.BASS_ACTIVE_PLAYING);
-    }
-
-
-    /// <summary>
     /// Displays Information about a BASS Exception
     /// </summary>
     /// <param name="methodName"></param>
@@ -1459,456 +1408,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
     }
-
-    /// <summary>
-    /// Create a Mixer Channel with corresponding channel values
-    /// </summary>
-    /// <param name="stream"></param>
-    private bool CreateMixer(MusicStream stream)
-    {
-      bool result = false;
-
-      if (Config.MusicPlayer == AudioPlayer.WasApi)
-      {
-        BassWasapi.BASS_WASAPI_Free();
-      }
-
-      BASSFlag mixerFlags = BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_MIXER_NORAMPIN;
-
-      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
-      {
-        mixerFlags |= BASSFlag.BASS_STREAM_DECODE;
-      }
-
-      if (_mixer != 0)
-      {
-        if (!Bass.BASS_StreamFree(_mixer))
-        {
-          Log.Error("BASS: Error stopping Asio Device: {0}", Bass.BASS_ErrorGetCode());
-        }
-      }
-
-      int outputChannels = _deviceOutputChannels;
-      _mixingMatrix = null;
-
-      // See, if we need Upmixing
-      if (outputChannels > stream.ChannelInfo.chans)
-      {
-        Log.Info("BASS: Found more output channels than input channels. Check for upmixing.");
-        _mixingMatrix = CreateMixingMatrix(stream.ChannelInfo.chans);
-        if (_mixingMatrix !=null)
-        {
-          outputChannels = Math.Min(_mixingMatrix.GetLength(0), outputChannels);
-        }
-        else 
-        {
-          outputChannels = stream.ChannelInfo.chans;
-        }
-      }
-      else if (outputChannels < stream.ChannelInfo.chans)
-      {
-        // Downmix to Stereo
-        Log.Info("BASS: Found more input channels than output channels. Downmix.");
-        outputChannels = Math.Min(outputChannels, 2);
-      }
-
-      Log.Debug("BASS: Creating {0} channel mixer with sample rate of {1}", outputChannels, stream.ChannelInfo.freq);
-      
-      _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, outputChannels, mixerFlags);
-      
-      Bass.BASS_ChannelPlay(_mixer, false);
-
-      switch (Config.MusicPlayer)
-      {
-        case AudioPlayer.Bass:
-        case AudioPlayer.DShow:
-
-          result = true;
-          
-          break;
-
-        case AudioPlayer.Asio:
-
-          if (BassAsio.BASS_ASIO_IsStarted() && !BassAsio.BASS_ASIO_Stop())
-          {
-            Log.Error("BASS: Error stopping Asio Device: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          // Disable and Unjoin all the channels
-          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_ENABLE))
-          {
-            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN))
-          {
-            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          if (_asioProc == null)
-          {
-            _asioProc = new ASIOPROC(AsioCallback);
-          }
-
-          BassAsio.BASS_ASIO_ChannelSetVolume(false, -1, (float)Config.StreamVolume / 100f);
-
-          // enable 1st output channel...(0=first)
-          Log.Debug("BASS: Joining Asio Channel #{0}", "0");
-          BassAsio.BASS_ASIO_ChannelEnable(false, 0, _asioProc, new IntPtr(_mixer));
-
-          // and join the next channels to it
-          int numChannels = Math.Max(stream.ChannelInfo.chans, outputChannels);
-          for (int i = 1; i < numChannels; i++)
-          {
-            Log.Debug("BASS: Joining Asio Channel #{0}", i);
-            BassAsio.BASS_ASIO_ChannelJoin(false, i, 0);
-          }
-
-          // since we joined the channels, the next commands will apply to all channles joined
-          // so setting the values to the first channels changes them all automatically
-          // set the source format (float, as the decoding channel is)
-          if (!BassAsio.BASS_ASIO_ChannelSetFormat(false, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT))
-          {
-            Log.Error("BASS: Error setting Asio Sample Format: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          // set the source rate
-          Log.Debug("BASS: Set sample rate to {0}", stream.ChannelInfo.freq);
-          if (!BassAsio.BASS_ASIO_ChannelSetRate(false, 0, (double)stream.ChannelInfo.freq))
-          {
-            Log.Error("BASS: Error setting Asio Channel Samplerate: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          // try to set the device rate too (saves resampling)
-          if (!BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq))
-          {
-            Log.Error("BASS: Error setting Asio Samplerate: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-
-          // and start playing it...start output using default buffer/latency
-          if (!BassAsio.BASS_ASIO_Start(0))
-          {
-            Log.Error("BASS: Error starting Asio playback: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-          result = true;
-
-          break;
-
-        case AudioPlayer.WasApi:
-
-          BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
-
-          int frequency = stream.ChannelInfo.freq;
-          int chans = outputChannels;
-
-          // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
-          if (_wasApiExclusiveMode)
-          {
-            BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_wasapiDeviceNumber,
-                                                                               stream.ChannelInfo.freq,
-                                                                               stream.ChannelInfo.chans,
-                                                                               BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
-
-            if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
-            {
-              Log.Warn("BASS: Stream can't be played in WASAPI exclusive mode. Switch to WASAPI shared mode.");
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED;
-              frequency = _wasapiDeviceInfo.mixfreq;
-              chans = _wasapiDeviceInfo.mixchans;
-
-              // Save the original frequency, so that we don't need to recreate the mixer every time
-              _wasapiSwitchedToMixed = true;
-              _wasapiMixedChans = stream.ChannelInfo.chans;
-              _wasapiMixedFreq = stream.ChannelInfo.freq;
-
-              // Recreate Mixer with new value
-              Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", chans, frequency);
-              _mixer = BassMix.BASS_Mixer_StreamCreate(frequency, chans, mixerFlags);
-              Bass.BASS_ChannelPlay(_mixer, false);
-            }
-            else
-            {
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
-              _wasapiSwitchedToMixed = false;
-              _wasapiMixedChans = 0;
-              _wasapiMixedFreq = 0;
-            }
-          }
-
-          if (BassWasapi.BASS_WASAPI_Init(_wasapiDeviceNumber, frequency, chans,
-                                      initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
-          {
-            BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
-
-            Log.Info("BASS: WASAPI Device successfully initialised");
-            Log.Info("BASS: ---------------------------------------------");
-            Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
-            Log.Info("BASS: Channels: {0}", wasapiInfo.chans);
-            Log.Info("BASS: Frequency: {0}", wasapiInfo.freq);
-            Log.Info("BASS: Format: {0}", wasapiInfo.format.ToString());
-            Log.Info("BASS: InitFlags: {0}", wasapiInfo.initflags.ToString());
-            Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
-            Log.Info("BASS: ---------------------------------------------");
-
-            BassWasapi.BASS_WASAPI_SetVolume(true, (float)Config.StreamVolume / 100f);
-            BassWasapi.BASS_WASAPI_Start();
-            result = true;
-          }
-          else
-          {
-            Log.Error("BASS: Couldn't init WASAPI device. Error: {0}", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
-          }
-
-          break;
-      }
-
-      return result;
-    }
-
-    /// <summary>
-    /// Check, which Mixing Matrix to be used
-    /// Thanks to Symphy, author of PureAudio, for this code
-    /// </summary>
-    /// <param name="inputChannels"></param>
-    /// <returns></returns>
-    private float[,] CreateMixingMatrix(int inputChannels)
-    {
-      switch (inputChannels)
-      {
-        case 1:
-          return CreateMonoUpMixMatrix();
-        case 2:
-          return CreateStereoUpMixMatrix();
-        case 4:
-          return CreateQuadraphonicUpMixMatrix();
-        case 6:
-          return CreateFiveDotOneUpMixMatrix();
-        default:
-          return null;
-      }
-    }
-
-    private float[,] CreateMonoUpMixMatrix()
-    {
-      float[,] mixMatrix = null;
-
-      switch (Config.UpmixMono)
-      {
-        case MonoUpMix.None:
-          Log.Info("BASS: No upmixing of Mono selected");
-          break;
-
-        case MonoUpMix.Stereo:
-          // Channel 1: left front out = in
-          // Channel 2: right front out = in
-          mixMatrix = new float[2, 1];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 0] = 1;
-          Log.Info("BASS: Using Mono -> Stereo mixing matrix");
-          break;
-
-        case MonoUpMix.QuadraphonicPhonic:
-          // Channel 1: left front out = in
-          // Channel 2: right front out = in
-          // Channel 3: left rear out = in
-          // Channel 4: right rear out = in
-          mixMatrix = new float[4, 1];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 0] = 1;
-          mixMatrix[2, 0] = 1;
-          mixMatrix[3, 0] = 1;
-          Log.Info("BASS: Using Mono -> Quadro mixing matrix");
-          break;
-
-        case MonoUpMix.FiveDotOne:
-          // Channel 1: left front out = in
-          // Channel 2: right front out = in
-          // Channel 3: centre out = in
-          // Channel 4: LFE out = in
-          // Channel 5: left rear/side out = in
-          // Channel 6: right rear/side out = in
-          mixMatrix = new float[6, 1];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 0] = 1;
-          mixMatrix[2, 0] = 1;
-          mixMatrix[3, 0] = 1;
-          mixMatrix[4, 0] = 1;
-          mixMatrix[5, 0] = 1;
-          Log.Info("BASS: Using Mono -> 5.1 mixing matrix");
-          break;
-
-        case MonoUpMix.SevenDotOne:
-          // Channel 1: left front out = in
-          // Channel 2: right front out = in
-          // Channel 3: centre out = in
-          // Channel 4: LFE out = in
-          // Channel 5: left rear/side out = in
-          // Channel 6: right rear/side out = in
-          // Channel 7: left-rear center out = in
-          // Channel 8: right-rear center out = in
-          mixMatrix = new float[8, 1];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 0] = 1;
-          mixMatrix[2, 0] = 1;
-          mixMatrix[3, 0] = 1;
-          mixMatrix[4, 0] = 1;
-          mixMatrix[5, 0] = 1;
-          mixMatrix[6, 0] = 1;
-          mixMatrix[7, 0] = 1;
-          Log.Info("BASS: Using Mono -> 7.1 mixing matrix");
-          break;
-      }
-      return mixMatrix;
-    }
-
-    private float[,] CreateStereoUpMixMatrix()
-    {
-      float[,] mixMatrix = null;
-
-      switch (Config.UpmixStereo)
-      {
-        case StereoUpMix.None:
-          Log.Info("BASS: No upmixing of Stereo selected");
-          break;
-
-        case StereoUpMix.QuadraphonicPhonic:
-          // Channel 1: left front out = left in
-          // Channel 2: right front out = right in
-          // Channel 3: left rear out = left in
-          // Channel 4: right rear out = right in
-          mixMatrix = new float[4, 2];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 0] = 1;
-          mixMatrix[3, 1] = 1;
-          Log.Info("BASS: Using Stereo -> Quadro mixing matrix");
-          break;
-
-        case StereoUpMix.FiveDotOne:
-          // Channel 1: left front out = left in
-          // Channel 2: right front out = right in
-          // Channel 3: centre out = left/right in
-          // Channel 4: LFE out = left/right in
-          // Channel 5: left rear/side out = left in
-          // Channel 6: right rear/side out = right in
-          mixMatrix = new float[6, 2];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 0] = 0.5f;
-          mixMatrix[2, 1] = 0.5f;
-          mixMatrix[3, 0] = 0.5f;
-          mixMatrix[3, 1] = 0.5f;
-          mixMatrix[4, 0] = 1;
-          mixMatrix[5, 1] = 1;
-          Log.Info("BASS: Using Stereo -> 5.1 mixing matrix");
-          break;
-
-        case StereoUpMix.SevenDotOne:
-          // Channel 1: left front out = left in
-          // Channel 2: right front out = right in
-          // Channel 3: centre out = left/right in
-          // Channel 4: LFE out = left/right in
-          // Channel 5: left rear/side out = left in
-          // Channel 6: right rear/side out = right in
-          // Channel 7: left-rear center out = left in
-          // Channel 8: right-rear center out = right in
-          mixMatrix = new float[8, 2];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 0] = 0.5f;
-          mixMatrix[2, 1] = 0.5f;
-          mixMatrix[3, 0] = 0.5f;
-          mixMatrix[3, 1] = 0.5f;
-          mixMatrix[4, 0] = 1;
-          mixMatrix[5, 1] = 1;
-          mixMatrix[6, 0] = 1;
-          mixMatrix[7, 1] = 1;
-          Log.Info("BASS: Using Stereo -> 7.1 mixing matrix");
-          break;
-      }
-      return mixMatrix;
-    }
-
-    private float[,] CreateQuadraphonicUpMixMatrix()
-    {
-      float[,] mixMatrix = null;
-
-      switch (Config.UpmixQuadro)
-      {
-        case QuadraphonicUpMix.None:
-          Log.Info("BASS: No upmixing of Quadro selected");
-          break;
-
-        case QuadraphonicUpMix.FiveDotOne:
-          // Channel 1: left front out = left front in
-          // Channel 2: right front out = right front in
-          // Channel 3: centre out = left/right front in
-          // Channel 4: LFE out = left/right front in
-          // Channel 5: left surround out = left surround in
-          // Channel 6: right surround out = right surround in
-          mixMatrix = new float[6, 4];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 0] = 0.5f;
-          mixMatrix[2, 1] = 0.5f;
-          mixMatrix[3, 0] = 0.5f;
-          mixMatrix[3, 1] = 0.5f;
-          mixMatrix[4, 2] = 1;
-          mixMatrix[5, 3] = 1;
-          Log.Info("BASS: Using Quadro -> 5.1 mixing matrix");
-          break;
-
-        case QuadraphonicUpMix.SevenDotOne:
-          // Channel 1: left front out = left front in
-          // Channel 2: right front out = right front in
-          // Channel 3: center out = left/right front in
-          // Channel 4: LFE out = left/right front in
-          // Channel 5: left surround out = left surround in
-          // Channel 6: right surround out = right surround in
-          // Channel 7: left back out = left surround in
-          // Channel 8: right back out = right surround in
-          mixMatrix = new float[8, 4];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 0] = 0.5f;
-          mixMatrix[2, 1] = 0.5f;
-          mixMatrix[3, 0] = 0.5f;
-          mixMatrix[3, 1] = 0.5f;
-          mixMatrix[4, 2] = 1;
-          mixMatrix[5, 3] = 1;
-          mixMatrix[6, 2] = 1;
-          mixMatrix[7, 3] = 1;
-          Log.Info("BASS: Using Quadro -> 7.1 mixing matrix");
-          break;
-      }
-      return mixMatrix;
-    }
-
-    private float[,] CreateFiveDotOneUpMixMatrix()
-    {
-      float[,] mixMatrix = null;
-      switch (Config.UpmixFiveDotOne)
-      {
-        case FiveDotOneUpMix.None:
-          Log.Info("BASS: No upmixing of 5.1 selected");
-          break;
-
-        case FiveDotOneUpMix.SevenDotOne:
-          mixMatrix = new float[8, 6];
-          mixMatrix[0, 0] = 1;
-          mixMatrix[1, 1] = 1;
-          mixMatrix[2, 2] = 1;
-          mixMatrix[3, 3] = 1;
-          mixMatrix[4, 4] = 1;
-          mixMatrix[5, 5] = 1;
-          mixMatrix[6, 4] = 1;
-          mixMatrix[7, 5] = 1;
-          Log.Info("BASS: Using 5.1 -> 7.1 mixing matrix");
-          break;
-      }
-      return mixMatrix;
-    }
-
+    
     #endregion
 
     #region IPlayer Implementation
@@ -1998,16 +1498,14 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        _streams.Insert(0, stream);
-
-        // Enable events, for various Playback Actions to be handled
-        stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
+        _streams.Add(stream);
 
         bool playbackStarted = false;
 
-        if (_mixer == 0)
+        if (_mixer == null)
         {
-          if (!CreateMixer(stream))
+          _mixer = new MixerStream(this);
+          if (!_mixer.CreateMixer(stream))
           {
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
             return false;
@@ -2015,14 +1513,16 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer);
+          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
           if (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans)
           {
-            if (!_wasapiSwitchedToMixed || stream.ChannelInfo.freq != _wasapiMixedFreq || stream.ChannelInfo.chans != _wasapiMixedChans)
+            if (!_mixer.WasApiSwitchedtoShared || stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
               // The new stream has a different frequency or number of channels
               // We need a new mixer
-              if (!CreateMixer(stream))
+              _mixer.Dispose();
+              _mixer = new MixerStream(this);
+              if (!_mixer.CreateMixer(stream))
               {
                 Log.Error("BASS: Could not create Mixer. Aborting playback.");
                 return false;
@@ -2031,7 +1531,11 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        if ((Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi) && stream.BassStream != 0)
+        // Enable events, for various Playback Actions to be handled
+        stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
+        _mixer.MusicStreamMessage += new MixerStream.MusicStreamMessageHandler(OnMusicStreamMessage);
+
+        if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
         {
           // In order to provide data for visualisation we need to clone the stream
           _streamcopy = new StreamCopy();
@@ -2051,20 +1555,7 @@ namespace MediaPortal.MusicPlayer.BASS
         SetCueTrackEndPosition(stream);
 
         // Plugin the stream into the Mixer
-        result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
-                                                BASSFlag.BASS_STREAM_AUTOFREE |
-                                                BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
-                                                BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
-        
-        if (result && _mixingMatrix != null)
-        {
-          Log.Debug("BASS: Setting mixing matrix...");
-          result = BassMix.BASS_Mixer_ChannelSetMatrix(stream.BassStream, _mixingMatrix);
-          if (!result)
-          {
-            Log.Error("BASS: Error attaching Mixing Matrix. {0}", Bass.BASS_ErrorGetCode());
-          }
-        }
+        result = _mixer.AttachStream(stream);
 
         if (Config.MusicPlayer == AudioPlayer.Asio && !BassAsio.BASS_ASIO_IsStarted())
         {
@@ -2077,13 +1568,13 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          if (Bass.BASS_ChannelIsActive(_mixer) == BASSActive.BASS_ACTIVE_PLAYING)
+          if (Bass.BASS_ChannelIsActive(_mixer.BassStream) == BASSActive.BASS_ACTIVE_PLAYING)
           {
             playbackStarted = true;
           }
           else
           {
-            playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
+            playbackStarted = Bass.BASS_ChannelPlay(_mixer.BassStream, false);
           }
         }
 
@@ -2166,14 +1657,14 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-in over 500ms
-            Bass.BASS_ChannelSlideAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
+            Bass.BASS_ChannelSlideAttribute(_mixer.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
           }
           else
           {
-            Bass.BASS_ChannelSetAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 1);
+            Bass.BASS_ChannelSetAttribute(_mixer.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1);
           }
 
-          BassMix.BASS_Mixer_ChannelPlay(_mixer);
+          BassMix.BASS_Mixer_ChannelPlay(_mixer.BassStream);
           Bass.BASS_Start();
 
           if (Config.MusicPlayer == AudioPlayer.Asio)
@@ -2193,14 +1684,14 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-out over 500ms
-            Bass.BASS_ChannelSlideAttribute(_mixer, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
+            Bass.BASS_ChannelSlideAttribute(_mixer.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
 
             // Wait until the slide is done
-            while (Bass.BASS_ChannelIsSliding(_mixer, BASSAttribute.BASS_ATTRIB_VOL))
+            while (Bass.BASS_ChannelIsSliding(_mixer.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
               System.Threading.Thread.Sleep(20);
           }
 
-          BassMix.BASS_Mixer_ChannelPause(_mixer);
+          BassMix.BASS_Mixer_ChannelPause(_mixer.BassStream);
           Bass.BASS_Pause();
 
           if (Config.MusicPlayer == AudioPlayer.Asio)
@@ -2232,45 +1723,65 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       // We might have performed the Stop already, because the end of the playback list was reached
       // g_Player is calling the Stop a second time. Don't execute the commands in this case
-      if (_mixer == 0)
+      if (_mixer == null)
       {
         Log.Debug("BASS: Already stopped. Don't execute Stop a second time");
         return;
       }
 
       MusicStream stream = GetCurrentStream();
-      Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
       try
       {
-        if (Config.SoftStop && !stream.IsDisposed)
+        if (stream != null)
         {
-          Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
-          Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
-                                          Config.CrossFadeIntervalMs);
-
-          // Wait until the slide is done
-          // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
-          DateTime start = DateTime.Now;
-          while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+          Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
+          if (Config.SoftStop && !stream.IsDisposed && !stream.IsCrossFading)
           {
-            System.Threading.Thread.Sleep(20);
-            if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
+            Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
+            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                            Config.CrossFadeIntervalMs);
+
+            // Wait until the slide is done
+            // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
+            DateTime start = DateTime.Now;
+            while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
             {
-              break;
+              System.Threading.Thread.Sleep(20);
+              if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
+              {
+                break;
+              }
             }
           }
-        }      
+          BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
+          stream.Dispose();
+        }
+        
+        _mixer.Dispose();
+        _mixer = null;
 
         if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
         {
+          Log.Debug("BASS: Stopping ASIO Device");
           if (!BassAsio.BASS_ASIO_Stop())
           {
             Log.Error("BASS: Error freeing ASIO: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
+          Log.Debug("BASS: unjoin ASIO CHannels");
+          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN))
+          {
+            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
+          Log.Debug("BASS: disabling ASIO CHannels");
+          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_ENABLE))
+          {
+            Log.Error("BASS: Error disabling Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
           }
         }
 
         if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
+          Log.Debug("BASS: Stopping WASAPI Device");
           if (!BassWasapi.BASS_WASAPI_Stop(true))
           {
             Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
@@ -2281,12 +1792,6 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
           }
         }
-
-        if (!Bass.BASS_StreamFree(_mixer))
-        {
-          Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
-        }
-        _mixer = 0;
 
         // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
         if (_isCDDAFile)
@@ -2380,15 +1885,12 @@ namespace MediaPortal.MusicPlayer.BASS
       try
       {
         MusicStream stream = GetCurrentStream();
-        long len = Bass.BASS_ChannelGetLength(stream.BassStream); // length in bytes
-        double totaltime = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, len); // the total time length
-
         long pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
 
         double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
         double offsetSecs = (double)ms / 1000.0;
 
-        if (timePos + offsetSecs >= totaltime)
+        if (timePos + offsetSecs >= stream.TotalStreamSeconds)
         {
           return false;
         }
@@ -2468,7 +1970,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         MusicStream stream = GetCurrentStream();
 
-        if (StreamIsPlaying(stream))
+        if (stream.IsPlaying)
         {
           if (_currentCueSheet != null)
           {

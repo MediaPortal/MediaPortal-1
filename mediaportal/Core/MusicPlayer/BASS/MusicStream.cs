@@ -48,7 +48,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private SYNCPROC _cueTrackEndProcDelegate = null;
     private SYNCPROC _metaTagSyncProcDelegate = null;
     private SYNCPROC _playBackSlideEndDelegate = null;
-    private SYNCPROC _streamFreedDelegate = null;
 
     public delegate void MusicStreamMessageHandler(object sender, StreamAction action);
     public event MusicStreamMessageHandler MusicStreamMessage;
@@ -115,40 +114,56 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Properties
 
+    /// <summary>
+    /// Returns the Stream Handle
+    /// </summary>
     public int BassStream
     {
       get { return _stream; }
     }
 
+    /// <summary>
+    /// Returns the Filepath of the Stream
+    /// </summary>
     public string FilePath
     {
       get { return _filePath; }
     }
 
+    /// <summary>
+    /// Returns the Channel Info
+    /// </summary>
     public BASS_CHANNELINFO ChannelInfo
     {
       get { return _channelInfo; }
     }
 
+    /// <summary>
+    /// Indicates that the stream is already disposed.
+    /// </summary>
     public bool IsDisposed
     {
       get { return _disposed; }
     }
 
-
     #region Playback Related Properties
 
+    /// <summary>
+    /// Returns the Playback status of the stream
+    /// </summary>
     public bool IsPlaying
     {
       get { return Bass.BASS_ChannelIsActive(_stream) == BASSActive.BASS_ACTIVE_PLAYING; }
     }
 
+    /// <summary>
+    /// The stream is Crossfading
+    /// </summary>
     public bool IsCrossFading
     {
       get { return _crossFading; }
     }
-
-
+    
     /// <summary>
     /// Return Total Seconds of the Stream
     /// </summary>
@@ -163,12 +178,7 @@ namespace MediaPortal.MusicPlayer.BASS
           return 0;
         }
 
-        // length in bytes
-        long len = Bass.BASS_ChannelGetLength(_stream);
-
-        // the total time length
-        double totaltime = Bass.BASS_ChannelBytes2Seconds(_stream, len);
-        return totaltime;
+        return Bass.BASS_ChannelBytes2Seconds(_stream, Bass.BASS_ChannelGetLength(_stream));
       }
     }
 
@@ -306,9 +316,8 @@ namespace MediaPortal.MusicPlayer.BASS
       _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
       _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
       _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
-      _streamFreedDelegate = new SYNCPROC(StreamFreedProc);
 
-      RegisterPlaybackEvents();
+      //RegisterPlaybackEvents();
 
       AttachDspToStream();
 
@@ -637,9 +646,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _streamEventSyncHandles.Add(RegisterCrossFadeEvent(_stream));
       }
-
       _streamEventSyncHandles.Add(RegisterPlaybackEndEvent(_stream));
-      _streamEventSyncHandles.Add(RegisterStreamFreedEvent(_stream));
     }
 
     /// <summary>
@@ -661,7 +668,7 @@ namespace MediaPortal.MusicPlayer.BASS
       long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
 
       syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS,
+                                            BASSSync.BASS_SYNC_POS,
                                             bytePos, _playbackCrossFadeProcDelegate,
                                             IntPtr.Zero);
 
@@ -670,7 +677,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Debug("BASS: RegisterCrossFadeEvent of stream {0} failed with error {1}", stream,
                   Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
       }
-
       return syncHandle;
     }
 
@@ -679,12 +685,12 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    private int RegisterPlaybackEndEvent(int stream)
+    private int  RegisterPlaybackEndEvent(int stream)
     {
       int syncHandle = 0;
 
       syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_END,
+                                            BASSSync.BASS_SYNC_END,
                                             0, _playbackEndProcDelegate,
                                             IntPtr.Zero);
 
@@ -693,30 +699,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream,
                   Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
       }
-
-      return syncHandle;
-    }
-
-    /// <summary>
-    /// Register the Stream Freed Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private int RegisterStreamFreedEvent(int stream)
-    {
-      int syncHandle = 0;
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_FREE,
-                                            0, _streamFreedDelegate,
-                                            IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
       return syncHandle;
     }
 
@@ -742,32 +724,6 @@ namespace MediaPortal.MusicPlayer.BASS
       return syncHandle;
     }
 
-
-    /// <summary>
-    /// Unregister the Playback Events
-    /// </summary>
-    /// <returns></returns>
-    public bool UnregisterPlaybackEvents()
-    {
-      try
-      {
-        foreach (int syncHandle in _streamEventSyncHandles)
-        {
-          if (syncHandle != 0)
-          {
-            Bass.BASS_ChannelRemoveSync(_stream, syncHandle);
-          }
-        }
-      }
-
-      catch
-      {
-        return false;
-      }
-
-      return true;
-    }
-
     /// <summary>
     /// Fade Out  Procedure
     /// </summary>
@@ -791,7 +747,7 @@ namespace MediaPortal.MusicPlayer.BASS
       Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate, IntPtr.Zero);
 
       _crossFading = true;
-      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, Config.CrossFadeIntervalMs);
+      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0, Config.CrossFadeIntervalMs);
     }
 
     /// <summary>
@@ -804,7 +760,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private void SlideEndedProc(int handle, int channel, int data, IntPtr user)
     {
       _crossFading = false;
-      Log.Debug("BASS: Fading of stream finished.");
+       Log.Debug("BASS: Fading of stream finished.");
     }
 
 
@@ -818,27 +774,10 @@ namespace MediaPortal.MusicPlayer.BASS
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
       Log.Debug("BASS: End of stream {0}", _filePath);
-
+      _crossFading = false;
       if (MusicStreamMessage != null)
       {
         MusicStreamMessage(this, StreamAction.Ended);
-      }
-    }
-
-    /// <summary>
-    /// Stream Freed Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void StreamFreedProc(int handle, int stream, int data, IntPtr userData)
-    {
-      Log.Debug("BASS: Stream {0} freed", _filePath);
-
-      if (MusicStreamMessage != null)
-      {
-        MusicStreamMessage(this, StreamAction.Freed);
       }
     }
 
@@ -949,6 +888,31 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// Unregister the Playback Events
+    /// </summary>
+    /// <returns></returns>
+    public bool UnregisterPlaybackEvents()
+    {
+      try
+      {
+        foreach (int syncHandle in _streamEventSyncHandles)
+        {
+          if (syncHandle != 0)
+          {
+            Bass.BASS_ChannelRemoveSync(_stream, syncHandle);
+          }
+        }
+      }
+
+      catch
+      {
+        return false;
+      }
+
+      return true;
+    }
+
     #endregion
 
     #region IDisposable Members
@@ -959,8 +923,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
       Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
       UnregisterPlaybackEvents();
+      Bass.BASS_StreamFree(_stream);
 
-      // Free Winamp resources
+      // Free Winamp resources)
       try
       {
         // Some Winamp dsps might raise an exception when closing
@@ -970,13 +935,6 @@ namespace MediaPortal.MusicPlayer.BASS
         }
       }
       catch (Exception) { }
-
-      if (_gain != null)
-      {
-        _gain.Stop();
-      }
-
-      Bass.BASS_StreamFree(_stream);
     }
 
     #endregion
