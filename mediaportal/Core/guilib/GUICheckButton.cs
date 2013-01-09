@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -58,6 +58,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
+    [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
 
     [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF =
@@ -84,7 +86,7 @@ namespace MediaPortal.GUI.Library
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
-    protected GUILabelControl _labelControl = null;
+    protected GUIControl _labelControl = null;
     protected GUICheckMarkControl checkMark = null;
 
     public GUICheckButton(int dwParentID) : base(dwParentID) {}
@@ -98,6 +100,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwPosY">The Y position of this control.</param>
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="checkFocus"></param>
+    /// <param name="checkNoFocus"></param>
+    /// <param name="checkWidth"></param>
+    /// <param name="checkHeight"></param>
     /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
     /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
     /// <param name="dwShadowAngle">The angle of the shadow; zero degrees along x-axis.</param>
@@ -125,7 +131,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
+    /// It allows the control to do any initialization
     /// </summary>
     public override void FinalizeConstruction()
     {
@@ -149,19 +155,37 @@ namespace MediaPortal.GUI.Library
                                  _borderCornerTextureRotateTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
-      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
-                                          _shadowAngle, _shadowDistance, _shadowColor);
-      _labelControl.ParentControl = this;
-      _labelControl.DimColor = DimColor;
-      _labelControl.TextAlignment = _textAlignment;
-      _labelControl.TextVAlignment = _textVAlignment;
+      if (_scrollStartDelay < 0)
+      {
+        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
+                                            _shadowAngle, _shadowDistance, _shadowColor)
+                          {
+                            ParentControl = this,
+                            DimColor = DimColor
+                          };
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+      }
+      else
+      {
+        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                         _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
+                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _userWrapString);
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUIFadeLabel)_labelControl).AllowScrolling = false;
+        ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
+      }
 
       checkMark = new GUICheckMarkControl(0, 0, _positionX + _width - _checkMarkWidth, _positionY, _checkMarkWidth,
                                           _checkMarkHeight, _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,
-                                          _checkMarkWidth, _checkMarkHeight, Alignment.ALIGN_LEFT);
-      checkMark.ParentControl = this;
-      checkMark.DimColor = DimColor;
+                                          _checkMarkWidth, _checkMarkHeight, Alignment.ALIGN_LEFT)
+                    {
+                      ParentControl = this,
+                      DimColor = DimColor
+                    };
     }
 
     /// <summary>
@@ -181,19 +205,30 @@ namespace MediaPortal.GUI.Library
       {
         if (value != IsFocused)
         {
-          if (value == true)
+          if (value)
           {
             if (_imageFocused != null)
             {
               _imageFocused.Begin();
             }
             GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+            // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).Clear(); // Resets the control to use the delayed start
+              ((GUIFadeLabel)_labelControl).AllowScrolling = true;
+            }
           }
           else
           {
             if (_imageNonFocused != null)
             {
               _imageNonFocused.Begin();
+            }
+            // When button focus is lost, the GUIFadeLabel (if specified) is not allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).AllowScrolling = false;
             }
           }
         }
@@ -230,6 +265,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
+      string labelText = _label;
+
       // Do not render if not visible.
       if (GUIGraphicsContext.EditMode == false)
       {
@@ -274,10 +311,20 @@ namespace MediaPortal.GUI.Library
       _labelControl.Width = labelWidth;
 
       // render the text on the button
-      _labelControl.TextAlignment = _textAlignment;
-      _labelControl.TextVAlignment = _textVAlignment;
-      _labelControl.Label = _label;
-      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUILabelControl)_labelControl).Label = labelText;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUIFadeLabel)_labelControl).Label = labelText;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
 
       int x = 0;
       int y = 0;
@@ -362,7 +409,6 @@ namespace MediaPortal.GUI.Library
     public override void OnAction(Action action)
     {
       base.OnAction(action);
-      GUIMessage message;
       if (Focus)
       {
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
@@ -375,7 +421,7 @@ namespace MediaPortal.GUI.Library
           }
 
           // send a message to anyone interested 
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          var message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
           
           // If this button has a click setting then execute the setting.
@@ -388,12 +434,15 @@ namespace MediaPortal.GUI.Library
           if (_application.Length != 0)
           {
             //button should start an external application, so start it
-            Process proc = new Process();
+            var proc = new Process();
 
             string strWorkingDir = Path.GetFullPath(_application);
             string strFileName = Path.GetFileName(_application);
-            strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
-            proc.StartInfo.FileName = strFileName;
+            if (strFileName != null)
+            {
+              strWorkingDir = strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length + 1));
+              proc.StartInfo.FileName = strFileName;
+            }
             proc.StartInfo.WorkingDirectory = strWorkingDir;
             proc.StartInfo.Arguments = _arguments;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -405,13 +454,13 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow(_hyperLinkWindowId);
             return;
           }
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
+            var newaction = new Action((Action.ActionType)ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -584,7 +633,14 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _fontName = value;
-        _labelControl.FontName = _fontName;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).FontName = _fontName;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        }
       }
     }
 
@@ -608,9 +664,18 @@ namespace MediaPortal.GUI.Library
       _textColor = dwColor;
       _fontName = strFontName;
 
-      _labelControl.FontName = _fontName;
-      _labelControl.TextColor = dwColor;
-      _labelControl.Label = strLabel;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).FontName = _fontName;
+        ((GUILabelControl)_labelControl).TextColor = dwColor;
+        ((GUILabelControl)_labelControl).Label = strLabel;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        ((GUIFadeLabel)_labelControl).TextColor = dwColor;
+        ((GUIFadeLabel)_labelControl).Label = strLabel;
+      }
     }
 
     /// <summary>
@@ -627,7 +692,14 @@ namespace MediaPortal.GUI.Library
         }
 
         _label = value;
-        _labelControl.Label = _label;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).Label = _label;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).Label = _label;
+        }
       }
     }
 
