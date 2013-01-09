@@ -257,22 +257,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
       ////Gentle.Common.CacheManager.Clear();
       Reset();
       //get all channels
-      IList<Channel> channels = ChannelManagement.ListAllChannels(ChannelIncludeRelationEnum.TuningDetails);
+      IList<Channel> channels = ChannelManagement.ListAllChannelsForEpgGrabbing(ChannelIncludeRelationEnum.TuningDetails);
       foreach (Channel channel in channels)
       {
-        //if epg grabbing is enabled and channel is a radio or tv channel
-        if (channel.GrabEpg == false)
-          continue;
-        if (channel.MediaType == (int)MediaTypeEnum.Radio == false && channel.MediaType == (int)MediaTypeEnum.TV == false)
-          continue;
-
         //for each tuning detail of the channel
         foreach (TuningDetail detail in channel.TuningDetails)
         {
-          //skip analog channels and webstream channels
-          if (detail.ChannelType == 0 || detail.ChannelType == 5)
-            continue;
-
           //create a new transponder
           Transponder t = new Transponder(detail);
           bool found = false;
