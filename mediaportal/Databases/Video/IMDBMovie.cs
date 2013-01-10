@@ -560,7 +560,7 @@ namespace MediaPortal.Video.Database
       _movieNfoFile = string.Empty;
     }
 
-    #region Database views skin properties
+    #region Do not use this region anymore (will be removed for in 1.4.0)
 
     [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
     public void SetProperties(bool isFolder)
@@ -671,16 +671,11 @@ namespace MediaPortal.Video.Database
       {
         GUIPropertyManager.SetProperty("#watchedcount", "-1");
       }
-      
+
       // MediaInfo Properties
       try
       {
-        ResetMediaInfoProperties(); // Clear previous values
-
-        if (!string.IsNullOrEmpty(file))
-        {
           SetMediaInfoProperties(file);
-        }
       }
         
       catch (Exception e)
@@ -850,7 +845,7 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
-    #region Share view movieinfo and skin properties
+    #region Share/Database view movieinfo and skin properties
 
     /// <summary>
     /// Use only in share view
@@ -1685,7 +1680,8 @@ namespace MediaPortal.Video.Database
     }
 
     /// <summary>
-    /// Use only in share view
+    /// Sets movie skin properties from albuminfotag from item, also sets new IMDBMovie
+    /// in case albuminfotag is NULL in GUIListItem and resets movie skin properties
     /// </summary>
     /// <param name="item"></param>
     public static void SetMovieProperties(GUIListItem item)
@@ -1696,6 +1692,7 @@ namespace MediaPortal.Video.Database
 
         if (info == null)
         {
+          ResetMovieProperties();
           return;
         }
       

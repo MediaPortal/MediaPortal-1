@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class GUIVideoTitle : GUIVideoBaseWindow, IMDB.IProgress
   {
-    #region Base variabeles
+    #region Base variables
 
     private DirectoryHistory m_history = new DirectoryHistory();
     private string currentFolder = string.Empty;
@@ -62,8 +63,13 @@ namespace MediaPortal.GUI.Video
     private ArrayList _conflictFiles = new ArrayList();
     private int _scanningFileNumber = 1;
     private int _scanningFileTotal = 1;
-    private Thread _setThumbs;
-    private ArrayList _threadGUIItems = new ArrayList();
+    // Worker threads variables
+    private bool _isSetThumbsRunning = false;
+    private bool _isSetRandomFanartsRunning = false;
+    private bool _isSetGroupContentRunning = false;
+    private bool _stopSetThumbsWorker = false;
+    private bool _stopSetRandomFanartsWorker = false;
+    private bool _stopSetGroupContentWorker = false;
     // Search movie/actor
     private static bool _searchMovie = false;
     private static bool _searchActor = false;
@@ -72,8 +78,9 @@ namespace MediaPortal.GUI.Video
     private static string _searchActorString = string.Empty;
     private static string _currentViewHistory = string.Empty;
     private static string _currentBaseView = string.Empty; // lvl 0 view name (origin view which can be drilled down liek genres, index, years..))
-    // Last View lvl postion on back from VideoInfo screen
-    private int _currentLevel = 0;
+    private int _currentLevel = 0; // Last View lvl postion on back from VideoInfo screen
+    private ArrayList _itemlist = new ArrayList(); // LoadDirectory items
+    private ArrayList _movies = new ArrayList(); // Group item content
     
     #endregion
 
@@ -252,6 +259,9 @@ namespace MediaPortal.GUI.Video
     {
       base.OnPageLoad();
       int previousWindow = GUIWindowManager.GetPreviousActiveWindow();
+      _stopSetRandomFanartsWorker = false;
+      _stopSetThumbsWorker = false;
+      _stopSetGroupContentWorker = false;
       
       // Reset parameters if previous window is not one of video windows
       if (!GUIVideoFiles.IsVideoWindow(previousWindow))
@@ -293,12 +303,17 @@ namespace MediaPortal.GUI.Video
     
     protected override void OnPageDestroy(int newWindowId)
     {
-      if (_setThumbs != null && _setThumbs.IsAlive)
+      _stopSetRandomFanartsWorker = true;
+      _stopSetThumbsWorker = true;
+      _stopSetGroupContentWorker = true;
+
+      while (_isSetRandomFanartsRunning || _isSetThumbsRunning || _isSetGroupContentRunning)
       {
-        _setThumbs.Abort();
+        GUIWindowManager.Process();
       }
 
       currentSelectedItem = facadeLayout.SelectedListItemIndex;
+
       if (newWindowId == (int)Window.WINDOW_VIDEO_TITLE ||
           newWindowId == (int)Window.WINDOW_VIDEOS)
       {
@@ -737,7 +752,7 @@ namespace MediaPortal.GUI.Video
 
           if (DateTime.TryParse(actor.LastUpdate, out lastUpdate))
           {
-            if (searchDate > lastUpdate)
+            if (searchDate > lastUpdate && Win32API.IsConnectedToInternet())
             {
               if (VideoDatabase.CheckActorImdbId(actor.IMDBActorID))
               {
@@ -755,14 +770,17 @@ namespace MediaPortal.GUI.Video
         else
         {
           string actorImdbId = VideoDatabase.GetActorImdbId(movie.ActorID);
-
-          if (VideoDatabase.CheckActorImdbId(actorImdbId))
+          
+          if (Win32API.IsConnectedToInternet())
           {
-            actor = IMDBFetcher.FetchMovieActor(this, movie, actorImdbId, movie.ActorID);
-          }
-          else
-          {
-            actor = IMDBFetcher.FetchMovieActor(this, movie, movie.Actor, movie.ActorID);
+            if (VideoDatabase.CheckActorImdbId(actorImdbId))
+            {
+              actor = IMDBFetcher.FetchMovieActor(this, movie, actorImdbId, movie.ActorID);
+            }
+            else
+            {
+              actor = IMDBFetcher.FetchMovieActor(this, movie, movie.Actor, movie.ActorID);
+            }
           }
 
           if (actor != null)
@@ -775,11 +793,13 @@ namespace MediaPortal.GUI.Video
     
     protected override void LoadDirectory(string strNewDirectory)
     {
+      CheckAndStopThreads();
+      
       GUIWaitCursor.Show();
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
-      ArrayList itemlist = new ArrayList();
-      ArrayList movies = new ArrayList();
+      _itemlist.Clear();
+      _movies.Clear();
 
       if (_searchMovie)
       {
@@ -817,7 +837,7 @@ namespace MediaPortal.GUI.Video
                      "WHERE "+ _searchMovieDbField + " LIKE '%" + _searchMovieString + "%' " +
                      "ORDER BY movieinfo.strTitle ASC";
 
-        VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out _movies, false, true, false, false);
       }
       else if (_searchActor && handler.CurrentLevelWhere != "title")
       {
@@ -834,11 +854,11 @@ namespace MediaPortal.GUI.Video
           sql = "SELECT * FROM actors WHERE strActor LIKE '%" + _searchActorString + "%' ORDER BY strActor ASC";
         }
         
-        VideoDatabase.GetMoviesByFilter(sql, out movies, true, false, false, false);
+        VideoDatabase.GetMoviesByFilter(sql, out _movies, true, false, false, false);
       }
       else
       {
-        movies = ((VideoViewHandler)handler).Execute();
+        _movies = ((VideoViewHandler)handler).Execute();
       }
 
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
@@ -851,22 +871,27 @@ namespace MediaPortal.GUI.Video
         listItem.IsFolder = true;
         Util.Utils.SetDefaultIcons(listItem);
         listItem.OnItemSelected += OnItemSelected;
-        itemlist.Add(listItem);
         SetLabel(listItem);
+        listItem.TVTag = -1;
+        listItem.MusicTag = string.Empty;
         ((VideoViewHandler)handler).SetLabel(listItem.AlbumInfoTag as IMDBMovie, ref listItem);
         facadeLayout.Add(listItem);
+        _itemlist.Add(listItem);
       }
 
       VirtualDirectory vDir = new VirtualDirectory();
       // Get protected share paths for videos
       vDir.LoadSettings("movies");
 
-      foreach (IMDBMovie movie in movies)
+      #region Set Item Movie data
+
+      foreach (IMDBMovie movie in _movies)
       {
         GUIListItem item = new GUIListItem();
         item.Label = movie.Title;
+        string curentLvlWhere = handler.CurrentLevelWhere;
 
-        if (handler.CurrentLevelWhere != "user groups")
+        if (curentLvlWhere != "user groups")
         {
           if (handler.CurrentLevel + 1 < handler.MaxLevels)
           {
@@ -899,7 +924,9 @@ namespace MediaPortal.GUI.Video
         if (!string.IsNullOrEmpty(item.Path))
         {
           if (!IsItemPinProtected(item, vDir))
+          {
             continue;
+          }
         }
         //
         item.Duration = movie.RunTime * 60;
@@ -908,6 +935,7 @@ namespace MediaPortal.GUI.Video
         item.DVDLabel = movie.DVDLabel;
         item.Rating = movie.Rating;
         item.IsPlayed = movie.Watched > 0;
+        item.TVTag = -1;
 
         try
         {
@@ -933,16 +961,16 @@ namespace MediaPortal.GUI.Video
         item.OnItemSelected += OnItemSelected;
         SetLabel(item);
         ((VideoViewHandler)handler).SetLabel(item.AlbumInfoTag as IMDBMovie, ref item);
-        // Movie/group content list skin property will read from musictag
-        item.MusicTag = SetMovieListGroupedBy(item);
         facadeLayout.Add(item);
-        itemlist.Add(item);
+        _itemlist.Add(item);
       }
+
+      #endregion
 
       // Sort
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       int itemIndex = 0;
-      string viewFolder = SetItemViewHistory();
+      string viewFolder = GetItemViewHistory();
       string selectedItemLabel = m_history.Get(viewFolder);
       
       if (string.IsNullOrEmpty(selectedItemLabel) && facadeLayout.SelectedListItem != null)
@@ -950,11 +978,11 @@ namespace MediaPortal.GUI.Video
         selectedItemLabel = facadeLayout.SelectedListItem.Label;
       }
 
-      int itemCount = itemlist.Count;
+      int itemCount = _itemlist.Count;
       
-      if (itemlist.Count > 0)
+      if (_itemlist.Count > 0)
       {
-        GUIListItem rootItem = (GUIListItem)itemlist[0];
+        GUIListItem rootItem = (GUIListItem)_itemlist[0];
         if (rootItem.Label == "..")
         {
           itemCount--;
@@ -965,15 +993,15 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(itemCount));
 
       // Clear info for zero result
-      if (itemlist.Count == 0)
+      if (_itemlist.Count == 0)
       {
         GUIListItem item = new GUIListItem();
         item.Label = GUILocalizeStrings.Get(284);
-        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-        movie = new IMDBMovie();
-        item.AlbumInfoTag = movie;
-        movie.SetProperties(false, string.Empty);
-        itemlist.Add(item);
+        IMDBMovie.SetMovieData(item);
+        IMDBMovie.SetMovieProperties(item);
+        item.TVTag = -1;
+        item.MusicTag = string.Empty;
+        _itemlist.Add(item);
         facadeLayout.Add(item);
       }
 
@@ -994,49 +1022,8 @@ namespace MediaPortal.GUI.Video
 
           itemIndex++;
         }
-        
-        switch (handler.CurrentLevelWhere.ToLower())
-        {
-          case "genre":
-            SetGenreThumbs(itemlist);
-            break;
-
-          case "user groups":
-            SetUserGroupsThumbs(itemlist);
-            break;
-
-          case "actor":
-          case "director":
-            SetActorThumbs(itemlist);
-            break;
-
-          case "year":
-            SetYearThumbs(itemlist);
-            break;
-
-          case "actorindex":
-          case "directorindex":
-          case "titleindex":
-            foreach (GUIListItem itemAbc in itemlist)
-            {
-              itemAbc.IconImageBig = @"alpha\" + itemAbc.Label + ".png";
-              itemAbc.IconImage = @"alpha\" + itemAbc.Label + ".png";
-              itemAbc.ThumbnailImage = @"alpha\" + itemAbc.Label + ".png";
-            }
-            break;
-
-          default:
-            // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
-            // Cover image thumbs missing in My Videos when view Selection is by "watched"
-            SetIMDBThumbs(itemlist);
-            break;
-        }
       }
-      else
-      {
-        SetIMDBThumbs(itemlist);
-      }
-
+      
       if (itemSelected)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
@@ -1046,10 +1033,14 @@ namespace MediaPortal.GUI.Video
         SelectCurrentItem();
       }
 
+      // Set thumbs and group lvl content (threaded)
+      SetThumbsWorker();
+      SetGroupContentWorker();
+      SetRandomFanartWorker();
       UpdateButtonStates();
       GUIWaitCursor.Hide();
     }
-    
+
     // Scan for new movies for selected folder in configuration
     protected override void OnSearchNew()
     {
@@ -1110,7 +1101,7 @@ namespace MediaPortal.GUI.Video
     }
     
     #endregion
-
+    
     private void SetLabel(GUIListItem item)
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
@@ -1289,40 +1280,33 @@ namespace MediaPortal.GUI.Video
         
       }
     }
-
-    private void SelectItem()
-    {
-      if (currentSelectedItem >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
-      }
-    }
-
+    
     #region SetThumbs
 
-    protected void SetGenreThumbs(ArrayList itemlist)
+    protected void SetGenreThumb(GUIListItem item)
     {
-      foreach (GUIListItem item in itemlist)
+      try
       {
-        // get the genre somewhere since the label isn't set yet.
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        //item.MusicTag = SetMovieListGroupedBy(item);
 
-        if (movie != null) 
+        if (movie != null)
         {
           string genreCover = Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
           SetItemThumb(item, genreCover);
         }
       }
+      catch (Exception)
+      { }
     }
 
-    protected void SetUserGroupsThumbs(ArrayList itemlist)
+    protected void SetUserGroupThumb(GUIListItem item)
     {
-      ArrayList movies = new ArrayList();
-      
-      foreach (GUIListItem item in itemlist)
+      try
       {
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-        
+        //item.MusicTag = SetMovieListGroupedBy(item);
+
         if (movie != null)
         {
           if (movie.Title == string.Empty)
@@ -1333,77 +1317,40 @@ namespace MediaPortal.GUI.Video
             {
               SetItemThumb(item, usergroupCover);
             }
-            else
-            {
-              //ArrayList mList = new ArrayList();
-              //VideoDatabase.GetMoviesByUserGroup(movie.SingleUserGroup, ref mList);
-              //IMDBMovie cMovie = GetRandomMovie(mList);
-
-              //if ( cMovie != null)
-              //{
-              //  string titleExt = cMovie.Title + "{" + cMovie.ID + "}";
-              //  usergroupCover = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-              //  SetItemThumb(item, usergroupCover);
-              //}
-            }
           }
           else
           {
-            movies.Add(item);
+            SetItemThumb(item);
           }
         }
       }
-      
-      if (movies.Count > 0)
-      {
-        SetIMDBThumbs(movies);
-      }
+      catch (Exception)
+      { }
     }
     
-    protected void SetActorThumbs(ArrayList itemlist)
-    {
-      if (_setThumbs != null && _setThumbs.IsAlive)
-      {
-        _setThumbs.Abort();
-        _setThumbs = null;
-      }
-
-      _threadGUIItems.Clear();
-      _threadGUIItems.AddRange(itemlist);
-      _setThumbs = new Thread(ThreadSetActorsThumbs);
-      _setThumbs.Priority = ThreadPriority.Lowest;
-      _setThumbs.IsBackground = true;
-      _setThumbs.Start();
-    }
-
-    private void ThreadSetActorsThumbs()
+    private void SetActorThumb(GUIListItem item)
     {
       try
       {
-        foreach (GUIListItem item in _threadGUIItems)
-        {
-          // get the actors somewhere since the label isn't set yet.
-          IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        //item.MusicTag = SetMovieListGroupedBy(item);
 
-          if (movie != null)
-          {
-            string actorCover = Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.ActorID.ToString());
-            SetItemThumb(item, actorCover);
-          }
+        if (movie != null)
+        {
+          string actorCover = Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.ActorID.ToString());
+          SetItemThumb(item, actorCover);
         }
-        SelectItem();
       }
-      catch (ThreadAbortException)
-      {
-        Log.Info("GUIVideoTitle: Thread SetActorsThumbs aborted.");
-      }
+      catch (Exception)
+      { }
     }
     
-    protected void SetYearThumbs(ArrayList itemlist)
+    protected void SetYearThumb(GUIListItem item)
     {
-      foreach (GUIListItem item in itemlist)
+      try
       {
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        //item.MusicTag = SetMovieListGroupedBy(item);
 
         if (movie != null) 
         {
@@ -1411,150 +1358,457 @@ namespace MediaPortal.GUI.Video
           SetItemThumb(item, yearCover);
         }
       }
+      catch (Exception)
+      { }
     }
     
-    private void SetIMDBThumbs(ArrayList items)
-    {
-      if (_setThumbs != null && _setThumbs.IsAlive)
-      {
-        _setThumbs.Abort();
-        _setThumbs = null;
-      }
-
-      _threadGUIItems.Clear();
-      _threadGUIItems.AddRange(items);
-      _setThumbs = new Thread(ThreadSetIMDBThumbs);
-      _setThumbs.Priority = ThreadPriority.Lowest;
-      _setThumbs.IsBackground = true;
-      _setThumbs.Start();
-    }
-    
-    private void ThreadSetIMDBThumbs()
+    private void SetItemThumb (GUIListItem item)
     {
       try
       {
-        for (int x = 0; x < _threadGUIItems.Count; ++x)
-        {
-          string coverArtImage = string.Empty;
-          GUIListItem listItem = (GUIListItem)_threadGUIItems[x];
-          IMDBMovie movie = listItem.AlbumInfoTag as IMDBMovie;
+        string coverArtImage = string.Empty;
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        //item.MusicTag = SetMovieListGroupedBy(item);
 
-          if (movie != null)
+        if (movie != null)
+        {
+          if (movie.ID >= 0)
           {
-            if (movie.ID >= 0)
-            {
-              string titleExt = movie.Title + "{" + movie.ID + "}";
-              coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+            string titleExt = movie.Title + "{" + movie.ID + "}";
+            coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
               
-              if (Util.Utils.FileExistsInCache(coverArtImage))
-              {
-                listItem.ThumbnailImage = coverArtImage;
-                listItem.IconImageBig = coverArtImage;
-                listItem.IconImage = coverArtImage;
-              }
-            }
-          }
-          // let's try to assign better covers
-          if (!string.IsNullOrEmpty(coverArtImage))
-          {
-            coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
             if (Util.Utils.FileExistsInCache(coverArtImage))
             {
-              listItem.ThumbnailImage = coverArtImage;
+              item.ThumbnailImage = coverArtImage;
+              item.IconImageBig = coverArtImage;
+              item.IconImage = coverArtImage;
             }
           }
-          else
+        }
+        // let's try to assign better covers
+        if (!string.IsNullOrEmpty(coverArtImage))
+        {
+          coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
+          if (Util.Utils.FileExistsInCache(coverArtImage))
           {
-            SetDefaultIcon(listItem);
+            item.ThumbnailImage = coverArtImage;
           }
         }
-        SelectItem();
+        else
+        {
+          SetDefaultIcon(item);
+        }
       }
-      catch (ThreadAbortException)
-      {
-        Log.Info("GUIVideoTitle: Thread SetIMDBThumbs aborted.");
-      }
+      catch (Exception)
+      { }
     }
 
-    protected void SetItemThumb(GUIListItem aItem, string aThumbPath)
+    protected void SetItemThumb(GUIListItem item, string aThumbPath)
     {
       try
       {
         if (!string.IsNullOrEmpty(aThumbPath))
         {
-          aItem.IconImage = aThumbPath;
-          aItem.IconImageBig = aThumbPath;
+          item.IconImage = aThumbPath;
+          item.IconImageBig = aThumbPath;
 
           // check whether there is some larger cover art
           string largeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
           
           if (Util.Utils.FileExistsInCache(largeCover))
           {
-            aItem.ThumbnailImage = largeCover;
+            item.ThumbnailImage = largeCover;
           }
           else
           {
-            aItem.ThumbnailImage = aThumbPath;
+            item.ThumbnailImage = aThumbPath;
           }
         }
         else
         {
-          SetDefaultIcon(aItem);
+          SetDefaultIcon(item);
         }
       }
-      catch (Exception) { }
+      catch (Exception)
+      { }
     }
 
     private void SetDefaultIcon(GUIListItem listItem)
     {
-      if (listItem.Label != "..")
+      try
       {
-        switch (handler.CurrentLevelWhere.ToLowerInvariant())
+        if (listItem.Label != "..")
         {
-          case "title":
-            listItem.IconImageBig = "defaultVideoBig.png";
-            listItem.IconImage = "defaultVideo.png";
-            listItem.ThumbnailImage = "defaultVideoBig.png";
-            break;
+          switch (handler.CurrentLevelWhere.ToLowerInvariant())
+          {
+            case "title":
+              listItem.IconImageBig = "defaultVideoBig.png";
+              listItem.IconImage = "defaultVideo.png";
+              listItem.ThumbnailImage = "defaultVideoBig.png";
+              break;
 
-          case "actor":
-          case "director":
-            listItem.IconImageBig = "defaultActorBig.png";
-            listItem.IconImage = "defaultActor.png";
-            listItem.ThumbnailImage = "defaultActorBig.png";
-            break;
+            case "actor":
+            case "director":
+              listItem.IconImageBig = "defaultActorBig.png";
+              listItem.IconImage = "defaultActor.png";
+              listItem.ThumbnailImage = "defaultActorBig.png";
+              break;
 
-          case "genre":
-            listItem.IconImageBig = "defaultGenreBig.png";
-            listItem.IconImage = "defaultGenre.png";
-            listItem.ThumbnailImage = "defaultGenreBig.png";
-            break;
+            case "genre":
+              listItem.IconImageBig = "defaultGenreBig.png";
+              listItem.IconImage = "defaultGenre.png";
+              listItem.ThumbnailImage = "defaultGenreBig.png";
+              break;
 
-          case "user groups":
-            break;
+            case "user groups":
+              break;
 
-          case "year":
-            listItem.IconImageBig = "defaultYearBig.png";
-            listItem.IconImage = "defaultYear.png";
-            listItem.ThumbnailImage = "defaultYearBig.png";
-            break;
+            case "year":
+              listItem.IconImageBig = "defaultYearBig.png";
+              listItem.IconImage = "defaultYear.png";
+              listItem.ThumbnailImage = "defaultYearBig.png";
+              break;
 
-          case "actorindex":
-          case "directorindex":
-          case "titleindex":
-            break;
+            case "actorindex":
+            case "directorindex":
+            case "titleindex":
+              break;
 
-          default: // For user custom views
-            listItem.IconImageBig = "defaultGroupBig.png";
-            listItem.IconImage = "defaultGroup.png";
-            listItem.ThumbnailImage = "defaultGroupBig.png";
-            break;
+            default: // For user custom views
+              listItem.IconImageBig = "defaultGroupBig.png";
+              listItem.IconImage = "defaultGroup.png";
+              listItem.ThumbnailImage = "defaultGroupBig.png";
+              break;
+          }
         }
       }
+      catch (Exception)
+      { }
     }
 
     #endregion
-    
+
+    #region Threads
+
+    private void CheckAndStopThreads()
+    {
+      if (_isSetRandomFanartsRunning || _isSetThumbsRunning || _isSetGroupContentRunning)
+      {
+        _stopSetRandomFanartsWorker = true;
+        _stopSetThumbsWorker = true;
+        _stopSetGroupContentWorker = true;
+
+        while (_isSetRandomFanartsRunning || _isSetThumbsRunning || _isSetGroupContentRunning)
+        {
+          GUIWindowManager.Process();
+        }
+
+        _stopSetRandomFanartsWorker = false;
+        _stopSetThumbsWorker = false;
+        _stopSetGroupContentWorker = false;
+      }
+    }
+
+    /// <summary>
+    /// This will set in thread thumbs for each item 
+    /// </summary>
+    private void SetThumbsWorker()
+    {
+      BackgroundWorker bgwSetThumbs = new BackgroundWorker();
+      bgwSetThumbs.WorkerSupportsCancellation = true;
+      bgwSetThumbs.WorkerReportsProgress = false;
+      bgwSetThumbs.DoWork += new DoWorkEventHandler(SetThumbsDoWork);
+      bgwSetThumbs.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelSetThumbsWorker);
+      bgwSetThumbs.RunWorkerAsync();
+    }
+
+    private void SetThumbsDoWork(object sender, DoWorkEventArgs e)
+    {
+      try
+      {
+        _isSetThumbsRunning = true;
+
+        if (_itemlist.Count == 0)
+        {
+          return;
+        }
+
+        string curentLvlWhere = handler.CurrentLevelWhere;
+
+        foreach (GUIListItem item in _itemlist)
+        {
+          if (_stopSetThumbsWorker)
+          {
+            e.Cancel = true;
+            break;
+          }
+
+          // Set thumbs for each item
+          switch (curentLvlWhere)
+          {
+            case "genre":
+              SetGenreThumb(item);
+              break;
+
+            case "user groups":
+              SetUserGroupThumb(item);
+              break;
+
+            case "actor":
+            case "director":
+              SetActorThumb(item);
+              break;
+
+            case "year":
+              SetYearThumb(item);
+              break;
+
+            case "actorindex":
+            case "directorindex":
+            case "titleindex":
+              item.IconImageBig = @"alpha\" + item.Label + ".png";
+              item.IconImage = @"alpha\" + item.Label + ".png";
+              item.ThumbnailImage = @"alpha\" + item.Label + ".png";
+              break;
+
+            default:
+              // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
+              // Cover image thumbs missing in My Videos when view Selection is by "watched"
+              SetItemThumb(item);
+              break;
+          }
+          // Refresh thumb if current loop item is also selected item
+          if (facadeLayout.SelectedListItem == item)
+          {
+            if (facadeLayout.SelectedListItem.MusicTag != null)
+            {
+              GUIPropertyManager.SetProperty("#groupmovielist", facadeLayout.SelectedListItem.MusicTag.ToString());
+            }
+
+            GUIPropertyManager.SetProperty("#thumb", facadeLayout.SelectedListItem.ThumbnailImage);
+            GUIPropertyManager.SetProperty("#selectedthumb", facadeLayout.SelectedListItem.ThumbnailImage);
+          }
+        }
+        // Refresh thumb for selected item
+        if (facadeLayout.SelectedListItem.MusicTag != null)
+        {
+          GUIPropertyManager.SetProperty("#groupmovielist", facadeLayout.SelectedListItem.MusicTag.ToString());
+        }
+
+        GUIPropertyManager.SetProperty("#thumb", facadeLayout.SelectedListItem.ThumbnailImage);
+        GUIPropertyManager.SetProperty("#selectedthumb", facadeLayout.SelectedListItem.ThumbnailImage);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle: Thread SetGroupItems/Thumbs error: {0}", ex.Message);
+      }
+    }
+
+    // Stop/Complete worker event handler
+    private void CancelSetThumbsWorker(object sender, RunWorkerCompletedEventArgs e)
+    {
+      BackgroundWorker bgw = (BackgroundWorker)sender;
+
+      if (e.Cancelled)
+      {
+        Log.Debug("GUIVideoTitle: SetThumbs worker canceled.");
+      }
+      else if (e.Error != null)
+      {
+        Log.Error("GuiVideoTitle SetThumbsError: " + e.Error.Message);
+      }
+
+      _isSetThumbsRunning= false;
+      _stopSetThumbsWorker = false;
+      bgw.Dispose();
+    }
+
+    /// <summary>
+    /// This will set in thread content of group item (MusicTag as string)
+    /// </summary>
+    private void SetGroupContentWorker()
+    {
+      BackgroundWorker bgwSetGroupContent = new BackgroundWorker();
+      bgwSetGroupContent.WorkerSupportsCancellation = true;
+      bgwSetGroupContent.WorkerReportsProgress = false;
+      bgwSetGroupContent.DoWork += new DoWorkEventHandler(SetGroupContentDoWork);
+      bgwSetGroupContent.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelSetGroupContentWorker);
+      bgwSetGroupContent.RunWorkerAsync();
+    }
+
+    private void SetGroupContentDoWork(object sender, DoWorkEventArgs e)
+    {
+      try
+      {
+        _isSetGroupContentRunning = true;
+
+        if (_itemlist.Count == 0)
+        {
+          return;
+        }
+
+        foreach (GUIListItem item in _itemlist)
+        {
+          if (_stopSetGroupContentWorker)
+          {
+            e.Cancel = true;
+            break;
+          }
+
+          item.MusicTag = SetMovieListGroupedBy(item); // Set content list for group item
+          
+          // Refresh content if current loop group item is also selected item
+          if (facadeLayout.SelectedListItem == item)
+          {
+            if (facadeLayout.SelectedListItem.MusicTag != null)
+            {
+              GUIPropertyManager.SetProperty("#groupmovielist", facadeLayout.SelectedListItem.MusicTag.ToString());
+            }
+          }
+        }
+        // Refresh group content for selected item
+        if (facadeLayout.SelectedListItem.MusicTag != null)
+        {
+          GUIPropertyManager.SetProperty("#groupmovielist", facadeLayout.SelectedListItem.MusicTag.ToString());
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle: Thread SetGroupContent error: {0}", ex.Message);
+      }
+    }
+
+    // Stop/Complete worker event handler
+    private void CancelSetGroupContentWorker(object sender, RunWorkerCompletedEventArgs e)
+    {
+      BackgroundWorker bgw = (BackgroundWorker)sender;
+
+      if (e.Cancelled)
+      {
+        Log.Debug("GUIVideoTitle: SetGroupContent worker canceled.");
+      }
+      else if (e.Error != null)
+      {
+        Log.Error("GuiVideoTitle SetGroupContentError: " + e.Error.Message);
+      }
+
+      _isSetGroupContentRunning = false;
+      _stopSetGroupContentWorker = false;
+      bgw.Dispose();
+    }
+
+    /// <summary>
+    /// This will set in thread random fanart (TVTag as int) for group item
+    /// </summary>
+    private void SetRandomFanartWorker()
+    {
+      BackgroundWorker bgwSetRandomFanart = new BackgroundWorker();
+      bgwSetRandomFanart.WorkerSupportsCancellation = true;
+      bgwSetRandomFanart.WorkerReportsProgress = false;
+      bgwSetRandomFanart.DoWork += new DoWorkEventHandler(SetRandomFanartDoWork);
+      bgwSetRandomFanart.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelSetRandomFanartWorker);
+      bgwSetRandomFanart.RunWorkerAsync();
+    }
+
+    private void SetRandomFanartDoWork(object sender, DoWorkEventArgs e)
+    {
+      try
+      {
+        _isSetRandomFanartsRunning = true;
+
+        if (_itemlist.Count == 0)
+        {
+          return;
+        }
+
+        ArrayList mList = new ArrayList();
+        string curentLvlWhere = handler.CurrentLevelWhere;
+        int curentLvl = handler.CurrentLevel;
+
+        foreach (GUIListItem item in _itemlist)
+        {
+          if (_stopSetRandomFanartsWorker)
+          {
+            e.Cancel = true;
+            break;
+          }
+
+          // Set random fanart for group item (TVTag)
+          switch (curentLvlWhere)
+          {
+            case "genre":
+              VideoDatabase.GetRandomMoviesByGenre(item.Label, ref mList, 1);
+              item.TVTag = SetRandomMovieId(mList);
+              break;
+
+            case "user groups":
+              IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+              if (movie == null || movie.ID == -1)
+              {
+                VideoDatabase.GetRandomMoviesByUserGroup(item.Label, ref mList, 1);
+                item.TVTag = SetRandomMovieId(mList);
+              }
+              break;
+
+            case "actor":
+            case "director":
+              return;
+              
+            case "year":
+              VideoDatabase.GetRandomMoviesByActor(item.Label, ref mList, 1);
+              item.TVTag = SetRandomMovieId(mList);
+              break;
+
+            case "actorindex":
+            case "directorindex":
+            case "titleindex":
+              if (curentLvl == 0 && curentLvlWhere == "titleindex")
+              {
+                string where = SetWhere(item.Label, "strTitle");
+                string sql = "SELECT * FROM movieinfo " + where +
+                             "GROUP BY strTitle ORDER BY RANDOM() LIMIT 1";
+
+                VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false);
+                item.TVTag = SetRandomMovieId(mList);
+              }
+              break;
+          }
+          // Refresh fanart parameter if loop item is also selected item
+          if (facadeLayout.SelectedListItem == item)
+          {
+            SetItemViewHistory(curentLvlWhere, curentLvl, item);
+          }
+        }
+        // Refresh fanart parameter for selected item
+        SetItemViewHistory(curentLvlWhere, curentLvl, facadeLayout.SelectedListItem);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle: Thread SetRandomFanart error: {0}", ex.Message);
+      }
+    }
+
+    // Stop/Complete worker event handler
+    private void CancelSetRandomFanartWorker(object sender, RunWorkerCompletedEventArgs e)
+    {
+      BackgroundWorker bgw = (BackgroundWorker)sender;
+
+      if (e.Cancelled)
+      {
+        Log.Debug("GUIVIdeoTitle: SetRandomFanart worker canceled.");
+      }
+      else if (e.Error != null)
+      {
+        Log.Error("GuiVideoTitle SetRandomFanartError: " + e.Error.Message);
+      }
+
+      _isSetRandomFanartsRunning = false;
+      _stopSetRandomFanartsWorker = false;
+      bgw.Dispose();
+    }
+
+    #endregion
+
     private void OnDeleteItem(GUIListItem item)
     {
       if (item.IsRemote)
@@ -1683,82 +1937,31 @@ namespace MediaPortal.GUI.Video
       {
         strView = handler.CurrentLevelWhere.ToLower();
         currentViewlvl = handler.CurrentLevel;
-
-        if (handler.CurrentLevel > 0)
-        {
-          FilterDefinition defCurrent = (FilterDefinition) handler.View.Filters[handler.CurrentLevel - 1];
-          string selectedValue = defCurrent.SelectedValue;
-          Int32 iSelectedValue;
-          
-          if (Int32.TryParse(selectedValue, out iSelectedValue))
-          {
-            if (strView == "actor" || strView == "director")
-            {
-              selectedValue = VideoDatabase.GetActorNameById(iSelectedValue);
-            }
-
-            if (strView == "genre")
-            {
-              selectedValue = VideoDatabase.GetGenreById(iSelectedValue);
-            }
-
-            if (strView == "user groups")
-            {
-              selectedValue = VideoDatabase.GetUserGroupById(iSelectedValue);
-            }
-          }
-
-          GUIPropertyManager.SetProperty("#currentmodule",
-                                         String.Format("{0}/{1} - {2}", GUILocalizeStrings.Get(100006),
-                                                       handler.LocalizedCurrentView, selectedValue));
-        }
       }
 
       if (item.Label == "..")
       {
-        IMDBMovie notMovie = new IMDBMovie();
-        notMovie.IsEmpty = true;
-        notMovie.SetProperties(true, string.Empty);
+        IMDBMovie.ResetMovieProperties();
         IMDBActor notActor = new IMDBActor();
-        notActor.SetProperties();
+        notActor.ResetProperties();
         return;
-      }
-      
-      // Set current item if thumb thread is working (thread can still update thumbs while user changed
-      // item) thus preventing sudden jump to initial selected item before thread start
-      if (_setThumbs != null && _setThumbs.IsAlive)
-      {
-        currentSelectedItem = facadeLayout.SelectedListItemIndex;
       }
 
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-      
+
       if (movie == null)
       {
         movie = new IMDBMovie();
       }
-      
-      if (!string.IsNullOrEmpty(movie.VideoFileName))
+
+      if (!string.IsNullOrEmpty(movie.VideoFileName) && movie.ID > 0)
       {
-        movie.SetProperties(false, movie.VideoFileName);
+        IMDBMovie.SetMovieProperties(item);
       }
       else
       {
-        switch (strView)
-        {
-          case "actorindex":
-          case "directorindex":
-          case "titleindex":
-            movie.IsEmpty = true;
-            movie.SetProperties(false, string.Empty);
-            break;
-
-          default:
-            movie.SetProperties(false, string.Empty);
-            break;
-        }
+        IMDBMovie.ResetMovieProperties();
         
-        // Set title properties for other views (year, genres..)
         if (!string.IsNullOrEmpty(item.Label))
         {
           GUIPropertyManager.SetProperty("#title", item.Label);
@@ -1769,49 +1972,41 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      
-      IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
-      
-      if (actor != null)
+
+      IMDBActor actor;
+
+      if (movie.ActorID > 0)
       {
-        actor.SetProperties();
+        actor = VideoDatabase.GetActorInfo(movie.ActorID);
+        if (actor == null)
+        {
+          actor = new IMDBActor();
+          actor.ResetProperties();
+        }
+        else
+        {
+          actor.SetProperties();
+        }
       }
       else
       {
         actor = new IMDBActor();
-        actor.SetProperties();
-      }
-
-      if (movie.ID >= 0)
-      {
-        string titleExt = movie.Title + "{" + movie.ID + "}";
-        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-        
-        if (Util.Utils.FileExistsInCache(coverArtImage))
-        {
-          facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
-        }
+        actor.ResetProperties();
       }
       
-      if (movie.Actor != string.Empty)
+      if (movie.ID > 0)
       {
-        GUIPropertyManager.SetProperty("#title", movie.Actor);
-        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.ActorID.ToString());
-        
-        if (Util.Utils.FileExistsInCache(coverArtImage))
-        {
-          facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
-        }
+        m_history.Set(item.Label, strView);
+        return;
       }
-      
       // Random movieId by view (for FA) for selected group
-      ArrayList mList = new ArrayList();
-      GetItemViewHistory(strView, mList, currentViewlvl);
+      SetItemViewHistory(strView, currentViewlvl, item);
     }
 
     // Set property value for #groupmovielist
     private string SetMovieListGroupedBy(GUIListItem item)
     {
+      
       string strMovies = string.Empty;
       string where = string.Empty;
       string value = string.Empty;
@@ -1819,90 +2014,99 @@ namespace MediaPortal.GUI.Video
       string view = handler.CurrentLevelWhere.ToLower();
       string groupDescription = string.Empty;
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-
-      switch (view)
+      
+      try
       {
-        case "genre":
-        strMovies = VideoDatabase.GetMovieTitlesByGenre(item.Label);
-          break;
-      
-        case "user groups":
-          int grpId = VideoDatabase.GetUserGroupId(item.Label);
-          groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
-          strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId);
+        switch (view)
+        {
+          case "genre":
+            strMovies = VideoDatabase.GetMovieTitlesByGenre(item.Label);
+            break;
 
-          if (!string.IsNullOrEmpty(groupDescription))
-          {
-            groupDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":\n"); //Movies
-          }
-          break;
-      
-        case "actor":
-          if (movie != null)
-          {
-            strMovies = VideoDatabase.GetMovieTitlesByActor(movie.ActorID);
-          }
-          break;
+          case "user groups":
+            int grpId = VideoDatabase.GetUserGroupId(item.Label);
+            groupDescription = VideoDatabase.GetUserGroupDescriptionById(grpId);
+            strMovies = VideoDatabase.GetMovieTitlesByUserGroup(grpId);
 
-        case "director":
-          if (movie != null)
-          {
-            strMovies = VideoDatabase.GetMovieTitlesByDirector(movie.ActorID);
-          }
-          break;
-        
-        case "year":
-          strMovies = VideoDatabase.GetMovieTitlesByYear(item.Label);
-          break;
-        
-        case"actorindex":
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strActor");
-          sql = "SELECT strActor FROM actors " + where +
-                     "AND idActor NOT IN (SELECT idDirector FROM movieinfo) GROUP BY strActor ORDER BY strActor ASC";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
-          break;
-      
-        case "directorindex":
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strActor");
-          sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor " + where + 
-                     "GROUP BY strActor ORDER BY strActor ASC";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
-          break;
-        
-        case "titleindex":
-          value = DatabaseUtility.RemoveInvalidChars(item.Label);
-          where = SetWhere(value, "strTitle");
-          sql = "SELECT strTitle FROM movieinfo " + where +
-                     "GROUP BY strTitle ORDER BY strTitle ASC ";
-          strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
-          break;
+            if (!string.IsNullOrEmpty(groupDescription))
+            {
+              groupDescription += ("\n\n" + GUILocalizeStrings.Get(342) + ":\n"); //Movies
+            }
+            break;
+
+          case "actor":
+            if (movie != null)
+            {
+              strMovies = VideoDatabase.GetMovieTitlesByActor(movie.ActorID);
+            }
+            break;
+
+          case "director":
+            if (movie != null)
+            {
+              strMovies = VideoDatabase.GetMovieTitlesByDirector(movie.ActorID);
+            }
+            break;
+
+          case "year":
+            strMovies = VideoDatabase.GetMovieTitlesByYear(item.Label);
+            break;
+
+          case "actorindex":
+            value = DatabaseUtility.RemoveInvalidChars(item.Label);
+            where = SetWhere(value, "strActor");
+            sql = "SELECT strActor FROM actors " + where +
+                  "AND idActor NOT IN (SELECT idDirector FROM movieinfo) GROUP BY strActor ORDER BY strActor ASC";
+            strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
+            break;
+
+          case "directorindex":
+            value = DatabaseUtility.RemoveInvalidChars(item.Label);
+            where = SetWhere(value, "strActor");
+            sql = "SELECT strActor FROM actors INNER JOIN movieinfo ON movieinfo.idDirector = actors.idActor " + where +
+                  "GROUP BY strActor ORDER BY strActor ASC";
+            strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
+            break;
+
+          case "titleindex":
+            value = DatabaseUtility.RemoveInvalidChars(item.Label);
+            where = SetWhere(value, "strTitle");
+            sql = "SELECT strTitle FROM movieinfo " + where +
+                  "GROUP BY strTitle ORDER BY strTitle ASC ";
+            strMovies = VideoDatabase.GetMovieTitlesByIndex(sql);
+            break;
+        }
+
+        if (!string.IsNullOrEmpty(groupDescription))
+        {
+          strMovies = groupDescription + strMovies;
+        }
       }
-
-      if (!string.IsNullOrEmpty(groupDescription))
-      {
-        strMovies = groupDescription + strMovies;
-      }
-      
+      catch (Exception)
+      {}
       return strMovies;
     }
 
     private string SetWhere(string value, string field)
     {
-      string where;
-      string nWordChar = VideoDatabase.NonwordCharacters();
+      string where = string.Empty;
 
-      if (Regex.Match(value, @"\W|\d").Success)
+      try
       {
-        where =
-          @"WHERE SUBSTR(" + field + @",1,1) IN (" + nWordChar + ") ";
-      }
-      else
-      {
-        where = @"WHERE SUBSTR(" + field + ",1,1) = '" + value + "' ";
-      }
+        string nWordChar = VideoDatabase.NonwordCharacters();
 
+        if (Regex.Match(value, @"\W|\d").Success)
+        {
+          where =
+            @"WHERE SUBSTR(" + field + @",1,1) IN (" + nWordChar + ") ";
+        }
+        else
+        {
+          where = @"WHERE SUBSTR(" + field + ",1,1) = '" + value + "' ";
+        }
+      }
+      catch (Exception)
+      {}
       return where;
     }
 
@@ -2249,7 +2453,6 @@ namespace MediaPortal.GUI.Video
       {
         VideoDatabase.MakeNfo(movieId);
 
-        // Notify user that new fanart download failed
         GUIDialogNotify dlgNotify =
           (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
@@ -2453,12 +2656,12 @@ namespace MediaPortal.GUI.Video
     }
 
     // Set movieID skin property (locked movies will be discarded)
-    private void SetRandomMovieId(ArrayList mList)
+    private int SetRandomMovieId(ArrayList mList)
     {
+      int randomMovieId = -1;
       if (mList.Count == 0)
       {
-        GUIPropertyManager.SetProperty("#movieid", "-1");
-        return;
+        return randomMovieId;
       }
       try
       {
@@ -2527,17 +2730,12 @@ namespace MediaPortal.GUI.Video
           Random rnd = new Random();
           int r = rnd.Next(mList.Count);
           IMDBMovie movieDetails = (IMDBMovie)mList[r];
-          GUIPropertyManager.SetProperty("#movieid", movieDetails.ID.ToString());
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#movieid", "-1");
+          randomMovieId = movieDetails.ID;
         }
       }
       catch (Exception)
-      {
-        GUIPropertyManager.SetProperty("#movieid", "-1");
-      }
+      {}
+      return randomMovieId;
     }
 
     private IMDBMovie GetRandomMovie(ArrayList mList)
@@ -2628,7 +2826,7 @@ namespace MediaPortal.GUI.Video
 
     // Set selected item position in history of current view 
     // (when user switch view and get back item position will be restored)
-    private string SetItemViewHistory()
+    private string GetItemViewHistory()
     {
       string viewFolder = handler.CurrentLevelWhere.ToLower();
       return viewFolder;
@@ -2636,11 +2834,11 @@ namespace MediaPortal.GUI.Video
 
     // Restore selected item postion on current view (if user was been here and switched view)
     // Set random movieId for group view (FA handler can use that)
-    private void GetItemViewHistory(string view, ArrayList mList, int currentLvl)
+    private void SetItemViewHistory(string view, int currentLvl, GUIListItem selectedItem)
     {
-      if (facadeLayout.SelectedListItem != null && !string.IsNullOrEmpty(facadeLayout.SelectedListItem.Label))
+      if (selectedItem != null && !string.IsNullOrEmpty(selectedItem.Label))
       {
-        string selectedLabel = facadeLayout.SelectedListItem.Label;
+        string selectedLabel = selectedItem.Label;
 
         if (!string.IsNullOrEmpty(view))
         {
@@ -2648,8 +2846,7 @@ namespace MediaPortal.GUI.Video
           {
             case "genre":
               m_history.Set(selectedLabel, view);
-              VideoDatabase.GetRandomMoviesByGenre(selectedLabel, ref mList, 1);
-              SetRandomMovieId(mList);
+              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
               break;
 
             case "user groups":
@@ -2657,22 +2854,22 @@ namespace MediaPortal.GUI.Video
               IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
               if (movie == null || movie.ID == -1)
               {
-                VideoDatabase.GetRandomMoviesByUserGroup(selectedLabel, ref mList, 1);
-                SetRandomMovieId(mList);
+                GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
               }
               break;
 
             case "actor":
             case "director":
               m_history.Set(selectedLabel, view);
-              VideoDatabase.GetRandomMoviesByActor(selectedLabel, ref mList, 1);
-              SetRandomMovieId(mList);
+              ArrayList mList = new ArrayList();
+              VideoDatabase.GetRandomMoviesByActor(selectedItem.Label, ref mList, 1);
+              selectedItem.TVTag = SetRandomMovieId(mList);
+              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
               break;
 
             case "year":
               m_history.Set(selectedLabel, view);
-              VideoDatabase.GetRandomMoviesByYear(selectedLabel, ref mList, 1);
-              SetRandomMovieId(mList);
+              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
               break;
 
             case "recently added":
@@ -2706,12 +2903,7 @@ namespace MediaPortal.GUI.Video
             case "titleindex":
               if (currentLvl == 0)
               {
-                string where = SetWhere(selectedLabel, "strTitle");
-                string sql = "SELECT * FROM movieinfo " + where +
-                             "GROUP BY strTitle ORDER BY RANDOM() LIMIT 1";
-
-                VideoDatabase.GetMoviesByFilter(sql, out mList, false, true, false, false);
-                SetRandomMovieId(mList);
+                GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
                 m_history.Set(selectedLabel, view);
               }
               break;

@@ -975,17 +975,9 @@ namespace MediaPortal.GUI.Video
         Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
       }
       
-      ArrayList files = new ArrayList();
-      VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
-        
-      if (files.Count > 0)
-      {
-        _currentMovie.SetProperties(false, (string) files[0]);
-      }
-      else
-      {
-        _currentMovie.SetProperties(false, string.Empty);
-      }
+      GUIListItem item = new GUIListItem();
+      item.AlbumInfoTag = _currentMovie;
+      IMDBMovie.SetMovieProperties(item);
     }
 
     private void  RenameTitle ()
@@ -1204,7 +1196,12 @@ namespace MediaPortal.GUI.Video
         
         GUIListItem item = listActors.SelectedListItem;
         item.AlbumInfoTag = _currentMovie;
-        IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        
+        if (Win32API.IsConnectedToInternet())
+        {
+          IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        }
+
         actor = VideoDatabase.GetActorInfo(item.ItemId);
 
         if (actor == null)

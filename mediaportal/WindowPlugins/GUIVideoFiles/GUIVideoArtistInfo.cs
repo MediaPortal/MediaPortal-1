@@ -318,6 +318,8 @@ namespace MediaPortal.GUI.Video
 
     private void SetNewproperties()
     {
+      _currentActor.SortActorMoviesByYear();
+
       for (int i = 0; i < _currentActor.Count; ++i)
       {
         string line = String.Format("{0}. {1} ({2})",

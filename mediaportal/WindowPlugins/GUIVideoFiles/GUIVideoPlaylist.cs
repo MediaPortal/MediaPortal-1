@@ -178,8 +178,7 @@ namespace MediaPortal.GUI.Video
       if (facadeLayout.Count <= 0)
       {
         GUIControl.FocusControl(GetID, btnLayouts.GetID);
-        IMDBMovie movie = new IMDBMovie();
-        movie.SetProperties(false, string.Empty);
+        IMDBMovie.ResetMovieProperties();
       }
 
 
@@ -442,8 +441,7 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            IMDBMovie movie = new IMDBMovie();
-            movie.SetProperties(false, string.Empty);
+            IMDBMovie.ResetMovieProperties();
           }
           UpdateButtonStates();
           GUIWaitCursor.Hide();
@@ -824,41 +822,18 @@ namespace MediaPortal.GUI.Video
     {
       if (item.Label == "..")
       {
-        IMDBMovie notMovie = new IMDBMovie();
-        notMovie.SetProperties(true, string.Empty);
+        IMDBMovie.ResetMovieProperties();
         IMDBActor notActor = new IMDBActor();
         notActor.SetProperties();
         return;
       }
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 
-      if (movie == null)
+      if (movie == null || movie.ID < 0)
       {
-        movie = new IMDBMovie();
+        IMDBMovie.SetMovieData(item);
       }
-
-      ArrayList files = new ArrayList();
-      VideoDatabase.GetFilesForMovie(movie.ID, ref files);
-
-      if (files.Count > 0)
-      {
-        movie.SetProperties(false, (string)files[0]);
-      }
-      else
-      {
-        movie.SetProperties(false, string.Empty);
-      }
-
-      if (movie.ID >= 0)
-      {
-        string titleExt = movie.Title + "{" + movie.ID + "}";
-        string coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-
-        if (Util.Utils.FileExistsInCache(coverArtImage))
-        {
-          facadeLayout.FilmstripLayout.InfoImageFileName = coverArtImage;
-        }
-      }
+      IMDBMovie.SetMovieProperties(item);
     }
   }
 }

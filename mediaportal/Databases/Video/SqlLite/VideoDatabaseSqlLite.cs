@@ -4159,16 +4159,7 @@ namespace MediaPortal.Video.Database
           if (movieinfoTable)
           {
             SetMovieDetails(ref movie, i, results);
-            // FanArt search need this (for database GUI view)
-            // Share view is handled in GUIVideoFiles class)
-            ArrayList files = new ArrayList();
-            GetFilesForMovie(movie.ID, ref files);
-            
-            if (files.Count > 0)
-            {
-              // We need only first file if there is multiple files for one movie, fanart class will handle filename
-              movie.File = files[0].ToString();
-            }
+            movie.File = movie.VideoFileName;
           }
           movies.Add(movie);
         }

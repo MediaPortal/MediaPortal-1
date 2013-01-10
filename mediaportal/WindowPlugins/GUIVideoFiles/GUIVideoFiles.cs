@@ -1508,10 +1508,9 @@ namespace MediaPortal.GUI.Video
             MovieDuration(files, true);
             int movieId = VideoDatabase.GetMovieId(file);
             IMDBMovie mInfo = new IMDBMovie();
-            mInfo.SetMediaInfoProperties(file, true);
             mInfo.SetDurationProperty(movieId);
             IMDBMovie.SetMovieData(item);
-            SelectCurrentItem();
+            IMDBMovie.SetMovieProperties(item);
           }
           break;
       }
@@ -3319,6 +3318,12 @@ namespace MediaPortal.GUI.Video
       // Get all video files in selected folder and it's subfolders
       ArrayList playFiles = new ArrayList();
       AddVideoFiles(path, ref playFiles);
+
+      if(playFiles.Count == 0)
+      {
+        return;
+      }
+
       int selectedOption = 0;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -4041,8 +4046,8 @@ namespace MediaPortal.GUI.Video
       {
         _threadISelectDVDHandler.SetIMDBThumbs(_threadGUIItems, _markWatchedFiles);
         // Refresh thumb on selected item
-        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
-        SelectCurrentItem();
+        GUIPropertyManager.SetProperty("#thumb", facadeLayout.SelectedListItem.ThumbnailImage);
+        GUIPropertyManager.SetProperty("#selectedthumb", facadeLayout.SelectedListItem.ThumbnailImage);
       }
       catch (ThreadAbortException)
       {
