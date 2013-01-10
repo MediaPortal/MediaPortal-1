@@ -65,6 +65,12 @@
       <OutputFile>$(OutDir)strmbasd.lib</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>REM a workaround for the libbluray build failure - this needs to be removed after libbluray's build is not failing on post build step when the folder doesn't exist
+
+md $(SolutionDir)bin_Win32d\lib
+exit 0</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
