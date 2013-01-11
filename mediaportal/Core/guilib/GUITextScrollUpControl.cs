@@ -199,27 +199,17 @@ namespace MediaPortal.GUI.Library
 
         if (GUIGraphicsContext.graphics != null)
         {
-          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
-                                                            _width, (int)(_itemsPerPage * _itemHeight * _lineSpacing)));
+          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY, _width, _height)); // (int)(_itemsPerPage * _itemHeight * _lineSpacing)
         }
         else
         {
-          if (_width < 1)
-          {
-            base.Render(timePassed);
-            return;
-          }
-          if (_height < 1)
+          if (_width < 1 || _height < 1)
           {
             base.Render(timePassed);
             return;
           }
 
-          Rectangle clipRect = new Rectangle();
-          clipRect.X = _positionX;
-          clipRect.Y = _positionY;
-          clipRect.Width = _width;
-          clipRect.Height = (int)(_height * _lineSpacing);
+          Rectangle clipRect = new Rectangle(_positionX, _positionY, _width, _height);
           GUIGraphicsContext.BeginClip(clipRect);
         }
         long color = _textColor;
@@ -227,7 +217,7 @@ namespace MediaPortal.GUI.Library
         {
           color &= DimColor;
         }
-        for (int i = 0; i < 1 + _itemsPerPage; i++)
+        for (int i = 0; i < 2 + _itemsPerPage; i++) // add one as the itemsPerPage might be almost one less than actual height plus one for the "incoming" item
         {
           // render each line
           int dwPosX = _positionX;
