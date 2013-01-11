@@ -126,7 +126,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public Music()
-      : this("Music") {}
+      : this("Music") { }
 
     public Music(string name)
       : base(name)
@@ -210,7 +210,7 @@ namespace MediaPortal.Configuration.Sections
 
         audioPlayerComboBox.SelectedIndex = audioPlayer;
 
-        #region General Bass Player Settings 
+        #region General Bass Player Settings
 
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
@@ -325,7 +325,7 @@ namespace MediaPortal.Configuration.Sections
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
 
@@ -455,7 +455,7 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValue("audioplayer", "upMixMono", cbUpmixMono.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "upMixStereo", cbUpmixStereo.SelectedIndex);
-        xmlwriter.SetValue("audioplayer", "upMixQuadro", cbUpmixQuadro.SelectedIndex );
+        xmlwriter.SetValue("audioplayer", "upMixQuadro", cbUpmixQuadro.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "upMixFiveDotOne", cbUpmixFiveDotOne.SelectedIndex);
 
         xmlwriter.SetValueAsBool("audioplayer", "enableResume", chkEnableResumeSupport.Checked);
@@ -485,7 +485,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-          // This is the case, when we started Config without activating the Vis Tab
+        // This is the case, when we started Config without activating the Vis Tab
         {
           xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
           xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
@@ -599,7 +599,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         xmlwriter.SetValue("musicmisc", "vumeter", vuMeter);
-        
+
         #endregion
       }
 
@@ -779,7 +779,7 @@ namespace MediaPortal.Configuration.Sections
       switch (player)
       {
         case (int)AudioPlayer.Bass:
-        case (int)AudioPlayer.DShow: 
+        case (int)AudioPlayer.DShow:
 
           // Get all available devices and add them to the combo box
           BASS_DEVICEINFO[] soundDevices = Bass.BASS_GetDeviceInfos();
@@ -802,7 +802,7 @@ namespace MediaPortal.Configuration.Sections
 
           break;
 
-        case (int)AudioPlayer.Asio: 
+        case (int)AudioPlayer.Asio:
 
           // Get all available ASIO devices and add them to the combo box
           BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
@@ -810,7 +810,7 @@ namespace MediaPortal.Configuration.Sections
           {
             MessageBox.Show(this, "No ASIO Devices available in the system.",
                             "MediaPortal - Setup", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            
+
             // Default back to BASS Player
             audioPlayerComboBox.SelectedIndex = 0;
           }
@@ -818,7 +818,7 @@ namespace MediaPortal.Configuration.Sections
           {
             foreach (BASS_ASIO_DEVICEINFO deviceInfo in asioDevices)
             {
-              soundDeviceComboBox.Items.Add(new SoundDeviceItem(deviceInfo.name, deviceInfo.driver));  
+              soundDeviceComboBox.Items.Add(new SoundDeviceItem(deviceInfo.name, deviceInfo.driver));
             }
           }
 
@@ -868,21 +868,26 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      // Find out the minimum Buffer length possible
-      Bass.BASS_Free();
-      if (Bass.BASS_Init(sounddevice, 48000, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, Guid.Empty))
-      {
-        BASS_INFO info = Bass.BASS_GetInfo();
-        if (info != null)
-        {
-          int currentBuffer = trackBarBuffering.Value;
-          if (currentBuffer < info.minbuf)
-          {
-            trackBarBuffering.Value = info.minbuf;
-          }
-          trackBarBuffering.Minimum = info.minbuf;
-        }
-      }
+      // Run the following code in a Thread to avoid delays, when entering the Music screen
+      new System.Threading.Thread(() =>
+                      {
+                        // Find out the minimum Buffer length possible
+                        Bass.BASS_Free();
+                        if (Bass.BASS_Init(sounddevice, 48000, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero, Guid.Empty))
+                        {
+                          BASS_INFO info = Bass.BASS_GetInfo();
+                          if (info != null)
+                          {
+                            int currentBuffer = trackBarBuffering.Value;
+                            if (currentBuffer < info.minbuf)
+                            {
+                              trackBarBuffering.Value = info.minbuf;
+                            }
+                            trackBarBuffering.Minimum = info.minbuf;
+                          }
+                        }
+                      }
+        ).Start();
     }
 
     /// <summary>
@@ -926,7 +931,7 @@ namespace MediaPortal.Configuration.Sections
       xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
-    
+
     private void trackBarBuffering_Scroll(object sender, EventArgs e)
     {
       float bufferingSecs = (float)trackBarBuffering.Value / 1000f;
