@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using MediaPortal.GUI.Library;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
@@ -15,15 +12,6 @@ namespace MediaPortal.MusicPlayer.BASS
   /// </summary>
   public class MixerStream : IDisposable
   {
-    #region Delegates
-
-    private SYNCPROC _playbackEndProcDelegate = null;
-
-    public delegate void MusicStreamMessageHandler(object sender, MusicStream.StreamAction action);
-    public event MusicStreamMessageHandler MusicStreamMessage;
-
-    #endregion
-
     #region Variables
 
     private BassAudioEngine _bassPlayer;
@@ -71,7 +59,6 @@ namespace MediaPortal.MusicPlayer.BASS
     public MixerStream(BassAudioEngine bassPlayer)
     {
       _bassPlayer = bassPlayer;
-      _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
     }
 
     #endregion
@@ -278,13 +265,7 @@ namespace MediaPortal.MusicPlayer.BASS
       bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                         BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
                                         BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
-
-      // Add the Syncproc to indicate that a stream has ended
-      long pos = Bass.BASS_ChannelGetPosition(_mixer, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_DECODE);
-      pos += Bass.BASS_ChannelSeconds2Bytes(_mixer, stream.TotalStreamSeconds);
-      GCHandle hGC = GCHandle.Alloc(stream);
-      Bass.BASS_ChannelSetSync(_mixer, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME, pos, _playbackEndProcDelegate, GCHandle.ToIntPtr(hGC));
-
+        
       if (result && _mixingMatrix != null)
       {
         Log.Debug("BASS: Setting mixing matrix...");
@@ -587,33 +568,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       return mixMatrix;
     }
-
-
-
-    #endregion
-
-    #region SyncProcs
-
-    /// <summary>
-    /// Playback end Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
-    {
-      GCHandle gch = GCHandle.FromIntPtr(userData);
-      MusicStream musicStream = (MusicStream)gch.Target;
-
-      Log.Debug("BASS: End of stream {0}", musicStream.FilePath);
-      if (MusicStreamMessage != null)
-      {
-        MusicStreamMessage(musicStream, MusicStream.StreamAction.Ended);
-      }
-    }
-
-
     #endregion
 
     #region IDisposable Members

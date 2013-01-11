@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
 using MediaPortal.TagReader;
@@ -163,7 +164,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       get { return _crossFading; }
     }
-    
+
     /// <summary>
     /// Return Total Seconds of the Stream
     /// </summary>
@@ -231,7 +232,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private void CreateStream()
     {
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
-      
+
       _fileType = Utils.GetFileType(_filePath);
 
       switch (_fileType.FileMainType)
@@ -317,7 +318,7 @@ namespace MediaPortal.MusicPlayer.BASS
       _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
       _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
 
-      //RegisterPlaybackEvents();
+      RegisterPlaybackEvents();
 
       AttachDspToStream();
 
@@ -349,7 +350,7 @@ namespace MediaPortal.MusicPlayer.BASS
             _replayGainInfo.AlbumPeak);
 
       float? gain = null;
-      
+
       if (Config.EnableAlbumReplayGain && _replayGainInfo.AlbumGain.HasValue)
       {
         gain = _replayGainInfo.AlbumGain;
@@ -612,7 +613,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (endPos > startPos)
       {
         _cueTrackEndEventHandler = RegisterCueTrackEndEvent(Bass.BASS_ChannelSeconds2Bytes(_stream, endPos));
-      }      
+      }
     }
 
     /// <summary>
@@ -662,7 +663,7 @@ namespace MediaPortal.MusicPlayer.BASS
       double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
       double fadeOutSeconds = 0;
 
-      if (Config.CrossFadeIntervalMs> 0)
+      if (Config.CrossFadeIntervalMs > 0)
         fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
 
       long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
@@ -685,7 +686,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    private int  RegisterPlaybackEndEvent(int stream)
+    private int RegisterPlaybackEndEvent(int stream)
     {
       int syncHandle = 0;
 
@@ -733,21 +734,28 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackCrossFadeProc(int handle, int stream, int data, IntPtr userData)
     {
-      Log.Debug("BASS: X-Fading out stream {0}", _filePath);
+      new Thread(() =>
+                   {
+                     Log.Debug("BASS: X-Fading out stream {0}", _filePath);
 
-      if (Config.CrossFadeIntervalMs > 0)
-      {
-        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
-      }
+                     if (Config.CrossFadeIntervalMs > 0)
+                     {
+                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
+                                                       0, 0, 0, null);
+                       GUIWindowManager.SendThreadMessage(msg);
+                     }
 
-      // We want to get informed, when Crossfading has ended
-      _playBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
-      Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate, IntPtr.Zero);
+                     // We want to get informed, when Crossfading has ended
+                     _playBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
+                     Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate,
+                                              IntPtr.Zero);
 
-      _crossFading = true;
-      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0, Config.CrossFadeIntervalMs);
+                     _crossFading = true;
+                     Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                                     Config.CrossFadeIntervalMs);
+                   }
+      ).Start();
     }
 
     /// <summary>
@@ -759,8 +767,12 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="user"></param>
     private void SlideEndedProc(int handle, int channel, int data, IntPtr user)
     {
-      _crossFading = false;
-       Log.Debug("BASS: Fading of stream finished.");
+      new Thread(() =>
+                   {
+                     _crossFading = false;
+                     Log.Debug("BASS: Fading of stream finished.");
+                   }
+      ).Start();
     }
 
 
@@ -773,12 +785,27 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      Log.Debug("BASS: End of stream {0}", _filePath);
-      _crossFading = false;
-      if (MusicStreamMessage != null)
-      {
-        MusicStreamMessage(this, StreamAction.Ended);
-      }
+      new Thread(() =>
+                   {
+                     Log.Debug("BASS: End of stream {0}", _filePath);
+                     _crossFading = false;
+
+                     // The Playlist Player waits on a Crossfading message to play the next song.
+                     // So if X-fading is set to 0, we must send the message in order to start playback of the next
+                     // file.
+                     if (Config.CrossFadeIntervalMs == 0)
+                     {
+                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
+                       GUIWindowManager.SendThreadMessage(msg);
+                     }
+
+                     if (MusicStreamMessage != null)
+                     {
+                       MusicStreamMessage(this, StreamAction.Ended);
+                     }
+                   }
+      ).Start();
     }
 
     /// <summary>
@@ -790,20 +817,25 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void CueTrackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
+      new Thread(() =>
+                   {
+                     Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
 
-      if (Config.CrossFadeIntervalMs > 0)
-      {
-        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
-      }
+                     if (Config.CrossFadeIntervalMs > 0)
+                     {
+                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
+                                                       0, 0, 0, null);
+                       GUIWindowManager.SendThreadMessage(msg);
+                     }
 
-      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
-      if (removed)
-      {
-        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in CueTrackEndProc");
-      }
+                     bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
+                     if (removed)
+                     {
+                       Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in CueTrackEndProc");
+                     }
+                   }
+       ).Start();
     }
 
     /// <summary>
@@ -852,11 +884,16 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="user"></param>
     private void MetaTagSyncProc(int handle, int channel, int data, IntPtr user)
     {
-      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
-      if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false, false))
-      {
-        GetMetaTags();
-      }
+      new Thread(() =>
+                   {
+                     // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
+                     if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false,
+                                                 false))
+                     {
+                       GetMetaTags();
+                     }
+                   }
+      ).Start();
     }
 
     /// <summary>
@@ -888,31 +925,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
-    /// <summary>
-    /// Unregister the Playback Events
-    /// </summary>
-    /// <returns></returns>
-    public bool UnregisterPlaybackEvents()
-    {
-      try
-      {
-        foreach (int syncHandle in _streamEventSyncHandles)
-        {
-          if (syncHandle != 0)
-          {
-            Bass.BASS_ChannelRemoveSync(_stream, syncHandle);
-          }
-        }
-      }
-
-      catch
-      {
-        return false;
-      }
-
-      return true;
-    }
-
     #endregion
 
     #region IDisposable Members
@@ -922,7 +934,6 @@ namespace MediaPortal.MusicPlayer.BASS
       _disposed = true;
 
       Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
-      UnregisterPlaybackEvents();
       Bass.BASS_StreamFree(_stream);
 
       // Free Winamp resources)

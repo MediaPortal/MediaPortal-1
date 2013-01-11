@@ -605,6 +605,7 @@ namespace MediaPortal.MusicPlayer.BASS
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
 
+          // REmove the stream from the active streams and free it
           lock (_streams)
           {
             if (_streams.Contains(musicStream))
@@ -1533,7 +1534,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
         // Enable events, for various Playback Actions to be handled
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
-        _mixer.MusicStreamMessage += new MixerStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
         if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
         {
@@ -1732,7 +1732,7 @@ namespace MediaPortal.MusicPlayer.BASS
       MusicStream stream = GetCurrentStream();
       try
       {
-        if (stream != null)
+        if (stream != null && !stream.IsDisposed)
         {
           Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
           if (Config.SoftStop && !stream.IsDisposed && !stream.IsCrossFading)
