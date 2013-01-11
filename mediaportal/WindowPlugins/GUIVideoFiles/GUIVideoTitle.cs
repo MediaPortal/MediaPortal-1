@@ -794,7 +794,6 @@ namespace MediaPortal.GUI.Video
     protected override void LoadDirectory(string strNewDirectory)
     {
       CheckAndStopThreads();
-      
       GUIWaitCursor.Show();
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
@@ -2733,8 +2732,10 @@ namespace MediaPortal.GUI.Video
           randomMovieId = movieDetails.ID;
         }
       }
-      catch (Exception)
-      {}
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle SetRandomMovieId error: {0}", ex.Message);
+      }
       return randomMovieId;
     }
 
@@ -2836,83 +2837,90 @@ namespace MediaPortal.GUI.Video
     // Set random movieId for group view (FA handler can use that)
     private void SetItemViewHistory(string view, int currentLvl, GUIListItem selectedItem)
     {
-      if (selectedItem != null && !string.IsNullOrEmpty(selectedItem.Label))
+      try
       {
-        string selectedLabel = selectedItem.Label;
-
-        if (!string.IsNullOrEmpty(view))
+        if (selectedItem != null && !string.IsNullOrEmpty(view))
         {
-          switch (view)
+          string selectedLabel = selectedItem.Label;
+
+          if (!string.IsNullOrEmpty(view))
           {
-            case "genre":
-              m_history.Set(selectedLabel, view);
-              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
-              break;
-
-            case "user groups":
-              m_history.Set(selectedLabel, view);
-              IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
-              if (movie == null || movie.ID == -1)
-              {
+            switch (view)
+            {
+              case "genre":
+                m_history.Set(selectedLabel, view);
                 GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
-              }
-              break;
+                break;
 
-            case "actor":
-            case "director":
-              m_history.Set(selectedLabel, view);
-              ArrayList mList = new ArrayList();
-              VideoDatabase.GetRandomMoviesByActor(selectedItem.Label, ref mList, 1);
-              selectedItem.TVTag = SetRandomMovieId(mList);
-              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
-              break;
-
-            case "year":
-              m_history.Set(selectedLabel, view);
-              GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
-              break;
-
-            case "recently added":
-              if (currentLvl == 0)
-              {
+              case "user groups":
                 m_history.Set(selectedLabel, view);
-              }
-              break;
+                IMDBMovie movie = facadeLayout.SelectedListItem.AlbumInfoTag as IMDBMovie;
+                if (movie == null || movie.ID == -1)
+                {
+                  GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
+                } 
+                break;
 
-            case "recently watched":
-              if (currentLvl == 0)
-              {
+              case "actor":
+              case "director":
                 m_history.Set(selectedLabel, view);
-              }
-              break;
-
-            case "watched":
-              if (currentLvl == 0)
-              {
-                m_history.Set(selectedLabel, view);
-              }
-              break;
-
-            case "unwatched":
-              if (currentLvl == 0)
-              {
-                m_history.Set(selectedLabel, view);
-              }
-              break;
-
-            case "titleindex":
-              if (currentLvl == 0)
-              {
+                ArrayList mList = new ArrayList();
+                VideoDatabase.GetRandomMoviesByActor(selectedItem.Label, ref mList, 1);
+                selectedItem.TVTag = SetRandomMovieId(mList);
                 GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
-                m_history.Set(selectedLabel, view);
-              }
-              break;
+                break;
 
-            default:
-              m_history.Set(selectedLabel, view);
-              break;
+              case "year":
+                m_history.Set(selectedLabel, view);
+                GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
+                break;
+
+              case "recently added":
+                if (currentLvl == 0)
+                {
+                  m_history.Set(selectedLabel, view);
+                }
+                break;
+
+              case "recently watched":
+                if (currentLvl == 0)
+                {
+                  m_history.Set(selectedLabel, view);
+                }
+                break;
+
+              case "watched":
+                if (currentLvl == 0)
+                {
+                  m_history.Set(selectedLabel, view);
+                }
+                break;
+
+              case "unwatched":
+                if (currentLvl == 0)
+                {
+                  m_history.Set(selectedLabel, view);
+                }
+                break;
+
+              case "titleindex":
+                if (currentLvl == 0)
+                {
+                  GUIPropertyManager.SetProperty("#movieid", selectedItem.TVTag.ToString());
+                  m_history.Set(selectedLabel, view);
+                }
+                break;
+
+              default:
+                m_history.Set(selectedLabel, view);
+                break;
+            } 
           }
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GUIVideoTitle SetItemViewHistory error: {0}", ex.Message);
       }
     }
 
