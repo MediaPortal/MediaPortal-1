@@ -134,42 +134,51 @@ public class MediaPortalApp : D3D, IRender
   private MouseEventArgs        _lastMouseClickEvent;
   private readonly Rectangle[]  _region;
   private static RestartOptions _restartOptions;
+  private IntPtr                _deviceNotificationHandle;
 
   // ReSharper disable InconsistentNaming
-  private const int WM_SYSCOMMAND           = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_MINIMIZE             = 0xF020; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_SCREENSAVE           = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_MONITORPOWER         = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int WM_ENDSESSION           = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
-  private const int WM_DEVICECHANGE         = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
-  private const int WM_QUERYENDSESSION      = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
-  private const int WM_ACTIVATE             = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WA_INACTIVE             = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WA_ACTIVE               = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WA_CLICKACTIVE          = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
-  private const int WM_SIZING               = 0x0214; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_LEFT               = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_RIGHT              = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_TOP                = 3;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_TOPLEFT            = 4;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_TOPRIGHT           = 5;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_BOTTOM             = 6;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_BOTTOMLEFT         = 7;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WMSZ_BOTTOMRIGHT        = 8;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
-  private const int WM_GETMINMAXINFO        = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
-  private const int WM_MOVING               = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
-  private const int WM_POWERBROADCAST       = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
-  private const int WM_DISPLAYCHANGE        = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
-  private const int PBT_APMSUSPEND          = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
-  private const int PBT_APMRESUMECRITICAL   = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
-  private const int PBT_APMRESUMESUSPEND    = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
-  private const int PBT_APMRESUMEAUTOMATIC  = 0x0012; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372718(v=vs.85).aspx
-  private const int SPI_SETSCREENSAVEACTIVE = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
-  private const int SPI_GETSCREENSAVEACTIVE = 0x0010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
-  private const int SPIF_SENDCHANGE         = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
-  private const int D3DERR_DEVICEHUNG       = -2005530508; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
-  private const int D3DERR_DEVICEREMOVED    = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
-  private const int D3DERR_INVALIDCALL      = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MINIMIZE              = 0xF020; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_SCREENSAVE            = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MONITORPOWER          = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int WM_ENDSESSION            = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
+  private const int WM_DEVICECHANGE          = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
+  private const int DBT_DEVICEARRIVAL        = 0x8000; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
+  private const int DBT_DEVICEREMOVECOMPLETE = 0x8004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
+  private const int WM_QUERYENDSESSION       = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376890(v=vs.85).aspx
+  private const int WM_ACTIVATE              = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WA_INACTIVE              = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WA_ACTIVE                = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WA_CLICKACTIVE           = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  private const int WM_SIZING                = 0x0214; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_LEFT                = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_RIGHT               = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOP                 = 3;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOPLEFT             = 4;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_TOPRIGHT            = 5;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOM              = 6;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOMLEFT          = 7;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WMSZ_BOTTOMRIGHT         = 8;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WM_GETMINMAXINFO         = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
+  private const int WM_MOVING                = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
+  private const int WM_POWERBROADCAST        = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_DISPLAYCHANGE         = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
+  private const int PBT_APMSUSPEND           = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
+  private const int PBT_APMRESUMECRITICAL    = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
+  private const int PBT_APMRESUMESUSPEND     = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
+  private const int PBT_APMRESUMEAUTOMATIC   = 0x0012; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372718(v=vs.85).aspx
+  private const int SPI_SETSCREENSAVEACTIVE  = 0x0011; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int SPI_GETSCREENSAVEACTIVE  = 0x0010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int SPIF_SENDCHANGE          = 0x0002; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
+  private const int D3DERR_DEVICEHUNG        = -2005530508; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_DEVICEREMOVED     = -2005530512; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+  private const int D3DERR_INVALIDCALL       = -2005530516; // http://msdn.microsoft.com/en-us/library/windows/desktop/bb172554(v=vs.85).aspx
+
+  private const int DEVICE_NOTIFY_WINDOW_HANDLE         = 0;
+  private const int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 4;
+  private const int DBT_DEVTYP_DEVICEINTERFACE          = 5;
+
+  private static readonly Guid KSCATEGORY_RENDER        = new Guid("{65E8773E-8F56-11D0-A3B9-00A0C9223196}");
   // ReSharper restore InconsistentNaming
 
   private const string MPMutex     = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
@@ -200,6 +209,43 @@ public class MediaPortalApp : D3D, IRender
   }
   #pragma warning restore 169, 649
   // ReSharper restore NotAccessedField.Local
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244(v=vs.85).aspx
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+  public struct DEV_BROADCAST_DEVICEINTERFACE
+  {
+    public int    dbcc_size;
+    public int    dbcc_devicetype;
+    public int    dbcc_reserved;
+    public Guid   dbcc_classguid;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 255)]
+    public string dbcc_name;
+  }
+
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363246(v=vs.85).aspx
+  [StructLayout(LayoutKind.Sequential)]
+  public struct DEV_BROADCAST_HDR
+  {
+    public int dbcc_size;
+    public int dbcc_devicetype;
+    public int dbcc_reserved;
+  }
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363245(v=vs.85).aspx
+  [StructLayout(LayoutKind.Sequential)]
+  public struct DEV_BROADCAST_HANDLE
+  {
+    public int    dbch_size;
+    public int    dbch_devicetype;
+    public int    dbch_reserved;
+    public IntPtr dbch_handle;
+    public IntPtr dbch_hdevnotify;
+    public Guid   dbch_eventguid;
+    public long   dbch_nameoffset;
+    public byte   dbch_data;
+    public byte   dbch_data1;
+  }
   // ReSharper restore InconsistentNaming
 
   #endregion
@@ -227,6 +273,15 @@ public class MediaPortalApp : D3D, IRender
   // http://msdn.microsoft.com/en-us/library/windows/desktop/bb773640(v=vs.85).aspx
   [DllImport("shlwapi.dll")]
   private static extern bool PathIsNetworkPath(string path);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363431(v=vs.85).aspx
+  [DllImport("user32.dll", SetLastError = true)]
+  private static extern IntPtr RegisterDeviceNotification(IntPtr hRecipient, IntPtr notificationFilter, uint flags);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363475(v=vs.85).aspx
+  [DllImport("user32.dll", CharSet = CharSet.Auto)]
+  private static extern uint UnregisterDeviceNotification(IntPtr hHandle);
+
 
   #region main()
 
@@ -1073,6 +1128,9 @@ public class MediaPortalApp : D3D, IRender
             mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
             Marshal.StructureToPtr(mmi, msg.LParam, true);
             msg.Result = (IntPtr)0;
+
+            // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+            SetBounds(0, 0, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
           }
           break;
 
@@ -1170,10 +1228,66 @@ public class MediaPortalApp : D3D, IRender
           msg.Result = (IntPtr)1;
           break;
         
-          // handle device changes
+        // handle device changes
         case WM_DEVICECHANGE:
           Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", msg.WParam.ToInt32());
+
           RemovableDriveHelper.HandleDeviceChangedMessage(msg);
+
+          // process additional data if available
+          if (msg.LParam.ToInt32() != 0)
+          {
+            var hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
+            if (hdr.dbcc_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+            {
+              var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(msg.LParam, typeof (DEV_BROADCAST_DEVICEINTERFACE));
+              
+              // get friendly device name
+              string deviceName = String.Empty;
+              string[] values = deviceInterface.dbcc_name.Split('#');
+              if (values.Length >= 3)
+              {
+                string deviceType       = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
+                string deviceInstanceID = values[1];
+                string deviceUniqueID   = values[2];
+                string regPath          = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
+                RegistryKey regKey      = Registry.LocalMachine.OpenSubKey(regPath);
+                if (regKey != null)
+                {
+                  // use the friendly name if it exists
+                  object result = regKey.GetValue("FriendlyName");
+                  if (result != null)
+                  {
+                    deviceName = result.ToString();
+                  }
+                  // if not use the device description's last part
+                  else
+                  {
+                    result = regKey.GetValue("DeviceDesc");
+                    if (result != null)
+                    {
+                      deviceName = result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2);
+                    }
+                  }
+                }
+              }
+
+              if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
+              {
+                switch (msg.WParam.ToInt32())
+                {
+                  case DBT_DEVICEREMOVECOMPLETE:
+                    Log.Info("Main: Audio Renderer {0} removed, deactivating MediaPortal", deviceName);
+                    MinimizeToTray(false);
+                    break;
+                  case DBT_DEVICEARRIVAL:
+                    Log.Info("Main: Audio Renderer {0} connected, activating MediaPortal", deviceName);
+                    RestoreFromTray(false);
+                    break;
+                }  
+              }
+            }
+          }
           msg.Result = (IntPtr)1;
           break;
 
@@ -1219,7 +1333,7 @@ public class MediaPortalApp : D3D, IRender
             // user clocked on minimize button
             case SC_MINIMIZE:
               Log.Debug("Main: SC_MINIMIZE");
-              MinimizeToTray(true);
+              MinimizeToTray(false);
               break;
 
             // windows wants to start the screen saver
@@ -1557,7 +1671,7 @@ public class MediaPortalApp : D3D, IRender
     if (MinimizeOnStartup && FirstTimeWindowDisplayed)
     {
       Log.Info("D3D: Minimizing to tray on startup");
-      MinimizeToTray(true);
+      MinimizeToTray(false);
       FirstTimeWindowDisplayed = false;
     }
     base.OnShown(e);
@@ -1708,6 +1822,20 @@ public class MediaPortalApp : D3D, IRender
     #pragma warning disable 168
     VolumeHandler vh = VolumeHandler.Instance;
     #pragma warning restore 168
+
+    // register for device change notifications
+    Log.Debug("Main: Registering for Device Notifications");
+    var devBroadcastDeviceInterface = new DEV_BROADCAST_DEVICEINTERFACE();
+    int size = Marshal.SizeOf(devBroadcastDeviceInterface);
+    devBroadcastDeviceInterface.dbcc_size = size;
+    devBroadcastDeviceInterface.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+    IntPtr devBroadcastDeviceInterfaceBuffer = Marshal.AllocHGlobal(size);
+    Marshal.StructureToPtr(devBroadcastDeviceInterface, devBroadcastDeviceInterfaceBuffer, true);
+    _deviceNotificationHandle = RegisterDeviceNotification(Handle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
+    if (_deviceNotificationHandle == IntPtr.Zero)
+    {
+      // TODO error handling
+    }
   }
 
 
@@ -1889,6 +2017,9 @@ public class MediaPortalApp : D3D, IRender
     {
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDCHANGE);
     }
+
+    UnregisterDeviceNotification(_deviceNotificationHandle);
+    _deviceNotificationHandle = IntPtr.Zero;
   }
 
 
@@ -2918,7 +3049,7 @@ public class MediaPortalApp : D3D, IRender
     if (MinimizeOnGuiExit && !ShuttingDown)
     {
       Log.Info("Main: Minimizing to tray on GUI exit");
-      MinimizeToTray(true);
+      MinimizeToTray(false);
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;

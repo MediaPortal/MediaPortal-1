@@ -1381,7 +1381,7 @@ namespace MediaPortal
       Log.Info("D3D: OnSetup - Stopping media");
       g_Player.Stop();
 
-      MinimizeToTray(true);
+      MinimizeToTray(false);
 
       using (Settings xmlreader = new MPSettings())
       {
@@ -2000,7 +2000,7 @@ namespace MediaPortal
         Log.Info("D3D: Minimizing to tray on GUI exit");
         _isClosing = false;
         e.Cancel = true;
-        MinimizeToTray(true);
+        MinimizeToTray(false);
       }
       _isClosing = true;
       base.OnClosing(e);
