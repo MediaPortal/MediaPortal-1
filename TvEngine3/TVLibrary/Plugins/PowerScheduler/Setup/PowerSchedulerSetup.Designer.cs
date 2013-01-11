@@ -1514,7 +1514,6 @@ namespace PowerScheduler.Setup
       this.numericUpDownStandbyHoursFrom.Size = new System.Drawing.Size(47, 20);
       this.numericUpDownStandbyHoursFrom.TabIndex = 3;
       this.numericUpDownStandbyHoursFrom.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      this.numericUpDownStandbyHoursFrom.ValueChanged += new System.EventHandler(this.numericUpDownStandbyHoursFrom_ValueChanged);
       // 
       // label6
       // 
@@ -1544,7 +1543,6 @@ namespace PowerScheduler.Setup
             0,
             0,
             0});
-      this.numericUpDownStandbyHoursTo.ValueChanged += new System.EventHandler(this.numericUpDownStandbyHoursTo_ValueChanged);
       // 
       // label7
       // 

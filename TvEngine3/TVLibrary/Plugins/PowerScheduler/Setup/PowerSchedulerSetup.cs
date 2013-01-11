@@ -1251,22 +1251,6 @@ namespace PowerScheduler.Setup
 
     #endregion
 
-    #region Legacy tab
-
-    private void numericUpDownStandbyHoursFrom_ValueChanged(object sender, EventArgs e)
-    {
-      if (numericUpDownStandbyHoursFrom.Value > numericUpDownStandbyHoursTo.Value)
-        numericUpDownStandbyHoursFrom.Value = numericUpDownStandbyHoursTo.Value;
-    }
-
-    private void numericUpDownStandbyHoursTo_ValueChanged(object sender, EventArgs e)
-    {
-      if (numericUpDownStandbyHoursTo.Value < numericUpDownStandbyHoursFrom.Value)
-        numericUpDownStandbyHoursTo.Value = numericUpDownStandbyHoursFrom.Value;
-    }
-
-    #endregion
-
     #endregion
 
   }
