@@ -174,13 +174,13 @@ namespace DShowNET.Helper
 
         if (hr >= 0 && enumFilters != null)
         {
-          int iFetched;
+          var fetched = new IntPtr();
           enumFilters.Reset();
           while (!bAllRemoved)
           {
             IBaseFilter[] pBasefilter = new IBaseFilter[2];
-            hr.Set(enumFilters.Next(1, pBasefilter, out iFetched));
-            if (hr < 0 || iFetched != 1 || pBasefilter[0] == null)
+            hr.Set(enumFilters.Next(1, pBasefilter, fetched));
+            if (hr < 0 || fetched.ToInt32() != 1 || pBasefilter[0] == null)
             {
               break;
             }
@@ -320,11 +320,11 @@ namespace DShowNET.Helper
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int f;
+        var f = new IntPtr();
         do
         {
           // Get the next pin
-          hr = pinEnum.Next(1, pins, out f);
+          hr = pinEnum.Next(1, pins, f);
           if ((hr == 0) && (pins[0] != null))
           {
             PinDirection pinDir;
@@ -355,9 +355,9 @@ namespace DShowNET.Helper
       while (true)
       {
         AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
-        int hr = types.Next(1, mediaTypes, out typesFetched);
-        if (hr != 0 || typesFetched == 0)
+        var typesFetched = new IntPtr();
+        int hr = types.Next(1, mediaTypes, typesFetched);
+        if (hr != 0 || typesFetched.ToInt32() == 0)
         {
           break;
         }
@@ -377,9 +377,9 @@ namespace DShowNET.Helper
       while (true)
       {
         AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
-        int hr = types.Next(1, mediaTypes, out typesFetched);
-        if (hr != 0 || typesFetched == 0)
+        var typesFetched = new IntPtr();
+        int hr = types.Next(1, mediaTypes, typesFetched);
+        if (hr != 0 || typesFetched.ToInt32() == 0)
         {
           break;
         }
@@ -410,10 +410,10 @@ namespace DShowNET.Helper
       graphBuilder.EnumFilters(out enumFilters);
       do
       {
-        int ffetched;
+        var ffetched = new IntPtr();
         IBaseFilter[] filters = new IBaseFilter[1];
-        hr = enumFilters.Next(1, filters, out ffetched);
-        if (hr == 0 && ffetched > 0)
+        hr = enumFilters.Next(1, filters, ffetched);
+        if (hr == 0 && ffetched.ToInt32() > 0)
         {
           FilterInfo info;
           filters[0].QueryFilterInfo(out info);
@@ -475,9 +475,9 @@ namespace DShowNET.Helper
       to.EnumPins(out enumPins);
       do
       {
-        int pinsFetched;
-        hr = enumPins.Next(1, pins, out pinsFetched);
-        if (hr != 0 || pinsFetched == 0)
+        var pinsFetched = new IntPtr();
+        hr = enumPins.Next(1, pins, pinsFetched);
+        if (hr != 0 || pinsFetched.ToInt32() == 0)
         {
           break;
         }
@@ -548,15 +548,15 @@ namespace DShowNET.Helper
           //Log.Info("got pins");
           pinEnum.Reset();
           IPin[] pins = new IPin[1];
-          int iFetched;
+          var fetched = new IntPtr();
           int iPinNo = 0;
           do
           {
             // Get the next pin
             //Log.Info("  get pin:{0}",iPinNo);
             iPinNo++;
-            hr = pinEnum.Next(1, pins, out iFetched);
-            if (hr == 0 && iFetched == 1)
+            hr = pinEnum.Next(1, pins, fetched);
+            if (hr == 0 && fetched.ToInt32() == 1)
             {
               //Log.Info("  find pin info");
               PinDirection pinDir;
@@ -662,13 +662,13 @@ namespace DShowNET.Helper
       graphBuilder.EnumFilters(out enumFilters);
       for (;;)
       {
-        int ffetched;
+        var ffetched = new IntPtr();
         IBaseFilter[] filters = new IBaseFilter[1];
-        int hr = enumFilters.Next(1, filters, out ffetched);
-        if (hr == 0 && ffetched > 0)
+        int hr = enumFilters.Next(1, filters, ffetched);
+        if (hr == 0 && ffetched.ToInt32() > 0)
         {
           uint m = (uint)GetMerit(filters[0]);
-          //substract merit from uint.maxvalue to get reverse ordering from highest merit to lowest merit
+          //subtract merit from uint.maxvalue to get reverse ordering from highest merit to lowest merit
           if (IsRenderer(filters[0]))
           {
             allMeritsR.Add(uint.MaxValue - m);
@@ -743,10 +743,10 @@ namespace DShowNET.Helper
       int hr = source.EnumPins(out enumPins);
       DsError.ThrowExceptionForHR(hr);
       IPin[] pins = new IPin[1];
-      int fetched = 0;
-      while (enumPins.Next(1, pins, out fetched) == 0)
+      var fetched = new IntPtr();
+      while (enumPins.Next(1, pins, fetched) == 0)
       {
-        if (fetched != 1)
+        if (fetched.ToInt32() != 1)
         {
           break;
         }
@@ -757,9 +757,9 @@ namespace DShowNET.Helper
           IEnumMediaTypes enumMediaTypes;
           pins[0].EnumMediaTypes(out enumMediaTypes);
           AMMediaType[] mediaTypes = new AMMediaType[20];
-          int fetchedTypes;
-          enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
-          for (int i = 0; i < fetchedTypes; ++i)
+          var fetchedTypes = new IntPtr();
+          enumMediaTypes.Next(20, mediaTypes, fetchedTypes);
+          for (int i = 0; i < fetchedTypes.ToInt32(); ++i)
           {
             if (mediaTypes[i].majorType == mediaType)
             {
@@ -816,9 +816,9 @@ namespace DShowNET.Helper
         for (;;)
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
-          int typesFetched;
-          hr = enumTypes.Next(1, mediaTypes, out typesFetched);
-          if (hr != 0 || typesFetched == 0)
+          var typesFetched = new IntPtr();
+          hr = enumTypes.Next(1, mediaTypes, typesFetched);
+          if (hr != 0 || typesFetched.ToInt32() == 0)
           {
             break;
           }
@@ -876,9 +876,9 @@ namespace DShowNET.Helper
       DsError.ThrowExceptionForHR(hr);
 
       IBaseFilter[] filters = new IBaseFilter[1];
-      int fetched;
+      var fetched = new IntPtr();
 
-      while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+      while (enumFilters.Next(filters.Length, filters, fetched) == 0)
       {
         filtersArray.Add(filters[0]);
       }
@@ -902,7 +902,7 @@ namespace DShowNET.Helper
       if (baseFilter == null)
         return;
 
-      int fetched;
+      var fetched = new IntPtr();
       IEnumPins pinEnum;
       int hr = baseFilter.EnumPins(out pinEnum);
       DsError.ThrowExceptionForHR(hr);
@@ -910,7 +910,7 @@ namespace DShowNET.Helper
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
+        while (pinEnum.Next(1, pins, fetched) == 0 && fetched.ToInt32() > 0)
         {
           PinDirection pinDir;
           pins[0].QueryDirection(out pinDir);
@@ -971,17 +971,17 @@ namespace DShowNET.Helper
         Log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int iFetched;
+        var fetched = new IntPtr();
         int iPinNo = 0;
         do
         {
           // Get the next pin
           //Log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next(1, pins, out iFetched);
+          hr = pinEnum.Next(1, pins, fetched);
           if (hr == 0)
           {
-            if (iFetched == 1 && pins[0] != null)
+            if (fetched.ToInt32() == 1 && pins[0] != null)
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
@@ -1035,16 +1035,16 @@ namespace DShowNET.Helper
             }
             else
             {
-              iFetched = 0;
+              fetched = (IntPtr)0;
               Log.Info("no pins?");
               break;
             }
           }
           else
           {
-            iFetched = 0;
+            fetched = (IntPtr)0;
           }
-        } while (iFetched == 1 && pinsRendered < maxPinsToRender && bAllConnected);
+        } while (fetched.ToInt32() == 1 && pinsRendered < maxPinsToRender && bAllConnected);
         ReleaseComObject(pinEnum);
       }
       return bAllConnected;
@@ -1076,17 +1076,17 @@ namespace DShowNET.Helper
         //Log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int iFetched;
+        var fetched = new IntPtr();
         int iPinNo = 0;
         do
         {
           // Get the next pin
           //Log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next(1, pins, out iFetched);
+          hr = pinEnum.Next(1, pins, fetched);
           if (hr == 0)
           {
-            if (iFetched == 1 && pins[0] != null)
+            if (fetched.ToInt32() == 1 && pins[0] != null)
             {
               //Log.Info("  find pin info");
               PinInfo pinInfo = new PinInfo();
@@ -1128,16 +1128,16 @@ namespace DShowNET.Helper
             }
             else
             {
-              iFetched = 0;
+              fetched = (IntPtr)0;
               Log.Info("no pins?");
               break;
             }
           }
           else
           {
-            iFetched = 0;
+            fetched = (IntPtr)0;
           }
-        } while (iFetched == 1);
+        } while (fetched.ToInt32() == 1);
         ReleaseComObject(pinEnum);
       }
     }
@@ -1157,9 +1157,9 @@ namespace DShowNET.Helper
         DsError.ThrowExceptionForHR(hr);
 
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        var fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           filtersArray.Add(filters[0]);
         }
@@ -1181,9 +1181,9 @@ namespace DShowNET.Helper
             bool hasIn = false;
             pinEnum.Reset();
             IPin[] pins = new IPin[1];
-            while (pinEnum.Next(1, pins, out fetched) == 0)
+            while (pinEnum.Next(1, pins, fetched) == 0)
             {
-              if (fetched > 0)
+              if (fetched.ToInt32() > 0)
               {
                 PinDirection pinDir;
                 hr = pins[0].QueryDirection(out pinDir);
@@ -1235,9 +1235,9 @@ namespace DShowNET.Helper
       for (;;)
       {
         IPin[] pins = new IPin[1];
-        int fetched;
-        hr = pinEnum.Next(1, pins, out fetched);
-        if (hr != 0 || fetched == 0)
+        var fetched = new IntPtr();
+        hr = pinEnum.Next(1, pins, fetched);
+        if (hr != 0 || fetched.ToInt32() == 0)
         {
           break;
         }
@@ -1307,9 +1307,9 @@ namespace DShowNET.Helper
       for (;;)
       {
         AMMediaType[] types = new AMMediaType[1];
-        int fetched;
-        hr = enumTypes.Next(1, types, out fetched);
-        if (hr != 0 || fetched == 0)
+        var fetched = new IntPtr();
+        hr = enumTypes.Next(1, types, fetched);
+        if (hr != 0 || fetched.ToInt32() == 0)
         {
           break;
         }
@@ -1345,17 +1345,17 @@ namespace DShowNET.Helper
         Log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int iFetched;
+        var fetched = new IntPtr();
         int iPinNo = 0;
         do
         {
           // Get the next pin
           //Log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next(1, pins, out iFetched);
+          hr = pinEnum.Next(1, pins, fetched);
           if (hr == 0)
           {
-            if (iFetched == 1 && pins[0] != null)
+            if (fetched.ToInt32() == 1 && pins[0] != null)
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
@@ -1393,16 +1393,16 @@ namespace DShowNET.Helper
             }
             else
             {
-              iFetched = 0;
+              fetched = (IntPtr)0;
               Log.Info("no pins?");
               break;
             }
           }
           else
           {
-            iFetched = 0;
+            fetched = (IntPtr)0;
           }
-        } while (iFetched == 1);
+        } while (fetched.ToInt32() == 1);
         ReleaseComObject(pinEnum);
       }
       return bAllConnected;
@@ -1421,17 +1421,17 @@ namespace DShowNET.Helper
         Log.Info("got pins");
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int iFetched;
+        var fetched = new IntPtr();
         int iPinNo = 0;
         do
         {
           // Get the next pin
           //Log.Info("  get pin:{0}",iPinNo);
           iPinNo++;
-          hr = pinEnum.Next(1, pins, out iFetched);
+          hr = pinEnum.Next(1, pins, fetched);
           if (hr == 0)
           {
-            if (iFetched == 1 && pins[0] != null)
+            if (fetched.ToInt32() == 1 && pins[0] != null)
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
@@ -1464,16 +1464,16 @@ namespace DShowNET.Helper
             }
             else
             {
-              iFetched = 0;
+              fetched = (IntPtr)0;
               Log.Info("no pins?");
               break;
             }
           }
           else
           {
-            iFetched = 0;
+            fetched = (IntPtr)0;
           }
-        } while (iFetched == 1);
+        } while (fetched.ToInt32() == 1);
         ReleaseComObject(pinEnum);
       }
       return bAllConnected;
@@ -1515,14 +1515,14 @@ namespace DShowNET.Helper
       hr = graphBuilder.EnumFilters(out enumFilters);
       if (hr >= 0 && enumFilters != null)
       {
-        int iFetched;
+        var fetched = new IntPtr();
         enumFilters.Reset();
         IBaseFilter[] pBasefilter = new IBaseFilter[2];
         do
         {
           pBasefilter = null;
-          hr = enumFilters.Next(1, pBasefilter, out iFetched);
-          if (hr == 0 && iFetched == 1 && pBasefilter[0] != null)
+          hr = enumFilters.Next(1, pBasefilter, fetched);
+          if (hr == 0 && fetched.ToInt32() == 1 && pBasefilter[0] != null)
           {
             IVMRAspectRatioControl pARC = pBasefilter[0] as IVMRAspectRatioControl;
             if (pARC != null)
@@ -1541,12 +1541,12 @@ namespace DShowNET.Helper
             {
               pinEnum.Reset();
               IPin[] pins = new IPin[1];
-              int f;
+              var f = new IntPtr();
               do
               {
                 // Get the next pin
-                hr = pinEnum.Next(1, pins, out f);
-                if (f == 1 && hr == 0 && pins[0] != null)
+                hr = pinEnum.Next(1, pins, f);
+                if (f.ToInt32() == 1 && hr == 0 && pins[0] != null)
                 {
                   IMixerPinConfig pMC = pins[0] as IMixerPinConfig;
                   if (null != pMC)
@@ -1555,12 +1555,12 @@ namespace DShowNET.Helper
                   }
                   ReleaseComObject(pins[0]);
                 }
-              } while (f == 1);
+              } while (f.ToInt32() == 1);
               ReleaseComObject(pinEnum);
             }
             ReleaseComObject(pBasefilter[0]);
           }
-        } while (iFetched == 1 && pBasefilter[0] != null);
+        } while (fetched.ToInt32() == 1 && pBasefilter[0] != null);
         ReleaseComObject(enumFilters);
       }
     }
@@ -1671,7 +1671,7 @@ namespace DShowNET.Helper
       int hr = 0;
       IEnumFilters ienumFilt = null;
       IBaseFilter[] foundfilter = new IBaseFilter[2];
-      int iFetched = 0;
+      var fetched = new IntPtr();
       try
       {
         hr = graphBuilder.EnumFilters(out ienumFilt);
@@ -1680,8 +1680,8 @@ namespace DShowNET.Helper
           ienumFilt.Reset();
           do
           {
-            hr = ienumFilt.Next(1, foundfilter, out iFetched);
-            if (hr == 0 && iFetched == 1)
+            hr = ienumFilt.Next(1, foundfilter, fetched);
+            if (hr == 0 && fetched.ToInt32() == 1)
             {
               FilterInfo filter_infos = new FilterInfo();
               foundfilter[0].QueryFilterInfo(out filter_infos);
@@ -1695,7 +1695,7 @@ namespace DShowNET.Helper
               }
               ReleaseComObject(foundfilter[0]);
             }
-          } while (iFetched == 1 && hr == 0);
+          } while (fetched.ToInt32() == 1 && hr == 0);
           if (ienumFilt != null)
           {
             ReleaseComObject(ienumFilt);
@@ -1736,9 +1736,9 @@ namespace DShowNET.Helper
         DsError.ThrowExceptionForHR(hr);
 
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        var fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           filtersArray.Add(filters[0]);
         }
@@ -1820,13 +1820,13 @@ namespace DShowNET.Helper
         int hr = m_graphBuilder.EnumFilters(out ienumFilt);
         if (hr == 0 && ienumFilt != null)
         {
-          int iFetched;
+          var fetched = new IntPtr();
           IBaseFilter[] filter = new IBaseFilter[2];
           ienumFilt.Reset();
           do
           {
-            hr = ienumFilt.Next(1, filter, out iFetched);
-            if (hr == 0 && iFetched == 1)
+            hr = ienumFilt.Next(1, filter, fetched);
+            if (hr == 0 && fetched.ToInt32() == 1)
             {
               Guid filterGuid;
               filter[0].GetClassID(out filterGuid);
@@ -1838,7 +1838,7 @@ namespace DShowNET.Helper
               ReleaseComObject(filter[0]);
               filter[0] = null;
             }
-          } while (iFetched == 1 && hr == 0);
+          } while (fetched.ToInt32() == 1 && hr == 0);
           if (ienumFilt != null)
           {
             ReleaseComObject(ienumFilt);
@@ -1995,11 +1995,11 @@ namespace DShowNET.Helper
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int f;
+        var f = new IntPtr();
         do
         {
           // Get the next pin
-          hr = pinEnum.Next(1, pins, out f);
+          hr = pinEnum.Next(1, pins, f);
           if ((hr == 0) && (pins[0] != null))
           {
             PinDirection pinDir;
@@ -2033,8 +2033,8 @@ namespace DShowNET.Helper
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int f;
-        while (pinEnum.Next(1, pins, out f) == 0)
+        var f = new IntPtr();
+        while (pinEnum.Next(1, pins, f) == 0)
         {
           if (pins[0] != null)
           {
@@ -2084,16 +2084,16 @@ namespace DShowNET.Helper
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        int f;
+        var f = new IntPtr();
         IEnumMediaTypes enumMediaTypesAudioVideo;
-        while (pinEnum.Next(1, pins, out f) == 0)
+        while (pinEnum.Next(1, pins, f) == 0)
         {
           if (pins[0] != null)
           {
             hr = pins[0].EnumMediaTypes(out enumMediaTypesAudioVideo);
             AMMediaType[] mediaTypes = new AMMediaType[1];
-            int typesFetched;
-            hr = enumMediaTypesAudioVideo.Next(1, mediaTypes, out typesFetched);
+            var typesFetched = new IntPtr();
+            hr = enumMediaTypesAudioVideo.Next(1, mediaTypes, typesFetched);
             if (mediaTypes[0].majorType != MediaType.Audio && mediaTypes[0].majorType != MediaType.Video)
             {
               PinDirection pinDir;
@@ -2166,10 +2166,10 @@ namespace DShowNET.Helper
         return;
       }
       IPin[] pins = new IPin[2];
-      int fetched;
-      while (enumPins.Next(1, pins, out fetched) == 0)
+      var fetched = new IntPtr();
+      while (enumPins.Next(1, pins, fetched) == 0)
       {
-        if (fetched != 1)
+        if (fetched.ToInt32() != 1)
         {
           break;
         }

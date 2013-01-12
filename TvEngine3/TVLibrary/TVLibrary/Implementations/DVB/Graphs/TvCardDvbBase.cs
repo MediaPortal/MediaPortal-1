@@ -33,6 +33,7 @@ using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
 using MediaPortal.TV.Epg;
 using TvDatabase;
+using LNB_Source = TvLibrary.Interfaces.Analyzer.LNB_Source;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -1458,12 +1459,12 @@ namespace TvLibrary.Implementations.DVB
         pinOut.EnumMediaTypes(out enumMedia);
         if (enumMedia != null)
         {
-          int fetched;
+          IntPtr fetched = new IntPtr();
           AMMediaType[] mediaTypes = new AMMediaType[21];
-          enumMedia.Next(20, mediaTypes, out fetched);
-          if (fetched > 0)
+          enumMedia.Next(20, mediaTypes, fetched);
+          if (fetched.ToInt32() > 0)
           {
-            for (int i = 0; i < fetched; ++i)
+            for (int i = 0; i < fetched.ToInt32(); ++i)
             {
               if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
                   mediaTypes[i].formatType == FormatType.None)
@@ -1795,9 +1796,9 @@ namespace TvLibrary.Implementations.DVB
         PinDirection pinDir;
         AMMediaType[] mediaTypes = new AMMediaType[2];
         IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
+        IntPtr fetched = new IntPtr();
+        enumPins.Next(1, pins, fetched);
+        if (fetched.ToInt32() != 1)
           break;
         if (pins[0] == null)
           break;
@@ -1811,9 +1812,9 @@ namespace TvLibrary.Implementations.DVB
         pins[0].EnumMediaTypes(out enumMedia);
         if (enumMedia != null)
         {
-          enumMedia.Next(1, mediaTypes, out fetched);
+          enumMedia.Next(1, mediaTypes, fetched);
           Release.ComObject("IEnumMedia", enumMedia);
-          if (fetched == 1 && mediaTypes[0] != null)
+          if (fetched.ToInt32() == 1 && mediaTypes[0] != null)
           {
             if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
             {

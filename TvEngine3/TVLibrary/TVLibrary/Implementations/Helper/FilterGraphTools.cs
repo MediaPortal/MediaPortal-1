@@ -398,9 +398,9 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        IntPtr fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           if (GetFilterName(filters[0]).Equals(filterName))
           {
@@ -435,9 +435,9 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        IntPtr fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           Guid clsid;
 
@@ -519,9 +519,9 @@ namespace TvLibrary.Implementations.DVB
       while (true)
       {
         IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
+        IntPtr fetched = new IntPtr();
+        enumPins.Next(1, pins, fetched);
+        if (fetched.ToInt32() != 1)
           break;
         //first check if the pindirection matches
         PinDirection pinDirection;
@@ -535,9 +535,9 @@ namespace TvLibrary.Implementations.DVB
         pins[0].EnumMediaTypes(out enumMedia);
         while (true)
         {
-          int fetchedMedia;
-          enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1)
+          IntPtr fetchedMedia = new IntPtr();
+          enumMedia.Next(1, media, fetchedMedia);
+          if (fetchedMedia.ToInt32() != 1)
             break;
 
           if (media[0].majorType == mediaType)
@@ -581,9 +581,9 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-        int lFetched;
+        IntPtr lFetched = new IntPtr();
         // Walk the pins looking for a match
-        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        while ((ppEnum.Next(1, pPins, lFetched) >= 0) && (lFetched.ToInt32() == 1))
         {
           PinDirection ppindir;
           // Read the info
@@ -640,9 +640,9 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-        int lFetched;
+        IntPtr lFetched = new IntPtr();
         // Walk the pins looking for a match
-        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        while ((ppEnum.Next(1, pPins, lFetched) >= 0) && (lFetched.ToInt32() == 1))
         {
           PinDirection ppindir;
 
@@ -711,9 +711,9 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-        int lFetched;
+        IntPtr lFetched = new IntPtr();
         // Walk the pins looking for a match
-        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        while ((ppEnum.Next(1, pPins, lFetched) >= 0) && (lFetched.ToInt32() == 1))
         {
           PinDirection ppindir;
           // Read the direction
@@ -766,8 +766,8 @@ namespace TvLibrary.Implementations.DVB
 
       try
       {
-        int fetched;
-        while (enumPins.Next(pins.Length, pins, out fetched) == 0)
+        IntPtr fetched = new IntPtr();
+        while (enumPins.Next(pins.Length, pins, fetched) == 0)
         {
           try
           {
@@ -807,9 +807,9 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        IntPtr fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           try
           {
@@ -849,9 +849,9 @@ namespace TvLibrary.Implementations.DVB
         DsError.ThrowExceptionForHR(hr);
 
         IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
+        IntPtr fetched = new IntPtr();
 
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+        while (enumFilters.Next(filters.Length, filters, fetched) == 0)
         {
           filtersArray.Add(filters[0]);
         }

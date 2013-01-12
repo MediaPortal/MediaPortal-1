@@ -561,9 +561,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="ulRange">The DisEqCPort</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    protected bool SendDiSEqCCommand(ulong ulRange)
+    protected bool SendDiSEqCCommand(int range)
     {
-      Log.Log.Info("KNC:  SendDiSEqC Command {0}", ulRange);
+      Log.Log.Info("KNC:  SendDiSEqC Command {0}", range);
       // get ControlNode of tuner control node
       object ControlNode;
       int hr = ((IBDA_Topology)m_tunerFilter).GetControlNode(0, 1, 0, out ControlNode);
@@ -581,8 +581,8 @@ namespace TvLibrary.Implementations.DVB
             {
               if (FrequencyFilter != null)
               {
-                hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info("KNC:  put_Range:{0} success:{1}", ulRange, hr);
+                hr = FrequencyFilter.put_Range(range);
+                Log.Log.Info("KNC:  put_Range:{0} success:{1}", range, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 

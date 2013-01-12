@@ -1449,14 +1449,16 @@ namespace MediaPortal.Player
 
     private void OnGraphNotify()
     {
-      int p1, p2, hr = 0;
-      EventCode code;
+      int hr = 0;
       int counter = 0;
       do
       {
         counter++;
         if ( /*Playing && */_mediaEvt != null)
         {
+          IntPtr p1;
+          IntPtr p2;
+          EventCode code;
           hr = _mediaEvt.GetEvent(out code, out p1, out p2, 0);
           if (hr == 0)
           {
@@ -1464,7 +1466,7 @@ namespace MediaPortal.Player
             /*
                         if (code>=EventCode.StreamBufferTimeHole && code <= EventCode.StreamBufferRateChanged)
                         {
-                          Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+                          Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(), p1.ToInt32(), p2.ToInt32(), p1.ToInt32(), p2.ToInt32());
                           long contentStart,contentStop,streamPosition,segmentstop;
                           double fcontentStart,fcontentStop,fstreamPosition,fsegmentstop;
                           _mediaSeeking.GetAvailable(out contentStart, out contentStop);
@@ -1486,7 +1488,7 @@ namespace MediaPortal.Player
                             //The Stream Buffer Source filter has reached a gap in the content. 
                             //p1 = Time of the start of the gap, in milliseconds, relative to the content start.
                             //param2 = Duration of the gap, in milliseconds.
-                            double newpos=(double)p1 + (double)p2 + contentStart;
+                            double newpos=(double)p1.ToInt32() + (double)p2.ToInt32() + contentStart;
                             newpos /=1000d;
                             if (newpos <fstreamPosition-1 || newpos > fstreamPosition+1)
                             {
@@ -1506,11 +1508,11 @@ namespace MediaPortal.Player
                         else */
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
-              //Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+              //Log.Info("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1.ToInt32(),p2v,p1.ToInt32(),p2.ToInt32());
               MovieEnded();
             }
             //else
-            //Log.Info("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
+            //Log.Info("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1.ToInt32(),p2.ToInt32(),p1.ToInt32(),p2.ToInt32());
           }
           else
           {

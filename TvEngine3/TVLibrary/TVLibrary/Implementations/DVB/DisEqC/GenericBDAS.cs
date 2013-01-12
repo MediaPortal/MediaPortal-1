@@ -124,11 +124,11 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Sends the DiSEqC command.
     /// </summary>
-    /// <param name="ulRange">The DisEqCPort</param>
+    /// <param name="range">The DisEqCPort</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    protected bool SendDiSEqCCommand(ulong ulRange)
+    protected bool SendDiSEqCCommand(int range)
     {
-      Log.Log.Info(FormatMessage("  SendDiSEqC Command {0}"), ulRange);
+      Log.Log.Info(FormatMessage("  SendDiSEqC Command {0}"), range);
       // get ControlNode of tuner control node
       object ControlNode;
       int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
@@ -146,8 +146,8 @@ namespace TvLibrary.Implementations.DVB
             {
               if (FrequencyFilter != null)
               {
-                hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info(FormatMessage("  put_Range:{0} success:{1}"), ulRange, hr);
+                hr = FrequencyFilter.put_Range(range);
+                Log.Log.Info(FormatMessage("  put_Range:{0} success:{1}"), range, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 
@@ -183,9 +183,9 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// gets the diseqc reply
     /// </summary>
-    /// <param name="pulRange">The DisEqCPort Port.</param>
+    /// <param name="range">The DisEqCPort Port.</param>
     /// <returns>true if succeeded, otherwise false</returns>
-    protected bool ReadDiSEqCCommand(out ulong pulRange)
+    protected bool ReadDiSEqCCommand(out int range)
     {
       // get ControlNode of tuner control node
       object ControlNode;
@@ -204,8 +204,8 @@ namespace TvLibrary.Implementations.DVB
             {
               if (FrequencyFilter != null)
               {
-                hr = FrequencyFilter.get_Range(out pulRange);
-                Log.Log.Info(FormatMessage("  get_Range:{0} success:{1}"), pulRange, hr);
+                hr = FrequencyFilter.get_Range(out range);
+                Log.Log.Info(FormatMessage("  get_Range:{0} success:{1}"), range, hr);
                 if (hr == 0)
                 {
                   return true;
@@ -218,7 +218,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       Log.Log.Info(FormatMessage("  GetControlNode Failed!"));
-      pulRange = 0;
+      range = 0;
       return false;
     }
 

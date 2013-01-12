@@ -1173,10 +1173,12 @@ namespace MediaPortal.Player
       {
         return;
       }
-      int p1, p2, hr = 0;
-      EventCode code;
+      int hr = 0;
       do
       {
+        IntPtr p1;
+        IntPtr p2;
+        EventCode code;
         hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
         if (hr < 0)
         {
@@ -1811,15 +1813,15 @@ namespace MediaPortal.Player
         //RETRIEVING THE CURRENT SPLITTER
         string filter;
         IBaseFilter[] foundfilter = new IBaseFilter[2];
-        int fetched = 0;
+        var fetched = new IntPtr();
         IEnumFilters enumFilters;
         graphBuilder.EnumFilters(out enumFilters);
         if (enumFilters != null)
         {
           enumFilters.Reset();
-          while (enumFilters.Next(1, foundfilter, out fetched) == 0)
+          while (enumFilters.Next(1, foundfilter, fetched) == 0)
           {
-            if (foundfilter[0] != null && fetched == 1)
+            if (foundfilter[0] != null && fetched.ToInt32() == 1)
             {
               if (chapters == null)
               {

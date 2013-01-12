@@ -112,12 +112,12 @@ namespace TvLibrary.Implementations.DVB
       {
         while (true)
         {
-          int fetched;
-          if (enumTuning.Next(1, spaces, out fetched) != 0)
+          IntPtr fetched = new IntPtr();
+          if (enumTuning.Next(1, spaces, fetched) != 0)
           {
             break;
           }
-          if (fetched != 1)
+          if (fetched.ToInt32() != 1)
             break;
           if (spaces[0] == null)
             break;

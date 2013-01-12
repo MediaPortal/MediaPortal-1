@@ -305,7 +305,9 @@ namespace MediaPortal.Core.Transcoding
         Cleanup();
         return true;
       }
-      int p1, p2, hr = 0;
+      IntPtr p1;
+      IntPtr p2;
+      int hr = 0;
       EventCode code;
       hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
       hr = mediaEvt.FreeEventParams(code, p1, p2);

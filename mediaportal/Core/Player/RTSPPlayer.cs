@@ -311,10 +311,10 @@ namespace MediaPortal.Player
           IEnumPins enumPins;
           _mpegDemux.EnumPins(out enumPins);
           IPin[] pins = new IPin[2];
-          int fetched = 0;
-          while (enumPins.Next(1, pins, out fetched) == 0)
+          var fetched = new IntPtr();
+          while (enumPins.Next(1, pins, fetched) == 0)
           {
-            if (fetched != 1)
+            if (fetched.ToInt32() != 1)
             {
               break;
             }
@@ -327,9 +327,9 @@ namespace MediaPortal.Player
             IEnumMediaTypes enumMediaTypes;
             pins[0].EnumMediaTypes(out enumMediaTypes);
             AMMediaType[] mediaTypes = new AMMediaType[20];
-            int fetchedTypes;
-            enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
-            for (int i = 0; i < fetchedTypes; ++i)
+            var fetchedTypes = new IntPtr();
+            enumMediaTypes.Next(20, mediaTypes, fetchedTypes);
+            for (int i = 0; i < fetchedTypes.ToInt32(); ++i)
             {
               if (mediaTypes[i].majorType == MediaType.Audio)
               {
@@ -345,10 +345,10 @@ namespace MediaPortal.Player
           IEnumPins enumPins;
           _mpegDemux.EnumPins(out enumPins);
           IPin[] pins = new IPin[2];
-          int fetched = 0;
-          while (enumPins.Next(1, pins, out fetched) == 0)
+          var fetched = new IntPtr();
+          while (enumPins.Next(1, pins, fetched) == 0)
           {
-            if (fetched != 1)
+            if (fetched.ToInt32() != 1)
             {
               break;
             }
@@ -1282,10 +1282,12 @@ namespace MediaPortal.Player
       {
         return;
       }
-      int p1, p2, hr = 0;
-      EventCode code;
+      int hr = 0;
       do
       {
+        IntPtr p1;
+        IntPtr p2;
+        EventCode code;
         hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
         if (hr < 0)
         {

@@ -79,7 +79,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <returns>HR result</returns>
     protected override int SetValue(Guid guid, ref object newBitRateModeO)
     {
-      return _encoderAPI.SetValue(guid, ref newBitRateModeO);
+      return _encoderAPI.SetValue(guid, newBitRateModeO);
     }
 
     /// <summary>

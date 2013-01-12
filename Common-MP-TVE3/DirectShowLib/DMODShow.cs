@@ -24,24 +24,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace DirectShowLib
 {
+    #region Interfaces
 
-  #region Interfaces
+    [ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+    Guid("52d6f586-9f0f-4824-8fc8-e32ca04930c2"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IDMOWrapperFilter
+    {
+        [PreserveSig]
+        int Init(
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid catDMO
+            );
+    }
 
-  [ComImport, SuppressUnmanagedCodeSecurity,
-   Guid("52d6f586-9f0f-4824-8fc8-e32ca04930c2"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IDMOWrapperFilter
-  {
-    [PreserveSig]
-    int Init(
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
-      [In, MarshalAs(UnmanagedType.LPStruct)] Guid catDMO
-      );
-  }
-
-  #endregion
+    #endregion
 }

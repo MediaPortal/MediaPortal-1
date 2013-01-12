@@ -399,13 +399,13 @@ namespace MediaPortal.Player
         IEnumMediaTypes enumMediaTypesAudioVideo;
         int hr = pPin.EnumMediaTypes(out enumMediaTypesAudioVideo);
         AMMediaType[] mediaTypes = new AMMediaType[1];
-        int typesFetched;
+        var typesFetched = new IntPtr();
         PinInfo pinInfo;
         pPin.QueryPinInfo(out pinInfo);
 
-        while (0 == enumMediaTypesAudioVideo.Next(1, mediaTypes, out typesFetched))
+        while (0 == enumMediaTypesAudioVideo.Next(1, mediaTypes, typesFetched))
         {
-          if (typesFetched == 0)
+          if (typesFetched.ToInt32() == 0)
             break;
 
           if (mediaTypes[0].majorType == MediaType.Video && !pinInfo.name.ToLowerInvariant().Contains("sub"))
@@ -1230,10 +1230,10 @@ namespace MediaPortal.Player
           hr = graphBuilder.EnumFilters(out enumFilters);
           do
           {
-            int ffetched;
+            var ffetched = new IntPtr();
             IBaseFilter[] filters = new IBaseFilter[1];
-            hr = enumFilters.Next(1, filters, out ffetched);
-            if (hr == 0 && ffetched > 0)
+            hr = enumFilters.Next(1, filters, ffetched);
+            if (hr == 0 && ffetched.ToInt32() > 0)
             {
               IBasicVideo2 localBasicVideo = filters[0] as IBasicVideo2;
               if (localBasicVideo != null)

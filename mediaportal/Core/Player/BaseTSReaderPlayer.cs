@@ -1706,14 +1706,16 @@ namespace MediaPortal.Player
 
     private void OnGraphNotify()
     {
-      int p1, p2, hr = 0;
-      EventCode code;
+      int hr = 0;
       int counter = 0;
       do
       {
         counter++;
         if ( /*Playing && */_mediaEvt != null)
         {
+          IntPtr p1;
+          IntPtr p2;
+          EventCode code;
           hr = _mediaEvt.GetEvent(out code, out p1, out p2, 0);
           if (hr == 0)
           {
@@ -1721,11 +1723,11 @@ namespace MediaPortal.Player
             if (code == EventCode.Complete || code == EventCode.ErrorAbort)
             {
               Log.Info("TSReaderPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}", code.ToString(),
-                       p1, p2, p1, p2);
+                       p1.ToInt32(), p2.ToInt32(), p1.ToInt32(), p2.ToInt32());
               MovieEnded();
 
               // Playback was aborted! No sound driver is available!
-              if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
+              if (code == EventCode.ErrorAbort && p1.ToInt32() == DSERR_NODRIVER)
               {
                 CloseInterfaces();
                 ExclusiveMode(false);
@@ -1734,7 +1736,7 @@ namespace MediaPortal.Player
               }
             }
             //else
-            //Log.Info("TSReaderPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
+            //Log.Info("TSReaderPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1.ToInt32(),p2.ToInt32(),p1.ToInt32(),p2.ToInt32());
           }
           else
           {

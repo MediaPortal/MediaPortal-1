@@ -450,9 +450,9 @@ namespace TvLibrary.Implementations.Analog.Components
       while (true)
       {
         IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
+        IntPtr fetched = new IntPtr();
+        enumPins.Next(1, pins, fetched);
+        if (fetched.ToInt32() != 1)
           break;
         //first check if the pindirection matches
         PinDirection pinDirection;
@@ -465,9 +465,9 @@ namespace TvLibrary.Implementations.Analog.Components
         pins[0].EnumMediaTypes(out enumMedia);
         while (true)
         {
-          int fetchedMedia;
-          enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1)
+          IntPtr fetchedMedia = new IntPtr();
+          enumMedia.Next(1, media, fetchedMedia);
+          if (fetchedMedia.ToInt32() != 1)
             break;
           if (media[0].majorType == mediaType)
           {
@@ -520,16 +520,16 @@ namespace TvLibrary.Implementations.Analog.Components
       string pinName1 = FilterGraphTools.GetPinName(pinInput1);
       string pinName2 = FilterGraphTools.GetPinName(pinInput2);
       int pinsConnected = 0;
-      int pinsAvailable = 0;
+      IntPtr pinsAvailable = new IntPtr();
       IPin[] pins = new IPin[20];
       IEnumPins enumPins = null;
       try
       {
         // for each output pin of the capture device
         _capture.VideoFilter.EnumPins(out enumPins);
-        enumPins.Next(20, pins, out pinsAvailable);
-        Log.Log.WriteFile("analog:  pinsAvailable on capture filter:{0}", pinsAvailable);
-        for (int i = 0; i < pinsAvailable; ++i)
+        enumPins.Next(20, pins, pinsAvailable);
+        Log.Log.WriteFile("analog:  pinsAvailable on capture filter:{0}", pinsAvailable.ToInt32());
+        for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
         {
           int hr;
           // check if this is an output pin
@@ -595,7 +595,7 @@ namespace TvLibrary.Implementations.Analog.Components
           Release.ComObject("encoder pin0", pinInput1);
         if (pinInput2 != null)
           Release.ComObject("encoder pin1", pinInput2);
-        for (int i = 0; i < pinsAvailable; ++i)
+        for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
         {
           if (pins[i] != null)
             Release.ComObject("capture pin" + i, pins[i]);
@@ -642,16 +642,16 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: ConnectMultiplexer to capture filter");
           //option 1, connect the multiplexer to the capture filter
           int pinsConnected = 0;
-          int pinsAvailable = 0;
+          IntPtr pinsAvailable = new IntPtr();
           IPin[] pins = new IPin[20];
           IEnumPins enumPins = null;
           try
           {
             // for each output pin of the capture filter
             _capture.VideoFilter.EnumPins(out enumPins);
-            enumPins.Next(20, pins, out pinsAvailable);
-            Log.Log.WriteFile("analog:  capture pins available:{0}", pinsAvailable);
-            for (int i = 0; i < pinsAvailable; ++i)
+            enumPins.Next(20, pins, pinsAvailable);
+            Log.Log.WriteFile("analog:  capture pins available:{0}", pinsAvailable.ToInt32());
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               int hr;
               // check if this is an outpin pin on the capture filter
@@ -722,7 +722,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             if (enumPins != null)
               Release.ComObject("ienumpins", enumPins);
-            for (int i = 0; i < pinsAvailable; ++i)
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               if (pins[i] != null)
                 Release.ComObject("capture pin" + i, pins[i]);
@@ -735,16 +735,16 @@ namespace TvLibrary.Implementations.Analog.Components
           //option 1, connect the multiplexer to a single encoder filter
           Log.Log.WriteFile("analog: ConnectMultiplexer to video encoder filter");
           int pinsConnected = 0;
-          int pinsAvailable = 0;
+          IntPtr pinsAvailable = new IntPtr();
           IPin[] pins = new IPin[20];
           IEnumPins enumPins = null;
           try
           {
             // for each output pin of the video encoder filter
             _filterVideoEncoder.EnumPins(out enumPins);
-            enumPins.Next(20, pins, out pinsAvailable);
-            Log.Log.WriteFile("analog:  video encoder pins available:{0}", pinsAvailable);
-            for (int i = 0; i < pinsAvailable; ++i)
+            enumPins.Next(20, pins, pinsAvailable);
+            Log.Log.WriteFile("analog:  video encoder pins available:{0}", pinsAvailable.ToInt32());
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               int hr;
               // check if this is an outpin pin on the video encoder filter
@@ -813,7 +813,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             if (enumPins != null)
               Release.ComObject("ienumpins", enumPins);
-            for (int i = 0; i < pinsAvailable; ++i)
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               if (pins[i] != null)
                 Release.ComObject("encoder pin" + i, pins[i]);
@@ -826,7 +826,7 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: ConnectMultiplexer to audio/video encoder filters");
           //option 3, connect the multiplexer to the audio/video encoder filters
           int pinsConnected = 0;
-          int pinsAvailable = 0;
+          IntPtr pinsAvailable = new IntPtr();
           IPin[] pins = new IPin[20];
           IEnumPins enumPins = null;
           try
@@ -835,9 +835,9 @@ namespace TvLibrary.Implementations.Analog.Components
             if (_filterVideoEncoder != null)
               _filterVideoEncoder.EnumPins(out enumPins);
             if (enumPins != null)
-              enumPins.Next(20, pins, out pinsAvailable);
-            Log.Log.WriteFile("analog:  videoencoder pins available:{0}", pinsAvailable);
-            for (int i = 0; i < pinsAvailable; ++i)
+              enumPins.Next(20, pins, pinsAvailable);
+            Log.Log.WriteFile("analog:  videoencoder pins available:{0}", pinsAvailable.ToInt32());
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               int hr;
               // check if this is an outpin pin on the video encoder filter
@@ -916,9 +916,9 @@ namespace TvLibrary.Implementations.Analog.Components
             {
               // for each output pin of the audio encoder filter
               _filterAudioEncoder.EnumPins(out enumPins);
-              enumPins.Next(20, pins, out pinsAvailable);
+              enumPins.Next(20, pins, pinsAvailable);
               Log.Log.WriteFile("analog:  audioencoder pins available:{0}", pinsAvailable);
-              for (int i = 0; i < pinsAvailable; ++i)
+              for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
               {
                 int hr;
                 // check if this is an outpin pin on the audio encoder filter
@@ -976,7 +976,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             if (enumPins != null)
               Release.ComObject("ienumpins", enumPins);
-            for (int i = 0; i < pinsAvailable; ++i)
+            for (int i = 0; i < pinsAvailable.ToInt32(); ++i)
             {
               if (pins[i] != null)
                 Release.ComObject("audio encoder pin" + i, pins[i]);
@@ -1238,12 +1238,12 @@ namespace TvLibrary.Implementations.Analog.Components
           pinOut.EnumMediaTypes(out enumMediaTypes);
           if (enumMediaTypes != null)
           {
-            int fetched;
+            IntPtr fetched = new IntPtr();
             AMMediaType[] mediaTypes = new AMMediaType[20];
-            enumMediaTypes.Next(20, mediaTypes, out fetched);
-            if (fetched > 0)
+            enumMediaTypes.Next(20, mediaTypes, fetched);
+            if (fetched.ToInt32() > 0)
             {
-              for (int media = 0; media < fetched; ++media)
+              for (int media = 0; media < fetched.ToInt32(); ++media)
               {
                 //check if media is mpeg-2 transport
                 if (mediaTypes[media].majorType == MediaType.Stream &&
@@ -1309,10 +1309,10 @@ namespace TvLibrary.Implementations.Analog.Components
           //First we get the media type of this pin to determine if its audio of video
           IEnumMediaTypes enumMedia;
           AMMediaType[] media = new AMMediaType[20];
-          int fetched;
+          IntPtr fetched = new IntPtr();
           pin1.EnumMediaTypes(out enumMedia);
-          enumMedia.Next(1, media, out fetched);
-          if (fetched == 1)
+          enumMedia.Next(1, media, fetched);
+          if (fetched.ToInt32() == 1)
           {
             //media type found
             Log.Log.WriteFile("analog: AddTvEncoderFilter encoder output major:{0} sub:{1}", media[0].majorType,
@@ -1417,9 +1417,9 @@ namespace TvLibrary.Implementations.Analog.Components
       while (true)
       {
         IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
+        IntPtr fetched = new IntPtr();
+        enumPins.Next(1, pins, fetched);
+        if (fetched.ToInt32() != 1)
           break;
         //first check if the pindirection matches
         PinDirection pinDirection;
@@ -1433,9 +1433,9 @@ namespace TvLibrary.Implementations.Analog.Components
         pins[0].EnumMediaTypes(out enumMedia);
         while (true)
         {
-          int fetchedMedia;
-          enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1)
+          IntPtr fetchedMedia = new IntPtr();
+          enumMedia.Next(1, media, fetchedMedia);
+          if (fetchedMedia.ToInt32() != 1)
             break;
           if (media[0].majorType == mediaType)
           {

@@ -716,7 +716,9 @@ namespace MediaPortal.Player
       if (_mediaEvt == null)
         return;
 
-      int p1, p2, hr = 0;
+      IntPtr p1;
+      IntPtr p2;
+      int hr = 0;
       EventCode code;
       try
       {
@@ -733,18 +735,18 @@ namespace MediaPortal.Player
           switch (code)
           {
             case EventCode.DvdPlaybackRateChange:
-              if (_speed != p1 / 10000)
+              if (_speed != p1.ToInt32() / 10000)
               {
-                _speed = p1 / 10000; // if RWD reaches start then PlaybackRate is changing automaticly 
+                _speed = p1.ToInt32() / 10000; // if RWD reaches start then PlaybackRate is changing automatically 
               }
               break;
 
             case EventCode.DvdWarning:
-              Log.Debug("DVDPlayer DVD warning :{0}", p1, p2);
+              Log.Debug("DVDPlayer DVD warning :{0}", p1.ToInt32(), p2.ToInt32());
               break;
 
             case EventCode.DvdCurrentHmsfTime:
-              byte[] ati = BitConverter.GetBytes(p1);
+              byte[] ati = BitConverter.GetBytes(p1.ToInt32());
               if (ati != null)
               {
                 _currTime.bHours = ati[0];
@@ -756,18 +758,18 @@ namespace MediaPortal.Player
               break;
 
             case EventCode.DvdSubPicictureStreamChange:
-              Log.Debug("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);
+              Log.Debug("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1.ToInt32(), p2.ToInt32());
               break;
 
             case EventCode.DvdChapterStart:
-              Log.Debug("EVT:DvdChaptStart:{0}", p1);
-              _currChapter = p1;
+              Log.Debug("EVT:DvdChaptStart:{0}", p1.ToInt32());
+              _currChapter = p1.ToInt32();
               UpdateDuration();
               break;
 
             case EventCode.DvdTitleChange:
-              Log.Debug("EVT:DvdTitleChange:{0}", p1);
-              _currTitle = p1;
+              Log.Debug("EVT:DvdTitleChange:{0}", p1.ToInt32());
+              _currTitle = p1.ToInt32();
               UpdateTitle(_currTitle);
               break;
 
@@ -783,21 +785,21 @@ namespace MediaPortal.Player
               break;
 
             case EventCode.DvdStillOn:
-              Log.Debug("EVT:DvdStillOn:{0}", p1);
+              Log.Debug("EVT:DvdStillOn:{0}", p1.ToInt32());
               break;
 
             case EventCode.DvdStillOff:
-              Log.Debug("EVT:DvdStillOff:{0}", p1);
+              Log.Debug("EVT:DvdStillOff:{0}", p1.ToInt32());
               break;
 
             case EventCode.DvdButtonChange:
-              Log.Debug("EVT:DvdButtonChange: buttons:#{0}, focused button: {1}", p1, p2);
-              buttonCount = p1;
-              focusedButton = p2;
+              Log.Debug("EVT:DvdButtonChange: buttons:#{0}, focused button: {1}", p1.ToInt32(), p2.ToInt32());
+              buttonCount = p1.ToInt32();
+              focusedButton = p2.ToInt32();
               break;
 
             case EventCode.DvdNoFpPgc:
-              Log.Debug("EVT:DvdNoFpPgc:{0}", p1);
+              Log.Debug("EVT:DvdNoFpPgc:{0}", p1.ToInt32());
               if (_dvdCtrl != null)
               {
                 hr = _dvdCtrl.PlayTitle(1, DvdCmdFlags.None, out _cmdOption);
@@ -805,17 +807,17 @@ namespace MediaPortal.Player
               break;
 
             case EventCode.DvdAudioStreamChange:
-              Log.Debug("EVT:DvdAudioStreamChange:{0}", p1);
+              Log.Debug("EVT:DvdAudioStreamChange:{0}", p1.ToInt32());
               break;
 
             case EventCode.DvdValidUopsChange:
-              Log.Debug("EVT:DvdValidUopsChange:0x{0:X}", p1);
-              _UOPs = p1;
+              Log.Debug("EVT:DvdValidUopsChange:0x{0:X}", p1.ToInt32());
+              _UOPs = p1.ToInt32();
               break;
 
             case EventCode.DvdDomainChange:
-              _currDomain = (DvdDomain)p1;
-              switch ((DvdDomain)p1)
+              _currDomain = (DvdDomain)p1.ToInt32();
+              switch ((DvdDomain)p1.ToInt32())
               {
                 case DvdDomain.FirstPlay:
                   Log.Debug("EVT:DVDPlayer:domain=firstplay");
@@ -849,7 +851,7 @@ namespace MediaPortal.Player
                   VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
                   break;
                 default:
-                  Log.Debug("EVT:DvdDomChange:{0}", p1);
+                  Log.Debug("EVT:DvdDomChange:{0}", p1.ToInt32());
                   break;
               }
               break;
@@ -906,7 +908,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary> asynchronous command completed </summary>
-    private void OnCmdComplete(int p1, int hrg)
+    private void OnCmdComplete(IntPtr p1, IntPtr hrg)
     {
       try
       {

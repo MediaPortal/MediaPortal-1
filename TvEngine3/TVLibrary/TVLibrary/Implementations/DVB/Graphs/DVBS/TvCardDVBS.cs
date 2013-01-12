@@ -135,9 +135,9 @@ namespace TvLibrary.Implementations.DVB
       IDVBSTuningSpace tuningSpace;
       while (true)
       {
-        int fetched;
-        enumTuning.Next(1, spaces, out fetched);
-        if (fetched != 1)
+        IntPtr fetched = new IntPtr();
+        enumTuning.Next(1, spaces, fetched);
+        if (fetched.ToInt32() != 1)
           break;
         string name;
         spaces[0].get_UniqueName(out name);

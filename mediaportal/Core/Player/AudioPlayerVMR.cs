@@ -503,10 +503,12 @@ namespace MediaPortal.Player
 
     private void OnGraphNotify()
     {
-      int p1, p2, hr = 0;
+      int hr = 0;
       EventCode code;
       do
       {
+        IntPtr p1;
+        IntPtr p2;
         hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
         if (hr < 0)
         {

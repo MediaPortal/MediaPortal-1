@@ -155,9 +155,9 @@ namespace MediaPortal.Core.Transcoding
         while (true)
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
-          int typesFetched;
-          hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
-          if (hr != 0 || typesFetched == 0) break;
+          var typesFetched = new IntPtr();
+          hr = enumMediaTypes.Next(1, mediaTypes, typesFetched);
+          if (hr != 0 || typesFetched.ToInt32() == 0) break;
           if (mediaTypes[0].majorType == MediaType.Audio && mediaTypes[0].subType == MediaSubType.LATMAAC)
           {
             Log.Info("TSReader2WMV: found LATM AAC audio out pin on tsreader");
@@ -169,9 +169,9 @@ namespace MediaPortal.Core.Transcoding
         while (true)
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
-          int typesFetched;
-          hr = enumMediaTypes.Next(1, mediaTypes, out typesFetched);
-          if (hr != 0 || typesFetched == 0) break;
+          var typesFetched = new IntPtr();
+          hr = enumMediaTypes.Next(1, mediaTypes, typesFetched);
+          if (hr != 0 || typesFetched.ToInt32() == 0) break;
           if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == AVC1)
           {
             Log.Info("TSReader2WMV: found H.264 video out pin on tsreader");
@@ -332,7 +332,9 @@ namespace MediaPortal.Core.Transcoding
         Cleanup();
         return true;
       }
-      int p1, p2, hr = 0;
+      IntPtr p1;
+      IntPtr p2;
+      int hr = 0;
       EventCode code;
       hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
       hr = mediaEvt.FreeEventParams(code, p1, p2);

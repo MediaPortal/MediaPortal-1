@@ -2004,7 +2004,8 @@ namespace MediaPortal.Player
 
     protected void OnGraphNotify()
     {
-      int param1, param2;
+      IntPtr param1;
+      IntPtr param2;
       EventCode eventCode;
       while (_mediaEvt != null && _mediaEvt.GetEvent(out eventCode, out param1, out param2, 0) >= 0)
       {
@@ -2021,7 +2022,7 @@ namespace MediaPortal.Player
             }
             break;
           case EventCode.ErrorAbort:
-            Log.Debug("BDPlayer - GraphNotify: Error: {0}", param1);
+            Log.Debug("BDPlayer - GraphNotify: Error: {0}", param1.ToInt32());
             MovieEnded();
             break;
           default:

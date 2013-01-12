@@ -402,10 +402,10 @@ namespace MediaPortal.Player
           hr = _fileSource.EnumPins(out enumPins);
           DsError.ThrowExceptionForHR(hr);
           IPin[] pins = new IPin[1];
-          int fetched = 0;
-          while (enumPins.Next(1, pins, out fetched) == 0)
+          var fetched = new IntPtr();
+          while (enumPins.Next(1, pins, fetched) == 0)
           {
-            if (fetched != 1)
+            if (fetched.ToInt32() != 1)
             {
               break;
             }
@@ -416,9 +416,9 @@ namespace MediaPortal.Player
               IEnumMediaTypes enumMediaTypes;
               pins[0].EnumMediaTypes(out enumMediaTypes);
               AMMediaType[] mediaTypes = new AMMediaType[20];
-              int fetchedTypes;
-              enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
-              for (int i = 0; i < fetchedTypes; ++i)
+              var fetchedTypes = new IntPtr();
+              enumMediaTypes.Next(20, mediaTypes, fetchedTypes);
+              for (int i = 0; i < fetchedTypes.ToInt32(); ++i)
               {
                 if (mediaTypes[i].majorType == MediaType.Audio)
                 {
