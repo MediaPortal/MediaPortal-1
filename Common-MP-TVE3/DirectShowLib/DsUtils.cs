@@ -1073,6 +1073,7 @@ namespace DirectShowLib
     }
 
     private int m_cookie = 0;
+    private int m_cookieMP = 0;
 
     #region APIs
 
@@ -1096,11 +1097,13 @@ namespace DirectShowLib
     {
       int hr = 0;
 #if USING_NET11
-            UCOMIRunningObjectTable rot = null;
-            UCOMIMoniker mk = null;
+      UCOMIRunningObjectTable rot = null;
+      UCOMIMoniker mk = null;
+      UCOMIMoniker mkMP = null;
 #else
       IRunningObjectTable rot = null;
       IMoniker mk = null;
+      IMoniker mkMP = null;
 #endif
       try
       {
@@ -1117,11 +1120,16 @@ namespace DirectShowLib
         hr = CreateItemMoniker("!", item, out mk);
         DsError.ThrowExceptionForHR(hr);
 
+        hr = CreateItemMoniker(@"!", "MediaPortal.GraphBuilder", out mkMP);
+        DsError.ThrowExceptionForHR(hr);
+
         // Add the object to the table
 #if USING_NET11
-                rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
+        rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
+        rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mkMP, out m_cookieMP);
 #else
         m_cookie = rot.Register((int) ROTFlags.RegistrationKeepsAlive, graph, mk);
+        m_cookieMP = rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mkMP);
 #endif
       }
       finally
@@ -1130,6 +1138,11 @@ namespace DirectShowLib
         {
           DsUtils.ReleaseComObject(mk);
           mk = null;
+        }
+        if (mkMP != null)
+        {
+          DsUtils.ReleaseComObject(mkMP);
+          mkMP = null;
         }
         if (rot != null)
         {
@@ -1146,11 +1159,11 @@ namespace DirectShowLib
 
     public void Dispose()
     {
-      if (m_cookie != 0)
+      if (m_cookie != 0 || m_cookieMP != 0)
       {
         GC.SuppressFinalize(this);
 #if USING_NET11
-                UCOMIRunningObjectTable rot = null;
+        UCOMIRunningObjectTable rot = null;
 #else
         IRunningObjectTable rot = null;
 #endif
@@ -1162,8 +1175,16 @@ namespace DirectShowLib
         try
         {
           // Remove our entry
-          rot.Revoke(m_cookie);
-          m_cookie = 0;
+          if (m_cookie != 0)
+          {
+            rot.Revoke(m_cookie);
+            m_cookie = 0;
+          }
+          if (m_cookieMP != 0)
+          {
+            rot.Revoke(m_cookieMP);
+            m_cookie = 0;
+          }
         }
         finally
         {
