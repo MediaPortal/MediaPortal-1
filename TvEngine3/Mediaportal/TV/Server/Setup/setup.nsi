@@ -515,10 +515,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\log4net.dll"
   File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
+  
+  ; Integration Directory
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -785,7 +788,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
-  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.config"
@@ -918,7 +921,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${EXTBIN}\EntityFramework.xml"
   File "${EXTBIN}\log4net.dll"
   File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
-  
+
   ; The Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins"
   File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
@@ -966,6 +969,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
+
+  ; Integration plugin
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
@@ -1079,7 +1086,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
 
   ; remove Start Menu shortcuts
