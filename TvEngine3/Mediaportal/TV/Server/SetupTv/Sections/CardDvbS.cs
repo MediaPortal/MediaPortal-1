@@ -937,6 +937,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      Init();
       UpdateStatus();
       labelCurrentPosition.Text = "";
       tabControl1_SelectedIndexChanged(null, null);

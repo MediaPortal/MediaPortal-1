@@ -88,6 +88,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      Init();
       UpdateStatus();
       
       int index = ServiceAgents.Instance.SettingServiceAgent.GetValue("dvbip" + _cardNumber.ToString() + "Service", 0);
