@@ -1107,6 +1107,7 @@ namespace DirectShowLib
 #if USING_NET11
             UCOMIRunningObjectTable rot = null;
             UCOMIMoniker mk = null;
+            UCOMIMoniker mkMP = null;
 #else
             IRunningObjectTable rot = null;
             IMoniker mk = null;
