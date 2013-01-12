@@ -106,27 +106,27 @@ namespace Mediaportal.TV.Server.SetupTV
       if (!Directory.Exists(resourceFolderXMLRoot))
       {
         Directory.CreateDirectory(resourceFolderXMLRoot);
-        IDictionary<string, byte[]> streamListResourcesXML = ServiceAgents.Instance.ControllerServiceAgent.GetXMLDVBFiles();
+      }
+      IDictionary<string, byte[]> streamListResourcesXML = ServiceAgents.Instance.ControllerServiceAgent.GetXMLDVBFiles();
 
-        string resourceFolderXML = null;
+      string resourceFolderXML = null;
 
-        foreach (KeyValuePair<string, byte[]> stream in streamListResourcesXML)
+      foreach (KeyValuePair<string, byte[]> stream in streamListResourcesXML)
+      {
+        if (stream.Value == null)
         {
-          if (stream.Value == null)
+          resourceFolderXML = Path.Combine(resourceFolderXMLRoot, stream.Key);
+          if (!Directory.Exists(resourceFolderXML) && stream.Value == null)
           {
-            resourceFolderXML = Path.Combine(resourceFolderXMLRoot, stream.Key);
-            if (!Directory.Exists(resourceFolderXML) && stream.Value == null)
-            {
-              Directory.CreateDirectory(resourceFolderXML);
-            }
+            Directory.CreateDirectory(resourceFolderXML);
           }
-          string fileFullPath = Path.Combine(resourceFolderXML, stream.Key);
-          if (stream.Value != null)
+        }
+        string fileFullPath = Path.Combine(resourceFolderXML, stream.Key);
+        if (stream.Value != null)
+        {
+          using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
           {
-            using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
-            {
-              fileStream.Write(stream.Value, 0, stream.Value.Length);
-            }
+            fileStream.Write(stream.Value, 0, stream.Value.Length);
           }
         }
       }
