@@ -92,7 +92,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <visible>control.hasfocus(7) + skin.hassetting(#skin.show.selectedbackdrops) + !plugin.isenabled('MP-TV Series')</visible>
+      <visible>control.hasfocus(7) + skin.hassetting(#skin.show.selectedbackdrops) + !plugin.isenabled(MP-TV Series)</visible>
       <texture>hover_my plugins.png</texture>
 			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
 			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
@@ -108,7 +108,7 @@
       <posY>0</posY>
       <width>1920</width>
       <height>1080</height>
-      <visible>control.hasfocus(7) + skin.hassetting(#skin.show.selectedbackdrops) + plugin.isenabled('MP-TV Series')</visible>
+      <visible>control.hasfocus(7) + skin.hassetting(#skin.show.selectedbackdrops) + plugin.isenabled(MP-TV Series)</visible>
       <texture>hover_tv series.png</texture>
 			<animation effect="fade" start="100" end="0" time="450" reversible="false">Hidden</animation>
 			<animation effect="fade" start="0" end="100" time="450" reversible="false">Visible</animation>
