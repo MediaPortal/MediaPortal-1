@@ -116,7 +116,8 @@ const AMOVIESETUP_FILTER tsMuxer =
 	L"MediaPortal Ts Muxer",		// String name
 	MERIT_DO_NOT_USE,           // Filter merit
 	6,                          // Number pins
-	tsMuxerPins					// Pin details
+	tsMuxerPins,				// Pin details
+  CLSID_LegacyAmFilterCategory
 };
 
 static char logbuffer[2000]; 

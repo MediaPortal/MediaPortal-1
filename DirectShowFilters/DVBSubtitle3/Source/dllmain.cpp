@@ -61,7 +61,8 @@ const AMOVIESETUP_FILTER FilterInfo =
   L"MediaPortal DVBSub3",    // String name
   MERIT_DO_NOT_USE,          // Filter merit
   1,                         // Number pins
-  sudPins                    // Pin details
+  sudPins,                   // Pin details
+  CLSID_LegacyAmFilterCategory
 };
 
 
