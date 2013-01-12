@@ -132,7 +132,7 @@ const AMOVIESETUP_PIN audioVideoPin[] =
 
 const AMOVIESETUP_FILTER TSReader =
 {
-  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,3,audioVideoPin
+  &CLSID_TSReader,L"MediaPortal File Reader",MERIT_NORMAL+1000,3,audioVideoPin,CLSID_LegacyAmFilterCategory
 };
 
 CFactoryTemplate g_Templates[] =
