@@ -372,7 +372,6 @@
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
     <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />

@@ -34,6 +34,7 @@ using Un4seen.Bass.AddOn.Cd;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
 using Un4seen.Bass.AddOn.WaDsp;
+using Un4seen.Bass.Misc;
 using Un4seen.BassAsio;
 using Un4seen.BassWasapi;
 using Action = MediaPortal.GUI.Library.Action;
@@ -96,10 +97,10 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Variables
 
-    private MixerStream  _mixer = null;
+    private MixerStream _mixer = null;
     private List<MusicStream> _streams = new List<MusicStream>();
     private int _deviceNumber = -1;
-    
+
     private BASS_WASAPI_DEVICEINFO _wasapiDeviceInfo = null;
 
     private int _deviceOutputChannels = 2;
@@ -128,12 +129,12 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private bool NeedUpdate = true;
     private bool NotifyPlaying = true;
-    
+
     private bool _isCDDAFile = false;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
-    
-    private StreamCopy _streamcopy; // For Asio Channels
+
+    private DSP_StreamCopy _streamcopy; // To Clone the Strem for Visualisation
 
     // CUE Support
     private string _currentCueFileName = null;
@@ -217,7 +218,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public int DeviceNumber
     {
-      get { return _deviceNumber; }  
+      get { return _deviceNumber; }
     }
 
     /// <summary>
@@ -481,7 +482,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override int CurrentAudioStream
     {
-      get { return GetCurrentVizStream(); }
+      get { return _mixer.BassStream; }
     }
 
     #endregion
@@ -511,7 +512,7 @@ namespace MediaPortal.MusicPlayer.BASS
               {
                 g_Player.SeekStep(true);
                 string strStatus = g_Player.GetStepDescription();
-                Log.Info("BASS: Skipping in stream for {0}", strStatus);  
+                Log.Info("BASS: Skipping in stream for {0}", strStatus);
               }
               else
               {
@@ -702,6 +703,8 @@ namespace MediaPortal.MusicPlayer.BASS
         Config.LoadDSPPlugins();
 
         _playBackType = (int)Config.PlayBack;
+
+        _streamcopy = new DSP_StreamCopy();
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -912,7 +915,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       Log.Info("BASS: Using WASAPI device: {0}", Config.SoundDevice);
       BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
-      
+
       int i = 0;
       // Check if the WASAPI device read is amongst the one retrieved
       for (i = 0; i < wasapiDevices.Length; i++)
@@ -1281,13 +1284,8 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     internal int GetCurrentVizStream()
     {
-      // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
-      {
-        return _streamcopy.Stream;
-      }
-
-      return _mixer.BassStream;
+      // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
+      return _streamcopy.StreamCopy;
     }
 
     /// <summary>
@@ -1409,7 +1407,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
     }
-    
+
     #endregion
 
     #region IPlayer Implementation
@@ -1511,6 +1509,11 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
             return false;
           }
+          // In order to provide data for visualisation we need to clone the stream
+          _streamcopy.ChannelHandle = _mixer.BassStream;
+          _streamcopy.StreamCopyFlags = _streamcopy.ChannelInfo.flags;
+          _streamcopy.Start();
+          _streamcopy.ReSync(); // Resync with Base Channel
         }
         else
         {
@@ -1528,29 +1531,15 @@ namespace MediaPortal.MusicPlayer.BASS
                 Log.Error("BASS: Could not create Mixer. Aborting playback.");
                 return false;
               }
+              _streamcopy.ChannelHandle = _mixer.BassStream;
+              _streamcopy.StreamCopyFlags = _streamcopy.ChannelInfo.flags;
+              _streamcopy.ReSync(); // Resync with Base Channel
             }
           }
         }
 
         // Enable events, for various Playback Actions to be handled
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
-
-        if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
-        {
-          // In order to provide data for visualisation we need to clone the stream
-          _streamcopy = new StreamCopy();
-          _streamcopy.ChannelHandle = stream.BassStream;
-          _streamcopy.StreamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
-
-          try
-          {
-            _streamcopy.Start(); // start the cloned stream
-          }
-          catch (Exception)
-          {
-            Log.Error("BASS: Captured an error on StreamCopy start");
-          }
-        }
 
         SetCueTrackEndPosition(stream);
 
@@ -1756,7 +1745,7 @@ namespace MediaPortal.MusicPlayer.BASS
           BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
           stream.Dispose();
         }
-        
+
         _mixer.Dispose();
         _mixer = null;
 
