@@ -60,7 +60,8 @@ const AMOVIESETUP_FILTER sudFilter[] =
     L"MediaPortal - Audio Renderer",
     0x30000000,
     NULL,
-    sudpPins
+    sudpPins,
+    CLSID_AudioRendererCategory
   }
 };
 

@@ -78,7 +78,8 @@ const AMOVIESETUP_FILTER sudDump =
 	L"MediaPortal File Writer",	// String name
 	MERIT_DO_NOT_USE,           // Filter merit
 	2,                          // Number pins
-	sudPins						// Pin details
+	sudPins,						// Pin details
+  CLSID_LegacyAmFilterCategory
 };
 
 static char logbuffer[2000]; 

@@ -51,7 +51,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;../LiveMedia555/liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -68,7 +68,7 @@
     <Link>
       <AdditionalDependencies>DvbCoreUtilsD.lib;strmbasd.lib;winmm.lib;livemedia555D.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Debug\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(DSHOW_BASE)Debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>Source\StreamingServer.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -85,7 +85,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;..\LiveMedia555\BasicUsageEnvironment/include;..\LiveMedia555\UsageEnvironment/include;..\LiveMedia555\liveMedia;..\LiveMedia555\liveMedia/include;..\LiveMedia555\groupsock/include;../LiveMedia555/MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -102,7 +102,7 @@
     <Link>
       <AdditionalDependencies>DvbCoreUtils.lib;strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>$(DSHOW_BASE)Release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>Source\StreamingServer.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>

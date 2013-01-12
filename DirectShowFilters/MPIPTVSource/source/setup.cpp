@@ -51,7 +51,8 @@ const AMOVIESETUP_FILTER iptvPushSource =
     g_wszPushSource,        // String name
     MERIT_NORMAL,           // Filter merit
     1,                      // Number pins
-    &iptvOutputPin          // Pin details
+    &iptvOutputPin,         // Pin details
+    CLSID_LegacyAmFilterCategory
 };
 
 // List of class IDs and creator functions for the class factory. This
