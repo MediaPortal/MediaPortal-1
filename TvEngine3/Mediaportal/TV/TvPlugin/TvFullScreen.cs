@@ -37,6 +37,7 @@ using MediaPortal.Video.Database;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVService.Interfaces;
@@ -188,6 +189,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TvFullScreen()
     {
+      IntegrationProviderHelper.Register();
       this.LogDebug("TvFullScreen:ctor");
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
     }
