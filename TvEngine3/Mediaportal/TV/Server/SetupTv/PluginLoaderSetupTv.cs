@@ -39,6 +39,7 @@ namespace Mediaportal.TV.Server.SetupTV
       try
       {
         RetrievePluginsFromServer();
+        RetrieveXMLFromServer();
         base.Load();
       }
       catch (Exception ex)
@@ -94,6 +95,38 @@ namespace Mediaportal.TV.Server.SetupTV
           using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
           {
             fileStream.Write(stream.Value, 0, stream.Value.Length);
+          }
+        }
+      }
+    }
+
+    private void RetrieveXMLFromServer()
+    {
+      string resourceFolderXMLRoot = String.Format(@"{0}\TuningParameters", PathManager.GetDataPath);
+      if (!Directory.Exists(resourceFolderXMLRoot))
+      {
+        Directory.CreateDirectory(resourceFolderXMLRoot);
+        IDictionary<string, byte[]> streamListResourcesXML = ServiceAgents.Instance.ControllerServiceAgent.GetXMLDVBFiles();
+
+        string resourceFolderXML = null;
+
+        foreach (KeyValuePair<string, byte[]> stream in streamListResourcesXML)
+        {
+          if (stream.Value == null)
+          {
+            resourceFolderXML = Path.Combine(resourceFolderXMLRoot, stream.Key);
+            if (!Directory.Exists(resourceFolderXML) && stream.Value == null)
+            {
+              Directory.CreateDirectory(resourceFolderXML);
+            }
+          }
+          string fileFullPath = Path.Combine(resourceFolderXML, stream.Key);
+          if (stream.Value != null)
+          {
+            using (FileStream fileStream = File.Create(fileFullPath, stream.Value.Length))
+            {
+              fileStream.Write(stream.Value, 0, stream.Value.Length);
+            }
           }
         }
       }

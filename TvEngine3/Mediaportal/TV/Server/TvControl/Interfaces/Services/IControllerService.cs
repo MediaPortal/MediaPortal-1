@@ -1004,7 +1004,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     void UnRegisterUserForTvServerEvents(string username);
 
-    [OperationContract]    
+    [OperationContract]
     IDictionary<string, byte[]> GetPluginBinaries();
 
     [OperationContract]
@@ -1013,7 +1013,10 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     [OperationContract]
     IDictionary<string, byte[]> GetPluginBinariesResources();
 
-    [OperationContract]    
+    [OperationContract]
+    IDictionary<string, byte[]> GetXMLDVBFiles();
+
+    [OperationContract]
     IList<StreamPresentation> ListAllStreamingChannels();
 
     [OperationContract]

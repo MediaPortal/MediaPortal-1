@@ -1169,7 +1169,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
       Service.UnRegisterUserForTvServerEvents(username);
     }
 
-
     public IDictionary<string, byte[]> GetPluginBinaries()
     {
       return Service.GetPluginBinaries();
@@ -1183,6 +1182,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     public IDictionary<string, byte[]> GetPluginBinariesResources()
     {
       return Service.GetPluginBinariesResources();
+    }
+
+    public IDictionary<string, byte[]> GetXMLDVBFiles()
+    {
+      return Service.GetXMLDVBFiles();
     }
 
     public IList<StreamPresentation> ListAllStreamingChannels()

@@ -5671,11 +5671,48 @@ namespace Mediaportal.TV.Server.TVLibrary
       return fileStreams;
     }
 
+    public IDictionary<string, byte[]> GetXMLDVBFiles()
+    {
+      var fileStreams = new Dictionary<string, byte[]>();
+      try
+      {
+        string resourcesFolder = String.Format(@"{0}\TuningParameters", PathManager.GetDataPath);
+        foreach (string dirPath in Directory.GetDirectories(resourcesFolder, "*", SearchOption.AllDirectories))
+        {
+          var dirInfoResources = new DirectoryInfo(dirPath);
+          FileInfo[] filesResources = dirInfoResources.GetFiles("*.*");
+          fileStreams.Add(dirInfoResources.Name, null);
+          foreach (FileInfo fileInfo in filesResources)
+          {
+            using (var filestream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
+            {
+              try
+              {
+                long length = filestream.Length;
+                var data = new byte[length];
+                filestream.Read(data, 0, (int) length);
+                fileStreams.Add(fileInfo.Name, data);
+              }
+              catch
+              {
+                // TODO Handle 'An item with the same key has already been added'
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        HandleControllerException(e);
+      }
+      return fileStreams;
+    }
+
     public IList<StreamPresentation> ListAllStreamingChannels()
     {
       IList<StreamPresentation> streams = new List<StreamPresentation>();
       try
-      {        
+      {
         foreach (ITvCardHandler cardHandler in _cards.Values)
         {
           if (!cardHandler.DataBaseCard.Enabled)
