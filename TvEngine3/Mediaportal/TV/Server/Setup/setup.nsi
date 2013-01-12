@@ -907,6 +907,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\Castle.Core.dll"
   File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
   File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
