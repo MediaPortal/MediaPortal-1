@@ -134,7 +134,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
 
-    private DSP_StreamCopy _streamcopy; // To Clone the Strem for Visualisation
+    private StreamCopy _streamcopy; // To Clone the Strem for Visualisation
 
     // CUE Support
     private string _currentCueFileName = null;
@@ -704,7 +704,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _playBackType = (int)Config.PlayBack;
 
-        _streamcopy = new DSP_StreamCopy();
+        _streamcopy = new StreamCopy();
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1285,7 +1285,7 @@ namespace MediaPortal.MusicPlayer.BASS
     internal int GetCurrentVizStream()
     {
       // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      return _streamcopy.StreamCopy;
+      return _streamcopy.Stream;
     }
 
     /// <summary>
@@ -1509,11 +1509,10 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Error("BASS: Could not create Mixer. Aborting playback.");
             return false;
           }
-          // In order to provide data for visualisation we need to clone the stream
+
           _streamcopy.ChannelHandle = _mixer.BassStream;
-          _streamcopy.StreamCopyFlags = _streamcopy.ChannelInfo.flags;
+          _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
           _streamcopy.Start();
-          _streamcopy.ReSync(); // Resync with Base Channel
         }
         else
         {
@@ -1532,8 +1531,7 @@ namespace MediaPortal.MusicPlayer.BASS
                 return false;
               }
               _streamcopy.ChannelHandle = _mixer.BassStream;
-              _streamcopy.StreamCopyFlags = _streamcopy.ChannelInfo.flags;
-              _streamcopy.ReSync(); // Resync with Base Channel
+              _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
             }
           }
         }
