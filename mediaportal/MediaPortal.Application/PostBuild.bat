@@ -32,6 +32,7 @@ xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\Entities\bin\%2\Mediaport
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvControl\bin\%2\Mediaportal.TV.Server.TVControl.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\TvBusinessLayer\bin\%2\Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.* . /Y /D
 xcopy %1\..\TvEngine3\Mediaportal\TV\Server\Plugins\PluginBase\bin\%2\Mediaportal.TV.Server.Plugins.Base.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.Integration.MP1\bin\%2\Mediaportal.TV.Server.TVLibrary.Integration.MP1.* . /Y /D
 
 REM Core
 xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D
