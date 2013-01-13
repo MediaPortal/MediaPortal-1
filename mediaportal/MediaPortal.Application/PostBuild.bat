@@ -23,6 +23,15 @@ xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
 xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 xcopy %1\Configuration\WinCustomControls\bin\%2\WinCustomControls.* . /Y /D
 xcopy %1\..\TvEngine3\TVLibrary\TvLibrary.Interfaces\bin\%2\TvLibrary.Interfaces.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.IntegrationProvider.Interfaces\bin\%2\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\ExternalBinaries\*.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvService.Interfaces\bin\%2\Mediaportal.TV.Server.TVService.Interfaces.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.Interfaces\bin\%2\Mediaportal.TV.Server.TVLibrary.Interfaces.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\Presentation\bin\%2\Mediaportal.TV.Server.TVDatabase.Presentation.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\Entities\bin\%2\Mediaportal.TV.Server.TVDatabase.Entities.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TvControl\bin\%2\Mediaportal.TV.Server.TVControl.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\TVDatabase\TvBusinessLayer\bin\%2\Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.* . /Y /D
+xcopy %1\..\TvEngine3\Mediaportal\TV\Server\Plugins\PluginBase\bin\%2\Mediaportal.TV.Server.Plugins.Base.* . /Y /D
 
 REM Core
 xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D
