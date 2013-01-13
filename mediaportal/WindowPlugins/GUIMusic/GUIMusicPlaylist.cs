@@ -572,29 +572,17 @@ namespace MediaPortal.GUI.Music
           if (facadeLayout.Count > 0)
           {
             btnClear.Disabled = false;
-            //            btnPlay.Disabled = false;
             btnSave.Disabled = false;
-
-            if (ScrobblerOn)
-            {
-              btnScrobble.Selected = true;
-            }
-            else
-            {
-              btnScrobble.Selected = false;
-            }
           }
           else
           {
             btnClear.Disabled = true;
-            //            btnPlay.Disabled = true;
             btnSave.Disabled = true;
           }
         }
         else
         {
           btnClear.Disabled = true;
-          //          btnPlay.Disabled = true;
           btnSave.Disabled = true;
         }
       }
