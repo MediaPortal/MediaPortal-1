@@ -32,6 +32,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using WindowPlugins;
@@ -111,6 +112,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public Radio()
     {
+      IntegrationProviderHelper.Register();
       TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_RADIO;
     }
