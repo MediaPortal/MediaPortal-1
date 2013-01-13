@@ -830,6 +830,7 @@ namespace TvPlugin
             i.TVTag = folder;
             i.IsFolder = !singleRecording;
             Utils.SetDefaultIcons(i);
+            i.ThumbnailImage = i.IconImageBig;
             facadeLayout.Add(i);
             
             if (string.IsNullOrEmpty(i.Label)) 	
