@@ -234,6 +234,8 @@ xcopy "$(SolutionDir)..\..\..\..\DirectShowFilters\DXErr9\$(OutDir)dxerr9.*" "$(
 xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)TvLibrary.IntegrationProvider.Interfaces\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
 xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(TargetDir)" /C/Y/S
-xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S</PreBuildEvent>
+xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(TargetDir)" /C/Y/S
+xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.dll" "$(SolutionDir)..\..\..\..\mediaportal\MediaPortal.Application\$(OutDir)" /C/Y/S
+xcopy "$(SolutionDir)TvLibrary.Integration.MP1\$(OutDir)*.pdb" "$(SolutionDir)..\..\..\..\mediaportal\MediaPortal.Application\$(OutDir)" /C/Y/S</PreBuildEvent>
   </PropertyGroup>
 </Project>
