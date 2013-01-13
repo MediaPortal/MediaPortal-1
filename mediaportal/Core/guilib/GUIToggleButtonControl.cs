@@ -168,12 +168,6 @@ namespace MediaPortal.GUI.Library
           _imageAlternativeFocused.Render(timePassed);
         }
         _frameCounter++;
-        // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
-        if (_labelControl is GUIFadeLabel)
-        {
-          ((GUIFadeLabel)_labelControl).Clear(); // Resets the control to use the delayed start
-          ((GUIFadeLabel)_labelControl).AllowScrolling = true;
-        }
       }
       else
       {
@@ -185,11 +179,6 @@ namespace MediaPortal.GUI.Library
         else
         {
           _imageAlternativeNonFocused.Render(timePassed);
-        }
-        // When button focus is lost, the GUIFadeLabel (if specified) is not allowed to scroll.
-        if (_labelControl is GUIFadeLabel)
-        {
-          ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         }
       }
 
@@ -260,6 +249,44 @@ namespace MediaPortal.GUI.Library
       base.Render(timePassed);
     }
 
+    /// <summary>
+    /// Sets and gets the status of the focus of the control.
+    /// </summary>
+    public override bool Focus
+    {
+      get { return IsFocused; }
+      set
+      {
+        if (Focus && !value)
+        {
+          QueueAnimation(AnimationType.Unfocus);
+
+          // When button focus is lost, the GUIFadeLabel (if specified) is not allowed to scroll.
+          if (_labelControl is GUIFadeLabel)
+          {
+            ((GUIFadeLabel)_labelControl).AllowScrolling = false;
+          }
+        }
+        else if (!Focus && value)
+        {
+          QueueAnimation(AnimationType.Focus);
+
+          if (_onfocus.Length != 0)
+          {
+            GUIPropertyManager.Parse(_onfocus, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
+          }
+
+          // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
+          if (_labelControl is GUIFadeLabel)
+          {
+              ((GUIFadeLabel)_labelControl).Clear(); // Resets the control to use the delayed start
+              ((GUIFadeLabel)_labelControl).AllowScrolling = true;
+          }
+        }
+        IsFocused = value;
+      }
+    }
+    
     public override void OnAction(Action action)
     {
       base.OnAction(action);
