@@ -219,6 +219,11 @@ namespace MediaPortal.MusicPlayer.BASS
       _channelInfo = new BASS_CHANNELINFO();
       _filePath = filePath;
 
+      _playbackCrossFadeProcDelegate = new SYNCPROC(PlaybackCrossFadeProc);
+      _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
+      _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
+      _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
+
       CreateStream();
     }
 
@@ -270,12 +275,10 @@ namespace MediaPortal.MusicPlayer.BASS
             // Get the Tags and set the Meta Tag SyncProc
             _tagInfo = new TAG_INFO(_filePath);
             SetStreamTags(_stream);
-
             if (BassTags.BASS_TAG_GetFromURL(_stream, _tagInfo))
             {
               GetMetaTags();
             }
-
             Bass.BASS_ChannelSetSync(_stream, BASSSync.BASS_SYNC_META, 0, _metaTagSyncProcDelegate, IntPtr.Zero);
           }
           Log.Debug("BASS: Webstream found - fetching stream {0}", Convert.ToString(_stream));
@@ -312,12 +315,6 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Info("BASS: ---------------------------------------------");
 
       Log.Debug("BASS: Registering Playback Events");
-
-      _playbackCrossFadeProcDelegate = new SYNCPROC(PlaybackCrossFadeProc);
-      _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
-      _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
-      _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
-
       RegisterPlaybackEvents();
 
       AttachDspToStream();
