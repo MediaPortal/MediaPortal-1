@@ -1277,12 +1277,11 @@ public class MediaPortalApp : D3D, IRender
                 switch (msg.WParam.ToInt32())
                 {
                   case DBT_DEVICEREMOVECOMPLETE:
-                    Log.Info("Main: Audio Renderer {0} removed, deactivating MediaPortal", deviceName);
-                    MinimizeToTray(false);
+                    Log.Info("Main: Audio Renderer {0} removed, stopping playback", deviceName);
+                    g_Player.Stop();
                     break;
                   case DBT_DEVICEARRIVAL:
-                    Log.Info("Main: Audio Renderer {0} connected, activating MediaPortal", deviceName);
-                    RestoreFromTray(false);
+                    Log.Info("Main: Audio Renderer {0} connected", deviceName);
                     break;
                 }  
               }
@@ -1315,7 +1314,14 @@ public class MediaPortalApp : D3D, IRender
           {
             case WA_INACTIVE:
               Log.Info("Main: Deactivation Request Received");
-              MinimizeToTray(false);
+              if (RefreshRateChanger.RefreshRateChangRunning)
+              {
+                Log.Info("Main: Refresh rate change in progress. Ignoring deactivation request");
+              }
+              else
+              {
+                MinimizeToTray(false);
+              }
               break;
             case WA_ACTIVE:
             case WA_CLICKACTIVE:

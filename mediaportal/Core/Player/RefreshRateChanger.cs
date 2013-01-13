@@ -241,28 +241,30 @@ namespace MediaPortal.Player
     {
       public SuicideForm()
       {
+        RefreshRateChanger.RefreshRateChangRunning = true;
         Thread.Sleep(500);
-        this.Activated += new EventHandler(SuicideForm_Activated);
-        this.Opacity = 0;
+        Activated += SuicideFormActivated;
+        Opacity = 0;
       }
 
       protected override void Dispose(bool disposing)
       {
-        this.Activated -= new EventHandler(SuicideForm_Activated);
+        Activated -= SuicideFormActivated;
         base.Dispose(disposing);
+        RefreshRateChanger.RefreshRateChangRunning = false;
       }
 
-      private void SuicideForm_Activated(Object sender, EventArgs e)
+      private void SuicideFormActivated(Object sender, EventArgs e)
       {
         Thread.Sleep(1000);
-        this.Close();
+        Close();
       }
     }
 
 
     public static void KillFormThread()
     {
-      SuicideForm suicideForm = new SuicideForm();
+      var suicideForm = new SuicideForm();
       suicideForm.Show();
       suicideForm.Focus();
     }
@@ -278,10 +280,8 @@ namespace MediaPortal.Player
         if (dwmEnabled > 0)
         {
           Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
-
-          ThreadStart starter = delegate { KillFormThread(); };
-          Thread killFormThread = new Thread(starter);
-          killFormThread.IsBackground = true;
+          ThreadStart starter = KillFormThread;
+          var killFormThread = new Thread(starter) {IsBackground = true};
           killFormThread.Start();
         }
       }
@@ -870,6 +870,8 @@ namespace MediaPortal.Player
     #endregion
 
     #region public properties
+
+    public static bool RefreshRateChangRunning { get; set; }
 
     public static bool RefreshRateChangePending
     {
