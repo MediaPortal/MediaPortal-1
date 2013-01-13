@@ -251,6 +251,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     public override void OnAdded()
     {
+      IntegrationProviderHelper.Register();
       this.LogInfo("RadioHome:OnAdded");
 
       LoadSettings();
