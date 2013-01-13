@@ -36,6 +36,7 @@ using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Integration;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using WindowPlugins;
@@ -175,6 +176,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public TvRecorded()
     {
+      IntegrationProviderHelper.Register();
       GetID = (int)Window.WINDOW_RECORDEDTV;
     }
 
