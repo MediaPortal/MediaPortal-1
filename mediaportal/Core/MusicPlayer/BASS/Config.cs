@@ -240,7 +240,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        Log.Info("BASS: LOading Settings");
+        Log.Info("BASS: Loading Settings");
         string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
         _audioPlayer = (AudioPlayer)Enum.Parse(typeof (AudioPlayer), strAudioPlayer);
         _soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default Sound Device");

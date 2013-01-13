@@ -704,7 +704,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _playBackType = (int)Config.PlayBack;
 
-        _streamcopy = new StreamCopy();
+        // Create a Stream Copy, if Visualisation is enabled
+        if (HasViz)
+        {
+          Log.Debug("BASS: Create Stream copy for Visualisation");
+          _streamcopy = new StreamCopy();
+          _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
+        }
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1022,12 +1028,9 @@ namespace MediaPortal.MusicPlayer.BASS
       VizManager = new VisualizationManager(this, VizWindow);
       TargetFPS = VizFPS;
 
-      if (VizManager != null)
+      if (VizPluginInfo != null)
       {
-        if (VizPluginInfo != null)
-        {
-          this.CreateVisualization(VizPluginInfo);
-        }
+        this.CreateVisualization(VizPluginInfo);
       }
     }
 
@@ -1510,9 +1513,12 @@ namespace MediaPortal.MusicPlayer.BASS
             return false;
           }
 
-          _streamcopy.ChannelHandle = _mixer.BassStream;
-          _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
-          _streamcopy.Start();
+          // Start a StreamCopy for Visualisation purposes
+          if (HasViz)
+          {
+            _streamcopy.ChannelHandle = _mixer.BassStream;
+            _streamcopy.Start();
+          }
         }
         else
         {
@@ -1530,8 +1536,11 @@ namespace MediaPortal.MusicPlayer.BASS
                 Log.Error("BASS: Could not create Mixer. Aborting playback.");
                 return false;
               }
-              _streamcopy.ChannelHandle = _mixer.BassStream;
-              _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
+
+              if (HasViz)
+              {
+                _streamcopy.ChannelHandle = _mixer.BassStream;
+              }
             }
           }
         }
