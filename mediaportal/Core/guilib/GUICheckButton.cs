@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
@@ -303,6 +304,12 @@ namespace MediaPortal.GUI.Library
       }
 
       int labelWidth = _width - 2 * _textOffsetX;
+
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
