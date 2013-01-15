@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("application")] protected string _application = "";
     [XMLSkinElement("arguments")] protected string _arguments = "";
     [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
@@ -317,6 +318,11 @@ namespace MediaPortal.GUI.Library
       if (_textOffsetXHasMargin)
       {
         labelWidth = _width - 2 * _textOffsetX;
+      }
+
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
       }
 
       if (labelWidth <= 0)
