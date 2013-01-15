@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
@@ -69,6 +70,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("suffixText")] protected string _suffixText = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("onclick")] protected string _onclick = "";
 
     protected bool _autoCheck = true;
@@ -162,69 +164,37 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
+
       if (!Focus)
       {
         _typed = string.Empty;
       }
+      
       int dwPosX = _positionX;
       string wszText;
 
-      if (_spinType == SpinType.SPIN_CONTROL_TYPE_INT)
+      switch (_spinType)
       {
-        string strValue = _intValue.ToString();
-        if (_digits > 1)
-        {
-          while (strValue.Length < _digits)
+        case SpinType.SPIN_CONTROL_TYPE_INT:
+          string strValue = _intValue.ToString(CultureInfo.InvariantCulture);
+
+          if (_digits > 1)
           {
-            strValue = "0" + strValue;
+            while (strValue.Length < _digits)
+            {
+              strValue = "0" + strValue;
+            }
           }
-        }
-        if (_showRange)
-        {
-          wszText = strValue + "/" + _endInt.ToString();
-        }
-        else
-        {
-          wszText = strValue.ToString();
-        }
 
-        if (_prefixText.Length > 0)
-        {
-          wszText = _prefixText + " " + wszText;
-        }
-
-        if (_suffixText.Length > 0)
-        {
-          wszText = wszText + " " + _suffixText;
-        }
-      }
-      else if (_spinType == SpinType.SPIN_CONTROL_TYPE_FLOAT)
-      {
-        wszText = String.Format("{0:2}/{1:2}", _floatValue, _endFloat);
-
-        if (_prefixText.Length > 0)
-        {
-          wszText = _prefixText + " " + wszText;
-        }
-
-        if (_suffixText.Length > 0)
-        {
-          wszText = wszText + " " + _suffixText;
-        }
-      }
-      else
-      {
-        wszText = "";
-        if (_intValue >= 0 && _intValue < _listLabels.Count)
-        {
           if (_showRange)
           {
-            wszText = String.Format("({0}/{1}) {2}", _intValue + 1, (int)_listLabels.Count, _listLabels[_intValue]);
+            wszText = strValue + "/" + _endInt.ToString(CultureInfo.InvariantCulture);
           }
           else
           {
-            wszText = (string)_listLabels[_intValue];
+            wszText = strValue;
           }
+
           if (_prefixText.Length > 0)
           {
             wszText = _prefixText + " " + wszText;
@@ -234,74 +204,114 @@ namespace MediaPortal.GUI.Library
           {
             wszText = wszText + " " + _suffixText;
           }
-        }
-        else
-        {
-          String.Format("?{0}?", _intValue);
-        }
+          break;
+
+        case SpinType.SPIN_CONTROL_TYPE_FLOAT:
+          wszText = String.Format("{0:2}/{1:2}", _floatValue, _endFloat);
+          
+          if (_prefixText.Length > 0)
+          {
+            wszText = _prefixText + " " + wszText;
+          }
+
+          if (_suffixText.Length > 0)
+          {
+            wszText = wszText + " " + _suffixText;
+          }
+          break;
+
+        default:
+          wszText = "";
+          if (_intValue >= 0 && _intValue < _listLabels.Count)
+          {
+            if (_showRange)
+            {
+              wszText = String.Format("({0}/{1}) {2}", _intValue + 1, (int) _listLabels.Count, _listLabels[_intValue]);
+            }
+            else
+            {
+              wszText = (string) _listLabels[_intValue];
+            }
+            if (_prefixText.Length > 0)
+            {
+              wszText = _prefixText + " " + wszText;
+            }
+
+            if (_suffixText.Length > 0)
+            {
+              wszText = wszText + " " + _suffixText;
+            }
+          }
+          else
+          {
+            String.Format("?{0}?", _intValue);
+          }
+          break;
       }
 
       int iTextXPos = _positionX;
       int iTextYPos = _positionY;
-      if (_alignment == Alignment.ALIGN_LEFT)
+      switch (_alignment)
       {
-        if (_font != null)
-        {
-          if (wszText != null && wszText.Length > 0)
+        case Alignment.ALIGN_LEFT:
+          if (_font != null)
           {
-            float fTextHeight = 0, fTextWidth = 0;
-            _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
+            if (!string.IsNullOrEmpty(wszText))
+            {
+              float fTextHeight = 0, fTextWidth = 0;
+              _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
+              if (Orientation == eOrientation.Horizontal)
+              {
+                _imageSpinUpFocus.SetPosition((int)fTextWidth + 5 + dwPosX + _imageSpinDown.Width, _positionY);
+                _imageSpinUp.SetPosition((int)fTextWidth + 5 + dwPosX + _imageSpinDown.Width, _positionY);
+                _imageSpinDownFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY);
+                _imageSpinDown.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY);
+              }
+              else
+              {
+                _imageSpinUpFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY - (Height / 2));
+                _imageSpinUp.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY - (Height / 2));
+                _imageSpinDownFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY + (Height / 2));
+                _imageSpinDown.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY + (Height / 2));
+              }
+            }
+          }
+          break;
+
+        case Alignment.ALIGN_CENTER:
+          if (_font != null)
+          {
+            float fTextHeight = 1, fTextWidth = 1;
+            if (!string.IsNullOrEmpty(wszText))
+            {
+              _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
+            }
             if (Orientation == eOrientation.Horizontal)
             {
-              _imageSpinUpFocus.SetPosition((int)fTextWidth + 5 + dwPosX + _imageSpinDown.Width, _positionY);
-              _imageSpinUp.SetPosition((int)fTextWidth + 5 + dwPosX + _imageSpinDown.Width, _positionY);
-              _imageSpinDownFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY);
-              _imageSpinDown.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY);
+              iTextXPos = dwPosX + _imageSpinUp.Width;
+              iTextYPos = _positionY;
+              _imageSpinDownFocus.SetPosition(dwPosX, _positionY);
+              _imageSpinDown.SetPosition(dwPosX, _positionY);
+              _imageSpinUpFocus.SetPosition((int)fTextWidth + _imageSpinUp.Width + dwPosX, _positionY);
+              _imageSpinUp.SetPosition((int)fTextWidth + _imageSpinUp.Width + dwPosX, _positionY);
+
+              fTextHeight /= 2.0f;
+              float fPosY = _height / 2.0f;
+              fPosY -= fTextHeight;
+              fPosY += iTextYPos;
+              iTextYPos = (int)fPosY;
             }
             else
             {
-              _imageSpinUpFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY - (Height / 2));
-              _imageSpinUp.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY - (Height / 2));
-              _imageSpinDownFocus.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY + (Height / 2));
-              _imageSpinDown.SetPosition((int)fTextWidth + 5 + dwPosX, _positionY + (Height / 2));
+              iTextXPos = dwPosX;
+              iTextYPos = _positionY + Height;
+              _imageSpinUpFocus.SetPosition(+dwPosX, _positionY - (Height + (int)fTextHeight) / 2);
+              _imageSpinUp.SetPosition(dwPosX, _positionY - (Height + (int)fTextHeight) / 2);
+              _imageSpinDownFocus.SetPosition(dwPosX, _positionY + (Height + (int)fTextHeight) / 2);
+              _imageSpinDown.SetPosition(dwPosX, _positionY + (Height + (int)fTextHeight) / 2);
             }
           }
-        }
-      }
-      if (_alignment == Alignment.ALIGN_CENTER)
-      {
-        if (_font != null)
-        {
-          float fTextHeight = 1, fTextWidth = 1;
-          if (wszText != null && wszText.Length > 0)
-          {
-            _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
-          }
-          if (Orientation == eOrientation.Horizontal)
-          {
-            iTextXPos = dwPosX + _imageSpinUp.Width;
-            iTextYPos = _positionY;
-            _imageSpinDownFocus.SetPosition((int)dwPosX, _positionY);
-            _imageSpinDown.SetPosition((int)dwPosX, _positionY);
-            _imageSpinUpFocus.SetPosition((int)fTextWidth + _imageSpinUp.Width + dwPosX, _positionY);
-            _imageSpinUp.SetPosition((int)fTextWidth + _imageSpinUp.Width + dwPosX, _positionY);
-
-            fTextHeight /= 2.0f;
-            float fPosY = ((float)_height) / 2.0f;
-            fPosY -= fTextHeight;
-            fPosY += (float)iTextYPos;
-            iTextYPos = (int)fPosY;
-          }
-          else
-          {
-            iTextXPos = dwPosX;
-            iTextYPos = _positionY + Height;
-            _imageSpinUpFocus.SetPosition((int)+dwPosX, _positionY - (Height + (int)fTextHeight) / 2);
-            _imageSpinUp.SetPosition((int)dwPosX, _positionY - (Height + (int)fTextHeight) / 2);
-            _imageSpinDownFocus.SetPosition((int)dwPosX, _positionY + (Height + (int)fTextHeight) / 2);
-            _imageSpinDown.SetPosition((int)dwPosX, _positionY + (Height + (int)fTextHeight) / 2);
-          }
-        }
+          break;
       }
 
       if (_spinSelect == SpinSelect.SPIN_BUTTON_UP)
@@ -383,22 +393,27 @@ namespace MediaPortal.GUI.Library
         _labelControl.TextColor = _textColor;
         _labelControl.Label = wszText;
 
+        if (_textPadding > 0)
+        {
+          _labelControl.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+        }
+
         if (Disabled)
         {
           _labelControl.TextColor &= 0x80ffffff;
         }
         if (_alignment != Alignment.ALIGN_CENTER)
         {
-          if (wszText != null && wszText.Length > 0)
+          if (!string.IsNullOrEmpty(wszText))
           {
             _labelControl.TextAlignment = _alignment;
-            float fHeight = (float)_labelControl.TextHeight;
+            float fHeight = _labelControl.TextHeight;
             fHeight /= 2.0f;
-            float fPosY = ((float)_height) / 2.0f;
+            float fPosY = _height / 2.0f;
             fPosY -= fHeight;
-            fPosY += (float)_positionY;
+            fPosY += _positionY;
 
-            // This offset positioning preserves the legacy behavior of a (hardcoded) 3 pixel offset.
+            // This offset positioning preserves the legacy behavior of a (hard coded) 3 pixel offset.
             int sign = 1;
             if (_alignment == Alignment.ALIGN_RIGHT)
             {
@@ -411,6 +426,12 @@ namespace MediaPortal.GUI.Library
         {
           _labelControl.SetPosition(iTextXPos + _textOffsetX, iTextYPos + _textOffsetY);
           _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
+        }
+
+        if (_labelControl.Width <= 0)
+        {
+          base.Render(timePassed);
+          return;
         }
         _labelControl.Render(timePassed);
       }
