@@ -753,8 +753,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
-                     maxWidth, dwColor, _textLine, bSelected);
+          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, _textLine, bSelected);
         }
       }
 
