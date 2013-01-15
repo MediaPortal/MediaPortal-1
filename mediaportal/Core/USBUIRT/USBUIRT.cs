@@ -196,6 +196,8 @@ namespace MediaPortal.IR
     private readonly Hashtable _stbToggleCommandsLearned = new Hashtable();
     private readonly Hashtable _jumpToCommands;
     private DateTime _timestamp = DateTime.Now;
+    private DateTime _timestampRepeat = DateTime.Now;
+    private int _lastCommand = -1;
     private bool _isLearning;
 
     private int _currentButtonIndex;
@@ -260,7 +262,7 @@ namespace MediaPortal.IR
     /// <summary>
     /// 
     /// </summary>
-    public bool TunerNeedsEnter { get; set; }
+    public bool NeedsEnter { get; set; }
 
     /// <summary>
     /// 
@@ -512,9 +514,9 @@ namespace MediaPortal.IR
         ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
         TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
         Is3Digit = xmlreader.GetValueAsBool("USBUIRT", "is3digit", false);
-        TunerNeedsEnter = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
+        NeedsEnter = xmlreader.GetValueAsBool("USBUIRT", "needsenter", false);
         RepeatWait = xmlreader.GetValueAsInt("USBUIRT", "repeatwait", 300);
-        RepeatDelay = xmlreader.GetValueAsInt("USBUIRT", "repeatdelay", 300);
+        RepeatDelay = xmlreader.GetValueAsInt("USBUIRT", "repeatdelay", 30);
         CommandRepeatCount = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2);
         InterCommandDelay = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100);
       }
@@ -819,7 +821,6 @@ namespace MediaPortal.IR
       }
 
       TimeSpan ts = DateTime.Now - _timestamp;
-
       if (ts.TotalMilliseconds >= RepeatDelay)
       {
         if (_isLearning && _waitingForIrRxLearnEvent && ts.TotalMilliseconds > 500)
@@ -852,38 +853,56 @@ namespace MediaPortal.IR
         {
           int cmdVal = Convert.ToInt32(command);
 
-          if (cmdVal < (int)JumpToActionType.JUMP_TO_INVALID)
+          bool executeCommand;
+          // execute new command and start the repeat delay timer
+          if (cmdVal != _lastCommand)
           {
-            // If one of the romote numeric keys was presses, mimic a keyboard keydown message...
-            if (cmdVal >= (int)Action.ActionType.REMOTE_0 && cmdVal <= (int)Action.ActionType.REMOTE_9)
-            {
-              int digit = cmdVal - (int)Action.ActionType.REMOTE_0;
-              var keyVal = (Keys)((int)Keys.D0 + digit);
-              ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
-            }
-            else
-            {
-              var action = (Action.ActionType)command;
-
-              if (action == Action.ActionType.ACTION_PREVIOUS_MENU)
-              {
-                ThreadSafeSendMessage(WM_KEYDOWN, (int)Keys.Escape, 0);
-              }
-              else if (_remoteCommandCallback != null)
-              {
-                _remoteCommandCallback(command);
-              }
-            }
+            executeCommand = true;
+            _timestampRepeat = DateTime.Now;
           }
-          else if (cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
+          // only repeat the same command after an initial delay
+          else
           {
-            object windowID = _jumpToCommands[(int)command];
-            command = (JumpToActionType)command;
+            TimeSpan timeSpan = DateTime.Now - _timestampRepeat;
+            executeCommand = timeSpan.TotalMilliseconds >= RepeatWait;
+          }
+          _lastCommand = cmdVal;
 
-            if (windowID != null)
+          if (executeCommand)
+          {
+            if (cmdVal < (int)JumpToActionType.JUMP_TO_INVALID)
             {
-              var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)windowID, 0, null);
-              GUIWindowManager.SendThreadMessage(msg);
+              // If one of the remote numeric keys was presses, mimic a keyboard keydown message...
+              if (cmdVal >= (int)Action.ActionType.REMOTE_0 && cmdVal <= (int)Action.ActionType.REMOTE_9)
+              {
+                int digit = cmdVal - (int)Action.ActionType.REMOTE_0;
+                var keyVal = (Keys)((int)Keys.D0 + digit);
+                ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
+              }
+              else
+              {
+                var action = (Action.ActionType)command;
+
+                if (action == Action.ActionType.ACTION_PREVIOUS_MENU)
+                {
+                  ThreadSafeSendMessage(WM_KEYDOWN, (int)Keys.Escape, 0);
+                }
+                else if (_remoteCommandCallback != null)
+                {
+                  _remoteCommandCallback(command);
+                }
+              }
+            }
+            else if (cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
+            {
+              object windowID = _jumpToCommands[(int)command];
+              command = (JumpToActionType)command;
+
+              if (windowID != null)
+              {
+                var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)windowID, 0, null);
+                GUIWindowManager.SendThreadMessage(msg);
+              }
             }
           }
 
@@ -892,7 +911,6 @@ namespace MediaPortal.IR
             OnRemoteCommandFeedback(command, irid);
           }
         }
-
         _timestamp = DateTime.Now;
       }
     }
@@ -1387,7 +1405,7 @@ namespace MediaPortal.IR
         Transmit(irTxString, UUIRTDRV_IRFMT_UUIRT, CommandRepeatCount);
       }
 
-      if (TunerNeedsEnter)
+      if (NeedsEnter)
       {
         const int codeIndex = 10;
         bool isToggledCode = false;
