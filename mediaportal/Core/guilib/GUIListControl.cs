@@ -741,8 +741,21 @@ namespace MediaPortal.GUI.Library
           dwColor &= DimColor;
         }
 
-        RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
-          dMaxWidth, dwColor, _textLine, bSelected);
+        int maxWidth = dMaxWidth;
+        if (_textPadding > 0)
+        {
+          maxWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+        }
+
+        if (maxWidth <= 0)
+        {
+          base.Render(timePassed);
+        }
+        else
+        {
+          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, 
+                     maxWidth, dwColor, _textLine, bSelected);
+        }
       }
 
       if (pItem.Label2.Length > 0)
@@ -778,7 +791,7 @@ namespace MediaPortal.GUI.Library
           dwColor &= DimColor;
         }
 
-        if (0 == _textOffsetX2)
+        if (_textOffsetX2 == 0)
         {
           dwPosX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
         }
@@ -811,7 +824,24 @@ namespace MediaPortal.GUI.Library
             label2.Label = _textLine;
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
-            label2.Render(timePassed);
+
+            float width = label2.Width;
+            float height = label2.Height;
+            _font.GetTextExtent(label2.Label, ref width, ref height);
+            if (_textPadding2 > 0)
+            {
+              width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+            }
+            label2.Width = (int)width;
+
+            if (label2.Width <= 0)
+            {
+              base.Render(timePassed);
+            }
+            else
+            {
+              label2.Render(timePassed);
+            }
           }
         }
       }
@@ -898,8 +928,20 @@ namespace MediaPortal.GUI.Library
             label3.TextAlignment = _text3Alignment;
             label3.FontName = _fontName3Name;
             label3.Width = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34));
-
-            RenderText(timePassed, buttonNr, label3, bSelected);
+            
+            if (_textPadding3 > 0)
+            {
+              label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
+            }
+      
+            if (label3.Width <= 0)
+            {
+              base.Render(timePassed);
+            }
+            else
+            {
+              RenderText(timePassed, buttonNr, label3, bSelected);
+            }
           }
         }
       }
