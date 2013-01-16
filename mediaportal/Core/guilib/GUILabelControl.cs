@@ -175,6 +175,10 @@ namespace MediaPortal.GUI.Library
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
           int xoff = (int)((_width - _textwidth) / 2);
+          if (xoff < 0)
+          {
+            xoff = 0;
+          }
           int yoff = (int)((_height - _textheight) / 2);
 
           this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
