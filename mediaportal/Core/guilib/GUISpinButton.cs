@@ -147,9 +147,9 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
+    /// It allows the control to do any initialization
     /// </summary>
-    public override void FinalizeConstruction()
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
       _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
@@ -177,8 +177,6 @@ namespace MediaPortal.GUI.Library
         _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                             _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
                                             _shadowAngle, _shadowDistance, _shadowColor);
-        ((GUILabelControl)_labelControl).ParentControl = this;
-        ((GUILabelControl)_labelControl).DimColor = DimColor;
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
       }
@@ -193,6 +191,8 @@ namespace MediaPortal.GUI.Library
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
       }
+      _labelControl.ParentControl = this;
+      _labelControl.DimColor = DimColor;
 
       string spinFontName = _fontName;
       if (_spinTextInButton)

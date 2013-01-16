@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Library
     /// This method gets called when the control is created and all properties has been set
     /// It allows the control to do any initialization
     /// </summary>
-    public override void FinalizeConstruction()
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
       _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
@@ -160,11 +160,7 @@ namespace MediaPortal.GUI.Library
       {
         _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                             _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
-                                            _shadowAngle, _shadowDistance, _shadowColor)
-                          {
-                            ParentControl = this,
-                            DimColor = DimColor
-                          };
+                                            _shadowAngle, _shadowDistance, _shadowColor);
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
       }
@@ -172,13 +168,15 @@ namespace MediaPortal.GUI.Library
       {
         _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
-                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
       }
+      _labelControl.ParentControl = this;
+      _labelControl.DimColor = DimColor;
 
       checkMark = new GUICheckMarkControl(0, 0, _positionX + _width - _checkMarkWidth, _positionY, _checkMarkWidth,
                                           _checkMarkHeight, _checkMarkFocusTextureName, _checkMarkNoFocusTextureName,

@@ -214,9 +214,9 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
+    /// It allows the control to do any initialization
     /// </summary>
-    public override void FinalizeConstruction()
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
       _imageFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
@@ -289,6 +289,8 @@ namespace MediaPortal.GUI.Library
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
                                         _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString);
+        ((GUIFadeLabel)_labelControl).ParentControl = this;
+        ((GUIFadeLabel)_labelControl).DimColor = DimColor;
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
