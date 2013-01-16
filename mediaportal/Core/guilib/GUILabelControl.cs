@@ -85,8 +85,7 @@ namespace MediaPortal.GUI.Library
       FinalizeConstruction();
     }
 
-    public GUILabelControl(int dwParentID)
-      : base(dwParentID) {}
+    public GUILabelControl(int dwParentID) : base(dwParentID) {}
 
     /// <summary> 
     /// This function is called after all of the XmlSkinnable fields have been filled
@@ -94,7 +93,7 @@ namespace MediaPortal.GUI.Library
     /// Use this to do any construction work other than simple data member assignments,
     /// for example, initializing new reference types, extra calculations, etc..
     /// </summary>
-    public override void FinalizeConstruction()
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
 
@@ -165,23 +164,23 @@ namespace MediaPortal.GUI.Library
         float vpos = _positionY;
         if (_textVAlignment == VAlignment.ALIGN_MIDDLE)
         {
-          vpos += (float)Math.Ceiling((this.Height - this._textheight) / 2.0f);
+          vpos += (float)Math.Ceiling((Height - _textheight) / 2.0f);
         }
         else if (_textVAlignment == VAlignment.ALIGN_BOTTOM)
         {
-          vpos += this.Height - this._textheight;
+          vpos += Height - _textheight;
         }
 
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
-          int xoff = (int)((_width - _textwidth) / 2);
+          int xoff = (_width - _textwidth) / 2;
           if (xoff < 0)
           {
             xoff = 0;
           }
-          int yoff = (int)((_height - _textheight) / 2);
+          int yoff = (_height - _textheight) / 2;
 
-          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
+          DrawText((float)_positionX + xoff, (float)_positionY + yoff, _cachedTextLabel, _width);
         }
         else
         {
@@ -189,7 +188,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_width == 0 || _textwidth < _width)
             {
-              this.DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, -1);
+              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, -1);
             }
             else
             {
@@ -199,7 +198,7 @@ namespace MediaPortal.GUI.Library
                 return;
               }
 
-              this.DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, (int)_width - 5);
+              DrawText((float)_positionX - _textwidth, vpos, _cachedTextLabel, _width - 5);
             }
             base.Render(timePassed);
             return;
@@ -207,7 +206,7 @@ namespace MediaPortal.GUI.Library
 
           if (_width == 0 || _textwidth < _width)
           {
-            this.DrawText((float)_positionX, vpos, _cachedTextLabel, (int)_width);
+            DrawText(_positionX, vpos, _cachedTextLabel, _width);
           }
           else
           {
@@ -215,7 +214,7 @@ namespace MediaPortal.GUI.Library
             {
               return;
             }
-            this.DrawText((float)_positionX, vpos, _cachedTextLabel, (int)_width - 5);
+            DrawText(_positionX, vpos, _cachedTextLabel, _width - 5);
           }
         }
       }
@@ -237,12 +236,11 @@ namespace MediaPortal.GUI.Library
         long sc = (uint)_shadowColor;
         if (Dimmed)
         {
-          sc &= (DimColor);
+          sc &= DimColor;
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
 
-        _font.DrawShadowTextWidth(xpos, ypos, c, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc,
-                                  fMaxWidth);
+        _font.DrawShadowTextWidth(xpos, ypos, c, label, Alignment.ALIGN_LEFT, _shadowAngle, _shadowDistance, sc, fMaxWidth);
       }
       else
       {
@@ -253,22 +251,21 @@ namespace MediaPortal.GUI.Library
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
     public void DrawText(float xpos, float ypos, string label, int width)
     {
-      long c = (uint)_textColor;
+      long c = _textColor;
       if (Dimmed)
       {
-        c &= (DimColor);
+        c &= DimColor;
       }
       c = GUIGraphicsContext.MergeAlpha((uint)c);
 
       if (Shadow)
       {
-        long sc = (uint)_shadowColor;
+        long sc = _shadowColor;
         if (Dimmed)
         {
-          sc &= (DimColor);
+          sc &= DimColor;
         }
         sc = GUIGraphicsContext.MergeAlpha((uint)sc);
-
         _font.DrawShadowText(xpos, ypos, c, label, Alignment.ALIGN_LEFT, width, _shadowAngle, _shadowDistance, sc);
       }
       else
@@ -290,24 +287,16 @@ namespace MediaPortal.GUI.Library
     /// This method is called when a message was recieved by this control.
     /// </summary>
     /// <param name="message">The message.</param>
-    /// <param name="message">message : contains the message</param>
     /// <returns>true if the message was handled, false if it wasnt</returns>
     public override bool OnMessage(GUIMessage message)
     {
-      // Check if the message was ment for this control.
+      // Check if the message was meant for this control.
       if (message.TargetControlId == GetID)
       {
         // Set the text of the label.
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-          if (message.Label != null)
-          {
-            Label = message.Label;
-          }
-          else
-          {
-            Label = string.Empty;
-          }
+          Label = message.Label ?? string.Empty;
           return true;
         }
       }
@@ -479,9 +468,7 @@ namespace MediaPortal.GUI.Library
 
       if (_containsProperty)
       {
-        v = GUIPropertyManager.Parse(_labelText);
-        if (v == null)
-          v = String.Empty;
+        v = GUIPropertyManager.Parse(_labelText) ?? String.Empty;
       }
       else
       {
@@ -548,10 +535,8 @@ namespace MediaPortal.GUI.Library
 
       if (_registeredForEvent == false)
       {
-        GUIPropertyManager.OnPropertyChanged -=
-          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-        GUIPropertyManager.OnPropertyChanged +=
-          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
+        GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
         _registeredForEvent = true;
       }
       _font = GUIFontManager.GetFont(_fontName);
@@ -579,14 +564,13 @@ namespace MediaPortal.GUI.Library
       //_labelText = string.Empty;
       _font = null;
       _reCalculate = true;
-      GUIPropertyManager.OnPropertyChanged -=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
       base.Dispose();
     }
 
     /// <summary>
     /// Property to get/set the usage of the font cache
-    /// if enabled the renderd text is cached
+    /// if enabled the rendered text is cached
     /// if not it will be re-created on every render() call
     /// </summary>
     public bool CacheFont
