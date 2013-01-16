@@ -76,17 +76,17 @@ REM Skins
 xcopy %1\MediaPortal.Base\Skin\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
 
 REM Copy all dll files from cpp solution 
-xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll . /Y /D
-xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll . /Y /D
-xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll . /Y /D
-xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll . /Y /D
-xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
+xcopy %1\..\DirectShowFilters\DirectShowHelper\bin\%2\dshowhelper.dll . /Y /D
+xcopy %1\..\DirectShowFilters\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll . /Y /D
+xcopy %1\..\DirectShowFilters\DXUtil\bin\%2\dxutil.dll . /Y /D
+xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.dll . /Y /D
+xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
 
 if /I "%2" EQU "DEBUG" (
-xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D
-xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.pdb . /Y /D
-xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.pdb . /Y /D
-xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
 )
 
 REM Copy one dll from DirectShowFilters folder
