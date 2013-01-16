@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,6 +54,8 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
+using DirectShowLib;
+using System.Runtime.InteropServices.ComTypes;
 
 #endregion
 
@@ -281,6 +283,10 @@ public class MediaPortalApp : D3D, IRender
   // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363475(v=vs.85).aspx
   [DllImport("user32.dll", CharSet = CharSet.Auto)]
   private static extern uint UnregisterDeviceNotification(IntPtr hHandle);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms678542(v=vs.85).aspx
+  [DllImport("ole32.dll")]
+  private static extern int CreateBindCtx(uint reserved, out IBindCtx ppbc);
 
 
   #region main()
@@ -1272,6 +1278,97 @@ public class MediaPortalApp : D3D, IRender
                 }
               }
 
+              // get DirectShow show graph from ROT
+              const string progID = "!MediaPortal.GraphBuilder";
+              object rotObject = null;
+
+              IBindCtx bindCtx = null;
+              IRunningObjectTable rot = null;
+              IEnumMoniker enumMoniker = null;
+
+              try
+              {
+                Marshal.ThrowExceptionForHR(CreateBindCtx(0, out bindCtx));
+                bindCtx.GetRunningObjectTable(out rot);
+                rot.EnumRunning(out enumMoniker);
+
+                var moniker = new IMoniker[1];
+                var monikersFetched = IntPtr.Zero;
+                while(enumMoniker.Next(1, moniker, monikersFetched) == 0)
+                {
+                  string name = null;
+                  try
+                  {
+                    if (moniker[0] != null)
+                    {
+                      moniker[0].GetDisplayName(bindCtx, null, out name);
+                    }
+                  }
+                  catch (UnauthorizedAccessException)
+                  {
+                    // do nothing, we simply don't have permissions to the entry in question
+                  }
+                  if (!string.IsNullOrEmpty(name) && name == progID)
+                  {
+                    Marshal.ThrowExceptionForHR(rot.GetObject(moniker[0], out rotObject));
+                    break;
+                  }
+                }
+              }
+              finally
+              {
+                if (enumMoniker != null)
+                {
+                  Marshal.ReleaseComObject(enumMoniker);
+                }
+                if (rot != null)
+                {
+                  Marshal.ReleaseComObject(rot);
+                }
+                if (bindCtx != null)
+                {
+                  Marshal.ReleaseComObject(bindCtx);
+                }
+              }
+              var filterGraph = (IGraphBuilder)rotObject;
+              
+              // enumerate filters currently inside the graph
+              if (filterGraph != null)
+              {
+                IEnumFilters enumFilters;
+                int hr = filterGraph.EnumFilters(out enumFilters);
+                if (hr == 0 && enumFilters != null)
+                {
+                  var baseFilter = new IBaseFilter[1];
+                  int filtersFetched;
+                  while(enumFilters.Next(1, baseFilter, out filtersFetched) == 0)
+                  {
+                    // get the filter's CLSID
+                    Guid classID;
+                    baseFilter[0].GetClassID(out classID);
+                    Log.Debug("CLSID: {0}", classID);
+                    
+                    // get the filter's name
+                    FilterInfo filterInfo;
+                    hr = baseFilter[0].QueryFilterInfo(out filterInfo);
+                    DsUtils.ReleaseComObject(filterInfo.pGraph);
+                    if (hr == 0)
+                    {
+                      string filterName = filterInfo.achName;
+                      Log.Debug("NAME: {0}", filterName);
+
+                    }
+                    DsUtils.ReleaseComObject(baseFilter[0]);
+
+                    FilterState filterState;
+                    baseFilter[0].GetState(10, out filterState);
+                    Log.Debug("STATE: {0}", filterState);
+                  }
+                  DsUtils.ReleaseComObject(enumFilters);
+                }
+              }
+
+              // TODO
               if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
               {
                 switch (msg.WParam.ToInt32())
