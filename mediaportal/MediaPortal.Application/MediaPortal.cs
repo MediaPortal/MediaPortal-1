@@ -99,7 +99,6 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _suspended;
   private bool                  _suspending;
   private bool                  _resuming;
-  private bool                  _wasActiveBeforeSuspending;
   private bool                  _ignoreContextMenuAction;
   private bool                  _supportsFiltering;
   private bool                  _supportsAlphaBlend;
@@ -1539,13 +1538,6 @@ public class MediaPortalApp : D3D, IRender
       DisposeDBs();
       VolumeHandler.Dispose();
 
-      // minimize to tray if App is active and in fullscreen
-      if (AppActive && !Windowed)
-      {
-        MinimizeToTray(false);
-        _wasActiveBeforeSuspending = true;
-      }
-      
       Log.Info("Main: OnSuspend - Done");
     }
     _suspending = false;
@@ -1564,17 +1556,19 @@ public class MediaPortalApp : D3D, IRender
     }
     _resuming = true;
     
+    // delay resuming as configured
     using (Settings xmlreader = new MPSettings())
     {
       int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false) ? xmlreader.GetValueAsInt("general", "delay", 0) : 0;
       if (waitOnResume > 0)
       {
-        Log.Info("MP waiting on resume {0} secs", waitOnResume);
+        Log.Info("Main: OnResume - waiting on resume {0} secs", waitOnResume);
         Thread.Sleep(waitOnResume * 1000);
       }
     }
 
-    GUIGraphicsContext.ResetLastActivity(); // avoid screen saver after standby
+    // avoid screen saver after standby
+    GUIGraphicsContext.ResetLastActivity();
     _ignoreContextMenuAction = true;
 
     if (!_suspended)
@@ -1583,7 +1577,8 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
-      ReOpenDBs();
+      _suspended = false;
+      _ignoreContextMenuAction = false;
 
       // Systems without DirectX9Ex have lost graphics device in suspend/hibernate cycle
       if (!GUIGraphicsContext.IsDirectX9ExUsed())
@@ -1591,30 +1586,20 @@ public class MediaPortalApp : D3D, IRender
         Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
       }
+      RecoverDevice();
 
-      Log.Info("Main: OnResume - show last active module?");
-      if (!ShowLastActiveModule())
+      if (GUIGraphicsContext.IsDirectX9ExUsed())
       {
-        if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
-        {
-          Log.Info("Main: OnResume - Switch to basic home screen");
-          GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_SECOND_HOME);
-        }
-        else
-        {
-          Log.Info("Main: OnResume - Switch to home screen");
-          GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_HOME);
-        }
+        Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
       }
 
-      Log.Info("Main: OnResume - Recovering device");
-      RecoverDevice();
+      ReOpenDBs();
 
       using (Settings xmlreader = new MPSettings())
       {
-        Log.Info("Main: OnResume - Resetting executing state");
+        // TODO: remove option as monitor should only turn on on user initiated wake ups, which are handled by windows
         bool turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-
         if (turnMonitorOn)
         {
           Log.Info("Main: OnResume - Trying to wake up the display");
@@ -1624,7 +1609,8 @@ public class MediaPortalApp : D3D, IRender
             Log.Warn("Main: OnResume - Display can only be turned on by the OS staring with Win8");
           }
         }
-  
+
+        // TODO: remove workaround option once resume behaves properly
         if (xmlreader.GetValueAsBool("general", "restartonresume", false))
         {
           Log.Info("Main: OnResume - prepare for restart!");
@@ -1635,31 +1621,15 @@ public class MediaPortalApp : D3D, IRender
       Log.Info("Main: OnResume - Init Input Devices");
       InputDevices.Init();
       
-      _suspended = false;
-
-      if (GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-      }
-
-      Log.Debug("Main: OnResume - autoplay start listening");
+      Log.Debug("Main: OnResume - Autoplay start listening");
       AutoPlay.StartListening();
 
-      Log.Debug("Main: OnResume - initializing volume handler");
+      Log.Debug("Main: OnResume - Initializing volume handler");
       #pragma warning disable 168
       VolumeHandler vh = VolumeHandler.Instance;
       #pragma warning restore 168
 
-      _ignoreContextMenuAction = false;
       _lastOnresume = DateTime.Now;
-
-      // restore from tray if it was active before suspending
-      if (_wasActiveBeforeSuspending)
-      {
-        RestoreFromTray(false);
-        _wasActiveBeforeSuspending = false;
-      }
 
       Log.Info("Main: OnResume - Done");
     }
@@ -3556,13 +3526,13 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   /// <param name="proc"></param>
   /// <param name="waitForExit"></param>
-  // TODO
   public void OnStartExternal(Process proc, bool waitForExit)
   {
     if (TopMost && waitForExit)
     {
       TopMost = false;
       _restoreTopMost = true;
+      MinimizeToTray(false);
     }
   }
 
@@ -3572,11 +3542,11 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   /// <param name="proc"></param>
   /// <param name="waitForExit"></param>
-  // TODO
   public void OnStopExternal(Process proc, bool waitForExit)
   {
     if (_restoreTopMost)
     {
+      RestoreFromTray(false);
       TopMost = true;
       _restoreTopMost = false;
     }
@@ -4024,13 +3994,13 @@ public class MediaPortalApp : D3D, IRender
     {
       string errorMsg = string.Format("Your version {0} of quartz.dll has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion);
       Log.Info("Util: quartz.dll error - {0}", errorMsg);
-      if (MessageBox.Show(errorMsg, "Core directshow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+      if (MessageBox.Show(errorMsg, "Core DirectShow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
       {
         Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
       }
     }
 
-    // TODO
+    // TODO: remove XP S3 registry hack, this is a system setting MP shouldn't touch
     EnableS3Trick();
 
     GUIWindowManager.OnNewAction += OnAction;
@@ -4135,7 +4105,7 @@ public class MediaPortalApp : D3D, IRender
   /// See: http://support.microsoft.com/kb/841858/en-us 
   /// if this option is enabled in the configuration.
   /// </summary>
-  // TODO
+  // TODO: remove method
   private static void EnableS3Trick()
   {
     try
