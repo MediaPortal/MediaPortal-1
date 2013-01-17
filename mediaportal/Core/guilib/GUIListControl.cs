@@ -115,9 +115,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
-    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus;
-    [XMLSkinElement("textcolorNoFocus2")] protected long _textColorNoFocus2;
-    [XMLSkinElement("textcolorNoFocus3")] protected long _textColorNoFocus3;
+    [XMLSkinElement("textcolorNoFocus")] protected string _textColorNoFocus = "N/A";
+    [XMLSkinElement("textcolorNoFocus2")] protected string _textColorNoFocus2 = "N/A";
+    [XMLSkinElement("textcolorNoFocus3")] protected string _textColorNoFocus3 = "N/A";
     
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
@@ -233,9 +233,6 @@ namespace MediaPortal.GUI.Library
 
     public GUIListControl(int dwParentID) : base(dwParentID)
     {
-      _textColorNoFocus = _textColor;
-      _textColorNoFocus2 = _textColor2;
-      _textColorNoFocus3 = _textColor3;
       WordWrap = false;
     }
 
@@ -279,9 +276,6 @@ namespace MediaPortal.GUI.Library
                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
-      _textColorNoFocus = _textColor;
-      _textColorNoFocus2 = _textColor2;
-      _textColorNoFocus3 = _textColor3;
       WordWrap = false;
       _spinControlWidth = dwSpinWidth;
       _spinControlHeight = dwSpinHeight;
@@ -659,7 +653,11 @@ namespace MediaPortal.GUI.Library
         // override text color if label is not selected
         if (!gotFocus)
         {
-          color = _textColorNoFocus2;
+          long value;
+          if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          {
+            color = value;
+          }
         }
 
         // override text color if skin sets it as selected
@@ -729,7 +727,11 @@ namespace MediaPortal.GUI.Library
         // override text color if label is not selected
         if (!gotFocus)
         {
-          color = _textColorNoFocus;
+          long value;
+          if (long.TryParse(_textColorNoFocus, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          {
+            color = value;
+          }
         }
 
         // override text color if skin sets it as selected
@@ -795,7 +797,11 @@ namespace MediaPortal.GUI.Library
         // override text color if label is not selected
         if (!gotFocus)
         {
-          color = _textColorNoFocus2;
+          long value;
+          if (long.TryParse(_textColorNoFocus2, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          {
+            color = value;
+          }
         }
 
         // override text color if skin sets it as selected
@@ -900,7 +906,11 @@ namespace MediaPortal.GUI.Library
         // override text color if label is not selected
         if (!gotFocus)
         {
-          color = _textColorNoFocus3;
+          long value;
+          if (long.TryParse(_textColorNoFocus3, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value))
+          {
+            color = value;
+          }
         }
 
         // override text color if skin sets it as selected
