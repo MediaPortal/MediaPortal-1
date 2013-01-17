@@ -701,8 +701,6 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      _textLine = pItem.Label;
-
       if (_text1Visible)
       {
         dwColor = _textColor;
@@ -742,7 +740,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, _textLine, bSelected);
+          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, pItem.Label, bSelected);
         }
       }
 
@@ -777,8 +775,6 @@ namespace MediaPortal.GUI.Library
           dwPosX = _positionX + _textOffsetX2;
         }
 
-        _textLine = pItem.Label2;
-
         if (_text2Visible)
         {
           if (_labelControls2 != null)
@@ -790,7 +786,7 @@ namespace MediaPortal.GUI.Library
               {
                 label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
                 label2.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label2.Label = _textLine;
+                label2.Label = pItem.Label2; 
                 label2.TextAlignment = Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
 
