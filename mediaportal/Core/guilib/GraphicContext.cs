@@ -475,7 +475,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return form.ClientSize.Height;
+        return DX9Device != null ? DX9Device.PresentationParameters.BackBufferHeight : form.ClientSize.Height;
       }
     }
 
@@ -486,7 +486,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        return form.ClientSize.Width;
+        return DX9Device != null ? DX9Device.PresentationParameters.BackBufferWidth : form.ClientSize.Width;
       }
     }
 
