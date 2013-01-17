@@ -197,6 +197,7 @@ namespace MediaPortal.IR
     private readonly Hashtable _jumpToCommands;
     private DateTime _timestamp = DateTime.Now;
     private DateTime _timestampRepeat = DateTime.Now;
+    private DateTime _timestampRepeatNumbers = DateTime.Now;
     private int _lastCommand = -1;
     private bool _isLearning;
 
@@ -859,12 +860,24 @@ namespace MediaPortal.IR
           {
             executeCommand = true;
             _timestampRepeat = DateTime.Now;
+            _timestampRepeatNumbers = DateTime.Now;
           }
           // only repeat the same command after an initial delay
           else
           {
             TimeSpan timeSpan = DateTime.Now - _timestampRepeat;
             executeCommand = timeSpan.TotalMilliseconds >= RepeatWait;
+
+            // do not repeat numbers quickly for SMS style input
+            if (executeCommand && (cmdVal >= (int) Action.ActionType.REMOTE_0 && cmdVal <= (int) Action.ActionType.REMOTE_9))
+            {
+              TimeSpan timeSpanNumbers = DateTime.Now - _timestampRepeatNumbers;
+              if (timeSpanNumbers.TotalMilliseconds < RepeatWait)
+              {
+                executeCommand = false;
+              }
+              _timestampRepeatNumbers = DateTime.Now;
+            }
           }
           _lastCommand = cmdVal;
 
