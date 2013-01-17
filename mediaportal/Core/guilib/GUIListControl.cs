@@ -115,7 +115,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor2")] protected long _selectedColor2 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor3")] protected long _selectedColor3 = 0xFFFFFFFF;
-
+    [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus;
+    [XMLSkinElement("textcolorNoFocus2")] protected long _textColorNoFocus2;
+    [XMLSkinElement("textcolorNoFocus3")] protected long _textColorNoFocus3;
+    
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
@@ -198,7 +201,6 @@ namespace MediaPortal.GUI.Library
     protected bool _upDownControlVisible = true;
 
     protected bool _refresh = false;
-    protected string _textLine;
     protected string _textLine2;
     protected string _brackedText;
 
@@ -231,6 +233,9 @@ namespace MediaPortal.GUI.Library
 
     public GUIListControl(int dwParentID) : base(dwParentID)
     {
+      _textColorNoFocus = _textColor;
+      _textColorNoFocus2 = _textColor2;
+      _textColorNoFocus3 = _textColor3;
       WordWrap = false;
     }
 
@@ -274,6 +279,9 @@ namespace MediaPortal.GUI.Library
                           int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
+      _textColorNoFocus = _textColor;
+      _textColorNoFocus2 = _textColor2;
+      _textColorNoFocus3 = _textColor3;
       WordWrap = false;
       _spinControlWidth = dwSpinWidth;
       _spinControlHeight = dwSpinHeight;
@@ -600,7 +608,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="timePassed"></param>
+    /// <param name="buttonNumber"></param>
+    /// <param name="positionX"></param>
+    /// <param name="positionY"></param>
+    /// <param name="gotFocus"></param>
+    protected virtual void RenderLabel(float timePassed, int buttonNumber, int positionX, int positionY, bool gotFocus)
     {
       GUIListItem scrollItem = SelectedListItem;
       if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling && scrollItem != null)
@@ -627,203 +643,232 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", " ");
       }
 
-      GUIListItem pItem = _listItems[buttonNr + _offset];
-      long dwColor;
+      GUIListItem item = _listItems[buttonNumber + _offset];
+      bool selected = buttonNumber == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
+      long color;
 
-      dwPosX += _textOffsetX;
-      bool bSelected = buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
+      // apply horizontal text offset to position and calculate width
+      positionX += _textOffsetX;
+      int labelWidth = _width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(20);
 
-      int dMaxWidth = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(20));
-      if ((_text2Visible && pItem.Label2.Length > 0) && (_textOffsetY == _textOffsetY2))
+      if (_text2Visible && item.Label2.Length > 0 && _textOffsetY == _textOffsetY2)
       {
-        dwColor = _textColor2;
+        // set initial text color
+        color = _textColor2;
 
-        if (pItem.Selected)
+        // override text color if label is not selected
+        if (!gotFocus)
         {
-          dwColor = _selectedColor2;
+          color = _textColorNoFocus2;
         }
 
-        if (pItem.IsPlayed)
+        // override text color if skin sets it as selected
+        if (item.Selected)
         {
-          dwColor = _playedColor;
+          color = _selectedColor2;
         }
 
-        if (pItem.IsRemote)
+        // override text color if item is currently played
+        if (item.IsPlayed)
         {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
-          {
-            dwColor = _downloadColor;
-          }
+          color = _playedColor;
         }
 
-        if (pItem.IsBdDvdFolder)
+        // override text color if item is on a remote folder
+        if (item.IsRemote)
         {
-          dwColor = _bdDvdDirectoryColor;
+          color = item.IsDownloading ? _downloadColor : _remoteColor;
         }
 
+        // override text color if item is a BD or DVD folder
+        if (item.IsBdDvdFolder)
+        {
+          color = _bdDvdDirectoryColor;
+        }
+
+        // if control is not in focus apply color dimming
         if (!Focus)
         {
-          dwColor &= DimColor;
+          color &= DimColor;
         }
 
-        int xpos;
-        int ypos = dwPosY;
+        // apply horizontal text offset to position
+        int x = _textOffsetX2 == 0 
+          ? _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16) 
+          : _positionX + _textOffsetX2;
 
-        if (_textOffsetX2 == 0)
+        if (_labelControls2 != null && buttonNumber >= 0 && buttonNumber < _labelControls2.Count)
         {
-          xpos = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
-        }
-        else
-        {
-          xpos = _positionX + _textOffsetX2;
-        }
-
-        if ((_labelControls2 != null) && (buttonNr >= 0) && (buttonNr < _labelControls2.Count))
-        {
-          GUILabelControl label2 = _labelControls2[buttonNr];
+          GUILabelControl label2 = _labelControls2[buttonNumber];
           if (label2 != null)
           {
-            label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+            // set position for rendering
+            label2.SetPosition(x, positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
-            if (gotFocus || !Focus)
-            {
-              label2.TextColor = dwColor;
-            }
-            else
-            {
-              label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-            }
+            // apply unfocusedAlpha if item is not selected and control is in focus, else use color in its current state for rendering
+            label2.TextColor = !gotFocus && Focus
+              ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb()
+              : color;
 
-            label2.Label = pItem.Label2;
+            // set text, alignment and font for rendering
+            label2.Label = item.Label2;
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
-            dMaxWidth = label2._positionX - dwPosX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
+
+            // recalculate label width
+            labelWidth = label2._positionX - positionX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
           }
         }
       }
 
-      _textLine = pItem.Label;
       if (_text1Visible)
       {
-        dwColor = _textColor;
+        // set initial text color
+        color = _textColor;
 
-        if (pItem.Selected)
+        // override text color if label is not selected
+        if (!gotFocus)
         {
-          dwColor = _selectedColor;
+          color = _textColorNoFocus;
         }
 
-        if (pItem.IsPlayed)
+        // override text color if skin sets it as selected
+        if (item.Selected)
         {
-          dwColor = _playedColor;
+          color = _selectedColor;
         }
 
-        if (pItem.IsRemote)
+        // override text color if item is currently played
+        if (item.IsPlayed)
         {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
-          {
-            dwColor = _downloadColor;
-          }
+          color = _playedColor;
         }
 
-        if (pItem.IsBdDvdFolder)
+        // override text color if item is on a remote folder
+        if (item.IsRemote)
         {
-          dwColor = _bdDvdDirectoryColor;
+          color = item.IsDownloading ? _downloadColor : _remoteColor;
         }
 
-        if (!pItem.Selected && !gotFocus)
+        // override text color if item is a BD or DVD folder
+        if (item.IsBdDvdFolder)
         {
-          dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+          color = _bdDvdDirectoryColor;
         }
+
+        // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
+        if (!gotFocus && !item.Selected)
+        {
+          color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
+        }
+
+        // if control is not in focus apply color dimming
         if (!Focus)
         {
-          dwColor &= DimColor;
+          color &= DimColor;
         }
 
-        int maxWidth = dMaxWidth;
+        // apply padding to label width 
+        int maxWidth = labelWidth;
         if (_textPadding > 0)
         {
           maxWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
         }
 
-        if (maxWidth <= 0)
+        // render label if it still has a visible length
+        if (maxWidth > 0)
+        {
+          RenderText(timePassed, buttonNumber, positionX, (float) positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, color, item.Label, selected);
+        }
+        else
         {
           base.Render(timePassed);
         }
-        else
-        {
-          RenderText(timePassed, buttonNr, dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, maxWidth, dwColor, _textLine, bSelected);
-        }
       }
 
-      if (pItem.Label2.Length > 0)
+      // if there is a second label present process it
+      if (item.Label2.Length > 0)
       {
-        dwColor = _textColor2;
+        // set initial text color
+        color = _textColor2;
 
-        if (pItem.Selected)
+        // override text color if label is not selected
+        if (!gotFocus)
         {
-          dwColor = _selectedColor2;
+          color = _textColorNoFocus2;
         }
 
-        if (pItem.IsPlayed)
+        // override text color if skin sets it as selected
+        if (item.Selected)
         {
-          dwColor = _playedColor;
+          color = _selectedColor2;
         }
 
-        if (pItem.IsRemote)
+        // override text color if item is currently played
+        if (item.IsPlayed)
         {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
+          color = _playedColor;
+        }
+
+        // override text color if item is on a remote folder
+        if (item.IsRemote)
+        {
+          color = _remoteColor;
+          if (item.IsDownloading)
           {
-            dwColor = _downloadColor;
+            color = _downloadColor;
           }
         }
 
-        if (pItem.IsBdDvdFolder)
+        // override text color if item is a BD or DVD folder
+        if (item.IsBdDvdFolder)
         {
-          dwColor = _bdDvdDirectoryColor;
+          color = _bdDvdDirectoryColor;
         }
 
+        // if control is not in focus apply color dimming
         if (!Focus)
         {
-          dwColor &= DimColor;
+          color &= DimColor;
         }
 
+        // apply horizontal text offset to position
         if (_textOffsetX2 == 0)
         {
-          dwPosX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
+          positionX = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
         }
         else
         {
-          dwPosX = _positionX + _textOffsetX2;
+          positionX = _positionX + _textOffsetX2;
         }
 
-        _textLine = pItem.Label2;
-
-        if (_text2Visible && (_labelControls2 != null) && (buttonNr >= 0) && (buttonNr < _labelControls2.Count))
+        if (_text2Visible && (_labelControls2 != null) && (buttonNumber >= 0) && (buttonNumber < _labelControls2.Count))
         {
-          GUILabelControl label2 = _labelControls2[buttonNr];
+          GUILabelControl label2 = _labelControls2[buttonNumber];
           if (label2 != null)
           {
-            label2.SetPosition(dwPosX - GUIGraphicsContext.ScaleHorizontal(6),
-                               dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-            if (gotFocus || !Focus)
+            // set position for rendering
+            label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+
+            // apply unfocusedAlpha if label is not selected
+            if (!gotFocus)
             {
-              label2.TextColor = dwColor;
+              // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering 
+              label2.TextColor = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb() : color;
+
+              // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
+              if (!item.Selected && _unfocusedAlphaApplyToAll)
+              {
+                label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
+              }
             }
-            else
-            {
-              label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-            }
-            if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
-            {
-              label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-            }
-            label2.Label = _textLine;
+
+            // set text, alignment and font for rendering
+            label2.Label = item.Label2;
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
 
+            // apply padding to label width
             float width = label2.Width;
             float height = label2.Height;
             _font.GetTextExtent(label2.Label, ref width, ref height);
@@ -833,113 +878,116 @@ namespace MediaPortal.GUI.Library
             }
             label2.Width = (int)width;
 
-            if (label2.Width <= 0)
+            // render label if it still has a visible length
+            if (label2.Width > 0)
             {
-              base.Render(timePassed);
+              label2.Render(timePassed);
             }
             else
             {
-              label2.Render(timePassed);
+              base.Render(timePassed);
             }
           }
         }
       }
 
-      if (pItem.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
+      // if there is a third label present process it
+      if (item.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
       {
-        dwColor = _textColor3;
+        // set initial text color
+        color = _textColor3;
 
-        if (pItem.Selected)
+        // override text color if label is not selected
+        if (!gotFocus)
         {
-          dwColor = _selectedColor3;
+          color = _textColorNoFocus3;
         }
 
-        if (pItem.IsPlayed)
+        // override text color if skin sets it as selected
+        if (item.Selected)
         {
-          dwColor = _playedColor;
+          color = _selectedColor3;
         }
 
-        if (pItem.IsRemote)
+        // override text color if item is currently played
+        if (item.IsPlayed)
         {
-          dwColor = _remoteColor;
-          if (pItem.IsDownloading)
-          {
-            dwColor = _downloadColor;
-          }
+          color = _playedColor;
         }
 
-        if (pItem.IsBdDvdFolder)
+        // override text color if item is on a remote folder
+        if (item.IsRemote)
         {
-          dwColor = _bdDvdDirectoryColor;
+          color = item.IsDownloading ? _downloadColor : _remoteColor;
         }
 
+        // override text color if item is a BD or DVD folder
+        if (item.IsBdDvdFolder)
+        {
+          color = _bdDvdDirectoryColor;
+        }
+
+        // if control is not in focus apply color dimming
         if (!Focus)
         {
-          dwColor &= DimColor;
+          color &= DimColor;
         }
 
-        if (_textOffsetX3 == 0)
-        {
-          dwPosX = _positionX + _textOffsetX;
-        }
-        else
-        {
-          dwPosX = _positionX + _textOffsetX3;
-        }
+        // apply horizontal text offset to position
+        positionX = _textOffsetX3 == 0 ? _positionX + _textOffsetX : _positionX + _textOffsetX3;
 
-        int ypos = dwPosY;
+        // apply vertical text offset to position
+        int ypos = positionY;
+        ypos += _textOffsetY3 == 0 ? _textOffsetY2 : _textOffsetY3;
 
-        if (_textOffsetY3 == 0)
+        if (_text3Visible && _labelControls3 != null && buttonNumber >= 0 && buttonNumber < _labelControls3.Count)
         {
-          ypos += _textOffsetY2;
-        }
-        else
-        {
-          ypos += _textOffsetY3;
-        }
-
-        if (_text3Visible &&
-            (_labelControls3 != null) &&
-            (buttonNr >= 0) && (buttonNr < _labelControls3.Count))
-        {
-          GUILabelControl label3 = _labelControls3[buttonNr];
+          GUILabelControl label3 = _labelControls3[buttonNumber];
 
           if (label3 != null)
           {
-            label3.SetPosition(dwPosX, ypos);
-            if (gotFocus || !Focus)
+            // set position for rendering
+            label3.SetPosition(positionX, ypos);
+
+            // apply unfocusedAlpha if label is not selected
+            if (!gotFocus)
             {
-              label3.TextColor = dwColor;
+              // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering
+              label3.TextColor = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb() : color;
+
+              // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
+              if (!item.Selected && _unfocusedAlphaApplyToAll)
+              {
+                label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
+              }
             }
-            else
-            {
-              label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-            }
-            if (!pItem.Selected && !gotFocus && _unfocusedAlphaApplyToAll)
-            {
-              label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-            }
-            label3.Label = pItem.Label3;
+
+            // set label text for rendering
+            label3.Label = item.Label3;
             if (!string.IsNullOrEmpty(_text3Content))
             {
-              label3.Label = SetLabel(_text3Content, pItem);
+              label3.Label = SetLabel(_text3Content, item);
             }
+
+            // set alignment, font and width for rendering
             label3.TextAlignment = _text3Alignment;
             label3.FontName = _fontName3Name;
-            label3.Width = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34));
+            label3.Width = _width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34);
             
+            // adjust label width with padding
             if (_textPadding3 > 0)
             {
               label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
             }
-      
-            if (label3.Width <= 0)
+
+            // render label if it still has a visible length
+            if (label3.Width > 0)
             {
-              base.Render(timePassed);
+              RenderText(timePassed, buttonNumber, label3, selected);
             }
             else
             {
-              RenderText(timePassed, buttonNr, label3, bSelected);
+              base.Render(timePassed);
             }
           }
         }
