@@ -127,6 +127,9 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
   // Finally verify next sink accepts AC3 format
   WAVEFORMATEXTENSIBLE* pAC3wfx = CreateAC3Format(pwfx->Format.nSamplesPerSec, 0);
 
+  if (!pAC3wfx)
+    return E_OUTOFMEMORY;  
+
   hr = m_pNextSink->NegotiateFormat(pAC3wfx, nApplyChangesDepth, pChOrder);
 
   if (FAILED(hr))
@@ -153,7 +156,10 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int
     OpenAC3Encoder(m_nBitRate, m_pInputFormat->Format.nChannels, m_pInputFormat->Format.nSamplesPerSec);
   }
   else
+  {
+    SAFE_DELETE_WAVEFORMATEX(pAC3wfx);
     LogWaveFormat(pwfx, "AC3  -          ");
+  }
 
   *pChOrder = AC3_ORDER;
 
@@ -514,11 +520,16 @@ HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE* pData)
   ASSERT(pOutData);
   BYTE* buf = (BYTE*)malloc(m_nMaxCompressedAC3FrameSize); // temporary buffer
 
+  if (!buf)
+    return E_OUTOFMEMORY;
+
   int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);
   nOffset += CreateAC3Bitstream(buf, AC3length, pOutData + nOffset);
   m_pNextOutSample->SetActualDataLength(nOffset);
   if (nOffset >= nSize)
     OutputNextSample();
+
+  free(buf);
 
   return S_OK;
 }
