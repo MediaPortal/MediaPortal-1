@@ -99,10 +99,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public SectionSettings Setup
     {
-      get
-      {
-        return new PowerSchedulerSetup();
-      }
+      get { return new PowerSchedulerSetup(); }
     }
 
     /// <summary>

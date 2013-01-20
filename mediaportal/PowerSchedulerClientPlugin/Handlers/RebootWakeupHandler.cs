@@ -175,17 +175,15 @@ namespace MediaPortal.Plugins.Process.Handlers
               {
                 // See if system is idle
                 bool unattended, disAllowShutdown;
-                String disAllowShutdownHandler, nextWakeupHandler;
-                DateTime nextWakeupTime;
+              String disAllowShutdownHandler, nextWakeupHandler;
+              DateTime nextWakeupTime;
 
-                ps.GetCurrentState(false, out unattended, out disAllowShutdown, out disAllowShutdownHandler,
-                  out nextWakeupTime, out nextWakeupHandler);
-                Log.Debug("RebootHandler: Reboot is due - standby is {0}allowed", disAllowShutdown ? "dis" : "");
-
-                // Reboot only if all other handlers allow standby
-                if (!disAllowShutdown)
-                {
-                  // Kick off reboot thread
+              // Reboot only if all other handlers allow standby
+              ps.GetCurrentState(false, out unattended, out disAllowShutdown, out disAllowShutdownHandler,
+                out nextWakeupTime, out nextWakeupHandler);
+              if (!disAllowShutdown)
+              {
+                // Kick off reboot thread
                   Log.Debug("RebootHandler: Reboot is due - reboot now");
                   Thread workerThread = new Thread(new ThreadStart(RebootThread));
                   workerThread.Name = "RebootHandler";

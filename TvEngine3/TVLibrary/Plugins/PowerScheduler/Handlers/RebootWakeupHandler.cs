@@ -177,11 +177,9 @@ namespace TvEngine.PowerScheduler.Handlers
               String disAllowShutdownHandler, nextWakeupHandler;
               DateTime nextWakeupTime;
 
+              // Reboot only if all other handlers allow standby
               ps.GetCurrentState(false, out unattended, out disAllowShutdown, out disAllowShutdownHandler,
                 out nextWakeupTime, out nextWakeupHandler);
-              Log.Debug("RebootHandler: Reboot is due - standby is {0}allowed", disAllowShutdown ? "dis" : "");
-
-              // Reboot only if all other handlers allow standby
               if (!disAllowShutdown)
               {
                 // Kick off reboot thread

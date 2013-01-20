@@ -339,7 +339,7 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               ps.Unregister(this as IWakeupHandler);
             }
-            Log.Debug("EpgGrabbingHandler: Wakeup system for EPG grabbing: {0}", enabled);
+            Log.Debug("EpgGrabbingHandler: Wakeup system for EPG grabbing: {0}", enabled ? "enabled" : "disabled");
           }
 
           // Check if a wakeup time is set
@@ -348,7 +348,7 @@ namespace TvEngine.PowerScheduler.Handlers
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
-            Log.Debug("EpgGrabbingHandler: Wakeup system for EPG at {0:00}:{1:00}", config.Hour, config.Minutes);
+            Log.Debug("EpgGrabbingHandler: EPG grabbing at {0:00}:{1:00}", config.Hour, config.Minutes);
             if (config.Days != null)
             {
               String days = "";
@@ -359,7 +359,7 @@ namespace TvEngine.PowerScheduler.Handlers
                 else
                   days = days + ", " + day.ToString();
               }
-              Log.Debug("EpgGrabbingHandler: EPG wakeup on: {0}", days);
+              Log.Debug("EpgGrabbingHandler: EPG grabbing on: {0}", days);
             }
             Log.Debug("EpgGrabbingHandler: EPG last run was at {0}", config.LastRun);
           }
