@@ -1096,8 +1096,8 @@ namespace DirectShowLib
     {
       int hr = 0;
 #if USING_NET11
-      UCOMIRunningObjectTable rot = null;
-      UCOMIMoniker mk = null;
+            UCOMIRunningObjectTable rot = null;
+            UCOMIMoniker mk = null;
 #else
       IRunningObjectTable rot = null;
       IMoniker mk = null;
@@ -1119,8 +1119,7 @@ namespace DirectShowLib
 
         // Add the object to the table
 #if USING_NET11
-        rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
-        rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mkMP, out m_cookieMP);
+                rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
 #else
         m_cookie = rot.Register((int) ROTFlags.RegistrationKeepsAlive, graph, mk);
 #endif
@@ -1151,7 +1150,7 @@ namespace DirectShowLib
       {
         GC.SuppressFinalize(this);
 #if USING_NET11
-        UCOMIRunningObjectTable rot = null;
+                UCOMIRunningObjectTable rot = null;
 #else
         IRunningObjectTable rot = null;
 #endif
@@ -1163,11 +1162,8 @@ namespace DirectShowLib
         try
         {
           // Remove our entry
-          if (m_cookie != 0)
-          {
-            rot.Revoke(m_cookie);
-            m_cookie = 0;
-          }
+          rot.Revoke(m_cookie);
+          m_cookie = 0;
         }
         finally
         {
