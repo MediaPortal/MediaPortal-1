@@ -287,7 +287,7 @@ public class MediaPortalApp : D3D, IRender
   [STAThread]
   public static void Main(string[] args)
   {
-    Thread.CurrentThread.Name = "MediaPortal";
+    Thread.CurrentThread.Name = "MPMain";
 
     if (args.Length > 0)
     {
