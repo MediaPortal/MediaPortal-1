@@ -21,7 +21,6 @@
 using System.Collections;
 using System.Drawing;
 using MediaPortal.ExtensionMethods;
-using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal.GUI.Library
 {
