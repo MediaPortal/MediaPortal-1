@@ -875,14 +875,11 @@ namespace MediaPortal.GUI.Library
             label2.FontName = _fontName2Name;
 
             // apply padding to label width
-            float width = label2.Width;
-            float height = label2.Height;
-            _font.GetTextExtent(label2.Label, ref width, ref height);
             if (_textPadding2 > 0)
             {
-              width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+              _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
             }
-            label2.Width = (int)width;
+            label2.Width = _width;
 
             // render label if it still has a visible length
             if (label2.Width > 0)
