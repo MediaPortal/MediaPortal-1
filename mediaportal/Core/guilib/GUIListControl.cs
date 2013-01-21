@@ -713,8 +713,11 @@ namespace MediaPortal.GUI.Library
             label2.TextAlignment = Alignment.ALIGN_RIGHT;
             label2.FontName = _fontName2Name;
 
+            // get width of longest label to preserve table view
+            int maxLabelWidth = _labelControls2.Select(control => control.TextWidth).Concat(new[] {0}).Max();
+
             // recalculate label width
-            labelWidth = label2._positionX - positionX - label2.TextWidth - GUIGraphicsContext.ScaleHorizontal(20);
+            labelWidth = label2._positionX - positionX - maxLabelWidth - GUIGraphicsContext.ScaleHorizontal(20);
           }
         }
       }
@@ -875,14 +878,11 @@ namespace MediaPortal.GUI.Library
             label2.FontName = _fontName2Name;
 
             // apply padding to label width
-            float width = label2.Width;
-            float height = label2.Height;
-            _font.GetTextExtent(label2.Label, ref width, ref height);
             if (_textPadding2 > 0)
             {
-              width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+              _width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
             }
-            label2.Width = (int)width;
+            label2.Width = _width;
 
             // render label if it still has a visible length
             if (label2.Width > 0)

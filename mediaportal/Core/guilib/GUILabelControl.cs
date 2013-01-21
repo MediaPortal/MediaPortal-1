@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -174,7 +173,7 @@ namespace MediaPortal.GUI.Library
         if (_textAlignment == Alignment.ALIGN_CENTER)
         {
           int xoff = (_width - _textwidth) / 2;
-          if (xoff < 0)
+          if (xoff < 0 && _width > 0)
           {
             xoff = 0;
           }
@@ -446,17 +445,7 @@ namespace MediaPortal.GUI.Library
         }
 
         _labelText = value;
-
-
-        if (_labelText.IndexOf("#") >= 0)
-        {
-          _containsProperty = true;
-        }
-        else
-        {
-          _containsProperty = false;
-        }
-
+        _containsProperty = _labelText.IndexOf("#") >= 0;
         CachedLabel();
       }
     }

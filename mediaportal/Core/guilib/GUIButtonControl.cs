@@ -331,6 +331,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
       _labelControl.Width = labelWidth;
+
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
@@ -361,7 +362,11 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          x = _positionX + _width / 2 - labelWidth / 2;
+          if (labelWidth > _width)
+          {
+            x += TextOffsetX;
+          }
           break;
       }
 
@@ -376,7 +381,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case VAlignment.ALIGN_MIDDLE:
-          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          y = _positionY + _height / 2 - _labelControl.Height / 2;
           break;
       }
 
