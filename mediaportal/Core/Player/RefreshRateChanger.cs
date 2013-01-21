@@ -251,6 +251,7 @@ namespace MediaPortal.Player
       {
         Activated -= SuicideFormActivated;
         base.Dispose(disposing);
+        Thread.Sleep(250);
         RefreshRateChanger.RefreshRateChangRunning = false;
       }
 

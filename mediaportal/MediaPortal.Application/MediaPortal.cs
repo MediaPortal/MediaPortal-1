@@ -1276,7 +1276,7 @@ public class MediaPortalApp : D3D, IRender
                 switch (msg.WParam.ToInt32())
                 {
                   case DBT_DEVICEREMOVECOMPLETE:
-                    Log.Debug("Main: Audio Renderer {0} removed, stopping playback", deviceName);
+                    Log.Debug("Main: Audio Renderer {0} removed", deviceName);
                     //g_Player.Stop();
                     break;
                   case DBT_DEVICEARRIVAL:
