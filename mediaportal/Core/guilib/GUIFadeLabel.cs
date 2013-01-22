@@ -518,8 +518,8 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIGraphicsContext.BeginClip(_labelControl.Height > 0
-                                       ? new Rectangle((int) positionX, (int) positionY, _labelControl.Width,_labelControl.Height)
-                                       : new Rectangle((int) positionX, (int) positionY, _labelControl.Width, (int)textHeight));
+                                       ? new Rectangle((int) positionX, (int)positionY, _labelControl.Width,_labelControl.Height)
+                                       : new Rectangle((int) positionX, _labelControl.YPosition, _labelControl.Width, (int)textHeight));
         _labelControl.Render(timePassed);
         GUIGraphicsContext.EndClip();
       }
