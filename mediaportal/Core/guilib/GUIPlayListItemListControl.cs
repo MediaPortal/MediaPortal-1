@@ -777,36 +777,31 @@ namespace MediaPortal.GUI.Library
 
         if (_text2Visible)
         {
-          if (_labelControls2 != null)
+          if (_labelControls2 != null && (buttonNr >= 0 && buttonNr < _labelControls2.Count))
           {
-            if (buttonNr >= 0 && buttonNr < _labelControls2.Count)
+            GUILabelControl label2 = _labelControls2[buttonNr];
+            if (label2 != null)
             {
-              GUILabelControl label2 = _labelControls2[buttonNr];
-              if (label2 != null)
+              label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+              label2.TextColor = gotFocus
+                                   ? dwColor
+                                   : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) dwColor)).ToArgb();
+              label2.Label = pItem.Label2;
+              label2.TextAlignment = Alignment.ALIGN_RIGHT;
+              label2.FontName = _fontName2Name;
+
+              if (_textPadding2 > 0)
               {
-                label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                label2.TextColor = gotFocus ? dwColor : Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label2.Label = pItem.Label2; 
-                label2.TextAlignment = Alignment.ALIGN_RIGHT;
-                label2.FontName = _fontName2Name;
+                label2.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
+              }
 
-                float width = label2.Width;
-                float height = label2.Height;
-                _font.GetTextExtent(label2.Label, ref width, ref height);
-                if (_textPadding2 > 0)
-                {
-                  width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
-                }
-                label2.Width = (int)width;
-
-                if (label2.Width <= 0)
-                {
-                  base.Render(timePassed);
-                }
-                else
-                {
-                  label2.Render(timePassed);
-                }
+              if (label2.Width <= 0)
+              {
+                base.Render(timePassed);
+              }
+              else
+              {
+                label2.Render(timePassed);
               }
             }
           }
@@ -872,14 +867,10 @@ namespace MediaPortal.GUI.Library
                 label3.TextAlignment = Alignment.ALIGN_LEFT;
                 label3.FontName = _fontName2Name;
 
-                float width = label3.Width;
-                float height = label3.Height;
-                _font.GetTextExtent(label3.Label, ref width, ref height);
                 if (_textPadding3 > 0)
                 {
-                  width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
+                  label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
                 }
-                label3.Width = (int)width;
 
                 if (label3.Width <= 0)
                 {
