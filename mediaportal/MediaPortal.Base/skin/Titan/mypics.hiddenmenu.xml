@@ -85,7 +85,7 @@
 				<width>369</width>
 				<height>1</height>
 				<texture>hiddenmenu_separator.png</texture>
-				<visible>!Control.HasFocus(50)+control.isvisible(50))</visible>
+				<visible>!Control.HasFocus(50)+control.isvisible50)(</visible>
 	    	<animation effect="fade" time="0">WindowClose</animation>
 	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
 	    	<animation effect="fade" time="50">visible</animation>
