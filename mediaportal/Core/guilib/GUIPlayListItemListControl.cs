@@ -790,16 +790,18 @@ namespace MediaPortal.GUI.Library
               label2.TextAlignment = Alignment.ALIGN_RIGHT;
               label2.FontName = _fontName2Name;
 
+              float width = label2.Width;
+              float height = label2.Height;
+              _font.GetTextExtent(label2.Label, ref width, ref height);
+              label2.Width = (int)width + 1;
+              label2.Height = (int)height;
+
               if (_textPadding2 > 0)
               {
                 label2.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding2);
               }
 
-              if (label2.Width <= 0)
-              {
-                base.Render(timePassed);
-              }
-              else
+              if (label2.Width > 0)
               {
                 label2.Render(timePassed);
               }
@@ -867,16 +869,18 @@ namespace MediaPortal.GUI.Library
                 label3.TextAlignment = Alignment.ALIGN_LEFT;
                 label3.FontName = _fontName2Name;
 
+                float width = label3.Width;
+                float height = label3.Height;
+                _font.GetTextExtent(label3.Label, ref width, ref height);
+                label3.Width = (int)width + 1;
+                label3.Height = (int)height;
+
                 if (_textPadding3 > 0)
                 {
                   label3.Width -= GUIGraphicsContext.ScaleHorizontal(_textPadding3);
                 }
 
-                if (label3.Width <= 0)
-                {
-                  base.Render(timePassed);
-                }
-                else
+                if (label3.Width > 0)
                 {
                   label3.Render(timePassed);
                 }
