@@ -492,16 +492,15 @@ namespace MediaPortal.GUI.Library
           {
             if (gotFocus || !Focus)
             {
-              //btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
-              btn.ColourDiffuse = 0xffffffff;
+              btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
             }
             else
             {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)_diffuseColor)).ToArgb();
             }
             if (_listItems[buttonNr].Selected && !gotFocus && _unfocusedAlphaApplyToAll)
             {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)_diffuseColor)).ToArgb();
             }
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
