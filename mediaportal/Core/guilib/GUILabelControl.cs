@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
@@ -269,7 +270,15 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
+        var clipRect = new Rectangle();
+        clipRect.X      = (int)xpos;
+        clipRect.Y      = (int)ypos;
+        clipRect.Width  = width > 0 ? width : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
+
+        GUIGraphicsContext.BeginClip(clipRect);
         _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
+        GUIGraphicsContext.EndClip();
       }
     }
 
