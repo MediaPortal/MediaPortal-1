@@ -485,7 +485,7 @@ namespace MediaPortal.GUI.Library
         _labelControl.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl.TextVAlignment = _textVAlignment;
         _labelControl.Label = scrollText;
-        _labelControl.Width = (int)(maxWidth + _scrollPosititionX - _scrollOffset + 5);
+        _labelControl.Width = (int)(maxWidth + _scrollPosititionX - _scrollOffset);
         _labelControl.TextColor = color;
 
         double xpos;
@@ -517,7 +517,13 @@ namespace MediaPortal.GUI.Library
             break;
         }
 
-        GUIGraphicsContext.BeginClip(new Rectangle((int)positionX, (int)positionY, _labelControl.Width, _labelControl.Height));
+        var clipRect = new Rectangle();
+        clipRect.X      = (int)positionX;
+        clipRect.Y      = _labelControl.YPosition;
+        clipRect.Width  = maxWidth > 0 ? (int)maxWidth : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
+
+        GUIGraphicsContext.BeginClip(clipRect);
         _labelControl.Render(timePassed);
         GUIGraphicsContext.EndClip();
       }
