@@ -138,6 +138,7 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>43</textpadding>
     <textureFocus>settings_button_focus_toggleon.png</textureFocus>
     <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
     <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
@@ -151,6 +152,7 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>46</textpadding>
     <textureFocus>settings_button_focus.png</textureFocus>
     <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>0</scrollStartDelaySec>
@@ -164,6 +166,7 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>43</textpadding>
     <textureFocus>settings_button_medium_focus.png</textureFocus>
     <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>0</scrollStartDelaySec>
@@ -177,6 +180,7 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>50</textpadding>
     <textureFocus>settings_button_large_focus.png</textureFocus>
     <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>0</scrollStartDelaySec>

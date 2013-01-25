@@ -71,7 +71,7 @@
       <playedColor>ff787878</playedColor>
       <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
-      <textcolorNoFocus>ff000000</textcolorNoFocus>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
       <colordiffuse>ffffffff</colordiffuse>
@@ -125,7 +125,7 @@
       <playedColor>ff787878</playedColor>
       <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
-      <textcolorNoFocus>ff000000</textcolorNoFocus>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
       <colordiffuse>ffffffff</colordiffuse>
