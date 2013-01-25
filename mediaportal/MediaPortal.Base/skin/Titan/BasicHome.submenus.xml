@@ -43,7 +43,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>1</hyperlink>
       <label>100001</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -65,7 +65,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>603</hyperlink>
       <label>914</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -87,7 +87,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>600</hyperlink>
       <label>600</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -109,7 +109,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>601</hyperlink>
       <label>646</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -131,7 +131,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>604</hyperlink>
       <label>724</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -177,7 +177,7 @@
     <dimColor>0xffffffff</dimColor>
 		<posX>728</posX>
 	  <posY>378</posY>
-		
+				
 		<control>
   		<description>Categories</description>
       <type>button</type>
@@ -188,7 +188,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>96742</hyperlink> 
       <label>#(L(2053)) #(L(101))</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -212,7 +212,7 @@
       <hyperlink>96742</hyperlink>
 			<hyperlinkParameter>categoryname:${AllMovies}</hyperlinkParameter>
       <label>All Movies</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -236,7 +236,7 @@
       <hyperlink>96742</hyperlink>
 			<hyperlinkParameter>categoryname:${RecentlyAddedMovies}</hyperlinkParameter>
       <label>4558</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -260,7 +260,7 @@
       <hyperlink>96742</hyperlink>
 			<hyperlinkParameter>categoryname:${UnwatchedMovies}</hyperlinkParameter>
       <label>1267</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
@@ -283,7 +283,7 @@
       <textureNoFocus>-</textureNoFocus>
       <hyperlink>6</hyperlink>
       <label>3</label>
-      <font>fontB12</font>
+      <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
 			<textalign>left</textalign>   
       <textcolorNoFocus>FF000000</textcolorNoFocus>
