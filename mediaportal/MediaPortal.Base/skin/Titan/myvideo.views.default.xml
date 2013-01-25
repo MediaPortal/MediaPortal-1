@@ -10,7 +10,7 @@
 		<posX>510</posX>
 		<posY>1015</posY>
 		<label>#selecteditem</label>
-		<visible>[[facadeview.list|facadeview.playlist] | facadeview.smallicons | facadeview.largeicons | facadeview.filmstrip | facadeview.coverflow]+Control.IsVisible(50) + !string.equals(#hideinfo, False)</visible>
+		<visible>Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
