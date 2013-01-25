@@ -39,6 +39,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("wrapString")] protected string _userWrapString = "";
+    [XMLSkinElement("allowFadeIn")] private bool _allowFadeIn = true;
 
     private readonly ArrayList _listLabels = new ArrayList();
     private int _currentLabelIndex;
@@ -57,7 +58,6 @@ namespace MediaPortal.GUI.Library
     }
 
     private bool _allowScrolling = true;
-    private bool _allowFadeIn = true;
     private bool _isScrolling;
     private bool _containsProperty;
 
