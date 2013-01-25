@@ -22,7 +22,8 @@
       </control>
 
     
-    <import>BasicHome.BackgroundSelected.xml</import> 
+		<include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
+		<include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.FanartSelected.xml</include>	
 		<include condition="#skin.enable.latest.myVideo">BasicHome.LatestVideo.xml</include>
 		<include condition="#skin.enable.latest.MovingPictures">BasicHome.LatestMovingPictures.xml</include>
 		<include condition="#skin.enable.latest.Series">BasicHome.LatestTVSeries.xml</include>
