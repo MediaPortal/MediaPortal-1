@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("application")] protected string _application = "";
     [XMLSkinElement("arguments")] protected string _arguments = "";
     [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
@@ -319,12 +320,18 @@ namespace MediaPortal.GUI.Library
         labelWidth = _width - 2 * _textOffsetX;
       }
 
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
         return;
       }
       _labelControl.Width = labelWidth;
+
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
@@ -355,7 +362,11 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          x = _positionX + _width / 2 - labelWidth / 2;
+          if (labelWidth > _width)
+          {
+            x += TextOffsetX;
+          }
           break;
       }
 
@@ -370,7 +381,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case VAlignment.ALIGN_MIDDLE:
-          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          y = _positionY + _height / 2 - _labelControl.Height / 2;
           break;
       }
 

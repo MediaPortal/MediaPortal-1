@@ -2270,7 +2270,7 @@
     <String id="300166">Strip artist prefix (The Who -&gt; Who, The)</String>
     <String id="300167">Treat tracks in folder as an album</String>
     <String id="300168">Use for thumb creation</String>
-    <String id="300169">folder.jpg (recommended)</String>
+    <String id="300169">folder.jpg</String>
     <String id="300170">*.png, *jpg (prefers front cover)</String>
     <String id="300171">Cover art embedded in ID3-Tags</String>
     <String id="300172">Create genre preview thumbs</String>

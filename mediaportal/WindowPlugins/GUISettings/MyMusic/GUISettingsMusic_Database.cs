@@ -88,10 +88,10 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
+        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         btnCreateartistthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         btnCreategenrethumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", false);
         btnUseAllImages.Selected = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
                                                              btnUseFolderThumbs.Selected);
         btnTreatFolderAsAlbum.Selected = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
