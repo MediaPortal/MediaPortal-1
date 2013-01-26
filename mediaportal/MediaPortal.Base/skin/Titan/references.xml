@@ -132,6 +132,7 @@
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
     <textureFocus>settings_button_large_focus.png</textureFocus>
+    <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
     <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
@@ -654,7 +655,6 @@
     <font>font12</font>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <textcolor>white</textcolor>
-    <allowFadeIn>no</allowFadeIn> 
     <wrapString> | </wrapString>
   </control>
   <control>
