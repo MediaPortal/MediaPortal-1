@@ -204,7 +204,9 @@ namespace MediaPortal.MusicPlayer.BASS
             if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
             {
               Log.Warn("BASS: Stream can't be played in WASAPI exclusive mode. Switch to WASAPI shared mode.");
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED;
+
+              // TODO: change to BASS Net flag, once it has been uopdated within BASS.Net
+              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | (BASSWASAPIInit)16;
 
               BASS_WASAPI_DEVICEINFO deviceinfo = BassWasapi.BASS_WASAPI_GetDeviceInfo(_bassPlayer.DeviceNumber);
               frequency = deviceinfo.mixfreq;
