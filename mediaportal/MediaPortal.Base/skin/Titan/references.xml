@@ -655,6 +655,7 @@
     <font>font12</font>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <textcolor>white</textcolor>
+		<allowFadeIn>no</allowFadeIn>
     <wrapString> | </wrapString>
   </control>
   <control>
