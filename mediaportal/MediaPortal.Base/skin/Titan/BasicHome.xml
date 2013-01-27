@@ -4,6 +4,18 @@
 <defaultcontrol>4</defaultcontrol>
 <allowoverlay>yes</allowoverlay>
 <disabletopbar>no</disabletopbar>
+<define>#useRandomGamesUserFanart:Yes</define>
+<define>#useRandomMoviesUserFanart:Yes</define>
+<define>#useRandomMoviesScraperFanart:Yes</define>
+<define>#useRandomMovingPicturesFanart:Yes</define>
+<define>#useRandomMusicUserFanart:Yes</define>
+<define>#useRandomMusicScraperFanart:Yes</define>
+<define>#useRandomPicturesUserFanart:Yes</define>
+<define>#useRandomPluginsUserFanart:Yes</define>
+<define>#useRandomScoreCenterUserFanart:Yes</define> 
+<define>#useRandomTVUserFanart:Yes</define>
+<define>#useRandomTVSeriesFanart:Yes</define>
+
 <define>#header.label:Home</define>
 <rememberLastFocusedControl>yes</rememberLastFocusedControl>
 
