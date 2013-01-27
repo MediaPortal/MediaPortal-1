@@ -569,7 +569,7 @@
 		<id>20</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
@@ -608,7 +608,7 @@
 		<id>23</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
