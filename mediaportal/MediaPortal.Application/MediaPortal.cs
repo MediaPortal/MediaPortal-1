@@ -1313,19 +1313,20 @@ public class MediaPortalApp : D3D, IRender
           {
             case WA_INACTIVE:
               Log.Info("Main: Deactivation Request Received");
-              if (RefreshRateChanger.RefreshRateChangRunning)
+              if (RefreshRateChanger.RefreshRateChangeRunning)
               {
-                Log.Info("Main: Refresh rate change in progress. Ignoring deactivation request");
+                Log.Info("Main: Refresh rate changer running. Ignoring deactivation request");
+                RefreshRateChanger.RefreshRateChangeRunning = false;
               }
               else
               {
-                MinimizeToTray(false);
+                MinimizeToTray();
               }
               break;
             case WA_ACTIVE:
             case WA_CLICKACTIVE:
               Log.Info("Main: Activation Request Received");
-              RestoreFromTray(false);
+              RestoreFromTray();
               break;
           }
           msg.Result = (IntPtr)0;
@@ -1338,7 +1339,7 @@ public class MediaPortalApp : D3D, IRender
             // user clocked on minimize button
             case SC_MINIMIZE:
               Log.Debug("Main: SC_MINIMIZE");
-              MinimizeToTray(false);
+              MinimizeToTray();
               break;
 
             // windows wants to start the screen saver
@@ -1647,7 +1648,7 @@ public class MediaPortalApp : D3D, IRender
     if (MinimizeOnStartup && FirstTimeWindowDisplayed)
     {
       Log.Info("D3D: Minimizing to tray on startup");
-      MinimizeToTray(false);
+      MinimizeToTray();
       FirstTimeWindowDisplayed = false;
     }
     base.OnShown(e);
@@ -1714,6 +1715,7 @@ public class MediaPortalApp : D3D, IRender
   /// <summary>
   /// OnStartup() gets called just before the application starts
   /// </summary>
+  // TODO
   protected override void OnStartup()
   {
     Log.Info("Main: Starting up");
@@ -1721,7 +1723,7 @@ public class MediaPortalApp : D3D, IRender
     // Restore minimized MP main window as soon as possible
     if (!Windowed)
     {
-      RestoreFromTray(true);
+      RestoreFromTray();
     }
 
     // Initializing input devices...
@@ -2679,7 +2681,7 @@ public class MediaPortalApp : D3D, IRender
 
         case Action.ActionType.ACTION_MPRESTORE:
           Log.Info("Main: Restore MP by action");
-          RestoreFromTray(false);
+          RestoreFromTray();
           if ((g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD) && Volume > 0)
           {
             g_Player.Volume = Volume;
@@ -3025,7 +3027,7 @@ public class MediaPortalApp : D3D, IRender
     if (MinimizeOnGuiExit && !ShuttingDown)
     {
       Log.Info("Main: Minimizing to tray on GUI exit");
-      MinimizeToTray(false);
+      MinimizeToTray();
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
@@ -3398,7 +3400,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void NotifyIconRestore(Object sender, EventArgs e)
   {
-    RestoreFromTray(false);
+    RestoreFromTray();
   }
 
   #endregion
@@ -3485,7 +3487,7 @@ public class MediaPortalApp : D3D, IRender
                 g_Player.Pause();
               }
             }
-            RestoreFromTray(false);
+            RestoreFromTray();
           }
           break;
 
@@ -3532,7 +3534,7 @@ public class MediaPortalApp : D3D, IRender
     {
       TopMost = false;
       _restoreTopMost = true;
-      MinimizeToTray(false);
+      MinimizeToTray();
     }
   }
 
@@ -3546,7 +3548,7 @@ public class MediaPortalApp : D3D, IRender
   {
     if (_restoreTopMost)
     {
-      RestoreFromTray(false);
+      RestoreFromTray();
       TopMost = true;
       _restoreTopMost = false;
     }

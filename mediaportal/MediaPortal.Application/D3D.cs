@@ -746,7 +746,7 @@ namespace MediaPortal
     /// <summary>
     /// Restores MP from System Tray
     /// </summary>
-    protected void RestoreFromTray(bool force)
+    protected void RestoreFromTray()
     {
       // do nothing if we are closing
       if (_isClosing)
@@ -755,7 +755,7 @@ namespace MediaPortal
       }
 
       // only restore if not visible
-      if (!IsVisible || force)
+      if (!IsVisible)
       {
         Log.Info("D3D: Restoring from tray");
         IsVisible = true;
@@ -793,7 +793,7 @@ namespace MediaPortal
     /// <summary>
     /// Minimized MP To System Tray
     /// </summary>
-    protected void MinimizeToTray(bool force)
+    protected void MinimizeToTray()
     {
       // do nothing if we are closing
       if (_isClosing)
@@ -802,7 +802,7 @@ namespace MediaPortal
       }
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode
-      if (IsVisible && ((_lostFocus && Windowed) || !Windowed || force))
+      if (IsVisible && ((_lostFocus && Windowed) || !Windowed))
       {
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
@@ -1381,7 +1381,7 @@ namespace MediaPortal
       Log.Info("D3D: OnSetup - Stopping media");
       g_Player.Stop();
 
-      MinimizeToTray(false);
+      MinimizeToTray();
 
       using (Settings xmlreader = new MPSettings())
       {
@@ -1660,7 +1660,7 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void NotifyIconRestore(Object sender, EventArgs e)
     {
-      RestoreFromTray(false);
+      RestoreFromTray();
     }
 
 
@@ -2000,7 +2000,7 @@ namespace MediaPortal
         Log.Info("D3D: Minimizing to tray on GUI exit");
         _isClosing = false;
         e.Cancel = true;
-        MinimizeToTray(false);
+        MinimizeToTray();
       }
       _isClosing = true;
       base.OnClosing(e);

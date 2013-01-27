@@ -241,7 +241,7 @@ namespace MediaPortal.Player
     {
       public SuicideForm()
       {
-        RefreshRateChanger.RefreshRateChangRunning = true;
+        RefreshRateChanger.RefreshRateChangeRunning = true;
         Thread.Sleep(500);
         Activated += SuicideFormActivated;
         Opacity = 0;
@@ -251,8 +251,6 @@ namespace MediaPortal.Player
       {
         Activated -= SuicideFormActivated;
         base.Dispose(disposing);
-        Thread.Sleep(250);
-        RefreshRateChanger.RefreshRateChangRunning = false;
       }
 
       private void SuicideFormActivated(Object sender, EventArgs e)
@@ -872,7 +870,7 @@ namespace MediaPortal.Player
 
     #region public properties
 
-    public static bool RefreshRateChangRunning { get; set; }
+    public static bool RefreshRateChangeRunning { get; set; }
 
     public static bool RefreshRateChangePending
     {
