@@ -230,6 +230,13 @@ namespace MediaPortal.MusicPlayer.BASS
               _wasapiMixedFreq = 0;
             }
           }
+          else
+          {
+            Log.Debug("BASS: Init WASAPI shared mode with Event driven system enabled.");
+
+            // TODO: change to BASS Net flag, once it has been uopdated within BASS.Net
+            initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | (BASSWASAPIInit)16;
+          }
 
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, frequency, chans,
                                       initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))

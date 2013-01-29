@@ -143,8 +143,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private float _cueTrackStartPos = 0;
     private float _cueTrackEndPos = 0;
 
-    private TAG_INFO _tagInfo;
-
     #endregion
 
     #region Properties
@@ -2213,41 +2211,6 @@ namespace MediaPortal.MusicPlayer.BASS
     #endregion
 
     #region  Public Methods
-
-    /// <summary>
-    /// Returns the Tags of an AV Stream
-    /// </summary>
-    /// <returns></returns>
-    public MusicTag GetStreamTags()
-    {
-      MusicTag tag = new MusicTag();
-      if (_tagInfo == null)
-      {
-        return tag;
-      }
-
-      // So let's filter it out ourself
-      string title = _tagInfo.title;
-      int streamUrlIndex = title.IndexOf("';StreamUrl=");
-      if (streamUrlIndex > -1)
-      {
-        title = _tagInfo.title.Substring(0, streamUrlIndex);
-      }
-
-      tag.Album = _tagInfo.album;
-      tag.Artist = _tagInfo.artist;
-      tag.Title = title;
-      tag.Genre = _tagInfo.genre;
-      try
-      {
-        tag.Year = Convert.ToInt32(_tagInfo.year);
-      }
-      catch (FormatException)
-      {
-        tag.Year = 0;
-      }
-      return tag;
-    }
 
     /// <summary>
     /// Switches the Playback to Gapless
