@@ -60,9 +60,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>454</posY>
-			<width>250</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.movingpicture.latest1.title</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -76,12 +76,12 @@
       <description>Movie 1 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>454</posY>
-			<width>350</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
+			<font>font12</font>
+			<align>right</align>
       <label>#latestMediaHandler.movingpicture.latest1.year</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -114,9 +114,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>490</posY>
-			<width>350</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.movingpicture.latest2.title</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -130,12 +130,12 @@
       <description>Movie 2 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>490</posY>
-			<width>350</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
+			<font>font12</font>
+			<align>right</align>
       <label>#latestMediaHandler.movingpicture.latest2.year</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -168,9 +168,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>528</posY>
-			<width>350</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.movingpicture.latest3.title</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -184,12 +184,12 @@
       <description>Movie 3 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>528</posY>
-			<width>350</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
+			<font>font12</font>
+			<align>right</align>
       <label>#latestMediaHandler.movingpicture.latest3.year</label>
       <visible>control.hasfocus(6)+string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>

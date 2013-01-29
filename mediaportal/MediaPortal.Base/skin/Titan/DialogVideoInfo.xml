@@ -569,7 +569,7 @@
 		<id>20</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
@@ -608,7 +608,7 @@
 		<id>23</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
@@ -628,22 +628,6 @@
 		<width>550</width>
 		<height>73</height>
 		<texture>logoframe.png</texture>
-		<visible>!Control.IsVisible(24)</visible>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
-	</control>
-			
-	<control>
-		<description>certification logo</description>
-		<type>image</type>
-		<id>101</id>
-		<posX>806</posX>
-		<posY>888</posY>
-		<width>60</width>
-		<height>60</height>
-    <keepaspectratio>yes</keepaspectratio>
-    <centered>yes</centered>
-		<texture>certification\#MovingPictures.SelectedMovie.certification.png</texture>
 		<visible>!Control.IsVisible(24)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
