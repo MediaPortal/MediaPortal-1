@@ -37,6 +37,7 @@
 		<onright>200</onright>
 		<onleft>400</onleft>
 		<onup>500</onup>
+		<ondown>700</ondown>
 	  <animation effect="fade" time="250" condition="!control.isvisible(2000)">conditional</animation>
  		<animation effect="slide" start="700" end="0" time="600">visible</animation>
 		<animation effect="fade" time="250">visible</animation>
