@@ -95,15 +95,6 @@
 </font>
 
 <font>
-	<name>fontB22</name>
-	<filename>TitanMedium</filename>
-	<height>22</height>
-	<start>0</start>
-	<end>1536</end>
-	<bold>yes</bold>
-</font>
-
-<font>
 	<name>TitanLight10</name>
 	<filename>TitanLight</filename>
 	<height>10</height>
@@ -153,6 +144,15 @@
 	<name>TitanLight20</name>
 	<filename>TitanLight</filename>
 	<height>20</height>
+	<start>0</start>
+	<end>1536</end>
+	<bold>no</bold>
+</font>
+
+<font>
+	<name>TitanLight22</name>
+	<filename>TitanLight</filename>
+	<height>22</height>
 	<start>0</start>
 	<end>1536</end>
 	<bold>no</bold>
