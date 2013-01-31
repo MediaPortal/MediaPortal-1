@@ -134,10 +134,9 @@ namespace MediaPortal.GUI.Video
     public static int TotalMovieDuration;
     public static ArrayList StackedMovieFiles = new ArrayList();
     public static bool IsStacked;
-
-    private List<GUIListItem> _cachedItems = new List<GUIListItem>();
-    private string _cachedDir;
-
+    // Cache
+    private static Dictionary<string, List<GUIListItem>> _cachedItems = new Dictionary<string, List<GUIListItem>>();
+    
     private bool _resetSMSsearch;
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
@@ -173,6 +172,8 @@ namespace MediaPortal.GUI.Video
     private bool _doNotUseDatabase = false;
     
     private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
+
+    private static VideosShareWatcherHelper _watcher = null;
 
     #endregion
 
@@ -212,6 +213,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
+      StartVideosShareWatcher();
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myVideo.xml"));
     }
 
@@ -284,7 +286,7 @@ namespace MediaPortal.GUI.Video
           _currentSelectedItem--;
         }
 
-        LoadDirectory(_currentFolder);
+        LoadDirectory(_currentFolder, true);
 
         if (_currentSelectedItem >= 0)
         {
@@ -401,7 +403,7 @@ namespace MediaPortal.GUI.Video
         if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           _history.Set("0", _currentFolder);
-          LoadDirectory(item.Path);
+          LoadDirectory(item.Path, true);
           return;
         }
       }
@@ -412,7 +414,7 @@ namespace MediaPortal.GUI.Video
         if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           _history.Set("0", _currentFolder);
-          LoadDirectory(item.Path);
+          LoadDirectory(item.Path, true);
         }
         return;
       }
@@ -449,12 +451,12 @@ namespace MediaPortal.GUI.Video
         Reset();
       }
       
-      if (!IsVideoWindow(PreviousWindowId) && IsFolderPinProtected(_cachedDir))
+      if (!IsVideoWindow(PreviousWindowId) && IsFolderPinProtected(_currentFolder))
       {
         //when the user left MyVideos completely make sure that we don't use the cache
         //if folder is pin protected and reload the dir completly including PIN request etc.
-        _cachedItems.Clear();
-        _cachedDir = null;
+        _cachedItems.Remove(_currentFolder);
+        Log.Debug("GUIVideoFiles: {0} removed from video cache", _currentFolder);
       }
 
       if (VideoState.StartWindow != GetID)
@@ -503,6 +505,11 @@ namespace MediaPortal.GUI.Video
       else // For real exit (ie.: to home, reset folder history)
       {
         _history.Set("0", _currentFolder);
+
+        if (_watcher == null || !_watcher.IsMonitoring())
+        {
+          _cachedItems.Clear();
+        }
       }
 
       SaveFolderSettings(_currentFolder);
@@ -528,7 +535,7 @@ namespace MediaPortal.GUI.Video
             if (Util.Utils.IsDVD(_currentFolder))
             {
               _currentFolder = string.Empty;
-              LoadDirectory(_currentFolder);
+              LoadDirectory(_currentFolder, false);
             }
           }
           break;
@@ -551,7 +558,7 @@ namespace MediaPortal.GUI.Video
             GUIWindowManager.ReplaceWindow(GetID);
           }
           _currentFolder = message.Label;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, true);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
@@ -563,7 +570,7 @@ namespace MediaPortal.GUI.Video
               _virtualDirectory.AddRemovableDrive(message.Label, message.Label2);
             }
           }
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
@@ -575,7 +582,7 @@ namespace MediaPortal.GUI.Video
           {
             _currentFolder = string.Empty;
           }
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
@@ -583,12 +590,130 @@ namespace MediaPortal.GUI.Video
           if (_currentFolder == string.Empty || _currentFolder.Substring(0, 2) == message.Label)
           {
             _currentFolder = string.Empty;
-            LoadDirectory(_currentFolder);
+            LoadDirectory(_currentFolder, false);
           }
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
           OnPlayDVD(message.Label, GetID);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED:
+          try
+          {
+            int selectedItem = facadeLayout.SelectedListItemIndex;
+            string deletedFileDirectory = Path.GetDirectoryName(message.Object.ToString());
+            
+            if (deletedFileDirectory != _currentFolder)
+            {
+              break;
+            }
+
+            LoadDirectory(_currentFolder, false);
+
+            if (selectedItem >= 0)
+            {
+              if (selectedItem >= facadeLayout.Count)
+              {
+                selectedItem = facadeLayout.Count - 1;
+              }
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED:
+          try
+          {
+            int selectedItem = facadeLayout.SelectedListItemIndex;
+            string createdFileDirectory = Path.GetDirectoryName(message.Object.ToString());
+            
+            if (createdFileDirectory != _currentFolder)
+            {
+              break;
+            }
+
+            LoadDirectory(_currentFolder, false);
+
+            if (selectedItem >= 0)
+            {
+              if (selectedItem >= facadeLayout.Count)
+              {
+                selectedItem = facadeLayout.Count - 1;
+              }
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED:
+          try
+          {
+            int selectedItem = facadeLayout.SelectedListItemIndex;
+
+            if (string.IsNullOrEmpty(_currentFolder))
+            {
+              break;
+            }
+            
+            // Is current folder deleted?
+            if (!Directory.Exists(_currentFolder))
+            {
+              _currentFolder = _virtualDirectory.CurrentShare;
+              selectedItem = -1;
+            }
+
+            LoadDirectory(_currentFolder, true);
+            
+            if (selectedItem >= 0)
+            {
+              if (selectedItem >= facadeLayout.Count)
+              {
+                selectedItem = facadeLayout.Count - 1;
+              }
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED:
+          try
+          {
+            int selectedItem = facadeLayout.SelectedListItemIndex;
+            string createdDirectoryParent = Path.GetDirectoryName(message.Object.ToString());
+
+            if (createdDirectoryParent != _currentFolder)
+            {
+              break;
+            }
+
+            LoadDirectory(_currentFolder, false);
+
+            if (selectedItem >= 0)
+            {
+              if (selectedItem >= facadeLayout.Count)
+              {
+                selectedItem = facadeLayout.Count - 1;
+              }
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
           break;
       }
       return base.OnMessage(message);
@@ -637,7 +762,7 @@ namespace MediaPortal.GUI.Video
           _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
         }
         
-        LoadDirectory(path);
+        LoadDirectory(path, true);
       }
       else
       {
@@ -1098,7 +1223,7 @@ namespace MediaPortal.GUI.Video
       }
       else if (item.IsRemote || (item.IsFolder) && (item.Label == ".."))
       {
-        return;
+        dlg.AddLocalizedString(1299); // Refresh current directory
       }
       else
       {
@@ -1275,7 +1400,7 @@ namespace MediaPortal.GUI.Video
           {
             Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
           }
-          LoadDirectory(string.Empty);
+          LoadDirectory(string.Empty, false);
           break;
 
         case 341: //Play dvd
@@ -1284,13 +1409,13 @@ namespace MediaPortal.GUI.Video
 
         case 346: //Stack
           _mapSettings.Stack = true;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           UpdateButtonStates();
           break;
 
         case 347: //Unstack
           _mapSettings.Stack = false;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, false);
           UpdateButtonStates();
           break;
 
@@ -1335,7 +1460,7 @@ namespace MediaPortal.GUI.Video
             // Send global message that movie is refreshed/scanned
             GUIMessage scanNfoMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(scanNfoMsg);
-            LoadDirectory(_currentFolder);
+            LoadDirectory(_currentFolder, true);
             facadeLayout.SelectedListItemIndex = currentIndex;
           }
           else
@@ -1346,7 +1471,7 @@ namespace MediaPortal.GUI.Video
             // Send global message that movie is refreshed/scanned
             GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(scanMsg);
-            LoadDirectory(_currentFolder);
+            LoadDirectory(_currentFolder, true);
             facadeLayout.SelectedListItemIndex = currentIndex;
           }
           break;
@@ -1389,14 +1514,14 @@ namespace MediaPortal.GUI.Video
           // Send global message that movie is refreshed/scanned
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, true);
           facadeLayout.SelectedListItemIndex = currentIndex;
           break;
 
         case 830: // Reset watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, false);
           int selectedIndex = facadeLayout.SelectedListItemIndex;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, true);
           UpdateButtonStates();
           facadeLayout.SelectedListItemIndex = selectedIndex;
           break;
@@ -1404,7 +1529,7 @@ namespace MediaPortal.GUI.Video
         case 1260: // Set watched status
           SetMovieWatchStatus(item.Path, item.IsFolder, true);
           selectedIndex = facadeLayout.SelectedListItemIndex;
-          LoadDirectory(_currentFolder);
+          LoadDirectory(_currentFolder, true);
           UpdateButtonStates();
           facadeLayout.SelectedListItemIndex = selectedIndex;
           break;
@@ -1527,6 +1652,34 @@ namespace MediaPortal.GUI.Video
       }
 
       base.Process();
+    }
+
+    public static void StartVideosShareWatcher()
+    {
+      if (_watcher == null)
+      {
+        _watcher = new VideosShareWatcherHelper();
+        _watcher.SetMonitoring(true);
+        _watcher.StartMonitor();
+      }
+      else
+      {
+        if (!_watcher.IsMonitoring())
+        {
+          _watcher.SetMonitoring(true);
+          _watcher.StartMonitor();
+        }
+      }
+    }
+
+    public static void StopVideosShareWatcher()
+    {
+      if (_watcher != null)
+      {
+        _watcher.SetMonitoring(false);
+        _watcher.ChangeMonitoring(false);
+        _watcher = null;
+      }
     }
 
     #endregion
@@ -2518,6 +2671,12 @@ namespace MediaPortal.GUI.Video
       get { return _internalGrabber; }
     }
 
+    public static Dictionary<string, List<GUIListItem>> CachedItems
+    {
+      get {return CachedItems = _cachedItems ; }
+      set { _cachedItems = value; }
+    }
+
     #endregion
 
     #region Private methods
@@ -2570,9 +2729,10 @@ namespace MediaPortal.GUI.Video
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
-      if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
+      if (useCache && !string.IsNullOrEmpty(_currentFolder) && _cachedItems != null && 
+          _cachedItems.ContainsKey(_currentFolder) && _cachedItems[_currentFolder].Any())
       {
-        itemlist = _cachedItems;
+        itemlist = _cachedItems[_currentFolder];
         int currentItemIndex = 0;
         
         foreach (GUIListItem item in itemlist)
@@ -2846,14 +3006,24 @@ namespace MediaPortal.GUI.Video
       facadeLayout.Sort(new VideoSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
 
-      if (_cachedItems != null)
+      if (_cachedItems != null && !string.IsNullOrEmpty(_currentFolder))
       {
-        _cachedItems.Clear();
-        _cachedItems.AddRange(facadeLayout.ListLayout.ListItems);
+        List<GUIListItem> items = new List<GUIListItem>(facadeLayout.ListLayout.ListItems);
+
+        if (!_cachedItems.ContainsKey(_currentFolder))
+        {
+          _cachedItems.Add(_currentFolder, items);
+          Log.Debug("GUIVideoFiles: {0} added to video cache", _currentFolder);
+        }
+        else
+        {
+          // Refresh cache
+          _cachedItems.Remove(_currentFolder);
+          _cachedItems.Add(_currentFolder, items);
+          Log.Debug("GUIVideoFiles: {0} added to video cache", _currentFolder);
+        }
       }
 
-      _cachedDir = _currentFolder;
-      
       // Update thumbs for all items (cached also - > cover can be changed in VideoInfoScreen and if we do
       // not update cover, old one will be visible)
       SetImdbThumbs(itemlist, selectDvdHandler);
@@ -3031,6 +3201,18 @@ namespace MediaPortal.GUI.Video
       string[] extensions = _externalPlayerExtensions.Split(splitter);
 
       foreach (string extension in extensions)
+      {
+        if (extension.Trim().Equals(Path.GetExtension(filename), StringComparison.InvariantCultureIgnoreCase))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public static bool CheckVideoExtension(string filename)
+    {
+      foreach (string extension in Util.Utils.VideoExtensions)
       {
         if (extension.Trim().Equals(Path.GetExtension(filename), StringComparison.InvariantCultureIgnoreCase))
         {
@@ -3662,7 +3844,7 @@ namespace MediaPortal.GUI.Video
             if (Util.Utils.IsDVD(_currentFolder))
             {
               _currentFolder = string.Empty;
-              LoadDirectory(_currentFolder);
+              LoadDirectory(_currentFolder, false);
             }
           }
           break;
@@ -3820,7 +4002,7 @@ namespace MediaPortal.GUI.Video
       _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
       facadeLayout.EnableSMSsearch = false;
 
-      if (dlgFile.Reload())
+      if (dlgFile.Reload() && _watcher == null)
       {
         int selectedItem = facadeLayout.SelectedListItemIndex;
 
@@ -3829,7 +4011,7 @@ namespace MediaPortal.GUI.Video
           selectedItem = -1;
         }
 
-        LoadDirectory(_currentFolder);
+        LoadDirectory(_currentFolder, false);
 
         if (selectedItem >= 0)
         {

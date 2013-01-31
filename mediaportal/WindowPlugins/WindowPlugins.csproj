@@ -275,6 +275,15 @@
     <Compile Include="GUISettings\MyPictures\GUISettingsPictures.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIVideoFiles\VideosFileWatcher\DelayedVideosFileSystemWatcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\VideosFileWatcher\VideosShareWatcherEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\VideosFileWatcher\VideosShareWatcherHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="StateBase.cs" />
     <Compile Include="WindowPluginBase.cs" />
     <Compile Include="GUIDisc\GUIDisc.cs" />

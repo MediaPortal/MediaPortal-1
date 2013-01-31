@@ -1108,9 +1108,56 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED:
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED:
+          try
+          {
+            currentSelectedItem = facadeLayout.SelectedListItemIndex;
+
+            if (currentSelectedItem > 0)
+            {
+              currentSelectedItem--;
+            }
+
+            LoadDirectory(currentFolder);
+
+            if (currentSelectedItem >= 0)
+            {
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED:
+          // Is new file in scanshare??
+          if (message.Param2 > 0)
+          {
+            // To do
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED:
+          // Is new directory in scanshare??
+          if (message.Param2 > 0)
+          {
+            // To do
+          }
+          break;
+      }
+      return base.OnMessage(message);
+    }
     
     #endregion
-
+    
     private void SetLabel(GUIListItem item)
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;

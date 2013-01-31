@@ -3193,7 +3193,7 @@ namespace MediaPortal.Video.Database
         DeleteSingleMovie(strFilenameAndPath);
     }
 
-    private void DeleteMoviesInFolder(string strPath)
+    public void DeleteMoviesInFolder(string strPath)
     {
       SQLiteResultSet results = m_db.Execute("SELECT idPath,strPath FROM path WHERE strPath LIKE '" + strPath + "%'");
       SortedDictionary<string, string> pathList = new SortedDictionary<string, string>();
