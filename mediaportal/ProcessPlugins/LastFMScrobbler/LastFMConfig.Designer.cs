@@ -48,16 +48,19 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LastFMConfig));
       this.btnAuthenticate = new System.Windows.Forms.Button();
       this.btnSecond = new System.Windows.Forms.Button();
       this.chkAutoDJ = new System.Windows.Forms.CheckBox();
       this.numRandomness = new System.Windows.Forms.NumericUpDown();
+      this.pictureBox1 = new System.Windows.Forms.PictureBox();
       ((System.ComponentModel.ISupportInitialize)(this.numRandomness)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // btnAuthenticate
       // 
-      this.btnAuthenticate.Location = new System.Drawing.Point(93, 42);
+      this.btnAuthenticate.Location = new System.Drawing.Point(214, 13);
       this.btnAuthenticate.Name = "btnAuthenticate";
       this.btnAuthenticate.Size = new System.Drawing.Size(99, 23);
       this.btnAuthenticate.TabIndex = 0;
@@ -68,7 +71,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // btnSecond
       // 
       this.btnSecond.Enabled = false;
-      this.btnSecond.Location = new System.Drawing.Point(93, 101);
+      this.btnSecond.Location = new System.Drawing.Point(214, 65);
       this.btnSecond.Name = "btnSecond";
       this.btnSecond.Size = new System.Drawing.Size(99, 23);
       this.btnSecond.TabIndex = 1;
@@ -81,7 +84,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.chkAutoDJ.AutoSize = true;
       this.chkAutoDJ.Checked = true;
       this.chkAutoDJ.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkAutoDJ.Location = new System.Drawing.Point(50, 163);
+      this.chkAutoDJ.Location = new System.Drawing.Point(38, 105);
       this.chkAutoDJ.Name = "chkAutoDJ";
       this.chkAutoDJ.Size = new System.Drawing.Size(94, 17);
       this.chkAutoDJ.TabIndex = 2;
@@ -91,7 +94,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       // numRandomness
       // 
-      this.numRandomness.Location = new System.Drawing.Point(50, 187);
+      this.numRandomness.Location = new System.Drawing.Point(38, 129);
       this.numRandomness.Maximum = new decimal(new int[] {
             200,
             0,
@@ -107,18 +110,29 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
             0});
       this.numRandomness.ValueChanged += new System.EventHandler(this.numRandomness_ValueChanged);
       // 
+      // pictureBox1
+      // 
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Location = new System.Drawing.Point(13, 13);
+      this.pictureBox1.Name = "pictureBox1";
+      this.pictureBox1.Size = new System.Drawing.Size(157, 48);
+      this.pictureBox1.TabIndex = 4;
+      this.pictureBox1.TabStop = false;
+      // 
       // LastFMConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(284, 262);
+      this.ClientSize = new System.Drawing.Size(335, 191);
+      this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.numRandomness);
       this.Controls.Add(this.chkAutoDJ);
       this.Controls.Add(this.btnSecond);
       this.Controls.Add(this.btnAuthenticate);
       this.Name = "LastFMConfig";
-      this.Text = "LastFMConfig";
+      this.Text = "Scrobbler Configuration";
       ((System.ComponentModel.ISupportInitialize)(this.numRandomness)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -130,5 +144,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private System.Windows.Forms.Button btnSecond;
     private System.Windows.Forms.CheckBox chkAutoDJ;
     private System.Windows.Forms.NumericUpDown numRandomness;
+    private System.Windows.Forms.PictureBox pictureBox1;
   }
 }

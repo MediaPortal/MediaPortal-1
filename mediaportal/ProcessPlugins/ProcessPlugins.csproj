@@ -202,7 +202,7 @@
       <Name>MusicShareWatcherHelper</Name>
     </ProjectReference>
     <Reference Include="System" />
-	<Reference Include="System.Core" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -255,6 +255,9 @@
     </Compile>
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
+    <EmbeddedResource Include="LastFMScrobbler\LastFMConfig.resx">
+      <DependentUpon>LastFMConfig.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
