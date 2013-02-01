@@ -321,8 +321,9 @@ namespace MediaPortal.LastFM
     /// Gets the playlist of radio station (will only be a small number of tracks)
     /// </summary>
     /// <returns>A list of tracks</returns>
-    public static List<LastFMStreamingTrack> GetRadioPlaylist()
+    public static bool GetRadioPlaylist(out List<LastFMStreamingTrack> tracks)
     {
+      tracks = new List<LastFMStreamingTrack>();
       var parms = new Dictionary<string, string>();
       const string methodName = "radio.getPlaylist";
       parms.Add("bitrate", "128");
@@ -335,6 +336,7 @@ namespace MediaPortal.LastFM
       {
         Log.Error("Invalid Response from last.fm request");
         Log.Error("{0}", lastFMResponseXML);
+        return false;
       }
 
       var y = XDocument.Parse(lastFMResponseXML);
@@ -349,7 +351,8 @@ namespace MediaPortal.LastFM
                           Identifier = int.Parse(a.Element(ns + "identifier").Value),
                           ImageURL = a.Element(ns + "image").Value
                         }).ToList();
-      return z;
+      tracks = z;
+      return true;
 
     }
 

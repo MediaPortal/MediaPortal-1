@@ -494,6 +494,10 @@ namespace MediaPortal.GUI.Music
         dlg.AddLocalizedString(33041);
       }
 
+      //TODO: need to only show if last.fm enabled
+      dlg.AddLocalizedString(34010);  //last.fm love
+      dlg.AddLocalizedString(34011);  //last.fm ban
+
       dlg.DoModal(GetID);
 
       // The ImgCoverArt visibility gets restored when a context menu is popped up.
@@ -1000,7 +1004,7 @@ namespace MediaPortal.GUI.Music
         PreviousTrackTag = CurrentTrackTag;
       }
 
-      bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName);
+      bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName) && !Util.Utils.IsLastFMStream(CurrentTrackFileName);
       if (isInternetStream && _usingBassEngine)
       {
         NextTrackTag = null;

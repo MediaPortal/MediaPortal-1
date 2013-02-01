@@ -701,7 +701,8 @@ namespace MediaPortal.GUI.Music
       // but user can udpate the playlist without firing g_player events
       // make sure the next track details shown are correct
       if ((_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC) ||
-          (!_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC_TEMP))
+          (!_playlistIsCurrent && nPlayList == PlayListType.PLAYLIST_MUSIC_TEMP) ||
+          (nPlayList == PlayListType.PLAYLIST_LAST_FM))
       {
         var nextFilename = playlistPlayer.GetNext();
         if (!string.IsNullOrEmpty(nextFilename))
@@ -719,7 +720,7 @@ namespace MediaPortal.GUI.Music
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
     {
-      var isInternetStream = Util.Utils.IsAVStream(filename);
+      var isInternetStream = Util.Utils.IsAVStream(filename) && !Util.Utils.IsLastFMStream(filename);
       MusicTag tag;
 
       if (string.IsNullOrEmpty(filename))
@@ -734,7 +735,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // When Playing an Internet Stream, via BASS, skin properties are set during the Play method in BassAudio.cs
-      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream && !Util.Utils.IsLastFMStream(filename))
+      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream)
       {
         return;
       }

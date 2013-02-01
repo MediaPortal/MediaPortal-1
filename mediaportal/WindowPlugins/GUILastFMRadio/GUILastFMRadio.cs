@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -244,8 +245,20 @@ namespace MediaPortal.GUI.LastFMRadio
     /// </summary>
     private void AddMoreTracks()
     {
-      var z = LastFMLibrary.GetRadioPlaylist();
-      foreach (var lastFMTrack in z)
+      List<LastFMStreamingTrack> tracks;
+      if(!LastFMLibrary.GetRadioPlaylist(out tracks))
+      {
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          dlgNotify.SetText("Error getting tracks.  Most likely too many skips.\nWait a while or try another station.");
+          dlgNotify.DoModal(GetID);
+        }
+        return;
+      }
+     
+      foreach (var lastFMTrack in tracks)
       {
         var tag = new MusicTag
         {
