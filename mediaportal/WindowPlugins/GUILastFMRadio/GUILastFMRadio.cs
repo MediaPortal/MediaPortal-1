@@ -289,6 +289,7 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       else
       {
+        Log.Debug("Downloading last.fm thumb for: {0} - {1}", tag.Artist, tag.Title);
         if (!string.IsNullOrEmpty(tag.Lyrics))
         { // download image from last.fm in background thread
           var worker = new BackgroundWorker();
