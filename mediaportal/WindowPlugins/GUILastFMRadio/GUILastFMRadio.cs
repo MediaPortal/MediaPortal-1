@@ -22,9 +22,6 @@ namespace MediaPortal.GUI.LastFMRadio
   public class GUILastFMRadio : GUIWindow, ISetupForm
   {
 
-    protected delegate void UpdateThumbsDelegate(GUIListItem item, string strThumbFile);
-    protected static TempFileCollection tfc;
-
     private enum SkinControls
     {
       USER_RECOMMENDED_BUTTON = 2,
@@ -42,6 +39,8 @@ namespace MediaPortal.GUI.LastFMRadio
     [SkinControlAttribute((int)SkinControls.TAG_BUTTON)] protected GUIButtonControl BtnTag = null;
     [SkinControlAttribute((int)SkinControls.PLAYLIST_CONTROL)] protected GUIFacadeControl PlaylistControl = null;
 
+    protected delegate void UpdateThumbsDelegate(GUIListItem item, string strThumbFile);
+    protected static TempFileCollection tfc;
     private static PlayListPlayer _playlistPlayer;
 
     #region ISetupForm Members
@@ -130,6 +129,8 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #endregion
 
+    #region ctor
+
     public GUILastFMRadio()
     {
       g_Player.PlayBackEnded += OnPlayBackEnded;
@@ -137,6 +138,8 @@ namespace MediaPortal.GUI.LastFMRadio
       g_Player.PlayBackStopped += OnPlayBackStopped;
       tfc = new TempFileCollection();
     }
+
+    #endregion
 
     #region overrides
 
@@ -216,6 +219,10 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #region last.fm code
 
+    /// <summary>
+    /// Tune to a new last.fm radio station and add tracks to playlist
+    /// </summary>
+    /// <param name="strStation"></param>
     private void TuneToStation(string strStation)
     {
 
@@ -232,6 +239,9 @@ namespace MediaPortal.GUI.LastFMRadio
       _playlistPlayer.Play(0);
     }
 
+    /// <summary>
+    /// Get more tracks for the current last.fm radio station and add to playlist
+    /// </summary>
     private void AddMoreTracks()
     {
       var z = LastFMLibrary.GetRadioPlaylist();
@@ -244,8 +254,7 @@ namespace MediaPortal.GUI.LastFMRadio
           Title = lastFMTrack.TrackTitle,
           FileName = lastFMTrack.TrackURL,
           Duration = lastFMTrack.Duration,
-          Lyrics = lastFMTrack.ImageURL, //TODO: this should not be lyrics
-          Rating = lastFMTrack.Identifier //TODO: this should be be rating
+          Lyrics = lastFMTrack.ImageURL //TODO: this should not be lyrics
         };
         var pli = new PlayListItem
         {
@@ -266,71 +275,6 @@ namespace MediaPortal.GUI.LastFMRadio
     }
 
     #endregion
-
-    protected virtual void OnRetrieveCoverArt(GUIListItem item)
-    {
-      Util.Utils.SetDefaultIcons(item);
-      if (item.Label == "..")
-      {
-        return;
-      }
-      MusicTag tag = (MusicTag)item.MusicTag;
-      string trackImgURL = tag.Lyrics;
-      string tmpThumb = GetTemporaryThumbName(trackImgURL);
-
-      string strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
-      if (strThumb != string.Empty)
-      {
-        item.ThumbnailImage = strThumb;
-        item.IconImageBig = strThumb;
-        item.IconImage = strThumb;
-
-        // let us test if there is a larger cover art image
-        string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumb);
-        if (Util.Utils.FileExistsInCache(strLarge))
-        {
-          item.ThumbnailImage = strLarge;
-        }
-      }
-      else if (File.Exists(tmpThumb))
-      {
-        Log.Debug("last.fm thumb already exists for: {0} - {1}", tag.Artist, tag.Title);
-        item.ThumbnailImage = tmpThumb;
-        item.IconImageBig = tmpThumb;
-        item.IconImage = tmpThumb;        
-      }
-      else
-      {
-        Log.Debug("Downloading last.fm thumb for: {0} - {1}", tag.Artist, tag.Title);
-        if (!string.IsNullOrEmpty(trackImgURL))
-        {
-          // download image from last.fm in background thread
-          var worker = new BackgroundWorker();
-          worker.DoWork += (obj, e) => ImageDownloadDoWork(trackImgURL, tmpThumb, item);
-          worker.RunWorkerAsync();
-        }
-      }
-    }
-
-    /// <summary>
-    /// Displays a virtual keyboard
-    /// </summary>
-    /// <param name="aDefaultText">a text which will be preselected</param>
-    /// <returns>the text entered by the user</returns>
-    private string GetInputFromUser(string aDefaultText)
-    {
-      string searchterm = aDefaultText;
-      var keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
-      keyboard.Reset();
-      keyboard.IsSearchKeyboard = false;
-      keyboard.Text = searchterm;
-      keyboard.DoModal(GetID);
-      if (keyboard.IsConfirmed)
-      {
-        searchterm = keyboard.Text;
-      }
-      return searchterm;
-    }
 
     #region g_player events
 
@@ -378,6 +322,10 @@ namespace MediaPortal.GUI.LastFMRadio
       DoOnEnded();
     }
 
+    /// <summary>
+    /// When track changes (either by user switching tracks or previous track ended)
+    /// Remove old tracks from playlist and ensure there is a stock of new tracks
+    /// </summary>
     private void DoOnChanged()
     {
       if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
@@ -398,6 +346,9 @@ namespace MediaPortal.GUI.LastFMRadio
       }
     }
 
+    /// <summary>
+    /// Handle situation where music ends (user pressed stop).   Clear playlist
+    /// </summary>
     private void DoOnEnded()
     {
       if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
@@ -409,6 +360,67 @@ namespace MediaPortal.GUI.LastFMRadio
       _playlistPlayer.Reset();
       LoadPlaylist();
       
+    }
+    
+    #endregion
+
+    #region GUI methods
+
+    protected virtual void OnRetrieveCoverArt(GUIListItem item)
+    {
+      Util.Utils.SetDefaultIcons(item);
+      if (item.Label == "..")
+      {
+        return;
+      }
+      MusicTag tag = (MusicTag)item.MusicTag;
+      string trackImgURL = tag.Lyrics;
+      string tmpThumb = GetTemporaryThumbName(trackImgURL);
+
+      string strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
+      if (strThumb != string.Empty)
+      {
+        UpdateListItemImage(item, strThumb);
+      }
+      else if (File.Exists(tmpThumb))
+      {
+        Log.Debug("last.fm thumb already exists for: {0} - {1}", tag.Artist, tag.Title);
+        item.ThumbnailImage = tmpThumb;
+        item.IconImageBig = tmpThumb;
+        item.IconImage = tmpThumb;
+        UpdateListItemImage(item, tmpThumb);
+      }
+      else
+      {
+        Log.Debug("Downloading last.fm thumb for: {0} - {1}", tag.Artist, tag.Title);
+        if (!string.IsNullOrEmpty(trackImgURL))
+        {
+          // download image from last.fm in background thread
+          var worker = new BackgroundWorker();
+          worker.DoWork += (obj, e) => ImageDownloadDoWork(trackImgURL, tmpThumb, item);
+          worker.RunWorkerAsync();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Displays a virtual keyboard
+    /// </summary>
+    /// <param name="aDefaultText">a text which will be preselected</param>
+    /// <returns>the text entered by the user</returns>
+    private string GetInputFromUser(string aDefaultText)
+    {
+      string searchterm = aDefaultText;
+      var keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      keyboard.Reset();
+      keyboard.IsSearchKeyboard = false;
+      keyboard.Text = searchterm;
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+      {
+        searchterm = keyboard.Text;
+      }
+      return searchterm;
     }
 
     private void LoadPlaylist()
@@ -459,6 +471,8 @@ namespace MediaPortal.GUI.LastFMRadio
 
         PlaylistControl.Add(pItem);
       }
+      //select first item in list (this will update selected thumb skin property)
+      GUIControl.SelectItemControl(GetID, PlaylistControl.GetID, 0);
     }
 
     #endregion
@@ -592,21 +606,33 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #endregion
 
-    #region thumb download
+    #region Thumb download
 
-    private static void ImageDownloadDoWork(string strTrackURL, string tmpThumbName, GUIListItem item)
+    /// <summary>
+    /// Background thread to download thumbs from last.fm where there is no local thumb
+    /// </summary>
+    /// <param name="strTrackImgURL">The URL of the image for track</param>
+    /// <param name="tmpThumbName">Full path to file to download image to</param>
+    /// <param name="item">GUIListItem to which this thumb relates</param>
+    private static void ImageDownloadDoWork(string strTrackImgURL, string tmpThumbName, GUIListItem item)
     {
-      Util.Utils.DownLoadImage(strTrackURL, tmpThumbName);
+      Util.Utils.DownLoadImage(strTrackImgURL, tmpThumbName);
       tfc.AddFile(tmpThumbName, false);
       GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage), item, tmpThumbName);
 
     }
 
+    /// <summary>
+    /// Update Playlist control items with thumbs
+    /// </summary>
+    /// <param name="item">Item to update</param>
+    /// <param name="strThumbFile">Thumb file to use</param>
     private static void UpdateListItemImage(GUIListItem item, string strThumbFile)
     {
       if (item == null) return;
 
-      if (item.Path == g_Player.currentFileName)
+      var pli = _playlistPlayer.GetCurrentItem();
+      if (item.Path == pli.FileName)
       {
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumbFile);
       }
@@ -614,12 +640,32 @@ namespace MediaPortal.GUI.LastFMRadio
       item.ThumbnailImage = strThumbFile;
       item.IconImageBig = strThumbFile;
       item.IconImage = strThumbFile;
+
+      // let us test if there is a larger cover art image
+      string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumbFile);
+      if (Util.Utils.FileExistsInCache(strLarge))
+      {
+        item.ThumbnailImage = strLarge;
+      }
     }
 
+    /// <summary>
+    /// Generate a standard file name in %TEMP% that will be used for downloaded thumbs from last.fm
+    /// </summary>
+    /// <param name="strUrl">URL of image</param>
+    /// <returns>full file path to temporary file</returns>
     private static string GetTemporaryThumbName(string strUrl)
     {
-      var s = new Uri(strUrl);
-      return Path.Combine(Path.GetTempPath(), string.Format("MP-Lastfm-{0}", Path.GetFileName(s.LocalPath)));
+      if (string.IsNullOrEmpty(strUrl)) return string.Empty;
+      try
+      {
+        var s = new Uri(strUrl);
+        return Path.Combine(Path.GetTempPath(), string.Format("MP-Lastfm-{0}", Path.GetFileName(s.LocalPath)));
+      }
+      catch (Exception)
+      {
+        return string.Empty;
+      }
     }
   
     #endregion
