@@ -278,8 +278,49 @@ namespace MediaPortal.GUI.Video
           // Lock the Collection, while processing the Events
           lock (m_Events.SyncRoot)
           {
+            #region Affected directories
+
+            // Get parent directories where events occured so we can avoid multiple refreshes on
+            // the same directory
             VideosShareWatcherEvent currentEvent = null;
+            ArrayList refreshDir = new ArrayList();
             
+            for (int i = 0; i < m_Events.Count; i++)
+            {
+              currentEvent = m_Events[i] as VideosShareWatcherEvent;
+              
+              if (currentEvent != null)
+              {
+                string strPath = currentEvent.FileName;
+
+                if (!string.IsNullOrEmpty(strPath))
+                {
+                  // Case if change occured inside of DVD/BD folder
+                  if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+                  {
+                    strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
+                  }
+                  else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
+                  {
+                    strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
+                  }
+
+                  strPath = Path.GetDirectoryName(strPath);
+                  // Add only one copy of changed directory
+                  if (strPath != null && !refreshDir.Contains(strPath))
+                  {
+                    refreshDir.Add(strPath);
+                  }
+                }
+              }
+            }
+
+            #endregion
+
+            #region Process all events
+
+            // Process all events for videodatabase purpose (delete event only)
+            // Does not fire any GUIWindowsMessage
             for (int i = 0; i < m_Events.Count; i++)
             {
               currentEvent = m_Events[i] as VideosShareWatcherEvent;
@@ -288,6 +329,7 @@ namespace MediaPortal.GUI.Video
               {
                 switch (currentEvent.Type)
                 {
+
                   #region file events handlers
 
                   // Create video
@@ -347,6 +389,66 @@ namespace MediaPortal.GUI.Video
                 i--; // Don't skip next event
               }
             }
+
+            #endregion
+
+            #region Update MyVideos cache and send refresh message
+
+            // Force MyVideos cache and db refresh for affected directories
+            bool refreshVideoDatabase = false;
+
+            foreach (string directory in refreshDir)
+            {
+              // Update MyVideos shares cache
+              if (GUIVideoFiles.CachedItems != null)
+              {
+                // Get all cached directories
+                ArrayList keys = new ArrayList(GUIVideoFiles.CachedItems.Keys);
+
+                foreach (string key in keys)
+                {
+                  // Find if affected directory exist in cache
+                  if (key == directory)
+                  {
+                    // And force refresh by deleting cached directory
+                    if (key != null)
+                    {
+                      GUIVideoFiles.CachedItems.Remove(key);
+                      Log.Debug("VideosShareWatcher: {0} removed from video cache", key);
+                      // Send message for auto refresh if user is currently in affected dir
+                      // For other affected directories, they will be refreshed on entry beacuse
+                      // cache record is removed
+                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_REFRESH, 0, 0, 0, 0, 0,
+                           directory);
+                      GUIWindowManager.SendMessage(msg);
+                    }
+                  }
+                }
+              }
+              // Check if one of directories is marked for movies scan and set flag to send message
+              // for database views for refresh if user is there.
+              // Message will be sent only once per events pool.
+              if (!refreshVideoDatabase)
+              {
+                foreach (string mScanShare in m_ScanShares)
+                {
+                  if (Util.Utils.AreEqual(mScanShare, directory))
+                  {
+                    refreshVideoDatabase = true;
+                  }
+                } 
+              }
+            }
+
+            #endregion
+
+            // Send only one message for database views refresh
+            if (refreshVideoDatabase)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH, 0, 0, 0, 0, 0,
+                           null);
+              GUIWindowManager.SendMessage(msg);
+            }
           }
         }
         finally
@@ -371,152 +473,23 @@ namespace MediaPortal.GUI.Video
         Log.Info("VideosShareWatcher: VideoFile not ready yet: {0}", strFileName);
         return;
       }
-
-      try
-      {
-        // Force refresh for parent directory of deleted file
-        string deletedFileDirectory = Path.GetDirectoryName(strFileName);
-
-        if (GUIVideoFiles.CachedItems != null)
-        {
-          if (deletedFileDirectory != null)
-          {
-            GUIVideoFiles.CachedItems.Remove(deletedFileDirectory);
-            Log.Debug("VideosShareWatcher: {0} removed from video cache", deletedFileDirectory);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VideosShareWatcher cache update for file {0}, error {1}", strFileName, ex.Message);
-        return;
-      }
-
-      int isScanShare = 0;
-      foreach (string share in m_ScanShares)
-      {
-        if (Util.Utils.AreEqual(share, strFileName))
-        {
-          isScanShare = 1;
-          break;
-        }
-      }
-
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED, 0, 0, 0, 0, isScanShare,
-                           strFileName);
-      GUIWindowManager.SendMessage(msg);
+      
       Log.Info("VideosShareWatcher: Created VideoFile: {0}", strFileName);
     }
 
     private void DeleteVideo(string strFilename)
     {
-      try
-      {
-        // Update video database
-        VideoDatabase.DeleteMovie(strFilename);
-        // Force refresh for parent directory of deleted file
-        string deletedFileDirectory = Path.GetDirectoryName(strFilename);
-
-        if (GUIVideoFiles.CachedItems != null)
-        {
-          if (deletedFileDirectory != null)
-          {
-            GUIVideoFiles.CachedItems.Remove(deletedFileDirectory);
-            Log.Debug("VideosShareWatcher: {0} removed from video cache", deletedFileDirectory);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VideosShareWatcher cache update for file {0}, error {1}", strFilename, ex.Message);
-        return;
-      }
-      
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED, 0, 0, 0, 0, 0,
-                            strFilename);
-      GUIWindowManager.SendMessage(msg);
+      VideoDatabase.DeleteMovie(strFilename);
       Log.Info("VideosShareWatcher: Deleted VideoFile: {0}", strFilename);
     }
 
     private void AddVideoDirectory(string strPath)
     {
-      bool isDvd = false;
-      bool isBD = false;
-      string dvdFolder = string.Empty;
-      string bdFolder = string.Empty;
-
-      try
-      {
-        if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
-        {
-          dvdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
-          dvdFolder = Path.GetDirectoryName(dvdFolder);
-          isDvd = true;
-        }
-        else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
-        {
-          bdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
-          bdFolder = Path.GetDirectoryName(bdFolder);
-          isBD = true;
-        }
-
-        // Update MyVideos shares cache
-        if (GUIVideoFiles.CachedItems != null)
-        {
-          // Get all cached directories
-          ArrayList keys = new ArrayList(GUIVideoFiles.CachedItems.Keys);
-          string parentDir = Path.GetDirectoryName(strPath);
-
-          foreach (string key in keys)
-          {
-            // Find if created directory parent path exist in cache
-            if (key == parentDir || isBD && key == bdFolder || isDvd && key == dvdFolder)
-            {
-              // And force refresh by deleting cached parent directory
-              if (key != null)
-              {
-                GUIVideoFiles.CachedItems.Remove(key);
-                Log.Debug("VideosShareWatcher: {0} removed from video cache", key);
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("VideosShareWatcher cache update for directory {0}, error {1}", strPath, ex.Message);
-        return;
-      }
-
-      if (isBD)
-      {
-        strPath = bdFolder;
-      }
-      else if (isDvd)
-      {
-        strPath = dvdFolder;
-      }
-
-      int isScanShare = 0;
-      foreach (string share in m_ScanShares)
-      {
-        if (Util.Utils.AreEqual(share, strPath))
-        {
-          isScanShare = 1;
-          break;
-        }
-      }
-
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED, 0, 0, 0, 0, isScanShare,
-                           strPath);
-      GUIWindowManager.SendMessage(msg);
       Log.Info("VideosShareWatcher: Created VideoDirectory: {0}", strPath);
     }
 
     private void DeleteVideoDirectory (string strPath)
     {
-      bool isDvd = false;
-      bool isBD = false;
       string dvdFolder = string.Empty;
       string bdFolder = string.Empty;
 
@@ -527,57 +500,25 @@ namespace MediaPortal.GUI.Video
           dvdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
           VideoDatabase.DeleteMoviesInFolder(dvdFolder);
           dvdFolder = Path.GetDirectoryName(dvdFolder);
-          isDvd = true;
         }
         else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
         {
           bdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
           VideoDatabase.DeleteMoviesInFolder(bdFolder);
           bdFolder = Path.GetDirectoryName(bdFolder);
-          isBD = true;
         }
         else
         {
           // Update video database
           VideoDatabase.DeleteMoviesInFolder(strPath);
         }
-
-        // Update MyVideos shares cache
-        if (GUIVideoFiles.CachedItems != null)
-        {
-          // Get all cached directories
-          ArrayList keys = new ArrayList(GUIVideoFiles.CachedItems.Keys);
-          string parentDir = Path.GetDirectoryName(strPath);
-
-          foreach (string key in keys)
-          {
-            // Get all cached directories which contains deleted directory (not parent)
-            if (key.Contains(strPath) || key == parentDir || isBD && key == bdFolder || isDvd && key == dvdFolder)
-            {
-              Log.Debug("VideosShareWatcher: {0} removed from video cache", key);
-              GUIVideoFiles.CachedItems.Remove(key);
-            }
-          }
-        }
       }
       catch (Exception ex)
       {
-        Log.Error("VideosShareWatcher cache update for directory {0}, error {1}", strPath, ex.Message);
+        Log.Error("VideosShareWatcher: VideoDatabase update for directory {0}, error: {1}", strPath, ex.Message);
         return;
       }
 
-      if (isBD)
-      {
-        strPath = bdFolder;
-      }
-      else if (isDvd)
-      {
-        strPath = dvdFolder;
-      }
-
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED, 0, 0, 0, 0, 0,
-                           strPath);
-      GUIWindowManager.SendMessage(msg);
       Log.Info("VideosShareWatcher: Deleted VideoDirectory: {0}", strPath);
     }
     

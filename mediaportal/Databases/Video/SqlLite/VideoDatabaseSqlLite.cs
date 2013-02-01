@@ -3195,6 +3195,7 @@ namespace MediaPortal.Video.Database
 
     public void DeleteMoviesInFolder(string strPath)
     {
+      DatabaseUtility.RemoveInvalidChars(ref strPath);
       SQLiteResultSet results = m_db.Execute("SELECT idPath,strPath FROM path WHERE strPath LIKE '" + strPath + "%'");
       SortedDictionary<string, string> pathList = new SortedDictionary<string, string>();
       

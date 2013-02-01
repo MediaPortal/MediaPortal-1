@@ -598,123 +598,149 @@ namespace MediaPortal.GUI.Video
           OnPlayDVD(message.Label, GetID);
           break;
 
-        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED:
-          try
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_REFRESH:
+          string changedFileDirectory = message.Object.ToString();
+          
+          if (changedFileDirectory == _currentFolder)
           {
-            int selectedItem = facadeLayout.SelectedListItemIndex;
-            string deletedFileDirectory = Path.GetDirectoryName(message.Object.ToString());
-            
-            if (deletedFileDirectory != _currentFolder)
+            try
             {
-              break;
-            }
+              int selectedItem = facadeLayout.SelectedListItemIndex;
+              LoadDirectory(_currentFolder, false);
 
-            LoadDirectory(_currentFolder, false);
-
-            if (selectedItem >= 0)
-            {
-              if (selectedItem >= facadeLayout.Count)
+              if (selectedItem >= 0)
               {
-                selectedItem = facadeLayout.Count - 1;
+                if (selectedItem >= facadeLayout.Count)
+                {
+                  selectedItem = facadeLayout.Count - 1;
+                }
+                GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
               }
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
             }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+            catch (Exception ex)
+            {
+              Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+            }
           }
           break;
 
-        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED:
-          try
-          {
-            int selectedItem = facadeLayout.SelectedListItemIndex;
-            string createdFileDirectory = Path.GetDirectoryName(message.Object.ToString());
+        //case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED:
+        //  try
+        //  {
+        //    int selectedItem = facadeLayout.SelectedListItemIndex;
+        //    string deletedFileDirectory = Path.GetDirectoryName(message.Object.ToString());
             
-            if (createdFileDirectory != _currentFolder)
-            {
-              break;
-            }
+        //    if (deletedFileDirectory != _currentFolder)
+        //    {
+        //      break;
+        //    }
 
-            LoadDirectory(_currentFolder, false);
+        //    LoadDirectory(_currentFolder, false);
 
-            if (selectedItem >= 0)
-            {
-              if (selectedItem >= facadeLayout.Count)
-              {
-                selectedItem = facadeLayout.Count - 1;
-              }
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
-          }
-          break;
+        //    if (selectedItem >= 0)
+        //    {
+        //      if (selectedItem >= facadeLayout.Count)
+        //      {
+        //        selectedItem = facadeLayout.Count - 1;
+        //      }
+        //      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+        //    }
+        //  }
+        //  catch (Exception ex)
+        //  {
+        //    Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+        //  }
+        //  break;
 
-        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED:
-          try
-          {
-            int selectedItem = facadeLayout.SelectedListItemIndex;
-
-            if (string.IsNullOrEmpty(_currentFolder))
-            {
-              break;
-            }
+        //case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED:
+        //  try
+        //  {
+        //    int selectedItem = facadeLayout.SelectedListItemIndex;
+        //    string createdFileDirectory = Path.GetDirectoryName(message.Object.ToString());
             
-            // Is current folder deleted?
-            if (!Directory.Exists(_currentFolder))
-            {
-              _currentFolder = _virtualDirectory.CurrentShare;
-              selectedItem = -1;
-            }
+        //    if (createdFileDirectory != _currentFolder)
+        //    {
+        //      break;
+        //    }
 
-            LoadDirectory(_currentFolder, true);
+        //    LoadDirectory(_currentFolder, false);
+
+        //    if (selectedItem >= 0)
+        //    {
+        //      if (selectedItem >= facadeLayout.Count)
+        //      {
+        //        selectedItem = facadeLayout.Count - 1;
+        //      }
+        //      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+        //    }
+        //  }
+        //  catch (Exception ex)
+        //  {
+        //    Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+        //  }
+        //  break;
+
+        //case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED:
+        //  try
+        //  {
+        //    int selectedItem = facadeLayout.SelectedListItemIndex;
+
+        //    if (string.IsNullOrEmpty(_currentFolder))
+        //    {
+        //      break;
+        //    }
             
-            if (selectedItem >= 0)
-            {
-              if (selectedItem >= facadeLayout.Count)
-              {
-                selectedItem = facadeLayout.Count - 1;
-              }
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
-          }
-          break;
+        //    // Is current folder deleted?
+        //    if (!Directory.Exists(_currentFolder))
+        //    {
+        //      _currentFolder = _virtualDirectory.CurrentShare;
+        //      selectedItem = -1;
+        //    }
 
-        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED:
-          try
-          {
-            int selectedItem = facadeLayout.SelectedListItemIndex;
-            string createdDirectoryParent = Path.GetDirectoryName(message.Object.ToString());
+        //    LoadDirectory(_currentFolder, true);
+            
+        //    if (selectedItem >= 0)
+        //    {
+        //      if (selectedItem >= facadeLayout.Count)
+        //      {
+        //        selectedItem = facadeLayout.Count - 1;
+        //      }
+        //      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+        //    }
+        //  }
+        //  catch (Exception ex)
+        //  {
+        //    Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+        //  }
+        //  break;
 
-            if (createdDirectoryParent != _currentFolder)
-            {
-              break;
-            }
+        //case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED:
+        //  try
+        //  {
+        //    int selectedItem = facadeLayout.SelectedListItemIndex;
+        //    string createdDirectoryParent = Path.GetDirectoryName(message.Object.ToString());
 
-            LoadDirectory(_currentFolder, false);
+        //    if (createdDirectoryParent != _currentFolder)
+        //    {
+        //      break;
+        //    }
 
-            if (selectedItem >= 0)
-            {
-              if (selectedItem >= facadeLayout.Count)
-              {
-                selectedItem = facadeLayout.Count - 1;
-              }
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
-          }
-          break;
+        //    LoadDirectory(_currentFolder, false);
+
+        //    if (selectedItem >= 0)
+        //    {
+        //      if (selectedItem >= facadeLayout.Count)
+        //      {
+        //        selectedItem = facadeLayout.Count - 1;
+        //      }
+        //      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
+        //    }
+        //  }
+        //  catch (Exception ex)
+        //  {
+        //    Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+        //  }
+        //  break;
       }
       return base.OnMessage(message);
     }

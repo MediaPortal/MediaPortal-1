@@ -1113,8 +1113,7 @@ namespace MediaPortal.GUI.Video
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_DELETED:
-        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_DELETED:
+        case GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH:
           try
           {
             currentSelectedItem = facadeLayout.SelectedListItemIndex;
