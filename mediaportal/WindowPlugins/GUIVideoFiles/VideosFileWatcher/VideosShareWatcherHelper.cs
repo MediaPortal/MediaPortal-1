@@ -198,6 +198,19 @@ namespace MediaPortal.GUI.Video
         FileInfo fi = new FileInfo(e.FullPath);
         if (fi.Exists)
         {
+          try
+          {
+            Stream s = null;
+            s = fi.OpenRead();
+            s.Close();
+          }
+          catch (IOException)
+          {
+            // The file is not closed yet. Ignore the event, it will be processed by the Change event
+            Log.Info("VideosShareWatcher: VideoFile not ready yet: {0}", e.FullPath);
+            return;
+          }
+
           Log.Debug("VideosShareWatcher: Add Video Fired: {0}", e.FullPath);
           m_Events.Add(new VideosShareWatcherEvent(VideosShareWatcherEvent.EventType.Create, e.FullPath));
         }
@@ -446,20 +459,6 @@ namespace MediaPortal.GUI.Video
 
     private void AddVideo(string strFileName)
     {
-      try
-      {
-        FileInfo file = new FileInfo(strFileName);
-        Stream s = null;
-        s = file.OpenRead();
-        s.Close();
-      }
-      catch (IOException)
-      {
-        // The file is not closed yet. Ignore the event, it will be processed by the Change event
-        Log.Info("VideosShareWatcher: VideoFile not ready yet: {0}", strFileName);
-        return;
-      }
-      
       Log.Info("VideosShareWatcher: Created VideoFile: {0}", strFileName);
     }
 
@@ -481,17 +480,17 @@ namespace MediaPortal.GUI.Video
 
       try
       {
+        // Check if DVD/BD main folder is removed (strange case but can happen) and parent folder
+        // still exist
         if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
         {
           dvdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
           VideoDatabase.DeleteMoviesInFolder(dvdFolder);
-          dvdFolder = Path.GetDirectoryName(dvdFolder);
         }
         else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
         {
           bdFolder = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
           VideoDatabase.DeleteMoviesInFolder(bdFolder);
-          bdFolder = Path.GetDirectoryName(bdFolder);
         }
         else
         {

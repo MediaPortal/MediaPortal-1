@@ -172,7 +172,6 @@ namespace MediaPortal.GUI.Video
     private bool _doNotUseDatabase = false;
     
     private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
-
     private static VideosShareWatcherHelper _watcher = null;
 
     #endregion
@@ -513,7 +512,7 @@ namespace MediaPortal.GUI.Video
       }
 
       SaveFolderSettings(_currentFolder);
-      ReleaseResources();
+      //ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -889,7 +888,6 @@ namespace MediaPortal.GUI.Video
           // In the list must be at least 2 files so we check stackable movie for resume 
           // (which file have a stop time)
           bool asked = false;
-          //ArrayList newItems = new ArrayList();
           string title = item.Label; // Dlg title
 
           if (movie != null && !movie.IsEmpty)
@@ -2752,7 +2750,7 @@ namespace MediaPortal.GUI.Video
       List<GUIListItem> itemlist = null;
       ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
       ISelectBDHandler selectBDHandler = GetSelectBDHandler();
-
+      
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
       if (useCache && !string.IsNullOrEmpty(_currentFolder) && _cachedItems != null && 
@@ -2765,78 +2763,10 @@ namespace MediaPortal.GUI.Video
         {
           // set label 1 & 2
           SetLabel(item);
-
-          // Set watched status and label 3
-          if (item.IsBdDvdFolder || Util.Utils.IsVideo(item.Path))
+          // Update full IMDBMovie object for last selected item (Movie info screen can change many info data)
+          if (currentItemIndex == _currentSelectedItem)
           {
-            // Check db for watched status for played movie or changed status in movie info window
-            string file = item.Path;
-
-            if (item.IsFolder)
-            {
-              file = selectDvdHandler.GetFolderVideoFile(item.Path);
-
-              if (file == string.Empty)
-              {
-                file = selectBDHandler.GetFolderVideoFile(item.Path);
-              }
-            }
-            // Get last watch status (IMDBMovie containes old one in caced objects)
-            int percentWatched = 0;
-            int timesWatched = 0;
-            int movieId = VideoDatabase.GetMovieId(file);
-            bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-            
-            // Update full IMDBMovie object for last selected item (Movie info screen can change many info data)
-            if (currentItemIndex == _currentSelectedItem)
-            {
-              IMDBMovie.SetMovieData(item);
-            }
-            else
-            {
-              // Update watch statuses for other items
-              IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
-
-              if (movie != null)
-              {
-                movie.WatchedPercent = percentWatched;
-                movie.WatchedCount = timesWatched;
-
-                if (played)
-                {
-                  movie.Watched = 1;
-                }
-
-                item.AlbumInfoTag = movie;
-              }
-            }
-
-            if (_markWatchedFiles)
-            {
-              item.IsPlayed = played;
-            }
-
-            if (item.IsBdDvdFolder)
-            {
-              if (selectDvdHandler.IsDvdDirectory(item.Path))
-              {
-                item.Label2 = MediaTypes.DVD.ToString();
-                item.Label3 = string.Empty;
-              }
-              else
-              {
-                item.Label2 = MediaTypes.BD.ToString();
-                item.Label3 = string.Empty;
-              }
-            }
-            else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-            {
-              item.Label3 = MediaTypes.ISO.ToString();
-            }
-            else
-            {
-              item.Label3 = percentWatched + "% #" + timesWatched;
-            }
+            IMDBMovie.SetMovieData(item);
           }
           
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -2851,178 +2781,50 @@ namespace MediaPortal.GUI.Video
 
         if (_mapSettings != null && _mapSettings.Stack)
         {
-          Dictionary<string, List<GUIListItem>> stackings = new Dictionary<string, List<GUIListItem>>(itemlist.Count);
-
+          Dictionary<string, GUIListItem> stackedItems = new Dictionary<string, GUIListItem>();
+          
           for (int i = 0; i < itemlist.Count; ++i)
           {
-            GUIListItem item1 = itemlist[i];
-            string cleanFilename = item1.Label;
-            Util.Utils.RemoveStackEndings(ref cleanFilename);
-            List<GUIListItem> innerList;
+            string label = itemlist[i].Label;
+            Util.Utils.RemoveStackEndings(ref label);
+            itemlist[i].IsBdDvdFolder = IsMovieFolder(itemlist[i].Path);
 
-            if (stackings.TryGetValue(cleanFilename, out innerList))
+            string ext = Util.Utils.GetFileExtension(itemlist[i].Path);
+
+            if (CheckVideoExtension(itemlist[i].Path) || itemlist[i].IsBdDvdFolder)
             {
-              for (int j = 0; j < innerList.Count; j++)
-              {
-                GUIListItem item2 = innerList[j];
+              itemlist[i].Label = label;
+            }
+            
+            string key = label.ToLowerInvariant() + ext.ToLowerInvariant() + itemlist[i].IsFolder;
 
-                if (((!item1.IsFolder || !item2.IsFolder) || (item1.IsFolder && IsMovieFolder(item1.Path) || item2.IsFolder && IsMovieFolder(item2.Path)))
-                    && (!item1.IsRemote && !item2.IsRemote)
-                    && Util.Utils.ShouldStack(item1.Path, item2.Path))
-                {
-                  if (String.Compare(item1.Path, item2.Path, StringComparison.OrdinalIgnoreCase) > 0)
-                  {
-                    item2.FileInfo.Length += item1.FileInfo.Length;
-                  }
-                  else
-                  {
-                    // keep item1, it's path is lexicographically before item2 path
-                    item1.FileInfo.Length += item2.FileInfo.Length;
-                    innerList[j] = item1;
-                  }
-                  item1 = null;
-                  break;
-                }
-              }
-
-              if (item1 != null) // not stackable
-              {
-                innerList.Add(item1);
-              }
+            if (!stackedItems.ContainsKey(key))
+            {
+              
+              // Add item to clean collection
+              itemlist[i].OnItemSelected += item_OnItemSelected;
+              SetLabel(itemlist[i]);
+              stackedItems.Add(key, itemlist[i]);
             }
             else
             {
-              innerList = new List<GUIListItem> { item1 };
-              stackings.Add(cleanFilename, innerList);
+              // Add file lenght of duplicate file and remove it from itemlist collection
+              stackedItems[key].FileInfo.Length += itemlist[i].FileInfo.Length;
+              SetLabel(stackedItems[key]);
+              itemlist.RemoveAt(i);
+              i--;
             }
           }
-
-          foreach (KeyValuePair<string, List<GUIListItem>> pair in stackings)
-          {
-            List<GUIListItem> innerList = pair.Value;
-            
-            for (int i = 0; i < innerList.Count; i++)
-            {
-              GUIListItem item = innerList[i];
-              bool isMovieFolder = IsMovieFolder(item.Path);
-
-              if (VirtualDirectory.IsValidExtension(item.Path, Util.Utils.VideoExtensions, false) || isMovieFolder)
-              {
-                item.Label = pair.Key;
-              }
-
-              SetLabel(item);
-              // Check db for watched status for played movie or changed status in movie info window
-              string file = item.Path;
-              
-              if (!item.IsFolder || isMovieFolder)
-              {
-                // Special folders (DVD/Blu-Ray)
-                if (isMovieFolder)
-                {
-                  item.IsBdDvdFolder = true;
-                  file = selectDvdHandler.GetFolderVideoFile(item.Path);
-
-                  if (file == string.Empty)
-                  {
-                    file = selectBDHandler.GetFolderVideoFile(item.Path);
-                  }
-                }
-
-                int percentWatched = 0;
-                int timesWatched = 0;
-                int movieId = VideoDatabase.GetMovieId(file);
-                bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-
-                if (_markWatchedFiles)
-                {
-                  item.IsPlayed = played;
-                }
-
-                if (item.IsBdDvdFolder)
-                {
-                  if (selectDvdHandler.IsDvdDirectory(item.Path))
-                  {
-                    item.Label3 = string.Empty;
-                    item.Label2 = MediaTypes.DVD.ToString();
-                  }
-                  else
-                  {
-                    item.Label3 = string.Empty;
-                    item.Label2 = MediaTypes.BD.ToString();
-                  }
-                }
-                else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-                {
-                  item.Label3 = MediaTypes.ISO.ToString();
-                }
-                else
-                {
-                  item.Label3 = percentWatched + "% #" + timesWatched;
-                }
-              }
-
-              item.OnItemSelected += item_OnItemSelected;
-              facadeLayout.Add(item);
-            }
-          }
-          itemlist = facadeLayout.ListLayout.ListItems;
+          
+          facadeLayout.ListLayout.ListItems.AddRange(stackedItems.Values);
+          stackedItems = null;
         }
         else
         {
           foreach (GUIListItem item in itemlist)
           {
             SetLabel(item);
-
-            // Check db for watched status for played movie or changed status in movie info window
-            string file = item.Path;
-            bool isMovieFolder = IsMovieFolder(item.Path);
-
-            if (!item.IsFolder || isMovieFolder)
-            {
-              // Special folders (DVD/BluRay)
-              if (isMovieFolder)
-              {
-                item.IsBdDvdFolder = true;
-                file = selectDvdHandler.GetFolderVideoFile(item.Path);
-
-                if (file == string.Empty)
-                {
-                  file = selectBDHandler.GetFolderVideoFile(item.Path);
-                }
-              }
-
-              int percentWatched = 0;
-              int timesWatched = 0;
-              int movieId = VideoDatabase.GetMovieId(file);
-              bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-
-              if (_markWatchedFiles)
-              {
-                item.IsPlayed = played;
-              }
-
-              if (item.IsBdDvdFolder)
-              {
-                if (selectDvdHandler.IsDvdDirectory(item.Path))
-                {
-                  item.Label3 = MediaTypes.DVD.ToString();
-                }
-                else
-                {
-                  item.Label3 = MediaTypes.BD.ToString();
-                }
-              }
-              else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-              {
-                item.Label3 = MediaTypes.ISO.ToString();
-              }
-              else
-              {
-                item.Label3 = percentWatched + "% #" + timesWatched;
-              }
-            }
-
+            item.IsBdDvdFolder = IsMovieFolder(item.Path);
             item.OnItemSelected += item_OnItemSelected;
             facadeLayout.Add(item);
           }
@@ -3049,7 +2851,7 @@ namespace MediaPortal.GUI.Video
           Log.Debug("GUIVideoFiles: {0} added to video cache", _currentFolder);
         }
       }
-
+      
       // Update thumbs for all items (cached also - > cover can be changed in VideoInfoScreen and if we do
       // not update cover, old one will be visible)
       SetImdbThumbs(itemlist, selectDvdHandler);
