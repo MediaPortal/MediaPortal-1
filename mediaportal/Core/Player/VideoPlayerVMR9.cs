@@ -1465,7 +1465,6 @@ namespace MediaPortal.Player
         GC.Collect();
         GC.Collect();
         GC.Collect();
-        GC.WaitForPendingFinalizers();
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;

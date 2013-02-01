@@ -88,10 +88,10 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
+        btnExtractthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         btnCreateartistthumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         btnCreategenrethumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        btnUseFolderThumbs.Selected = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", false);
         btnUseAllImages.Selected = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
                                                              btnUseFolderThumbs.Selected);
         btnTreatFolderAsAlbum.Selected = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -207,10 +207,16 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

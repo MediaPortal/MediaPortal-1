@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
@@ -418,23 +419,47 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-          // previous : play previous song from playlist
+          // previous : play previous song from playlist or previous item from MyPictures
+        case Action.ActionType.ACTION_PREV_CHAPTER:
         case Action.ActionType.ACTION_PREV_ITEM:
           {
-            //g_playlistPlayer.PlayPrevious();
+            if (g_Player.IsPicture)
+            {
+              GUISlideShow._slideDirection = -1;
+              g_Player.Stop();
+            }
+            else
+            {
+              //g_playlistPlayer.PlayNext();
+            }
           }
           break;
 
-          // next : play next song from playlist
+          // next : play next song from playlist or next item from MyPictures
+        case Action.ActionType.ACTION_NEXT_CHAPTER:
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
-            //g_playlistPlayer.PlayNext();
+            if (g_Player.IsPicture)
+            {
+              GUISlideShow._slideDirection = 1;
+              g_Player.Stop();
+            }
+            else
+            {
+              //g_playlistPlayer.PlayNext();
+            }
           }
           break;
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
           {
+            // Stop Video for MyPictures when going to home
+            if (g_Player.IsPicture)
+            {
+              GUISlideShow._slideDirection = 0;
+              g_Player.Stop();
+            }
             // switch back to the menu
             if ((g_Player.IsDVD) && (g_Player.IsDVDMenu))
             {
@@ -841,6 +866,10 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_STOP:
           {
+            if (g_Player.IsPicture)
+            {
+              GUISlideShow._slideDirection = 0;
+            }
             Log.Info("GUIVideoFullscreen:stop");
             g_Player.Stop();
             GUIWindowManager.ShowPreviousWindow();
@@ -923,7 +952,7 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {
-            char chKey = (char)action.m_key.KeyChar;
+            char chKey = (char) action.m_key.KeyChar;
             if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
             {
               if (g_Player.CanSeek)

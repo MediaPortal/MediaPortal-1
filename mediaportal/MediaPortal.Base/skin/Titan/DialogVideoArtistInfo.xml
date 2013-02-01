@@ -134,6 +134,12 @@
 				<onup>4</onup>
 				<ondown>4</ondown>
 				<textalign>left</textalign>
+ 		   	<textcolor>FF000000</textcolor>
+				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 		
 			<control>
@@ -146,10 +152,12 @@
 				<onup>3</onup>
 				<ondown>5</ondown>
 				<textalign>left</textalign>
-				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-				<textureFocus>togglebutton-on-focus.png</textureFocus>
-				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+		   	<textcolor>FF000000</textcolor>
+				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureFocus>button_tv_on_focus.png</textureFocus>
+        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
+        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
+        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
 		</control>
@@ -165,19 +173,6 @@
 		<label>#Actor.Biography</label>
 		<font>TitanLight12</font>
 		<textcolor>FFFFFFFF</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
-	</control>
-
-	<control>
-		<description>Poster shadow</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>110</posX>
-		<posY>350</posY>
-		<width>305</width>
-		<height>436</height>
-		<texture>list_poster_shadow.png</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>

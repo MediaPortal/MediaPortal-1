@@ -39,6 +39,7 @@ using System.ServiceProcess;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Player;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
@@ -637,7 +638,8 @@ namespace MediaPortal.Util
     {
       if (item == null || String.IsNullOrEmpty(item.Path))
       {
-        Log.Debug("SetThumbnails: nothing to do.");
+        //Disable verbose logging
+        //Log.Debug("SetThumbnails: nothing to do.");
         return;
       }
 
@@ -647,7 +649,8 @@ namespace MediaPortal.Util
       {
         if (!IsVideo(item.Path))
         {
-          Log.Debug("SetThumbnails: nothing to do.");
+          //Disable verbose logging
+          //Log.Debug("SetThumbnails: nothing to do.");
           return;
         }
 
@@ -2063,6 +2066,15 @@ namespace MediaPortal.Util
                 OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
+              if (IsISOImage(strFile))
+              {
+                if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+                    (g_Player.IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+                    g_Player.IsDvdDirectory(DaemonTools.GetVirtualDrive())))
+                {
+                  DaemonTools.UnMount();
+                }
+              }
               return true;
             }
             else

@@ -213,11 +213,6 @@ namespace MediaPortal.Playlists
                   Player.g_Player.IsPicturePlaylist = false;
                 }
               }
-                else
-                {
-                  Player.g_Player.IsPicturePlaylist = false;
-                }
-              }
             }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
             GUIGraphicsContext.SendMessage(msg);

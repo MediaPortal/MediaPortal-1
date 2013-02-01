@@ -24,8 +24,6 @@ using System.Text;
 using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
-using mshtml;
-using SHDocVw;
 
 namespace MediaPortal.Utils.Web
 {
@@ -43,7 +41,6 @@ namespace MediaPortal.Utils.Web
     private string _encoding = string.Empty;
     private string _error;
     private IHtmlCache _cache;
-    private InternetExplorer _IE;
 
     #endregion
 
@@ -173,46 +170,7 @@ namespace MediaPortal.Utils.Web
     /// <returns>true if successful</returns>
     private bool GetExternal(HTTPRequest page)
     {
-      // Delay before getting page
-      // Bugfix: Moved over from LoadPage because it affected GetInternal as well.
-      // GetInternal already get's delayed when calling HTTPTransaction.HTTPGet/Transaction
-      if (page.Delay > 0)
-        Thread.Sleep(page.Delay);
-
-      // Use External Browser (IE) to get HTML page
-      // IE downloads all linked graphics ads, etc
-      // IE will run Javascript source if required to renderthe page
-      if (_IE == null)
-      {
-        _IE = new InternetExplorer();
-      }
-
-      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
-
-      object empty = Missing.Value;
-
-      // check if request is POST or GET
-      if (page.PostQuery != null)
-      {
-        ASCIIEncoding encoding = new ASCIIEncoding();
-        object postData = (object)encoding.GetBytes(page.PostQuery);
-        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
-      }
-      else
-      {
-        webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
-      }
-
-      while (webBrowser.Busy == true)
-      {
-        Thread.Sleep(500);
-      }
-      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
-
-      _strPageSource = doc.body.innerHTML;
-
-      return true;
+      return GetInternal(page);
     }
 
     /// <summary>

@@ -139,6 +139,11 @@ namespace MediaPortal.Tests.Core.Playlists
       return false;
     }
 
+    public bool Play(string strFile, Player.g_Player.MediaType type)
+    {
+      return true;
+    }
+
     #endregion
   }
 }

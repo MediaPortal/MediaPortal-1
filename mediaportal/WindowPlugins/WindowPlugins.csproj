@@ -249,6 +249,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIPictures\PictureSort.cs" />
     <Compile Include="GUILastFMRadio\GUILastFMRadio.cs" />
     <Compile Include="GUISettings\BluRay\GUISetingsBluRay.cs" />
     <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos_OtherSettings.cs" />

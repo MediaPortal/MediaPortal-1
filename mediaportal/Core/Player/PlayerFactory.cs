@@ -336,7 +336,7 @@ namespace MediaPortal.Player
             }
           }
 
-          if (!Util.Utils.IsAVStream(aFileName) && Util.Utils.IsVideo(aFileName))
+          if (!Util.Utils.IsAVStream(aFileName) && Util.Utils.IsVideo(aFileName) && localType != g_Player.MediaType.Music)
           {
             if (aMediaType != null)
             {
