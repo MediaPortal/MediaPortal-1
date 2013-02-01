@@ -252,6 +252,7 @@ namespace MediaPortal.GUI.LastFMRadio
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          //TODO: need localised string and possibly better check for lack of content vs other failure
           dlgNotify.SetText("Error getting tracks.  Most likely too many skips.\nWait a while or try another station.");
           dlgNotify.DoModal(GetID);
         }
