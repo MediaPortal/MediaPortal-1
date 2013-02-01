@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using MediaPortal.Configuration;
@@ -19,6 +20,8 @@ namespace MediaPortal.GUI.LastFMRadio
   [PluginIcons("WindowPlugins.GUILastFMRadio.BallonRadio.gif", "WindowPlugins.GUILastFMRadio.BallonRadioDisabled.gif")]
   public class GUILastFMRadio : GUIWindow, ISetupForm
   {
+
+    protected delegate void UpdateThumbsDelegate(GUIListItem item, string strThumbFile);
 
     private enum SkinControls
     {
@@ -286,20 +289,12 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       else
       {
-        //TODO: Only for testing
-        // need to remove this as downloading thumb in main thread
-        // also I think temp resources are not cleaned up
-        // There is also a check in music overlay so that this will
-        // not override thumb set here (#Play.Current.Thumb)
-        string temporaryFilename = Path.GetTempFileName() + ".jpg";
-        Util.Utils.DownLoadAndCacheImage(tag.Lyrics, temporaryFilename);
-        if (item.Path == g_Player.currentFileName)
-        {
-          GUIPropertyManager.SetProperty("#Play.Current.Thumb", temporaryFilename);
+        if (!string.IsNullOrEmpty(tag.Lyrics))
+        { // download image from last.fm in background thread
+          var worker = new BackgroundWorker();
+          worker.DoWork += (obj, e) => ImageDownloadDoWork(tag.Lyrics, item);
+          worker.RunWorkerAsync();
         }
-        item.ThumbnailImage = temporaryFilename;
-        item.IconImageBig = temporaryFilename;
-        item.IconImage = temporaryFilename;
       }
     }
 
@@ -581,6 +576,32 @@ namespace MediaPortal.GUI.LastFMRadio
       GUIControl.SelectItemControl(GetID, PlaylistControl.GetID, iItem);
     }
 
+    #endregion
+
+    #region thumb download
+
+    private static void ImageDownloadDoWork(string strTrackURL, GUIListItem item)
+    {
+      var temporaryFilename = Path.GetTempFileName() + ".jpg";
+      Util.Utils.DownLoadAndCacheImage(strTrackURL, temporaryFilename);
+      GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage),item,temporaryFilename);
+
+    }
+
+    private static void UpdateListItemImage(GUIListItem item, string strThumbFile)
+    {
+      if (item == null) return;
+
+      if (item.Path == g_Player.currentFileName)
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumbFile);
+      }
+
+      item.ThumbnailImage = strThumbFile;
+      item.IconImageBig = strThumbFile;
+      item.IconImage = strThumbFile;
+    }
+  
     #endregion
 
   }
