@@ -36,6 +36,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Visualization;
+using MediaPortal.LastFM;
 using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
@@ -1141,12 +1142,24 @@ namespace MediaPortal.GUI.Music
 
     private void DoLastFMLove()
     {
-      //TODO: update to APIv2
+      var dlgNotifyLastFM = (GUIDialogNotifyLastFM) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_LASTFM);
+      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+      string dlgText = GUILocalizeStrings.Get(34010) + " : " + CurrentTrackTag.Title;
+      dlgNotifyLastFM.SetText(dlgText);
+      dlgNotifyLastFM.TimeOut = 2;
+      dlgNotifyLastFM.DoModal(GetID);
+      LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
     }
 
     private void DoLastFMBan()
     {
-      //TODO: update to APIv2
+      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+      string dlgText = GUILocalizeStrings.Get(34011) + " : " + CurrentTrackTag.Title;
+      dlgNotifyLastFM.SetText(dlgText);
+      dlgNotifyLastFM.TimeOut = 2;
+      dlgNotifyLastFM.DoModal(GetID);
+      LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
     }
 
     #endregion
