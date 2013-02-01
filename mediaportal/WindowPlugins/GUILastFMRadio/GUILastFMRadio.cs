@@ -244,10 +244,9 @@ namespace MediaPortal.GUI.LastFMRadio
           Title = lastFMTrack.TrackTitle,
           FileName = lastFMTrack.TrackURL,
           Duration = lastFMTrack.Duration,
-          Lyrics =   lastFMTrack.ImageURL
-          //TODO: this should not be lyrics
+          Lyrics = lastFMTrack.ImageURL, //TODO: this should not be lyrics
+          Rating = lastFMTrack.Identifier //TODO: this should be be rating
         };
-
         var pli = new PlayListItem
         {
           Type = PlayListItem.PlayListItemType.Audio,
@@ -276,6 +275,9 @@ namespace MediaPortal.GUI.LastFMRadio
         return;
       }
       MusicTag tag = (MusicTag)item.MusicTag;
+      string trackImgURL = tag.Lyrics;
+      string tmpThumb = GetTemporaryThumbName(trackImgURL);
+
       string strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
       if (strThumb != string.Empty)
       {
@@ -290,14 +292,21 @@ namespace MediaPortal.GUI.LastFMRadio
           item.ThumbnailImage = strLarge;
         }
       }
+      else if (File.Exists(tmpThumb))
+      {
+        Log.Debug("last.fm thumb already exists for: {0} - {1}", tag.Artist, tag.Title);
+        item.ThumbnailImage = tmpThumb;
+        item.IconImageBig = tmpThumb;
+        item.IconImage = tmpThumb;        
+      }
       else
       {
         Log.Debug("Downloading last.fm thumb for: {0} - {1}", tag.Artist, tag.Title);
-        if (!string.IsNullOrEmpty(tag.Lyrics))
+        if (!string.IsNullOrEmpty(trackImgURL))
         {
           // download image from last.fm in background thread
           var worker = new BackgroundWorker();
-          worker.DoWork += (obj, e) => ImageDownloadDoWork(tag.Lyrics, item);
+          worker.DoWork += (obj, e) => ImageDownloadDoWork(trackImgURL, tmpThumb, item);
           worker.RunWorkerAsync();
         }
       }
@@ -585,12 +594,11 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #region thumb download
 
-    private static void ImageDownloadDoWork(string strTrackURL, GUIListItem item)
+    private static void ImageDownloadDoWork(string strTrackURL, string tmpThumbName, GUIListItem item)
     {
-      var temporaryFilename = Path.GetTempFileName();
-      tfc.AddFile(temporaryFilename,false);
-      Util.Utils.DownLoadImage(strTrackURL, temporaryFilename);
-      GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage),item,temporaryFilename);
+      Util.Utils.DownLoadImage(strTrackURL, tmpThumbName);
+      tfc.AddFile(tmpThumbName, false);
+      GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage), item, tmpThumbName);
 
     }
 
@@ -606,6 +614,12 @@ namespace MediaPortal.GUI.LastFMRadio
       item.ThumbnailImage = strThumbFile;
       item.IconImageBig = strThumbFile;
       item.IconImage = strThumbFile;
+    }
+
+    private static string GetTemporaryThumbName(string strUrl)
+    {
+      var s = new Uri(strUrl);
+      return Path.Combine(Path.GetTempPath(), string.Format("MP-Lastfm-{0}", Path.GetFileName(s.LocalPath)));
     }
   
     #endregion
