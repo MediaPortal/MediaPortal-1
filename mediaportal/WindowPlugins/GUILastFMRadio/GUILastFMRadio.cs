@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace MediaPortal.GUI.LastFMRadio
   {
 
     protected delegate void UpdateThumbsDelegate(GUIListItem item, string strThumbFile);
+    protected static TempFileCollection tfc;
 
     private enum SkinControls
     {
@@ -133,6 +135,7 @@ namespace MediaPortal.GUI.LastFMRadio
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       g_Player.PlayBackStopped += OnPlayBackStopped;
+      tfc = new TempFileCollection();
     }
 
     #region overrides
@@ -291,7 +294,8 @@ namespace MediaPortal.GUI.LastFMRadio
       {
         Log.Debug("Downloading last.fm thumb for: {0} - {1}", tag.Artist, tag.Title);
         if (!string.IsNullOrEmpty(tag.Lyrics))
-        { // download image from last.fm in background thread
+        {
+          // download image from last.fm in background thread
           var worker = new BackgroundWorker();
           worker.DoWork += (obj, e) => ImageDownloadDoWork(tag.Lyrics, item);
           worker.RunWorkerAsync();
@@ -495,7 +499,7 @@ namespace MediaPortal.GUI.LastFMRadio
       }
 
       int iItem = PlaylistControl.SelectedListItemIndex;
-      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
 
       playList.MovePlayListItemDown(iItem);
       int selectedIndex = PlaylistControl.MoveItemDown(iItem, true);
@@ -583,8 +587,9 @@ namespace MediaPortal.GUI.LastFMRadio
 
     private static void ImageDownloadDoWork(string strTrackURL, GUIListItem item)
     {
-      var temporaryFilename = Path.GetTempFileName() + ".jpg";
-      Util.Utils.DownLoadAndCacheImage(strTrackURL, temporaryFilename);
+      var temporaryFilename = Path.GetTempFileName();
+      tfc.AddFile(temporaryFilename,false);
+      Util.Utils.DownLoadImage(strTrackURL, temporaryFilename);
       GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage),item,temporaryFilename);
 
     }
