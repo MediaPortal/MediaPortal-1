@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Playlists
@@ -31,6 +32,7 @@ namespace MediaPortal.Playlists
       bool Playing { get; }
       void Release();
       bool Play(string strFile);
+      bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
       bool PlayMusic(string strFile);
@@ -58,6 +60,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile)
       {
         return Player.g_Player.Play(strFile);
+      }
+
+      bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type)
+      {
+        return Player.g_Player.Play(strFile, type);
       }
 
       bool IPlayer.PlayMusic(string strFile)
@@ -196,8 +203,20 @@ namespace MediaPortal.Playlists
             {
               if (item.Type != PlayListItem.PlayListItemType.AudioStream)
               {
-                Reset();
-                _currentPlayList = PlayListType.PLAYLIST_NONE;
+                if (!Player.g_Player.IsPicturePlaylist)
+                {
+                  Reset();
+                  _currentPlayList = PlayListType.PLAYLIST_NONE;
+                }
+                else
+                {
+                  Player.g_Player.IsPicturePlaylist = false;
+                }
+              }
+                else
+                {
+                  Player.g_Player.IsPicturePlaylist = false;
+                }
               }
             }
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, -1, 0, null);
@@ -552,13 +571,28 @@ namespace MediaPortal.Playlists
         {
           playResult = g_Player.PlayAudioStream(item.FileName);
         }
+//TODO: Compare this against GIT commit 
+//https://github.com/MediaPortal/MediaPortal-1/commit/e251ba196316944c31a5c8e9a6b844b9ee3d4120#mediaportal/Core/PlayList/PlayListPlayer.cs
         else if (item.Type == PlayListItem.PlayListItemType.Audio)
         {
           playResult = g_Player.PlayMusic(item.FileName);
         }
         else
         {
-          playResult = g_Player.Play(item.FileName);
+          switch (_currentPlayList)
+          {
+            case PlayListType.PLAYLIST_MUSIC:
+            case PlayListType.PLAYLIST_MUSIC_TEMP:
+              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
+              break;            
+            case PlayListType.PLAYLIST_VIDEO:
+            case PlayListType.PLAYLIST_VIDEO_TEMP:
+              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+              break;
+            default:
+              playResult = g_Player.Play(item.FileName);
+              break;
+          }
         }
         if (!playResult)
         {
