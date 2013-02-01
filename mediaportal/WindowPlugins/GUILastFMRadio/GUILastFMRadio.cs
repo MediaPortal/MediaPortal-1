@@ -179,6 +179,10 @@ namespace MediaPortal.GUI.LastFMRadio
           TuneToStation("lastfm://globaltags/" + strTag);
         }
       }
+      if (controlId == (int)SkinControls.PLAYLIST_CONTROL)
+      {
+        _playlistPlayer.Play(PlaylistControl.SelectedListItemIndex);
+      }
 
       base.OnClicked(controlId, control, actionType);
     }
