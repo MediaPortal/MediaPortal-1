@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <section>
 	<!--28.03.2012 verified-->
 	<!--Do not edit or delete this file or MyVideos will stop to fetch movie data-->
@@ -107,13 +107,13 @@
 			<![CDATA[<poster.*</poster>]]>
 		</string>
 		<string><!--2-->
-			<![CDATA[<image\surl="(?<cover>http://cf2.imgobject.com/t/p/w500/.*?)"]]>
+			<![CDATA[<image\surl="(?<cover>http://.*?/t/p/w342/.*?)"]]>
 		</string>
 		<string><!--3-->
 			<![CDATA[http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/]]>
 		</string>
 		<string><!--4-->
-			<![CDATA[<image\stype="poster"\surl="(?<cover>http://cf2.imgobject.com/t/p/w500/.*?jpg)"]]>
+			<![CDATA[<image\stype="poster"\surl="(?<cover>http://.*?/t/p/w500/.*?jpg)"]]>
 		</string>
 	</TMDBPosters>
 	
@@ -167,7 +167,7 @@
 			<![CDATA[<small>(]]>
 		</string>
 		<string><!--13 extract to (ref role)-->
-			<![CDATA[,]]>
+			<![CDATA[<a href]]>
 		</string>
 		<string><!--14 skip to end of (iterate next or exit loop)-->
 			<![CDATA[</tr>]]>
