@@ -400,30 +400,16 @@ namespace MediaPortal.GUI.Video
             foreach (string directory in refreshDir)
             {
               // Update MyVideos shares cache
-              if (GUIVideoFiles.CachedItems != null)
+              if (GUIVideoFiles.CachedItems != null && GUIVideoFiles.CachedItems.ContainsKey(directory))
               {
-                // Get all cached directories
-                ArrayList keys = new ArrayList(GUIVideoFiles.CachedItems.Keys);
-
-                foreach (string key in keys)
-                {
-                  // Find if affected directory exist in cache
-                  if (key == directory)
-                  {
-                    // And force refresh by deleting cached directory
-                    if (key != null)
-                    {
-                      GUIVideoFiles.CachedItems.Remove(key);
-                      Log.Debug("VideosShareWatcher: {0} removed from video cache", key);
-                      // Send message for auto refresh if user is currently in affected dir
-                      // For other affected directories, they will be refreshed on entry beacuse
-                      // cache record is removed
-                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_REFRESH, 0, 0, 0, 0, 0,
-                           directory);
-                      GUIWindowManager.SendMessage(msg);
-                    }
-                  }
-                }
+                GUIVideoFiles.CachedItems.Remove(directory);
+                Log.Debug("VideosShareWatcher: {0} removed from video cache", directory);
+                // Send message for auto refresh if user is currently in affected dir
+                // For other affected directories, they will be refreshed on entry beacuse
+                // cache record is removed
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_REFRESH, 0, 0, 0, 0, 0,
+                      directory);
+                GUIWindowManager.SendMessage(msg);
               }
               // Check if one of directories is marked for movies scan and set flag to send message
               // for database views for refresh if user is there.
