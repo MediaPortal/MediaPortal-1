@@ -113,18 +113,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
         mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
 
-        Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
+        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
         IList<Card> dbsCards = ServiceAgents.Instance.CardServiceAgent.ListAllCards(CardIncludeRelationEnum.None);
         foreach (Card card in dbsCards)
-        {          
-          cards[card.DevicePath] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
+        {
+          cards[card.IdCard] = ServiceAgents.Instance.ControllerServiceAgent.Type(card.IdCard);
         }
         base.OnSectionActivated();
         mpListView1.Items.Clear();
 
         ChannelIncludeRelationEnum includeRelations = ChannelIncludeRelationEnum.TuningDetails;
         includeRelations |= ChannelIncludeRelationEnum.ChannelMaps;
-        includeRelations |= ChannelIncludeRelationEnum.ChannelMapsCard;
         IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannelsByMediaType(_mediaTypeEnum, includeRelations);
 
         foreach (Channel ch in channels)
@@ -137,8 +136,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           bool dvbip = false;
           bool hasFta = false;
           bool hasScrambled = false;
-          if (ch.MediaType != (decimal)_mediaTypeEnum)
-            continue;
           if (ch.IsWebstream())
             continue;
 
@@ -181,9 +178,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageName);
           foreach (ChannelMap map in ch.ChannelMaps)
           {
-            if (cards.ContainsKey(map.Card.DevicePath))
+            if (cards.ContainsKey(map.IdCard))
             {
-              CardType type = cards[map.Card.DevicePath];
+              CardType type = cards[map.IdCard];
               switch (type)
               {
                 case CardType.Analog:

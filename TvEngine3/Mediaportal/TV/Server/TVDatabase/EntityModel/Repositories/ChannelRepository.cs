@@ -1,5 +1,8 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
@@ -35,14 +38,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return channels;     
     }
 
-   
 
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
     {
       IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).
         Include(c => c.Channel.GroupMaps);
       return includeRelations;
-    }    
+    }
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
     {      
@@ -53,14 +55,12 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       bool groupMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMaps);
       bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
+      bool recordings = includeRelations.HasFlag(ChannelIncludeRelationEnum.Recordings);
 
-      if (tuningDetails)
+      if (recordings)
       {
-        query = query.Include(c => c.TuningDetails);
-        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
-        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
+        query = query.Include(c => c.Recordings);
       }
-
       if (channelLinkMapsChannelLink)
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink));
@@ -73,10 +73,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         query = query.Include(c => c.ChannelMaps);
       }
-      if (channelMapsCard)
-      {
-        query = query.Include(c => c.ChannelMaps.Select(card => card.Card));
-      }
+      //if (channelMapsCard)
+      //{
+        //too slow, handle in LoadNavigationProperties instead
+        //query = query.Include(c => c.ChannelMaps.Select(card => card.Card));
+      //}
       if (groupMaps)
       {
         query = query.Include(c => c.GroupMaps);
@@ -84,28 +85,142 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (groupMapsChannelGroup)
       {
         query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
-      }      
+      }
+
+      if (tuningDetails)
+      {
+        query = query.Include(c => c.TuningDetails);
+      }
 
       return query;
+    }
+    
+
+    private IDictionary<int, Card> GetCardsDictionary()
+    {
+      List<Card> cards = ObjectContext.Cards.ToList();
+      IDictionary<int, Card> cardsDict = new Dictionary<int, Card>();
+      foreach (Card card in cards)
+      {
+        cardsDict.Add(card.IdCard, card);
+      }
+      return cardsDict;
+    }
+
+    private IDictionary<int, LnbType> GetLnbTypesDictionary()
+    {
+      List<LnbType> lnbTypes = ObjectContext.LnbTypes.ToList();
+      IDictionary<int, LnbType> lnbTypesDict = new Dictionary<int, LnbType>();
+      foreach (LnbType lnbType in lnbTypes)
+      {
+        lnbTypesDict.Add(lnbType.IdLnbType, lnbType);
+      }
+      return lnbTypesDict;
+    }
+
+    public Channel LoadNavigationProperties(Channel channel)
+    {
+      ChannelIncludeRelationEnum includeRelations = GetAllRelationsForChannel();
+      return LoadNavigationProperties(channel, includeRelations);
+    }
+
+  
+
+    public Channel LoadNavigationProperties(Channel channel, ChannelIncludeRelationEnum includeRelations)
+    {
+      bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
+      bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+
+      ThreadHelper.ParallelInvoke(
+        ()=>
+          {
+            if (tuningDetails)
+            {
+              //now attach missing relations for tuningdetail - done in order to speed up query        
+              IDictionary<int, LnbType> lnbTypesDict = GetLnbTypesDictionary();
+              Parallel.ForEach(channel.TuningDetails, (tuningDetail) => LoadTuningDetail(lnbTypesDict, tuningDetail));
+            }      
+          }
+          ,
+          ()=>
+            {
+              if (channelMapsCard)
+              {
+                IDictionary<int, Card> cardDict = GetCardsDictionary();
+                Parallel.ForEach(channel.ChannelMaps, (channelMap) => LoadChannelMap(cardDict, channelMap));
+              }
+            }
+        );
+
+      return channel;
+    }
+
+    public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels)
+    {
+      ChannelIncludeRelationEnum includeRelations = GetAllRelationsForChannel();
+      return LoadNavigationProperties(channels, includeRelations);
+
+    }
+
+    public IList<Channel> LoadNavigationProperties(IEnumerable<Channel> channels, ChannelIncludeRelationEnum includeRelations)
+    {
+      bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
+
+      IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
+
+      if (tuningDetails)
+      {        
+        //now attach missing relations for tuningdetail - done in order to speed up query        
+        IDictionary<int, LnbType> lnbTypesDict = GetLnbTypesDictionary();
+        Parallel.ForEach(list, (channel) => Parallel.ForEach(channel.TuningDetails, (tuningDetail) => LoadTuningDetail(lnbTypesDict, tuningDetail)));
+      }
+      return list;
+    }
+
+    private static void LoadChannelMap(IDictionary<int, Card> cardDict, ChannelMap channelmap)
+    {
+      if (channelmap.IdCard > 0)
+      {
+        Card card;
+        if (cardDict.TryGetValue(channelmap.IdCard, out card))
+        {
+          channelmap.Card = card;
+        }
+      }
+    }
+
+    private static void LoadTuningDetail(IDictionary<int, LnbType> lnbTypesDict, TuningDetail tuningDetail)
+    {
+      if (tuningDetail.IdLnbType.HasValue)
+      {
+        LnbType lnbType;
+        if (
+          lnbTypesDict.TryGetValue(
+            tuningDetail.IdLnbType.Value,
+            out lnbType))
+        {
+          tuningDetail.LnbType = lnbType;
+        }
+      }
     }
 
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query)
     {
-      IQueryable<Channel> includeRelations =
-        query.          
-          Include(c => c.TuningDetails).
-          Include(c => c.TuningDetails.Select(l => l.LnbType)).
-          Include(c => c.TuningDetails.Select(l=>l.LnbType)).
-          Include(c => c.ChannelMaps).
-          Include(c => c.ChannelMaps.Select(card => card.Card)).
-          Include(c => c.GroupMaps).
-          Include(c => c.GroupMaps.Select(g => g.ChannelGroup)).
-          Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink)).
-          Include(c => c.ChannelLinkMaps.Select(l => l.ChannelPortal))          
-        ;   
+      ChannelIncludeRelationEnum include = GetAllRelationsForChannel();
+      return IncludeAllRelations(query, include);
+    }
 
-      return includeRelations;
+    private static ChannelIncludeRelationEnum GetAllRelationsForChannel()
+    {
+      ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
+      include |= ChannelIncludeRelationEnum.ChannelMapsCard;
+      include |= ChannelIncludeRelationEnum.GroupMaps;
+      include |= ChannelIncludeRelationEnum.GroupMapsChannelGroup;
+      include |= ChannelIncludeRelationEnum.ChannelMaps;
+      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink;
+      include |= ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal;
+      return include;
     }
 
     public IQueryable<ChannelMap> IncludeAllRelations(IQueryable<ChannelMap> query)
@@ -113,8 +228,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IQueryable<ChannelMap> includeRelations =
         query.
           Include(c => c.Channel).
-          Include(c => c.Card)
-        ;
+          Include(c => c.Card);
 
       return includeRelations;
     }
