@@ -51,9 +51,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       bool channelLinkMapsChannelLink = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelLink);
       bool channelLinkMapsChannelPortal = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelLinkMapsChannelPortal);
       bool channelMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMaps);
-      bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
       bool groupMaps = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMaps);
-      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
       bool recordings = includeRelations.HasFlag(ChannelIncludeRelationEnum.Recordings);
 
@@ -61,31 +59,39 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         query = query.Include(c => c.Recordings);
       }
+
+      //todo: move to LoadNavigationProperties for performance improvement
       if (channelLinkMapsChannelLink)
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelLink));
       }
+
+      //todo: move to LoadNavigationProperties for performance improvement
       if (channelLinkMapsChannelPortal)
       {
         query = query.Include(c => c.ChannelLinkMaps.Select(l => l.ChannelPortal));
       }
+
       if (channelMaps)
       {
         query = query.Include(c => c.ChannelMaps);
       }
-      //if (channelMapsCard)
-      //{
+
       //too slow, handle in LoadNavigationProperties instead
+      //if (channelMapsCard)
+      //{      
       //query = query.Include(c => c.ChannelMaps.Select(card => card.Card));
       //}
       if (groupMaps)
       {
         query = query.Include(c => c.GroupMaps);
       }
-      if (groupMapsChannelGroup)
-      {
-        query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
-      }
+
+      //too slow, handle in LoadNavigationProperties instead
+      //if (groupMapsChannelGroup)
+      //{
+      //  query = query.Include(c => c.GroupMaps.Select(g => g.ChannelGroup));
+      //}
 
       if (tuningDetails)
       {
@@ -95,6 +101,18 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       return query;
     }
 
+
+
+    private IDictionary<int, ChannelGroup> GetChannelGroupsDictionary()
+    {
+      List<ChannelGroup> groups = ObjectContext.ChannelGroups.ToList();
+      IDictionary<int, ChannelGroup> groupsDict = new Dictionary<int, ChannelGroup>();
+      foreach (ChannelGroup group in groups)
+      {
+        groupsDict.Add(group.IdGroup, group);
+      }
+      return groupsDict;
+    }
 
     private IDictionary<int, Card> GetCardsDictionary()
     {
@@ -139,11 +157,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
       bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
 
       IList<Channel> list = channels.ToList(); //fetch the basic/incomplete result from DB now.
 
       IDictionary<int, LnbType> lnbTypesDict = null;
       IDictionary<int, Card> cardDict = null;
+      IDictionary<int, ChannelGroup> groupDict = null;
 
       if (tuningDetails)
       {
@@ -152,6 +172,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (channelMapsCard)
       {
         cardDict = GetCardsDictionary();
+      }
+
+      if (groupMapsChannelGroup)
+      {
+        groupDict = GetChannelGroupsDictionary();
       }
 
       //now attach missing relations for tuningdetail - done in order to speed up query                    
@@ -171,6 +196,14 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
             LoadChannelMap(cardDict, channelMap);
           }
         }
+
+        if (groupMapsChannelGroup)
+        {
+          foreach (GroupMap groupMap in channel.GroupMaps)
+          {
+            LoadGroupMap(groupDict, groupMap);
+          }
+        }
       }
 
       return list;
@@ -180,9 +213,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       bool tuningDetails = includeRelations.HasFlag(ChannelIncludeRelationEnum.TuningDetails);
       bool channelMapsCard = includeRelations.HasFlag(ChannelIncludeRelationEnum.ChannelMapsCard);
+      bool groupMapsChannelGroup = includeRelations.HasFlag(ChannelIncludeRelationEnum.GroupMapsChannelGroup);
 
       IDictionary<int, LnbType> lnbTypesDict = null;
       IDictionary<int, Card> cardDict = null;
+      IDictionary<int, ChannelGroup> groupDict = null;
 
       if (tuningDetails)
       {
@@ -193,13 +228,18 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         cardDict = GetCardsDictionary();
       }
 
+      if (groupMapsChannelGroup)
+      {
+        groupDict = GetChannelGroupsDictionary();
+      }
+
       ThreadHelper.ParallelInvoke(
         () =>
         {
           if (tuningDetails)
           {
             //now attach missing relations for tuningdetail - done in order to speed up query                    
-            foreach (var tuningDetail in channel.TuningDetails)
+            foreach (TuningDetail tuningDetail in channel.TuningDetails)
             {
               LoadTuningDetail(lnbTypesDict, tuningDetail);
             }
@@ -211,16 +251,41 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
           {
             if (channelMapsCard)
             {
-              foreach (var channelMap in channel.ChannelMaps)
+              foreach (ChannelMap channelMap in channel.ChannelMaps)
               {
                 LoadChannelMap(cardDict, channelMap);
               }
               //Parallel.ForEach(channel.ChannelMaps, (channelMap) => LoadChannelMap(cardDict, channelMap));
             }
           }
+          ,
+          () =>
+          {
+            if (groupMapsChannelGroup)
+            {
+              foreach (GroupMap groupMap in channel.GroupMaps)
+              {
+                LoadGroupMap(groupDict, groupMap);
+              }
+            }
+          }
         );
 
       return channel;
+    }
+
+
+
+    private static void LoadGroupMap(IDictionary<int, ChannelGroup> groupDict, GroupMap groupMap)
+    {
+      if (groupMap.IdGroup > 0)
+      {
+        ChannelGroup group;
+        if (groupDict.TryGetValue(groupMap.IdGroup, out group))
+        {
+          groupMap.ChannelGroup = group;
+        }
+      }
     }
 
     private static void LoadChannelMap(IDictionary<int, Card> cardDict, ChannelMap channelmap)
