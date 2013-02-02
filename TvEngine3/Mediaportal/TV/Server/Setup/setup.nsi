@@ -121,10 +121,10 @@ Var frominstall
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
+!AddPluginDir "${git_InstallScripts}\ExecDos-plugin\Plugins"
 
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
-
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -370,7 +370,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
   ${If} $InstallPath != ""
     ${LOG_TEXT} "INFO" "Uninstalling TVService"
-    ExecWait '"$InstallPath\TVService.exe" /uninstall'
+    ExecDos::exec '"$InstallPath\TVService.exe" /uninstall'
     ${LOG_TEXT} "INFO" "Finished uninstalling TVService"
   ${EndIf}
 
@@ -541,7 +541,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   # SERVICE INSTALLATION
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "Installing TVService"
-  ExecWait '"$INSTDIR\TVService.exe" /install'
+  ExecDos::exec '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
   SetOutPath "${SETUP_TV_FOLDER}"
@@ -584,7 +584,7 @@ ${MementoSectionEnd}
   # SERVICE UNINSTALLATION
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "DeInstalling TVService"
-  ExecWait '"$INSTDIR\TVService.exe" /uninstall'
+  ExecDos::exec '"$INSTDIR\TVService.exe" /uninstall'
   ;ExecWait '"msiexec" /qn /x "$INSTDIR\EF_JUNE_2011_CTP.msi" /msicl ACCEPTEFJUNE2011CTPEULA=1'
   ${LOG_TEXT} "INFO" "Finished DeInstalling TVService"
 
