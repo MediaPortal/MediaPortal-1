@@ -411,7 +411,7 @@ namespace MediaPortal.GUI.Video
             pathIndex = fileName.ToUpperInvariant().LastIndexOf(@"\VIDEO_TS\");
             path = fileName.Remove(pathIndex);
           }
-          else
+          else if (!String.IsNullOrEmpty(fileName))
           {
             path = Path.GetDirectoryName(fileName);
           }
@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Video
           }
           else if (fileName.ToLower().Contains("index.bdmv")) // BD folder title check
           {
-            string title = selectBdHandler.GetBDFolderName(fileName);
+            string title = selectBdHandler.GetDiscTitle(fileName);
             // get the name when play BD directly from Drive letter
             if (String.IsNullOrEmpty(title))
             {
@@ -477,7 +477,7 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              string title = selectBdHandler.GetBDFolderName(fileName);
+              string title = selectBdHandler.GetDiscTitle(fileName);
               // get the name when play BD directly from Drive letter
               if (String.IsNullOrEmpty(title))
               {
