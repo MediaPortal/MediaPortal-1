@@ -81,7 +81,6 @@ namespace Mediaportal.TV.Server.TVService
       }            
     }
 
-
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
@@ -93,7 +92,18 @@ namespace Mediaportal.TV.Server.TVService
         opt = args[0];
       }
 
-      if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
+      if (opt != null && opt.ToUpperInvariant() == "-CONSOLE")
+      {
+        var tvServiceThread = new TvServiceThread(Application.ExecutablePath);
+        tvServiceThread.Start();
+
+        while (Console.ReadKey().KeyChar != 'q')
+        {
+        }
+        tvServiceThread.Stop(60000);
+      }
+
+      else if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
       {
         TransactedInstaller ti = new TransactedInstaller();
         ProjectInstaller mi = new ProjectInstaller();
@@ -106,7 +116,7 @@ namespace Mediaportal.TV.Server.TVService
         ti.Install(new Hashtable());
         return;
       }
-      if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
+      else if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
       {
         using (TransactedInstaller ti = new TransactedInstaller())
         {
@@ -123,7 +133,7 @@ namespace Mediaportal.TV.Server.TVService
       }
       // When using /DEBUG switch (in visual studio) the TvService is not run as a service
       // Make sure the real TvService is disabled before debugging with /DEBUG
-      if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
+      else if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
       {
         Service1 s = new Service1();
         s.DoStart(new string[] { "/DEBUG" });
@@ -139,8 +149,11 @@ namespace Mediaportal.TV.Server.TVService
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
-      ServiceBase.Run(ServicesToRun);
+      else
+      {
+        ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+        ServiceBase.Run(ServicesToRun);
+      }
     }
 
     public void DoStart(string[] args)
