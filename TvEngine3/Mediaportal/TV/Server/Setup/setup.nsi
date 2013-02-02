@@ -121,7 +121,7 @@ Var frominstall
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
-!AddPluginDir "${git_InstallScripts}\ExecDos-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\ExecDos-plugin\Plugins"
 
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
