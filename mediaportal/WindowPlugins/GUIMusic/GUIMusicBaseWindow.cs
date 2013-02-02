@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.Music
       SelectCurrentItem();
     }
 
-    protected static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
+    public static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
     {
       if (item.MusicTag == null)
       {

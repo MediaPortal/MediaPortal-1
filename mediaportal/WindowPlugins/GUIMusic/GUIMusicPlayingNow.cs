@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -56,7 +57,10 @@ namespace MediaPortal.GUI.Music
     private enum ControlIDs
     {
       LBL_CAPTION = 1,
+      BTN_LASTFM_LOVE = 30,
+      BTN_LASTFM_BAN = 31,
       IMG_COVERART = 112,
+      LIST_SIMILAR_TRACKS = 155,
       PROG_TRACK = 118,
       LBL_UP_NEXT = 20,
       VUMETER_LEFT = 999,
@@ -82,13 +86,16 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.LBL_UP_NEXT)] protected GUILabelControl LblUpNext = null;
     [SkinControl((int)ControlIDs.VUMETER_LEFT)] protected GUIImage VUMeterLeft = null;
     [SkinControl((int)ControlIDs.VUMETER_RIGHT)] protected GUIImage VUMeterRight = null;
+    [SkinControl((int)ControlIDs.LIST_SIMILAR_TRACKS)] protected GUIListControl lstSimilarTracks = null;
+    [SkinControl((int)ControlIDs.BTN_LASTFM_LOVE)] protected GUIButtonControl btnLastFMLove = null;
+    [SkinControl((int)ControlIDs.BTN_LASTFM_BAN)] protected GUIButtonControl btnLastFMBan = null;
 
     #endregion
 
     #region Event delegates
 
     protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
-
+    protected delegate void UpdateSimilarTracksDelegate(string filename, MusicTag tag);
     protected delegate void TimerElapsedDelegate();
 
     #endregion
@@ -111,6 +118,7 @@ namespace MediaPortal.GUI.Music
     private bool _showVisualization = false;
     private object _imageMutex = null;
     private string _vuMeter = "none";
+    private static readonly Random Randomizer = new Random();
 
     #endregion
 
@@ -228,6 +236,7 @@ namespace MediaPortal.GUI.Music
       }
 
       GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
+      UpdateSimilarTracks(filename);
     }
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
@@ -382,6 +391,26 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_CLICKED:
+          {
+            if (message.SenderControlId == (int)ControlIDs.LIST_SIMILAR_TRACKS)
+            {
+              if ((int) Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+              {
+                var song = (Song) lstSimilarTracks.SelectedListItem.AlbumInfoTag;
+                AddSongToPlaylist(ref song);
+              }
+            }
+          }
+          break;
+      }
+      return base.OnMessage(message);
+    }
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
@@ -472,6 +501,18 @@ namespace MediaPortal.GUI.Music
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
       base.OnPageDestroy(new_windowId);
+    }
+
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if (control == btnLastFMLove)
+      {
+        DoLastFMLove();
+      }
+      if (control == btnLastFMBan)
+      {
+        DoLastFMBan();
+      }
     }
 
     protected override void OnShowContextMenu()
@@ -1144,6 +1185,10 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    #endregion
+
+    #region last.fm integration
+
     private void DoLastFMLove()
     {
       var dlgNotifyLastFM = (GUIDialogNotifyLastFM) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_LASTFM);
@@ -1164,6 +1209,47 @@ namespace MediaPortal.GUI.Music
       dlgNotifyLastFM.TimeOut = 2;
       dlgNotifyLastFM.DoModal(GetID);
       LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+    }
+
+    private void UpdateSimilarTracks(string filename)
+    {
+      Log.Info("MIKE: update: {0}", filename);
+      //TODO: check here for last.fm and do not update ?
+      lstSimilarTracks.Clear();
+
+      var worker = new BackgroundWorker();
+      worker.DoWork += (obj, e) => UpdateSimilarTrackWorker(filename, CurrentTrackTag);
+      worker.RunWorkerAsync();      
+    }
+
+    private void UpdateSimilarTrackWorker(string filename, MusicTag tag)
+    {
+      if (tag == null) return;
+
+      var tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
+      var dbTracks = LastFMLibrary.GetSimilarTracksInDatabase(tracks);
+
+      Log.Info("MIKE: tracks: {0}", tracks.Count);
+      Log.Info("MIKE: dbtracks: {0}", dbTracks.Count);
+      
+      for (var i = 0; i < 3; i++)
+      {
+        var trackNo = Randomizer.Next(0, dbTracks.Count);
+        var song = dbTracks[trackNo];
+
+        var t = song.ToMusicTag();
+        var item = new GUIListItem
+                     {AlbumInfoTag = song, MusicTag = tag, IsFolder = false, Label = song.Title, Path = song.FileName};
+        item.AlbumInfoTag = song;
+        item.MusicTag = t;
+        GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Name);
+        dbTracks.RemoveAt(trackNo);  // remove song after adding to playlist to prevent the same sone being added twice
+
+        if (g_Player.currentFileName != filename) return;  // track has changed since request so ignore
+        
+        lstSimilarTracks.Add(item);
+
+      }
     }
 
     #endregion
