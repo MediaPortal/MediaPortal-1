@@ -21,6 +21,7 @@
 using System;
 using System.Windows.Forms;
 using MediaPortal.LastFM;
+using MediaPortal.Music.Database;
 using MediaPortal.Profile;
 
 namespace MediaPortal.ProcessPlugins.LastFMScrobbler
@@ -60,11 +61,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         btnSecond.Enabled = false;
         return;
       }
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValue("lastfm:test", "SK", SK);
-      }
+      
       MessageBox.Show("Authentication Succesful", "Authentication Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      
     }
 
     private void chkAutoDJ_CheckedChanged(object sender, EventArgs e)

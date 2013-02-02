@@ -2239,5 +2239,41 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region last.fm
+
+    public bool AddLastFMUser(string userName, string lastFmKey)
+    {
+      if (string.IsNullOrEmpty(lastFmKey)) return false;
+
+      try
+      {
+        strSQL = @"select * from scrobbleusers";
+        var results = DirectExecute(strSQL);
+        if(results.Rows.Count == 0)
+        {
+          strSQL = String.Format("insert into lastfmusers (idLastFMUser , strUsername, strSK) values ( NULL, '{0}', '{1}' )",
+                                 userName, lastFmKey);
+          DirectExecute(strSQL);
+          Log.Info("LastFM Key added to database");
+        }
+        else
+        {
+          strSQL = String.Format("udpate scrobbleusers set strUsername = '{0}', strPassword = '{1}'", userName, lastFmKey);
+          DirectExecute(strSQL);
+          Log.Info("LastFM Key updated in database");
+        }
+
+      }
+      catch (Exception e)
+      {
+        Log.Error("Unable to add last.fm key to database");
+        Log.Error(e);
+        return false;
+      }
+
+      return true;
+    }
+
+    #endregion
   }
 }

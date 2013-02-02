@@ -49,13 +49,13 @@ namespace MediaPortal.GUI.LastFMRadio
     // Returns the name of the plugin which is shown in the plugin menu
     public string PluginName()
     {
-      return "Last.fm Radio Test";
+      return "Last.fm Radio";
     }
 
     // Returns the description of the plugin is shown in the plugin menu
     public string Description()
     {
-      return "Last.fm Radio Test";
+      return "Last.fm Radio";
     }
 
     // Returns the author of the plugin which is shown in the plugin menu

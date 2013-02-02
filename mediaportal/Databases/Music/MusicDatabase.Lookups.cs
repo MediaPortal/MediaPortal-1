@@ -103,6 +103,22 @@ namespace MediaPortal.Music.Database
       return 0;
     }
 
+    public string GetLastFMUser()
+    {
+      strSQL = @"select strUsername from lastfmusers";
+      var results = DirectExecute(strSQL);
+      var row = results.Rows[0];
+      return row.fields[0];
+    }
+
+    public string GetLastFMSK()
+    {
+      strSQL = @"select strSK from lastfmusers";
+      var results = DirectExecute(strSQL);
+      var row = results.Rows[0];
+      return row.fields[0];
+    }
+
     public int GetTotalSongs()
     {
       try

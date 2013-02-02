@@ -70,21 +70,16 @@ namespace MediaPortal.LastFM
     #region settings
 
     private static void LoadSettings()
-    {//TODO This should be in database
-      using (var xmlreader = new MPSettings())
-      {
-        _theSK = xmlreader.GetValueAsString("lastfm:test", "SK", String.Empty);
-        _currentUser = xmlreader.GetValueAsString("lastfm:test", "User", string.Empty);
-      }
+    {
+      var mdb = MusicDatabase.Instance;
+      _theSK = mdb.GetLastFMSK();
+      _currentUser = mdb.GetLastFMUser();
     }
 
     private static void SaveSettings()
-    {//TODO This should be in database
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValue("lastfm:test", "SK", _theSK);
-        xmlwriter.SetValue("lastfm:test", "User", _currentUser);
-      }
+    {
+      var mdb = MusicDatabase.Instance;
+      mdb.AddLastFMUser(_currentUser, _theSK);
     }
 
     #endregion
