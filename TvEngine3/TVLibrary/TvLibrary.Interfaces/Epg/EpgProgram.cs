@@ -34,7 +34,8 @@ namespace TvLibrary.Epg
     private List<EpgLanguageText> _languageText;
     private DateTime _startTime;
     private DateTime _endTime;
-
+    private string _seriesId;
+    private int _seriesTermination;
     #endregion
 
     #region ctor
@@ -84,7 +85,24 @@ namespace TvLibrary.Epg
       get { return _endTime; }
       set { _endTime = value; }
     }
-
+    
+    /// <summary>
+    /// Gets/Sets the series id (used for 'series link' for Sky UK/IT/AU)
+    /// </summary>
+    public string SeriesId
+     {
+       get { return _seriesId; }
+       set { _seriesId = value; }
+     }
+ 
+     /// <summary>
+     /// Gets/Sets the series termination flag (used to designate last episode of a series for Sky UK/IT/AU)
+     /// </summary>
+     public int SeriesTermination
+     {
+       get { return _seriesTermination; }
+       set { _seriesTermination = value; }
+     }
     #endregion
 
     #region IComparable<EpgProgram> Members

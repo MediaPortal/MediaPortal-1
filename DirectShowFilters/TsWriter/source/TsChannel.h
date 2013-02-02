@@ -27,6 +27,7 @@
 #include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
+#include "CustomDataParser.h"
 
 // {C564CEB9-FC77-4776-8CB8-96DD87624161}
 
@@ -43,6 +44,10 @@ public:
 	CDiskRecorder*	m_pRecorder;
 	CDiskRecorder*	m_pTimeShifting;
 	CTeletextGrabber*	m_pTeletextGrabber;
-  CCaGrabber*     m_pCaGrabber;
+	CCaGrabber*     m_pCaGrabber;
 	int m_id;
+	CCustomDataParser* m_pCustomDataGrabber;
+	bool b_grabCustomPackets;
+	bool started;
+	
 };
