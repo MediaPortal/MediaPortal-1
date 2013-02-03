@@ -50,6 +50,8 @@ namespace MediaPortal.GUI.Video
     private Timer m_Timer = null;
     private int m_TimerInterval = 2000; // milliseconds
 
+    private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
+
     #endregion
 
     #region Constructors/Destructors
@@ -195,6 +197,13 @@ namespace MediaPortal.GUI.Video
     {
       if (GUIVideoFiles.CheckVideoExtension(e.FullPath))
       {
+        // Is file been locked before?
+        if (_notReadyFiles.Contains(e.FullPath))
+        {
+          // Exit beacuse it will be processed by changed event
+          return;
+        }
+
         FileInfo fi = new FileInfo(e.FullPath);
         if (fi.Exists)
         {
@@ -206,6 +215,8 @@ namespace MediaPortal.GUI.Video
           }
           catch (IOException)
           {
+            // File is locked (not copied yet), add it to blacklisted array
+            _notReadyFiles.Add(e.FullPath);
             // The file is not closed yet. Ignore the event, it will be processed by the Change event
             Log.Info("VideosShareWatcher: VideoFile not ready yet: {0}", e.FullPath);
             return;
@@ -222,9 +233,26 @@ namespace MediaPortal.GUI.Video
     {
       if (GUIVideoFiles.CheckVideoExtension(e.FullPath))
       {
+        // Check if file is available
         FileInfo fi = new FileInfo(e.FullPath);
         if (fi.Exists)
         {
+          try
+          {
+            Stream s = null;
+            s = fi.OpenRead();
+            s.Close();
+          }
+          catch (IOException)
+          {
+            return;
+          }
+          // Check if file was blacklisted and remove it from that list
+          if (_notReadyFiles.Contains(e.FullPath))
+          {
+            _notReadyFiles.Remove(e.FullPath);
+          }
+
           Log.Debug("VideosShareWatcher: Change VideoFile Fired: {0}", e.FullPath);
           m_Events.Add(new VideosShareWatcherEvent(VideosShareWatcherEvent.EventType.Change, e.FullPath));
         }
