@@ -26,7 +26,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -2749,7 +2748,6 @@ namespace MediaPortal.GUI.Video
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       List<GUIListItem> itemlist = null;
       ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
-      ISelectBDHandler selectBDHandler = GetSelectBDHandler();
       
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
@@ -2789,18 +2787,15 @@ namespace MediaPortal.GUI.Video
             Util.Utils.RemoveStackEndings(ref label);
             itemlist[i].IsBdDvdFolder = IsMovieFolder(itemlist[i].Path);
 
-            string ext = Util.Utils.GetFileExtension(itemlist[i].Path);
-
             if (CheckVideoExtension(itemlist[i].Path) || itemlist[i].IsBdDvdFolder)
             {
               itemlist[i].Label = label;
             }
             
-            string key = label.ToLowerInvariant() + ext.ToLowerInvariant() + itemlist[i].IsFolder;
+            string key = label.ToLowerInvariant() + itemlist[i].IsFolder + itemlist[i].IsBdDvdFolder;
 
             if (!stackedItems.ContainsKey(key))
             {
-              
               // Add item to clean collection
               itemlist[i].OnItemSelected += item_OnItemSelected;
               SetLabel(itemlist[i]);
