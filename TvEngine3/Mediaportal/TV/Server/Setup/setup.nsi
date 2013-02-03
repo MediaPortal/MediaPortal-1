@@ -431,12 +431,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
-  File "${TVSERVER.BASE}\hauppauge.dll"
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   
   ; CustomDevice plugin 3rd party resource assemblies
   SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
+  File "${TVSERVER.BASE}\Ionic.Zip.dll"
+  File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\CIAPI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
   File "${TVSERVER.BASE}\TbsCIapi.dll"
@@ -921,6 +922,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   
   ; The Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"  
   File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
   File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
   File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
@@ -1172,20 +1174,17 @@ Section -Post
   
   !insertmacro RestoreTVServiceConfig
   
-  
-  ;if TV Server was installed exec SetupTv with correct parameters    
+  #---------------------------------------------------------------------------
+  # SERVICE STARTING
+  #---------------------------------------------------------------------------
+  ;if TV Server was installed start TVService
   ${If} $noServer == 0
-	  ${If} $DeploySql != ""
-	  ${AndIf} $DeployPwd != ""
-	            StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd"
-	  ${Else}
-	            StrCpy $R0 "--DeployMode"
-	  ${EndIf}
-	
-	  ${LOG_TEXT} "INFO" "Starting SetupTv.exe $R0..."
-	  ExecWait '"${SETUP_TV_FOLDER}\SetupTV.exe" $R0'
+      ${AndIf} ${FileExists} "$INSTDIR\TVService.exe"
+      ${LOG_TEXT} "INFO" "Starting TVService"
+      ExecDos::exec '"$INSTDIR\TVService.exe" /start'
+      ${LOG_TEXT} "INFO" "Finished Starting TVService"
   ${EndIf}
-      
+
 SectionEnd
 
 #---------------------------------------------------------------------------

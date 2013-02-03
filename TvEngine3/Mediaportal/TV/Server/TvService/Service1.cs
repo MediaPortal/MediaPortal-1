@@ -30,12 +30,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVService
 {
-
-
   public partial class Service1 : ServiceBase
   {
-    
-
     //private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;
 
@@ -102,7 +98,6 @@ namespace Mediaportal.TV.Server.TVService
         }
         tvServiceThread.Stop(60000);
       }
-
       else if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
       {
         TransactedInstaller ti = new TransactedInstaller();
@@ -141,6 +136,35 @@ namespace Mediaportal.TV.Server.TVService
         {
           Thread.Sleep(100);
         } while (true);
+      }
+      // Start TVService
+      else if (opt != null && opt.ToUpperInvariant() == "/START")
+      {
+        try
+        {
+          using (ServiceController sc = new ServiceController("TVService"))
+          {
+            switch (sc.Status)
+            {
+              case ServiceControllerStatus.Running:
+                return;
+              case ServiceControllerStatus.StopPending:
+                return;
+              case ServiceControllerStatus.Stopped:
+                sc.Start();
+                break;
+            }
+            sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(30));
+            return;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error(
+            "ServiceHelper: Starting tvservice failed. Please check your installation. \nError: {0}",
+            ex.ToString());
+          return;
+        }
       }
 
       // More than one user Service may run within the same process. To add
