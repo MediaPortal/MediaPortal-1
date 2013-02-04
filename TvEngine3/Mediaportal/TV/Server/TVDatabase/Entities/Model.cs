@@ -8,12 +8,16 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
@@ -351,23 +355,124 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             trackingItem.ChangeTracker.AcceptChanges();
         }
     }
-    
-    // An System.Collections.ObjectModel.ObservableCollection that raises
-    // individual item removal notifications on clear and prevents adding duplicates.
+            
     public class TrackableCollection<T> : ObservableCollection<T>
     {
-        protected override void ClearItems()
+      private readonly HashSet<T> _lookupList = new HashSet<T>();
+      private readonly object _lookupListLock = new object();
+
+      private void InsertIntoLookUp(T item)
+      {
+        var t = new Task(() =>
+                           {
+                             lock (_lookupListLock)
+                             {
+                               if (!_lookupList.Contains(item))
+                               {
+                                 _lookupList.Add(item);
+                               } 
+                             }                             
+                           });
+        t.Start();
+      }
+
+      public new bool Contains(T item)
+      {
+        lock (_lookupListLock)
         {
-            new List<T>(this).ForEach(t => Remove(t));
+          return _lookupList.Contains(item);
         }
-    
-        protected override void InsertItem(int index, T item)
+      }      
+
+      public new void Insert(int index, T item)
+      {
+        base.Insert(index, item);
+        InsertIntoLookUp(item);
+      }
+
+      public new void RemoveAt(int index)
+      {        
+        base.RemoveAt(index);
+        T item = this[index];
+        RemoveFromLookUp(item);        
+      }
+
+      private void RemoveFromLookUp(T item)
+      {
+        var t = new Task(() =>
         {
-            if (!this.Contains(item))
+          lock (_lookupListLock)
+          {
+            if (_lookupList.Contains(item))
             {
-                base.InsertItem(index, item);
+              _lookupList.Remove(item);
             }
+          }
+        });
+        t.Start();
+      }
+
+      private void ReplaceIntoLookUp(T oldValue, T newValue)
+      {
+        var t = new Task(() =>
+        {
+          lock (_lookupListLock)
+          {
+            if (_lookupList.Contains(oldValue))
+            {
+              _lookupList.Remove(oldValue);              
+            }
+            _lookupList.Add(newValue);              
+          }
+        });
+        t.Start();
+      }
+
+      public new bool Remove(T item)
+      {
+        bool value = base.Remove(item);        
+        RemoveFromLookUp(item);        
+        return value;
+      }
+
+      public new T this[int index]
+      {
+        get { return base[index]; }
+        set
+        {
+          T oldValue = base[index];
+          ReplaceIntoLookUp(oldValue, value);
+          base[index] = value;          
         }
+      }
+      
+
+      public new void Add(T item)
+      {
+        base.Add(item);
+        InsertIntoLookUp(item);
+      }
+
+      public new void Clear()
+      {
+        int count = Count;
+        for (int index = 0; index < count; index++)
+        {
+          RemoveAt(0);
+        }
+
+        lock (_lookupListLock)
+        {
+          _lookupList.Clear();
+        }
+      }
+
+      bool IsReadOnly
+      {
+        get { return ((ICollection<T>)this).IsReadOnly; }
+      }
+      
+
     }
     
     // An interface that provides an event that fires when complex properties change.
