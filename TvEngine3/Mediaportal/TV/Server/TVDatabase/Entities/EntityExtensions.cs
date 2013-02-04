@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -38,13 +39,14 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       foreach (PropertyInfo propertyInfo in from oPropertyInfo in properties let type = oPropertyInfo.PropertyType let found = IsAssignableToGenericType(type, typeof(TrackableCollection<>)) where found select oPropertyInfo)
       {        
         var changeTrackers = propertyInfo.GetValue(trackingItem, null) as IList;
-        bool changeDetected = false;        
+        bool changeDetected = false;
 
-        if (changeTrackers != null)
+        if (changeTrackers != null && changeTrackers.Count > 0)
         {
-          for (int i = changeTrackers.Count - 1; i >= 0; i--)
+          var markedForDeletions = new List<object>();
+          int i = 0;
+          foreach (object changeTracker in changeTrackers)
           {
-            var changeTracker = changeTrackers[i];          
             var objectWithChangeTracker = changeTracker as IObjectWithChangeTracker;
             if (objectWithChangeTracker != null && objectWithChangeTracker.ChangeTracker.State != ObjectState.Unchanged)
             {
@@ -53,9 +55,17 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
             else
             {
-              changeTrackers.RemoveAt(i);
-            }            
+              markedForDeletions.Add(changeTracker);
+            }
+            i++;
           }
+          if (markedForDeletions.Count > 0)
+          {
+            foreach (object changeTracker in markedForDeletions)
+            {
+              changeTrackers.Remove(changeTracker);
+            } 
+          }                  
         }                  
 
         if (!changeDetected)
