@@ -214,9 +214,10 @@ namespace Mediaportal.TV.Server.TVService
         }
 
         _tvServiceThread = new TvServiceThread(Application.ExecutablePath);
-        _tvServiceThread.Start();        
-      }      
-    }    
+        _tvServiceThread.Start();
+        _tvServiceThread.InitializedEvent.WaitOne();
+      }
+    }
 
     private void debug()
     {
@@ -322,21 +323,21 @@ namespace Mediaportal.TV.Server.TVService
       man.InsertPrograms(importParams);*/
     }
 
-    
+
 
     /// <summary>
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
     protected override void OnStop()
-    { 
+    {
       RequestAdditionalTime(300000); // we want to make sure all services etc. are closed before tearing down the process.
       this.LogDebug("service.OnStop");
       if (_tvServiceThread != null)
       {
-        _tvServiceThread.Stop(60000);        
+        _tvServiceThread.Stop(60000);
       }
       base.OnStop();
       ExitCode = 0;
-    } 
+    }
   }
 }
