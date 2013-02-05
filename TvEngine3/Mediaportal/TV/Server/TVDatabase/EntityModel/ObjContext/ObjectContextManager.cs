@@ -116,10 +116,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       ctx.SaveChanges();
     }
 
+    private static object _createDbContextLock = new object();
+
     public static Model CreateDbContext()
     {
-      // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
-      Initialize();
+      lock (_createDbContextLock)
+      {
+        // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
+        Initialize();
+      }
+
       var model = GetModel();
 
       //model.ContextOptions.DefaultQueryPlanCachingSetting = true;
@@ -159,6 +165,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.TvMovieMappings.MergeOption = MergeOption.NoTracking;
       model.Versions.MergeOption = MergeOption.NoTracking;
       return model;
+
     }
 
     private static void DropConstraint(Model model, string tablename, string constraintname)

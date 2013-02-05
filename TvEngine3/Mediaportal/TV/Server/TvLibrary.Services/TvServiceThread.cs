@@ -19,7 +19,7 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
-  
+
 
     #region variables
 
@@ -45,9 +45,9 @@ namespace Mediaportal.TV.Server.TVLibrary
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
-      
+
       _powerEventHandlers = new List<PowerEventHandler>();
-      GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);      
+      GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
 
       AddPowerEventHandler(OnPowerEventHandler);
       try
@@ -76,6 +76,11 @@ namespace Mediaportal.TV.Server.TVLibrary
     public static bool Started
     {
       get { return _started; }
+    }
+
+    public EventWaitHandle InitializedEvent
+    {
+      get { return _initializedEvent; }
     }
 
     #region IPowerEventHandler implementation
@@ -418,7 +423,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);            
+            this.LogError(ex, "TV Service:  Plugin: {0} failed to start", plugin.Name);
           }
         }
         else
@@ -441,7 +446,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);            
+            this.LogError(ex, "TV Service: Plugin: {0} failed to startedAll", plugin.Name);
           }
         }
       }
@@ -460,7 +465,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           }
           catch (Exception ex)
           {
-            this.LogError(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);            
+            this.LogError(ex, "TV Service: plugin: {0} failed to stop", plugin.Name);
           }
         }
         _pluginsStarted = new List<ITvServerPlugin>();
@@ -468,17 +473,17 @@ namespace Mediaportal.TV.Server.TVLibrary
       this.LogInfo("TV Service: Plugins stopped");
     }
 
-   
+
 
     private void DoStop()
     {
-//if (!Started)
+      //if (!Started)
       //  return;
       this.LogDebug("TV Service: stopping");
 
-      if (_initializedEvent != null)
+      if (InitializedEvent != null)
       {
-        _initializedEvent.Reset();
+        InitializedEvent.Reset();
       }
       if (ServiceManager.Instance.InternalControllerService != null)
       {
@@ -496,7 +501,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       _powerEventThread = null;
       _started = false;
       this.LogDebug("TV Service: stopped");
-    }    
+    }
 
     private void ApplyProcessPriority()
     {
@@ -545,7 +550,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     public void Start()
     {
       var tvServiceThreadStart = new ThreadStart(DoStart);
-      _tvServiceThread = new Thread(tvServiceThreadStart) {IsBackground = false};
+      _tvServiceThread = new Thread(tvServiceThreadStart) { IsBackground = false };
 
 
       // apply process priority on initial service start.
@@ -557,13 +562,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           _priorityApplied = true;
         }
         catch (Exception ex)
-        {          
+        {
           this.LogError("OnStart: exception applying process priority: {0}", ex.StackTrace);
         }
       }
 
       _tvServiceThreadEvt.Reset();
-      _tvServiceThread.Start();      
+      _tvServiceThread.Start();
     }
 
     public void Stop(int maxWaitMsecs)
@@ -581,8 +586,8 @@ namespace Mediaportal.TV.Server.TVLibrary
           _tvServiceThread.Join();
           this.LogDebug("tvService thread aborted.");
         }
-        _tvServiceThread = null; 
-      }      
+        _tvServiceThread = null;
+      }
     }
 
     private void DoStart()
@@ -603,15 +608,15 @@ namespace Mediaportal.TV.Server.TVLibrary
           //Check for unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
 
-          _powerEventThread = new Thread(PowerEventThread) {Name = "PowerEventThread", IsBackground = true};
+          _powerEventThread = new Thread(PowerEventThread) { Name = "PowerEventThread", IsBackground = true };
           _powerEventThread.Start();
           ServiceManager.Instance.InternalControllerService.Init();
           StartPlugins();
 
           _started = true;
-          if (_initializedEvent != null)
+          if (InitializedEvent != null)
           {
-            _initializedEvent.Set();
+            InitializedEvent.Set();
           }
           this.LogInfo("TV service: Started");
           _tvServiceThreadEvt.WaitOne();
