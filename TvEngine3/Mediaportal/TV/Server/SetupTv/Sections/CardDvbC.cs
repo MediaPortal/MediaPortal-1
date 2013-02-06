@@ -158,7 +158,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      Init();
       mpComboBoxMod.SelectedIndex = 3;
       UpdateStatus();
       SetDefaults();

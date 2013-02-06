@@ -155,7 +155,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      Init();
       UpdateStatus();
       SetDefaults();
 
