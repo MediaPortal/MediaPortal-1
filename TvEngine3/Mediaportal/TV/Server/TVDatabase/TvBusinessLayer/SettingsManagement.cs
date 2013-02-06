@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities.Cache;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -20,22 +23,29 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         }
         return _epgKeepDuration;
       }
-    }
+    }    
 
     public static Setting GetSetting(string tagName)
     {
-      using (ISettingsRepository settingsRepository = new SettingsRepository())
-      {
-        return settingsRepository.GetSetting(tagName);
-      }
+      Setting setting = EntityCacheHelper.Instance.SettingCache.GetOrUpdateFromCache(tagName,
+                  delegate
+                    {
+                      using (ISettingsRepository settingsRepository = new SettingsRepository())
+                      {
+                        return settingsRepository.GetSetting(tagName);
+                      }
+                    }
+        );
+      return setting;
     }
 
     public static void SaveSetting(string tagName, string value)
-    {
+    {            
       using (ISettingsRepository settingsRepository = new SettingsRepository(true))
       {
-        settingsRepository.SaveSetting(tagName, value);
-      }
+        Setting setting = settingsRepository.SaveSetting(tagName, value);
+        EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
+      }      
     }
 
     public static void SaveValue(string tagName, int defaultValue)
@@ -65,10 +75,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     
     public static Setting GetSetting(string tagName, string defaultValue)
     {
-      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+      Setting setting = EntityCacheHelper.Instance.SettingCache.GetFromCache(tagName);
+
+      if (setting == null)
       {
-        return settingsRepository.GetOrSaveSetting(tagName, defaultValue);
+        using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+        {
+          setting = settingsRepository.GetOrSaveSetting(tagName, defaultValue);
+          EntityCacheHelper.Instance.SettingCache.AddOrUpdateCache(tagName, setting);
+        } 
       }
+      return setting;
     }
 
     public static int GetValue(string tagName, int defaultValue)
@@ -111,6 +128,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       Setting setting = GetSetting(tagName, defaultValue.ToString(CultureInfo.InvariantCulture));
       return string.IsNullOrEmpty(setting.Value) ? DateTime.MinValue : DateTime.Parse(setting.Value, CultureInfo.InvariantCulture);
+    }
+
+    public static IList<Setting> ListAllSettings()
+    {
+      using (ISettingsRepository settingsRepository = new SettingsRepository(true))
+      {
+        IQueryable<Setting> settings = settingsRepository.GetAll<Setting>();        
+        return settings.ToList();
+      }
     }
   }
 }
