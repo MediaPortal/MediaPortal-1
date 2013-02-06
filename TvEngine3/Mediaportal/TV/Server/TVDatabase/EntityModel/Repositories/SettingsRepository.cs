@@ -21,7 +21,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     /// <summary>
     /// saves a value to the database table "Setting"
     /// </summary>    
-    public void SaveSetting(string tagName, string value)
+    public Setting SaveSetting(string tagName, string value)
     {            
       Setting setting = First<Setting>(s => s.Tag == tagName);
       if (setting == null)
@@ -36,6 +36,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       UnitOfWork.SaveChanges();
       setting.AcceptChanges();
+      return setting;
     }
 
     public Setting GetOrSaveSetting(string tagName, string defaultValue)
