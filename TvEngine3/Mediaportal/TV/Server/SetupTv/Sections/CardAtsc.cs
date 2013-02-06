@@ -96,7 +96,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      Init();
       UpdateStatus();
       checkBoxQAM.Checked = ServiceAgents.Instance.SettingServiceAgent.GetValue("atsc" + _cardNumber + "supportsqam", false);
       checkBoxQAM_CheckedChanged(null, null);

@@ -937,6 +937,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      if (scanState != ScanState.Done && scanState != ScanState.Scanning && scanState != ScanState.Cancel && scanState != ScanState.Updating)
       Init();
       UpdateStatus();
       labelCurrentPosition.Text = "";
@@ -1984,10 +1985,11 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _transponders.Sort();
       String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", PathManager.GetDataPath,
                                       DateTime.Now.ToString("yyyy-MM-dd"));
-      System.IO.TextWriter parFileXML = System.IO.File.CreateText(filePath);
-      XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));
-      xmlSerializer.Serialize(parFileXML, _transponders);
-      parFileXML.Close();
+      using (System.IO.TextWriter parFileXML = System.IO.File.CreateText(filePath))
+      {
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));
+        xmlSerializer.Serialize(parFileXML, _transponders);
+      }
       Init();
       return Path.GetFileNameWithoutExtension(filePath);
     }
