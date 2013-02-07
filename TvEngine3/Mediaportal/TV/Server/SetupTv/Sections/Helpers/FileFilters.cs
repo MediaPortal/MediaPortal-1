@@ -120,15 +120,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// Load existing list from xml file 
     /// </summary>
     /// <param name="fileName">Path for input filen</param>
-    public object LoadList(string fileName, Type ListType)
+    /// <param name="listType"> </param>
+    public object LoadList(string fileName, Type listType)
     {
       try
       {
-        XmlReader parFileXML = XmlReader.Create(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(ListType);
-        object result = xmlSerializer.Deserialize(parFileXML);
-        parFileXML.Close();
-        return result;
+        using (XmlReader parFileXML = XmlReader.Create(fileName))
+        {
+          XmlSerializer xmlSerializer = new XmlSerializer(listType);
+          object result = xmlSerializer.Deserialize(parFileXML);
+          return result; 
+        }        
       }
       catch (Exception ex)
       {

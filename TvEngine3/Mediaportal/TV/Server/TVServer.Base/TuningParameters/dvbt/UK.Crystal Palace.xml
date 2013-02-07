@@ -6,7 +6,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>490000</Frequency><!-- C23 Now -->
@@ -14,7 +14,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>506000</Frequency><!-- C25 From 18 April 2012 -->
@@ -22,7 +22,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>514000</Frequency><!-- C26 From 18 April 2012 -->
@@ -30,7 +30,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>530000</Frequency><!-- C28 Now -->
@@ -38,7 +38,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>538000</Frequency><!-- C29 Now -->
@@ -46,7 +46,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>546000</Frequency><!-- C30 From 18 April 2012 -->
@@ -54,7 +54,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>554000</Frequency><!-- C31 Now -->
@@ -62,7 +62,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
  <DVBTTuning>
     <Frequency>562000</Frequency><!-- C32 Now -->
@@ -70,7 +70,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>570000</Frequency><!-- C33 from 4 April 2012 -->
@@ -78,7 +78,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>578000</Frequency><!-- C34 Now -->
@@ -86,7 +86,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>586000</Frequency><!-- C35 -->
@@ -94,7 +94,7 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>594000</Frequency><!-- C36 -->
@@ -102,6 +102,6 @@
     <Offset>167</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
 </ArrayOfDVBTTuning>

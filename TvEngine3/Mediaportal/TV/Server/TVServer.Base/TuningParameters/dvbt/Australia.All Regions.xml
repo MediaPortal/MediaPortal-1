@@ -6,7 +6,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>184500</Frequency>
@@ -14,7 +14,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>191500</Frequency>
@@ -22,7 +22,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>198500</Frequency>
@@ -30,7 +30,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>205500</Frequency>
@@ -38,7 +38,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>212500</Frequency>
@@ -46,7 +46,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>219500</Frequency>
@@ -54,7 +54,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>226500</Frequency>
@@ -62,7 +62,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>529500</Frequency>
@@ -70,7 +70,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>536500</Frequency>
@@ -78,7 +78,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>536625</Frequency>
@@ -86,7 +86,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>543500</Frequency>
@@ -94,7 +94,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>550500</Frequency>
@@ -102,7 +102,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>557500</Frequency>
@@ -110,7 +110,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>564500</Frequency>
@@ -118,7 +118,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>571500</Frequency>
@@ -126,7 +126,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>    
   <DVBTTuning>
     <Frequency>578500</Frequency>
@@ -134,7 +134,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>585500</Frequency>
@@ -142,7 +142,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>592500</Frequency>
@@ -150,7 +150,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>599500</Frequency>
@@ -158,7 +158,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>606500</Frequency>
@@ -166,7 +166,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>613500</Frequency>
@@ -174,7 +174,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>620500</Frequency>
@@ -182,7 +182,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>627500</Frequency>
@@ -190,7 +190,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>634500</Frequency>
@@ -198,7 +198,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>641500</Frequency>
@@ -206,7 +206,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>648500</Frequency>
@@ -214,7 +214,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>655500</Frequency>
@@ -222,7 +222,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>662500</Frequency>
@@ -230,7 +230,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>669500</Frequency>
@@ -238,7 +238,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>676500</Frequency>
@@ -246,7 +246,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>683500</Frequency>
@@ -254,7 +254,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>690500</Frequency>
@@ -262,7 +262,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>697500</Frequency>
@@ -270,7 +270,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>704500</Frequency>
@@ -278,7 +278,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>711500</Frequency>
@@ -286,7 +286,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>718500</Frequency>
@@ -294,7 +294,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>725500</Frequency>
@@ -302,7 +302,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>732500</Frequency>
@@ -310,7 +310,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>739500</Frequency>
@@ -318,7 +318,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>746500</Frequency>
@@ -326,7 +326,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>753500</Frequency>
@@ -334,7 +334,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>760500</Frequency>
@@ -342,7 +342,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>767500</Frequency>
@@ -350,7 +350,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>774500</Frequency>
@@ -358,7 +358,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>781500</Frequency>
@@ -366,7 +366,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>788500</Frequency>
@@ -374,7 +374,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>795500</Frequency>
@@ -382,7 +382,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>802500</Frequency>
@@ -390,7 +390,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>809500</Frequency>
@@ -398,7 +398,7 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>816500</Frequency>
@@ -406,6 +406,6 @@
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
 </ArrayOfDVBTTuning>

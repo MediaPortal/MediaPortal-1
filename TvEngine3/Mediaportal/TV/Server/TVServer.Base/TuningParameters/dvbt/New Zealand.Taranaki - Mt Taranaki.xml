@@ -6,7 +6,7 @@
     <Offset>0</Offset>
     <CellId>20410</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>578000</Frequency>
@@ -14,7 +14,7 @@
     <Offset>0</Offset>
     <CellId>10410</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
     <Frequency>594000</Frequency>
@@ -22,6 +22,6 @@
     <Offset>0</Offset>
     <CellId>30410</CellId>
     <CellIdExtension>0</CellIdExtension>
-    <IsDvbT2>False</IsDvbT2>
+    <IsDvbT2>false</IsDvbT2>
   </DVBTTuning>
 </ArrayOfDVBTTuning>
