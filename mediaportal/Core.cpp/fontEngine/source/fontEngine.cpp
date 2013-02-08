@@ -15,12 +15,14 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+
+#include <vector>
+#include <shlobj.h>
+
 #include "fontEngine.h"
 #include "transformmatrix.h"
 
 using namespace std;
-#include <vector>
-#include <shlobj.h>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -153,11 +155,11 @@ void Log(char* txt)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\fontEngine.log",folder);
+    _stprintf(logFile, _T("%s\\Team MediaPortal\\MediaPortal\\Log\\fontEngine.log"), folder);
     pathInitialized=true;
   }
   
-  FILE* fp = fopen(logFile,"a+");
+  FILE* fp = _tfopen(logFile, _T("a+"));
   if (!fp)
   {
     // failed to open log file, folder missing?
@@ -2114,8 +2116,8 @@ void FontEngineRemoveFont(int fontNumber)
 
 void PrintStatistics()
 {
-  char log[128];
-  sprintf(log,"fontengine: Textures InUse:%d VertexBuffer Updates:%d %d\n",m_iTexturesInUse, m_iVertexBuffersUpdated,m_iFontVertexBuffersUpdated);
+  TCHAR log[256];
+  _stprintf(log, _T("fontengine: Textures InUse:%d VertexBuffer Updates:%d %d\n"), m_iTexturesInUse, m_iVertexBuffersUpdated, m_iFontVertexBuffersUpdated);
   OutputDebugString(log);
 }
 

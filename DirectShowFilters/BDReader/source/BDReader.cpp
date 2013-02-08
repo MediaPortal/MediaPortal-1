@@ -40,8 +40,8 @@
 #include "..\..\alloctracing.h"
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
-extern void LogDebug(const char *fmt, ...);
-extern void GetLogFile(char *pLog);
+extern void LogDebug(const char* fmt, ...);
+extern void GetLogFile(TCHAR* pLog);
 
 const AMOVIESETUP_MEDIATYPE acceptAudioPinTypes =
 {
