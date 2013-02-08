@@ -109,7 +109,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <returns>The plugin name.</returns>
     public string PluginName()
     {
-      return "LastFMScrobblerTest";
+      return "LastFMScrobbler";
     }
 
     /// <summary>
