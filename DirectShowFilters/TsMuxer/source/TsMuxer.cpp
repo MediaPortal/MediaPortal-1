@@ -28,6 +28,7 @@
 #include <streams.h>
 #include <initguid.h>
 #include <shlobj.h>
+#include <tchar.h>
 #include "TsMuxer.h"
 #include "liveMedia.hh"
 #include "ChannelScan.h"
@@ -133,9 +134,9 @@ void LogDebug(const char *fmt, ...)
 	TCHAR folder[MAX_PATH];
 	TCHAR fileName[MAX_PATH];
 	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsMuxer.Log",folder);
+	_stprintf(fileName, _T("%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsMuxer.Log"), folder);
 
-	FILE* fp = fopen(fileName,"a+");
+	FILE* fp = _tfopen(fileName, _T("a+"));
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
@@ -279,7 +280,7 @@ m_pTsOutputPin(NULL)
 {
 	LogDebug("CTsMuxer::ctor()");
 
-	DeleteFile("TsMuxer.log");
+	DeleteFile(_T("TsMuxer.log"));
 	m_pFilter = new CTsMuxerFilter(this, GetOwner(), &m_Lock, phr);
 	if (m_pFilter == NULL) 
 	{

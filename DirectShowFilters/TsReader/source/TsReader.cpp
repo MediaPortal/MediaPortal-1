@@ -46,14 +46,14 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-static char logFile[MAX_PATH];
+static TCHAR logFile[MAX_PATH];
 static WORD logFileParsed = -1;
 
 DWORD m_tGTStartTime = 0;
 
 DEFINE_MP_DEBUG_SETTING(DoNotAllowSlowMotionDuringZapping)
 
-void GetLogFile(char *pLog)
+void GetLogFile(TCHAR* pLog)
 {
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
@@ -61,10 +61,10 @@ void GetLogFile(char *pLog)
   {
     TCHAR folder[MAX_PATH];
     ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    _stprintf(logFile, _T("%s\\Team MediaPortal\\MediaPortal\\Log\\TsReader-%04.4d-%02.2d-%02.2d.Log"), folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
     logFileParsed=systemTime.wDay; // rec
   }
-  strcpy(pLog, &logFile[0]);
+  _tcscpy (pLog, &logFile[0]);
 }
 
 
@@ -84,7 +84,7 @@ void LogDebug(const char *fmt, ...)
 //#ifdef DONTLOG
   TCHAR filename[1024];
   GetLogFile(filename);
-  FILE* fp = fopen(filename,"a+");
+  FILE* fp = _tfopen(filename, _T("a+"));
 
   if (fp!=NULL)
   {
@@ -205,11 +205,11 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bDisableVidSizeRebuildMPEG2 = false;
   m_bDisableVidSizeRebuildH264 = false;
   m_bDisableAddPMT = false;
-  if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Team MediaPortal\\TsReader", 0, NULL, 
+  if (ERROR_SUCCESS==RegCreateKeyEx(HKEY_CURRENT_USER, _T("Software\\Team MediaPortal\\TsReader"), 0, NULL, 
                                     REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &key, NULL))
   {
     DWORD keyValue = 0;
-    LPCTSTR disableVidSizeRebuildMPEG2 = TEXT("DisableVidSizeRebuildMPEG2");
+    LPCTSTR disableVidSizeRebuildMPEG2 = _T("DisableVidSizeRebuildMPEG2");
     ReadRegistryKeyDword(key, disableVidSizeRebuildMPEG2, keyValue);
     if (keyValue)
     {
@@ -218,7 +218,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     }
 
     keyValue = 0;
-    LPCTSTR disableVidSizeRebuildH264 = TEXT("DisableVidSizeRebuildH264");
+    LPCTSTR disableVidSizeRebuildH264 = _T("DisableVidSizeRebuildH264");
     ReadRegistryKeyDword(key, disableVidSizeRebuildH264, keyValue);
     if (keyValue)
     {
@@ -227,7 +227,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     }
 
     keyValue = 0;
-    LPCTSTR disableAddPMT = TEXT("DisableAddPMT");
+    LPCTSTR disableAddPMT = _T("DisableAddPMT");
     ReadRegistryKeyDword(key, disableAddPMT, keyValue);
     if (keyValue)
     {

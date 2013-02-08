@@ -59,7 +59,7 @@ TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
 
 
 BOOL m_bEVRLoaded    = false;
-char* m_RenderPrefix = "vmr9";
+TCHAR* m_RenderPrefix = _T("vmr9");
 
 LPDIRECT3DDEVICE9			    m_pDevice       = NULL;
 CVMR9AllocatorPresenter*	m_vmr9Presenter = NULL;
@@ -127,22 +127,22 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 }
 
 
-void LogPath(char* dest, char* name)
+void LogPath(TCHAR* dest, TCHAR* name)
 {
   TCHAR folder[MAX_PATH];
   SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s",folder,m_RenderPrefix,name);
+  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\%s.%s"), folder, m_RenderPrefix, name);
 }
 
 
 void LogRotate()
 {
   TCHAR fileName[MAX_PATH];
-  LogPath(fileName, "log");
+  LogPath(fileName, _T("log"));
   TCHAR bakFileName[MAX_PATH];
-  LogPath(bakFileName, "bak");
-  remove(bakFileName);
-  rename(fileName, bakFileName);
+  LogPath(bakFileName, _T("bak"));
+  _tremove(bakFileName);
+  _trename(fileName, bakFileName);
 }
 
 
@@ -167,10 +167,10 @@ string GetLogLine()
 UINT CALLBACK LogThread(void* param)
 {
   TCHAR fileName[MAX_PATH];
-  LogPath(fileName, "log");
+  LogPath(fileName, _T("log"));
   while ( m_bLoggerRunning ) {
     if ( m_logQueue.size() > 0 ) {
-      FILE* fp = fopen(fileName,"a+");
+      FILE* fp = _tfopen(fileName, _T("a+"));
       if (fp!=NULL)
       {
         SYSTEMTIME systemTime;
@@ -437,10 +437,10 @@ void UnloadEVR()
 bool LoadEVR()
 {
   Log("Loading EVR libraries");
-  char systemFolder[MAX_PATH];
-  char DLLFileName[MAX_PATH];
+  TCHAR systemFolder[MAX_PATH];
+  TCHAR DLLFileName[MAX_PATH];
   GetSystemDirectory(systemFolder,sizeof(systemFolder));
-  sprintf(DLLFileName,"%s\\dxva2.dll", systemFolder);
+  _stprintf(DLLFileName, _T("%s\\dxva2.dll"), systemFolder);
   m_hModuleDXVA2=LoadLibrary(DLLFileName);
   if (m_hModuleDXVA2 != NULL)
   {
@@ -449,7 +449,7 @@ bool LoadEVR()
     if (m_pDXVA2CreateDirect3DDeviceManager9 != NULL)
     {
       Log("Found method DXVA2CreateDirect3DDeviceManager9");
-      sprintf(DLLFileName,"%s\\evr.dll", systemFolder);
+      _stprintf(DLLFileName, _T("%s\\evr.dll"), systemFolder);
       m_hModuleEVR = LoadLibrary(DLLFileName);
       m_pMFCreateVideoSampleFromSurface = (TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
 
@@ -460,7 +460,7 @@ bool LoadEVR()
         if(m_pMFCreateVideoMediaType)
         {
           Log("Found method MFCreateVideoMediaType");
-          sprintf(DLLFileName,"%s\\mfplat.dll", systemFolder);
+          _stprintf(DLLFileName, _T("%s\\mfplat.dll"), systemFolder);
           m_hModuleMFPLAT = LoadLibrary(DLLFileName);
           m_pMFCreateMediaType = (TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
           if (m_pMFCreateMediaType)
@@ -468,7 +468,7 @@ bool LoadEVR()
             Log("Found method MFCreateMediaType");
             Log("Successfully loaded EVR dlls");
             
-            sprintf(DLLFileName,"%s\\dwmapi.dll", systemFolder);
+            _stprintf(DLLFileName, _T("%s\\dwmapi.dll"), systemFolder);
             m_hModuleDWMAPI = LoadLibrary(DLLFileName);
             // Vista / Windows 7 only, allowed to return NULL. Remember to check agains NULL when using
             if (m_hModuleDWMAPI)
@@ -478,7 +478,7 @@ bool LoadEVR()
             }
 
 
-            sprintf(DLLFileName,"%s\\avrt.dll", systemFolder);
+            _stprintf(DLLFileName, _T("%s\\avrt.dll"), systemFolder);
             m_hModuleAVRT = LoadLibrary(DLLFileName);
             // Vista / Windows 7 only, allowed to return NULL. Remember to check agains NULL when using
             if (m_hModuleAVRT)
@@ -493,7 +493,7 @@ bool LoadEVR()
 
             if (IsWin7())
             {
-              sprintf(DLLFileName,"Win7RefreshRateHelper.dll");
+              _stprintf(DLLFileName, _T("Win7RefreshRateHelper.dll"));
               m_hModuleW7Helper = LoadLibrary(DLLFileName);
               if (m_hModuleW7Helper)
               {
@@ -605,7 +605,7 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor)
 {
   HRESULT hr;
-  m_RenderPrefix = "evr";
+  m_RenderPrefix = _T("evr");
   LogRotate();
   // Make sure that we aren't trying to load the DLLs for second time
   if (!m_bEVRLoaded)
