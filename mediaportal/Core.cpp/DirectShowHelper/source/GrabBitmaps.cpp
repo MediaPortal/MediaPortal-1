@@ -95,7 +95,7 @@ public:
         // Convert the buffer into a bitmap
         //
         TCHAR szFilename[MAX_PATH];
-        strcpy(szFilename,"temp.bmp");
+        _tcscpy(szFilename, _T("temp.bmp"));
         DeleteFile(szFilename);
         // Create a file to hold the bitmap
         HANDLE hf = CreateFile(szFilename, GENERIC_WRITE, FILE_SHARE_READ,  NULL, CREATE_ALWAYS, NULL, NULL );
