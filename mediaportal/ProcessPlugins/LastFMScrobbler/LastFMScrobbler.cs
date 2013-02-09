@@ -27,16 +27,16 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Profile;
-using MediaPortal.LastFM;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
+using MediaPortal.LastFM;
 
 namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 {
 
   [PluginIcons("ProcessPlugins.LastFMScrobbler.LastFMScrobbler.gif",
-               "ProcessPlugins.LastFMScrobbler.LastFMSscrobblerDisabled.gif")]
+               "ProcessPlugins.LastFMScrobbler.LastFMScrobblerDisabled.gif")]
   public class LastFMScrobbler : IPlugin, ISetupForm
   {
     private class PlaybackStop
@@ -50,6 +50,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static readonly Random Randomizer = new Random();
     private static int _randomness = 100;
     private static bool _autoDJEnabled = true;
+    private static bool _announceTracks = false;
+    private static bool _scrobbleTracks = false;
 
     private static void LoadSettings()
     {
@@ -57,6 +59,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         _autoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", true);
         _randomness = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
+        _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
+        _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
+
       }
     }
 
@@ -154,11 +159,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// </summary>
     public void ShowPlugin()
     {
-      //      using (var config = new LastFMConfig())
-      //      {
       var config = new LastFMConfig();
       config.Show();
-      //      }
     }
 
     /// <summary>
@@ -188,10 +190,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Music)
-      {
-        return;
-      }
+      // only carry on if there is actually something to do
+      if (!_announceTracks && !_autoDJEnabled) return;
+
+      if (type != g_Player.MediaType.Music) return;
 
       _announceWorker = new BackgroundWorker();
       _announceWorker.DoWork += AnnounceWorkerDoWork;
@@ -264,17 +266,21 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     {
       // Get song details and announce on last.fm
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-      var plI = pl.First(plItem => plItem.FileName == (string)e.Argument);
+      var plI = pl.First(plItem => plItem.FileName == (string) e.Argument);
       if (plI == null || plI.MusicTag == null)
       {
         Log.Info("Unable to announce song: {0}  as it does not exist in the playlist");
         return;
       }
 
-      var currentSong = (MusicTag)plI.MusicTag;
-      
-      LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
-                         currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+      var currentSong = (MusicTag) plI.MusicTag;
+
+      if (_announceTracks)
+      {
+        LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
+                                       currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+      }
+
       if (_autoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
       {
         AutoDJ(currentSong.Title, currentSong.Artist);
@@ -289,6 +295,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of track that was stopped</param>
     private static void DoOnChangedOrStopped(int stoptime, string filename)
     {
+      // only scrobble if enabled
+      if (!_scrobbleTracks) return;
+
       var playbackStop = new PlaybackStop { Filename = filename, Stoptime = stoptime };
       _scrobbleWorker = new BackgroundWorker();
       _scrobbleWorker.DoWork += ScrobbleWorkerDoWork;
@@ -317,17 +326,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
 
       var currentSong = (MusicTag)plI.MusicTag;
-
-      /*
-      var currentSong = new Song();
-      MusicDatabase.Instance.GetSongByFileName(filename, ref currentSong);
-
-      if (string.IsNullOrEmpty(currentSong.FileName))
-      {
-        Log.Info("[MIKE] Scobble: Song is not in database: {0}", filename);
-        return;
-      }
-       */
 
       if (currentSong.Duration < 30)
       { // last.fm say not to scrobble songs that last less than 30 seconds

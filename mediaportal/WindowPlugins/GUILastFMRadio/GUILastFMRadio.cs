@@ -3,7 +3,6 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -246,7 +245,7 @@ namespace MediaPortal.GUI.LastFMRadio
     private void AddMoreTracks()
     {
       List<LastFMStreamingTrack> tracks;
-      if(!LastFMLibrary.GetRadioPlaylist(out tracks))
+      if (!LastFMLibrary.GetRadioPlaylist(out tracks))
       {
         var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)

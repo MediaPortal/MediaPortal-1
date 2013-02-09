@@ -203,9 +203,11 @@
     </ProjectReference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -213,6 +215,12 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LastFMScrobbler\LastFMAuthentication.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LastFMScrobbler\LastFMAuthentication.Designer.cs">
+      <DependentUpon>LastFMAuthentication.cs</DependentUpon>
     </Compile>
     <Compile Include="LastFMScrobbler\LastFMConfig.cs">
       <SubType>Form</SubType>
@@ -255,6 +263,9 @@
     </Compile>
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
     <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
+    <EmbeddedResource Include="LastFMScrobbler\LastFMAuthentication.resx">
+      <DependentUpon>LastFMAuthentication.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LastFMScrobbler\LastFMConfig.resx">
       <DependentUpon>LastFMConfig.cs</DependentUpon>
     </EmbeddedResource>

@@ -1213,7 +1213,6 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateSimilarTracks(string filename)
     {
-      Log.Info("MIKE: update: {0}", filename);
       //TODO: check here for last.fm and do not update ?
       lstSimilarTracks.Clear();
 
@@ -1228,9 +1227,6 @@ namespace MediaPortal.GUI.Music
 
       var tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       var dbTracks = LastFMLibrary.GetSimilarTracksInDatabase(tracks);
-
-      Log.Info("MIKE: tracks: {0}", tracks.Count);
-      Log.Info("MIKE: dbtracks: {0}", dbTracks.Count);
       
       for (var i = 0; i < 3; i++)
       {

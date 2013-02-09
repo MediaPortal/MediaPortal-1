@@ -38,35 +38,19 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         chkAutoDJ.Checked = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", true);
         numRandomness.Value = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
+        chkAnnounce.Checked = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
+        chkScrobble.Checked = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
       }
+
+      if (string.IsNullOrEmpty(MusicDatabase.Instance.GetLastFMSK())) return;
+
+      var user = LastFMLibrary.GetUserInfo(MusicDatabase.Instance.GetLastFMUser());
+      if (user == null || string.IsNullOrEmpty(user.UserImgURL)) return;
+
+      pbLastFMUser.ImageLocation = user.UserImgURL;
     }
 
-    private void btnAuthenticate_Click(object sender, EventArgs e)
-    {
-      _token = LastFMLibrary.AuthGetToken();
-      var authURL = LastFMLibrary.AuthGetAuthURL(_token);
-      System.Diagnostics.Process.Start(authURL);
-      btnAuthenticate.Enabled = false;
-      btnSecond.Enabled = true;
-    }
-
-    private void btnSecond_Click(object sender, EventArgs e)
-    {
-      var SK = LastFMLibrary.AuthGetSession(_token);
-
-      if (string.IsNullOrEmpty(SK))
-      {
-        MessageBox.Show("Error authenticating\nPlease try again.", "Authentication Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        btnAuthenticate.Enabled = true;
-        btnSecond.Enabled = false;
-        return;
-      }
-      
-      MessageBox.Show("Authentication Succesful", "Authentication Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-      
-    }
-
-    private void chkAutoDJ_CheckedChanged(object sender, EventArgs e)
+   private void chkAutoDJ_CheckedChanged(object sender, EventArgs e)
     {
       using (var xmlwriter = new MPSettings())
       {
@@ -81,5 +65,32 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         xmlwriter.SetValue("lastfm:test", "randomness", numRandomness.Value);
       }
     }
+
+    private void chkAnnounce_CheckedChanged(object sender, EventArgs e)
+    {
+      using (var xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("lastfm:test", "announce", chkAnnounce.Checked);
+      }
+    }
+
+    private void chkScrobble_CheckedChanged(object sender, EventArgs e)
+    {
+      using (var xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("lastfm:test", "scrobble", chkScrobble.Checked);
+      }
+    }
+
+    private void btnWebAuthenticate_Click(object sender, EventArgs e)
+    {
+      var frm = new LastFMAuthentication();
+      frm.Show();
+
+      //var user = LastFMLibrary.GetUserInfo();
+      //pbLastFMUser.ImageLocation = user.UserImgURL;
+    }
+
+
   }
 }
