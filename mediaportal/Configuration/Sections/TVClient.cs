@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -40,7 +41,7 @@ namespace MediaPortal.Configuration.Sections
     private string _preferredAudioLanguages;
     private string _preferredSubLanguages;
     private List<string> _languageCodes;
-    private string _hostname = "";
+    private string _hostName = "";
 
     private MPGroupBox mpGroupBox2;
     private MPTextBox mpTextBoxHostname;
@@ -120,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
 
     private MPCheckBox cbContinuousScrollGuide;
     private MPCheckBox mpCheckBoxEnableCCSub;
+    private MPButton mpButtonTestHostname;
 
     private bool _SingleSeat;
 
@@ -142,11 +144,11 @@ namespace MediaPortal.Configuration.Sections
       //Load parameters from XML File
       using (Settings xmlreader = new MPSettings())
       {
-        _hostname = xmlreader.GetValueAsString("tvservice", "hostname", "-");
-        if (_hostname == "-")
+        _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "-");
+        if (_hostName == "-")
           mpTextBoxHostname.Text = "";
         else
-          mpTextBoxHostname.Text = _hostname;
+          mpTextBoxHostname.Text = _hostName;
 
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
@@ -329,7 +331,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
 
         // Update database connection if hostname has changed
-        if (mpTextBoxHostname.Text != _hostname)
+        if (mpTextBoxHostname.Text != _hostName && mpTextBoxHostname.BackColor != Color.YellowGreen)
         {
           if (!UpdateGentleConfig(mpTextBoxHostname.Text))
           {
@@ -398,6 +400,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpButtonTestHostname = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -484,6 +487,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
+      this.mpGroupBox2.Controls.Add(this.mpButtonTestHostname);
       this.mpGroupBox2.Controls.Add(this.mpTextBoxHostname);
       this.mpGroupBox2.Controls.Add(this.mpLabel3);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -494,13 +498,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
       // 
+      // mpButtonTestHostname
+      // 
+      this.mpButtonTestHostname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonTestHostname.Location = new System.Drawing.Point(294, 20);
+      this.mpButtonTestHostname.Name = "mpButtonTestHostname";
+      this.mpButtonTestHostname.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonTestHostname.TabIndex = 9;
+      this.mpButtonTestHostname.Text = "&Test";
+      this.mpButtonTestHostname.UseVisualStyleBackColor = true;
+      this.mpButtonTestHostname.Click += new System.EventHandler(this.mpButtonTestHostname_Click);
+      // 
       // mpTextBoxHostname
       // 
       this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxHostname.Location = new System.Drawing.Point(126, 22);
       this.mpTextBoxHostname.Name = "mpTextBoxHostname";
-      this.mpTextBoxHostname.Size = new System.Drawing.Size(229, 20);
+      this.mpTextBoxHostname.Size = new System.Drawing.Size(152, 20);
       this.mpTextBoxHostname.TabIndex = 6;
+      this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
       // 
       // mpLabel3
       // 
@@ -1448,5 +1464,56 @@ namespace MediaPortal.Configuration.Sections
         mpTextBoxMacAddress.Enabled = false;
       }
     }
+
+    private void mpButtonTestHostname_Click(object sender, EventArgs e)
+    {
+      // Save current cursor and display wait cursor
+      Cursor currentCursor = Cursor.Current;
+      Cursor.Current = Cursors.WaitCursor;
+      mpButtonTestHostname.Enabled = false;
+      
+      // If hostname is empty, use local hostname
+      if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
+        mpTextBoxHostname.Text = Dns.GetHostName();
+      _hostName = mpTextBoxHostname.Text;
+
+      // Check connection to the tv service
+      if (!CheckTcpPort(31456))
+      {
+        // Reset cursor and show warning
+        Cursor.Current = currentCursor;
+        mpButtonTestHostname.Enabled = true;
+        MessageBox.Show("Unable to connect to the TV-Server", "Warning",
+          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        mpTextBoxHostname.BackColor = Color.Red;
+        return;
+      }
+
+      // Reset cursor and show success
+      Cursor.Current = currentCursor;
+      mpButtonTestHostname.Enabled = true;
+      MessageBox.Show("Connected to TV-Server", "OK");
+      mpTextBoxHostname.BackColor = Color.GreenYellow;
+    }
+
+    private bool CheckTcpPort(int port)
+    {
+      TcpClient client = new TcpClient();
+      try
+      {
+        client.Connect(_hostName, port);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      client.Close();
+      return true;
+    }
+
+    private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
+    {
+      mpTextBoxHostname.BackColor = SystemColors.Control;
+    }  
   }
 }
