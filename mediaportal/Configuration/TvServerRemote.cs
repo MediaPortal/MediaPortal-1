@@ -218,11 +218,11 @@ namespace MediaPortal.Configuration
             }
             catch (TargetInvocationException ex)
             {
-              Log.Error("Tv: Failed to load the database connection string {0}", ex.ToString());
+              Log.Error("TvClient: Failed to load the database connection string {0}", ex.ToString());
             }
             catch (Exception gex)
             {
-              Log.Error("Tv: Failed to load settings {0}", gex.Message);
+              Log.Error("TvClient: Failed to load settings {0}", gex.Message);
             }
           }
         }
