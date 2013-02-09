@@ -38,17 +38,24 @@ typedef uint32 VDThreadID;
 typedef uint32 VDThreadId;
 typedef uint32 VDProcessId;
 
-struct _RTL_CRITICAL_SECTION;
+#if defined(__MINGW32__) || defined(__MINGW64__)
+	struct _CRITICAL_SECTION;
+	typedef _CRITICAL_SECTION VDCriticalSectionW32;
+#else
+	struct _RTL_CRITICAL_SECTION;
+	typedef _RTL_CRITICAL_SECTION VDCriticalSectionW32;
+#endif
 
-extern "C" void __declspec(dllimport) __stdcall InitializeCriticalSection(_RTL_CRITICAL_SECTION *lpCriticalSection);
-extern "C" void __declspec(dllimport) __stdcall LeaveCriticalSection(_RTL_CRITICAL_SECTION *lpCriticalSection);
-extern "C" void __declspec(dllimport) __stdcall EnterCriticalSection(_RTL_CRITICAL_SECTION *lpCriticalSection);
-extern "C" void __declspec(dllimport) __stdcall DeleteCriticalSection(_RTL_CRITICAL_SECTION *lpCriticalSection);
+extern "C" void __declspec(dllimport) __stdcall InitializeCriticalSection(VDCriticalSectionW32 *lpCriticalSection);
+extern "C" void __declspec(dllimport) __stdcall LeaveCriticalSection(VDCriticalSectionW32 *lpCriticalSection);
+extern "C" void __declspec(dllimport) __stdcall EnterCriticalSection(VDCriticalSectionW32 *lpCriticalSection);
+extern "C" void __declspec(dllimport) __stdcall DeleteCriticalSection(VDCriticalSectionW32 *lpCriticalSection);
 extern "C" unsigned long __declspec(dllimport) __stdcall WaitForSingleObject(void *hHandle, unsigned long dwMilliseconds);
 extern "C" int __declspec(dllimport) __stdcall ReleaseSemaphore(void *hSemaphore, long lReleaseCount, long *lpPreviousCount);
 
 VDThreadID VDGetCurrentThreadID();
 VDProcessId VDGetCurrentProcessId();
+uint32 VDGetLogicalProcessorCount();
 
 void VDSetThreadDebugName(VDThreadID tid, const char *name);
 void VDThreadSleep(int milliseconds);
@@ -77,6 +84,10 @@ void VDThreadSleep(int milliseconds);
 
 class VDThread {
 public:
+	enum {
+		kPriorityDefault = INT_MIN
+	};
+
 	VDThread(const char *pszDebugName = NULL);	// NOTE: pszDebugName must have static duration
 	~VDThread() throw();
 
@@ -85,6 +96,7 @@ public:
 	bool ThreadStart();							// start thread
 	void ThreadDetach();						// detach thread (wait() won't be called)
 	void ThreadWait();							// wait for thread to finish
+	void ThreadSetPriority(int priority);
 
 	bool isThreadActive();
 
@@ -113,6 +125,7 @@ private:
 	const char *mpszDebugName;
 	VDThreadHandle	mhThread;
 	VDThreadID		mThreadID;
+	int				mThreadPriority;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -143,27 +156,27 @@ public:
 	};
 
 	VDCriticalSection() {
-		InitializeCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		InitializeCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 
 	~VDCriticalSection() {
-		DeleteCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		DeleteCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 
 	void operator++() {
-		EnterCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		EnterCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 
 	void operator--() {
-		LeaveCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		LeaveCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 
 	void Lock() {
-		EnterCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		EnterCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 
 	void Unlock() {
-		LeaveCriticalSection((_RTL_CRITICAL_SECTION *)&csect);
+		LeaveCriticalSection((VDCriticalSectionW32 *)&csect);
 	}
 };
 
@@ -212,6 +225,9 @@ public:
 	int wait(VDSignalBase *second);
 	int wait(VDSignalBase *second, VDSignalBase *third);
 	static int waitMultiple(const VDSignalBase **signals, int count);
+
+	bool tryWait(uint32 timeoutMillisec);
+
 	void *getHandle() { return hEvent; }
 
 	void operator()() { signal(); }
