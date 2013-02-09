@@ -107,6 +107,7 @@ namespace MediaPortal.Music.Database
     {
       strSQL = @"select strUsername from lastfmusers";
       var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
       var row = results.Rows[0];
       return row.fields[0];
     }
@@ -115,6 +116,7 @@ namespace MediaPortal.Music.Database
     {
       strSQL = @"select strSK from lastfmusers";
       var results = DirectExecute(strSQL);
+      if (results.Rows.Count == 0) return string.Empty;
       var row = results.Rows[0];
       return row.fields[0];
     }

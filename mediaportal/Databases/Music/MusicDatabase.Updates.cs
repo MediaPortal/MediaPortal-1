@@ -2258,7 +2258,7 @@ namespace MediaPortal.Music.Database
         }
         else
         {
-          strSQL = String.Format("udpate lastfmusers set strUsername = '{0}', strPassword = '{1}'", userName, lastFmKey);
+          strSQL = String.Format("update lastfmusers set strUsername = '{0}', strSK = '{1}'", userName, lastFmKey);
           DirectExecute(strSQL);
           Log.Info("LastFM Key updated in database");
         }
