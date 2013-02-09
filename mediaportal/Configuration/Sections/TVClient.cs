@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -38,6 +40,7 @@ namespace MediaPortal.Configuration.Sections
     private string _preferredAudioLanguages;
     private string _preferredSubLanguages;
     private List<string> _languageCodes;
+    private string _hostname = "";
 
     private MPGroupBox mpGroupBox2;
     private MPTextBox mpTextBoxHostname;
@@ -139,7 +142,12 @@ namespace MediaPortal.Configuration.Sections
       //Load parameters from XML File
       using (Settings xmlreader = new MPSettings())
       {
-        mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        _hostname = xmlreader.GetValueAsString("tvservice", "hostname", "-");
+        if (_hostname == "-")
+          mpTextBoxHostname.Text = "";
+        else
+          mpTextBoxHostname.Text = _hostname;
+
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
@@ -320,6 +328,20 @@ namespace MediaPortal.Configuration.Sections
         }
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
 
+        // Update database connection if hostname has changed
+        if (mpTextBoxHostname.Text != _hostname)
+        {
+          if (!UpdateGentleConfig(mpTextBoxHostname.Text))
+          {
+            MessageBox.Show(
+              "The connection to the TV server database on host \"{0}\" could not be configured." +
+              System.Environment.NewLine +
+              "Please review your hostname settings in the \"TV Client\" section",
+              "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            xmlwriter.SetValue("tvservice", "hostname", "");
+          }
+        }
+
         //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
         if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
             (_SingleSeat != Network.IsSingleSeat()))
@@ -327,8 +349,50 @@ namespace MediaPortal.Configuration.Sections
           MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
-
       }
+    }
+    
+    /// <summary>
+    /// Updates the database connection string in the gentle.config file.
+    /// The connection string is fetched from the TV server.
+    /// </summary>
+    /// <param name="tvServer">The TV server's hostname</param>
+    /// <returns>Returns true if the update was successful</returns>
+    private bool UpdateGentleConfig(string tvServer)
+    {
+      // Set the hostname of the TV server
+      if (string.IsNullOrEmpty(tvServer))
+        tvServer = Dns.GetHostName();
+      TvServerRemote.HostName = tvServer;
+
+      // Get the database connection string from the TV server
+      string connectionString, provider;
+      TvServerRemote.GetDatabaseConnectionString(out connectionString, out provider);
+      if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
+      {
+        Log.Error("UpdateGentleConfig: Unable to get database connection string from TV server \"{0}\"", tvServer);
+        return false;
+      }
+
+      // Update the gentle.config file with the database connection string
+      try
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        node.InnerText = connectionString;
+        nodeProvider.InnerText = provider;
+        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        Log.Debug("UpdateGentleConfig: Updated gentle.config with connectionString \"{0}\" for provider \"{1}\"", connectionString, provider);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("UpdateGentleConfig: Unable to modify gentle.config {0}", ex.Message);
+        return false;
+      }
+      return true;
     }
 
     private void InitializeComponent()

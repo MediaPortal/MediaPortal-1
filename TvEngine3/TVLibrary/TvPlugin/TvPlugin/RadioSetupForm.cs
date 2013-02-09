@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -85,14 +86,22 @@ namespace TvPlugin
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
       int selectedIdx = 0;
-      IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
-      foreach (RadioChannelGroup group in groups)
+      try
       {
-        int idx = comboBoxGroups.Items.Add(group.GroupName);
-        if (group.GroupName == _rootGroup)
+        IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
+        foreach (RadioChannelGroup group in groups)
         {
-          selectedIdx = idx;
+          int idx = comboBoxGroups.Items.Add(group.GroupName);
+          if (group.GroupName == _rootGroup)
+          {
+            selectedIdx = idx;
+          }
         }
+      }
+      catch (Exception)
+      {
+        MessageBox.Show("Cannot load radio channel groups from TV Server", "Warning",
+          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       comboBoxGroups.SelectedIndex = selectedIdx;
     }
