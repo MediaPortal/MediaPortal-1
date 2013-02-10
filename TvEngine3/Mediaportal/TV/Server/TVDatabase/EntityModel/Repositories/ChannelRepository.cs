@@ -104,8 +104,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
 
     private IDictionary<int, ChannelGroup> GetChannelGroupsDictionary()
-    {
-      List<ChannelGroup> groups = ObjectContext.ChannelGroups.ToList();
+    {      
+      List<ChannelGroup> groups = GetAll<ChannelGroup>().ToList();
       IDictionary<int, ChannelGroup> groupsDict = new Dictionary<int, ChannelGroup>();
       foreach (ChannelGroup group in groups)
       {
@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     private IDictionary<int, Card> GetCardsDictionary()
     {
-      List<Card> cards = ObjectContext.Cards.ToList();
+      List<Card> cards = GetAll<Card>().ToList();
       IDictionary<int, Card> cardsDict = new Dictionary<int, Card>();
       foreach (Card card in cards)
       {
@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
     private IDictionary<int, LnbType> GetLnbTypesDictionary()
     {
-      List<LnbType> lnbTypes = ObjectContext.LnbTypes.ToList();
+      List<LnbType> lnbTypes = GetAll<LnbType>().ToList();
       IDictionary<int, LnbType> lnbTypesDict = new Dictionary<int, LnbType>();
       foreach (LnbType lnbType in lnbTypes)
       {
