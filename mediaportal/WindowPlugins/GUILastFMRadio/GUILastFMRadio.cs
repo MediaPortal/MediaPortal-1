@@ -110,10 +110,10 @@ namespace MediaPortal.GUI.LastFMRadio
     public bool GetHome(out string strButtonText, out string strButtonImage,
                         out string strButtonImageFocus, out string strPictureImage)
     {
-      strButtonText = PluginName();
+      strButtonText = GUILocalizeStrings.Get(34000);
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
-      strPictureImage = String.Empty;
+      strPictureImage = "hover_LastFmRadio.png";;
       return true;
     }
 
