@@ -1040,6 +1040,19 @@ namespace MediaPortal.Configuration
             }
           }
         }
+
+        // Check hostname for tv server (empty hostname is invalid)
+        if (UseTvServer)
+        {
+          string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+          if (string.IsNullOrEmpty(hostName))
+          {
+            MessageBox.Show("Please check the hostname specified in the \"TV Client\" section",
+              "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return false;
+          }
+        }
+
       }
       return true;
     }
