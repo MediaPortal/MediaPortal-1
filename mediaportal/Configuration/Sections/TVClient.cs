@@ -154,6 +154,7 @@ namespace MediaPortal.Configuration.Sections
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
         cbContinuousScrollGuide.Checked = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
+        cbConfirmTimeshiftStop.Checked = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
         mpNumericTextBoxWOLTimeOut.Text = xmlreader.GetValueAsString("tvservice", "WOLTimeOut", "10");
@@ -295,6 +296,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
         xmlwriter.SetValueAsBool("mytv", "continuousScrollGuide", cbContinuousScrollGuide.Checked);
         xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
+        xmlwriter.SetValueAsBool("mytv", "confirmTimeshiftStop", cbConfirmTimeshiftStop.Checked);
 
         xmlwriter.SetValueAsBool("tvservice", "isWakeOnLanEnabled", mpCheckBoxIsWakeOnLanEnabled.Checked);
         xmlwriter.SetValue("tvservice", "WOLTimeOut", mpNumericTextBoxWOLTimeOut.Text);
@@ -350,6 +352,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsAutoMacAddressEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxIsWakeOnLanEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbConfirmTimeshiftStop = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbContinuousScrollGuide = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -425,7 +428,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(431, 53);
+      this.mpGroupBox2.Size = new System.Drawing.Size(237, 52);
       this.mpGroupBox2.TabIndex = 10;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
@@ -433,15 +436,15 @@ namespace MediaPortal.Configuration.Sections
       // mpTextBoxHostname
       // 
       this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxHostname.Location = new System.Drawing.Point(126, 22);
+      this.mpTextBoxHostname.Location = new System.Drawing.Point(70, 18);
       this.mpTextBoxHostname.Name = "mpTextBoxHostname";
-      this.mpTextBoxHostname.Size = new System.Drawing.Size(229, 20);
+      this.mpTextBoxHostname.Size = new System.Drawing.Size(153, 20);
       this.mpTextBoxHostname.TabIndex = 6;
       // 
       // mpLabel3
       // 
       this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(19, 25);
+      this.mpLabel3.Location = new System.Drawing.Point(6, 21);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(58, 13);
       this.mpLabel3.TabIndex = 5;
@@ -536,7 +539,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsAutoMacAddressEnabled);
       this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsWakeOnLanEnabled);
       this.mpGroupBox900.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox900.Location = new System.Drawing.Point(16, 286);
+      this.mpGroupBox900.Location = new System.Drawing.Point(16, 250);
       this.mpGroupBox900.Name = "mpGroupBox900";
       this.mpGroupBox900.Size = new System.Drawing.Size(431, 126);
       this.mpGroupBox900.TabIndex = 14;
@@ -621,14 +624,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       // grpTsReader
       // 
+      this.grpTsReader.Controls.Add(this.cbConfirmTimeshiftStop);
       this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
       this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpTsReader.Location = new System.Drawing.Point(16, 231);
+      this.grpTsReader.Location = new System.Drawing.Point(16, 176);
       this.grpTsReader.Name = "grpTsReader";
-      this.grpTsReader.Size = new System.Drawing.Size(431, 47);
+      this.grpTsReader.Size = new System.Drawing.Size(431, 68);
       this.grpTsReader.TabIndex = 12;
       this.grpTsReader.TabStop = false;
       this.grpTsReader.Text = "TsReader options";
+      // 
+      // cbConfirmTimeshiftStop
+      // 
+      this.cbConfirmTimeshiftStop.AutoSize = true;
+      this.cbConfirmTimeshiftStop.Checked = true;
+      this.cbConfirmTimeshiftStop.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbConfirmTimeshiftStop.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbConfirmTimeshiftStop.Location = new System.Drawing.Point(22, 40);
+      this.cbConfirmTimeshiftStop.Name = "cbConfirmTimeshiftStop";
+      this.cbConfirmTimeshiftStop.Size = new System.Drawing.Size(215, 17);
+      this.cbConfirmTimeshiftStop.TabIndex = 1;
+      this.cbConfirmTimeshiftStop.Text = "Ask confirmation when stopping timeshift";
+      this.cbConfirmTimeshiftStop.UseVisualStyleBackColor = true;
       // 
       // cbRelaxTsReader
       // 
@@ -650,7 +667,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
       this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
       this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox6.Location = new System.Drawing.Point(16, 127);
+      this.mpGroupBox6.Location = new System.Drawing.Point(16, 74);
       this.mpGroupBox6.Name = "mpGroupBox6";
       this.mpGroupBox6.Size = new System.Drawing.Size(431, 96);
       this.mpGroupBox6.TabIndex = 12;
@@ -704,9 +721,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
       this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox5.Location = new System.Drawing.Point(16, 75);
+      this.mpGroupBox5.Location = new System.Drawing.Point(259, 16);
       this.mpGroupBox5.Name = "mpGroupBox5";
-      this.mpGroupBox5.Size = new System.Drawing.Size(431, 45);
+      this.mpGroupBox5.Size = new System.Drawing.Size(188, 52);
       this.mpGroupBox5.TabIndex = 11;
       this.mpGroupBox5.TabStop = false;
       this.mpGroupBox5.Text = "Group options";
@@ -1222,6 +1239,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbConfirmTimeshiftStop;
 
     private void mpListView2_SelectedIndexChanged(object sender, EventArgs e) {}
 
