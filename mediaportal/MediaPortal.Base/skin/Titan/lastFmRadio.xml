@@ -8,7 +8,7 @@
 
 <controls>
 
-	<import>common.window.genres.xml</import>
+	<import>common.window.music.genres.xml</import>
 
   <control>
 		<id>0</id>
