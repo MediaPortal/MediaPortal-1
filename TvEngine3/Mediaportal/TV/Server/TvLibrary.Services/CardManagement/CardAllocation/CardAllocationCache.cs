@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
@@ -17,7 +20,52 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
     static CardAllocationCache()
     {
       ChannelManagement.OnStateChangedTuningDetailEvent += new ChannelManagement.OnStateChangedTuningDetailDelegate(ChannelManagement_OnStateChangedTuningDetailEvent);
-      ChannelManagement.OnStateChangedChannelMapEvent += new ChannelManagement.OnStateChangedChannelMapDelegate(ChannelManagement_OnStateChangedChannelMapEvent);      
+      ChannelManagement.OnStateChangedChannelMapEvent += new ChannelManagement.OnStateChangedChannelMapDelegate(ChannelManagement_OnStateChangedChannelMapEvent);
+      
+      var allCardIds = new List<int>();
+      IList<Channel> channels = null;
+      ThreadHelper.ParallelInvoke(
+        ()=>
+          {
+            IList<Card> cards = TVDatabase.TVBusinessLayer.CardManagement.ListAllCards(CardIncludeRelationEnum.None);
+            allCardIds.AddRange(cards.Select(card => card.IdCard));
+          },
+          ()=>
+            {
+              ChannelIncludeRelationEnum include = ChannelIncludeRelationEnum.TuningDetails;
+              include |= ChannelIncludeRelationEnum.ChannelMaps;
+              include |= ChannelIncludeRelationEnum.GroupMaps;
+              channels = ChannelManagement.ListAllChannels(include);
+            }
+          );
+                  
+
+      lock (_channelMappingLock)
+      {
+        lock (_tuningChannelMappingLock)
+        {
+          foreach (Channel channel in channels)
+          {            
+            IList<IChannel> tuningDetails = ChannelManagement.GetTuningChannelsByDbChannel(channel);
+            _tuningChannelMapping[channel.IdChannel] = tuningDetails;
+
+            IDictionary<int, bool> mapDict = new Dictionary<int, bool>();
+            var copyAllCardIds = new List<int>(allCardIds);
+            foreach (ChannelMap map in channel.ChannelMaps)
+            {
+              mapDict[map.IdCard] =  true;
+              copyAllCardIds.Remove(map.IdCard);
+            }
+
+            foreach (int cardIdNotMapped in copyAllCardIds)
+            {
+              mapDict[cardIdNotMapped] = false;
+            }
+            _channelMapping.Add(channel.IdChannel, mapDict);
+          }
+        }        
+      }
+
     }
 
     private static void ChannelManagement_OnStateChangedChannelMapEvent(ChannelMap map, ObjectState state)
