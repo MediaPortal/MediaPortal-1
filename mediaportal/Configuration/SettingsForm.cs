@@ -1047,9 +1047,11 @@ namespace MediaPortal.Configuration
           string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
           {
-            MessageBox.Show("Please check the hostname specified in the \"TV Client\" section",
-              "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            return false;
+            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Client\" section. " +
+              "It will not be saved." + Environment.NewLine + Environment.NewLine + "Do you want to review it before exiting?",
+              "MediaPortal Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+              return false;
           }
         }
 
