@@ -8,7 +8,7 @@
 
 <controls>
 
-	<import>common.window.playlist.xml</import>
+	<import>common.window.genres.xml</import>
 
   <control>
 		<id>0</id>
@@ -36,11 +36,23 @@
 		<width>606</width>
 		<height>605</height>
 		<texture>list_poster_shadow_music.png</texture>
-		<visible>facadeview.playlist+Control.IsVisible(50)</visible>
+		<visible>[facadeview.list | facadeview.album]+Control.IsVisible(50)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
-	</control>		
+	</control>	
 
+	<control>
+		<id>0</id>
+		<type>image</type>
+		<posX>121</posX>
+		<posY>362</posY>
+		<width>556</width>
+		<height>556</height>
+		<visible>[facadeview.list | facadeview.album]+!control.hasthumb(500)+!string.contains(#selecteditem, ..)</visible>
+		<texture>defaultAudioBig.png</texture>
+ 		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
 	
 	<control>
 		<id>0</id>
@@ -49,9 +61,9 @@
 		<posY>362</posY>
 		<width>556</width>
 		<height>556</height>
-		<texture>DefaultAudioBig.png</texture>
-		<visible>facadeview.playlist+!control.hasthumb(500)</visible>
-  	<animation effect="fade" time="250">WindowOpen</animation>
+		<texture>DefaultFolderBackBig.png</texture>
+		<visible>[facadeview.list | facadeview.album]+string.contains(#selecteditem, ..)]</visible>
+  		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
@@ -64,8 +76,8 @@
 		<width>556</width>
 		<height>556</height>
 		<texture>#selectedthumb</texture>
-		<visible>facadeview.playlist+Control.IsVisible(50)</visible>
-  	<animation effect="fade" time="250">WindowOpen</animation>
+		<visible>[facadeview.list | facadeview.album]+Control.IsVisible(50)</visible>
+  		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
 	
@@ -209,6 +221,30 @@
 				</control>
 			
 			</control>
+			
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>0</posX>
+		<posY>440</posY>
+		<width>64</width>
+		<height>199</height>
+		<texture>hiddenmenu_tab.png</texture>
+		<visible>[facadeview.list | facadeview.smallicons | facadeview.largeicons]+Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
+		<animation effect="slide" start="-60,0" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="-60,0" time="250" delay="100">WindowClose</animation>
+	</control>
+    
+	<control>
+		<id>1</id>
+		<type>image</type>
+		<posX>858</posX>
+		<posY>0</posY>
+		<texture>hiddenmenu_tab_up.png</texture>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
+		<animation effect="slide" start="0,-60" time="250" delay="400">WindowOpen</animation>
+		<animation effect="slide" start="0,0" end="0,-60" time="250" delay="100">WindowClose</animation>
+	</control>			
 
 <import>common.facade.music.xml</import>
 <import>common.overlay.xml</import>
