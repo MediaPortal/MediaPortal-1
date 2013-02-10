@@ -122,6 +122,9 @@ namespace MediaPortal
           screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
         }
 
+        if (D3DApp._windowedOverride)
+          startFullScreen = false;
+
         if (useFullScreenSplash && screennumber > 0)
         {
           int AvailableScreensNumber = 0;
