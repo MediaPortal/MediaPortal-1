@@ -18,6 +18,8 @@
 
 #endregion
 
+using System;
+
 namespace MediaPortal.LastFM
 {
   public class LastFMTrack
@@ -53,6 +55,16 @@ namespace MediaPortal.LastFM
     }
 
     public LastFMStreamingTrack()   { }
+
+  }
+
+  public class LastFMScrobbleTrack : LastFMTrack
+  {
+    public DateTime DatePlayed { get; set; }
+    public bool UserSelected { get; set; }
+    public string AlbumName { get; set; }
+
+    public LastFMScrobbleTrack() { }
 
   }
 

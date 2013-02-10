@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.LastFMRadio
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      PlaylistControl.CurrentLayout = Layout.Playlist;
+      PlaylistControl.CurrentLayout = Layout.List;
       PlaylistControl.Clear();
       LoadPlaylist();
     }
@@ -194,25 +194,6 @@ namespace MediaPortal.GUI.LastFMRadio
       }
 
       base.OnClicked(controlId, control, actionType);
-    }
-
-    public override void OnAction(Action action)
-    {
-      switch (action.wID)
-      {
-        case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP:
-          MovePlayListItemUp();
-          break;
-        case Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN:
-          MovePlayListItemDown();
-          break;
-        case Action.ActionType.ACTION_DELETE_SELECTED_ITEM:
-          DeletePlayListItem();
-          LoadPlaylist();
-          break;
-      }
-
-      base.OnAction(action);
     }
 
     #endregion
@@ -379,6 +360,14 @@ namespace MediaPortal.GUI.LastFMRadio
 
     #region GUI methods
 
+    /// <summary>
+    /// Check for thumbs.   Will check for
+    ///  1 - Local thumb (from users music collection)
+    ///  2 - Already downloaded thumb from last.fm
+    ///  3 - Last.fm thumb and download accordingly
+    /// Thumbs are stored in temp folder and deleted when MP is closed
+    /// </summary>
+    /// <param name="item">Item to lookup thumb for</param>
     protected virtual void OnRetrieveCoverArt(GUIListItem item)
     {
       Util.Utils.SetDefaultIcons(item);
@@ -436,18 +425,19 @@ namespace MediaPortal.GUI.LastFMRadio
       return searchterm;
     }
 
+    /// <summary>
+    /// Load Facade Control
+    /// </summary>
     private void LoadPlaylist()
     {
       PlaylistControl.Clear();
       var playlist = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-      for (int i = 0; i < playlist.Count; i++)
+      foreach (var pli in playlist)
       {
-        PlayListItem pli = playlist[i];
+        var pItem = new GUIListItem(pli.Description);
 
-        GUIListItem pItem = new GUIListItem(pli.Description);
-
-        MusicTag tag = (MusicTag) pli.MusicTag;
-        bool dirtyTag = false;
+        var tag = (MusicTag) pli.MusicTag;
+        var dirtyTag = false;
         if (tag != null)
         {
           pItem.MusicTag = tag;
@@ -463,7 +453,7 @@ namespace MediaPortal.GUI.LastFMRadio
 
         if (tag != null && !dirtyTag)
         {
-          string duration = Util.Utils.SecondsToHMSString(tag.Duration);
+          var duration = Util.Utils.SecondsToHMSString(tag.Duration);
           pItem.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
           pItem.Label2 = duration;
           pItem.MusicTag = pli.MusicTag;
@@ -480,7 +470,6 @@ namespace MediaPortal.GUI.LastFMRadio
         Util.Utils.SetDefaultIcons(pItem);
 
         pItem.OnRetrieveArt += OnRetrieveCoverArt;
-        //pItem.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
         PlaylistControl.Add(pItem);
       }
@@ -491,115 +480,6 @@ namespace MediaPortal.GUI.LastFMRadio
     #endregion
 
     #region playlist changes
-
-    private void MovePlayListItemUp()
-    {
-      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-      {
-        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
-      }
-
-      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
-          || PlaylistControl.CurrentLayout != GUIFacadeControl.Layout.Playlist
-          || PlaylistControl.PlayListLayout == null)
-      {
-        return;
-      }
-
-      int iItem = PlaylistControl.SelectedListItemIndex;
-
-      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-      playList.MovePlayListItemUp(iItem);
-      int selectedIndex = PlaylistControl.MoveItemUp(iItem, true);
-
-      if (iItem == _playlistPlayer.CurrentSong)
-      {
-        _playlistPlayer.CurrentSong = selectedIndex;
-      }
-
-      PlaylistControl.SelectedListItemIndex = selectedIndex;
-    }
-
-    private void MovePlayListItemDown()
-    {
-      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-      {
-        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
-      }
-
-      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
-          || PlaylistControl.CurrentLayout != Layout.Playlist
-          || PlaylistControl.PlayListLayout == null)
-      {
-        return;
-      }
-
-      int iItem = PlaylistControl.SelectedListItemIndex;
-      PlayList playList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-
-      playList.MovePlayListItemDown(iItem);
-      int selectedIndex = PlaylistControl.MoveItemDown(iItem, true);
-
-      if (iItem == _playlistPlayer.CurrentSong)
-      {
-        _playlistPlayer.CurrentSong = selectedIndex;
-      }
-    }
-
-    private void DeletePlayListItem()
-    {
-      if (_playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
-      {
-        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
-      }
-
-      if (_playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM
-          || PlaylistControl.CurrentLayout != Layout.Playlist
-          || PlaylistControl.PlayListLayout == null)
-      {
-        return;
-      }
-
-      int iItem = PlaylistControl.SelectedListItemIndex;
-
-      string currentFile = g_Player.CurrentFile;
-      GUIListItem item = PlaylistControl[iItem];
-      RemovePlayListItem(iItem);
-
-      if (currentFile.Length > 0 && currentFile == item.Path)
-      {
-        string nextTrackPath = _playlistPlayer.GetNext();
-
-        if (nextTrackPath.Length == 0)
-        {
-          g_Player.Stop();
-        }
-
-        else
-        {
-          if (iItem == PlaylistControl.Count)
-          {
-            _playlistPlayer.Play(iItem - 1);
-          }
-
-          else
-          {
-            _playlistPlayer.PlayNext();
-          }
-        }
-      }
-
-      if (PlaylistControl.Count == 0)
-      {
-        g_Player.Stop();
-      }
-
-      else
-      {
-        PlaylistControl.PlayListLayout.SelectedListItemIndex = iItem;
-      }
-
-    }
 
     private void RemovePlayListItem(int iItem)
     {

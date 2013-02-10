@@ -38,6 +38,7 @@ namespace MediaPortal.LastFM
     private static string _theSK = String.Empty;
     private static string _currentUser = string.Empty;
     internal static string BaseURL = "http://ws.audioscrobbler.com/2.0/";
+    internal static string BaseURLHttps = "https://ws.audioscrobbler.com/2.0/";
 
     #region ctor
 
@@ -93,10 +94,7 @@ namespace MediaPortal.LastFM
       parms.Add("password", password);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      // This is the only API call that requires HTTPS
-      buildLastFMString = buildLastFMString.Replace("http", "https");
-
-      var lastFMResponseXML = HttpPost(buildLastFMString);
+      var lastFMResponseXML = HttpPost(buildLastFMString, true);
 
       if (!IsValidReponse(lastFMResponseXML))
       {
@@ -178,40 +176,103 @@ namespace MediaPortal.LastFM
       }
     }
 
+
     /// <summary>
-    /// Scrobble track to last.fm showing as played on user profile on last.fm website
+    /// Scrobble track to last.fm showing as played on user profile on last.fm website.   
+    /// Assumes track is selected by user and scrobble is for current time
     /// </summary>
     /// <param name="strArtist">artist of track that was played</param>
     /// <param name="strTrack">name of track that was played</param>
     /// <param name="strAlbum">album that track that was played is part of</param>
     public static void Scrobble(String strArtist, String strTrack, String strAlbum)
     {
-      if(string.IsNullOrEmpty(_theSK))
+      var track = new LastFMScrobbleTrack
+                    {
+                      ArtistName = strArtist,
+                      TrackTitle = strTrack,
+                      AlbumName = strAlbum,
+                      DatePlayed = DateTime.UtcNow,
+                      UserSelected = true
+                    };
+      var tracks = new List<LastFMScrobbleTrack> {track};
+      ScrobbleTracks(tracks);
+    }
+
+    /// <summary>
+    /// Scrobble track to last.fm showing as played on user profile on last.fm website
+    /// </summary>
+    /// <param name="strArtist">artist of track that was played</param>
+    /// <param name="strTrack">name of track that was played</param>
+    /// <param name="strAlbum">album that track that was played is part of</param>
+    /// <param name="isUserSubmitted">True if track was selected by user or false if by system (radio / auto DJ etc)</param> 
+    /// <param name="dtPlayed">Date track was played</param>
+    public static void Scrobble(String strArtist, String strTrack, String strAlbum, bool isUserSubmitted, DateTime dtPlayed)
+    {
+      var track = new LastFMScrobbleTrack
       {
-        Log.Warn("Attempted to scrobble track: {0} - {1}", strArtist, strTrack);
-        Log.Warn("But last.fm has not been authorised so aborting");
-        return;
+        ArtistName = strArtist,
+        TrackTitle = strTrack,
+        AlbumName = strAlbum,
+        DatePlayed = DateTime.UtcNow,
+        UserSelected = true
+      };
+      var tracks = new List<LastFMScrobbleTrack> { track };
+      ScrobbleTracks(tracks);
+    }
+
+    /// <summary>
+    /// Scrobble a collection of tracks
+    /// </summary>
+    /// <param name="tracks">List of tracks to scrobble</param>
+    public static void ScrobbleTracks(List<LastFMScrobbleTrack> tracks)
+    {
+      // only able to scrobble tracks in batches of 50 so split into multiple chunks if needed
+      foreach (var trackList in tracks.InSetsOf(50))
+      {
+        ScrobbleTracksInternal(trackList);
       }
+    }
 
-      //TODO: Need to handle offline scrobbling (save in cache and submit when internet connection is back)
-
-      var span = (DateTime.UtcNow - new DateTime(1970, 1, 1));
-      var unixEpoch = (int) span.TotalSeconds;
-
+    /// <summary>
+    /// We are only able to scrobble at most 50 tracks each time
+    /// Previous step must ensure that list contains 50 or less items
+    /// </summary>
+    /// <param name="tracks">List of tracks to scrobble</param>
+    private static void ScrobbleTracksInternal(IEnumerable<LastFMScrobbleTrack> tracks)
+    {
       var parms = new Dictionary<string, string>();
       const string methodName = "track.scrobble";
-      parms.Add("timestamp", unixEpoch.ToString(CultureInfo.InvariantCulture));
-      parms.Add("artist", strArtist);
-      parms.Add("track", strTrack);
-      if (!String.IsNullOrEmpty(strAlbum))
+      int i = 0;
+
+      foreach (var track in tracks)
       {
-        parms.Add("album", strAlbum);
+        var span = (track.DatePlayed.ToUniversalTime() - new DateTime(1970, 1, 1));
+        var unixEpoch = (int) span.TotalSeconds;
+
+        parms.Add(string.Format("timestamp[{0}]", i), unixEpoch.ToString(CultureInfo.InvariantCulture));
+        parms.Add(string.Format("artist[{0}]", i), track.ArtistName);
+        parms.Add(string.Format("track[{0}]",i), track.TrackTitle);
+        if (!String.IsNullOrEmpty(track.AlbumName))
+        {
+          parms.Add(string.Format("album[{0}]",i), track.AlbumName);
+        }
+        if (!track.UserSelected)
+        {
+          // parameter used to identify that track has been scrobbled but user did not select it
+          // eg. radio or auto DJ
+          parms.Add(string.Format("chosenByUser[{0}]", i), "0");
+        }
+
+        i++;
       }
+
       parms.Add("sk", _theSK);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
       var lastFMResponseXML = HttpPost(buildLastFMString);
+      Log.Info(lastFMResponseXML);
+
       if (!IsValidReponse(lastFMResponseXML))
       {
         Log.Error("Invalid Response from last.fm request");
@@ -219,8 +280,9 @@ namespace MediaPortal.LastFM
       }
       else
       {
-        Log.Info("Submitted last.fm scobble for: {0} - {1}", strArtist, strTrack);
+        //Log.Info("Submitted last.fm scobble for: {0} - {1}", strArtist, strTrack);
       }
+
     }
 
     #endregion
@@ -549,6 +611,12 @@ namespace MediaPortal.LastFM
 
     #region user methods
 
+
+    public static LastFMUser GetUserInfo()
+    {
+      return GetUserInfo(string.Empty);
+    }
+
     /// <summary>
     /// Get details of named user
     /// </summary>
@@ -563,6 +631,10 @@ namespace MediaPortal.LastFM
       if (!String.IsNullOrEmpty(strUser))
       {
         parms.Add("user", strUser);
+      }
+      else
+      {
+        parms.Add("sk", _theSK);
       }
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
 
@@ -645,7 +717,7 @@ namespace MediaPortal.LastFM
       }
 
 #if DEBUG
-      Log.Info(lastFMResponse);
+      Log.Debug(lastFMResponse);
 #endif
 
       return lastFMResponse;
@@ -658,6 +730,11 @@ namespace MediaPortal.LastFM
     /// <returns>Text response from server</returns>
     private static string HttpPost(string postData)
     {
+      return HttpPost(postData, false);
+    }
+
+    private static string HttpPost(string postData, bool useHttps)
+    {
       //TODO: need to add check for no internet connection?
       var lastFMResponse = String.Empty;
       var postArray = Encoding.UTF8.GetBytes(postData);
@@ -666,7 +743,9 @@ namespace MediaPortal.LastFM
         try
         {
           myWebClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-          var responseArray = myWebClient.UploadData(BaseURL, postArray);
+
+          var url = useHttps ? BaseURLHttps : BaseURL;
+          var responseArray = myWebClient.UploadData(url, postArray);
           lastFMResponse = Encoding.UTF8.GetString(responseArray);
         }
         catch (WebException ex)
@@ -695,7 +774,8 @@ namespace MediaPortal.LastFM
       }
 
 #if DEBUG
-      Log.Info(lastFMResponse);
+      Log.Debug("HttpPost Response");
+      Log.Debug(lastFMResponse);
 #endif
       //TODO should return XDocument rather than string ???
       return lastFMResponse;
@@ -742,4 +822,26 @@ namespace MediaPortal.LastFM
     #endregion
 
   }
+
+  internal static class ExtensionMethods
+  {
+    internal static IEnumerable<List<T>> InSetsOf<T>(this IEnumerable<T> source, int max)
+    {
+      var toReturn = new List<T>(max);
+      foreach (var item in source)
+      {
+        toReturn.Add(item);
+        if (toReturn.Count != max) continue;
+        yield return toReturn;
+        toReturn = new List<T>(max);
+      }
+      if (toReturn.Any())
+      {
+        yield return toReturn;
+      }
+    }
+  }
+
 }
+
+

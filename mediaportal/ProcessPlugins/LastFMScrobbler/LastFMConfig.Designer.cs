@@ -56,10 +56,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtUserName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pbLastFMUser = new System.Windows.Forms.PictureBox();
-      this.btnWebAuthenticate = new System.Windows.Forms.Button();
+      this.btnAddUser = new System.Windows.Forms.Button();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.numRandomness = new System.Windows.Forms.NumericUpDown();
       this.chkAutoDJ = new System.Windows.Forms.CheckBox();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -121,7 +123,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       this.mpGroupBox2.Controls.Add(this.txtUserName);
       this.mpGroupBox2.Controls.Add(this.pbLastFMUser);
-      this.mpGroupBox2.Controls.Add(this.btnWebAuthenticate);
+      this.mpGroupBox2.Controls.Add(this.btnAddUser);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(187, 14);
       this.mpGroupBox2.Name = "mpGroupBox2";
@@ -146,15 +148,15 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.pbLastFMUser.TabIndex = 6;
       this.pbLastFMUser.TabStop = false;
       // 
-      // btnWebAuthenticate
+      // btnAddUser
       // 
-      this.btnWebAuthenticate.Location = new System.Drawing.Point(277, 33);
-      this.btnWebAuthenticate.Name = "btnWebAuthenticate";
-      this.btnWebAuthenticate.Size = new System.Drawing.Size(99, 23);
-      this.btnWebAuthenticate.TabIndex = 5;
-      this.btnWebAuthenticate.Text = "Authenticate";
-      this.btnWebAuthenticate.UseVisualStyleBackColor = true;
-      this.btnWebAuthenticate.Click += new System.EventHandler(this.btnWebAuthenticate_Click);
+      this.btnAddUser.Location = new System.Drawing.Point(277, 33);
+      this.btnAddUser.Name = "btnAddUser";
+      this.btnAddUser.Size = new System.Drawing.Size(99, 23);
+      this.btnAddUser.TabIndex = 5;
+      this.btnAddUser.Text = "Add User";
+      this.btnAddUser.UseVisualStyleBackColor = true;
+      this.btnAddUser.Click += new System.EventHandler(this.btnWebAuthenticate_Click);
       // 
       // mpGroupBox1
       // 
@@ -199,11 +201,33 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.chkAutoDJ.UseVisualStyleBackColor = true;
       this.chkAutoDJ.CheckedChanged += new System.EventHandler(this.chkAutoDJ_CheckedChanged);
       // 
+      // btnOK
+      // 
+      this.btnOK.Location = new System.Drawing.Point(426, 240);
+      this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
+      this.btnOK.TabIndex = 9;
+      this.btnOK.Text = "OK";
+      this.btnOK.UseVisualStyleBackColor = true;
+      this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+      // 
+      // btnCancel
+      // 
+      this.btnCancel.Location = new System.Drawing.Point(518, 240);
+      this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
+      this.btnCancel.TabIndex = 10;
+      this.btnCancel.Text = "Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
+      this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+      // 
       // LastFMConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(617, 339);
+      this.ClientSize = new System.Drawing.Size(617, 287);
+      this.Controls.Add(this.btnCancel);
+      this.Controls.Add(this.btnOK);
       this.Controls.Add(this.mpGroupBox3);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
@@ -228,7 +252,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private System.Windows.Forms.CheckBox chkAutoDJ;
     private System.Windows.Forms.NumericUpDown numRandomness;
     private System.Windows.Forms.PictureBox pictureBox1;
-    private System.Windows.Forms.Button btnWebAuthenticate;
+    private System.Windows.Forms.Button btnAddUser;
     private UserInterface.Controls.MPGroupBox mpGroupBox1;
     private UserInterface.Controls.MPGroupBox mpGroupBox2;
     private UserInterface.Controls.MPTextBox txtUserName;
@@ -236,5 +260,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private UserInterface.Controls.MPGroupBox mpGroupBox3;
     private UserInterface.Controls.MPCheckBox chkScrobble;
     private UserInterface.Controls.MPCheckBox chkAnnounce;
+    private UserInterface.Controls.MPButton btnOK;
+    private UserInterface.Controls.MPButton btnCancel;
   }
 }

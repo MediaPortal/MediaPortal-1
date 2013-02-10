@@ -86,9 +86,28 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     {
       var frm = new LastFMAuthentication();
       frm.Show();
+    }
 
-      //var user = LastFMLibrary.GetUserInfo();
-      //pbLastFMUser.ImageLocation = user.UserImgURL;
+    private void btnOK_Click(object sender, EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+      this.Close();
+    }
+
+    private void SaveSettings()
+    {
+      using (var xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", chkAutoDJ.Checked);
+        xmlwriter.SetValue("lastfm:test", "randomness", numRandomness.Value);
+        xmlwriter.SetValueAsBool("lastfm:test", "announce", chkAnnounce.Checked);
+        xmlwriter.SetValueAsBool("lastfm:test", "scrobble", chkScrobble.Checked);
+      }      
     }
 
 
