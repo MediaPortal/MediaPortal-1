@@ -34,6 +34,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.WinCustomControls;
+using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace MediaPortal.Configuration.Sections
@@ -979,6 +980,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlreader = new MPSettings())
       {
         TvServerRemote.HostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        ServiceAgents.Instance.Hostname = xmlreader.GetValueAsString("tvservice", "hostname", ""); ;
       }
 
       // Get the MediaPortal genres from the TV server.
