@@ -116,6 +116,18 @@ namespace Mediaportal.TV.TvPlugin
 
     public void SetupDatabaseConnection()
     {
+      try
+      {
+        using (Settings xmlreader = new MPSettings())
+        {
+          ServiceAgents.Instance.Hostname = xmlreader.GetValueAsString("tvservice", "hostname", "-");
+        }
+      }
+      catch (Exception ex)
+      {
+        //this.LogError("Unable to DatabaseConnection {0},{1}", ex.Message, ex.StackTrace);
+      }
+
       /*string connectionString, provider;
       if (!TVHome.Connected)
       {

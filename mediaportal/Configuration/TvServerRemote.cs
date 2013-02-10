@@ -47,7 +47,7 @@ namespace MediaPortal.Configuration
       set {
         try
         {
-          Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+          Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TvControl.dll");
           if (assem != null)
           {
             Type[] types = assem.GetExportedTypes();
@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration
       languageCodes = null;
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TVLibrary.Interfaces.dll");
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
@@ -137,6 +137,5 @@ namespace MediaPortal.Configuration
         Log.Error("Configuration: Exception: {0}", ex);
       }
     }
-
   }
 }
