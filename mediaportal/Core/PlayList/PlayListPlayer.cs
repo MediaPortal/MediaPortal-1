@@ -35,7 +35,6 @@ namespace MediaPortal.Playlists
       bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
-      bool PlayMusic(string strFile);
       void Stop();
       void SeekAsolutePercentage(int iPercentage);
       double Duration { get; }
@@ -65,11 +64,6 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type)
       {
         return Player.g_Player.Play(strFile, type);
-      }
-
-      bool IPlayer.PlayMusic(string strFile)
-      {
-        return Player.g_Player.Play(strFile, Player.g_Player.MediaType.Music);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -165,6 +159,7 @@ namespace MediaPortal.Playlists
       _musicVideoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _radioStreamPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _emptyPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _lastFMPlaylist.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
     }
 
     private void NotifyChange(PlayList playlist)
@@ -566,18 +561,13 @@ namespace MediaPortal.Playlists
         {
           playResult = g_Player.PlayAudioStream(item.FileName);
         }
-//TODO: Compare this against GIT commit 
-//https://github.com/MediaPortal/MediaPortal-1/commit/e251ba196316944c31a5c8e9a6b844b9ee3d4120#mediaportal/Core/PlayList/PlayListPlayer.cs
-        else if (item.Type == PlayListItem.PlayListItemType.Audio)
-        {
-          playResult = g_Player.PlayMusic(item.FileName);
-        }
         else
         {
           switch (_currentPlayList)
           {
             case PlayListType.PLAYLIST_MUSIC:
             case PlayListType.PLAYLIST_MUSIC_TEMP:
+            case PlayListType.PLAYLIST_LAST_FM:
               playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
               break;            
             case PlayListType.PLAYLIST_VIDEO:
