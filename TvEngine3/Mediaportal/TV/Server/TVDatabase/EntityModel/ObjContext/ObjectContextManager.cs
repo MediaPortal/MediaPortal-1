@@ -16,6 +16,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     public delegate DbConnection CreateConnectionDelegate();
     private static CreateConnectionDelegate _externalDbCreator;
+
+    private static readonly object _syncObj = new object();
+    private static MetadataWorkspace _metadataWorkspace = null;
+    private static string _conType = null;
     private static bool _initialized = false;
 
     #endregion
@@ -81,21 +85,28 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <returns>EntityConnection</returns>
     public static EntityConnection BuildEFConnection(DbConnection dbConnection)
     {
-      List<string> metadata = new List<string> 
-          {
-            "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.csdl",
-            "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.msl"
-          };
       string conType = dbConnection.GetType().ToString();
-      if (conType.Contains("MySqlClient"))
-        metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MySQL.ssdl");
-      else if (conType.Contains("SqlServerCe"))
-        metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQLCE.ssdl");
-      else if (conType.Contains("SqlClient"))
-        metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQL.ssdl");
+      lock (_syncObj)
+      {
+        if (conType != _conType || _metadataWorkspace == null)
+        {
+          List<string> metadata = new List<string>
+            {
+              "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.csdl",
+              "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.msl"
+            };
+          if (conType.Contains("MySqlClient"))
+            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MySQL.ssdl");
+          else if (conType.Contains("SqlServerCe"))
+            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQLCE.ssdl");
+          else if (conType.Contains("SqlClient"))
+            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQL.ssdl");
 
-      MetadataWorkspace workspace = new MetadataWorkspace(metadata, new[] { Assembly.GetExecutingAssembly() });
-      return new EntityConnection(workspace, dbConnection);
+          _conType = conType;
+          _metadataWorkspace = new MetadataWorkspace(metadata, new[] { Assembly.GetExecutingAssembly() });
+        }
+        return new EntityConnection(_metadataWorkspace, dbConnection);
+      }
     }
 
     #endregion
