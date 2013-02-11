@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
-    <Frequency>226000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>178000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>  
-  <DVBCTuning>
-    <Frequency>394000</Frequency>
-    <ModulationType>Mod128Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning>
-  <DVBCTuning>
-    <Frequency>514000</Frequency>
-    <ModulationType>Mod256Qam</ModulationType>
-    <SymbolRate>6875</SymbolRate>
-  </DVBCTuning><DVBCTuning>
     <Frequency>330000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
@@ -125,8 +106,38 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <Frequency>234000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
     <Frequency>218000</Frequency>
     <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>226000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>178000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>  
+  <DVBCTuning>
+    <Frequency>394000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>154000</Frequency>
+    <ModulationType>Mod128Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
+    <Frequency>514000</Frequency>
+    <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
 </ArrayOfDVBCTuning>

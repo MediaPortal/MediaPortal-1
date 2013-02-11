@@ -5,7 +5,7 @@
     <entry name="#skin.tvguide.usecolorsforgenre">True</entry>
     <entry name="#skin.tvguide.useborderhighlight">False</entry>
     <entry name="#skin.tvguide.showgenrekey">True</entry>
-    <entry name="#skin.fanart.basichome">False</entry>
+    <entry name="#skin.fanart.basichome">True</entry>
     <entry name="#skin.theme.backdrops">False</entry>
     <entry name="#skin.category.fanart">False</entry>
     <entry name="#skin.no.category.fanart">False</entry>
@@ -31,5 +31,8 @@
     <entry name="genre4">FF2169EE,FF2169EE</entry>
     <entry name="genre5">FFFFD700,FFFFD700</entry>
     <entry name="genre6">FF006400,FF006400</entry>
+  </section>
+  <section name="stringsettings">
+    <entry name="#skin.tvguide.rows"> 9</entry>
   </section>
 </profile>

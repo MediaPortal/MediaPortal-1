@@ -16,7 +16,7 @@
 		<id>1</id>
 		<posX>685</posX>
 		<posY>225</posY>
-		<width>550</width>
+		<width>800</width>
 		<label>#(L(1))/#(L(129))</label>
 		<textcolor>00b7ff</textcolor>
 		<font>TitanLight20</font>
@@ -51,7 +51,7 @@
       <description>Ken Buns transitions</description>
       <type>checkbutton</type>
       <id>6</id>
-      <onleft>2</onleft>
+      <onleft>9995</onleft>
       <onright>2</onright>
       <label>13008</label>
       <onup>123</onup>
@@ -60,7 +60,7 @@
       <description>X-fade transitions</description>
       <type>checkbutton</type>
       <id>5</id>
-      <onleft>3</onleft>
+      <onleft>9995</onleft>
       <onright>3</onright>
       <label>13010</label>
     </control>
@@ -68,7 +68,7 @@
       <description>Random transitions</description>
       <type>checkbutton</type>
       <id>7</id>
-      <onleft>4</onleft>
+      <onleft>9995</onleft>
       <onright>4</onright>
       <label>13009</label>
     </control>
@@ -104,7 +104,7 @@
       <type>checkbutton</type>
       <id>41</id>
       <label>300185</label>
-      <onleft>43</onleft>
+      <onleft>9995</onleft>
       <onright>43</onright>
     </control>
 		<control Style="SettingsCheckButtonMedium">
@@ -112,7 +112,7 @@
       <type>checkbutton</type>
       <id>42</id>
       <label>300186</label>
-      <onleft>44</onleft>
+      <onleft>9995</onleft>
       <onright>44</onright>
       <ondown>2</ondown>
     </control>
@@ -278,14 +278,16 @@
       <label>300190</label>
       <onleft>42</onleft>
       <onright>42</onright>
+			<onup>43</onup>
+			<ondown>45</ondown>
     </control>
 		<control Style="SettingsCheckButtonMedium">
       <description>Play videos in slideshow</description>
       <type>checkbutton</type>
       <id>45</id>
       <label>300191</label>
-      <onleft>40</onleft>
-      <onright>40</onright>
+      <onleft>42</onleft>
+      <onright>42</onright>
       <ondown>6</ondown>
       <onup>44</onup>
     </control>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Controls;
 using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
@@ -49,6 +48,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("textpadding")] protected int _textPadding = 0;
     [XMLSkinElement("application")] protected string _application = "";
     [XMLSkinElement("arguments")] protected string _arguments = "";
     [XMLSkinElement("hover")] protected string _hoverFilename = string.Empty;
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
+    /// It allows the control to do any initialization
     /// </summary>
     public override void FinalizeConstruction()
     {
@@ -242,7 +242,7 @@ namespace MediaPortal.GUI.Library
       {
         if (value != IsFocused)
         {
-          if (value == true)
+          if (value)
           {
             if (_imageFocused != null)
             {
@@ -320,12 +320,18 @@ namespace MediaPortal.GUI.Library
         labelWidth = _width - 2 * _textOffsetX;
       }
 
+      if (_textPadding > 0)
+      {
+        labelWidth -= GUIGraphicsContext.ScaleHorizontal(_textPadding);
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
         return;
       }
       _labelControl.Width = labelWidth;
+
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
@@ -356,7 +362,11 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + ((_width / 2) - (labelWidth / 2));
+          x = _positionX + _width / 2 - labelWidth / 2;
+          if (labelWidth > _width)
+          {
+            x += TextOffsetX;
+          }
           break;
       }
 
@@ -371,7 +381,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case VAlignment.ALIGN_MIDDLE:
-          y = _positionY + ((_height / 2) - (_labelControl.Height / 2));
+          y = _positionY + _height / 2 - _labelControl.Height / 2;
           break;
       }
 
@@ -408,7 +418,6 @@ namespace MediaPortal.GUI.Library
       }
 
       base.OnAction(action);
-      GUIMessage message;
 
       if (Focus)
       {
@@ -434,8 +443,11 @@ namespace MediaPortal.GUI.Library
 
             string workingFolder = Path.GetFullPath(_application);
             string fileName = Path.GetFileName(_application);
-            workingFolder = workingFolder.Substring(0, workingFolder.Length - (fileName.Length + 1));
-            proc.StartInfo.FileName = fileName;
+            if (fileName != null)
+            {
+              workingFolder = workingFolder.Substring(0, workingFolder.Length - (fileName.Length + 1));
+              proc.StartInfo.FileName = fileName;
+            }
             proc.StartInfo.WorkingDirectory = workingFolder;
             proc.StartInfo.Arguments = _arguments;
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -450,12 +462,12 @@ namespace MediaPortal.GUI.Library
             if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
             {
               // The link also contains a parameter that we want to pass to the plugin
-              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
+              GUIWindowManager.ActivateWindow(_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter),
                                               !_addToHistory);
             }
             else
             {
-              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, !_addToHistory);
+              GUIWindowManager.ActivateWindow(_hyperLinkWindowId, !_addToHistory);
             }
             return;
           }
@@ -481,7 +493,7 @@ namespace MediaPortal.GUI.Library
           }
 
           // send a message to anyone interested 
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          var message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
         }
       }
@@ -977,21 +989,7 @@ namespace MediaPortal.GUI.Library
 
       dialog.Reset();
       dialog.SetHeading(924); // menu
-
-      //foreach (object item in ContextMenu.Items)
-      //{
-      //  if (item is MenuItem)
-      //  {
-      //    dialog.Add(((MenuItem)item).Header as string);
-      //  }
-      //}
-
       dialog.DoModal(ParentID);
-
-      if (dialog.SelectedId == -1)
-      {
-        return;
-      }
     }
 
     public override int DimColor

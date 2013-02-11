@@ -16,8 +16,10 @@
       <description>Video Watched Count Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>1026</posX>
-      <posY>417</posY>
+      <posX>1000</posX>
+      <posY>392</posY>
+      <width>50</width>
+      <height>50</height>
       <label>#watchedcount</label>
       <font>font10</font>
       <align>center</align>

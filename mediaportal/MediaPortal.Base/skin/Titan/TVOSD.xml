@@ -20,7 +20,7 @@
 		<textureNoFocus>osd_info_button_nofocus.png</textureNoFocus>
 		<onup>998</onup>
 		<ondown>998</ondown>
-		<onright>220</onright>
+		<onright>218</onright>
 		<onleft>995</onleft>
 		<width>43</width>
 		<height>43</height>
