@@ -39,6 +39,7 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(25)] protected GUIButtonControl btnAudioCodec = null;
     [SkinControl(27)] protected GUIButtonControl btnDeinterlace = null;
     [SkinControl(28)] protected GUIButtonControl btnAspectRatio = null;
+    [SkinControl(29)] protected GUICheckButton chbConfirmTimeshiftStop = null;
     [SkinControl(30)] protected GUIButtonControl btnAutoTurnOnTv = null;
     [SkinControl(33)] protected GUIButtonControl btnAudioRenderer = null;
     [SkinControl(35)] protected GUIButtonControl btnH264VideoCodec = null;
@@ -57,7 +58,8 @@ namespace WindowPlugins.GUISettings.TV
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      
+      LoadSettings();
+
       if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
       {
         if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
@@ -69,6 +71,8 @@ namespace WindowPlugins.GUISettings.TV
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      SaveSettings();
+
       if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
       {
         MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
@@ -76,6 +80,26 @@ namespace WindowPlugins.GUISettings.TV
 
       base.OnPageDestroy(newWindowId);
     }
+
+    #region Serialisation
+
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        chbConfirmTimeshiftStop.Selected = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
+      }
+    }
+
+    private void SaveSettings()
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValueAsBool("mytv", "confirmTimeshiftStop", chbConfirmTimeshiftStop.Selected);
+      }
+    }
+
+    #endregion
 
     #region Overrides
 
