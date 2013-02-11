@@ -644,7 +644,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbConfirmTimeshiftStop.Name = "cbConfirmTimeshiftStop";
       this.cbConfirmTimeshiftStop.Size = new System.Drawing.Size(215, 17);
       this.cbConfirmTimeshiftStop.TabIndex = 1;
-      this.cbConfirmTimeshiftStop.Text = "Ask confirmation when stopping timeshift";
+      this.cbConfirmTimeshiftStop.Text = "Ask for confirmation when stopping timeshift";
       this.cbConfirmTimeshiftStop.UseVisualStyleBackColor = true;
       // 
       // cbRelaxTsReader
