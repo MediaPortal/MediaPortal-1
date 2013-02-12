@@ -624,9 +624,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpButtonTestHostname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonTestHostname.Location = new System.Drawing.Point(294, 20);
       this.mpButtonTestHostname.Name = "mpButtonTestHostname";
-      this.mpButtonTestHostname.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonTestHostname.Size = new System.Drawing.Size(131, 23);
       this.mpButtonTestHostname.TabIndex = 9;
-      this.mpButtonTestHostname.Text = "&Test";
+      this.mpButtonTestHostname.Text = "Test connection";
       this.mpButtonTestHostname.UseVisualStyleBackColor = true;
       this.mpButtonTestHostname.Click += new System.EventHandler(this.mpButtonTestHostname_Click);
       // 
