@@ -244,7 +244,7 @@ namespace MediaPortal.Plugins.Process.Handlers
 
     public string HandlerName
     {
-      get { return "ActiveNetwork"; }
+      get { return "Active Network"; }
     }
 
     #endregion

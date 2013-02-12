@@ -28,9 +28,9 @@ namespace PowerScheduler.Setup
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerSchedulerSetup));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.textBoxCommand = new System.Windows.Forms.TextBox();
@@ -95,9 +95,6 @@ namespace PowerScheduler.Setup
       this.groupBoxAdvanced = new System.Windows.Forms.GroupBox();
       this.buttonCommand = new System.Windows.Forms.Button();
       this.labelCommand = new System.Windows.Forms.Label();
-      this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-      this.label2 = new System.Windows.Forms.Label();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.flowLayoutPanelShutdownMode = new System.Windows.Forms.FlowLayoutPanel();
       this.labelShutdownMode = new System.Windows.Forms.Label();
       this.tabPageReboot = new System.Windows.Forms.TabPage();
@@ -159,7 +156,6 @@ namespace PowerScheduler.Setup
       this.groupBoxStatus.SuspendLayout();
       this.tabPageAdvanced.SuspendLayout();
       this.groupBoxAdvanced.SuspendLayout();
-      this.flowLayoutPanel3.SuspendLayout();
       this.flowLayoutPanelShutdownMode.SuspendLayout();
       this.tabPageReboot.SuspendLayout();
       this.groupBoxReboot.SuspendLayout();
@@ -197,8 +193,8 @@ namespace PowerScheduler.Setup
       this.textBoxCommand.Size = new System.Drawing.Size(329, 20);
       this.textBoxCommand.TabIndex = 2;
       this.toolTip.SetToolTip(this.textBoxCommand, "The command is executed on each system power state change. The\r\nargument (\"standb" +
-              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the" +
-              " time the command is executed.");
+              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
+              "ime the command is executed.");
       this.textBoxCommand.TextChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
       // checkBoxRebootWakeup
@@ -219,40 +215,40 @@ namespace PowerScheduler.Setup
       this.dataGridShares.AllowUserToOrderColumns = true;
       this.dataGridShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
       this.dataGridShares.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-      dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dataGridShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sharename,
             this.Hostname,
             this.Username});
-      dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle11;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle2;
       this.dataGridShares.EnableHeadersVisualStyles = false;
       this.dataGridShares.Location = new System.Drawing.Point(34, 66);
       this.dataGridShares.MaximumSize = new System.Drawing.Size(348, 231);
       this.dataGridShares.MinimumSize = new System.Drawing.Size(348, 48);
       this.dataGridShares.Name = "dataGridShares";
-      dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridShares.RowHeadersWidth = 30;
       this.dataGridShares.RowTemplate.Height = 24;
       this.dataGridShares.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -466,9 +462,9 @@ namespace PowerScheduler.Setup
       this.checkBoxAutoPowerSettings.Size = new System.Drawing.Size(390, 17);
       this.checkBoxAutoPowerSettings.TabIndex = 13;
       this.checkBoxAutoPowerSettings.Text = "Apply recommended windows power settings for selected profile automatically";
-      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasona" +
-              "ble values depending on the selected profile.\r\nUncheck this option to configure " +
-              "the Windows Power Settings manually.");
+      this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasonabl" +
+              "e values depending on the selected profile.\r\nUncheck this option to configure th" +
+              "e Windows Power Settings manually.");
       this.checkBoxAutoPowerSettings.UseVisualStyleBackColor = true;
       this.checkBoxAutoPowerSettings.CheckedChanged += new System.EventHandler(this.checkBoxAutoPowerSettings_CheckedChanged);
       // 
@@ -880,6 +876,7 @@ namespace PowerScheduler.Setup
       this.textBoxStandbyHandler.Multiline = true;
       this.textBoxStandbyHandler.Name = "textBoxStandbyHandler";
       this.textBoxStandbyHandler.ReadOnly = true;
+      this.textBoxStandbyHandler.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.textBoxStandbyHandler.Size = new System.Drawing.Size(342, 33);
       this.textBoxStandbyHandler.TabIndex = 3;
       // 
@@ -938,7 +935,6 @@ namespace PowerScheduler.Setup
       this.groupBoxAdvanced.Controls.Add(this.textBoxCommand);
       this.groupBoxAdvanced.Controls.Add(this.labelCommand);
       this.groupBoxAdvanced.Controls.Add(this.checkBoxReinitializeController);
-      this.groupBoxAdvanced.Controls.Add(this.flowLayoutPanel3);
       this.groupBoxAdvanced.Controls.Add(this.flowLayoutPanelShutdownMode);
       this.groupBoxAdvanced.Controls.Add(this.checkBoxShutdownEnabled);
       this.groupBoxAdvanced.Location = new System.Drawing.Point(6, 6);
@@ -967,42 +963,6 @@ namespace PowerScheduler.Setup
       this.labelCommand.Size = new System.Drawing.Size(226, 13);
       this.labelCommand.TabIndex = 1;
       this.labelCommand.Text = "Run command on system power state change:";
-      // 
-      // flowLayoutPanel3
-      // 
-      this.flowLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.flowLayoutPanel3.AutoSize = true;
-      this.flowLayoutPanel3.Controls.Add(this.label2);
-      this.flowLayoutPanel3.Controls.Add(this.comboBox1);
-      this.flowLayoutPanel3.Location = new System.Drawing.Point(28, 181);
-      this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-      this.flowLayoutPanel3.Size = new System.Drawing.Size(426, 27);
-      this.flowLayoutPanel3.TabIndex = 23;
-      // 
-      // label2
-      // 
-      this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(3, 7);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(75, 13);
-      this.label2.TabIndex = 22;
-      this.label2.Text = "Standby mode";
-      // 
-      // comboBox1
-      // 
-      this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.comboBox1.Enabled = false;
-      this.comboBox1.Items.AddRange(new object[] {
-            "(Hybrid) Sleep - S3",
-            "Hibernate - S4",
-            "Stay on - S0"});
-      this.comboBox1.Location = new System.Drawing.Point(84, 3);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(137, 21);
-      this.comboBox1.TabIndex = 21;
-      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBoxShutdownMode_SelectedIndexChanged);
       // 
       // flowLayoutPanelShutdownMode
       // 
@@ -1661,8 +1621,6 @@ namespace PowerScheduler.Setup
       this.tabPageAdvanced.ResumeLayout(false);
       this.groupBoxAdvanced.ResumeLayout(false);
       this.groupBoxAdvanced.PerformLayout();
-      this.flowLayoutPanel3.ResumeLayout(false);
-      this.flowLayoutPanel3.PerformLayout();
       this.flowLayoutPanelShutdownMode.ResumeLayout(false);
       this.flowLayoutPanelShutdownMode.PerformLayout();
       this.tabPageReboot.ResumeLayout(false);
@@ -1809,9 +1767,6 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.GroupBox groupBoxClient;
     private System.Windows.Forms.CheckBox checkBoxHomeOnly;
     private System.Windows.Forms.CheckBox checkBoxUmuteMasterVolume;
-    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox comboBox1;
     private System.Windows.Forms.TabPage tabPageLegacy;
     private System.Windows.Forms.GroupBox groupBoxLegacy;
     private System.Windows.Forms.Label label4;

@@ -370,12 +370,6 @@ namespace TvEngine.PowerScheduler
         return;
       }
 
-      if (_ignoreSuspendUntil > DateTime.Now)
-      {
-        Log.Debug("PS: SuspendSystem aborted - wait at least until {0:T}", _ignoreSuspendUntil);
-        return;
-      }
-
       Log.Debug("PS: Kick off shutdown thread (how: {0})", (RestartOptions)how);
       SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
       data.that = this;
@@ -1233,18 +1227,31 @@ namespace TvEngine.PowerScheduler
         {
           DateTime idleTimeout = _lastUserTime.AddMinutes(_settings.IdleTimeout);
 
-          if (idleTimeout <= DateTime.Now)
+          if (idleTimeout <= DateTime.Now && _ignoreSuspendUntil <= DateTime.Now)
           {
             Log.Debug("PS: Active standby is enabled - go to standby now");
             SuspendSystem();
           }
           else
           {
-            Log.Debug("PS: Active standby is enabled - go to standby after timeout at {0:T}", idleTimeout);
+            if (idleTimeout > _ignoreSuspendUntil)
+              Log.Debug("PS: Active standby is enabled - go to standby after idle timeout at {0:T}", idleTimeout);
+            else
+              Log.Debug("PS: SuspendSystem aborted - wait at least until {0:T}", _ignoreSuspendUntil);
           }
         }
         else
+        {
           Log.Debug("PS: Active standby is disabled - standby is handled by Windows");
+          string requests = PowerManager.GetPowerCfgRequests(true);
+          if (requests != null)
+          {
+            if (requests == string.Empty)
+              Log.Debug("PS: System will go to standby after Windows idle timeout");
+            else
+              Log.Debug("PS: Requests preventing Windows standby: " + requests.Replace(Environment.NewLine, ", "));
+          }
+        }
       }
       else
       {

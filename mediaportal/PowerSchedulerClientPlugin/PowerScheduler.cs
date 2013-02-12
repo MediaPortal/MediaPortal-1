@@ -306,12 +306,6 @@ namespace MediaPortal.Plugins.Process
         return;
       }
 
-      if (_ignoreSuspendUntil > DateTime.Now)
-      {
-        Log.Debug("PS: SuspendSystem aborted - wait at least until {0:T}", _ignoreSuspendUntil);
-        return;
-      }
-
       Log.Debug("PS: Kick off shutdown thread (how: {0})", (RestartOptions)how);
       SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
       data.that = this;
@@ -1215,14 +1209,17 @@ namespace MediaPortal.Plugins.Process
         {
           DateTime idleTimeout = _lastUserTime.AddMinutes(_settings.IdleTimeout);
 
-          if (idleTimeout <= DateTime.Now)
+          if (idleTimeout <= DateTime.Now && _ignoreSuspendUntil <= DateTime.Now)
           {
             Log.Debug("PS: Active standby is enabled - go to standby now");
             SuspendSystem();
           }
           else
           {
-            Log.Debug("PS: Active standby is enabled - go to standby after timeout at {0:T}", idleTimeout);
+            if (idleTimeout > _ignoreSuspendUntil)
+              Log.Debug("PS: Active standby is enabled - go to standby after idle timeout at {0:T}", idleTimeout);
+            else
+              Log.Debug("PS: SuspendSystem aborted - wait at least until {0:T}", _ignoreSuspendUntil);
           }
         }
         else
@@ -1238,7 +1235,7 @@ namespace MediaPortal.Plugins.Process
         }
         Log.Debug("PS: System is busy and should not go to standby");
       }
-    }
+    }    
 
     /// <summary>
     /// Called on system suspend

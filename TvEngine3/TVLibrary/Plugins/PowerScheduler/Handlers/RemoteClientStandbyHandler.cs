@@ -82,7 +82,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get { return "RemoteClient"; }
+      get { return "Remote Client"; }
     }
 
     #endregion

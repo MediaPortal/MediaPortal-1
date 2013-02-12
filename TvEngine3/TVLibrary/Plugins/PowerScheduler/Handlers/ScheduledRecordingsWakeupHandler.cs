@@ -108,7 +108,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get { return "ScheduledRecordings"; }
+      get { return "Scheduled Recordings"; }
     }
 
     #endregion

@@ -58,7 +58,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get { return "ActiveStreams"; }
+      get { return "Active Streams"; }
     }
 
     #endregion

@@ -27,6 +27,9 @@ using System.Windows.Forms;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
 #if SERVER
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using TvDatabase;
 #endif
@@ -138,7 +141,7 @@ namespace PowerScheduler.Setup
 
       // Add server profile, no Client tab
       textBoxProfile.Text +=
-        "\r\nServer:	    Dedicated server without GUI provides TV and recording services";
+        Environment.NewLine + "Server:	    Dedicated server without GUI provides TV and recording services";
       comboBoxProfile.Items.Add("Server");
       tabControl.Controls.Remove(tabPageClient);
 #endif
@@ -796,11 +799,26 @@ namespace PowerScheduler.Setup
         labelWakeupTimeValue.Text = "";
 
       if (Convert.ToBoolean(GetSetting("ShutdownEnabled", "false")))
+      {
         labelStandbyStatus.Text = "Standby is handled by PowerScheduler";
+        textBoxStandbyHandler.Text = disAllowShutdownHandler;
+      }
       else
+      {
         labelStandbyStatus.Text = "Standby is handled by Windows";
-
-      textBoxStandbyHandler.Text = disAllowShutdownHandler;
+        if (string.IsNullOrEmpty(disAllowShutdownHandler))
+        {
+          textBoxStandbyHandler.Text = PowerManager.GetPowerCfgRequests(true);   // show tvservice.exe
+        }
+        else
+        {
+          string requests = PowerManager.GetPowerCfgRequests(false);   // do not show tvservice.exe
+          if (string.IsNullOrEmpty(requests))
+            textBoxStandbyHandler.Text = disAllowShutdownHandler;
+          else
+            textBoxStandbyHandler.Text = disAllowShutdownHandler + Environment.NewLine + requests;
+        }
+      }
     }
 #endif
 
@@ -957,12 +975,12 @@ namespace PowerScheduler.Setup
         labelIdleTimeout1.ForeColor = SystemColors.GrayText;
         labelIdleTimeout2.ForeColor = SystemColors.GrayText;
         toolTip.SetToolTip(groupBoxGeneral,
-          "Adjust the time after which the system goes to standby\r\n" +
-          "by configuring the Windows Power Settings manually.\r\n" +
+          "Adjust the time after which the system goes to standby" + Environment.NewLine +
+          "by configuring the Windows Power Settings manually." + Environment.NewLine +
           "(Switch to \"Expert Mode\" and open the \"Advanced\" tab.)");
         toolTip.SetToolTip(flowLayoutPanelIdleTimeout,
-          "Adjust the time after which the system goes to standby\r\n" +
-          "by configuring the Windows Power Settings manually.\r\n" +
+          "Adjust the time after which the system goes to standby" + Environment.NewLine +
+          "by configuring the Windows Power Settings manually." + Environment.NewLine +
           "(Switch to \"Expert Mode\" and open the \"Advanced\" tab.)");
       }
     }
@@ -1233,7 +1251,7 @@ namespace PowerScheduler.Setup
       {
         numericUpDownIdleTimeout.Minimum = 0;
         toolTip.SetToolTip(numericUpDownIdleTimeout,
-          "Adjust the time after which the system goes to standby when idle\r\n" + 
+          "Adjust the time after which the system goes to standby when idle" + Environment.NewLine +
           "(\"0\" means \"never\").");
 
         labelShutdownMode.ForeColor = SystemColors.GrayText;

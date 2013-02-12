@@ -300,7 +300,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get { return "ActiveShares"; }
+      get { return "Active Shares"; }
     }
 
     #endregion

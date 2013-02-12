@@ -67,7 +67,7 @@ namespace MediaPortal.Plugins.Process
 
     public string Author()
     {
-        return "michael_t (based on the work of micheloe and others)";
+      return "michael_t (based on the work of micheloe and others)";
     }
 
     public bool CanEnable()

@@ -167,7 +167,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get { return "EpgGrabbing"; }
+      get { return "EPG Grabbing"; }
     }
 
     public StandbyMode StandbyMode

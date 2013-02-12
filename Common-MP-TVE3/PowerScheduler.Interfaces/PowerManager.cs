@@ -21,8 +21,11 @@
 #region Usings
 
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 
 #endregion
 
@@ -574,6 +577,84 @@ namespace TvEngine.PowerScheduler.Interfaces
       return false;
     }
 
+    /// <summary>
+    /// Get "powercfg /requests" output (only on Win7 or higher)
+    /// </summary>
+    /// <returns>Output of "powercfg /requests" command</returns>
+    public static string GetPowerCfgRequests(bool showTvService)
+    {
+      // Windows XP / 2003
+      if (Environment.OSVersion.Version.Major < 6)
+        return null;
+      // Vista
+      if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 0)
+        return null;
+
+      string output, requests = string.Empty;
+
+      // Disable WOW64 redirection for this thread on 64-bit systems to call the 64-bit powercfg
+      IntPtr oldValue = IntPtr.Zero;
+      if (IsOS64Bit())
+      {
+        Wow64DisableWow64FsRedirection(ref oldValue);
+      }
+
+      // Run "powercfg /requests"
+      using (Process p = new Process())
+      {
+        p.StartInfo.UseShellExecute = false;
+        p.StartInfo.RedirectStandardOutput = true;
+        p.StartInfo.StandardOutputEncoding = Encoding.ASCII;
+        p.StartInfo.FileName = @"powercfg.exe";
+        p.StartInfo.Arguments = "/requests";
+        p.StartInfo.CreateNoWindow = true;
+        p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+        p.StartInfo.Verb = "runas";
+
+        p.Start();
+        output = p.StandardOutput.ReadToEnd();
+        p.WaitForExit();
+      }
+
+      // Re-enable WOW64 redirection
+      if (IsOS64Bit())
+      {
+        Wow64RevertWow64FsRedirection(oldValue);
+      }
+
+      // Process the output
+      using (StringReader reader = new StringReader(output))
+      {
+        string line;
+
+        // Skip lines until "SYSTEM:"
+        while (true)
+        {
+          line = reader.ReadLine();
+          if (line == null || line.StartsWith("SYSTEM:"))
+            break;
+        }
+
+        // Save lines of interest
+        while (line != null)
+        {
+          line = reader.ReadLine();
+          if (line.StartsWith("AWAYMODE:"))
+            break;
+          if (!line.StartsWith("[DRIVER]") && !line.StartsWith("[PROCESS]") && !line.StartsWith("[SERVICE]"))
+            continue;
+          if (!showTvService && line.IndexOf("TvService.exe") >= 0)
+            continue;
+
+          if (string.IsNullOrEmpty(requests))
+            requests = line;
+          else
+            requests += Environment.NewLine + line;
+        }
+      }
+      return requests;
+    }
+
     #endregion
 
     #region Public properties
@@ -782,6 +863,39 @@ namespace TvEngine.PowerScheduler.Interfaces
 
     [DllImport("powrprof.dll", SetLastError = true)]
     private static extern bool SetActivePwrScheme(uint uiID, ref GLOBAL_POWER_POLICY lpGlobalPowerPolicy, ref POWER_POLICY lpPowerPolicy);
+
+    /// <summary>
+    /// Disables file system redirection for the calling thread. File system redirection is enabled by default.
+    /// </summary>
+    /// <param name="OldValue">The WOW64 file system redirection value.</param>
+    /// <returns>If the function succeeds, the return value is a nonzero value.</returns>
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern UInt32 Wow64DisableWow64FsRedirection(ref IntPtr OldValue);
+
+    /// <summary>
+    /// Restores file system redirection for the calling thread.
+    /// </summary>
+    /// <param name="OldValue">The WOW64 file system redirection value.</param>
+    /// <returns>If the function succeeds, the return value is a nonzero value.</returns>
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern UInt32 Wow64RevertWow64FsRedirection(IntPtr OldValue);
+
+    /// <summary>
+    /// Loads the specified module into the address space of the calling process.
+    /// </summary>
+    /// <param name="libraryName">The name of the module.</param>
+    /// <returns>If the function succeeds, the return value is a handle to the module.</returns>
+    [DllImport("kernel32", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    private extern static IntPtr LoadLibrary(string libraryName);
+
+    /// <summary>
+    /// Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
+    /// </summary>
+    /// <param name="hwnd">A handle to the DLL module that contains the function or variable.</param>
+    /// <param name="procedureName">The function or variable name, or the function's ordinal value.</param>
+    /// <returns>If the function succeeds, the return value is the address of the exported function or variable.</returns>
+    [DllImport("kernel32", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    private extern static IntPtr GetProcAddress(IntPtr hwnd, string procedureName);
 
     #endregion
 
@@ -1260,6 +1374,48 @@ namespace TvEngine.PowerScheduler.Interfaces
         SetActivePwrScheme(index, ref gpp, ref pp);
       }
       catch (Exception) { }
+    }
+
+    private delegate bool IsWow64ProcessDelegate([In] IntPtr handle, [Out] out bool isWow64Process);
+
+    /// <summary>
+    /// Checks if OS is 64 bit
+    /// </summary>
+    /// <returns>Returns true if 64-bit OS</returns>
+    private static bool IsOS64Bit()
+    {
+      return (IntPtr.Size == 8 || (IntPtr.Size == 4 && Is32BitProcessOn64BitProcessor()));
+    }
+
+    private static IsWow64ProcessDelegate GetIsWow64ProcessDelegate()
+    {
+      IntPtr handle = LoadLibrary("kernel32");
+
+      if (handle != IntPtr.Zero)
+      {
+        IntPtr fnPtr = GetProcAddress(handle, "IsWow64Process");
+        if (fnPtr != IntPtr.Zero)
+        {
+          return (IsWow64ProcessDelegate)Marshal.GetDelegateForFunctionPointer((IntPtr)fnPtr, typeof(IsWow64ProcessDelegate));
+        }
+      }
+      return null;
+    }
+
+    private static bool Is32BitProcessOn64BitProcessor()
+    {
+      IsWow64ProcessDelegate fnDelegate = GetIsWow64ProcessDelegate();
+
+      if (fnDelegate == null)
+        return false;
+
+      bool isWow64;
+      bool retVal = fnDelegate.Invoke(Process.GetCurrentProcess().Handle, out isWow64);
+
+      if (retVal == false)
+        return false;
+      else
+        return isWow64;
     }
 
     #endregion

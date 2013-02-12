@@ -113,7 +113,7 @@ namespace TvEngine.PowerScheduler.Handlers
       [MethodImpl(MethodImplOptions.Synchronized)]
       get
       {
-        _handlerName = "ControllerActive";
+        _handlerName = "TV Controller";
         bool isTimeShifting = false;
 
         if (_controller == null)
@@ -136,19 +136,19 @@ namespace TvEngine.PowerScheduler.Handlers
             // Check if user is recording
             if (_controller.CardCollection[cardId].Recorder.IsRecording(ref users[i]))
             {
-              _handlerName = "ControllerActive (Recording)";
+              _handlerName = "TV Controller (Recording)";
               return StandbyMode.AwayModeRequested;
             }
 
             // Check if user is timeshifting
             if (_controller.CardCollection[cardId].TimeShifter.IsTimeShifting(ref users[i]))
             {
-              _handlerName = "ControllerActive (Local timeshifting)";
+              _handlerName = "TV Controller (Local timeshifting)";
               isTimeShifting = true;
               if (!PowerManager.IsLocal(users[i].Name))
               {
                 // Timeshifting to a remote client 
-                _handlerName = "ControllerActive (Remote timeshifting)";
+                _handlerName = "TV Controller (Remote timeshifting)";
                 return StandbyMode.AwayModeRequested;
               }
             }

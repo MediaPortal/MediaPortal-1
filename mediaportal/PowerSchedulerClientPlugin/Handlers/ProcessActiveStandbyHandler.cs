@@ -154,9 +154,9 @@ namespace MediaPortal.Plugins.Process.Handlers
             preventers = preventers + ", " + p;
         }
         if (preventers == String.Empty)
-          return ("ProcessActive");
+          return ("Processes");
         else
-          return ("ProcessActive" + " (" + preventers + ")");
+          return ("Processes" + " (" + preventers + ")");
       }
     }
 
