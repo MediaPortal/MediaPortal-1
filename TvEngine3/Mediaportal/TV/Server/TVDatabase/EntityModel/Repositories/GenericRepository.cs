@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     private readonly PluralizationService _pluralizer = PluralizationService.CreateService(CultureInfo.GetCultureInfo("en"));
     private bool _disposed;
 
-    private readonly bool _trackingEnabled = true;
+    private readonly bool _trackingEnabled = false;
 
     ~GenericRepository()
     {

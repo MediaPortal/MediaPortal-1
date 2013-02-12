@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.ContextOptions.LazyLoadingEnabled = false;
       model.ContextOptions.ProxyCreationEnabled = false;
 
-      /*model.CanceledSchedules.MergeOption = MergeOption.NoTracking;
+      model.CanceledSchedules.MergeOption = MergeOption.NoTracking;
       model.CardGroupMaps.MergeOption = MergeOption.NoTracking;
       model.CardGroups.MergeOption = MergeOption.NoTracking;
       model.Cards.MergeOption = MergeOption.NoTracking;
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.Timespans.MergeOption = MergeOption.NoTracking;
       model.TuningDetails.MergeOption = MergeOption.NoTracking;
       model.TvMovieMappings.MergeOption = MergeOption.NoTracking;
-      model.Versions.MergeOption = MergeOption.NoTracking;*/
+      model.Versions.MergeOption = MergeOption.NoTracking;
       return model;
     }
 
