@@ -74,8 +74,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       lvwColumnSorter3.Order = SortOrder.Ascending;
       lvwColumnSorter2.Order = SortOrder.Descending;
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
-      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
-      mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
+      //mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      //mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
     }
 
     public MediaTypeEnum MediaTypeEnum

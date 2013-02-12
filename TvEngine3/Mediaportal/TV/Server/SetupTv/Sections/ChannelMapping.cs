@@ -70,10 +70,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(1);
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
       lvwColumnSorter1.Order = SortOrder.Ascending;
-      mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
+      //mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
       lvwColumnSorter2.Order = SortOrder.Ascending;
-      mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
+      //mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
     public MediaTypeEnum MediaTypeEnum

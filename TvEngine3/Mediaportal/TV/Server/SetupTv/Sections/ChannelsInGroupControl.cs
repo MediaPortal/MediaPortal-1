@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
-      listView1.ListViewItemSorter = lvwColumnSorter;
+      //listView1.ListViewItemSorter = lvwColumnSorter;
       listView1.IsChannelListView = true;
     }
 

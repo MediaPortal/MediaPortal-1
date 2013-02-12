@@ -48,8 +48,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
-      mpListView1.ListViewItemSorter = lvwColumnSorter;
-      mpListView2.ListViewItemSorter = lvwColumnSorter;
+      //mpListView1.ListViewItemSorter = lvwColumnSorter;
+      //mpListView2.ListViewItemSorter = lvwColumnSorter;
       ignoreCheckChanges = true;
       this.languagesSettingsKey = languagesSettingsKey;
       this.storeOnlySelectedSettingsKey = storeOnlySelectedSettingsKey;

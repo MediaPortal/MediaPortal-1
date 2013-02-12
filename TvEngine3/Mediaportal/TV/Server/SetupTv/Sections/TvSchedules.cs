@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       InitializeComponent();
       lvwColumnSorter = new MPListViewStringColumnSorter();
       lvwColumnSorter.Order = SortOrder.None;
-      listView1.ListViewItemSorter = lvwColumnSorter;
+      //listView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     public override void OnSectionActivated()
