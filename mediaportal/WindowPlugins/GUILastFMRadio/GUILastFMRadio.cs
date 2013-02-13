@@ -133,9 +133,6 @@ namespace MediaPortal.GUI.LastFMRadio
 
     public GUILastFMRadio()
     {
-      g_Player.PlayBackEnded += OnPlayBackEnded;
-      g_Player.PlayBackChanged += OnPlayBackChanged;
-      g_Player.PlayBackStopped += OnPlayBackStopped;
       tfc = new TempFileCollection();
     }
 
@@ -146,6 +143,9 @@ namespace MediaPortal.GUI.LastFMRadio
     public override bool Init()
     {
       _playlistPlayer = PlayListPlayer.SingletonPlayer;
+      g_Player.PlayBackEnded += OnPlayBackEnded;
+      g_Player.PlayBackChanged += OnPlayBackChanged;
+      g_Player.PlayBackStopped += OnPlayBackStopped;
       var a = new LastFMLibrary(); //TODO this is just making _SK get loaded.   No need to actual instansiate
       return Load(GUIGraphicsContext.Skin + @"\lastFmRadio.xml");
     }
