@@ -21,8 +21,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -38,6 +42,7 @@ namespace MediaPortal.Configuration.Sections
     private string _preferredAudioLanguages;
     private string _preferredSubLanguages;
     private List<string> _languageCodes;
+    private string _hostname;
 
     private MPGroupBox mpGroupBox2;
     private MPTextBox mpTextBoxHostname;
@@ -117,6 +122,7 @@ namespace MediaPortal.Configuration.Sections
 
     private MPCheckBox cbContinuousScrollGuide;
     private MPCheckBox mpCheckBoxEnableCCSub;
+    private MPButton mpButtonTestHostname;
 
     private bool _SingleSeat;
 
@@ -139,7 +145,22 @@ namespace MediaPortal.Configuration.Sections
       //Load parameters from XML File
       using (Settings xmlreader = new MPSettings())
       {
-        mpTextBoxHostname.Text = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        // Get hostname entry
+        _hostname = xmlreader.GetValueAsString("tvservice", "hostname", "");
+        if (string.IsNullOrEmpty(_hostname))
+        {
+          // Set hostname to local host
+          mpTextBoxHostname.Text = Dns.GetHostName();
+          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpTextBoxHostname.Text);
+        }
+        else
+        {
+          // Take verified hostname from MediaPortal.xml
+          mpTextBoxHostname.Text = _hostname;
+          mpTextBoxHostname.BackColor = Color.YellowGreen;    // verified
+          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpTextBoxHostname.Text);
+        }
+
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
         _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
@@ -279,8 +300,36 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        string prefLangs = "";
-        xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
+        // If hostname is empty, use local hostname
+        if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
+          mpTextBoxHostname.Text = Dns.GetHostName();
+
+        // Save hostname only, if it is verified
+        if (mpTextBoxHostname.BackColor == Color.YellowGreen ||
+          (mpTextBoxHostname.BackColor != Color.Red && VerifyHostname(mpTextBoxHostname.Text)))
+        {
+          // hostname is valid
+          Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
+          if (UpdateGentleConfig(mpTextBoxHostname.Text, mpTextBoxHostname.Text.Equals(_hostname)))
+          {
+            Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
+            xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
+          }
+          else
+          {
+            Log.Debug("SaveSettings: error in updating gentle.config - save empty string");
+            xmlwriter.SetValue("tvservice", "hostname", "");
+            mpTextBoxHostname.BackColor = Color.Red;
+          }
+        }
+        else
+        {
+          // hostname is invalid  
+          Log.Debug("SaveSettings: hostname is invalid - save empty string");
+          mpTextBoxHostname.BackColor = Color.Red;
+          xmlwriter.SetValue("tvservice", "hostname", "");
+        }
+
         xmlwriter.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
         xmlwriter.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
 
@@ -307,6 +356,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
         xmlwriter.SetValue("mytv", "showEpisodeInfo", comboboxShowEpisodeInfo.SelectedIndex);
 
+        string prefLangs = "";
         foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
         {
           prefLangs += (string)item.Name + ";";
@@ -327,13 +377,151 @@ namespace MediaPortal.Configuration.Sections
           MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
-
       }
+    }
+
+    
+    /// <summary>
+    /// Verifies that the given hostname is a working tv server
+    /// </summary>
+    /// <param name="hostname">The TV server's hostname</param>
+    /// <returns>Returns treu, if the hostname is a tv server</returns>
+    private bool VerifyHostname(string hostname)
+    {
+      // See if hostname is an active client
+      Ping ping = new Ping();
+      PingOptions pingOptions = new PingOptions() { DontFragment = true, Ttl = 1 };
+      PingReply rep;
+      try
+      {
+        rep = ping.Send(hostname, 100, new byte[] { 1 }, pingOptions);
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("VerifyHostname: unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message);
+        MessageBox.Show(string.Format("Unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+      if (rep.Status == IPStatus.TtlExpired || rep.Status == IPStatus.TimedOut || rep.Status == IPStatus.TimeExceeded)
+      {
+        Log.Debug("VerifyHostname: unable to detect host \"{0}\"", hostname);
+        MessageBox.Show(string.Format("Unable to detect host \"{0}\"", hostname),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+
+      // See if the tv server port is accessible
+      TcpClient client = new TcpClient();
+      try
+      {
+        client.Connect(hostname, 31456);
+      }
+      catch (Exception)
+      {
+        Log.Debug("VerifyHostname: unable to connect to TV server on host \"{0}\"", hostname);
+        MessageBox.Show(string.Format("Unable to connect to TV server on host \"{0}\"", hostname),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+      client.Close();
+
+      // Set the hostname of the TV server
+      TvServerRemote.HostName = hostname;
+
+      // Get the database connection string from the TV server
+      string connectionString, provider;
+      TvServerRemote.GetDatabaseConnectionString(out connectionString, out provider);
+      if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
+      {
+        Log.Debug("VerifyHostname: unable to get data from TV server on host \"{0}\"", hostname);
+        MessageBox.Show(string.Format("Unable to get data from TV server on host \"{0}\"", hostname),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+
+      Log.Debug("VerifyHostname: verified a working TV server on host \"{0}\"", hostname);
+      return true;
+    }
+
+    /// <summary>
+    /// Updates the database connection string in the gentle.config file
+    /// if the hostname has been changed or gentle.config contains "-" as server name.
+    /// The connection string is fetched from the TV server.
+    /// </summary>
+    /// <param name="hostname">The TV server's hostname</param>
+    /// <param name="unchanged">Indicates if the hostname has been loaded from the settings</param>
+    /// <returns>Returns true, if the gentle.config file is updated</returns>
+    private bool UpdateGentleConfig(string hostname, bool unchanged)
+    {
+      Log.Debug("UpdateGentleConfig({0}, {1})", hostname, unchanged);
+
+      // Load the gentle.config file with the database connection string
+      XmlNode node, nodeProvider;
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
+        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
+        node = nodeKey.Attributes.GetNamedItem("connectionString");
+        nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("UpdateGentleConfig: unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message);
+        MessageBox.Show(string.Format("Unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+
+      // See if gentle.config has to be updated
+      if (unchanged && node.InnerText.IndexOf("Server=-;") == -1)
+      {
+        Log.Debug("UpdateGentleConfig: no need to update gentle.config file");
+        return true;
+      }
+
+      // Verify tvServer (could be down at the moment)
+      if (!VerifyHostname(hostname))
+      {
+        Log.Error("UpdateGentleConfig: unable to contact TV server on host \"{0}\"", hostname);
+        return false;
+      }
+
+      // Get the database connection string from the TV server
+      string connectionString, provider;
+      TvServerRemote.GetDatabaseConnectionString(out connectionString, out provider);
+      if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
+      {
+        Log.Error("UpdateGentleConfig: unable to get database connection string from TV server \"{0}\"", hostname);
+        MessageBox.Show(string.Format("Unable to get database connection string from TV server \"{0}\"", hostname),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+
+      // Save the gentle.config file with the database connection string
+      try
+      {
+        node.InnerText = connectionString;
+        nodeProvider.InnerText = provider;
+        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("UpdateGentleConfig: unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message);
+        MessageBox.Show(string.Format("Unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message),
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return false;
+      }
+
+      Log.Debug("UpdateGentleConfig: updated gentle.config with connectionString \"{0}\" for provider \"{1}\"", connectionString, provider);
+      return true;
     }
 
     private void InitializeComponent()
     {
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpButtonTestHostname = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -420,6 +608,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
+      this.mpGroupBox2.Controls.Add(this.mpButtonTestHostname);
       this.mpGroupBox2.Controls.Add(this.mpTextBoxHostname);
       this.mpGroupBox2.Controls.Add(this.mpLabel3);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -430,13 +619,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
       // 
+      // mpButtonTestHostname
+      // 
+      this.mpButtonTestHostname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonTestHostname.Location = new System.Drawing.Point(294, 20);
+      this.mpButtonTestHostname.Name = "mpButtonTestHostname";
+      this.mpButtonTestHostname.Size = new System.Drawing.Size(131, 23);
+      this.mpButtonTestHostname.TabIndex = 9;
+      this.mpButtonTestHostname.Text = "Test connection";
+      this.mpButtonTestHostname.UseVisualStyleBackColor = true;
+      this.mpButtonTestHostname.Click += new System.EventHandler(this.mpButtonTestHostname_Click);
+      // 
       // mpTextBoxHostname
       // 
       this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxHostname.Location = new System.Drawing.Point(126, 22);
       this.mpTextBoxHostname.Name = "mpTextBoxHostname";
-      this.mpTextBoxHostname.Size = new System.Drawing.Size(229, 20);
+      this.mpTextBoxHostname.Size = new System.Drawing.Size(152, 20);
       this.mpTextBoxHostname.TabIndex = 6;
+      this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
       // 
       // mpLabel3
       // 
@@ -1384,5 +1585,40 @@ namespace MediaPortal.Configuration.Sections
         mpTextBoxMacAddress.Enabled = false;
       }
     }
+
+    private void mpButtonTestHostname_Click(object sender, EventArgs e)
+    {
+      // Save current cursor and display wait cursor
+      Cursor currentCursor = Cursor.Current;
+      Cursor.Current = Cursors.WaitCursor;
+      mpButtonTestHostname.Enabled = false;
+      
+      // If hostname is empty, use local hostname
+      if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
+        mpTextBoxHostname.Text = Dns.GetHostName();
+
+      // Verify hostname
+      if (!VerifyHostname(mpTextBoxHostname.Text))
+      {
+        // Reset cursor
+        Cursor.Current = currentCursor;
+        mpButtonTestHostname.Enabled = true;
+        mpTextBoxHostname.BackColor = Color.Red;
+      }
+      else
+      {
+        // Reset cursor and show success message
+        Cursor.Current = currentCursor;
+        mpButtonTestHostname.Enabled = true;
+        mpTextBoxHostname.BackColor = Color.YellowGreen;
+        MessageBox.Show("Connection to the TV server successful",
+          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.None);
+      }
+    }
+
+    private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
+    {
+      mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+    }  
   }
 }

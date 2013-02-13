@@ -184,5 +184,55 @@ namespace MediaPortal.Configuration
       }
     }
 
+    /// <summary>
+    /// Retrieves the tv database connection string and provider from the TvServer.
+    /// </summary>
+    /// <param name="connectionString">The database connection string</param>
+    /// <param name="provider">The database default provider</param>
+    public static void GetDatabaseConnectionString(out string connectionString, out string provider)
+    {
+      connectionString = null;
+      provider = null;
+      try
+      {
+        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+        if (assem != null)
+        {
+          Type[] types = assem.GetExportedTypes();
+          foreach (Type exportedType in types)
+          {
+            try
+            {
+              if (exportedType.Name == "TvServer")
+              {
+                // Execute the remote method call to the tv server.
+                Object exportedObject = Activator.CreateInstance(exportedType);
+                object[] parametersArray = new object[] { null, null };
+                MethodInfo methodInfo = exportedType.GetMethod("GetDatabaseConnectionString",
+                                                               BindingFlags.Public | BindingFlags.Instance);
+                methodInfo.Invoke(exportedObject, parametersArray);
+                connectionString = (string)parametersArray[0];
+                provider = (string)parametersArray[1];
+                break;
+              }
+            }
+            catch (TargetInvocationException ex)
+            {
+              Log.Error("TvClient: Failed to load the database connection string {0}", ex.ToString());
+            }
+            catch (Exception gex)
+            {
+              Log.Error("TvClient: Failed to load settings {0}", gex.Message);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Configuration: Loading TvControl assembly");
+        Log.Error("Configuration: Exception: {0}", ex);
+      }
+    }
+
   }
 }
