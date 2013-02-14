@@ -48,7 +48,8 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer
   m_ullPrevSystemTime(0),
   m_ullPrivateTime(0),
   m_ullHWPrivateTime(0),
-  m_bDiscontinuity(false)
+  m_bDiscontinuity(false),
+  m_clockSource(NOT_SET)
 {
 }
 
@@ -137,20 +138,32 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   UINT64 hwClock(0);
   UINT64 hwQpc(0);
+  INT64 delta(0);
+  INT64 qpcDelta(0);
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
   if (hr == S_OK)
   {
+    if (m_clockSource != HW)
+    {
+      Log("Using HW clock");
+      m_clockSource = HW;
+    }
+    
     if (m_ullStartQpcHW == 0)
     {
       m_ullStartQpcHW = hwQpc;
       m_ullStartTimeSystem = qpcNow;
-      m_ullPrevSystemTime = qpcNow;
     }
 
     if (m_ullStartTimeHW == 0)
+    {
       m_ullStartTimeHW = hwClock;
+      m_ullPrevSystemTime = qpcNow;
+    }
+
+    qpcDelta = qpcNow - m_ullPrevSystemTime;
 
     m_llDurationHW = (hwClock - m_ullStartTimeHW);
     m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
@@ -159,21 +172,20 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
-      m_ullStartTimeSystem = qpcNow;
+      //m_ullStartTimeSystem = qpcNow;
+      delta = qpcNow - m_ullPrevSystemTime;
+
       m_bDiscontinuity = false;
     }
     else
     {
+      delta = hwClock - m_ullPrevTimeHW;
+	  
       double clockDiff = hwClock - m_ullStartTimeHW;
       double qpcDiff = hwQpc - m_ullStartQpcHW;
 
+      m_dSystemClockMultiplier =1.0;
       double prevMultiplier = m_dSystemClockMultiplier;
-
-      if (clockDiff > 0 && qpcDiff > 0)
-        m_dSystemClockMultiplier = clockDiff / qpcDiff;
-
-      if (m_dSystemClockMultiplier < 0.95 || m_dSystemClockMultiplier > 1.05)
-        m_dSystemClockMultiplier = prevMultiplier;
 
       if (m_bHWBasedRefClock)
         m_SynchCorrection.SetAVMult(m_dSystemClockMultiplier);
@@ -184,15 +196,26 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   }
   else
   {
-    //Log("AudioClock() returned error (0x%08x)");
+    if (m_clockSource != SYSTEM)
+    {
+      Log("Using SYSTEM clock");
+      m_clockSource = SYSTEM;
+    }
+
+    if (m_ullPrevSystemTime == 0)
+    {
+      m_ullPrevSystemTime = qpcNow;
+      m_ullStartTimeSystem = qpcNow;
+    }
+
+    qpcDelta = delta = qpcNow - m_ullPrevSystemTime;
+    
     if (m_ullStartTimeSystem == 0)
       m_ullStartTimeSystem = qpcNow;
 
     if (m_ullPrevSystemTime == 0)
       m_ullPrevSystemTime = qpcNow;
   }
-
-  INT64 delta = qpcNow - m_ullPrevSystemTime;
 
   if (qpcNow < m_ullPrevSystemTime)
     delta += REFERENCE_TIME(ULLONG_MAX) + 1;
@@ -201,7 +224,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(delta);
 
-  //Log("diff %I64d delta: %I64d synchCorrectedDelta: %I64d", delta - synchCorrectedDelta, delta, synchCorrectedDelta);
+  //Log("diff %I64d delta: %I64d synchCorrectedDelta: %I64d qpc based delta: %I64d", delta - synchCorrectedDelta, delta, synchCorrectedDelta, qpcDelta);
 
   m_ullHWPrivateTime = m_ullHWPrivateTime + delta;
   m_ullPrivateTime = m_ullPrivateTime + synchCorrectedDelta;
@@ -230,6 +253,9 @@ HRESULT CSyncClock::GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTime)
   // Log("rtTime: %6.3f m_ullRealPrivateTime: %6.3f", rtTime / 10000000.0, m_ullRealPrivateTime/ 10000000.0);
 
   *rtHwTime = m_ullHWPrivateTime;
+
+  Log("CWASAPIRenderFilter::GetHWTime Clocks: Hw Clock: rtHwTime: %10.8f rtTime: %10.8f",
+    *rtHwTime / 10000000.0, *rtDsTime / 10000000.0);
 
   return S_OK;
 }

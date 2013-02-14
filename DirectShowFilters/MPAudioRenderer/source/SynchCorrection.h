@@ -38,7 +38,7 @@ public:
   ~SynchCorrection();
   
   // Call reset when a discontinuity happens in the audio stream (drifting resets to zero etc)
-  void Reset();
+  void Reset(bool soft);
   void Reset(double dBias);
   
   // Suggested adjustment - this can be ignored if you want

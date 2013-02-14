@@ -49,6 +49,14 @@ public:
   char* DebugData();
 
 private:
+
+  enum CLOCK_SOURCE
+  {
+    NOT_SET,
+    HW,
+    SYSTEM
+  };
+
   double m_dAdjustment;
   double m_dSuggestedAudioMultiplier;
     
@@ -75,6 +83,8 @@ private:
   bool m_bDiscontinuity;
 
   SynchCorrection m_SynchCorrection;
+
+  CLOCK_SOURCE m_clockSource;
 
   // Not owned
   IReferenceClock*  m_pCurrentRefClock;
