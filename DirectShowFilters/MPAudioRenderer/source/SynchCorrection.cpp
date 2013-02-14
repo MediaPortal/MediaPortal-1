@@ -27,7 +27,7 @@ SynchCorrection::SynchCorrection(void) :
   m_dAudioDelay(0.0) // audio delay is not reset on seek / pause
 {
   m_pDebugLine = new char[1023];
-  Reset();
+  Reset(false);
 }
 
 SynchCorrection::~SynchCorrection(void)
@@ -35,33 +35,39 @@ SynchCorrection::~SynchCorrection(void)
   delete[] m_pDebugLine;
 }
 
-void SynchCorrection::Reset()
+void SynchCorrection::Reset(bool soft)
 {
   Log("SynchCorrection::Reset");
   m_dBiasCorrection = 0.0001;
   m_iBiasDir = 0;
-  m_dAVmult = 1.0;
-  m_ullTotalTime = 0;
-  m_dlastAdjustment = 1.0;
-  m_dBiasAdjustmentDelay=0;
-  m_bQualityMode = false;
-  m_iQualityDir = 0;
-  m_bQualityCorrectionOn = false;
-  m_bDriftCorrectionEnabled = true;
-  m_bBiasCorrectionEnabled = true;
-  m_bAdjustmentCorrectionEnabled = true;
+  //m_dlastAdjustment = 1.0;
+  
+  if (!soft)
+  {
+    m_dAVmult = 1.0;
+    m_ullTotalTime = 0;
+    m_dlastAdjustment = 1.0;
+    m_dBiasAdjustmentDelay=0;
+    m_bQualityMode = false;
+    m_iQualityDir = 0;
+    m_bQualityCorrectionOn = false;
+    m_bDriftCorrectionEnabled = true;
+    m_bBiasCorrectionEnabled = true;
+    m_bAdjustmentCorrectionEnabled = true;
 
-  m_Bias.Reset();
-  m_Adjustment.Reset();
-  m_AVTracker.Reset();
+    m_Bias.Reset();
+    m_Adjustment.Reset();
+    m_AVTracker.Reset();
+  }
 }
 
 void SynchCorrection::Reset(double dBias)
 {
-  Log("SynchCorrection::Reset");
-  Reset();
+  Log("SynchCorrection::Reset with bias");
+  //Reset();
   m_Bias.SetAdjuster(dBias);
 }
+
 double SynchCorrection::SuggestedAudioMultiplier(double sampleLength, double bias, double adjustment)
 {
   return GetRequiredAdjustment(sampleLength,  m_dAVmult, bias, adjustment);
@@ -138,10 +144,10 @@ double SynchCorrection::GetAdjustment()
 void SynchCorrection::SetBias(double bias)
 {
   // handle intrastream bias change
-  double currentDrift = TotalAudioDrift(m_dAVmult);
-  Reset();
+  //double currentDrift = TotalAudioDrift(m_dAVmult);
+  Reset(true);
   m_Bias.SetAdjuster(bias);
-  m_dBiasAdjustmentDelay=currentDrift;
+  //m_dBiasAdjustmentDelay=currentDrift;
 }
 
 double SynchCorrection::GetBias()
