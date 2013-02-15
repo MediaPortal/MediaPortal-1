@@ -171,8 +171,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       ctx.SaveChanges();
     }
 
-    private static readonly object _createDbContextLock = new object();
-
     public static Model CreateDbContext()
     {
       // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
@@ -216,7 +214,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.TvMovieMappings.MergeOption = MergeOption.NoTracking;
       model.Versions.MergeOption = MergeOption.NoTracking;
       return model;
-    }
     }
 
     /// <summary>
