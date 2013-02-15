@@ -692,7 +692,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Epg
         // get rid of managed resources
         if (!_disposed)
         {
-          _dbUpdater.Dispose();
           _epgTimer.Dispose();
           _disposed = true;
         }
