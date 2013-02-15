@@ -21,6 +21,7 @@
 
 #include "fontEngine.h"
 #include "transformmatrix.h"
+#include "EffectStateManager.h"
 
 using namespace std;
 
@@ -120,13 +121,14 @@ struct TEXTURE_PLACE
   D3DRECT rect[200];
 };
 
-static FONT_DATA_T*         fontData = new FONT_DATA_T[MAX_FONTS];
-static TEXTURE_DATA_T*      textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
-static LPDIRECT3DDEVICE9    m_pDevice=NULL;	
-static int                  textureZ[MAX_TEXTURES];
-static TEXTURE_PLACE*       texturePlace[MAX_TEXTURES];
-static D3DTEXTUREFILTERTYPE m_Filter;
-int                         textureCount;
+static FONT_DATA_T*            fontData = new FONT_DATA_T[MAX_FONTS];
+static TEXTURE_DATA_T*         textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
+static LPDIRECT3DDEVICE9       m_pDevice=NULL;	
+static CStateManagerInterface* m_pStateManager;
+static int                     textureZ[MAX_TEXTURES];
+static TEXTURE_PLACE*          texturePlace[MAX_TEXTURES];
+static D3DTEXTUREFILTERTYPE    m_Filter;
+int                            textureCount;
 
 static bool inPresentTextures=false; 
 static vector<int> texturesToBeRemoved;
@@ -139,7 +141,6 @@ int m_iTexturesInUse=0;
 int m_iScreenWidth=0;
 int m_iScreenHeight=0;
 D3DPOOL   m_ipoolFormat=D3DPOOL_MANAGED;
-DWORD     m_alphaBlend=-1;
 
 void Log(char* txt)
 {
@@ -184,7 +185,7 @@ void Cleanup()
   }
   delete[] textureData;
   delete[] fontData;
-  return;
+  delete m_pStateManager;
 }
 
 //*******************************************************************************************************************
@@ -249,19 +250,26 @@ void FontEngineSetDevice(void* device)
   {
     m_Filter = D3DTEXF_LINEAR;
   }
-  m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
-  m_alphaBlend = -1;
+  
+  m_pStateManager = CStateManagerInterface::Create(m_pDevice);
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
 }
 
 //*******************************************************************************************************************
 
-void FontEngineSetAlphaBlend(DWORD alphaBlend)
+void FontEngineSetRenderState(D3DRENDERSTATETYPE state, DWORD dwValue)
 {
-  if(alphaBlend!=m_alphaBlend)
-  {
-    m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,alphaBlend);
-    m_alphaBlend = alphaBlend;
-  }
+  m_pStateManager->SetRenderState(state, dwValue);
+}
+
+void FontEngineSetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE d3dSamplerState, DWORD dwValue)
+{
+  m_pStateManager->SetSamplerState(dwStage, d3dSamplerState, dwValue);
+}
+
+void FontEngineSetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE d3dTextureStageState, DWORD dwValue)
+{
+  m_pStateManager->SetTextureStageState(dwStage, d3dTextureStageState, dwValue);
 }
 
 //*******************************************************************************************************************
@@ -690,7 +698,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
                             unsigned int color, float m[3][4],
                             int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
-                            int blendMode)
+                            BLEND_MODE blendMode)
 {
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
@@ -891,77 +899,77 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
   verts[3].color = color;
 
-  FontEngineSetAlphaBlend(TRUE);
-  m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-  m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+  m_pStateManager->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+  m_pStateManager->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+  m_pStateManager->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
   // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
   // The caller must have already called SetScissorRect() to set the clipping rectangle.
   if (clipEnabled)
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
   }
   else
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
 
-  if (blendMode > 0)
+  if (blendMode > BLEND_NONE)
   {
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-    if (blendMode == 1)
+    if (blendMode == BLEND_DIFFUSE)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
-    else if (blendMode == 2)
+    else if (blendMode == BLEND_OVERLAY)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
-    }
-
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-
-    if (blendMode == 1)
-    {
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    }
-    else if (blendMode == 2)
-    {
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
     }
 
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+
+    if (blendMode == BLEND_DIFFUSE)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == BLEND_OVERLAY)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
     // Disable the remainder of the texture stages.
-    m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
-    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
   }
 
-  m_pDevice->SetTexture(0, texture1->pTexture);
-  if (blendMode > 0)
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  if (blendMode > BLEND_NONE)
   {
-    m_pDevice->SetTexture(1, texture2->pTexture);
+    m_pStateManager->SetTexture(1, texture2->pTexture);
   }
 
-  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
-
-  m_pDevice->SetTexture(0, NULL);
-  if (blendMode > 0)
+  
+  m_pStateManager->SetTexture(0, NULL);
+  if (blendMode > BLEND_NONE)
   {
-    m_pDevice->SetTexture(1, NULL);
+    m_pStateManager->SetTexture(1, NULL);
   }
 
   // Important - the scissor test (for clipping) must be disabled before return.
   // Clipping may not be defined other FontEngine calls that draw textures.
-  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -1167,66 +1175,65 @@ void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, flo
   verts[3].tv2 = ty1_2;
   verts[3].color = color;
 
-  FontEngineSetAlphaBlend(TRUE);
-
-  m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-  m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
   // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
   // The caller must have already called SetScissorRect() to set the clipping rectangle.
   if (clipEnabled)
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
   }
   else
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
 
   // This stage simply selects color and alpha from texture1.
   // Choose the alpha and color from the current texture (texture1).
-  m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 
   // This stage blends the alpha of texture1 and texture2.
   // Select the color from the current texture (the output of stage 1) but select the alpha from the new texture (texture2)
   // and modulate (multiply) the alpha values of the new texture (texture2) and the current texture (output of stage 1).
   // Alpha values of zero in texture2 (the mask) result in alpha values of zero (transparent pixels) in the output.
-  m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
-  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 
   // This stage blends the masked resultant texture with the background (the diffuse texture).
-  m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
 
   // Disable the remainder of the texture stages.
-  m_pDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
-  m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+  m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
+  m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
-  m_pDevice->SetTexture(0, texture1->pTexture);
-  m_pDevice->SetTexture(1, texture2->pTexture);
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  m_pStateManager->SetTexture(1, texture2->pTexture);
 
-  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
 
-  m_pDevice->SetTexture(0, NULL);
-  m_pDevice->SetTexture(1, NULL);
+  m_pStateManager->SetTexture(0, NULL);
+  m_pStateManager->SetTexture(1, NULL);
 
   // Important - the scissor test (for clipping) must be disabled before return.
   // Clipping may not be defined other FontEngine calls that draw textures.
-  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
-// blendMode 0 = ignore/bypass blending operation (completely disregard the use of textureNo2)
-// blendMode 1 = diffuse blending (choose D3DTOP_MODULATE)
-// blendMode 2 = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
+// BLEND_NONE    = ignore/bypass blending operation (completely disregard the use of textureNo2)
+// BLEND_DIFFUSE = diffuse blending (choose D3DTOP_MODULATE)
+// BLEND_OVERLAY = linear blending (choose D3DTOP_BLENDTEXTUREALPHA)
 void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
                                   unsigned int color, float m[3][4],
                                   int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
@@ -1464,89 +1471,88 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   verts[3].tv3 = ty1_3;
   verts[3].color = color;
 
-  FontEngineSetAlphaBlend(TRUE);
-
-  m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-  m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
   // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
   // The caller must have already called SetScissorRect() to set the clipping rectangle.
   if (clipEnabled)
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
   }
   else
   {
-    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
 
   if (blendMode > 0)
   {
     // This stage blends the color and alpha of the current texture (texture1) with the background (diffuse image).
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
     // This stage blends the alpha of result of the last stage with texture2 (our own alpha mask).
     if (blendMode == 1)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
     else if (blendMode == 2)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
     }
 
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 
     if (blendMode == 1)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
     }
     else if (blendMode == 2)
     {
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
     }
 
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
     // This stage selects the color of the mask (arg1 = texture3) and blends it with the result of the
     // last stage (our alpha adjusted texture).
-    m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-    m_pDevice->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
-    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 
     // This stage blends the masked resultant texture with the background (the diffuse texture).
-    m_pDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-    m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
 
     // Disable the remainder of the texture stages.
-    m_pDevice->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
-    m_pDevice->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
   }
 
-  m_pDevice->SetTexture(0, texture1->pTexture);
-  m_pDevice->SetTexture(1, texture2->pTexture);
-  m_pDevice->SetTexture(2, texture3->pTexture); 
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  m_pStateManager->SetTexture(1, texture2->pTexture);
+  m_pStateManager->SetTexture(2, texture3->pTexture); 
 
-  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX3);
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX3);
   m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX3));
 
-  m_pDevice->SetTexture(0, NULL);
-  m_pDevice->SetTexture(1, NULL);
-  m_pDevice->SetTexture(2, NULL);
+  m_pStateManager->SetTexture(0, NULL);
+  m_pStateManager->SetTexture(1, NULL);
+  m_pStateManager->SetTexture(2, NULL);
 
   // Important - the scissor test (for clipping) must be disabled before return.
   // Clipping may not be defined other FontEngine calls that draw textures.
-  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -1562,26 +1568,24 @@ void FontEnginePresentTextures()
   try
   {
     if (textureCount > 0)
-    {  
-      m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-
+    {
       // Set the texture blending operations for default rendering.
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
-      m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
-      m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+      m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+      m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
       for (int i=0; i < textureCount; ++i)
       {
@@ -1597,17 +1601,10 @@ void FontEnginePresentTextures()
             {
               m_iTexturesInUse++;
 
-              if (texture->useAlphaBlend)
-              {
-                FontEngineSetAlphaBlend(TRUE);
-              }
-              else
-              {
-                FontEngineSetAlphaBlend(FALSE);
-              }
+              m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, texture->useAlphaBlend ? 1 : 0);
+              m_pStateManager->SetTexture(0, texture->pTexture);
+              m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
 
-              m_pDevice->SetTexture(0, texture->pTexture);
-              m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
               WORD* pIndices = NULL;
               texture->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
 
@@ -1960,27 +1957,28 @@ void FontEnginePresent3D(int fontNumber)
     if (font->dwNumTriangles !=0)
 	  {
       // Set the texture blending operations for default rendering.
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
-      m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
-      m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+      m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+      m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
-      FontEngineSetAlphaBlend(1);
-      m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-      m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-      m_pDevice->SetTexture(0, font->pTexture);
+      m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+      m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
+      m_pStateManager->SetTexture(0, font->pTexture);
+
       WORD* pIndices = NULL;
       font->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
 
@@ -2046,7 +2044,7 @@ void FontEngineSetTexture(void* surface)
 
     //LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)pContainer;
     LPDIRECT3DTEXTURE9 pTexture = (LPDIRECT3DTEXTURE9)surface;
-    m_pDevice->SetTexture(0, pTexture);
+    m_pStateManager->SetTexture(0, pTexture);
     //pTexture->Release();
   }
   catch(...)
@@ -2063,7 +2061,7 @@ void FontEngineDrawSurface( int fx, int fy, int nw, int nh, int dstX, int dstY,
   {
     IDirect3DSurface9* pBackBuffer;
 
-    FontEngineSetAlphaBlend(FALSE);
+    m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pBackBuffer);
 
     LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;

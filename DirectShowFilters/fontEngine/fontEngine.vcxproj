@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\EffectStateManager.cpp" />
     <ClCompile Include="source\fontEngine.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DSHOW_BASE);  $(WINDOWS_SDK)Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -134,6 +135,7 @@
     <None Include="source\fontEngine.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\EffectStateManager.h" />
     <ClInclude Include="source\TransformMatrix.h" />
     <ClInclude Include="source\fontEngine.h" />
     <ClInclude Include="source\stdafx.h" />
