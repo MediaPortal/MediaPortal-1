@@ -43,12 +43,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIFontManager
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresentTextures();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetDevice(void* device);
-
     #region Constructors
 
     // singleton. Dont allow any instance of this class
@@ -99,7 +93,7 @@ namespace MediaPortal.GUI.Library
     {
       unsafe
       {
-        FontEngineSetDevice(null);
+        DXNative.FontEngineSetDevice(null);
       }
     }
 
@@ -494,7 +488,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        FontEnginePresentTextures();
+        DXNative.FontEnginePresentTextures();
         for (int i = 0; i < _listFonts.Count; ++i)
         {
           GUIFont font = _listFonts[i];
@@ -614,7 +608,7 @@ namespace MediaPortal.GUI.Library
 
       unsafe
       {
-        FontEngineSetDevice(upDevice.ToPointer());
+        DXNative.FontEngineSetDevice(upDevice.ToPointer());
       }
     }
 
@@ -630,7 +624,7 @@ namespace MediaPortal.GUI.Library
 
         unsafe
         {
-          FontEngineSetDevice(upDevice.ToPointer());
+          DXNative.FontEngineSetDevice(upDevice.ToPointer());
         }
         foreach (GUIFont font in _listFonts)
         {

@@ -3611,49 +3611,52 @@ public class MediaPortalApp : D3DApp, IRender
 
   #region helper funcs
 
-  private void CreateStateBlock()
-  {
-    GUIGraphicsContext.DX9Device.RenderState.CullMode = Cull.None;
-    GUIGraphicsContext.DX9Device.RenderState.Lighting = false;
-    GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
-    GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
-    GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-    GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
-    GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = TextureArgument.TextureColor;
-    GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = TextureArgument.Diffuse;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = TextureOperation.Modulate;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = TextureArgument.TextureColor;
-    GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = TextureArgument.Diffuse;
-    if (supportsFiltering)
-    {
-      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-    }
-    else
-    {
-      GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Point;
-      GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Point;
-    }
-    if (bSupportsAlphaBlend)
-    {
-      GUIGraphicsContext.DX9Device.RenderState.AlphaTestEnable = true;
-      GUIGraphicsContext.DX9Device.RenderState.ReferenceAlpha = 0x01;
-      GUIGraphicsContext.DX9Device.RenderState.AlphaFunction = Compare.GreaterEqual;
-    }
-    return;
-  }
+	private void CreateStateBlock()
+	{
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_CULLMODE, (int)D3DCULL.D3DCULL_NONE);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_LIGHTING, 0);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ZENABLE, 1);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_FOGENABLE, 0);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_FILLMODE, (int)D3DFILLMODE.D3DFILL_SOLID);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_SRCBLEND, (int)D3DBLEND.D3DBLEND_SRCALPHA);
+		DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_DESTBLEND, (int)D3DBLEND.D3DBLEND_INVSRCALPHA);
+
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG1, (int)D3DTA.D3DTA_TEXTURE);
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG2, (int)D3DTA.D3DTA_DIFFUSE);
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG1, (int)D3DTA.D3DTA_TEXTURE);
+		DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG2, (int)D3DTA.D3DTA_DIFFUSE);
+
+		if (supportsFiltering)
+		{
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+		}
+		else
+		{
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+			DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+			DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_POINT);
+		}
+		if (bSupportsAlphaBlend)
+		{
+			DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHATESTENABLE, 1);
+			DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHAREF, 1);
+			DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHAFUNC, (int)D3DCMPFUNC.D3DCMP_GREATEREQUAL);
+		}
+	}
 
   /// <summary>
   /// Get the current date from the system and localize it based on the user preferences.

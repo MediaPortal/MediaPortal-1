@@ -24,6 +24,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -401,18 +402,18 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
@@ -556,18 +557,17 @@ namespace MediaPortal.Util
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
-
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);
@@ -709,30 +709,40 @@ namespace MediaPortal.Util
 
         GUIGraphicsContext.DX9Device.SetTexture(0, texture);
 
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 = Direct3D.TextureArgument.Diffuse;
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG2, (int)D3DTA.D3DTA_DIFFUSE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG2, (int)D3DTA.D3DTA_DIFFUSE);
 
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation = Direct3D.TextureOperation.Modulate;
 
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 = Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 = Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation = Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation = Direct3D.TextureOperation.Disable;
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLORARG2, (int)D3DTA.D3DTA_DIFFUSE);
+
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_MODULATE);
+
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG1, (int)D3DTA.D3DTA_TEXTURE);
+        DXNative.FontEngineSetTextureStageState(0, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAARG2, (int)D3DTA.D3DTA_DIFFUSE);
+
+        DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_COLOROP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
+        DXNative.FontEngineSetTextureStageState(1, (int)D3DTEXTURESTAGESTATETYPE.D3DTSS_ALPHAOP, (int)D3DTEXTUREOP.D3DTOP_DISABLE);
 
         int g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
         float g_fMipMapLodBias = 0.0f;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (uint)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
-        GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy = g_nAnisotropy;
-        GUIGraphicsContext.DX9Device.SamplerState[1].MipMapLevelOfDetailBias = g_fMipMapLodBias;
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAXANISOTROPY, (uint)g_nAnisotropy);
+        DXNative.FontEngineSetSamplerState(1, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPMAPLODBIAS, (uint)g_fMipMapLodBias);
 
         // Render the image
         GUIGraphicsContext.DX9Device.SetStreamSource(0, m_vbBuffer, 0);

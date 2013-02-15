@@ -53,12 +53,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetClipEnable();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetClipDisable();
-
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
 
@@ -2057,7 +2051,7 @@ namespace MediaPortal.GUI.Library
       // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
       _clipRectangleStack.Push(r3);
       DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
-      FontEngineSetClipEnable();
+      DXNative.FontEngineSetClipEnable();
     }
 
     /// <summary>
@@ -2071,7 +2065,7 @@ namespace MediaPortal.GUI.Library
       // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
       if (_clipRectangleStack.Count == 0)
       {
-        FontEngineSetClipDisable();
+        DXNative.FontEngineSetClipDisable();
       }
       else
       {
