@@ -19,6 +19,8 @@ FontEngineSetDevice				@14
 FontEngineDrawTexture2			@15
 FontEngineDrawMaskedTexture     @16
 FontEngineDrawMaskedTexture2    @17
-FontEngineSetAlphaBlend         @18
-FontEngineSetClipEnable      @19
-FontEngineSetClipDisable      @20
+FontEngineSetClipEnable         @18
+FontEngineSetClipDisable        @19
+FontEngineSetRenderState        @20
+FontEngineSetSamplerState       @21
+FontEngineSetTextureStageState  @22
