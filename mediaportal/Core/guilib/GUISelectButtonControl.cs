@@ -373,6 +373,7 @@ namespace MediaPortal.GUI.Library
           }
           _labelControl.TextAlignment = _textAlignment;
           _labelControl.Label = _label;
+          _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
 
           if (_labelControl.Width <= 0)
           {
