@@ -894,7 +894,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         query = channelRepository.IncludeAllRelations(query, includeRelations);
 
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
-        Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
+        // Log.Debug("ListAllChannelsByMediaType(MediaTypeEnum mediaType, ChannelIncludeRelationEnum includeRelations) SQL = {0}", query.ToTraceString());
         return channels;
       }
     }
@@ -906,7 +906,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         IQueryable<Channel> query = channelRepository.GetAll<Channel>().OrderBy(c => c.SortOrder);
         query = channelRepository.IncludeAllRelations(query, includeRelations);
         IList<Channel> channels = channelRepository.LoadNavigationProperties(query, includeRelations);
-        Log.Debug("ListAllChannels(ChannelIncludeRelationEnum) SQL = {0}", query.ToTraceString());
+        // Log.Debug("ListAllChannels(ChannelIncludeRelationEnum) SQL = {0}", query.ToTraceString());
         return channels;
       }
     }
