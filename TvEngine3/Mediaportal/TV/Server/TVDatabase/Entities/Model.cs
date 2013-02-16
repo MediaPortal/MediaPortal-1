@@ -8,12 +8,9 @@
 //------------------------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -355,101 +352,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             trackingItem.ChangeTracker.AcceptChanges();
         }
     }
-            
-    public class TrackableCollection<T> : ObservableCollection<T>
-    {
-      private readonly HashSet<T> _lookupList = new HashSet<T>();
 
-      private void InsertIntoLookUp(T item)
-      {
-        _lookupList.Add(item);
-      }
-
-      public new bool Contains(T item)
-      {
-        return _lookupList.Contains(item);
-      }      
-
-      public new void Insert(int index, T item)
-      {
-        if (!Contains(item))
-        {
-          base.Insert(index, item);
-          InsertIntoLookUp(item);          
-        }
-      }
-
-      public new void RemoveAt(int index)
-      {        
-        base.RemoveAt(index);
-        T item = this[index];
-        RemoveFromLookUp(item);        
-      }
-
-      private void RemoveFromLookUp(T item)
-      {
-          if (_lookupList.Contains(item))
-          {
-            _lookupList.Remove(item);
-          }
-      }
-
-      private void ReplaceIntoLookUp(T oldValue, T newValue)
-      {
-        if (_lookupList.Contains(oldValue))
-        {
-          _lookupList.Remove(oldValue);
-        }
-        _lookupList.Add(newValue);
-      }
-
-      public new bool Remove(T item)
-      {
-        bool value = base.Remove(item);        
-        RemoveFromLookUp(item);        
-        return value;
-      }
-
-      public new T this[int index]
-      {
-        get { return base[index]; }
-        set
-        {
-          T oldValue = base[index];
-          ReplaceIntoLookUp(oldValue, value);
-          base[index] = value;          
-        }
-      }
-      
-
-      public new void Add(T item)
-      {
-        if (!Contains(item))
-        {
-          base.Add(item);
-          InsertIntoLookUp(item);
-        }
-      }
-
-      public new void Clear()
-      {
-        int count = Count;
-        for (int index = 0; index < count; index++)
-        {
-          RemoveAt(0);
-        }
-
-       _lookupList.Clear();
-      }
-
-      bool IsReadOnly
-      {
-        get { return ((ICollection<T>)this).IsReadOnly; }
-      }
-      
-
-    }
-    
     // An interface that provides an event that fires when complex properties change.
     // Changes can be the replacement of a complex property with a new complex type instance or
     // a change to a scalar property within a complex type instance.
