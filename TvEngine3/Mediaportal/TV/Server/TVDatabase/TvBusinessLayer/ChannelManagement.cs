@@ -944,7 +944,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
         var query = channelRepository.GetAll<Channel>().Where(c => (c.MediaType == (int)MediaTypeEnum.TV || c.MediaType == (int)MediaTypeEnum.Radio) 
-          && c.GrabEpg && c.TuningDetails.Any(t => t.ChannelType == 0 || t.ChannelType == 5)).OrderBy(c => c.SortOrder);
+          && c.GrabEpg && !c.TuningDetails.Any(t => t.ChannelType == 0 || t.ChannelType == 5)).OrderBy(c => c.SortOrder);
         return channelRepository.IncludeAllRelations(query, includeRelations).ToList();
       }
     }
