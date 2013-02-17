@@ -360,94 +360,71 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     {
       private readonly HashSet<T> _lookupList = new HashSet<T>();
 
-      private void InsertIntoLookUp(T item)
+      private void AddRange(IList list)
       {
-        _lookupList.Add(item);
+        if (list == null)
+          return;
+        foreach (T item in list)
+          _lookupList.Add(item);
+      }
+
+      private void RemoveRange(IList list)
+      {
+        if (list == null)
+          return;
+        foreach (T item in list)
+          _lookupList.Remove(item);
+      }
+
+      private void Reset ()
+      {
+        _lookupList.Clear();
+        foreach (T item in this)
+          _lookupList.Add(item);
+      }
+
+      public TrackableCollection ()
+      {
+        CollectionChanged += OnCollectionChanged;
+      }
+
+      public TrackableCollection(IEnumerable<T> collection): 
+        base(collection)
+      {
+        CollectionChanged += OnCollectionChanged;
+      }
+
+      public TrackableCollection(List<T> list)
+        : base(list)
+      {
+        CollectionChanged += OnCollectionChanged;
+      }
+
+      private void OnCollectionChanged (object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+      {
+        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Add)
+        {
+          AddRange(notifyCollectionChangedEventArgs.NewItems);
+        }
+        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Remove)
+        {
+          RemoveRange(notifyCollectionChangedEventArgs.OldItems);
+        }
+        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Replace)
+        {
+          RemoveRange(notifyCollectionChangedEventArgs.OldItems);
+          AddRange(notifyCollectionChangedEventArgs.NewItems);
+        }
+        if (notifyCollectionChangedEventArgs.Action == NotifyCollectionChangedAction.Reset)
+        {
+          Reset();
+        }
       }
 
       public new bool Contains(T item)
       {
         return _lookupList.Contains(item);
-      }      
-
-      public new void Insert(int index, T item)
-      {
-        if (!Contains(item))
-        {
-          base.Insert(index, item);
-          InsertIntoLookUp(item);          
-        }
       }
-
-      public new void RemoveAt(int index)
-      {        
-        base.RemoveAt(index);
-        T item = this[index];
-        RemoveFromLookUp(item);        
-      }
-
-      private void RemoveFromLookUp(T item)
-      {
-          if (_lookupList.Contains(item))
-          {
-            _lookupList.Remove(item);
-          }
-      }
-
-      private void ReplaceIntoLookUp(T oldValue, T newValue)
-      {
-        if (_lookupList.Contains(oldValue))
-        {
-          _lookupList.Remove(oldValue);
-        }
-        _lookupList.Add(newValue);
-      }
-
-      public new bool Remove(T item)
-      {
-        bool value = base.Remove(item);        
-        RemoveFromLookUp(item);        
-        return value;
-      }
-
-      public new T this[int index]
-      {
-        get { return base[index]; }
-        set
-        {
-          T oldValue = base[index];
-          ReplaceIntoLookUp(oldValue, value);
-          base[index] = value;          
-        }
-      }
-      
-
-      public new void Add(T item)
-      {
-        if (!Contains(item))
-        {
-          base.Add(item);
-          InsertIntoLookUp(item);
-        }
-      }
-
-      public new void Clear()
-      {
-        int count = Count;
-        for (int index = 0; index < count; index++)
-        {
-          RemoveAt(0);
-        }
-
-       _lookupList.Clear();
-      }
-
-      bool IsReadOnly
-      {
-        get { return ((ICollection<T>)this).IsReadOnly; }
-      }
-      
-
     }
     
     // An interface that provides an event that fires when complex properties change.
