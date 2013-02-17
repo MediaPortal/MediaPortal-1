@@ -298,7 +298,6 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="TrackableCollection.cs" />
     <Compile Include="TuningDetail.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
