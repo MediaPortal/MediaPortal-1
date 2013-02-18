@@ -18,38 +18,78 @@
 
 #endregion
 
+#region Using
+
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
-using MediaPortal.WinCustomControls;
+
+#endregion
 
 namespace MediaPortal.Configuration.Sections
 {
   public class TVClient : SectionSettings
   {
-    #region variables
+    #region Variables
 
     private string _preferredAudioLanguages;
     private string _preferredSubLanguages;
     private List<string> _languageCodes;
-    private string _hostname;
+    private List<string> _languagesAvail;
+    private string[] ShowEpisodeOptions = new string[]
+                                            {
+                                              "[None]", // Dont show episode info
+                                              "Number", // Show seriesNum.episodeNum.episodePart
+                                              "Title", // Show episodeName
+                                              "Number + Title" // Show number and title
+                                            };
+    private bool _SingleSeat;
 
-    private MPGroupBox mpGroupBox2;
-    private MPTextBox mpTextBoxHostname;
-    private MPLabel mpLabel3;
+    #endregion
+
+    #region Constructor
+
+    public TVClient()
+      : this("TV Client") {}
+
+    public TVClient(string name)
+      : base(name)
+    {
+      InitializeComponent();
+      // Episode Options
+      comboboxShowEpisodeInfo.Items.Clear();
+      comboboxShowEpisodeInfo.Items.AddRange(ShowEpisodeOptions);
+    }
+
+    #endregion
+
+    #region Dispose
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #endregion
+
+    #region Designer generated code
+
     private MPGroupBox mpGroupBox1;
     private MPCheckBox mpCheckBoxPrefAC3;
-    private List<string> _languagesAvail;
     private MPCheckBox mpCheckBoxPrefAudioOverLang;
     private MPTabControl tabControlTVGeneral;
     private MPTabPage tabPageGeneralSettings;
@@ -89,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader5;
     private ColumnHeader columnHeader6;
     private ColumnHeader columnHeader8;
-    private TabPage tabPage1;
+    private MPTabPage tabPage1;
     private MPGroupBox mpGroupBox7;
     private MPLabel mpLabel2;
     private MPTextBox txtNotifyBefore;
@@ -101,442 +141,42 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader7;
     private MPGroupBox grpTsReader;
     private MPCheckBox cbRelaxTsReader;
-    private MPGroupBox mpGroupBox900;
-    private MPTextBox mpTextBoxMacAddress;
-    private MPLabel mpLabelWOLTimeOut;
-    private MPNumericTextBox mpNumericTextBoxWOLTimeOut;
-    private MPLabel mpLabel400;
-    private MPCheckBox mpCheckBoxIsAutoMacAddressEnabled;
-    private MPCheckBox mpCheckBoxIsWakeOnLanEnabled;
     private ListViewColumnSorter _columnSorter;
     private MPLabel labelShowEpisodeinfo;
     private MPComboBox comboboxShowEpisodeInfo;
-
-    private string[] ShowEpisodeOptions = new string[]
-                                            {
-                                              "[None]", // Dont show episode info
-                                              "Number", // Show seriesNum.episodeNum.episodePart
-                                              "Title", // Show episodeName
-                                              "Number + Title" // Show number and title
-                                            };
-
     private MPCheckBox cbContinuousScrollGuide;
     private MPCheckBox mpCheckBoxEnableCCSub;
-    private MPButton mpButtonTestHostname;
-
-    private bool _SingleSeat;
-
-    #endregion
-
-    public TVClient()
-      : this("TV Client") {}
-
-    public TVClient(string name)
-      : base(name)
-    {
-      InitializeComponent();
-      // Episode Options
-      comboboxShowEpisodeInfo.Items.Clear();
-      comboboxShowEpisodeInfo.Items.AddRange(ShowEpisodeOptions);
-    }
-
-    public override void LoadSettings()
-    {
-      //Load parameters from XML File
-      using (Settings xmlreader = new MPSettings())
-      {
-        // Get hostname entry
-        _hostname = xmlreader.GetValueAsString("tvservice", "hostname", "");
-        if (string.IsNullOrEmpty(_hostname))
-        {
-          // Set hostname to local host
-          mpTextBoxHostname.Text = Dns.GetHostName();
-          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpTextBoxHostname.Text);
-        }
-        else
-        {
-          // Take verified hostname from MediaPortal.xml
-          mpTextBoxHostname.Text = _hostname;
-          mpTextBoxHostname.BackColor = Color.YellowGreen;    // verified
-          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpTextBoxHostname.Text);
-        }
-
-        mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
-        mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-        _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
-        _preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
-
-        mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
-        mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-        mpCheckBoxEnableCCSub.Checked = xmlreader.GetValueAsBool("tvservice", "ccsubtitles", false);
-        mpCheckBoxAutoShowSubWhenTvStarts.Checked = xmlreader.GetValueAsBool("tvservice", "autoshowsubwhentvstarts", true);
-        enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
-        cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
-        cbContinuousScrollGuide.Checked = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
-        cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
-
-        mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
-        mpNumericTextBoxWOLTimeOut.Text = xmlreader.GetValueAsString("tvservice", "WOLTimeOut", "10");
-        mpCheckBoxIsAutoMacAddressEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled",
-                                                                             true);
-        mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
-
-        chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
-        txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
-        txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
-        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
-        int showEpisodeinfo = xmlreader.GetValueAsInt("mytv", "showEpisodeInfo", 0);
-        if (showEpisodeinfo > this.ShowEpisodeOptions.Length)
-        {
-          showEpisodeinfo = 0;
-        }
-        comboboxShowEpisodeInfo.SelectedIndex = showEpisodeinfo;
-      }
-
-      mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(null, null);
-
-      // Enable this Panel if the TvPlugin exists in the plug-in Directory
-      Enabled = true;
-
-      // Retrieve the languages and language codes for the Epg.
-      TvServerRemote.GetLanguages(out _languagesAvail, out _languageCodes);
-
-      if (_languagesAvail == null || _languageCodes == null)
-      {
-        Log.Debug("Failed to load languages");
-        return;
-      }
-      else
-      {
-        mpListViewAvailAudioLang.Items.Clear();
-        mpListViewPreferredAudioLang.Items.Clear();
-        for (int i = 0; i < _languagesAvail.Count; i++)
-        {
-          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-          item.Name = _languageCodes[i];
-          if (!_preferredAudioLanguages.Contains(item.Name))
-          {
-            if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
-            {
-              mpListViewAvailAudioLang.Items.Add(item);
-            }
-          }
-        }
-        mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-        _columnSorter.SortColumn = 0;
-        _columnSorter.Order = SortOrder.Ascending;
-        mpListViewAvailAudioLang.Sort();
-
-        if (_preferredAudioLanguages.Length > 0)
-        {
-          string[] langArr = _preferredAudioLanguages.Split(';');
-
-          for (int i = 0; i < langArr.Length; i++)
-          {
-            string langStr = langArr[i];
-            if (langStr.Trim().Length > 0)
-            {
-              for (int j = 0; j < _languagesAvail.Count; j++)
-              {
-                if (_languageCodes[j].Contains(langStr))
-                {
-                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
-                  item.Name = _languageCodes[j];
-                  mpListViewPreferredAudioLang.Items.Add(item);
-                  break;
-                }
-              }
-            }
-          }
-        }
-
-        mpListViewAvailSubLang.Items.Clear();
-        mpListViewPreferredSubLang.Items.Clear();
-        for (int i = 0; i < _languagesAvail.Count; i++)
-        {
-          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-          item.Name = _languageCodes[i];
-          if (!_preferredSubLanguages.Contains(item.Name))
-          {
-            if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
-            {
-              mpListViewAvailSubLang.Items.Add(item);
-            }
-          }
-        }
-        mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-        _columnSorter.SortColumn = 0;
-        _columnSorter.Order = SortOrder.Ascending;
-        mpListViewAvailSubLang.Sort();
-
-        if (_preferredSubLanguages.Length > 0)
-        {
-          string[] langArr = _preferredSubLanguages.Split(';');
-
-          for (int i = 0; i < langArr.Length; i++)
-          {
-            string langStr = langArr[i];
-            if (langStr.Trim().Length > 0)
-            {
-              for (int j = 0; j < _languagesAvail.Count; j++)
-              {
-                if (_languageCodes[j].Contains(langStr))
-                {
-                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
-                  item.Name = _languageCodes[j];
-                  mpListViewPreferredSubLang.Items.Add(item);
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-      _SingleSeat = Network.IsSingleSeat();
-    }
-
-    public override void SaveSettings()
-    {
-      using (Settings xmlwriter = new MPSettings())
-      {
-        // If hostname is empty, use local hostname
-        if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
-          mpTextBoxHostname.Text = Dns.GetHostName();
-
-        // Save hostname only, if it is verified
-        if (mpTextBoxHostname.BackColor == Color.YellowGreen ||
-          (mpTextBoxHostname.BackColor != Color.Red && VerifyHostname(mpTextBoxHostname.Text)))
-        {
-          // hostname is valid
-          Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
-          if (UpdateGentleConfig(mpTextBoxHostname.Text, mpTextBoxHostname.Text.Equals(_hostname)))
-          {
-            Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
-            xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
-          }
-          else
-          {
-            Log.Debug("SaveSettings: error in updating gentle.config - save empty string");
-            xmlwriter.SetValue("tvservice", "hostname", "");
-            mpTextBoxHostname.BackColor = Color.Red;
-          }
-        }
-        else
-        {
-          // hostname is invalid  
-          Log.Debug("SaveSettings: hostname is invalid - save empty string");
-          mpTextBoxHostname.BackColor = Color.Red;
-          xmlwriter.SetValue("tvservice", "hostname", "");
-        }
-
-        xmlwriter.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
-        xmlwriter.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
-
-        xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
-        xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
-        xmlwriter.SetValueAsBool("tvservice", "ccsubtitles", mpCheckBoxEnableCCSub.Checked);
-        xmlwriter.SetValueAsBool("tvservice", "autoshowsubwhentvstarts", mpCheckBoxAutoShowSubWhenTvStarts.Checked);
-        xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
-        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
-        xmlwriter.SetValueAsBool("myradio", "hideAllChannelsGroup", cbHideAllChannels.Checked);
-        //currently we use the same checkbox for radio but different settings in config file
-        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
-        xmlwriter.SetValueAsBool("mytv", "continuousScrollGuide", cbContinuousScrollGuide.Checked);
-        xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
-
-        xmlwriter.SetValueAsBool("tvservice", "isWakeOnLanEnabled", mpCheckBoxIsWakeOnLanEnabled.Checked);
-        xmlwriter.SetValue("tvservice", "WOLTimeOut", mpNumericTextBoxWOLTimeOut.Text);
-        xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
-        xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
-
-        xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
-        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
-        xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
-        xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
-        xmlwriter.SetValue("mytv", "showEpisodeInfo", comboboxShowEpisodeInfo.SelectedIndex);
-
-        string prefLangs = "";
-        foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
-        {
-          prefLangs += (string)item.Name + ";";
-        }
-        xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
-
-        prefLangs = "";
-        foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
-        {
-          prefLangs += (string)item.Name + ";";
-        }
-        xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
-
-        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
-        if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
-            (_SingleSeat != Network.IsSingleSeat()))
-        {
-          MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
-      }
-    }
-
-    
-    /// <summary>
-    /// Verifies that the given hostname is a working tv server
-    /// </summary>
-    /// <param name="hostname">The TV server's hostname</param>
-    /// <returns>Returns treu, if the hostname is a tv server</returns>
-    private bool VerifyHostname(string hostname)
-    {
-      // See if hostname is an active client
-      Ping ping = new Ping();
-      PingOptions pingOptions = new PingOptions() { DontFragment = true, Ttl = 1 };
-      PingReply rep;
-      try
-      {
-        rep = ping.Send(hostname, 100, new byte[] { 1 }, pingOptions);
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("VerifyHostname: unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message);
-        MessageBox.Show(string.Format("Unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-      if (rep.Status == IPStatus.TtlExpired || rep.Status == IPStatus.TimedOut || rep.Status == IPStatus.TimeExceeded)
-      {
-        Log.Debug("VerifyHostname: unable to detect host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to detect host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
-      // See if the tv server port is accessible
-      TcpClient client = new TcpClient();
-      try
-      {
-        client.Connect(hostname, 31456);
-      }
-      catch (Exception)
-      {
-        Log.Debug("VerifyHostname: unable to connect to TV server on host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to connect to TV server on host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-      client.Close();
-
-      // Set the hostname of the TV server
-      TvServerRemote.HostName = hostname;
-
-      // Get the database connection string from the TV server
-      string connectionString, provider;
-      TvServerRemote.GetDatabaseConnectionString(out connectionString, out provider);
-      if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
-      {
-        Log.Debug("VerifyHostname: unable to get data from TV server on host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to get data from TV server on host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
-      Log.Debug("VerifyHostname: verified a working TV server on host \"{0}\"", hostname);
-      return true;
-    }
-
-    /// <summary>
-    /// Updates the database connection string in the gentle.config file
-    /// if the hostname has been changed or gentle.config contains "-" as server name.
-    /// The connection string is fetched from the TV server.
-    /// </summary>
-    /// <param name="hostname">The TV server's hostname</param>
-    /// <param name="unchanged">Indicates if the hostname has been loaded from the settings</param>
-    /// <returns>Returns true, if the gentle.config file is updated</returns>
-    private bool UpdateGentleConfig(string hostname, bool unchanged)
-    {
-      Log.Debug("UpdateGentleConfig({0}, {1})", hostname, unchanged);
-
-      // Load the gentle.config file with the database connection string
-      XmlNode node, nodeProvider;
-      XmlDocument doc = new XmlDocument();
-      try
-      {
-        doc.Load(Config.GetFile(Config.Dir.Config, "gentle.config"));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        node = nodeKey.Attributes.GetNamedItem("connectionString");
-        nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-      }
-      catch (Exception ex)
-      {
-        Log.Error("UpdateGentleConfig: unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message);
-        MessageBox.Show(string.Format("Unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
-      // See if gentle.config has to be updated
-      if (unchanged && node.InnerText.IndexOf("Server=-;") == -1)
-      {
-        Log.Debug("UpdateGentleConfig: no need to update gentle.config file");
-        return true;
-      }
-
-      // Verify tvServer (could be down at the moment)
-      if (!VerifyHostname(hostname))
-      {
-        Log.Error("UpdateGentleConfig: unable to contact TV server on host \"{0}\"", hostname);
-        return false;
-      }
-
-      // Get the database connection string from the TV server
-      string connectionString, provider;
-      TvServerRemote.GetDatabaseConnectionString(out connectionString, out provider);
-      if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
-      {
-        Log.Error("UpdateGentleConfig: unable to get database connection string from TV server \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to get database connection string from TV server \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
-      // Save the gentle.config file with the database connection string
-      try
-      {
-        node.InnerText = connectionString;
-        nodeProvider.InnerText = provider;
-        doc.Save(Config.GetFile(Config.Dir.Config, "gentle.config"));
-      }
-      catch (Exception ex)
-      {
-        Log.Error("UpdateGentleConfig: unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message);
-        MessageBox.Show(string.Format("Unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
-      Log.Debug("UpdateGentleConfig: updated gentle.config with connectionString \"{0}\" for provider \"{1}\"", connectionString, provider);
-      return true;
-    }
+    private MPGroupBox mpGroupBoxAdditional;
+    private MPComboBox cbDeinterlace;
+    private MPLabel label8;
+    private MPGroupBox groupBox5;
+    private MPCheckBox cbAutoFullscreen;
+    private MPCheckBox cbTurnOnTv;
+    private MPGroupBox groupBox3;
+    private MPCheckBox byIndexCheckBox;
+    private MPCheckBox showChannelNumberCheckBox;
+    private MPNumericUpDown channelNumberMaxLengthNumUpDn;
+    private MPLabel lblChanNumMaxLen;
 
     private void InitializeComponent()
     {
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonTestHostname = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxPrefAudioOverLang = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxPrefAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlTVGeneral = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageGeneralSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.mpGroupBox900 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabelWOLTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpTextBoxMacAddress = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpLabel400 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpCheckBoxIsAutoMacAddressEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpCheckBoxIsWakeOnLanEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpGroupBoxAdditional = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbAutoFullscreen = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.showChannelNumberCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.channelNumberMaxLengthNumUpDn = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
+      this.lblChanNumMaxLen = new MediaPortal.UserInterface.Controls.MPLabel();
       this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -579,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewAvailSubLang = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.chkRecnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -588,11 +228,13 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtNotifyBefore = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
       this.tabPageGeneralSettings.SuspendLayout();
-      this.mpGroupBox900.SuspendLayout();
+      this.mpGroupBoxAdditional.SuspendLayout();
+      this.groupBox5.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).BeginInit();
       this.grpTsReader.SuspendLayout();
       this.mpGroupBox6.SuspendLayout();
       this.mpGroupBox5.SuspendLayout();
@@ -606,48 +248,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox7.SuspendLayout();
       this.SuspendLayout();
       // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Controls.Add(this.mpButtonTestHostname);
-      this.mpGroupBox2.Controls.Add(this.mpTextBoxHostname);
-      this.mpGroupBox2.Controls.Add(this.mpLabel3);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(431, 53);
-      this.mpGroupBox2.TabIndex = 10;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "TV-Server";
-      // 
-      // mpButtonTestHostname
-      // 
-      this.mpButtonTestHostname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonTestHostname.Location = new System.Drawing.Point(294, 20);
-      this.mpButtonTestHostname.Name = "mpButtonTestHostname";
-      this.mpButtonTestHostname.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonTestHostname.TabIndex = 9;
-      this.mpButtonTestHostname.Text = "Test connection";
-      this.mpButtonTestHostname.UseVisualStyleBackColor = true;
-      this.mpButtonTestHostname.Click += new System.EventHandler(this.mpButtonTestHostname_Click);
-      // 
-      // mpTextBoxHostname
-      // 
-      this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxHostname.Location = new System.Drawing.Point(126, 22);
-      this.mpTextBoxHostname.Name = "mpTextBoxHostname";
-      this.mpTextBoxHostname.Size = new System.Drawing.Size(152, 20);
-      this.mpTextBoxHostname.TabIndex = 6;
-      this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(19, 25);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(58, 13);
-      this.mpLabel3.TabIndex = 5;
-      this.mpLabel3.Text = "Hostname:";
-      // 
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
@@ -656,9 +256,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAudioOverLang);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAC3);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 338);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 308);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 75);
+      this.mpGroupBox1.Size = new System.Drawing.Size(432, 91);
       this.mpGroupBox1.TabIndex = 9;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Audio stream settings";
@@ -668,7 +268,7 @@ namespace MediaPortal.Configuration.Sections
       this.enableAudioDualMonoModes.AutoSize = true;
       this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
       this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(9, 41);
+      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(8, 51);
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 12;
@@ -681,7 +281,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAudioOverLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAudioOverLang.AutoSize = true;
       this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 18);
+      this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(238, 28);
       this.mpCheckBoxPrefAudioOverLang.Name = "mpCheckBoxPrefAudioOverLang";
       this.mpCheckBoxPrefAudioOverLang.Size = new System.Drawing.Size(172, 17);
       this.mpCheckBoxPrefAudioOverLang.TabIndex = 11;
@@ -693,7 +293,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxPrefAC3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAC3.AutoSize = true;
       this.mpCheckBoxPrefAC3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(9, 18);
+      this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(8, 28);
       this.mpCheckBoxPrefAC3.Name = "mpCheckBoxPrefAC3";
       this.mpCheckBoxPrefAC3.Size = new System.Drawing.Size(110, 17);
       this.mpCheckBoxPrefAC3.TabIndex = 7;
@@ -714,11 +314,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageGeneralSettings
       // 
-      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox900);
+      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBoxAdditional);
+      this.tabPageGeneralSettings.Controls.Add(this.groupBox5);
+      this.tabPageGeneralSettings.Controls.Add(this.groupBox3);
       this.tabPageGeneralSettings.Controls.Add(this.grpTsReader);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox6);
       this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox5);
-      this.tabPageGeneralSettings.Controls.Add(this.mpGroupBox2);
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
       this.tabPageGeneralSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -727,104 +328,154 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox900
+      // mpGroupBoxAdditional
       // 
-      this.mpGroupBox900.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-      this.mpGroupBox900.Controls.Add(this.mpNumericTextBoxWOLTimeOut);
-      this.mpGroupBox900.Controls.Add(this.mpLabelWOLTimeOut);
-      this.mpGroupBox900.Controls.Add(this.mpTextBoxMacAddress);
-      this.mpGroupBox900.Controls.Add(this.mpLabel400);
-      this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsAutoMacAddressEnabled);
-      this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsWakeOnLanEnabled);
-      this.mpGroupBox900.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox900.Location = new System.Drawing.Point(16, 286);
-      this.mpGroupBox900.Name = "mpGroupBox900";
-      this.mpGroupBox900.Size = new System.Drawing.Size(431, 126);
-      this.mpGroupBox900.TabIndex = 14;
-      this.mpGroupBox900.TabStop = false;
-      this.mpGroupBox900.Text = "Wake-On-Lan";
+      this.mpGroupBoxAdditional.Controls.Add(this.cbDeinterlace);
+      this.mpGroupBoxAdditional.Controls.Add(this.label8);
+      this.mpGroupBoxAdditional.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxAdditional.Location = new System.Drawing.Point(16, 322);
+      this.mpGroupBoxAdditional.Name = "mpGroupBoxAdditional";
+      this.mpGroupBoxAdditional.Size = new System.Drawing.Size(431, 63);
+      this.mpGroupBoxAdditional.TabIndex = 19;
+      this.mpGroupBoxAdditional.TabStop = false;
+      this.mpGroupBoxAdditional.Text = "Additional settings";
       // 
-      // mpNumericTextBoxWOLTimeOut
+      // cbDeinterlace
       // 
-      this.mpNumericTextBoxWOLTimeOut.AutoCompleteCustomSource.AddRange(new string[] {
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90"});
-      this.mpNumericTextBoxWOLTimeOut.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-      this.mpNumericTextBoxWOLTimeOut.Enabled = false;
-      this.mpNumericTextBoxWOLTimeOut.Location = new System.Drawing.Point(126, 42);
-      this.mpNumericTextBoxWOLTimeOut.MaxLength = 4;
-      this.mpNumericTextBoxWOLTimeOut.Name = "mpNumericTextBoxWOLTimeOut";
-      this.mpNumericTextBoxWOLTimeOut.Size = new System.Drawing.Size(45, 20);
-      this.mpNumericTextBoxWOLTimeOut.TabIndex = 9;
-      this.mpNumericTextBoxWOLTimeOut.Tag = "Default timeout is 10 seconds";
-      this.mpNumericTextBoxWOLTimeOut.Text = "10";
-      this.mpNumericTextBoxWOLTimeOut.Value = 10;
-      this.mpNumericTextBoxWOLTimeOut.WordWrap = false;
+      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDeinterlace.BorderColor = System.Drawing.Color.Empty;
+      this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbDeinterlace.Items.AddRange(new object[] {
+            "None",
+            "Bob",
+            "Weave",
+            "Best"});
+      this.cbDeinterlace.Location = new System.Drawing.Point(166, 19);
+      this.cbDeinterlace.Name = "cbDeinterlace";
+      this.cbDeinterlace.Size = new System.Drawing.Size(259, 21);
+      this.cbDeinterlace.TabIndex = 15;
       // 
-      // mpLabelWOLTimeOut
+      // label8
       // 
-      this.mpLabelWOLTimeOut.AutoSize = true;
-      this.mpLabelWOLTimeOut.Location = new System.Drawing.Point(41, 45);
-      this.mpLabelWOLTimeOut.Name = "mpLabelWOLTimeOut";
-      this.mpLabelWOLTimeOut.Size = new System.Drawing.Size(72, 13);
-      this.mpLabelWOLTimeOut.TabIndex = 8;
-      this.mpLabelWOLTimeOut.Text = "WOL timeout:";
+      this.label8.Location = new System.Drawing.Point(6, 23);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(146, 17);
+      this.label8.TabIndex = 14;
+      this.label8.Text = "Fallback de-interlace mode:";
       // 
-      // mpTextBoxMacAddress
+      // groupBox5
       // 
-      this.mpTextBoxMacAddress.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxMacAddress.Location = new System.Drawing.Point(126, 91);
-      this.mpTextBoxMacAddress.MaxLength = 17;
-      this.mpTextBoxMacAddress.Name = "mpTextBoxMacAddress";
-      this.mpTextBoxMacAddress.Size = new System.Drawing.Size(97, 20);
-      this.mpTextBoxMacAddress.TabIndex = 7;
-      this.mpTextBoxMacAddress.Text = "00:00:00:00:00:00";
+      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox5.Controls.Add(this.cbAutoFullscreen);
+      this.groupBox5.Controls.Add(this.cbTurnOnTv);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox5.Location = new System.Drawing.Point(258, 169);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(189, 94);
+      this.groupBox5.TabIndex = 18;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "When entering the TV screen:";
       // 
-      // mpLabel400
+      // cbAutoFullscreen
       // 
-      this.mpLabel400.AutoSize = true;
-      this.mpLabel400.Location = new System.Drawing.Point(41, 94);
-      this.mpLabel400.Name = "mpLabel400";
-      this.mpLabel400.Size = new System.Drawing.Size(74, 13);
-      this.mpLabel400.TabIndex = 6;
-      this.mpLabel400.Text = "MAC Address:";
+      this.cbAutoFullscreen.AutoSize = true;
+      this.cbAutoFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbAutoFullscreen.Location = new System.Drawing.Point(17, 40);
+      this.cbAutoFullscreen.Name = "cbAutoFullscreen";
+      this.cbAutoFullscreen.Size = new System.Drawing.Size(152, 17);
+      this.cbAutoFullscreen.TabIndex = 1;
+      this.cbAutoFullscreen.Text = "Directly show fullscreen TV";
+      this.cbAutoFullscreen.UseVisualStyleBackColor = true;
+      this.cbAutoFullscreen.CheckedChanged += new System.EventHandler(this.cbAutoFullscreen_CheckedChanged);
       // 
-      // mpCheckBoxIsAutoMacAddressEnabled
+      // cbTurnOnTv
       // 
-      this.mpCheckBoxIsAutoMacAddressEnabled.AutoSize = true;
-      this.mpCheckBoxIsAutoMacAddressEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxIsAutoMacAddressEnabled.Location = new System.Drawing.Point(44, 68);
-      this.mpCheckBoxIsAutoMacAddressEnabled.Name = "mpCheckBoxIsAutoMacAddressEnabled";
-      this.mpCheckBoxIsAutoMacAddressEnabled.Size = new System.Drawing.Size(192, 17);
-      this.mpCheckBoxIsAutoMacAddressEnabled.TabIndex = 1;
-      this.mpCheckBoxIsAutoMacAddressEnabled.Text = "Auto-configure server MAC Address";
-      this.mpCheckBoxIsAutoMacAddressEnabled.UseVisualStyleBackColor = true;
-      this.mpCheckBoxIsAutoMacAddressEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged);
+      this.cbTurnOnTv.AutoSize = true;
+      this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbTurnOnTv.Location = new System.Drawing.Point(17, 20);
+      this.cbTurnOnTv.Name = "cbTurnOnTv";
+      this.cbTurnOnTv.Size = new System.Drawing.Size(78, 17);
+      this.cbTurnOnTv.TabIndex = 0;
+      this.cbTurnOnTv.Text = "Turn on TV";
+      this.cbTurnOnTv.UseVisualStyleBackColor = true;
       // 
-      // mpCheckBoxIsWakeOnLanEnabled
+      // groupBox3
       // 
-      this.mpCheckBoxIsWakeOnLanEnabled.AutoSize = true;
-      this.mpCheckBoxIsWakeOnLanEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxIsWakeOnLanEnabled.Location = new System.Drawing.Point(22, 19);
-      this.mpCheckBoxIsWakeOnLanEnabled.Name = "mpCheckBoxIsWakeOnLanEnabled";
-      this.mpCheckBoxIsWakeOnLanEnabled.Size = new System.Drawing.Size(172, 17);
-      this.mpCheckBoxIsWakeOnLanEnabled.TabIndex = 0;
-      this.mpCheckBoxIsWakeOnLanEnabled.Text = "Wake up TV Server as needed";
-      this.mpCheckBoxIsWakeOnLanEnabled.UseVisualStyleBackColor = true;
-      this.mpCheckBoxIsWakeOnLanEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsWakeOnLanEnabled_CheckedChanged);
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Controls.Add(this.byIndexCheckBox);
+      this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
+      this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
+      this.groupBox3.Controls.Add(this.lblChanNumMaxLen);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox3.Location = new System.Drawing.Point(16, 169);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(233, 94);
+      this.groupBox3.TabIndex = 17;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Channel numbers";
+      // 
+      // byIndexCheckBox
+      // 
+      this.byIndexCheckBox.AutoSize = true;
+      this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.byIndexCheckBox.Location = new System.Drawing.Point(17, 20);
+      this.byIndexCheckBox.Name = "byIndexCheckBox";
+      this.byIndexCheckBox.Size = new System.Drawing.Size(182, 17);
+      this.byIndexCheckBox.TabIndex = 0;
+      this.byIndexCheckBox.Text = "Select channel by index (non-US)";
+      this.byIndexCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // showChannelNumberCheckBox
+      // 
+      this.showChannelNumberCheckBox.AutoSize = true;
+      this.showChannelNumberCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showChannelNumberCheckBox.Location = new System.Drawing.Point(17, 40);
+      this.showChannelNumberCheckBox.Name = "showChannelNumberCheckBox";
+      this.showChannelNumberCheckBox.Size = new System.Drawing.Size(135, 17);
+      this.showChannelNumberCheckBox.TabIndex = 1;
+      this.showChannelNumberCheckBox.Text = "Show channel numbers";
+      this.showChannelNumberCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // channelNumberMaxLengthNumUpDn
+      // 
+      this.channelNumberMaxLengthNumUpDn.AutoSize = true;
+      this.channelNumberMaxLengthNumUpDn.Location = new System.Drawing.Point(178, 60);
+      this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
+      this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
+      this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
+      this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      // 
+      // lblChanNumMaxLen
+      // 
+      this.lblChanNumMaxLen.AutoSize = true;
+      this.lblChanNumMaxLen.Location = new System.Drawing.Point(31, 62);
+      this.lblChanNumMaxLen.Name = "lblChanNumMaxLen";
+      this.lblChanNumMaxLen.Size = new System.Drawing.Size(141, 13);
+      this.lblChanNumMaxLen.TabIndex = 2;
+      this.lblChanNumMaxLen.Text = "Channel number max. length";
       // 
       // grpTsReader
       // 
       this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
       this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpTsReader.Location = new System.Drawing.Point(16, 231);
+      this.grpTsReader.Location = new System.Drawing.Point(16, 269);
       this.grpTsReader.Name = "grpTsReader";
       this.grpTsReader.Size = new System.Drawing.Size(431, 47);
       this.grpTsReader.TabIndex = 12;
@@ -851,7 +502,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
       this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
       this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox6.Location = new System.Drawing.Point(16, 127);
+      this.mpGroupBox6.Location = new System.Drawing.Point(16, 67);
       this.mpGroupBox6.Name = "mpGroupBox6";
       this.mpGroupBox6.Size = new System.Drawing.Size(431, 96);
       this.mpGroupBox6.TabIndex = 12;
@@ -905,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox5.Controls.Add(this.cbHideAllChannels);
       this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox5.Location = new System.Drawing.Point(16, 75);
+      this.mpGroupBox5.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox5.Name = "mpGroupBox5";
       this.mpGroupBox5.Size = new System.Drawing.Size(431, 45);
       this.mpGroupBox5.TabIndex = 11;
@@ -1393,14 +1044,16 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.tabControlTVGeneral);
       this.Name = "TVClient";
       this.Size = new System.Drawing.Size(510, 450);
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.tabControlTVGeneral.ResumeLayout(false);
       this.tabPageGeneralSettings.ResumeLayout(false);
-      this.mpGroupBox900.ResumeLayout(false);
-      this.mpGroupBox900.PerformLayout();
+      this.mpGroupBoxAdditional.ResumeLayout(false);
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.channelNumberMaxLengthNumUpDn)).EndInit();
       this.grpTsReader.ResumeLayout(false);
       this.grpTsReader.PerformLayout();
       this.mpGroupBox6.ResumeLayout(false);
@@ -1423,6 +1076,219 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
+
+    #endregion
+
+    #region Public methods
+
+    public override void LoadSettings()
+    {
+      //Load parameters from XML File
+      using (Settings xmlreader = new MPSettings())
+      {
+        cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
+        cbAutoFullscreen.Checked = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
+        byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        showChannelNumberCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
+
+        int channelNumberMaxLen = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        channelNumberMaxLengthNumUpDn.Value = channelNumberMaxLen;
+
+        int DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
+        if (DeInterlaceMode < 0 || DeInterlaceMode > 3)
+        {
+          DeInterlaceMode = 3;
+        }
+        cbDeinterlace.SelectedIndex = DeInterlaceMode;
+
+        mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
+        mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
+        _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
+        _preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+
+        mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
+        mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
+        mpCheckBoxEnableCCSub.Checked = xmlreader.GetValueAsBool("tvservice", "ccsubtitles", false);
+        mpCheckBoxAutoShowSubWhenTvStarts.Checked = xmlreader.GetValueAsBool("tvservice", "autoshowsubwhentvstarts", true);
+        enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
+        cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
+        cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+        cbContinuousScrollGuide.Checked = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
+        cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
+
+        chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
+        txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
+        txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
+        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        int showEpisodeinfo = xmlreader.GetValueAsInt("mytv", "showEpisodeInfo", 0);
+        if (showEpisodeinfo > this.ShowEpisodeOptions.Length)
+        {
+          showEpisodeinfo = 0;
+        }
+        comboboxShowEpisodeInfo.SelectedIndex = showEpisodeinfo;
+      }
+
+      // Enable this Panel if the TvPlugin exists in the plug-in Directory
+      Enabled = true;
+
+      // Retrieve the languages and language codes for the Epg.
+      TvServerRemote.GetLanguages(out _languagesAvail, out _languageCodes);
+
+      if (_languagesAvail == null || _languageCodes == null)
+      {
+        Log.Debug("Failed to load languages");
+        return;
+      }
+      else
+      {
+        mpListViewAvailAudioLang.Items.Clear();
+        mpListViewPreferredAudioLang.Items.Clear();
+        for (int i = 0; i < _languagesAvail.Count; i++)
+        {
+          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+          item.Name = _languageCodes[i];
+          if (!_preferredAudioLanguages.Contains(item.Name))
+          {
+            if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
+            {
+              mpListViewAvailAudioLang.Items.Add(item);
+            }
+          }
+        }
+        mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+        _columnSorter.SortColumn = 0;
+        _columnSorter.Order = SortOrder.Ascending;
+        mpListViewAvailAudioLang.Sort();
+
+        if (_preferredAudioLanguages.Length > 0)
+        {
+          string[] langArr = _preferredAudioLanguages.Split(';');
+
+          for (int i = 0; i < langArr.Length; i++)
+          {
+            string langStr = langArr[i];
+            if (langStr.Trim().Length > 0)
+            {
+              for (int j = 0; j < _languagesAvail.Count; j++)
+              {
+                if (_languageCodes[j].Contains(langStr))
+                {
+                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                  item.Name = _languageCodes[j];
+                  mpListViewPreferredAudioLang.Items.Add(item);
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        mpListViewAvailSubLang.Items.Clear();
+        mpListViewPreferredSubLang.Items.Clear();
+        for (int i = 0; i < _languagesAvail.Count; i++)
+        {
+          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
+          item.Name = _languageCodes[i];
+          if (!_preferredSubLanguages.Contains(item.Name))
+          {
+            if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
+            {
+              mpListViewAvailSubLang.Items.Add(item);
+            }
+          }
+        }
+        mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
+        _columnSorter.SortColumn = 0;
+        _columnSorter.Order = SortOrder.Ascending;
+        mpListViewAvailSubLang.Sort();
+
+        if (_preferredSubLanguages.Length > 0)
+        {
+          string[] langArr = _preferredSubLanguages.Split(';');
+
+          for (int i = 0; i < langArr.Length; i++)
+          {
+            string langStr = langArr[i];
+            if (langStr.Trim().Length > 0)
+            {
+              for (int j = 0; j < _languagesAvail.Count; j++)
+              {
+                if (_languageCodes[j].Contains(langStr))
+                {
+                  ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                  item.Name = _languageCodes[j];
+                  mpListViewPreferredSubLang.Items.Add(item);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      _SingleSeat = Network.IsSingleSeat();
+    }
+
+    public override void SaveSettings()
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        if (cbDeinterlace.SelectedIndex >= 0)
+        {
+          xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());
+        }
+
+        xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
+        xmlwriter.SetValueAsBool("mytv", "autofullscreen", cbAutoFullscreen.Checked);
+        xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
+        xmlwriter.SetValueAsBool("mytv", "showchannelnumber", showChannelNumberCheckBox.Checked);
+        xmlwriter.SetValue("mytv", "channelnumbermaxlength", channelNumberMaxLengthNumUpDn.Value);
+
+        xmlwriter.SetValueAsBool("tvservice", "preferac3", mpCheckBoxPrefAC3.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "preferAudioTypeOverLang", mpCheckBoxPrefAudioOverLang.Checked);
+
+        xmlwriter.SetValueAsBool("tvservice", "dvbbitmapsubtitles", mpCheckBoxEnableDVBSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "dvbttxtsubtitles", mpCheckBoxEnableTTXTSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "ccsubtitles", mpCheckBoxEnableCCSub.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "autoshowsubwhentvstarts", mpCheckBoxAutoShowSubWhenTvStarts.Checked);
+        xmlwriter.SetValueAsBool("tvservice", "audiodualmono", enableAudioDualMonoModes.Checked);
+        xmlwriter.SetValueAsBool("mytv", "hideAllChannelsGroup", cbHideAllChannels.Checked);
+        xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
+        xmlwriter.SetValueAsBool("mytv", "continuousScrollGuide", cbContinuousScrollGuide.Checked);
+        xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
+
+        xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
+        xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
+        xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
+        xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
+        xmlwriter.SetValue("mytv", "showEpisodeInfo", comboboxShowEpisodeInfo.SelectedIndex);
+
+        string prefLangs = "";
+        foreach (ListViewItem item in mpListViewPreferredAudioLang.Items)
+        {
+          prefLangs += (string)item.Name + ";";
+        }
+        xmlwriter.SetValue("tvservice", "preferredaudiolanguages", prefLangs);
+
+        prefLangs = "";
+        foreach (ListViewItem item in mpListViewPreferredSubLang.Items)
+        {
+          prefLangs += (string)item.Name + ";";
+        }
+        xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
+
+        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
+        if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
+            (_SingleSeat != Network.IsSingleSeat()))
+        {
+          MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
+                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+      }
+    }
+
+    #endregion
+
+    #region Private methods
 
     private void mpListView2_SelectedIndexChanged(object sender, EventArgs e) {}
 
@@ -1550,75 +1416,14 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged(object sender, EventArgs e)
+    private void cbAutoFullscreen_CheckedChanged(object sender, EventArgs e)
     {
-      if (mpCheckBoxIsAutoMacAddressEnabled.Checked)
+      if (cbAutoFullscreen.Checked)
       {
-        mpTextBoxMacAddress.Enabled = false;
-      }
-      else
-      {
-        mpTextBoxMacAddress.Enabled = true;
+        cbTurnOnTv.Checked = true;
       }
     }
 
-    private void mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(object sender, EventArgs e)
-    {
-      if (mpCheckBoxIsWakeOnLanEnabled.Checked)
-      {
-        mpNumericTextBoxWOLTimeOut.Enabled = true;
-        mpCheckBoxIsAutoMacAddressEnabled.Enabled = true;
-
-        if (mpCheckBoxIsAutoMacAddressEnabled.Checked)
-        {
-          mpTextBoxMacAddress.Enabled = false;
-        }
-        else
-        {
-          mpTextBoxMacAddress.Enabled = true;
-        }
-      }
-      else
-      {
-        mpNumericTextBoxWOLTimeOut.Enabled = false;
-        mpCheckBoxIsAutoMacAddressEnabled.Enabled = false;
-        mpTextBoxMacAddress.Enabled = false;
-      }
-    }
-
-    private void mpButtonTestHostname_Click(object sender, EventArgs e)
-    {
-      // Save current cursor and display wait cursor
-      Cursor currentCursor = Cursor.Current;
-      Cursor.Current = Cursors.WaitCursor;
-      mpButtonTestHostname.Enabled = false;
-      
-      // If hostname is empty, use local hostname
-      if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
-        mpTextBoxHostname.Text = Dns.GetHostName();
-
-      // Verify hostname
-      if (!VerifyHostname(mpTextBoxHostname.Text))
-      {
-        // Reset cursor
-        Cursor.Current = currentCursor;
-        mpButtonTestHostname.Enabled = true;
-        mpTextBoxHostname.BackColor = Color.Red;
-      }
-      else
-      {
-        // Reset cursor and show success message
-        Cursor.Current = currentCursor;
-        mpButtonTestHostname.Enabled = true;
-        mpTextBoxHostname.BackColor = Color.YellowGreen;
-        MessageBox.Show("Connection to the TV server successful",
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.None);
-      }
-    }
-
-    private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
-    {
-      mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
-    }  
+    #endregion
   }
 }

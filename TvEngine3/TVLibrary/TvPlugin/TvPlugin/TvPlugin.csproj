@@ -138,12 +138,6 @@
     <Compile Include="Radio.cs" />
     <Compile Include="RadioGuide.cs" />
     <Compile Include="RadioGuideBase.cs" />
-    <Compile Include="RadioSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RadioSetupForm.Designer.cs">
-      <DependentUpon>RadioSetupForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="RecordedBase.cs" />
     <Compile Include="teletext\Hamming.cs" />
     <Compile Include="teletext\TeletextPageRenderer.cs" />
@@ -228,10 +222,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RadioSetupForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="teletext\LogoPage" />
   </ItemGroup>
   <ItemGroup>
