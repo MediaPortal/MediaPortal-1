@@ -80,6 +80,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.txtDuration = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
+      this.chkASynch = new Mediaportal.TV.Server.SetupControls.UserInterfaceControls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -527,10 +528,24 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.label6.TabIndex = 72;
       this.label6.Text = "Duration:";
       // 
+      // chkASynch
+      // 
+      this.chkASynch.AutoSize = true;
+      this.chkASynch.Checked = true;
+      this.chkASynch.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkASynch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkASynch.Location = new System.Drawing.Point(405, 209);
+      this.chkASynch.Name = "chkASynch";
+      this.chkASynch.Size = new System.Drawing.Size(55, 17);
+      this.chkASynch.TabIndex = 77;
+      this.chkASynch.Text = "ASync";
+      this.chkASynch.UseVisualStyleBackColor = true;
+      // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.chkASynch);
       this.Controls.Add(this.txtDuration);
       this.Controls.Add(this.label6);
       this.Controls.Add(this.txtPrio);
@@ -611,5 +626,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.TextBox txtDuration;
     private System.Windows.Forms.Label label6;
+    private MPCheckBox chkASynch;
   }
 }

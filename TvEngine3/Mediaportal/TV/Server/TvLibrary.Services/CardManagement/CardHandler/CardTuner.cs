@@ -208,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       {
         return;
       }
-      this.LogInfo("card: CancelTune {0} to {1}", _cardHandler.DataBaseCard.IdCard);
+      this.LogInfo("card: CancelTune {0}", _cardHandler.DataBaseCard.IdCard);
       _cardHandler.Card.CancelTune(subchannel);
       RaiseOnAfterCancelTuneEvent(subchannel);
       WaitForCancelledTuneToFinish(subchannel);

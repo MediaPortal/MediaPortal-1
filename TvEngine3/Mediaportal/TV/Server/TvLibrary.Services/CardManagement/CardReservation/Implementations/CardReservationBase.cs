@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
             
       if (blockingUser != null)
       {
-        hasUserHigherPriority = (user.Priority > blockingUser.Priority);
+        hasUserHigherPriority = (user.Priority > blockingUser.Priority || user.Name.Equals(blockingUser.Name));
         Log.Debug("CardReservationBase.HasUserHigherPriorityThanBlockingUser: {0} - user '{1}' with prio={2} vs blocking user '{3}' with prio={4}", hasUserHigherPriority,
           user.Name, user.Priority, blockingUser.Name, blockingUser.Priority);
       }

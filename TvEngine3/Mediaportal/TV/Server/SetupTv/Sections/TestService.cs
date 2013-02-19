@@ -267,7 +267,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         TvResult result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(GetUserName(cardId, id), id, out card, out user);
         if (result != TvResult.Succeeded)
         {
-          HandleTvResult(result);
+          if (_currentChannelIdForTune == id)
+          {
+            HandleTvResult(result);            
+          }          
         }
         else
         {
@@ -786,6 +789,35 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       bool result = ServiceAgents.Instance.ControllerServiceAgent.UnParkTimeShifting(user.Name, duration, id, out user, out card);
     }
 
+    
+
+    private void DoAsynchTune (string username, int channelId, int prio, bool parsed)
+    {
+      IUser user;
+      IVirtualCard card;
+      TvResult result;
+
+      if (parsed)
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, prio, channelId, out card, out user);
+      }
+      else
+      {
+        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, channelId, out card, out user);
+      }
+
+      if (_currentChannelIdForTune == channelId)
+      {
+        _mainThreadContext.Send((object state) => HandleTvResult(result), null);
+      }
+
+    }
+
+    private SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
+    //private Thread tuneThread;
+
+    private int _currentChannelIdForTune = 0;
+
     private void mpButtonAdvStartTimeshift_Click(object sender, EventArgs e)
     {
       if (!ServiceHelper.IsAvailable) return;
@@ -793,24 +825,40 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
 
-
+      _currentChannelIdForTune = id;
       
       IVirtualCard card;
 
       int prio;
       bool parsed = int.TryParse(txtPrio.Text, out prio);
-      TvResult result;
+      TvResult result = TvResult.UnknownError;
       IUser user;
-      if (parsed)
+
+      if (chkASynch.Checked)
       {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, prio, id, out card, out user);
+        //if (tuneThread == null)
+        {
+          ThreadStart work = () => DoAsynchTune(txtUsername.Text, id, prio, parsed);
+          //tuneThread = new Thread(new ParameterizedThreadStart(DoAsynchTune));
+          var tuneThread = new Thread(work) { Name = "Async Tune Thread for channel " + channel};
+          tuneThread.Start();
+        }
       }
       else
       {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, id, out card, out user);
+        if (parsed)
+        {
+          result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, prio, id, out card, out user);
+        }
+        else
+        {
+          result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, id, out card, out user);
+        }
+        if (_currentChannelIdForTune == id)
+        {
+          HandleTvResult(result);
+        }
       }
-      
-      HandleTvResult(result);
     }
 
     private void mpButtonAdvStopTimeshift_Click(object sender, EventArgs e)
@@ -829,6 +877,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void UpdateAdvMode()
     {
+      chkASynch.Visible = mpCheckBoxAdvMode.Checked;
+
       mpButtonTimeShift.Visible = !mpCheckBoxAdvMode.Checked;
       mpButtonRec.Visible = !mpCheckBoxAdvMode.Checked;
       mpButtonAdvStartTimeshift.Visible = mpCheckBoxAdvMode.Checked;
@@ -836,6 +886,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       mpButtonPark.Visible = mpCheckBoxAdvMode.Checked;
       mpButtonUnPark.Visible = mpCheckBoxAdvMode.Checked;
 
+      chkASynch.Visible = mpCheckBoxAdvMode.Checked;
       label27.Visible = mpCheckBoxAdvMode.Checked;
       label5.Visible= mpCheckBoxAdvMode.Checked;
       txtUsername.Visible = mpCheckBoxAdvMode.Checked;
