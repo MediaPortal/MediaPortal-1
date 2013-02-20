@@ -40,10 +40,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
                                        "\\MySQL\\MySQL Server 5.6";
 
+    private static bool MySQL51 = false;
+
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
-      WritePrivateProfileString("mysql", "default-character-set", "latin1", iniFile);
+      WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
       WritePrivateProfileString("mysqld", "basedir",
                                 "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
@@ -81,8 +83,95 @@ namespace MediaPortal.DeployTool.InstallationChecks
       return (result == DialogResult.OK);
     }
 
+    public bool BackupDB()
+    {
+      RegistryKey key = null;
+      string strMySqlDump = null;
+      key = Utils.registryKey32.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      if (key != null)
+      {
+        string strMySQL = key.GetValue("Location").ToString();
+        if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.1"))
+        {
+          key.Close();
+          strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
+          MySQL51 = true;
+          string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
+                           " --all-databases --flush-logs";
+          cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
+          Process setup = Process.Start(strMySqlDump, cmdLine);
+          try
+          {
+            if (setup != null)
+            {
+              setup.WaitForExit();
+            }
+          }
+          catch
+          {
+            return false;
+          }
+        }
+        const string ServiceName = "MySQL";
+        ServiceController ctrl = new ServiceController(ServiceName);
+        try
+        {
+          ctrl.Stop();
+        }
+        catch (Exception)
+        {
+          MessageBox.Show("MySQL - start service exception");
+          return false;
+        }
+        
+        string cmdExe = Environment.SystemDirectory + "\\sc.exe";
+        string cmdParam = "delete " + ServiceName;// +"\"";
+#if DEBUG
+        string ff = "c:\\mysql-srv.bat";
+        StreamWriter a = new StreamWriter(ff);
+        a.WriteLine("@echo off");
+        a.WriteLine(cmdExe + " " + cmdParam);
+        a.Close();
+        Process svcInstaller = Process.Start(ff);
+#else
+      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+#endif
+        if (svcInstaller != null)
+        {
+          svcInstaller.WaitForExit();
+        }
+        return true;
+      }
+      return true;
+    }
+
+    public bool RestoreDB()
+    {
+      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe";
+      string cmdLine = "--host=localhost --user=root --port=3306 --default-character-set=utf8 -p";
+      cmdLine += InstallationProperties.Instance["DBMSPassword"];
+      cmdLine += " --comments ";
+      cmdLine += "-e " + "\"" + "source " + Path.GetTempPath() + "all_databases.sql" + "\"";
+      Process setup = Process.Start(strMySql, cmdLine);
+      try
+      {
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
+
     public bool Install()
     {
+      BackupDB();
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
@@ -158,6 +247,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       try
       {
+        // Try restore DB here first
+        if (MySQL51)
+          RestoreDB();
+
         Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
         if (mysqladmin != null)
         {
@@ -199,6 +292,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         MessageBox.Show("MySQL - set privileges exception");
         return false;
       }
+      if (MySQL51)
+        RestoreDB();
       return true;
     }
 
