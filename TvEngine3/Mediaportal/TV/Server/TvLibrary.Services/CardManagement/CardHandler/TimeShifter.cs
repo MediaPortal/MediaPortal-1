@@ -158,18 +158,21 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       bool isTimeShifting = false;
       try
       {
-        foreach (ISubChannel subch in user.SubChannels.Values)
+        if (user != null && user.SubChannels != null)
         {
-          ITvSubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
-          if (subchannel != null)
+          foreach (ISubChannel subch in user.SubChannels.Values)
           {
-            isTimeShifting = subchannel.IsTimeShifting;
-            if (isTimeShifting)
+            ITvSubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
+            if (subchannel != null)
             {
-              break; 
-            }            
-          } 
-        }        
+              isTimeShifting = subchannel.IsTimeShifting;
+              if (isTimeShifting)
+              {
+                break;
+              }
+            }
+          }
+        }
       }
       catch (Exception ex)
       {
