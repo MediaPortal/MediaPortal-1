@@ -78,8 +78,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
                               "{87819CFA-1786-484D-B0DE-10B5FBF2625D}", //MP < 0.2.3.0 RC3
                               "{4B738773-EE07-413D-AFB7-BB0AB04A5488}", //TVServer MSI
                               "{F7444E89-5BC0-497E-9650-E50539860DE0}", //TVClient (old MSI clsid)
-                              "{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}"
-                            }; //TVClient (new MSI clsid)
+                              "{FD9FD453-1C0C-4EDA-AEE6-D7CF0E9951CA}", //TVClient (new MSI clsid)
+                              "{561AB451-B967-475C-80E0-3B6679C38B52}"  //MySQL 5.1 //TODO check if needed
+                            }; 
 
       foreach (string UnistKey in UninstKeys)
       {

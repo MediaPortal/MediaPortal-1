@@ -38,28 +38,25 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                                       "\\MySQL\\MySQL Server 5.1";
+                                       "\\MySQL\\MySQL Server 5.6";
 
     private void PrepareMyIni(string iniFile)
     {
       WritePrivateProfileString("client", "port", "3306", iniFile);
-      WritePrivateProfileString("mysql", "default-character-set", "utf8", iniFile);
+      WritePrivateProfileString("mysql", "default-character-set", "latin1", iniFile);
       WritePrivateProfileString("mysqld", "port", "3306", iniFile);
       WritePrivateProfileString("mysqld", "basedir",
                                 "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
       WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
-      WritePrivateProfileString("mysqld", "default-character-set", "utf8", iniFile);
-      WritePrivateProfileString("mysqld", "default-storage-engine", "myisam", iniFile);
+      WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode",
                                 "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
-      WritePrivateProfileString("mysqld", "table_cache", "64", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
       WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
-      WritePrivateProfileString("mysqld", "myisam_max_extra_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
@@ -75,7 +72,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MySQL 5.1";
+      return "MySQL 5.6";
     }
 
     public bool Download()
@@ -108,7 +105,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       while (!sr.EndOfStream)
       {
         string line = sr.ReadLine();
-        if (line.Contains("Installation operation completed successfully"))
+        if (line.Contains("Installation completed successfully"))
         {
           installOk = true;
           break;
@@ -207,12 +204,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
+      Utils.UninstallMSI("{56DA0CB5-ABD2-4318-BEAB-62FDBC9B12CC}");
       return true;
     }
 
     public CheckResult CheckStatus()
     {
+      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
       FileInfo mySqlFile = new FileInfo(_fileName);
@@ -225,7 +223,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      key = Utils.registryKey32.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
       if (key == null)
         result.state = CheckState.NOT_INSTALLED;
       else
