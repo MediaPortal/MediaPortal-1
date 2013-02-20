@@ -115,7 +115,8 @@ namespace MediaPortal.DeployTool
       XmlDocument doc = new XmlDocument();
       HTTPDownload dlg = new HTTPDownload();
       string XmlFile = Application.StartupPath + "\\ApplicationLocations.xml";
-      const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      // const string XmlUrl = "http://install.team-mediaportal.com/DeployTool/ApplicationLocations.xml";
+      const string XmlUrl = "https://dl.dropbox.com/u/10536084/mp/TVE35/MySQL/ApplicationLocations.xml"; // MySQL 5.6
 
       //HTTP update of the xml file with the application download URLs
       if (!File.Exists(XmlFile))
@@ -245,10 +246,35 @@ namespace MediaPortal.DeployTool
       CheckUninstallString(clsid, true);
     }
 
+    public static RegistryKey registryKey32
+    {
+      get
+      {
+        return registryKeyCheck();
+      }
+    }
+
+    public static RegistryKey registryKeyCheck()
+    {
+      RegistryKey registryKey;
+      if (Environment.Is64BitOperatingSystem == true)
+      {
+        registryKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+      }
+      else
+      {
+        registryKey = RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry32);
+      }
+      return registryKey;
+    }
+
     public static string CheckUninstallString(string clsid, bool delete)
     {
+      RegistryKey key = null;
       string keyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + clsid;
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+      key = Registry.LocalMachine.OpenSubKey(keyPath);
+      if (key == null)
+        key = registryKey32.OpenSubKey(keyPath);
       if (key != null)
       {
         string strUninstall = key.GetValue("UninstallString").ToString();
@@ -268,11 +294,13 @@ namespace MediaPortal.DeployTool
 
     public static CheckResult CheckNSISUninstallString(string RegistryPath, string MementoSection)
     {
+      RegistryKey key = null;
       CheckResult result = new CheckResult();
       result.state = CheckState.NOT_INSTALLED;
 
-      RegistryKey key =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      key = registryKey32.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + RegistryPath);
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
@@ -573,7 +601,10 @@ namespace MediaPortal.DeployTool
 
     public static string PathFromRegistry(string regkey)
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      RegistryKey key = null;
+      key = registryKey32.OpenSubKey(regkey);
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey(regkey);
       string Tv3Path = null;
 
       if (key != null)
@@ -587,7 +618,10 @@ namespace MediaPortal.DeployTool
 
     public static Version VersionFromRegistry(string regkey)
     {
-      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      RegistryKey key = null;
+      key = registryKey32.OpenSubKey(regkey);
+      if (key == null)
+        key = Registry.LocalMachine.OpenSubKey(regkey);
       int major = 0;
       int minor = 0;
       int revision = 0;

@@ -57,8 +57,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql =
-        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      RegistryKey keySql = null;
+      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      if (keySql == null)
+        keySql = Utils.registryKey32.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
       {
         return;
@@ -68,6 +70,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       keySql =
         Registry.LocalMachine.OpenSubKey(
+          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
+          true);
+      if (keySql == null)
+        Utils.registryKey32.OpenSubKey(
           "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
           true);
       if (keySql == null)
@@ -174,6 +180,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public CheckResult CheckStatus()
     {
+      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
       FileInfo msSqlFile = new FileInfo(_fileName);
@@ -186,10 +193,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      using (
-        RegistryKey key =
-          Registry.LocalMachine.OpenSubKey(
-            "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
+      key =
+        Registry.LocalMachine.OpenSubKey(
+          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
+      if (key == null)
+        key =
+          Utils.registryKey32.OpenSubKey(
+            "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
+
+      using (key)
       {
         if (key == null)
           result.state = CheckState.NOT_INSTALLED;
