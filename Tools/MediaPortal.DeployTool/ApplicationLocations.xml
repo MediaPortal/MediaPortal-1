@@ -65,12 +65,12 @@
     <TYPE>Automatic</TYPE>
   </MySQL64> -->
   <MySQL32>
-    <URL>https://dl.dropbox.com/u/10536084/mp/TVE35/MySql_32bit</URL>
+    <URL>https://dl.dropbox.com/u/10536084/mp/TVE35/MySql_32bit/mysql-5.6.10-win32.msi</URL>
     <FILE>mysql-5.6.10-win32.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL32>
   <MySQL64>
-    <URL>https://dl.dropbox.com/u/10536084/mp/TVE35/MySql_64bit</URL>
+    <URL>https://dl.dropbox.com/u/10536084/mp/TVE35/MySql_64bit/mysql-5.6.10-winx64.msi</URL>
     <FILE>mysql-5.6.10-winx64.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL64>
