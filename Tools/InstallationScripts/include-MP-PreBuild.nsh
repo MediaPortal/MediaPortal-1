@@ -56,7 +56,7 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !endif
 
 !ifdef BUILD_Installer
