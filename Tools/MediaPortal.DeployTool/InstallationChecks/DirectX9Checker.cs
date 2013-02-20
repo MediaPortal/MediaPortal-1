@@ -103,7 +103,11 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       try
       {
-        using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX"))
+        RegistryKey key = null;
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
+        if (key == null)
+          key = Utils.registryKey32.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
+        using (key)
         {
           if (key == null)
           {
