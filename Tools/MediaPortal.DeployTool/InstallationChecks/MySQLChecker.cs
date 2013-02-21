@@ -34,7 +34,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
-    private static readonly string prg = "MySQL" + _arch;
+    private static readonly string prg = "MySQL56" + _arch;
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
