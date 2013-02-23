@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Sets the master TV server hostname for the TV server RemoteControl (calls TvControl.TvServer.SetHostName()).
     /// </summary>
-    public static string SetHostName
+    public static string HostName
     {
       set {
         try

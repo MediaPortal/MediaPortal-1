@@ -427,10 +427,10 @@ namespace MediaPortal.Configuration
         SectionSettings television = new TV();
         AddSection(new ConfigPage(null, television, false));
 
-        Log.Info("  add tv client section");
-        AddSection(new ConfigPage(television, new TVClient(), false));
-        Log.Info("  add radio client section");
-        AddSection(new ConfigPage(television, new RadioClient(), false));
+        Log.Info("  add tv server section");
+        AddSection(new ConfigPage(television, new TVServer(), false));
+        Log.Info("  add radio section");
+        AddSection(new ConfigPage(television, new Radio(), false));
         Log.Info("  add tv zoom section");
         AddSection(new ConfigPage(television, new TVZoom(), false));
         Log.Info("  add tv postprocessing section");
@@ -1051,11 +1051,33 @@ namespace MediaPortal.Configuration
           string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
           {
-            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Client\" section. " +
+            // Show message box
+            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Server\" section. " +
               "It will not be saved." + Environment.NewLine + Environment.NewLine + "Do you want to review it before exiting?",
               "MediaPortal Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            // If user wants to review hostname select "TV Server" section and return false
             if (result == DialogResult.Yes)
+            {
+              // Loop through the tree to find the "TV -> TV Server" node and select it
+              foreach (TreeNode parentNode in sectionTree.Nodes)
+              {
+                if (parentNode.Text == "TV")
+                {
+                  foreach (TreeNode node in parentNode.Nodes)
+                  {
+                    if (node.Text == "TV Server")
+                    {
+                      sectionTree.SelectedNode = node;
+                      node.EnsureVisible();
+                      return false;
+                    }
+                  }
+                }
+              }
               return false;
+            }
+
           }
         }
 

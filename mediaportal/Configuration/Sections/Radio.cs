@@ -31,7 +31,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class RadioClient : SectionSettings
+  public class Radio : SectionSettings
   {
     #region Variables
 
@@ -39,16 +39,15 @@ namespace MediaPortal.Configuration.Sections
     private bool _rememberLastGroup = true;
     private string _rootGroup = "(none)";
     private bool _autoTurnOnRadio = false;
-    private bool _init = false;
 
     #endregion
 
     #region Constructor
 
-    public RadioClient()
-      : this("Radio Client") { }
+    public Radio()
+      : this("Radio") { }
 
-    public RadioClient(string name)
+    public Radio(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -60,30 +59,8 @@ namespace MediaPortal.Configuration.Sections
 
     #region Public methods
 
-    public override void OnSectionActivated()
-    {
-      base.OnSectionActivated();
-      if (_init == false)
-      {
-        _init = true;
-
-        LoadSettings();
-        cbTurnOnRadio.Checked = _autoTurnOnRadio;
-        cbHideAllChannelsGroup.Checked = _hideAllChannelsGroup;
-        cbRememberLastGroup.Checked = _rememberLastGroup;
-        comboBoxGroups.Items.Clear();
-        comboBoxGroups.Items.Add(_rootGroup);
-        comboBoxGroups.SelectedIndex = 0;
-      }
-    }
-
     public override void LoadSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
       using (Settings xmlreader = new MPSettings())
       {
         _hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
@@ -92,17 +69,19 @@ namespace MediaPortal.Configuration.Sections
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
 
+      cbTurnOnRadio.Checked = _autoTurnOnRadio;
+      cbHideAllChannelsGroup.Checked = _hideAllChannelsGroup;
+      cbRememberLastGroup.Checked = _rememberLastGroup;
+      comboBoxGroups.Items.Clear();
+      comboBoxGroups.Items.Add(_rootGroup);
+      comboBoxGroups.SelectedIndex = 0;
+
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
       Enabled = true;
     }
 
     public override void SaveSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
       using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValueAsBool("myradio", "hideAllChannelsGroup", _hideAllChannelsGroup);
@@ -110,25 +89,6 @@ namespace MediaPortal.Configuration.Sections
         xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
         xmlreader.SetValueAsBool("myradio", "autoturnonradio", _autoTurnOnRadio);
       }
-    }
-
-    #endregion
-
-    #region Dispose
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     #endregion
@@ -296,7 +256,9 @@ namespace MediaPortal.Configuration.Sections
       // Fill comboBox with radio channel names
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
+
       int selectedIdx = 0;
+      TvServerRemote.HostName = TVServer.Hostname;
       foreach (string groupName in TvServerRemote.GetRadioChannelGroupNames())
       {
         int idx = comboBoxGroups.Items.Add(groupName);
@@ -308,6 +270,7 @@ namespace MediaPortal.Configuration.Sections
       // Reset cursor
       Cursor.Current = currentCursor;
     }
+
     #endregion
   }
 }
