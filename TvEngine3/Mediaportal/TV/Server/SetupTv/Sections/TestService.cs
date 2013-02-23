@@ -793,30 +793,42 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void DoAsynchTune (string username, int channelId, int prio, bool parsed)
     {
-      IUser user;
-      IVirtualCard card;
-      TvResult result;
+      try
+      {        
 
-      if (parsed)
-      {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, prio, channelId, out card, out user);
-      }
-      else
-      {
-        result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, channelId, out card, out user);
-      }
+        if (_currentChannelIdForTune == channelId)
+        {
+          return;
+        }
+        _currentChannelIdForTune = channelId;
 
-      if (_currentChannelIdForTune == channelId)
-      {
-        _mainThreadContext.Send((object state) => HandleTvResult(result), null);
+        IVirtualCard card;
+        TvResult result;
+        IUser user;
+        if (parsed)
+        {
+          result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, prio, channelId, out card, out user);
+        }
+        else
+        {
+          result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(username, channelId, out card, out user);
+        }
+
+        if (_currentChannelIdForTune == channelId)
+        {
+          _mainThreadContext.Send((object state) => HandleTvResult(result), null);
+        }
       }
+      finally
+      {
+        _currentChannelIdForTune = 0;        
+      }      
 
     }
 
-    private SynchronizationContext _mainThreadContext = SynchronizationContext.Current;
-    //private Thread tuneThread;
+    private SynchronizationContext _mainThreadContext = SynchronizationContext.Current;    
 
-    private int _currentChannelIdForTune = 0;
+    private int _currentChannelIdForTune = 0;    
 
     private void mpButtonAdvStartTimeshift_Click(object sender, EventArgs e)
     {
@@ -824,28 +836,22 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (mpComboBoxChannels.SelectedItem == null) return;
       string channel = mpComboBoxChannels.SelectedItem.ToString();
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
-
-      _currentChannelIdForTune = id;
       
-      IVirtualCard card;
 
       int prio;
       bool parsed = int.TryParse(txtPrio.Text, out prio);
-      TvResult result = TvResult.UnknownError;
-      IUser user;
 
       if (chkASynch.Checked)
       {
-        //if (tuneThread == null)
-        {
-          ThreadStart work = () => DoAsynchTune(txtUsername.Text, id, prio, parsed);
-          //tuneThread = new Thread(new ParameterizedThreadStart(DoAsynchTune));
-          var tuneThread = new Thread(work) { Name = "Async Tune Thread for channel " + channel};
-          tuneThread.Start();
-        }
+        ThreadStart work = () => DoAsynchTune(txtUsername.Text, id, prio, parsed);       
+        var tuneThread = new Thread(work) { Name = "Async Tune Thread for channel " + channel};
+        tuneThread.Start();
       }
       else
       {
+        TvResult result;
+        IVirtualCard card;
+        IUser user;
         if (parsed)
         {
           result = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(txtUsername.Text, prio, id, out card, out user);
@@ -856,8 +862,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         }
         if (_currentChannelIdForTune == id)
         {
-          HandleTvResult(result);
-        }
+          HandleTvResult(result); 
+        }        
+        _currentChannelIdForTune = 0;
       }
     }
 
