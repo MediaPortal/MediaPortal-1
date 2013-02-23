@@ -98,6 +98,9 @@ namespace Mediaportal.TV.TvPlugin
 
     #region variables
 
+    private static SynchronizationContext _mainThreadContext = SynchronizationContext.Current;    
+    private static int _currentChannelIdForTune = 0;
+
     private enum Controls
     {
       IMG_REC_CHANNEL = 21,
@@ -3344,93 +3347,11 @@ namespace Mediaportal.TV.TvPlugin
         {
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
-        bool cardChanged;
-        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(user.Name, channel.IdChannel, kickCardId, out card, out kickableCards, out cardChanged, out parkedDuration, out user);
 
-        if (_status.IsSet(LiveTvStatus.WasPlaying))
-        {
-          if (card != null)
-            g_Player.OnZapping((int)card.Type);
-          else
-            g_Player.OnZapping(-1);
-        }
-
-
-        if (succeeded != TvResult.Succeeded && succeeded != TvResult.UsersBlocking && succeeded != TvResult.AlreadyParked)
-        {
-          //timeshifting new channel failed. 
-          g_Player.Stop();
-          // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
-          ChannelTuneFailedNotifyUser(succeeded, _status.IsSet(LiveTvStatus.WasPlaying), channel);
-          _doingChannelChange = true; // keep fullscreen false;
-          return true; // "success"                    
-        }
-
-        if (card != null && card.NrOfOtherUsersTimeshiftingOnCard > 0)
-        {
-          _status.Set(LiveTvStatus.SeekToEndAfterPlayback);
-        }
-
-        if (cardChanged)
-        {
-          _status.Set(LiveTvStatus.CardChange);
-          if (card != null)
-          {
-            RegisterCiMenu(card.Id);
-          }
-          _status.Reset(LiveTvStatus.WasPlaying);
-        }
-        else
-        {
-          _status.Reset(LiveTvStatus.CardChange);
-          _status.Set(LiveTvStatus.SeekToEnd);
-        }
-
-        // Update channel navigator
-        if (Navigator.Channel.Entity != null &&
-            (channel.IdChannel != Navigator.Channel.Entity.IdChannel || (Navigator.LastViewedChannel == null)))
-        {
-          Navigator.LastViewedChannel = Navigator.Channel.Entity;
-        }
-        Log.Info("succeeded:{0} {1}", succeeded, card);
-        if (card != null)
-        {
-          Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
-        }
-
-        // if needed seek to end
-        if (_status.IsSet(LiveTvStatus.SeekToEnd))
-        {
-          SeekToEnd(true);
-        }
-
-
-        // CardChange refactor it, so it reacts to changes in timeshifting path / URL.
-
-        // continue graph
-        g_Player.ContinueGraph();
-        if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) || (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
-        {
-          StartPlay();
-          // if needed seek to end
-          if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
-          {
-            double dTime = g_Player.Duration - 5;
-            g_Player.SeekAbsolute(dTime);
-          }
-        }
-        try
-        {
-          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
-        }
-        catch
-        {
-          //ignore, error already logged
-        }
-
-        _playbackStopped = false;
-        _doingChannelChange = false;
-        _ServerNotConnectedHandled = false;
+        ThreadStart work = () => DoAsynchTune(user.Name, channel, kickCardId);
+        var tuneThread = new Thread(work) { Name = "Async Tune Thread for channel " + channel };
+        tuneThread.Start();
+       
         return true;
       }
       catch (Exception ex)
@@ -3441,32 +3362,273 @@ namespace Mediaportal.TV.TvPlugin
         g_Player.Stop();
         Card.StopTimeShifting();
         return false;
-      }
-      finally
-      {
-        StopRenderBlackImage();
-        _userChannelChanged = false;
+      }                
+    }
 
-        if (succeeded == TvResult.UsersBlocking)
+    private static bool _guiWaitCursorActive;
+    private static object _guiWaitCursorLock = new object();
+
+    private static void GUIWaitCursorHide()
+    {
+      _mainThreadContext.Send(delegate
+                                {
+                                  if (!_guiWaitCursorActive)
+                                  {
+                                    return;
+                                  }
+                                  lock (_guiWaitCursorLock)
+                                  {
+                                    if (_guiWaitCursorActive)
+                                    {
+                                      GUIWaitCursor.Hide();
+                                      _guiWaitCursorActive = false;
+                                    }
+                                  }                                  
+                                }, null);
+    }
+
+
+    private static void GUIWaitCursorShow ()
+    {
+      _mainThreadContext.Send(delegate
+      {
+        if (_guiWaitCursorActive)
         {
-          int cardId = ShowKickUserDialogue(kickableCards);
-          if (cardId > 0)
+          return;
+        }
+        lock (_guiWaitCursorLock)
+        {
+          if (!_guiWaitCursorActive)
           {
-            ViewChannelAndCheck(channel, cardId);
+            GUIWaitCursor.Show();
+            _guiWaitCursorActive = true; 
+          }          
+        }
+      }, null);
+    }
+
+    private static readonly object _asyncTuneLock = new object();
+    
+    private static void DoAsynchTune (string userName, Channel channel, int? kickCardId)
+    {
+
+      if (_currentChannelIdForTune == channel.IdChannel)
+      {
+        return;
+      }
+
+      GUIWaitCursorShow();
+
+      _currentChannelIdForTune = channel.IdChannel;
+
+      TvResult succeeded = TvResult.UnknownError;
+      Dictionary<int, List<IUser>> kickableCards = null;
+      double? parkedDuration = null;
+
+      bool cardChanged = false;
+      IVirtualCard card = null;
+
+      Exception startTimeShiftException = null;
+      try
+      {
+        IUser user;
+        succeeded = ServiceAgents.Instance.ControllerServiceAgent.StartTimeShifting(userName, channel.IdChannel,
+                                                                                  kickCardId, out card,
+                                                                                  out kickableCards, out cardChanged,
+                                                                                  out parkedDuration, out user);
+      }
+      catch (Exception ex)
+      {
+        startTimeShiftException = ex;
+      }
+
+      lock (_asyncTuneLock)
+      {        
+        try
+        {
+          if (startTimeShiftException != null)
+          {
+            throw startTimeShiftException;
+          }
+
+          if (_currentChannelIdForTune != channel.IdChannel)
+          {
+            return;
+          }
+
+          _mainThreadContext.Send(delegate
+          {
+            if (_currentChannelIdForTune != channel.IdChannel)
+            {
+              return;
+            }
+            CompleteTune(channel, succeeded, card, cardChanged);
+          }, null);
+
+          if (_currentChannelIdForTune != channel.IdChannel)
+          {
+            return;
+          }
+          _playbackStopped = false;
+          _doingChannelChange = false;
+          _ServerNotConnectedHandled = false;
+
+        }
+        catch (Exception ex)
+        {
+          if (_currentChannelIdForTune != channel.IdChannel)
+          {
+            return;
+          }
+          _mainThreadContext.Send(delegate
+          {
+            if (_currentChannelIdForTune != channel.IdChannel)
+            {
+              return;
+            }
+            Log.Error(ex, "TvPlugin:ViewChannelandCheckV2 Exception");
+            _doingChannelChange = false;
+            Card.User.Name = new User().Name;
+            g_Player.Stop();
+            Card.StopTimeShifting();
+          }, null);
+
+        }
+        finally
+        {
+          try
+          {
+            if (_currentChannelIdForTune == channel.IdChannel)
+            {
+
+
+              _mainThreadContext.Send(delegate
+                                        {
+                                          if (_currentChannelIdForTune == channel.IdChannel)
+                                          {
+                                            StopRenderBlackImage();
+                                            _userChannelChanged = false;
+                                            if (succeeded == TvResult.UsersBlocking)
+                                            {
+                                              int cardId = ShowKickUserDialogue(kickableCards);
+                                              if (cardId > 0)
+                                              {
+                                                ViewChannelAndCheck(channel, cardId);
+                                              }
+                                            }
+                                            else if (succeeded == TvResult.AlreadyParked)
+                                            {
+                                              bool dlgYesNo = ShowUnParkDialogue(Card.User.Name);
+                                              bool watchFromLivePoint = !dlgYesNo;
+                                              ViewParkedChannelAndCheck(channel, parkedDuration.GetValueOrDefault(0),
+                                                                        Card.User.CardId, watchFromLivePoint);
+                                            }
+                                            else
+                                            {
+                                              FireOnChannelChangedEvent();
+                                              Navigator.UpdateCurrentChannel();
+                                            }
+                                          }
+                                        }, null);
+            }
+          }
+          finally
+          {
+            if (_currentChannelIdForTune == channel.IdChannel)
+            {
+              _currentChannelIdForTune = 0;
+              GUIWaitCursorHide();              
+            }
           }
         }
-        else if (succeeded == TvResult.AlreadyParked)
+      }
+      
+    }
+
+    private static void CompleteTune(Channel channel, TvResult succeeded, IVirtualCard card, bool cardChanged)
+    {
+      
+        if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
-          bool dlgYesNo = ShowUnParkDialogue(Card.User.Name);
-          bool watchFromLivePoint = !dlgYesNo;
-          ViewParkedChannelAndCheck(channel, parkedDuration.GetValueOrDefault(0), Card.User.CardId, watchFromLivePoint);
+          if (card != null)
+            g_Player.OnZapping((int) card.Type);
+          else
+            g_Player.OnZapping(-1);
+        }
+
+        if (succeeded != TvResult.Succeeded && succeeded != TvResult.UsersBlocking && succeeded != TvResult.AlreadyParked)
+        {
+          //timeshifting new channel failed. 
+          g_Player.Stop();
+          // ensure right channel name, even if not watchable:Navigator.Channel = channel; 
+          ChannelTuneFailedNotifyUser(succeeded, _status.IsSet(LiveTvStatus.WasPlaying), channel);
+          _doingChannelChange = true; // keep fullscreen false;                                      
         }
         else
         {
-          FireOnChannelChangedEvent();
-          Navigator.UpdateCurrentChannel();
-        }
-      }
+          if (card != null && card.NrOfOtherUsersTimeshiftingOnCard > 0)
+          {
+            _status.Set(LiveTvStatus.SeekToEndAfterPlayback);
+          }
+
+          if (cardChanged)
+          {
+            _status.Set(LiveTvStatus.CardChange);
+            if (card != null)
+            {
+              RegisterCiMenu(card.Id);
+            }
+            _status.Reset(LiveTvStatus.WasPlaying);
+          }
+          else
+          {
+            _status.Reset(LiveTvStatus.CardChange);
+            _status.Set(LiveTvStatus.SeekToEnd);
+          }
+
+          // Update channel navigator
+          if (Navigator.Channel.Entity != null &&
+              (channel.IdChannel != Navigator.Channel.Entity.IdChannel || (Navigator.LastViewedChannel == null)))
+          {
+            Navigator.LastViewedChannel = Navigator.Channel.Entity;
+          }
+          Log.Info("succeeded:{0} {1}", succeeded, card);
+          if (card != null)
+          {
+            Card = card; //Moved by joboehl - Only touch the card if starttimeshifting succeeded. 
+          }
+
+          // if needed seek to end
+          if (_status.IsSet(LiveTvStatus.SeekToEnd))
+          {
+            SeekToEnd(true);
+          }
+
+
+          // CardChange refactor it, so it reacts to changes in timeshifting path / URL.
+
+          // continue graph
+          g_Player.ContinueGraph();
+          if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) ||
+              (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
+          {
+            StartPlay();
+            // if needed seek to end
+            if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
+            {
+              double dTime = g_Player.Duration - 5;
+              g_Player.SeekAbsolute(dTime);
+            }
+          }
+          try
+          {
+            TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
+          }
+          catch
+          {
+            //ignore, error already logged
+          }
+        }            
     }
 
     private static int ShowKickUserDialogue(Dictionary<int, List<IUser>> kickableCards)
@@ -3819,7 +3981,7 @@ namespace Mediaportal.TV.TvPlugin
 
           for (int i = 0; i < currentCiMenu.NumChoices; i++) // CI Menu Entries
             dlgCiMenu.Add(currentCiMenu.MenuEntries[i].Message); // take only message, numbers come from dialog
-
+          
           // show dialog and wait for result       
           dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
           if (currentCiMenu.State != CiMenuState.Error)
