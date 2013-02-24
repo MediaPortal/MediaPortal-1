@@ -359,35 +359,24 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     public class TrackableCollection<T> : ObservableCollection<T>
     {
       private readonly HashSet<T> _lookupList = new HashSet<T>();
-      private readonly object _lookupListLock = new object();
 
       private void InsertIntoLookUp(T item)
       {
-        var t = new Task(() =>
-                           {
-                             lock (_lookupListLock)
-                             {
-                               if (!_lookupList.Contains(item))
-                               {
-                                 _lookupList.Add(item);
-                               } 
-                             }                             
-                           });
-        t.Start();
+        _lookupList.Add(item);
       }
 
       public new bool Contains(T item)
       {
-        lock (_lookupListLock)
-        {
-          return _lookupList.Contains(item);
-        }
+        return _lookupList.Contains(item);
       }      
 
       public new void Insert(int index, T item)
       {
-        base.Insert(index, item);
-        InsertIntoLookUp(item);
+        if (!Contains(item))
+        {
+          base.Insert(index, item);
+          InsertIntoLookUp(item);          
+        }
       }
 
       public new void RemoveAt(int index)
@@ -399,33 +388,19 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
       private void RemoveFromLookUp(T item)
       {
-        var t = new Task(() =>
-        {
-          lock (_lookupListLock)
+          if (_lookupList.Contains(item))
           {
-            if (_lookupList.Contains(item))
-            {
-              _lookupList.Remove(item);
-            }
+            _lookupList.Remove(item);
           }
-        });
-        t.Start();
       }
 
       private void ReplaceIntoLookUp(T oldValue, T newValue)
       {
-        var t = new Task(() =>
+        if (_lookupList.Contains(oldValue))
         {
-          lock (_lookupListLock)
-          {
-            if (_lookupList.Contains(oldValue))
-            {
-              _lookupList.Remove(oldValue);              
-            }
-            _lookupList.Add(newValue);              
-          }
-        });
-        t.Start();
+          _lookupList.Remove(oldValue);
+        }
+        _lookupList.Add(newValue);
       }
 
       public new bool Remove(T item)
@@ -449,8 +424,11 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 
       public new void Add(T item)
       {
-        base.Add(item);
-        InsertIntoLookUp(item);
+        if (!Contains(item))
+        {
+          base.Add(item);
+          InsertIntoLookUp(item);
+        }
       }
 
       public new void Clear()
@@ -461,10 +439,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
           RemoveAt(0);
         }
 
-        lock (_lookupListLock)
-        {
-          _lookupList.Clear();
-        }
+       _lookupList.Clear();
       }
 
       bool IsReadOnly
