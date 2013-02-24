@@ -59,7 +59,6 @@ void SynchCorrection::Flush()
 
 void SynchCorrection::Reset(bool soft)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   Log("SynchCorrection::Reset %u", soft);
   m_dBiasCorrection = 0.0001;
   m_iBiasDir = 0;
@@ -67,6 +66,7 @@ void SynchCorrection::Reset(bool soft)
   
   if (!soft)
   {
+    CAutoLock lock(&m_csSampleQueueLock);
     m_rtStart = 0;
     m_dEVRAudioDelay = 0.0;
     m_dlastAdjustment = 1.0;
@@ -75,20 +75,22 @@ void SynchCorrection::Reset(bool soft)
     m_bDriftCorrectionEnabled = true;
     m_bBiasCorrectionEnabled = true;
     m_bAdjustmentCorrectionEnabled = true;
-    m_dDeltaError=0.0;
-
+    {
+      CAutoLock dLock(&m_csDeltaLock);
+      m_dDeltaError=0.0;
+    }
     m_rtAHwStartSet = false;
     m_rtAHwStart = 0;
 
-    m_Bias= 1.0;
-    m_Adjustment=1.0;
+    SetBias(1.0);
+    SetAdjustment(1.0);
     Flush();
   }
 }
 
 void SynchCorrection::Reset(double dBias)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
+  CAutoLock lock(&m_csBiasLock);
   Log("SynchCorrection::Reset with bias");
   //Reset();
   m_Bias = dBias;
@@ -96,7 +98,6 @@ void SynchCorrection::Reset(double dBias)
 
 void SynchCorrection::Reset(double dBias, REFERENCE_TIME tStart)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   Log("SynchCorrection::Reset with rtStart");
   //Reset();
   m_rtStart = tStart;
@@ -107,20 +108,19 @@ void SynchCorrection::Reset(double dBias, REFERENCE_TIME tStart)
 
 double SynchCorrection::SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   return GetRequiredAdjustment(rtAHwTime,  rtRCTime, bias, adjustment);
 }
 
 double SynchCorrection::GetCurrentDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   return TotalAudioDrift(rtAHwTime, rtRCTime);
 }
 
 // used for the adjustment - it also corrects bias
 void SynchCorrection::SetAdjustment(double adjustment)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
+  CAutoLock lock(&m_csAdjustmentLock);
+
   if (adjustment != m_dlastAdjustment)
   {
 	  m_dlastAdjustment=adjustment;
@@ -138,6 +138,7 @@ void SynchCorrection::SetAdjustment(double adjustment)
     else if (adjustment < 1)
       m_iBiasDir = DIRDOWN;
 
+    CAutoLock lock(&m_csBiasLock);
     m_Bias += m_dBiasCorrection * (double) m_iBiasDir;
   }
   m_Adjustment=adjustment;
@@ -145,63 +146,55 @@ void SynchCorrection::SetAdjustment(double adjustment)
 
 double SynchCorrection::GetAdjustment()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
+  CAutoLock lock(&m_csAdjustmentLock);
   return m_Adjustment;
 }
 
 void SynchCorrection::SetBias(double bias)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
-
   // handle intrastream bias change
   //double currentDrift = TotalAudioDrift(m_dAVmult);
   Reset(true);
+  CAutoLock lock(&m_csBiasLock);
   m_Bias = bias;
 }
 
 double SynchCorrection::GetBias()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
+  CAutoLock lock(&m_csBiasLock);
   return m_Bias;
 }
 
 void SynchCorrection::SetAudioDelay(INT64 delay)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   m_dAudioDelay = (double)delay;
 }
 
 INT64 SynchCorrection::GetAudioDelay()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   return (INT64)m_dAudioDelay;
 }
 
 //EVR presenter requests a delay
 void SynchCorrection::SetPresenterInducedAudioDelay(INT64 delay)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   m_dEVRAudioDelay = (double)delay;
 }
 
 INT64 SynchCorrection::GetPresenterInducedAudioDelay()
 {
-  CAutoLock lock(&m_csSampleQueueLock);
   return (INT64)m_dEVRAudioDelay;
 }
 
 // recalculation of the delta value for the reference clock
 INT64 SynchCorrection::GetCorrectedTimeDelta(INT64 time, REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
-
-  double deltaTime = 0;
-  if (m_dDeltaError<0)
-    Log("Delta Error : %6.3", m_dDeltaError);
-  
-  deltaTime = time * m_Adjustment * m_Bias + m_dDeltaError;
-  m_dDeltaError = deltaTime - floor(deltaTime);
-  
+  double deltaTime = 0;  
+  {
+    CAutoLock lock(&m_csDeltaLock);
+    deltaTime = time * GetAdjustment() * GetBias() + m_dDeltaError;
+    m_dDeltaError = deltaTime - floor(deltaTime);
+  }
   return (INT64) deltaTime;
 }
 
@@ -214,7 +207,6 @@ double SynchCorrection::TotalAudioDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME
 // get the adjustment required to match the hardware clocks
 double SynchCorrection::GetRequiredAdjustment(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
-  CAutoLock lock(&m_csSampleQueueLock);
 
   double ret = bias* adjustment;
   double totalAudioDrift = CalculateDrift(rtAHwTime, rtRCTime - m_rtStart) + m_dAudioDelay +m_dEVRAudioDelay;
@@ -294,12 +286,10 @@ void SynchCorrection::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, IN
     Log ("SynchCorrection::AddSample Size: %4u rtOriginalStart: %10.8f rtAdjustedStart: %10.8f rtOriginalEnd: %10.8f rtAdjustedEnd: %10.8f m_rtQueueDuration: %10.8f  m_rtAdjustedQueueDuration: %10.8f",
       m_qSampleTimes.size(),rtOriginalStart / 10000000.0, rtAdjustedStart / 10000000.0, rtOriginalEnd / 10000000.0, rtAdjustedEnd / 10000000.0, m_rtQueueDuration / 10000000.0, m_rtQueueAdjustedDuration/ 10000000.0);
 
+  m_rtQueueDuration += newSample->rtOriginalSampleEnd - newSample->rtOriginalSampleStart;
+  m_rtQueueAdjustedDuration += newSample->rtAdjustedSampleEnd - newSample->rtAdjustedSampleStart;
+
   CAutoLock lock(&m_csSampleQueueLock);
-  
-  INT64 origDur = newSample->rtOriginalSampleEnd - newSample->rtOriginalSampleStart;
-  m_rtQueueDuration += origDur;
-  INT64 adjDur = newSample->rtAdjustedSampleEnd - newSample->rtAdjustedSampleStart;
-  m_rtQueueAdjustedDuration += adjDur;
   m_qSampleTimes.push(newSample);
 }
 
@@ -322,8 +312,7 @@ SampleTimeData* SynchCorrection::GetMatchingSampleForTime(REFERENCE_TIME rtAHwti
 {
   SampleTimeData* ret = NULL;
 
-  CAutoLock lock(&m_csSampleQueueLock);
-  while (m_qSampleTimes.size()>1 && m_qSampleTimes.front()->rtOriginalSampleEnd < rtAHwtime)
+  while (m_qSampleTimes.size() > 1 && m_qSampleTimes.front()->rtOriginalSampleEnd < rtAHwtime)
   {
     SampleTimeData * oldSample = m_qSampleTimes.front();
     m_qSampleTimes.pop();
@@ -335,7 +324,7 @@ SampleTimeData* SynchCorrection::GetMatchingSampleForTime(REFERENCE_TIME rtAHwti
   if (m_qSampleTimes.size() == 1 && m_qSampleTimes.front()->rtOriginalSampleEnd < rtAHwtime)
     Log("SynchCorrection::GetMatchingSampleForTime: Not Enough Data");
   
-  if (m_qSampleTimes.size()>0)
+  if (m_qSampleTimes.size() > 0)
     ret = m_qSampleTimes.front();
 
   return ret;
@@ -352,14 +341,15 @@ INT64 SynchCorrection::CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME r
   if (rtRCTime < 0) 
     return 0;
   
+  double bias = GetBias();
   if (!m_rtAHwStartSet) 
   {
-    m_rtAHwStart = rtAHwTime - rtRCTime / m_Bias;
+    m_rtAHwStart = rtAHwTime - rtRCTime / bias;
     m_rtAHwStartSet = true;
     rtAHwTime -= m_rtAHwStart;
   }
   
   REFERENCE_TIME preCalculatedTime = GetReferenceTimeFromAudioSamples(rtAHwTime);
-  return preCalculatedTime- rtRCTime - (m_rtQueueDuration * m_Bias) + m_rtQueueAdjustedDuration;
+  return preCalculatedTime- rtRCTime - (m_rtQueueDuration * bias) + m_rtQueueAdjustedDuration;
 }
 

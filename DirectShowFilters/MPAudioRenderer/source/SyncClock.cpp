@@ -92,6 +92,7 @@ HRESULT CSyncClock::Reset()
   m_SynchCorrection.Reset(m_dBias);
   m_SynchCorrection.SetPresenterInducedAudioDelay(m_dEVRDelay);
   m_bDiscontinuity = true;
+
   return S_OK;
 }
 
@@ -101,6 +102,7 @@ HRESULT CSyncClock::Reset(REFERENCE_TIME tStart)
   m_SynchCorrection.Reset(m_dBias, tStart);
   m_SynchCorrection.SetPresenterInducedAudioDelay(m_dEVRDelay);
   m_bDiscontinuity = true;
+
   return S_OK;
 }
 
@@ -127,16 +129,17 @@ void CSyncClock::UpdateClockData(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTi
 
 double CSyncClock::SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
-  CAutoLock cObjectLock(this);
+  // Use a local copy so we wont need locking
+  double dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(rtAHwTime, rtRCTime, bias, adjustment);
   
-  // store for EVR stats renderer
-  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(rtAHwTime, rtRCTime, bias, adjustment);
-  return m_dSuggestedAudioMultiplier;
+  // store for EVR stats renderer - it is ok for other threads to change the stats
+  m_dSuggestedAudioMultiplier = dSuggestedAudioMultiplier;
+
+  return dSuggestedAudioMultiplier;
 }
 
 double CSyncClock::GetBias()
 {
-  CAutoLock cObjectLock(this);
   return m_SynchCorrection.GetBias();
 }
 
@@ -157,8 +160,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc, qpcNow);
 
   //UINT64 end1 = GetCurrentTimestamp();
-
-  CAutoLock cObjectLock(this);
 
   if (hr == S_OK)
   {
@@ -259,8 +260,6 @@ HRESULT CSyncClock::GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTime)
   else
     rtDsTime = &rtTmp;
 
-  CAutoLock cObjectLock(this);
-
   // Update the HW clock information
   hr = CBaseReferenceClock::GetTime(rtDsTime);
   if (FAILED(hr))
@@ -275,7 +274,6 @@ HRESULT CSyncClock::GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTime)
     UpdateClockData(*rtHwTime, *rtDsTime);
 
   //UINT64 end3 = GetCurrentTimestamp();
-
 
   /*if (start3 - end3 > 50)
     Log("DUR3: first: %I64d ", end3 - start3);

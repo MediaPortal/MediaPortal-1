@@ -109,6 +109,9 @@ private:
   REFERENCE_TIME m_rtQueueAdjustedDuration;
 
   CCritSec m_csSampleQueueLock;
+  CCritSec m_csBiasLock;
+  CCritSec m_csAdjustmentLock;
+  CCritSec m_csDeltaLock;
   
   SampleTimeData * GetMatchingSampleForTime(REFERENCE_TIME time);
 
