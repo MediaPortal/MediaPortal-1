@@ -155,27 +155,23 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// <returns>true when card is timeshifting otherwise false</returns>
     public bool IsTimeShifting(IUser user)
     {
-      bool isTimeShifting = false;
+      if (user == null || user.SubChannels == null)
+        return false;
+
       try
       {
         foreach (ISubChannel subch in user.SubChannels.Values)
         {
           ITvSubChannel subchannel = GetSubChannel(user.Name, subch.IdChannel);
-          if (subchannel != null)
-          {
-            isTimeShifting = subchannel.IsTimeShifting;
-            if (isTimeShifting)
-            {
-              break; 
-            }            
-          } 
-        }        
+          if (subchannel != null && subchannel.IsTimeShifting)
+            return true;
+        }
       }
       catch (Exception ex)
       {
         this.LogError(ex);
       }
-      return isTimeShifting;
+      return false;
     }
 
 
