@@ -28,6 +28,20 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
+      <description>Dummyy Button</description>
+      <type>button</type>
+      <id>55</id>
+      <label></label>
+      <posX>0</posX>
+      <posY>200</posY>
+      <width>50</width>
+      <height>50</height>
+      <textureFocus></textureFocus>
+      <textureNoFocus></textureNoFocus>
+      <onleft>2</onleft>
+      <onright>2</onright>
+    </control>
+    <control>
       <description>Overlay video info</description>
       <id>0</id>
       <type>image</type>
@@ -111,7 +125,8 @@
           <id>2</id>
           <label>208</label>
           <font>font13</font>
-          <onleft>2</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onup>11</onup>
           <ondown>3</ondown>
         </control>
@@ -121,7 +136,8 @@
           <id>3</id>
           <label>207</label>
           <font>font13</font>
-          <onleft>3</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onup>2</onup>
           <ondown>4</ondown>
         </control>
@@ -131,7 +147,8 @@
           <id>4</id>
           <label>206</label>
           <font>font13</font>
-          <onleft>4</onleft>
+          <onright>24</onright>
+          <onleft>55</onleft>
           <onup>3</onup>
           <ondown>7</ondown>
         </control>
@@ -141,7 +158,8 @@
           <id>7</id>
           <label>183</label>
           <font>font13</font>
-          <onleft>7</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onup>4</onup>
           <ondown>5</ondown>
         </control>
@@ -150,7 +168,8 @@
           <type>button</type>
           <id>5</id>
           <label>184</label>
-          <onleft>5</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onup>7</onup>
           <ondown>26</ondown>
         </control>
@@ -158,7 +177,8 @@
           <description>Rename Title Button</description>
           <type>button</type>
           <id>26</id>
-          <onleft>26</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <label>118</label>
           <onup>5</onup>
           <ondown>6</ondown>
@@ -168,7 +188,8 @@
           <type>togglebutton</type>
           <id>6</id>
           <label>1010</label>
-          <onleft>6</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onright>24</onright>
           <onup>26</onup>
           <ondown>4755</ondown>
@@ -180,7 +201,8 @@
           <label>5906</label>
           <hyperlink>4755</hyperlink>
           <hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
-          <onleft>4755</onleft>
+          <onleft>55</onleft>
+          <onright>55</onright>
           <onup>6</onup>
           <ondown>10</ondown>
           <visible>plugin.isenabled(OnlineVideos)</visible>
@@ -614,7 +636,7 @@
     <visible>!control.isvisible(24)</visible>
   </control>
   <control>
-  <description>Movie Cover Glass Image and Dummy button to be able to activate action menu</description>
+    <description>Movie Cover Glass Image and Dummy button to be able to activate action menu</description>
     <type>button</type>
     <id>54321</id>
     <posX>1000</posX>

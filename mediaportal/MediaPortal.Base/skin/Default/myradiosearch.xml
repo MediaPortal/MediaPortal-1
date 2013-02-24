@@ -165,50 +165,40 @@
       <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
+      <id>1</id>
       <type>image</type>
       <posX>60</posX>
       <posY>440</posY>
       <width>45</width>
-      <height>45</height>
+      <height>60</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>#Radio.Search.thumb</texture>
+      <texture>#selectedthumb</texture>
     </control>
     <control>
-      <description>channel</description>
-      <id>0</id>
+      <description>Current program title</description>
       <type>fadelabel</type>
+      <id>13</id>
       <posX>120</posX>
       <posY>440</posY>
       <width>795</width>
-      <textcolor>ff6FAFE1</textcolor>
-      <label>#Radio.Search.Channel      #Radio.Search.Time      #Radio.Search.Genre</label>
-      <font>font12</font>
-    </control>
-    <control>
-      <description>Program Title</description>
-      <id>14</id>
-      <type>fadelabel</type>
-      <posX>120</posX>
-      <posY>465</posY>
-      <width>510</width>
       <label>#Radio.Search.Title</label>
-      <align>left</align>
       <font>font14</font>
       <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
-      <description>Current program Genre</description>
-      <type>fadelabel</type>
-      <id>13</id>
-      <posX>1914</posX>
-      <posY>566</posY>
-      <width>510</width>
-      <label>#Radio.Search.Genre</label>
-      <font>font10</font>
+      <description>Current program time</description>
+      <type>label</type>
+      <id>14</id>
+      <posX>120</posX>
+      <posY>470</posY>
+      <width>795</width>
+      <label>#Radio.Search.Time</label>
+      <font>font11</font>
       <textcolor>ff6FAFE1</textcolor>
-      <visible>!string.equals(#Radio.Search.Genre,-)</visible>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
     </control>
     <control>
       <description>Description1</description>
@@ -218,9 +208,33 @@
       <posY>505</posY>
       <width>795</width>
       <height>105</height>
-      <label>#Radio.Search.Description</label>
       <font>font11</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <label>#Radio.Search.Description</label>
+      <textcolor>ivory</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>1867</posX>
+      <posY>440</posY>
+      <width>556</width>
+      <label>#Radio.Search.Genre</label>
+      <font>font11</font>
+      <textcolor>ff6FAFE1</textcolor>
+      <visible>control.hasfocus(10) | control.hasfocus(11)</visible>
+    </control>
+    <control>
+      <description>Current channel</description>
+      <type>label</type>
+      <id>16</id>
+      <posX>1846</posX>
+      <posY>520</posY>
+      <label>#Radio.Search.Channel</label>
+      <align>left</align>
+      <font>font13</font>
+      <textcolor>ff6FAFE1</textcolor>
     </control>
   </controls>
 </window>

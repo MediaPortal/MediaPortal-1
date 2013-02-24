@@ -62,8 +62,10 @@
         <spinColor>FF393939</spinColor>
         <textXOff>35</textXOff>
         <textYOff>16</textYOff>
-        <textcolor>FF000000</textcolor>
-        <textcolor2>FF000000</textcolor2>
+        <textcolor>FFFFFFFF</textcolor>
+        <textcolor2>FFFFFFFF</textcolor2>
+        <textcolorNoFocus>FF393939</textcolorNoFocus>
+        <textcolor2NoFocus>FF393939</textcolor2NoFocus>
      		<selectedColor>FF000000</selectedColor>                
         <textureFocus>context_item_selected.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>
@@ -73,7 +75,7 @@
 				<PinIconHeight>15</PinIconHeight>
         <PinIconXOff>2000</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
-				<unfocusedAlpha>130</unfocusedAlpha>
+				<unfocusedAlpha>255</unfocusedAlpha>
       </control>
     </control>
   </controls>

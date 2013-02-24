@@ -78,6 +78,24 @@ namespace MediaPortal.GUI.Settings
       }
 
       GUIPropertyManager.SetProperty("#currentmodule", module);
+      
+      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      {
+        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
+      }
+    }
+
+    protected override void OnPageDestroy(int newWindowId)
+    {
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

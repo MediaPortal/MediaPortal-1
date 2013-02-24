@@ -81,6 +81,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxGroupDays.Checked = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
         checkBoxEnableVideo.Checked = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
         checkBoxPlayVideosInSlideshow.Checked = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
+        UpdateVideoSettings();
       }
     }
 
@@ -413,9 +414,17 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private void checkBoxEnableVideo_CheckedChanged(object sender, EventArgs e)
+    /// <summary>
+    /// sets useability of select video config depending
+    /// </summary>
+    public void UpdateVideoSettings()
     {
       checkBoxPlayVideosInSlideshow.Enabled = (checkBoxEnableVideo.Checked);
+    }
+
+    private void checkBoxEnableVideo_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdateVideoSettings();
     }
   }
 }

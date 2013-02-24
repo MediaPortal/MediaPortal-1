@@ -87,7 +87,7 @@
         <onup>2</onup>
         <ondown>11</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
       <control>
         <description>Create scan date</description>
@@ -101,7 +101,7 @@
         <onup>14</onup>
         <ondown>12</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
       <control>
         <description>Only update by new date</description>
@@ -115,7 +115,7 @@
         <onup>11</onup>
         <ondown>13</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
       <control>
         <description>Auto update</description>
@@ -129,7 +129,7 @@
         <onup>12</onup>
         <ondown>3</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
       <control>
         <description>Strip prefixes button</description>
@@ -145,7 +145,7 @@
         <onup>13</onup>
         <ondown>4</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
       <control>
         <description>Treat tracks</description>
@@ -158,9 +158,9 @@
         <font>font10</font>
         <onleft></onleft>
         <onup>3</onup>
-        <ondown>5</ondown>
+        <ondown>7</ondown>
         <onleft>17</onleft>
-        <onright>5</onright>
+        <onright>7</onright>
       </control>
     </control>
     <control>
@@ -200,20 +200,20 @@
       <posX>670</posX>
       <posY>160</posY>
       <layout>StackLayout</layout>
-      <control>
-        <description>All extensions</description>
+			<control>
+        <description>Cover art in ID3</description>
         <type>checkbutton</type>
-        <id>5</id>
-        <label>300169</label>
+        <id>7</id>
+        <label>300171</label>
         <posX>70</posX>
-        <posY>435</posY>
+        <posY>505</posY>
         <width>400</width>
         <font>font10</font>
         <onup>4</onup>
         <ondown>6</ondown>
         <onleft>14</onleft>
         <onright>17</onright>
-      </control>
+      </control>      
       <control>
         <description>All extensions</description>
         <type>checkbutton</type>
@@ -224,18 +224,18 @@
         <width>400</width>
         <font>font10</font>
         <onleft></onleft>
-        <onup>5</onup>
-        <ondown>7</ondown>
+        <onup>7</onup>
+        <ondown>5</ondown>
         <onleft>14</onleft>
         <onright>17</onright>
       </control>
       <control>
-        <description>Cover art in ID3</description>
+        <description>folder.jpg</description>
         <type>checkbutton</type>
-        <id>7</id>
-        <label>300171</label>
+        <id>5</id>
+        <label>300169</label>
         <posX>70</posX>
-        <posY>505</posY>
+        <posY>435</posY>
         <width>400</width>
         <font>font10</font>
         <onup>6</onup>
@@ -252,7 +252,7 @@
         <posY>540</posY>
         <width>400</width>
         <font>font10</font>
-        <onup>7</onup>
+        <onup>5</onup>
         <ondown>9</ondown>
         <onleft>14</onleft>
         <onright>17</onright>
