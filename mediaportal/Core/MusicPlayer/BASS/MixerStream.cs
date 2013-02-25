@@ -205,8 +205,7 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               Log.Warn("BASS: Stream can't be played in WASAPI exclusive mode. Switch to WASAPI shared mode.");
 
-              // TODO: change to BASS Net flag, once it has been uopdated within BASS.Net
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | (BASSWASAPIInit)16;
+              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | BASSWASAPIInit.BASS_WASAPI_EVENT;
 
               BASS_WASAPI_DEVICEINFO deviceinfo = BassWasapi.BASS_WASAPI_GetDeviceInfo(_bassPlayer.DeviceNumber);
               frequency = deviceinfo.mixfreq;
@@ -233,9 +232,7 @@ namespace MediaPortal.MusicPlayer.BASS
           else
           {
             Log.Debug("BASS: Init WASAPI shared mode with Event driven system enabled.");
-
-            // TODO: change to BASS Net flag, once it has been uopdated within BASS.Net
-            initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | (BASSWASAPIInit)16;
+            initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | BASSWASAPIInit.BASS_WASAPI_EVENT;
           }
 
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, frequency, chans,
@@ -253,7 +250,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
             Log.Info("BASS: ---------------------------------------------");
 
-            BassWasapi.BASS_WASAPI_SetVolume(true, (float)Config.StreamVolume / 100f);
+            BassWasapi.BASS_WASAPI_SetVolume(BASSWASAPIVolume.BASS_WASAPI_CURVE_DB, (float)Config.StreamVolume / 100f);
             BassWasapi.BASS_WASAPI_Start();
             result = true;
           }

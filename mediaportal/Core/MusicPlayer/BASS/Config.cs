@@ -367,7 +367,7 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           continue;
         }
-        int font = BassMidi.BASS_MIDI_FontInit(file.FullName);
+        int font = BassMidi.BASS_MIDI_FontInit(file.FullName, BASSFlag.BASS_MIDI_FONT_MMAP);
         if (font != 0)
         {
           BASS_MIDI_FONTINFO fontInfo = new BASS_MIDI_FONTINFO();
