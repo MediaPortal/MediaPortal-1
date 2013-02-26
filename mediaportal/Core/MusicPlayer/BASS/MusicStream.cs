@@ -61,7 +61,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       Ended,
       InternetStreamChanged,
-      Freed,
+      Disposed,
     }
 
     #endregion
@@ -958,6 +958,11 @@ namespace MediaPortal.MusicPlayer.BASS
         }
       }
       catch (Exception) { }
+
+      if (MusicStreamMessage != null)
+      {
+        MusicStreamMessage(this, StreamAction.Disposed);
+      }
     }
 
     #endregion

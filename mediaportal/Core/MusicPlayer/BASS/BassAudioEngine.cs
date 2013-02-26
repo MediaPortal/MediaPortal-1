@@ -604,14 +604,6 @@ namespace MediaPortal.MusicPlayer.BASS
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
 
-          // REmove the stream from the active streams and free it
-          lock (_streams)
-          {
-            if (_streams.Contains(musicStream))
-            {
-              _streams.Remove(musicStream);
-            }
-          }
           BassMix.BASS_Mixer_ChannelRemove(musicStream.BassStream);
           musicStream.Dispose();
 
@@ -631,6 +623,17 @@ namespace MediaPortal.MusicPlayer.BASS
           if (InternetStreamSongChanged != null)
           {
             InternetStreamSongChanged(this);
+          }
+          break;
+
+        case MusicStream.StreamAction.Disposed:
+          // Remove the stream from the active streams and free it
+          lock (_streams)
+          {
+            if (_streams.Contains(musicStream))
+            {
+              _streams.Remove(musicStream);
+            }
           }
           break;
       }
