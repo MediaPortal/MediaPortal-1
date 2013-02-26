@@ -72,7 +72,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 
   m_Settings.AddRef();
 
-  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
+  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, &m_Settings);
 
   if (!m_pClock)
   {
@@ -155,7 +155,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
   delete m_pOutBitDepthAdapter;
   delete m_pTimestretchFilter;
   delete m_pSampleRateConverter;
-  delete m_pStreamSanitizer;
   delete m_pChannelMixer;
 
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
@@ -192,15 +191,10 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   if (!m_pSampleRateConverter)
     return E_OUTOFMEMORY;
 
-  m_pStreamSanitizer = new CStreamSanitizer(&m_Settings);
-  if (!m_pStreamSanitizer)
-    return E_OUTOFMEMORY;
-
   m_pChannelMixer = new CChannelMixer(&m_Settings);
   if (!m_pChannelMixer)
     return E_OUTOFMEMORY;
 
-  m_pStreamSanitizer->ConnectTo(m_pInBitDepthAdapter);
   m_pInBitDepthAdapter->ConnectTo(m_pSampleRateConverter);
   m_pSampleRateConverter->ConnectTo(m_pChannelMixer);
   m_pChannelMixer->ConnectTo(m_pTimestretchFilter);
@@ -209,7 +203,7 @@ HRESULT CMPAudioRenderer::SetupFilterPipeline()
   m_pAC3Encoder->ConnectTo(m_pWASAPIRenderer);
   
   // Entry point for the audio filter pipeline
-  m_pPipeline = m_pStreamSanitizer;
+  m_pPipeline = m_pInBitDepthAdapter;
 
   return S_OK;
 }
@@ -276,10 +270,10 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType* pmt)
   }
 }
 
-HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
+HRESULT CMPAudioRenderer::AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow)
 {
   if (m_pRenderer)
-    return m_pRenderer->AudioClock(pTimestamp, pQpc);
+    return m_pRenderer->AudioClock(ullTimestamp, ullQpc, ullQpcNow);
   else
     return S_FALSE;
 
@@ -601,7 +595,7 @@ HRESULT CMPAudioRenderer::EndFlush()
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   m_pPipeline->EndFlush();
-  m_pClock->Reset();
+  m_pClock->Reset(0);
 
   return CBaseRenderer::EndFlush(); 
 }

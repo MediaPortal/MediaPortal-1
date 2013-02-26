@@ -154,7 +154,6 @@
     <ClCompile Include="source\Settings.cpp" />
     <ClCompile Include="source\SettingsProp.cpp" />
     <ClCompile Include="source\SoundTouchEx.cpp" />
-    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
     <ClCompile Include="source\SyncClock.cpp" />
     <ClCompile Include="source\ThreadDecouplingFilter.cpp" />
     <ClCompile Include="source\TimeSource.cpp" />
@@ -181,8 +180,6 @@
     <ClCompile Include="SoundTouch\source\TDStretch.cpp" />
     <ClCompile Include="AC3_encoder\ac3enc.cpp" />
     <ClCompile Include="AC3_encoder\bits.cpp" />
-    <ClCompile Include="source\AudioClockTracker.cpp" />
-    <ClCompile Include="source\ClockAdjuster.cpp" />
     <ClCompile Include="source\SynchCorrection.cpp" />
     <ClCompile Include="source\WASAPIRenderFilter.cpp" />
   </ItemGroup>
@@ -227,7 +224,6 @@
     <ClInclude Include="source\SharedInclude.h" />
     <ClInclude Include="source\SoundTouchEx.h" />
     <ClInclude Include="source\stdafx.h" />
-    <ClInclude Include="source\StreamSanitizerFilter.h" />
     <ClInclude Include="source\SyncClock.h" />
     <ClInclude Include="source\ThreadDecouplingFilter.h" />
     <ClInclude Include="source\TimeSource.h" />
@@ -251,8 +247,6 @@
     <ClInclude Include="SoundTouch\source\TDStretch.h" />
     <ClInclude Include="AC3_encoder\ac3enc.h" />
     <ClInclude Include="AC3_encoder\bits.h" />
-    <ClInclude Include="source\AudioClockTracker.h" />
-    <ClInclude Include="source\ClockAdjuster.h" />
     <ClInclude Include="source\SynchCorrection.h" />
     <ClInclude Include="source\WASAPIRenderFilter.h" />
   </ItemGroup>

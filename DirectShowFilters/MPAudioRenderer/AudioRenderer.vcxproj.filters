@@ -22,8 +22,6 @@
     <ClCompile Include="source\VolumeHandler.cpp" />
     <ClCompile Include="source\WaitableState.cpp" />
     <ClCompile Include="source\WASAPIRenderer.cpp" />
-    <ClCompile Include="source\AudioClockTracker.cpp" />
-    <ClCompile Include="source\ClockAdjuster.cpp" />
     <ClCompile Include="source\SynchCorrection.cpp" />
     <ClCompile Include="source\WASAPIRenderFilter.cpp" />
     <ClCompile Include="libresample\src\src_linear.c">
@@ -88,7 +86,6 @@
     <ClCompile Include="AC3_encoder\bits.cpp">
       <Filter>AC3_encoder</Filter>
     </ClCompile>
-    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
     <ClCompile Include="source\SettingsProp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +116,6 @@
     <ClInclude Include="source\VolumeHandler.h" />
     <ClInclude Include="source\WaitableState.h" />
     <ClInclude Include="source\WASAPIRenderer.h" />
-    <ClInclude Include="source\AudioClockTracker.h" />
-    <ClInclude Include="source\ClockAdjuster.h" />
     <ClInclude Include="source\SynchCorrection.h" />
     <ClInclude Include="source\WASAPIRenderFilter.h" />
     <ClInclude Include="libresample\src\samplerate.h">
@@ -179,7 +174,6 @@
     <ClInclude Include="AC3_encoder\bits.h">
       <Filter>AC3_encoder</Filter>
     </ClInclude>
-    <ClInclude Include="source\StreamSanitizerFilter.h" />
     <ClInclude Include="source\SettingsProp.h" />
   </ItemGroup>
   <ItemGroup>
