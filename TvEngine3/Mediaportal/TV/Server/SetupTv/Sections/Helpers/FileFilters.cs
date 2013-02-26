@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -37,12 +38,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class CustomFileName
   {
-    private String m_fileName;
-    private String m_filter;
+    private readonly String _fileName;
+    private readonly String _filter;
 
     public String FileName
     {
-      get { return m_fileName; }
+      get { return _fileName; }
     }
 
     public String DisplayName
@@ -52,8 +53,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
 
     public CustomFileName(String fileName, String filter)
     {
-      m_fileName = fileName;
-      m_filter = filter;
+      _fileName = fileName;
+      _filter = filter;
     }
 
     /// <summary>
@@ -62,7 +63,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <returns>String</returns>
     public override String ToString()
     {
-      return System.IO.Path.GetFileNameWithoutExtension(m_fileName).Replace(m_filter + ".", "");
+      return System.IO.Path.GetFileNameWithoutExtension(_fileName).Replace(_filter + ".", "");
     }
   }
 
@@ -73,21 +74,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class SimpleFileName
   {
-    private String m_fileName;
+    private readonly String _fileName;
 
     public String FileName
     {
-      get { return m_fileName; }
+      get { return _fileName; }
     }
 
     public String DisplayName
     {
-      get { return System.IO.Path.GetFileNameWithoutExtension(m_fileName); }
+      get { return System.IO.Path.GetFileNameWithoutExtension(_fileName); }
     }
 
     public SimpleFileName(String fileName)
     {
-      m_fileName = fileName;
+      _fileName = fileName;
     }
 
     /// <summary>
@@ -111,24 +112,26 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
   /// </summary>
   internal class FileFilters
   {
- 
-    private String[] files;
-    private MPComboBox m_cbxCountries;
-    private MPComboBox m_cbxRegions;
+    private readonly String[] _files;
+    private readonly MPComboBox _cbxCountries;
+    private readonly MPComboBox _cbxRegions;
 
     /// <summary>
     /// Load existing list from xml file 
     /// </summary>
-    /// <param name="fileName">Path for input filen</param>
-    public object LoadList(string fileName, Type ListType)
+    /// <param name="fileName">Path for input file</param>
+    /// <param name="listType">Type of list to deserialize</param>
+    public object LoadList(string fileName, Type listType)
     {
       try
       {
-        XmlReader parFileXML = XmlReader.Create(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(ListType);
-        object result = xmlSerializer.Deserialize(parFileXML);
-        parFileXML.Close();
-        return result;
+        using (XmlReader parFileXml = XmlReader.Create(fileName))
+        {
+          XmlSerializer xmlSerializer = new XmlSerializer(listType);
+          object result = xmlSerializer.Deserialize(parFileXml);
+          parFileXml.Close();
+          return result;
+        }
       }
       catch (Exception ex)
       {
@@ -141,22 +144,21 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <summary>
     /// CTOR
     /// </summary>
-    /// <param name="TuningType">Tuning type (subfolder name)</param>
+    /// <param name="tuningType">Tuning type (subfolder name)</param>
     /// <param name="cbxCountries">reference to country cbx</param>
     /// <param name="cbxRegions">reference to region cbx</param>
-    public FileFilters(String TuningType, ref MPComboBox cbxCountries, ref MPComboBox cbxRegions)
+    public FileFilters(String tuningType, ref MPComboBox cbxCountries, ref MPComboBox cbxRegions)
     {
-      m_cbxCountries = cbxCountries;
-      m_cbxRegions = cbxRegions;
+      _cbxCountries = cbxCountries;
+      _cbxRegions = cbxRegions;
 
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, TuningType),
-                                           "*.xml");
-      List<String> countries = CountryList(files);
-      for (int i = 0; i < countries.Count; ++i)
+      _files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, tuningType), "*.xml");
+      List<String> countries = CountryList(_files);
+      foreach (string t in countries)
       {
-        cbxCountries.Items.Add(countries[i]);
+        cbxCountries.Items.Add(t);
       }
-      cbxCountries.SelectedIndexChanged += new System.EventHandler(SelectedIndexChanged);
+      cbxCountries.SelectedIndexChanged += SelectedIndexChanged;
       cbxCountries.SelectedIndex = 0;
       cbxRegions.DisplayMember = "DisplayName";
     }
@@ -164,23 +166,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <summary>
     /// CTOR
     /// </summary>
-    /// <param name="TuningType">Tuning type (subfolder name)</param>
-    public FileFilters(String TuningType)
+    /// <param name="tuningType">Tuning type (subfolder name)</param>
+    public FileFilters(String tuningType)
     {
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, TuningType),
-                                           "*.xml");
+      _files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", PathManager.GetDataPath, tuningType), "*.xml");
     }
 
     public List<SimpleFileName> AllFiles
     {
       get
       {
-        List<SimpleFileName> list = new List<SimpleFileName>();
-        foreach (String file in files)
-        {
-          list.Add(new SimpleFileName(file));
-        }
-        return list;
+        return _files.Select(file => new SimpleFileName(file)).ToList();
       }
     }
 
@@ -190,17 +186,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// Naming format:
     ///    country.region.xml
     /// </summary>
-    /// <param name="FullList">Complete file list</param>
-    /// <param name="CountryFilter">Selected country</param>
+    /// <param name="fullList">Complete file list</param>
+    /// <param name="countryFilter">Selected country</param>
     /// <returns>List of CustomFileNames</returns>
-    private List<CustomFileName> FilteredList(String[] FullList, String CountryFilter)
+    private List<CustomFileName> FilteredList(String[] fullList, String countryFilter)
     {
       List<CustomFileName> filtered = new List<CustomFileName>();
-      foreach (String SingleFile in FullList)
+      foreach (String singleFile in fullList)
       {
-        if (System.IO.Path.GetFileName(SingleFile).StartsWith(CountryFilter))
+        if (System.IO.Path.GetFileName(singleFile).StartsWith(countryFilter))
         {
-          filtered.Add(new CustomFileName(SingleFile, CountryFilter));
+          filtered.Add(new CustomFileName(singleFile, countryFilter));
         }
       }
       return filtered;
@@ -212,14 +208,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// Naming format:
     ///    country.region.xml
     /// </summary>
-    /// <param name="FullList">Complete file list</param>
+    /// <param name="fullList">Complete file list</param>
     /// <returns>List of countries</returns>
-    private List<String> CountryList(String[] FullList)
+    private List<String> CountryList(String[] fullList)
     {
       List<String> filtered = new List<String>();
-      foreach (String SingleFile in FullList)
+      foreach (String singleFile in fullList)
       {
-        String country = System.IO.Path.GetFileName(SingleFile).Split('.')[0];
+        String country = System.IO.Path.GetFileName(singleFile).Split('.')[0];
         if (!filtered.Contains(country))
         {
           filtered.Add(country);
@@ -235,7 +231,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections.Helpers
     /// <param name="e"></param>
     public void SelectedIndexChanged(object sender, EventArgs e)
     {
-      m_cbxRegions.DataSource = FilteredList(files, m_cbxCountries.SelectedItem.ToString());
+      _cbxRegions.DataSource = FilteredList(_files, _cbxCountries.SelectedItem.ToString());
     }
   }
 
