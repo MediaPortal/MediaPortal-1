@@ -27,8 +27,9 @@
 
 extern void Log(const char* fmt, ...);
 
-CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock)
+CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer, AudioRendererSettings* pSettings)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
+  m_SynchCorrection(pSettings),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
   m_dAdjustment(1.0),
@@ -40,8 +41,6 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer
   m_ullStartTimeSystem(0),
   m_ullPrevTimeHW(0),
   m_ullPrevQpcHW(0),
-  m_dSystemClockMultiplier(1.0),
-  m_bHWBasedRefClock(pUseHWRefClock),
   m_llDurationHW(0),
   m_llDurationSystem(0),
   m_dSuggestedAudioMultiplier(1.0),
@@ -49,7 +48,8 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT* phr, CMPAudioRenderer* pRenderer
   m_ullPrivateTime(0),
   m_ullHWPrivateTime(0),
   m_bDiscontinuity(false),
-  m_clockSource(NOT_SET)
+  m_clockSource(NOT_SET),
+  m_pSettings(pSettings)
 {
 }
 
@@ -95,32 +95,42 @@ HRESULT CSyncClock::Reset()
   return S_OK;
 }
 
-void CSyncClock::GetClockData(CLOCKDATA *pClockData)
-{
-  // pClockData pointer is validated already in CMPAudioRenderer
-  pClockData->driftMultiplier = m_SynchCorrection.GetAVMult();
-  pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000.0;
-  pClockData->currentDrift = m_SynchCorrection.GetCurrentDrift() / 10000.0;
-  pClockData->resamplingAdjustment = m_dSuggestedAudioMultiplier;
-}
-
-void CSyncClock::AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier)
+HRESULT CSyncClock::Reset(REFERENCE_TIME tStart)
 {
   CAutoLock cObjectLock(this);
-  m_SynchCorrection.AudioResampled(sourceLength, resampleLength, bias, adjustment, driftMultiplier); 
+  m_SynchCorrection.Reset(m_dBias, tStart);
+  m_SynchCorrection.SetPresenterInducedAudioDelay(m_dEVRDelay);
+  m_bDiscontinuity = true;
+  return S_OK;
 }
 
-char* CSyncClock::DebugData()
+void CSyncClock::GetClockData(CLOCKDATA* pClockData)
 {
-  return m_SynchCorrection.DebugData(); 
+  // pClockData has been checked in the MpAudioRenderer class
+
+  // We don't want 100% exact results - it won't matter if one video frame displays a bit wrong
+  // debug details as no person can read those in any case with sich great detail
+
+  INT64 llDurationSystem = m_llDurationSystem;
+  INT64 llDurationHW = m_llDurationHW;
+
+  pClockData->driftMultiplier = llDurationSystem > 0 ? (double)llDurationHW / (double)llDurationSystem : 0;
+  pClockData->driftHWvsSystem = (double)(llDurationHW - llDurationSystem) / 10000.0;
+  pClockData->currentDrift = m_dCurrentDrift;
+  pClockData->resamplingAdjustment = m_dSuggestedAudioMultiplier;;
 }
 
-double CSyncClock::SuggestedAudioMultiplier(UINT64 sampleLength, double bias, double adjustment)
+void CSyncClock::UpdateClockData(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime)
+{
+  m_dCurrentDrift = m_SynchCorrection.GetCurrentDrift(rtAHwTime, rtRCTime) / 10000.0;
+}
+
+double CSyncClock::SuggestedAudioMultiplier(REFERENCE_TIME rtAHwTime, REFERENCE_TIME rtRCTime, double bias, double adjustment)
 {
   CAutoLock cObjectLock(this);
   
   // store for EVR stats renderer
-  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(sampleLength, bias, adjustment);
+  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(rtAHwTime, rtRCTime, bias, adjustment);
   return m_dSuggestedAudioMultiplier;
 }
 
@@ -132,16 +142,23 @@ double CSyncClock::GetBias()
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
 {
-  CAutoLock cObjectLock(this);
-
   UINT64 qpcNow = GetCurrentTimestamp();
 
-  UINT64 hwClock(0);
-  UINT64 hwQpc(0);
-  INT64 delta(0);
-  INT64 qpcDelta(0);
+  UINT64 hwClock = 0;
+  UINT64 hwQpc = 0;
+  INT64 delta = 0;
+  INT64 qpcDelta = 0;
 
-  HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
+  HRESULT hr = S_FALSE;
+
+  //UINT64 start1 = GetCurrentTimestamp();
+
+  if (m_pSettings->m_bHWBasedRefClock)
+    hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc, qpcNow);
+
+  //UINT64 end1 = GetCurrentTimestamp();
+
+  CAutoLock cObjectLock(this);
 
   if (hr == S_OK)
   {
@@ -172,7 +189,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
-      //m_ullStartTimeSystem = qpcNow;
+      m_ullStartTimeSystem = qpcNow;
       delta = qpcNow - m_ullPrevSystemTime;
 
       m_bDiscontinuity = false;
@@ -181,15 +198,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     {
       delta = hwClock - m_ullPrevTimeHW;
 	  
-      double clockDiff = hwClock - m_ullStartTimeHW;
-      double qpcDiff = hwQpc - m_ullStartQpcHW;
-
-      m_dSystemClockMultiplier =1.0;
-      double prevMultiplier = m_dSystemClockMultiplier;
-
-      if (m_bHWBasedRefClock)
-        m_SynchCorrection.SetAVMult(m_dSystemClockMultiplier);
-
       m_ullPrevTimeHW = hwClock;
       m_ullPrevQpcHW = hwQpc;
     }
@@ -222,12 +230,20 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   m_ullPrevSystemTime = qpcNow;
 
-  INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(delta);
+  //UINT64 start2 = GetCurrentTimestamp();
+  INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(delta, m_ullHWPrivateTime, m_ullPrivateTime);
+  //UINT64 end2 = GetCurrentTimestamp();
 
   //Log("diff %I64d delta: %I64d synchCorrectedDelta: %I64d qpc based delta: %I64d", delta - synchCorrectedDelta, delta, synchCorrectedDelta, qpcDelta);
 
   m_ullHWPrivateTime = m_ullHWPrivateTime + delta;
   m_ullPrivateTime = m_ullPrivateTime + synchCorrectedDelta;
+
+  //UINT64 qpcEnd = GetCurrentTimestamp();
+
+  /*if (qpcEnd - qpcNow > 2000)
+    Log("DUR: %I64d first: %I64d second: %I64d", qpcEnd - qpcNow, end1 - start1, end2 - start2);
+  */
 
   return m_ullPrivateTime;
 }
@@ -254,8 +270,29 @@ HRESULT CSyncClock::GetHWTime(REFERENCE_TIME* rtTime, REFERENCE_TIME* rtHwTime)
 
   *rtHwTime = m_ullHWPrivateTime;
 
-  Log("CWASAPIRenderFilter::GetHWTime Clocks: Hw Clock: rtHwTime: %10.8f rtTime: %10.8f",
-    *rtHwTime / 10000000.0, *rtDsTime / 10000000.0);
+  //UINT64 start3 = GetCurrentTimestamp();
+  if (rtHwTime && rtDsTime)
+    UpdateClockData(*rtHwTime, *rtDsTime);
+
+  //UINT64 end3 = GetCurrentTimestamp();
+
+
+  /*if (start3 - end3 > 50)
+    Log("DUR3: first: %I64d ", end3 - start3);
+  */
+  
+  //Log("CWASAPIRenderFilter::GetHWTime Clocks: Hw Clock: rtHwTime: %10.8f rtTime: %10.8f",
+  //  *rtHwTime / 10000000.0, *rtDsTime / 10000000.0);
 
   return S_OK;
+}
+
+void CSyncClock::AddSample(INT64 rtOriginalStart, INT64 rtAdjustedStart, INT64 rtOriginalEnd, INT64 rtAdjustedEnd)
+{
+  m_SynchCorrection.AddSample(rtOriginalStart, rtAdjustedStart, rtOriginalEnd, rtAdjustedEnd);
+}
+
+void CSyncClock::Flush()
+{
+  m_SynchCorrection.Flush();
 }
