@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
@@ -78,7 +79,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// Indicates whether the transmission complies with the second generation DVB terrestrial
     /// broadcasting standard (DVB-T2 EN 302 755).
     /// </summary>
+    [XmlIgnore]
     public bool IsDvbT2;
+
+    /// <summary>
+    /// Helper attribute for serialization only. It is not intended for direct use.
+    /// </summary>
+    [XmlElement("IsDvbT2")]
+    public string XML_IsDvbT2
+    {
+      get { return IsDvbT2.ToString(); }
+      set { bool.TryParse(value, out IsDvbT2); }
+    }
 
     /// <summary>
     /// ToString
