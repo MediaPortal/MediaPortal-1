@@ -570,28 +570,38 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="stream"></param>
     public void FadeOutStop()
     {
-      Log.Debug("BASS: FadeOutStop of stream {0}", _filePath);
+      new Thread(() =>
+                   {
+                     Log.Debug("BASS: FadeOutStop of stream {0}", _filePath);
 
-      if (!IsPlaying)
-      {
-        return;
-      }
+                     if (!IsPlaying)
+                     {
+                       return;
+                     }
 
-      double crossFadeSeconds = 0.0;
+                     double crossFadeSeconds = 0.0;
 
-      if (Config.CrossFadeIntervalMs > 0)
-      {
-        crossFadeSeconds = crossFadeSeconds / 1000.0;
-      }
+                     if (Config.CrossFadeIntervalMs > 0)
+                     {
+                       crossFadeSeconds = crossFadeSeconds / 1000.0;
+                     }
 
-      if ((TotalStreamSeconds - (StreamElapsedTime + crossFadeSeconds) > -1))
-      {
-        Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, -1, Config.CrossFadeIntervalMs);
-      }
-      else
-      {
-        Bass.BASS_ChannelStop(_stream);
-      }
+                     if ((TotalStreamSeconds - (StreamElapsedTime + crossFadeSeconds) > -1))
+                     {
+                       Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, -1,
+                                                       Config.CrossFadeIntervalMs);
+                       while (Bass.BASS_ChannelIsSliding(_stream, BASSAttribute.BASS_ATTRIB_VOL))
+                       {
+                         Thread.Sleep(20);
+                       }
+                     }
+                     else
+                     {
+                       Bass.BASS_ChannelStop(_stream);
+                     }
+                     Dispose();
+                   }
+        ).Start();
     }
 
     /// <summary>
@@ -928,6 +938,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
+      if (_disposed)
+      {
+        return;
+      }
+
       _disposed = true;
 
       Log.Debug("BASS: Disposing Music Stream {0}", _filePath);
