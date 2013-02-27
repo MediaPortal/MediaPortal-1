@@ -4,7 +4,7 @@
     <String id="0" prefix="Mina ">Program</String>
     <String id="1" prefix="Mina ">Bilder</String>
     <String id="2" prefix="Min ">Musik</String>
-    <String id="3" prefix="Mina ">Filmer</String>
+    <String id="3" prefix="Mina ">Film</String>
     <String id="4">TV-tablå</String>
     <String id="5">Inställningar</String>
     <String id="6">Etikett saknas!</String>
@@ -1097,6 +1097,7 @@
     <String id="1317">Spara undertext</String>
     <String id="1318">Spara ändrad undertext?</String>
     <String id="1319">Namn (mappar och filer)</String>
+    <String id="1320">{0} som {1} &#10;</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
     <String id="1442">Scroll-hastighet (Horisontel)</String>
