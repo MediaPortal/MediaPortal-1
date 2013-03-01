@@ -85,7 +85,7 @@
 				<width>369</width>
 				<height>1</height>
 				<texture>hiddenmenu_separator.png</texture>
-				<visible>!Control.HasFocus(50)+control.isvisible(50))</visible>
+				<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
 	    	<animation effect="fade" time="0">WindowClose</animation>
 	    	<animation effect="slide" start="-150,0" time="100">visible</animation>
 	    	<animation effect="fade" time="50">visible</animation>
@@ -188,6 +188,8 @@
 							<offsetSortButtonY>27</offsetSortButtonY>
 							<onright>50</onright>
 							<onleft>50</onleft>
+							<onup>2</onup>
+							<ondown>5</ondown>
 						</control>
 		
 						<control>
@@ -253,6 +255,7 @@
 							<onright>50</onright>
 							<onleft>50</onleft>
 			        <ondown>8</ondown>
+							<onup>6</onup>
 						</control>
 			
 	          <control>
@@ -281,7 +284,7 @@
 							<onright>50</onright>
 							<onleft>50</onleft>
 			        <onup>7</onup>				
-			        <ondown>66612</ondown>
+			        <ondown>2</ondown>
 							<hyperlink>12</hyperlink>				
 						</control>				
 				</control>

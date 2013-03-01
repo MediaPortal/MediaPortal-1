@@ -160,10 +160,10 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", false);
+        buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "extractthumbs", true);
         checkBoxCreateArtist.Checked = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         checkBoxCreateGenre.Checked = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        checkBoxUseFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
+        checkBoxUseFolderThumb.Checked = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", false);
         checkBoxAllImages.Checked = xmlreader.GetValueAsBool("musicfiles", "useAllImages",
                                                              checkBoxUseFolderThumb.Checked);
         folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
@@ -378,22 +378,22 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxUseFolderThumb
       // 
       this.checkBoxUseFolderThumb.AutoSize = true;
-      this.checkBoxUseFolderThumb.Checked = true;
-      this.checkBoxUseFolderThumb.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUseFolderThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(15, 22);
+      this.checkBoxUseFolderThumb.Location = new System.Drawing.Point(15, 68);
       this.checkBoxUseFolderThumb.Name = "checkBoxUseFolderThumb";
-      this.checkBoxUseFolderThumb.Size = new System.Drawing.Size(143, 17);
+      this.checkBoxUseFolderThumb.Size = new System.Drawing.Size(67, 17);
       this.checkBoxUseFolderThumb.TabIndex = 4;
-      this.checkBoxUseFolderThumb.Text = "folder.jpg (recommended)";
+      this.checkBoxUseFolderThumb.Text = "folder.jpg";
       this.checkBoxUseFolderThumb.UseVisualStyleBackColor = true;
       this.checkBoxUseFolderThumb.CheckedChanged += new System.EventHandler(this.checkBoxUseFolderThumb_CheckedChanged);
       // 
       // buildThumbsCheckBox
       // 
       this.buildThumbsCheckBox.AutoSize = true;
+      this.buildThumbsCheckBox.Checked = true;
+      this.buildThumbsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.buildThumbsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.buildThumbsCheckBox.Location = new System.Drawing.Point(15, 68);
+      this.buildThumbsCheckBox.Location = new System.Drawing.Point(15, 22);
       this.buildThumbsCheckBox.Name = "buildThumbsCheckBox";
       this.buildThumbsCheckBox.Size = new System.Drawing.Size(177, 17);
       this.buildThumbsCheckBox.TabIndex = 6;

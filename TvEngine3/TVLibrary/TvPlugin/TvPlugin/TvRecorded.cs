@@ -710,6 +710,7 @@ namespace TvPlugin
             i.IsFolder = !singleRecording;
             if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
             Utils.SetDefaultIcons(i);
+            i.ThumbnailImage = i.IconImageBig;
             facadeLayout.Add(i);
             
             if (string.IsNullOrEmpty(i.Label)) 	

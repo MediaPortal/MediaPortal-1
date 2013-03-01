@@ -2,6 +2,7 @@
 <window>
   <controls>
   
+	
 	<control>
 		<description>BG</description>
 		<type>image</type>
@@ -9,27 +10,52 @@
 		<width>1920</width>
 		<height>1080</height>
 		<texture>background.png</texture>
+    <shouldCache>true</shouldCache>
 	</control>
 
+	<control>
+		<description>background listview</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1920</width>
+		<height>1080</height>
+		<texture>fanart_overlay.png</texture>
+	</control>
+	
   <control>
   	<description>VIEWPORT</description>
     <type>image</type>
     <id>0</id>
 		<posX>8</posX>
-		<posY>182</posY>
+		<posY>410</posY>
     <width>1907</width>
-    <height>898</height>
-    <texture>panel_tv_guide_large.png</texture>
+    <height>670</height>
+    <texture>panel_tv_guide_11rows.png</texture>
   </control>
-		
+	
+  <control>
+ 		<description>Description BG</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>8</posX>
+		<posY>143</posY>
+    <width>1907</width>
+    <height>285</height>
+    <texture>tv_guide_description_bg_11rows.png</texture>
+		<visible>!string.equals(#TV.Guide.CompositeTitle,)</visible>
+    <animation effect="fade" time="150">visiblechange</animation>
+  </control>
+	
   <control>
   	<description>TVGUIDE Panel</description>
     <type>image</type>
     <id>2</id>
     <posX>460</posX>
-    <posY>278</posY>
-    <width>1415</width>
-    <height>800</height>
+    <posY>543</posY>
+    <width>1405</width>
+    <height>500</height>
     <colordiffuse>ffffffff</colordiffuse>
     <texture>-</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
@@ -39,7 +65,7 @@
 		<description>Single Channel Label</description>
 	  <type>label</type>
 	  <id>32</id>
-	  <posX>436</posX>
+	  <posX>-2000</posX>
 	  <posY>120</posY>
 	  <font>TitanLight16</font>
 	  <align>left</align>
@@ -51,10 +77,10 @@
 		<description>Single Channel Image</description>
 		<type>image</type>
 		<id>33</id>
-		<posX>350</posX>
+		<posX>-2000</posX>
 		<posY>117</posY>
-		<width>48</width>
-		<height>48</height>
+		<width>36</width>
+		<height>36</height>
 		<keepaspectratio>yes</keepaspectratio>
 		<zoom>no</zoom>
 		<texture>defaultTVBig.png</texture>
@@ -79,7 +105,7 @@
 		<type>label</type>
 		<id>40</id>
 		<posX>463</posX>
-    <posY>199</posY>
+    <posY>428</posY>
 		<font>TitanLight12</font>
     <textcolor>ff000000</textcolor>
 	</control>
@@ -92,7 +118,7 @@
 		<height>37</height>
 		<posX>117</posX>
 		<textYOff>1</textYOff>
-		<posY>199</posY>
+		<posY>428</posY>
 		<showrange>no</showrange>
 		<orientation>horizontal</orientation>
 		<align>center</align>
@@ -112,7 +138,7 @@
 		<width>35</width>
 		<height>37</height>
 		<posX>397</posX>
-		<posY>199</posY>
+		<posY>428</posY>
 		<showrange>no</showrange>
 		<orientation>horizontal</orientation>
 		<align>center</align>
@@ -129,9 +155,9 @@
 		<type>image</type>
 		<id>20</id>
 		<posX>128</posX>
-		<posY>278</posY>
+		<posY>492</posY>
 		<width>335</width>
-		<height>67</height>
+		<height>49</height>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
 	
@@ -140,9 +166,9 @@
 		<type>image</type>
 		<id>7</id>
 		<posX>15</posX>
-		<posY>7</posY>
-		<width>48</width>
-		<height>48</height>
+		<posY>5</posY>
+		<width>36</width>
+		<height>36</height>
 		<centered>yes</centered>
 		<zoom>no</zoom>
 		<keepaspectratio>yes</keepaspectratio>
@@ -154,10 +180,10 @@
 		<type>label</type>
 		<id>18</id>
 		<posX>75</posX>
-		<posY>14</posY>
+		<posY>8</posY>
 		<width>86</width>
 		<height>20</height>
-		<font>TitanLight12</font>
+		<font>TitanLight11</font>
 		<textcolor>FFFFFFFF</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
@@ -166,9 +192,9 @@
 		<description>Current program title</description>
 		<type>fadelabel</type>
 		<id>13</id>
-		<posX>-2000</posX>
-		<posY>201</posY>
-		<width>1395</width>
+		<posX>263</posX>
+		<posY>210</posY>
+		<width>1100</width>
 		<label>#TV.Guide.CompositeTitle</label>
 		<font>fontB16</font>
  		<textcolor>ffffff</textcolor>
@@ -180,8 +206,8 @@
 		<type>label</type>
 		<id>14</id>
 		<posX>-2000</posX>
-		<posY>254</posY>
-		<width>850</width>
+		<posY>220</posY>
+		<width>440</width>
 		<label>#TV.Guide.Time #TV.Guide.ChannelName</label>
 		<font>TitanLight12</font>
  		<textcolor>ffffff</textcolor>
@@ -189,16 +215,57 @@
 	</control>
 	
 	<control>
+		<description>Current program time</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>1405</posX>
+		<posY>220</posY>
+		<width>440</width>
+		<label>#TV.Guide.Time #TV.Guide.ChannelName</label>
+		<font>TitanLight12</font>
+ 		<textcolor>ffffff</textcolor>
+		<visible>!string.equals(#TV.Guide.Time,)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+	</control>
+	
+	<control>
 		<description>Description1</description>
 		<type>textboxscrollup</type>
 		<id>15</id>
-		<posX>-2000</posX>
-		<posY>253</posY>
-		<width>925</width>
-		<height>110</height>
-		<font>TitanLight12</font>
+		<posX>263</posX>
+		<posY>270</posY>
+		<width>1544</width>
+		<height>105</height>
+		<font>TitanLight11</font>
+    <lineSpacing>0.85</lineSpacing>
 		<label>#TV.Guide.Description</label>
  		<textcolor>ffffff</textcolor>
+    <animation effect="fade" time="250">WindowOpen</animation>
+	</control>
+	
+	<control>
+		<description>thumb bg</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>75</posX>
+		<posY>212</posY>
+		<width>150</width>
+		<height>95</height>
+		<texture>tvguide_logo_bg.png</texture>
+		<visible>!string.equals(#TV.Guide.CompositeTitle,)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+	</control>
+
+	<control>
+		<description>Playing Channel</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>116</posX>
+		<posY>225</posY>
+		<width>70</width>
+		<height>70</height>
+		<texture>#TV.Guide.thumb</texture>
+		<visible>!string.equals(#TV.Guide.CompositeTitle,)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
 	
@@ -208,9 +275,9 @@
     <visible>no</visible>
     <id>26</id>
     <label>-</label>
-    <font>TitanLight12</font>
+    <font>TitanLight11</font>
 		<posX>25</posX>
-		<posY>14</posY>
+		<posY>8</posY>
     <textcolor>FFFFFFFF</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
@@ -221,10 +288,10 @@
 		<id>24</id>
 		<visible>no</visible>
 		<label>-</label>
-		<font>TitanLight12</font>
+		<font>TitanLight11</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<posX>25</posX>
-		<posY>14</posY>
+		<posY>8</posY>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
 	
@@ -233,10 +300,10 @@
 		<type>image</type>
 		<id>25</id>
 		<posX>55</posX>
-		<posY>228</posY>
-		<height>734</height>
+		<posY>450</posY>
+		<height>605</height>
 		<colordiffuse>c0ffffff</colordiffuse>
-		<texture>tvguide_slider_large.png</texture>
+		<texture>tvguide_slider_11rows.png</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
 
@@ -280,9 +347,9 @@
 		<type>button3part</type>
 		<id>100</id>
     <posX>60</posX>
-    <posY>278</posY>
+    <posY>493</posY>
     <width>65</width>
-    <height>734</height>
+    <height>536</height>
 		<label></label>
 		<onleft>60</onleft>
 		<onright>6</onright>
@@ -302,7 +369,7 @@
 		<type>label</type>
 		<id>0</id>
     <posX>96</posX>
-    <posY>998</posY>
+    <posY>1008</posY>
 	  <valign>middle</valign>
     <label>#TV.Guide.ChangeGroup</label>
     <font>TitanLight14</font>
@@ -332,5 +399,6 @@
     <font>font10</font>
     <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
   </control>
+	
 </controls>
 </window>
