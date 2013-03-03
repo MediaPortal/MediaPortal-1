@@ -940,8 +940,9 @@ namespace MediaPortal.MusicPlayer.BASS
         _wasapiDeviceInfo = wasapiDevices[i];
         if (_wasapiDeviceInfo != null)
         {
-          // Assume 8 channels, we only know, the number of channels supported, once the device is initialised
-          _deviceOutputChannels = 8;
+          // We only know, the number of speakers supported, once the device is initialised
+          // So let's try and detect the speakers attached to the device
+          _deviceOutputChannels = GetWasApiSpeakers();
 
           Log.Info("BASS: Device Information");
           Log.Info("BASS: ---------------------------------------------");
@@ -968,6 +969,9 @@ namespace MediaPortal.MusicPlayer.BASS
       return result;
     }
 
+    /// <summary>
+    /// Detect the supported output formats for WASAPI
+    /// </summary>
     private void GetWasApiFormats()
     {
       int[] channels = { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -995,6 +999,28 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
       }
+    }
+
+    /// <summary>
+    /// WASAPI doesnj't provide a way to ask the driver on the maximum of supported speakers.
+    /// So we try to enumerate the channels and detect the attached speakers.
+    /// </summary>
+    /// <returns></returns>
+    private int GetWasApiSpeakers()
+    {
+      int channels = 0;
+      // Let's assume a maximum of 8 speakers attached to the device
+      for (int c = 1; c < 9; c++)
+      {
+        BASSWASAPIFormat format = BassWasapi.BASS_WASAPI_CheckFormat(_deviceNumber, 44100, c, BASSWASAPIInit.BASS_WASAPI_SHARED);
+
+        if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+        {
+          channels = c;
+        }
+      }
+
+      return channels;
     }
 
     /// <summary>
