@@ -72,6 +72,9 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
 
   m_Settings.AddRef();
 
+  m_hRendererStarving = CreateEvent(NULL, TRUE, FALSE, NULL);
+  m_hStopWaitingRenderer = CreateEvent(NULL, FALSE, FALSE, NULL);
+
   m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, &m_Settings);
 
   if (!m_pClock)
@@ -121,7 +124,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT* phr)
     return;
   }  
 
-  m_pPipeline->Start(0);
+  if (SUCCEEDED(m_pRenderer->SetMoreSamplesEvent(&m_hRendererStarving)))
+    m_pPipeline->Start(0);
 }
 
 CMPAudioRenderer::~CMPAudioRenderer()
@@ -129,6 +133,14 @@ CMPAudioRenderer::~CMPAudioRenderer()
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
   
   CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  m_pRenderer->SetMoreSamplesEvent(NULL);
+
+  if (m_hRendererStarving)
+    CloseHandle(m_hRendererStarving);
+
+  if (m_hStopWaitingRenderer)
+    CloseHandle(m_hStopWaitingRenderer);
 
   if (m_pVolumeHandler)
     m_pVolumeHandler->Release();
@@ -377,6 +389,12 @@ bool CMPAudioRenderer::DeliverSample(IMediaSample* pSample)
       Log("Discontinuity flag set on in the incoming sample: %6.3f", rtStart / 10000000.0);
   }
 
+  HANDLE handles[2];
+  handles[0] = m_hRendererStarving;
+  handles[1] = m_hStopWaitingRenderer;
+
+  DWORD result = WaitForMultipleObjects(2, &handles[0], FALSE, INFINITE);
+
   return  m_pPipeline->PutSample(pSample) == S_OK ? true : false;
 }
 
@@ -515,6 +533,9 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
+
   m_pPipeline->BeginStop();
   m_pPipeline->EndStop();
 
@@ -528,6 +549,9 @@ STDMETHODIMP CMPAudioRenderer::Pause()
 {
   Log("Pause");
   CAutoLock cInterfaceLock(&m_InterfaceLock);
+
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
 
   HRESULT hr = m_pPipeline->Pause();
 
@@ -565,6 +589,9 @@ HRESULT CMPAudioRenderer::EndOfStream()
 {
   Log("EndOfStream");
 
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
+
   HRESULT hr = m_pPipeline->EndOfStream();
   if (FAILED(hr))
     return hr;
@@ -578,6 +605,9 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
   if (m_State == State_Paused) 
     NotReady();
+
+  if (m_hStopWaitingRenderer)
+    SetEvent(m_hStopWaitingRenderer);
 
   SourceThreadCanWait(FALSE);
   CancelNotification();
