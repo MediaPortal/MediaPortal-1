@@ -950,6 +950,7 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Info("BASS: Type: {0}", _wasapiDeviceInfo.type.ToString());
           Log.Info("BASS: Shared Mode Channels: {0}", _wasapiDeviceInfo.mixchans);
           Log.Info("BASS: Shared Mode Samplerate: {0}", _wasapiDeviceInfo.mixfreq);
+          GetWasApiFormats();
           Log.Info("BASS: ---------------------------------------------");
 
           result = true;
@@ -965,6 +966,35 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       return result;
+    }
+
+    private void GetWasApiFormats()
+    {
+      int[] channels = { 1, 2, 3, 4, 5, 6, 7, 8 };
+      int[] sampleRates = { 22050, 32000, 44100, 48000, 88200, 96000, 192000 };
+
+      string selectedMode = "Shared";
+      BASSWASAPIInit initFlag = BASSWASAPIInit.BASS_WASAPI_SHARED;
+      if (Config.WasApiExclusiveMode)
+      {
+        selectedMode = "Exclusive";
+        initFlag = BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
+      }
+
+      Log.Info("BASS: This device supports following formats in WASAPI {0} mode:", selectedMode);
+      Log.Info(string.Format("BASS: {0,-6} {1, -2} {2}", "Rate", "Ch", "Maximum Supported"));
+      for (int sr = 0; sr < sampleRates.GetLength(0); sr++)
+      {
+        for (int c = 0; c < channels.GetLength(0); c++)
+        {
+          BASSWASAPIFormat format = BassWasapi.BASS_WASAPI_CheckFormat(_deviceNumber, sampleRates[sr], channels[c], initFlag);
+
+          if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+          {
+            Log.Info(string.Format("BASS: {0,6} {1,2} {2}", sampleRates[sr], channels[c], format));
+          }
+        }
+      }
     }
 
     /// <summary>
