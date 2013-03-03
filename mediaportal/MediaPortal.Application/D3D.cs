@@ -1153,7 +1153,9 @@ namespace MediaPortal
       else
       {
         Log.Error("D3D: Could not create device");
+        // ReSharper disable LocalizableElement
         MessageBox.Show("Direct3D device could not be created.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        // ReSharper restore LocalizableElement
         Close();
       }
     }
@@ -1707,7 +1709,9 @@ namespace MediaPortal
         handle.Close();
       }
       // suppress any errors
+      // ReSharper disable EmptyGeneralCatchClause
       catch { }
+      // ReSharper restore EmptyGeneralCatchClause
 
       _lastCursorPosition = Cursor.Position;
       ShowLastActiveModule();

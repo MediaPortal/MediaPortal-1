@@ -397,7 +397,9 @@ public class MediaPortalApp : D3D, IRender
         {
           Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch {} // no exception logging needed, since MP is now closed
+        // ReSharper restore EmptyGeneralCatchClause
         return;
       }
 
@@ -632,7 +634,9 @@ public class MediaPortalApp : D3D, IRender
               {
                 ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
               }
+              // ReSharper disable EmptyGeneralCatchClause
               catch (Exception) {}
+              // ReSharper restore EmptyGeneralCatchClause
               
               if (ctrl.Status == ServiceControllerStatus.Running)
               {
@@ -671,7 +675,9 @@ public class MediaPortalApp : D3D, IRender
             string strLine = "Please install a newer DirectX 9.0c redist!\r\n";
             strLine = strLine + "MediaPortal cannot run without DirectX 9.0c redist (August 2008)\r\n";
             strLine = strLine + "http://install.team-mediaportal.com/DirectX";
+            // ReSharper disable LocalizableElement
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // ReSharper restore LocalizableElement
             return;
           }
 
@@ -701,7 +707,9 @@ public class MediaPortalApp : D3D, IRender
           #endif
 
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch (Exception) {}
+        // ReSharper restore EmptyGeneralCatchClause
 
         Application.DoEvents(); // process message queue
         
@@ -782,7 +790,9 @@ public class MediaPortalApp : D3D, IRender
       msg       += "Do you want to open your local file now?";
       Log.Error(msg);
       
+      // ReSharper disable LocalizableElement
       DialogResult result = MessageBox.Show(msg, "MediaPortal - Update Conflict", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+      // ReSharper restore LocalizableElement
       try
       {
         if (result == DialogResult.Yes)
@@ -794,10 +804,12 @@ public class MediaPortalApp : D3D, IRender
       }
       catch (Exception)
       {
+        // ReSharper disable LocalizableElement
         MessageBox.Show(
           "Error opening file " + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
           @"\Team MediaPortal\MediaPortalDirs.xml using notepad.exe", "Error", MessageBoxButtons.OK,
           MessageBoxIcon.Error);
+        // ReSharper restore LocalizableElement
       }
     }
     Environment.Exit(0);
@@ -895,7 +907,9 @@ public class MediaPortalApp : D3D, IRender
     // temporarily set new client size for initialization purposes
     ClientSize = new Size(0, 0);
     
+    // ReSharper disable LocalizableElement
     Text = "MediaPortal";
+    // ReSharper restore LocalizableElement
     GUIGraphicsContext.form = this;
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
@@ -1014,10 +1028,9 @@ public class MediaPortalApp : D3D, IRender
         }
       }
     }
-    catch 
-    {
-      // Intentionally left blank - if stats rendering fails it is not a critical issue
-    }
+    // ReSharper disable EmptyGeneralCatchClause
+    catch {} // Intentionally left blank - if stats rendering fails it is not a critical issue
+    // ReSharper restore EmptyGeneralCatchClause
   }
 
   #endregion
@@ -1871,8 +1884,10 @@ public class MediaPortalApp : D3D, IRender
     }
     catch (Exception ex)
     {
+      // ReSharper disable LocalizableElement
       MessageBox.Show(String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", ex.Message, ex.StackTrace),
-                      "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      // ReSharper restore LocalizableElement
       Application.Exit();
     }
   }
@@ -2026,7 +2041,9 @@ public class MediaPortalApp : D3D, IRender
     }
     catch (Exception exs)
     {
+      // ReSharper disable LocalizableElement
       MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      // ReSharper restore LocalizableElement
       Close();
     }
     Utils.FileExistsInCache(Config.GetSubFolder(Config.Dir.Skin, "") + "dummy.png");
@@ -2286,8 +2303,8 @@ public class MediaPortalApp : D3D, IRender
             int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
             if ((currentScreenNr > -1) && (Manager.Adapters.Count > currentScreenNr))
             {
-              double currentRR = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
-              if (currentRR > 0 && _errorCounter > (5 * currentRR))
+              double refreshRate = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
+              if (refreshRate > 0 && _errorCounter > (5 * refreshRate))
               {
                 _errorCounter = 0; //reset counter
                 Log.Info("Main: D3DERR_INVALIDCALL - {0}", dex.ToString());
@@ -2450,7 +2467,9 @@ public class MediaPortalApp : D3D, IRender
       catch (FileNotFoundException ex)
       {
         Log.Error(ex);
+        // ReSharper disable LocalizableElement
         MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        // ReSharper restore LocalizableElement
         Close();
       }
       if (_useScreenSaver)
@@ -2700,7 +2719,7 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_REBOOT:
           // reboot
           Log.Info("Main: Reboot requested");
-          bool okToChangePowermode = (action.fAmount1 == 1);
+          bool okToChangePowermode = (Math.Abs(action.fAmount1 - 1) < float.Epsilon);
 
           if (!okToChangePowermode)
           {
@@ -3003,7 +3022,9 @@ public class MediaPortalApp : D3D, IRender
     catch (FileNotFoundException ex)
     {
       Log.Error(ex);
+      // ReSharper disable LocalizableElement
       MessageBox.Show("File not found:" + ex.FileName, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      // ReSharper restore LocalizableElement
       Close();
     }
     catch (Exception ex)
@@ -3448,13 +3469,17 @@ public class MediaPortalApp : D3D, IRender
               _usbuirtdevice.ChangeTunerChannel(message.Label);
             }
           }
+          // ReSharper disable EmptyGeneralCatchClause
           catch {}
+          // ReSharper restore EmptyGeneralCatchClause
 
           try
           {
             _winlircdevice.ChangeTunerChannel(message.Label);
           }
-          catch {}
+          // ReSharper disable EmptyGeneralCatchClause
+          catch { }
+          // ReSharper restore EmptyGeneralCatchClause
           
           try
           {
@@ -3463,7 +3488,9 @@ public class MediaPortalApp : D3D, IRender
               _redeyedevice.ChangeTunerChannel(message.Label);
             }
           }
-          catch {}
+          // ReSharper disable EmptyGeneralCatchClause
+          catch { }
+          // ReSharper restore EmptyGeneralCatchClause
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
@@ -3996,7 +4023,9 @@ public class MediaPortalApp : D3D, IRender
     {
       string errorMsg = string.Format("Your version {0} of quartz.dll has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion);
       Log.Info("Util: quartz.dll error - {0}", errorMsg);
+      // ReSharper disable LocalizableElement
       if (MessageBox.Show(errorMsg, "Core DirectShow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+      // ReSharper restore LocalizableElement
       {
         Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
       }
@@ -4089,7 +4118,9 @@ public class MediaPortalApp : D3D, IRender
       }
       doc.Save("MediaPortal.exe.config");
     }
+    // ReSharper disable EmptyGeneralCatchClause
     catch {}
+    // ReSharper restore EmptyGeneralCatchClause
     
     Thumbs.CreateFolders();
     
