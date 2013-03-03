@@ -145,6 +145,9 @@ private:
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;
+
+  HANDLE m_hRendererStarving;
+  HANDLE m_hStopWaitingRenderer;
   
   AM_MEDIA_TYPE* m_pMediaType;
 };

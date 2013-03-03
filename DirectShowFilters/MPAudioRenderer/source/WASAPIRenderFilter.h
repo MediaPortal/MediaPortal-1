@@ -48,6 +48,7 @@ public:
   REFERENCE_TIME Latency();
   void ReleaseDevice();
   REFERENCE_TIME BufferredDataDuration();
+  HRESULT SetMoreSamplesEvent(HANDLE* hEvent);
 
 protected:
   // Processing
@@ -89,6 +90,8 @@ private:
 
   void ResetClockData();
   void UpdateAudioClock();
+
+  void CheckBufferStatus();
 
   HRESULT IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx, WAVEFORMATEXTENSIBLE** pwfxAccepted);
   HRESULT CheckSample(IMediaSample* pSample, UINT32 framesToFlush);

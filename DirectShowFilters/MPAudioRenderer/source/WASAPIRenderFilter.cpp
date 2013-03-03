@@ -44,7 +44,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_nDataLeftInSample(0),
   m_llPosError(0),
   m_ullPrevQpc(0),
-  m_ullPrevPos(0)
+  m_ullPrevPos(0),
+  m_hNeedMoreSamples(NULL)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -651,7 +652,10 @@ HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
 
   if (m_filterState != State_Running)
+  {
+    CheckBufferStatus();
     Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
+  }
 
   return hr;
 }
@@ -726,8 +730,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     }
     
     m_csResources.Unlock();
+
+    CheckBufferStatus();
+
     hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
     m_csResources.Lock();
+
+    CheckBufferStatus();
 
     if (hr == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
     {
@@ -854,6 +863,9 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
             RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
           }
+
+        CheckBufferStatus();
+
         } while (bytesFilled < bufferSizeInBytes);
 
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, flags);
@@ -905,11 +917,11 @@ void CWASAPIRenderFilter::StopRenderThread()
 
 REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
 {
-  CAutoLock queueLock(&m_inputQueueLock);
-
   REFERENCE_TIME rtDuration = 0;
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
+
+  CAutoLock queueLock(&m_inputQueueLock);
 
   vector<TQueueEntry>::iterator it = m_inputQueue.begin();
   while (it != m_inputQueue.end())
@@ -926,6 +938,32 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
   }
 
   return rtDuration;
+}
+
+void CWASAPIRenderFilter::CheckBufferStatus()
+{
+  REFERENCE_TIME bufferedAmount = BufferredDataDuration();
+  if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->m_msOutbutBuffer * 10000)
+  {
+    //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+    SetEvent(*m_hNeedMoreSamples);
+  }
+  else
+  {
+    //Log("CWASAPIRenderFilter::Render - dont need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+    ResetEvent(*m_hNeedMoreSamples);
+  }
+}
+
+HRESULT CWASAPIRenderFilter::SetMoreSamplesEvent(HANDLE* hEvent)
+{
+  m_hNeedMoreSamples = hEvent;
+  
+  // Request the initial sample as soon as it is available
+  if (m_hNeedMoreSamples)
+    SetEvent(*m_hNeedMoreSamples);
+
+  return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& currentPadding, UINT32& bufferSizeInBytes, BYTE** pData)
