@@ -236,6 +236,9 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void CreateStream()
     {
+      Log.Info("BASS: ---------------------------------------------");
+      Log.Info("BASS: Creating BASS audio stream");
+
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
 
       _fileType = Utils.GetFileType(_filePath);
@@ -306,15 +309,16 @@ namespace MediaPortal.MusicPlayer.BASS
         return;
       }
 
-      Log.Info("BASS: Channel Information");
+      Log.Info("BASS: Stream Information");
       Log.Info("BASS: ---------------------------------------------");
       Log.Info("BASS: File: {0}", _filePath);
-      Log.Info("BASS: Type of Channels: {0}", _channelInfo.ctype);
+      Log.Info("BASS: Type of Stream: {0}", _channelInfo.ctype);
       Log.Info("BASS: Number of Channels: {0}", _channelInfo.chans);
-      Log.Info("BASS: Channel Frequency: {0}", _channelInfo.freq);
+      Log.Info("BASS: Stream Samplerate: {0}", _channelInfo.freq);
+      Log.Info("BASS: Stream Flags: {0}", _channelInfo.flags);
       Log.Info("BASS: ---------------------------------------------");
 
-      Log.Debug("BASS: Registering Playback Events");
+      Log.Debug("BASS: Registering stream playback events");
       RegisterPlaybackEvents();
 
       AttachDspToStream();
@@ -323,6 +327,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         SetReplayGain();
       }
+      Log.Info("BASS: Successfully created BASS audio stream");
+      Log.Info("BASS: ---------------------------------------------");
     }
 
     /// <summary>
@@ -340,11 +346,18 @@ namespace MediaPortal.MusicPlayer.BASS
       _replayGainInfo.TrackGain = ParseReplayGainTagValue(_musicTag.ReplayGainTrack);
       _replayGainInfo.TrackPeak = ParseReplayGainTagValue(_musicTag.ReplayGainTrackPeak);
 
-      Log.Info("BASS: Replay Gain Data: Track Gain={0}dB, Track Peak={1}, Album Gain={2}dB, Album Peak={3}",
+      if (_replayGainInfo.TrackGain.HasValue || _replayGainInfo.AlbumGain.HasValue)
+      {
+        Log.Info("BASS: Replay Gain Data: Track Gain={0}dB, Track Peak={1}, Album Gain={2}dB, Album Peak={3}",
             _replayGainInfo.TrackGain,
             _replayGainInfo.TrackPeak,
             _replayGainInfo.AlbumGain,
             _replayGainInfo.AlbumPeak);
+      }
+      else
+      {
+        Log.Info("BASS: No Replay Gain Information found in stream tags");
+      }
 
       float? gain = null;
 

@@ -67,6 +67,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public bool CreateMixer(MusicStream stream)
     {
+      Log.Info("BASS: ---------------------------------------------");
+      Log.Info("BASS: Creating BASS mixer stream");
+
       bool result = false;
 
       if (Config.MusicPlayer == AudioPlayer.WasApi)
@@ -87,7 +90,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // See, if we need Upmixing
       if (outputChannels > stream.ChannelInfo.chans)
       {
-        Log.Info("BASS: Found more output channels than input channels. Check for upmixing.");
+        Log.Info("BASS: Found more output channels ({0}) than input channels ({1}). Check for upmixing.", outputChannels, stream.ChannelInfo.chans);
         _mixingMatrix = CreateMixingMatrix(stream.ChannelInfo.chans);
         if (_mixingMatrix != null)
         {
@@ -101,7 +104,7 @@ namespace MediaPortal.MusicPlayer.BASS
       else if (outputChannels < stream.ChannelInfo.chans)
       {
         // Downmix to Stereo
-        Log.Info("BASS: Found more input channels than output channels. Downmix.");
+        Log.Info("BASS: Found more input channels ({0}) than output channels ({1}). Downmix.", stream.ChannelInfo.chans, outputChannels);
         outputChannels = Math.Min(outputChannels, 2);
       }
 
@@ -121,6 +124,8 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case AudioPlayer.Asio:
+
+          Log.Info("BASS: Initialising ASIO device");
 
           if (BassAsio.BASS_ASIO_IsStarted() && !BassAsio.BASS_ASIO_Stop())
           {
@@ -180,11 +185,14 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Error("BASS: Error starting Asio playback: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
           }
+          Log.Info("BASS: Finished initialising ASIO device");
           result = true;
 
           break;
 
         case AudioPlayer.WasApi:
+
+          Log.Info("BASS: Initialising WASAPI device");
 
           BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
 
@@ -239,8 +247,7 @@ namespace MediaPortal.MusicPlayer.BASS
                                       initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
-
-            Log.Info("BASS: WASAPI Device successfully initialised");
+            
             Log.Info("BASS: ---------------------------------------------");
             Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
             Log.Info("BASS: Channels: {0}", wasapiInfo.chans);
@@ -249,6 +256,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: InitFlags: {0}", wasapiInfo.initflags.ToString());
             Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
             Log.Info("BASS: ---------------------------------------------");
+            Log.Info("BASS: WASAPI Device successfully initialised");
 
             BassWasapi.BASS_WASAPI_SetVolume(BASSWASAPIVolume.BASS_WASAPI_CURVE_DB, (float)Config.StreamVolume / 100f);
             BassWasapi.BASS_WASAPI_Start();
@@ -258,10 +266,14 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Error("BASS: Couldn't init WASAPI device. Error: {0}", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
           }
-
           break;
       }
 
+      if (result)
+      {
+        Log.Info("BASS: Successfully created BASS Mixer stream");
+        Log.Info("BASS: ---------------------------------------------");
+      }
       return result;
     }
 

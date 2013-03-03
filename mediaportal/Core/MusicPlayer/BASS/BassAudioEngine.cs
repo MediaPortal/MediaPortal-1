@@ -1558,6 +1558,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             if (!_mixer.WasApiSwitchedtoShared || stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
+              Log.Info("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
               // The new stream has a different frequency or number of channels
               // We need a new mixer
               _mixer.Dispose();
