@@ -699,7 +699,9 @@ public class MediaPortalApp : D3D, IRender
               strLine       += "MediaPortal Version: " + mpVersion + "\r\n";
               strLine       += "TvPlugin    Version: " + tvPluginVersion;
               DisableSplashScreen();
+              // ReSharper disable LocalizableElement
               MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              // ReSharper restore LocalizableElement
               Log.Info(strLine);
               return;
             }
@@ -1349,7 +1351,7 @@ public class MediaPortalApp : D3D, IRender
         case WM_SYSCOMMAND:
           switch (msg.WParam.ToInt32())
           {
-            // user clocked on minimize button
+            // user clicked on minimize button
             case SC_MINIMIZE:
               Log.Debug("Main: SC_MINIMIZE");
               MinimizeToTray();
@@ -1733,9 +1735,10 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
-    // Restore minimized MP main window as soon as possible
+    // Force restore of MP main window
     if (!Windowed)
     {
+      IsVisible = false;
       RestoreFromTray();
     }
 
@@ -3221,7 +3224,7 @@ public class MediaPortalApp : D3D, IRender
   protected override void MouseMoveEvent(MouseEventArgs e)
   {
     // Disable first mouse action when mouse was hidden
-    if (!ShowMouseCursor)
+    if (!MouseCursor)
     {
       base.MouseMoveEvent(e);
     }
@@ -3264,7 +3267,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.ResetLastActivity();
 
     // Disable first mouse action when mouse was hidden
-    if (!ShowMouseCursor)
+    if (!MouseCursor)
     {
       base.MouseClickEvent(e);
     }
@@ -3294,7 +3297,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.ResetLastActivity();
 
     // Disable first mouse action when mouse was hidden
-    if (!ShowMouseCursor)
+    if (!MouseCursor)
     {
       base.MouseClickEvent(e);
     }
