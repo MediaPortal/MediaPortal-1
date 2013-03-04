@@ -72,6 +72,11 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
     pSettings->GetAvailableAudioDevices(&devices, NULL, true);
     SAFE_RELEASE(devices); // currently only log available devices
   }
+
+  // We are the end point in the pipeline so we cannot ever have passtru
+  m_bNextFormatPassthru = false; 
+
+  m_nOutBufferCount = WASAPI_OUT_BUFFER_COUNT;
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
@@ -234,7 +239,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
     // We must use incoming format so the WAVEFORMATEXTENSIBLE to WAVEFORMATEXT difference
     // that some audio drivers require is not causing an infinite loop of format changes
     SetInputFormat(pwfx);
-    SetOutputFormat(&outFormat);    
+    SetOutputFormat(&outFormat);
 
     // Reinitialize audio client
     hr = CreateAudioClient(true);
@@ -246,6 +251,36 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
 
   return hr;
+}
+
+// Buffer negotiation
+HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize)
+{
+  REFERENCE_TIME rtBufferLength = m_pSettings->m_msOutbutBuffer * 10000;
+
+  if (rtBufferLength < m_pSettings->m_hnsPeriod * 2)
+    rtBufferLength = m_pSettings->m_hnsPeriod * 2;
+
+  if (bCanModifyBufferSize)
+  {
+    UINT32 nFrames = rtBufferLength / (UNITS / pwfx->Format.nSamplesPerSec);
+    *pBufferSize = nFrames / m_nOutBufferCount * pwfx->Format.nBlockAlign;
+    *pBufferCount = m_nOutBufferCount;
+  }
+  else
+  {
+    UINT32 nFrames = *pBufferSize / pwfx->Format.nBlockAlign;
+    REFERENCE_TIME rtProposedBufferLength = nFrames * UNITS / pwfx->Format.nSamplesPerSec;
+
+    if (rtProposedBufferLength > 0)
+      *pBufferCount =  max(rtBufferLength / rtProposedBufferLength, 2) + 1;
+    else
+      *pBufferCount = 10;
+
+    m_nOutBufferCount = *pBufferCount;
+  }
+
+  return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx, WAVEFORMATEXTENSIBLE** pwfxAccepted)

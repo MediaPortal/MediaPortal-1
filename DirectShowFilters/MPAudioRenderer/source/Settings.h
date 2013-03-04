@@ -193,6 +193,7 @@ public:
   bool m_bReleaseDeviceOnStop;
   
   REFERENCE_TIME m_hnsPeriod;
+  UINT32 m_msOutbutBuffer;
 
   AUDCLNT_SHAREMODE m_WASAPIShareMode;
   
