@@ -23,6 +23,7 @@
 #include "SyncClock.h"
 
 #define CLOCK_DATA_SIZE 10
+#define WASAPI_OUT_BUFFER_COUNT 10
 
 using namespace std;
 
@@ -36,6 +37,7 @@ public:
   HRESULT Init();
   HRESULT Cleanup();
   HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
+  HRESULT NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize);
   HRESULT EndOfStream();
   HRESULT Run(REFERENCE_TIME rtStart);
   HRESULT Pause();
@@ -141,6 +143,8 @@ private:
 
   vector<DWORD> m_dwDataWaitObjects;
   vector<DWORD> m_dwSampleWaitObjects;
+
+  HANDLE* m_hNeedMoreSamples;
 
   UINT32 m_nSampleOffset;
   UINT32 m_nDataLeftInSample;

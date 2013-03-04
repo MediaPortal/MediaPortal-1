@@ -64,10 +64,6 @@ CTimeStretchFilter::~CTimeStretchFilter(void)
 //Initialization
 HRESULT CTimeStretchFilter::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
-
   m_hSampleEvents.push_back(m_hInputAvailableEvent);
   m_hSampleEvents.push_back(m_hOOBCommandAvailableEvent);
   m_hSampleEvents.push_back(m_hStopThreadEvent);
@@ -137,6 +133,8 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   {
     LogWaveFormat(pwfx, "TS   - applying ");
 
+    m_pNextSink->NegotiateBuffer(pwfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
+
     AM_MEDIA_TYPE tmp;
     HRESULT result = CreateAudioMediaType((WAVEFORMATEX*)pwfx, &tmp, true);
     if (SUCCEEDED(result))
@@ -153,6 +151,7 @@ HRESULT CTimeStretchFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, in
   else
     LogWaveFormat(pwfx, "TS   -          ");
 
+  m_bNextFormatPassthru = !m_pSettings->m_bUseTimeStretching;
   m_chOrder = *pChOrder;
 
   return S_OK;
@@ -546,7 +545,7 @@ DWORD CTimeStretchFilter::ThreadProc()
 void CTimeStretchFilter::CreateOutput(UINT32 nInFrames, UINT32 nOutFrames, double dBias, double dAdjustment, double dAVMult, bool bFlushPartialSample)
 {
   HRESULT hr = S_OK;
-  UINT32 maxBufferFrames = DEFAULT_OUT_BUFFER_SIZE / m_pOutputFormat->Format.nBlockAlign;
+  UINT32 maxBufferFrames = m_nOutBufferSize / m_pOutputFormat->Format.nBlockAlign;
   UINT32 nOutFramesTotal = 0;
 
   while (nOutFrames > 0)
@@ -589,7 +588,7 @@ void CTimeStretchFilter::OutputSample(bool bForce)
   if (m_pNextOutSample)
   {
     UINT32 sampleLen = m_pNextOutSample->GetActualDataLength();
-    if (bForce || (sampleLen + m_pOutputFormat->Format.nBlockAlign > DEFAULT_OUT_BUFFER_SIZE))
+    if (bForce || (sampleLen + m_pOutputFormat->Format.nBlockAlign > m_nOutBufferSize))
     {
       HRESULT hr = OutputNextSample();
       m_rtInSampleTime += (sampleLen * UNITS) / (m_pOutputFormat->Format.nBlockAlign * m_pOutputFormat->Format.nSamplesPerSec);
