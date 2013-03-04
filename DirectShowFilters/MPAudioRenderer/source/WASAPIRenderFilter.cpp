@@ -654,7 +654,7 @@ HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
   if (m_filterState != State_Running)
   {
     CheckBufferStatus();
-    Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
+    Log("Buffering...%6.3f ms", BufferredDataDuration() / 10000000.0);
   }
 
   return hr;
