@@ -479,6 +479,13 @@ public class MediaPortalApp : D3D, IRender
       Log.Info("Build: " + Application.ProductVersion);
       #endif
 
+      // setting minimum worker threads
+      int minWorker, minIOC;
+      ThreadPool.GetMinThreads(out minWorker, out minIOC);
+      ThreadPool.SetMinThreads(minWorker * 4, minIOC * 2);
+      ThreadPool.GetMinThreads(out minWorker, out minIOC);
+      Log.Info("Main: Minimum number of worker threads to {0}/{1}", minWorker, minIOC);
+
       // Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(false);
 
@@ -1741,9 +1748,9 @@ public class MediaPortalApp : D3D, IRender
     InputDevices.Init();
 
     // Starting plugins...
-    UpdateSplashScreenMessage(GUILocalizeStrings.Get(64));
-    PluginManager.Load();
-    PluginManager.Start();
+    //UpdateSplashScreenMessage(GUILocalizeStrings.Get(64));
+    //PluginManager.Load();
+    //PluginManager.Start();
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -2086,15 +2093,41 @@ public class MediaPortalApp : D3D, IRender
     GUIFontManager.InitializeDeviceObjects();
 
     // Loading window plugins
-    Log.Info("Startup: Loading Plugins");
+    Log.Info("Startup: Loading and Starting Plugins");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70));
     if (!string.IsNullOrEmpty(_safePluginsList))
     {
       PluginManager.LoadWhiteList(_safePluginsList);
     }
-    PluginManager.LoadWindowPlugins();
-    PluginManager.CheckExternalPlayersCompatibility();
 
+    // load window plugins in a thread
+    // ReSharper disable UnusedAnonymousMethodSignature
+    var loadWindowPlugins = new Thread(delegate()
+    // ReSharper restore UnusedAnonymousMethodSignature
+    {
+      PluginManager.LoadWindowPlugins();
+      PluginManager.CheckExternalPlayersCompatibility();
+    });
+    loadWindowPlugins.Start();
+
+    // load process plugins in a thread
+    // ReSharper disable UnusedAnonymousMethodSignature
+    var loadProcessPlugins = new Thread(delegate()
+    // ReSharper restore UnusedAnonymousMethodSignature
+    {
+      PluginManager.LoadProcessPlugins();
+      PluginManager.StartProcessPlugins();
+    });
+    loadProcessPlugins.Start();
+
+
+
+    // wait until all plugins are loaded
+    while (loadProcessPlugins.IsAlive || loadWindowPlugins.IsAlive)
+    {
+      Application.DoEvents();
+    }
+    
     // Initialize window manager
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71));
     Log.Info("Startup: Initialize Window Manager...");

@@ -233,14 +233,14 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
-    public static void Load()
+    public static void LoadProcessPlugins()
     {
       if (_nonWindowPluginsLoaded)
       {
         return;
       }
 
-      Log.Debug("PlugInManager: Load()");
+      Log.Debug("PlugInManager: LoadProcessPlugins()");
       _nonWindowPluginsLoaded = true;
       try
       {
@@ -277,13 +277,13 @@ namespace MediaPortal.GUI.Library
 
             DateTime startTime = DateTime.Now;
             TimeSpan delay = startTime - queueTime;
-            Log.Debug("PluginManager: Loading process plugin '{0}' started ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
+            Log.Debug("PluginManager: Begin Loading '{0}' ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
 
             LoadPlugin(file);
 
             DateTime endTime = DateTime.Now;
             TimeSpan runningTime = endTime - startTime;
-            Log.Debug("PluginManager: Loading process plugin '{0}' completed ({1} ms running time, )", pluginFile, runningTime.TotalMilliseconds);
+            Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
 
             // safely decrement the counter
             if (Interlocked.Decrement(ref pluginsToLoad) == 0)
@@ -325,7 +325,12 @@ namespace MediaPortal.GUI.Library
 
       // need to load windowPlugins.dll first
       string windowPluginsDLL = Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll");
-      LoadWindowPlugin(windowPluginsDLL); // need to load this first!!!
+      DateTime startTimeNonThreaded = DateTime.Now;
+      Log.Debug("PluginManager: Begin loading '\\windows\\WindowPlugins.dll' (non threaded)");
+      LoadWindowPlugin(windowPluginsDLL);
+      DateTime endTimeNonThreaded = DateTime.Now;
+      TimeSpan runningTimeNonThreaded = endTimeNonThreaded - startTimeNonThreaded;
+      Log.Debug("PluginManager: End loading '\\windows\\WindowPlugins.dll' ({0} ms running time)", runningTimeNonThreaded.TotalMilliseconds);
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
 
@@ -357,13 +362,13 @@ namespace MediaPortal.GUI.Library
 
             DateTime startTime = DateTime.Now;
             TimeSpan delay = startTime - queueTime;
-            Log.Debug("PluginManager: Loading window plugin '{0}' started ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
+            Log.Debug("PluginManager: Begin loading '{0}' ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
 
             LoadWindowPlugin(file);
 
             DateTime endTime = DateTime.Now;
             TimeSpan runningTime = endTime - startTime;
-            Log.Debug("PluginManager: Loading process plugin '{0}' completed ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
+            Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
 
             // safely decrement the counter
             if (Interlocked.Decrement(ref pluginsToLoad) == 0)
@@ -383,14 +388,14 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
-    public static void Start()
+    public static void StartProcessPlugins()
     {
       if (_started)
       {
         return;
       }
 
-      Log.Debug("PlugInManager: Start()");
+      Log.Debug("PlugInManager: StartProcessPlugins()");
 
       _incompatibilities.Save();
 
@@ -416,7 +421,7 @@ namespace MediaPortal.GUI.Library
             {
               DateTime startTime = DateTime.Now;
               TimeSpan delay = startTime - queueTime;
-              Log.Debug("PluginManager: Starting plugin '{0}' ({1} ms thread delay)", plugin.ToString(), delay.TotalMilliseconds);
+              Log.Debug("PluginManager: Begin starting '{0}' ({1} ms thread delay)", plugin.ToString(), delay.TotalMilliseconds);
 
               try
               {
@@ -424,12 +429,12 @@ namespace MediaPortal.GUI.Library
               }
               catch (Exception ex)
               {
-                Log.Error("PluginManager: Unable to start plugin: {0} exception:{1}", plugin.ToString(), ex.ToString());
+                Log.Error("PluginManager: Unable to start plugin: {0} exception: {1}", plugin.ToString(), ex.ToString());
               }
 
               DateTime endTime = DateTime.Now;
               TimeSpan runningTime = endTime - startTime;
-              Log.Debug("PluginManager: Starting process plugin '{0}' completed ({1} ms running time)", plugin.ToString(), runningTime.TotalMilliseconds);
+              Log.Debug("PluginManager: End starting '{0}' ({1} ms running time)", plugin.ToString(), runningTime.TotalMilliseconds);
             }
 
             // safely decrement the counter
