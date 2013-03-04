@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
@@ -205,7 +206,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        Log.Info("  Loading plugins whitelist:");
+        Log.Info("Loading plugins whitelist:");
         document.Load(filename);
         XmlNodeList xmlNodeList = document.SelectNodes("/whitelist/plugin");
         if (xmlNodeList != null)
@@ -229,6 +230,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static void Load()
     {
       if (_nonWindowPluginsLoaded)
@@ -236,23 +240,70 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      Log.Debug("PlugInManager: Load()");
       _nonWindowPluginsLoaded = true;
-      Log.Info("PlugInManager.Load()");
       try
       {
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
+      // ReSharper disable EmptyGeneralCatchClause
       catch (Exception) { }
+      // ReSharper restore EmptyGeneralCatchClause
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "dll");
 
-      foreach (string strFile in strFiles)
+      int pluginsToLoad = strFiles.Length;
+      using (var resetEvent = new ManualResetEvent(false))
       {
-        LoadPlugin(strFile);
+        // initialize state list
+        var states = new List<int>();
+        for (int i = 0; i < strFiles.Length; i++)
+        {
+          states.Add(i);
+        }
+
+        // load all plugins using available worker threads
+        for (int i = 0; i < strFiles.Length; i++)
+        {
+          string file = strFiles[i];
+          DateTime queueTime = DateTime.Now;
+          ThreadPool.QueueUserWorkItem(x =>
+          {
+            // get relative plugin file name
+            string removeString = Config.GetFolder(Config.Dir.Plugins);
+            int index = file.IndexOf(removeString, StringComparison.Ordinal);
+            string pluginFile = (index < 0) ? file : file.Remove(index, removeString.Length);
+
+            DateTime startTime = DateTime.Now;
+            TimeSpan delay = startTime - queueTime;
+            Log.Debug("PluginManager: Loading process plugin '{0}' started ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
+
+            LoadPlugin(file);
+
+            DateTime endTime = DateTime.Now;
+            TimeSpan runningTime = endTime - startTime;
+            Log.Debug("PluginManager: Loading process plugin '{0}' completed ({1} ms running time, )", pluginFile, runningTime.TotalMilliseconds);
+
+            // safely decrement the counter
+            if (Interlocked.Decrement(ref pluginsToLoad) == 0)
+            {
+              // ReSharper disable AccessToDisposedClosure
+              resetEvent.Set();
+              // ReSharper restore AccessToDisposedClosure
+            }
+          }, states[i]);
+        }
+
+        // wait until all worker threads are finished
+        resetEvent.WaitOne();
       }
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static void LoadWindowPlugins()
     {
       if (_windowPluginsLoaded)
@@ -260,28 +311,78 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      Log.Debug("PlugInManager: LoadWindowPlugins()");
+
       _windowPluginsLoaded = true;
-      Log.Info("  LoadWindowPlugins()");
       try
       {
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       }
+      // ReSharper disable EmptyGeneralCatchClause
       catch (Exception) { }
-      LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
+      // ReSharper restore EmptyGeneralCatchClause
+
+      // need to load windowPlugins.dll first
+      string windowPluginsDLL = Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll");
+      LoadWindowPlugin(windowPluginsDLL); // need to load this first!!!
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
 
-      foreach (string strFile in strFiles)
+      // remove windowplugins.dll from list of window plugins to be loaded
+      int pluginIndex = Array.IndexOf(strFiles, windowPluginsDLL);
+      strFiles = strFiles.Where((val, idx) => idx != pluginIndex).ToArray();
+
+      int pluginsToLoad = strFiles.Length;
+      using (var resetEvent = new ManualResetEvent(false))
       {
-        if (strFile.ToLower().IndexOf("windowplugins.dll", StringComparison.Ordinal) >= 0)
+        // initialize state list
+        var states = new List<int>();
+        for (int i = 0; i < strFiles.Length; i++)
         {
-          continue;
+          states.Add(i);
         }
-        LoadWindowPlugin(strFile);
-      }
+
+        // load all window plugins using available worker threads
+        for (int i = 0; i < strFiles.Length; i++)
+        {
+          string file = strFiles[i];
+          DateTime queueTime = DateTime.Now;
+          ThreadPool.QueueUserWorkItem(x =>
+          {
+            // get relative plugin file name
+            string removeString = Config.GetFolder(Config.Dir.Plugins);
+            int index = file.IndexOf(removeString, StringComparison.Ordinal);
+            string pluginFile = (index < 0) ? file : file.Remove(index, removeString.Length);
+
+            DateTime startTime = DateTime.Now;
+            TimeSpan delay = startTime - queueTime;
+            Log.Debug("PluginManager: Loading window plugin '{0}' started ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
+
+            LoadWindowPlugin(file);
+
+            DateTime endTime = DateTime.Now;
+            TimeSpan runningTime = endTime - startTime;
+            Log.Debug("PluginManager: Loading process plugin '{0}' completed ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
+
+            // safely decrement the counter
+            if (Interlocked.Decrement(ref pluginsToLoad) == 0)
+            {
+              // ReSharper disable AccessToDisposedClosure
+              resetEvent.Set();
+              // ReSharper restore AccessToDisposedClosure
+            }
+          }, states[i]);
+        }
+
+        // wait until all worker threads are finished
+        resetEvent.WaitOne();
+      }      
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static void Start()
     {
       if (_started)
@@ -289,23 +390,68 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      Log.Debug("PlugInManager: Start()");
+
       _incompatibilities.Save();
 
-      Log.Info("  PlugInManager.Start()");
-      foreach (IPlugin plugin in _nonGuiPlugins)
+      int pluginsToStart = _nonGuiPlugins.Count;
+      using (var resetEvent = new ManualResetEvent(false))
       {
-        try
+        // initialize state list
+        var states = new List<int>();
+        for (int i = 0; i < _nonGuiPlugins.Count; i++)
         {
-          plugin.Start();
+          states.Add(i);
         }
-        catch (Exception ex)
+
+        // load all window plugins using available worker threads
+        for (int i = 0; i < _nonGuiPlugins.Count; i++)
         {
-          Log.Error("Unable to start plugin:{0} exception:{1}", plugin.ToString(), ex.ToString());
+          var plugin = _nonGuiPlugins[i] as IPlugin;
+          DateTime queueTime = DateTime.Now;
+          ThreadPool.QueueUserWorkItem(x =>
+          {
+
+            if (plugin != null)
+            {
+              DateTime startTime = DateTime.Now;
+              TimeSpan delay = startTime - queueTime;
+              Log.Debug("PluginManager: Starting plugin '{0}' ({1} ms thread delay)", plugin.ToString(), delay.TotalMilliseconds);
+
+              try
+              {
+                plugin.Start();
+              }
+              catch (Exception ex)
+              {
+                Log.Error("PluginManager: Unable to start plugin: {0} exception:{1}", plugin.ToString(), ex.ToString());
+              }
+
+              DateTime endTime = DateTime.Now;
+              TimeSpan runningTime = endTime - startTime;
+              Log.Debug("PluginManager: Starting process plugin '{0}' completed ({1} ms running time)", plugin.ToString(), runningTime.TotalMilliseconds);
+            }
+
+            // safely decrement the counter
+            if (Interlocked.Decrement(ref pluginsToStart) == 0)
+            {
+              // ReSharper disable AccessToDisposedClosure
+              resetEvent.Set();
+              // ReSharper restore AccessToDisposedClosure
+            }
+          }, states[i]);
         }
-      }
+
+        // wait until all worker threads are finished
+        resetEvent.WaitOne();
+      }      
       _started = true;
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static void Stop()
     {
       if (!_started)
@@ -313,18 +459,22 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      Log.Info("  PlugInManager.Stop()");
+      Log.Debug("PlugInManager: Stop()");
       foreach (IPlugin plugin in _nonGuiPlugins)
       {
-        Log.Info("PluginManager: stopping {0}", plugin.ToString());
+        Log.Debug("PluginManager: Stopping plugin '{0}'", plugin.ToString());
         plugin.Stop();
       }
       _started = false;
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static void Clear()
     {
-      Log.Info("PlugInManager.Clear()");
+      Log.Debug("PlugInManager: Clear()");
       Stop();
       _nonGuiPlugins.Clear();
       WakeablePlugins.Clear();
@@ -390,6 +540,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="strFile"></param>
     private static void LoadPlugin(string strFile)
     {
       if (!IsPlugInEnabled(strFile))
@@ -397,20 +552,19 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      Log.Info("  Load plugins from : {0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  File Version : {0}", FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
+          Log.Info("PluginManager: Plugin: '{0}' / Version: {1}", strFile, FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
 
           Type[] types = assem.GetExportedTypes();
           TypeFilter myFilter2 = MyInterfaceFilter;
 
           if (types.Any(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)) && !CompatibilityManager.IsPluginCompatible(assem))
           {
-            Log.Error("PluginManager: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!", assem.FullName);
+            Log.Error("PluginManager: '{0}' is tagged as incompatible with the current MediaPortal version and won't be loaded!", assem.FullName);
             _incompatibilities.Add(assem);
           }
           else
@@ -476,7 +630,7 @@ namespace MediaPortal.GUI.Library
                       // don't activate plugins that have NO entry at all in MediaPortal.xml
                       if (!PluginEntryExists(setup.PluginName()))
                       {
-                        Log.Info("PluginManager:  {0} {1} not found in Mediaportal.xml so adding it now", setup.PluginName(), t.Assembly.ManifestModule.Name);
+                        Log.Info("PluginManager: {0} {1} not found in Mediaportal.xml so adding it now", setup.PluginName(), t.Assembly.ManifestModule.Name);
                         AddPluginEntry(setup.PluginName(), t.Assembly.ManifestModule.Name);
                         MPSettings.Instance.SetValueAsBool("home", setup.PluginName(), false);
                         MPSettings.Instance.SetValueAsBool("myplugins", setup.PluginName(), true);
@@ -536,8 +690,7 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
-          strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
+        Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
         Log.Info("PluginManager: Exception: {0}", ex);
       }
     }
@@ -549,20 +702,17 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      Log.Info("  Load plugins from : {0}", strFile);
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
         if (assem != null)
         {
-          Log.Info("  File Version : {0}", FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
+          Log.Info("PluginManager: '{0}' file version: {1}", strFile, FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
 
           Type[] types = assem.GetExportedTypes();
           if (types.Any(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(GUIWindow))) && !CompatibilityManager.IsPluginCompatible(assem))
           {
-            Log.Error(
-              "PluginManager: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!",
-              assem.FullName);
+            Log.Error("PluginManager: '{0}' is tagged as incompatible with the current MediaPortal version and won't be loaded!", assem.FullName);
             _incompatibilities.Add(assem);
           }
           else
@@ -631,13 +781,12 @@ namespace MediaPortal.GUI.Library
                       var setup = (ISetupForm)newObj;
                       if (!PluginEntryExists(setup.PluginName()))
                       {
-                        Log.Info("PluginManager:  {0} {1} not found in Mediaportal.xml so adding it now",
-                                 setup.PluginName(), t.Assembly.ManifestModule.Name);
+                        Log.Info("PluginManager: {0} {1} not found in Mediaportal.xml so adding it now", setup.PluginName(), t.Assembly.ManifestModule.Name);
                         AddPluginEntry(setup.PluginName(), t.Assembly.ManifestModule.Name);
                       }
                       if (IsPluginNameEnabled(setup.PluginName()))
                       {
-                          _setupForms.Add(setup);
+                        _setupForms.Add(setup);
                       }
                     }
                   }
@@ -680,13 +829,10 @@ namespace MediaPortal.GUI.Library
       catch (BadImageFormatException) { }
       catch (Exception ex)
       {
-        Log.Info(
-          "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
-          strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
+        Log.Info("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\", StringComparison.Ordinal) + 1));
         Log.Info("PluginManager: Exception: {0}", ex);
       }
     }
-
 
 
     public static bool IsPlugInEnabled(string strDllname)
