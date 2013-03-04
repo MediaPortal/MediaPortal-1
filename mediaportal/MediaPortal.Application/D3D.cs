@@ -139,16 +139,15 @@ namespace MediaPortal
     #endregion
 
     #region private attributes
-
     private readonly Control           _renderTarget;             // render target object
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
     private readonly D3DEnumeration    _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
-    private readonly bool              _showCursorWhenFullscreen; // should the mouse cursor be shown in fullscreen?
+    private readonly bool              _showCursorWhenFullscreen; // should the mouse cursor be shown in full screen?
     private bool                       _miniTvMode;               // 
     private bool                       _isClosing;                //
-    private bool                       _lastMouseCursor;      // holds the last mouse cursor state to keep state balance
+    private bool                       _lastMouseCursor;          // holds the last mouse cursor state to keep state balance
     private bool                       _lostFocus;                // set to true if form lost focus
     private bool                       _needReset;                // set to true when the D3D device needs a reset
     private bool                       _wasPlayingVideo;          //
@@ -157,7 +156,7 @@ namespace MediaPortal
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
     private string                     _currentFile;              //
-    private Rectangle                  _oldClientRectangle;                // last size of the MP window
+    private Rectangle                  _oldClientRectangle;       // last size of the MP window
     private IContainer                 _components;               //
     private MainMenu                   _menuStripMain;            // menu
     private MenuItem                   _menuItemFile;             // sub menu
@@ -181,6 +180,8 @@ namespace MediaPortal
     private Win32API.MSG               _msgApi;                   //
     private GraphicsAdapterInfo        _adapterInfo;              //
     private Point                      _lastCursorPosition;       // track cursor position of last move move event
+
+    private static readonly Stopwatch ClockWatch = new Stopwatch();
     
     #endregion
 
@@ -1770,7 +1771,9 @@ namespace MediaPortal
       {
         OnProcess();
         FrameMove();
+        StartFrameClock();
         FullRender();
+        WaitForFrameClock();
 
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
@@ -1779,6 +1782,48 @@ namespace MediaPortal
       } while (!Win32API.PeekMessage(ref _msgApi, IntPtr.Zero, 0, 0, 0));
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static void StartFrameClock()
+    {
+      ClockWatch.Reset();
+      ClockWatch.Start();
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static void WaitForFrameClock()
+    {
+      // sleep as long as there are ticks left for this frame
+      ClockWatch.Stop();
+      long timeElapsed = ClockWatch.ElapsedTicks;
+
+      if (timeElapsed >= GUIGraphicsContext.DesiredFrameTime)
+      {
+        return;
+      }
+
+      long milliSecondsLeft = (GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000 / Stopwatch.Frequency;
+      DoSleep((int)milliSecondsLeft);
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sleepTime"></param>
+    private static void DoSleep(int sleepTime)
+    {
+      if (sleepTime <= 0)
+      {
+        sleepTime = 1;
+      }
+      Thread.Sleep(sleepTime);
+    }
 
     /// <summary>
     /// 
