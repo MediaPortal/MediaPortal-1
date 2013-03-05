@@ -224,7 +224,7 @@ STDMETHODIMP CMPAudioRenderer::GetState(DWORD dwMSecs, FILTER_STATE* State)
 {
   CheckPointer(State, E_POINTER);
 
-  if ((m_pRenderer->BufferredDataDuration() <= (m_Settings.m_msOutbutBuffer * 10000)) &&
+  if ((m_pRenderer->BufferredDataDuration() <= (m_Settings.m_msOutputBuffer * 10000)) &&
      (GetCurrentTimestamp() - m_lastSampleArrivalTime < SAMPLE_RECEIVE_TIMEOUT)) 
   {
     NotifyEvent(EC_STARVATION, 0, 0);

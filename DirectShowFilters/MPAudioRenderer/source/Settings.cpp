@@ -112,7 +112,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lQuality_SEEKWINDOW_MS(28),
   m_lQuality_OVERLAP_MS(28),
   m_hnsPeriod(devicePeriodData),
-  m_msOutbutBuffer(outputBufferSizeData),
+  m_msOutputBuffer(outputBufferSizeData),
   m_AC3bitrate(DEFAULT_AC3_BITRATE),
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
@@ -330,7 +330,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     }
 
     m_hnsPeriod = devicePeriodData;
-    m_msOutbutBuffer = outputBufferSizeData;
+    m_msOutputBuffer = outputBufferSizeData;
 
     if (forceChannelMixingData > 0)
       m_bForceChannelMixing = true;
@@ -449,7 +449,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   maxBiasData = m_dMaxBias * 10000;
   minBiasData = m_dMinBias * 10000;
   audioDelayData = m_lAudioDelay;
-  outputBufferSizeData = m_msOutbutBuffer;
+  outputBufferSizeData = m_msOutputBuffer;
   logSampleTimesData = m_bLogSampleTimes ? 1 : 0;
   logDebugData = m_bLogDebug ? 1: 0;
   HWBasedRefClockData = m_bHWBasedRefClock ? 1 : 0;

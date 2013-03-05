@@ -257,7 +257,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
 // Buffer negotiation
 HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize)
 {
-  REFERENCE_TIME rtBufferLength = m_pSettings->m_msOutbutBuffer * 10000;
+  REFERENCE_TIME rtBufferLength = m_pSettings->m_msOutputBuffer * 10000;
 
   if (rtBufferLength < m_pSettings->m_hnsPeriod * 2)
     rtBufferLength = m_pSettings->m_hnsPeriod * 2;
@@ -943,7 +943,7 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
 void CWASAPIRenderFilter::CheckBufferStatus()
 {
   REFERENCE_TIME bufferedAmount = BufferredDataDuration();
-  if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->m_msOutbutBuffer * 10000)
+  if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->m_msOutputBuffer * 10000)
   {
     //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
     SetEvent(*m_hNeedMoreSamples);
