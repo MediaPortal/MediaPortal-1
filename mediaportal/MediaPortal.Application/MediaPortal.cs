@@ -1742,15 +1742,22 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
+    // Force restore of MP main window as soon as possible
+    if (!Windowed)
+    {
+      IsVisible = false;
+      RestoreFromTray();
+    }
+
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
     InputDevices.Init();
 
     // Starting plugins...
-    //UpdateSplashScreenMessage(GUILocalizeStrings.Get(64));
-    //PluginManager.Load();
-    //PluginManager.Start();
+    UpdateSplashScreenMessage(GUILocalizeStrings.Get(64));
+    PluginManager.LoadProcessPlugins();
+    PluginManager.StartProcessPlugins();
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -1774,13 +1781,6 @@ public class MediaPortalApp : D3D, IRender
       GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
-
-      // Force restore of MP main window
-      if (!Windowed)
-      {
-        IsVisible = false;
-        RestoreFromTray();
-      }
 
       // stop splash screen thread
       if (SplashScreen != null)
@@ -2099,34 +2099,8 @@ public class MediaPortalApp : D3D, IRender
     {
       PluginManager.LoadWhiteList(_safePluginsList);
     }
-
-    // load window plugins in a thread
-    // ReSharper disable UnusedAnonymousMethodSignature
-    var loadWindowPlugins = new Thread(delegate()
-    // ReSharper restore UnusedAnonymousMethodSignature
-    {
-      PluginManager.LoadWindowPlugins();
-      PluginManager.CheckExternalPlayersCompatibility();
-    });
-    loadWindowPlugins.Start();
-
-    // load process plugins in a thread
-    // ReSharper disable UnusedAnonymousMethodSignature
-    var loadProcessPlugins = new Thread(delegate()
-    // ReSharper restore UnusedAnonymousMethodSignature
-    {
-      PluginManager.LoadProcessPlugins();
-      PluginManager.StartProcessPlugins();
-    });
-    loadProcessPlugins.Start();
-
-
-
-    // wait until all plugins are loaded
-    while (loadProcessPlugins.IsAlive || loadWindowPlugins.IsAlive)
-    {
-      Application.DoEvents();
-    }
+    PluginManager.LoadWindowPlugins();
+    PluginManager.CheckExternalPlayersCompatibility();
     
     // Initialize window manager
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71));
