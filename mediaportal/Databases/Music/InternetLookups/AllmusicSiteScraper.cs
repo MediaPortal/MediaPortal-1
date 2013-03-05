@@ -65,11 +65,11 @@ namespace MediaPortal.Music.Database
       }
 
       var matches = ArtistURLRegEx.Matches(artistSearchHtml);
-      var strCleanArtist = EncodeString(CleanArtist(strArtist));
+      var strCleanArtist = CleanArtist(strArtist);
 
       //TODO needs image url in regexp
       artists.AddRange(from Match m in matches
-                       let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString()))
+                       let strCleanMatch = CleanArtist(m.Groups["artist"].ToString())
                        let strYearsActive = m.Groups["years"].ToString().Trim()
                        let strArtistUrl = m.Groups["artistURL"].ToString()
                        let strGenre = m.Groups["genres"].ToString()
@@ -82,7 +82,7 @@ namespace MediaPortal.Music.Database
         // still possible that search returned values but none match our artist
         // try again but this time do not include years active
         artists.AddRange(from Match m in matches 
-                         let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString())) 
+                         let strCleanMatch = CleanArtist(m.Groups["artist"].ToString()) 
                          let strYearsActive = m.Groups["years"].ToString().Trim() 
                          let strArtistUrl = m.Groups["artistURL"].ToString() 
                          let strGenre = m.Groups["genres"].ToString()
@@ -133,7 +133,7 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      strAlbum = strAlbum.ToLower();
+      strAlbum = EncodeString(strAlbum);
 
       // build up a list of possible alternatives
 
@@ -154,22 +154,23 @@ namespace MediaPortal.Music.Database
       {
         var strFoundValue = m.Groups["albumName"].ToString().ToLower();
         strFoundValue = System.Web.HttpUtility.HtmlDecode(strFoundValue);
+        strFoundValue = EncodeString(strFoundValue);
         var strFoundPunctuation = PunctuationRegex.Replace(strFoundValue, "");
         var strFoundAnd = strFoundValue.Replace("&", "and").Replace("+", "and");
 
-        if (strFoundValue == strAlbum.ToLower())
+        if (strFoundValue == strAlbum)
         {
           albumFound = true;
         }
-        else if (strFoundValue == strStripStackEnding.ToLower())
+        else if (strFoundValue == strStripStackEnding)
         {
           albumFound = true;
         }
-        else if (strFoundValue == strAlbumRemoveBrackets.ToLower())
+        else if (strFoundValue == strAlbumRemoveBrackets)
         {
           albumFound = true;
         }
-        else if (strFoundPunctuation == strRemovePunctuation.ToLower())
+        else if (strFoundPunctuation == strRemovePunctuation)
         {
           albumFound = true;
         }
@@ -208,9 +209,8 @@ namespace MediaPortal.Music.Database
     }
 
     /// <summary>
-    /// Improve changes of matching artist by replacing & and + with "and"
-    /// on both side of comparison
-    /// Also remove "The"
+    /// Improve changes of matching artist by replacing & and + with "and" on both side of comparison
+    /// Also remove "The" and normalise output to remove accents and finally html decode
     /// </summary>
     /// <param name="strArtist">artist we are searching for</param>
     /// <returns>Cleaned artist string</returns>
@@ -220,7 +220,8 @@ namespace MediaPortal.Music.Database
       strCleanArtist = strCleanArtist.Replace("&", "and");
       strCleanArtist = strCleanArtist.Replace("+", "and");
       strCleanArtist = Regex.Replace(strCleanArtist, "^the ", "", RegexOptions.IgnoreCase);
-      return strCleanArtist;
+      strCleanArtist = System.Web.HttpUtility.HtmlDecode(strCleanArtist);
+      return EncodeString(strCleanArtist);
     }
 
     #endregion
