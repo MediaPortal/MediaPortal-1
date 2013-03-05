@@ -35,6 +35,9 @@ unsigned int speakerConfigs[7]              = {4, 3, 51, 263, 63, 1551, 1599};
 LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 
 #define DEFAULT_AC3_BITRATE 448000
+#define DEFAULT_OUTPUT_BUFFER 500
+#define MAX_OUTPUT_BUFFER 5000
+#define MIN_OUTPUT_BUFFER 100
 
 // Registry setting names
 LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
@@ -129,7 +132,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v1.1.3");
+  Log("MP Audio Renderer - v1.1.4");
 
   LoadSettingsFromRegistry();
 }
@@ -330,7 +333,32 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     }
 
     m_hnsPeriod = devicePeriodData;
-    m_msOutputBuffer = outputBufferSizeData;
+    
+    if (devicePeriodData == 0 || devicePeriodData == 1)
+    {
+      m_msOutputBuffer = DEFAULT_OUTPUT_BUFFER;
+      Log("   devicePeriodData: %d - using default (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+    }
+    else
+    {
+      if ((outputBufferSizeData * 10000) < (devicePeriodData * 2))
+      {
+        m_msOutputBuffer = max((devicePeriodData / 10000) * 2, MIN_OUTPUT_BUFFER);
+        Log("   too small output buffer - devicePeriodData: %d - using (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData > MAX_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MAX_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData < MIN_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MIN_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else
+        m_msOutputBuffer = outputBufferSizeData;
+    }
 
     if (forceChannelMixingData > 0)
       m_bForceChannelMixing = true;
@@ -1000,6 +1028,16 @@ int AudioRendererSettings::GetAudioDelay()
 void AudioRendererSettings::SetAudioDelay(int setting)
 {
   m_lAudioDelay = setting;
+}
+
+int AudioRendererSettings::GetOutputBuffer()
+{
+  return m_msOutputBuffer;
+}
+
+void AudioRendererSettings::SetOutputBuffer(int setting)
+{
+  m_msOutputBuffer = setting;
 }
 
 int AudioRendererSettings::GetSampleRate()
