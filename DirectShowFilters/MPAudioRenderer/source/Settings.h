@@ -74,6 +74,9 @@ interface IMPARSettings : public IUnknown
   virtual int GetAudioDelay() = 0;
   virtual void SetAudioDelay(int setting) = 0;
 
+  virtual int GetOutputBuffer() = 0;
+  virtual void SetOutputBuffer(int setting) = 0;
+
   virtual int GetSampleRate() = 0;
   virtual void SetSampleRate(int setting) = 0;
 
@@ -139,6 +142,9 @@ public:
 
   int GetAudioDelay();
   void SetAudioDelay(int setting);
+
+  int GetOutputBuffer();
+  void SetOutputBuffer(int setting);
 
   int GetSampleRate();
   void SetSampleRate(int setting);
