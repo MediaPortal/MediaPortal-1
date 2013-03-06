@@ -2078,7 +2078,6 @@ public class MediaPortalApp : D3D, IRender
       LastRect.bottom = Size.Height;
       LastRect.right  = Size.Width;
       Location = new Point(0, 0);
-      UpdatePresentParams(Windowed, true);
     }
     else
     {
@@ -2093,7 +2092,7 @@ public class MediaPortalApp : D3D, IRender
     GUIFontManager.InitializeDeviceObjects();
 
     // Loading window plugins
-    Log.Info("Startup: Loading and Starting Plugins");
+    Log.Info("Startup: Loading and Starting Window Plugins");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70));
     if (!string.IsNullOrEmpty(_safePluginsList))
     {
@@ -2204,6 +2203,9 @@ public class MediaPortalApp : D3D, IRender
       Log.Info("Main: Resetting DX9 device");
 
       int activeWin = GUIWindowManager.ActiveWindow;
+      Log.Debug("TEST: " + activeWin);
+      Log.Debug("TEST: " + GUIWindowManager.HasPreviousWindow());
+
       if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow())
       {
         if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
@@ -2211,6 +2213,7 @@ public class MediaPortalApp : D3D, IRender
           activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
         }
       }
+      Log.Debug("TEST: " + activeWin);
 
       if (GUIGraphicsContext.DX9ExRealDeviceLost)
       {
@@ -2222,11 +2225,10 @@ public class MediaPortalApp : D3D, IRender
         activeWin = GUIWindowManager.GetPreviousActiveWindow();
         GUIWindowManager.ShowPreviousWindow();
       }
+      Log.Debug("TEST: " + activeWin);
 
       // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
       GUIWindowManager.UnRoute();
-      Log.Info("Main: UnRoute - done");
-
       GUIWindowManager.Dispose();
       GUIFontManager.Dispose();
       GUITextureManager.Dispose();
@@ -2236,6 +2238,8 @@ public class MediaPortalApp : D3D, IRender
       GUITextureManager.Init();
       GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
+
+      Log.Debug("TEST: " + activeWin);
 
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -3202,6 +3206,22 @@ public class MediaPortalApp : D3D, IRender
 
   #region mouse event handlers
   
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="location"></param>
+  /// <returns></returns>
+  private Point ScaleCursorPosition(Point location)
+  {
+    var point = new Point
+    {
+      X = (int)Math.Round(location.X * (float)GUIGraphicsContext.Width / ClientSize.Width),
+      Y = (int)Math.Round(location.Y * (float)GUIGraphicsContext.Height / ClientSize.Height)
+    };
+    return point;
+  }
+
   /// <summary>
   /// 
   /// </summary>
@@ -3210,13 +3230,15 @@ public class MediaPortalApp : D3D, IRender
   {
     if (e.Delta > 0)
     {
-      var action = new Action(Action.ActionType.ACTION_MOVE_UP, e.X, e.Y) {MouseButton = e.Button};
+      Point p = ScaleCursorPosition(e.Location);
+      var action = new Action(Action.ActionType.ACTION_MOVE_UP, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity(); 
       GUIGraphicsContext.OnAction(action);
     }
     else if (e.Delta < 0)
     {
-      var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, e.X, e.Y) {MouseButton = e.Button};
+      Point p = ScaleCursorPosition(e.Location);
+      var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity();
       GUIGraphicsContext.OnAction(action);
     }
@@ -3249,10 +3271,10 @@ public class MediaPortalApp : D3D, IRender
           }
         }
         _lastCursorPosition = Cursor.Position;
-
         if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow) != null)
         {
-          var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y) {MouseButton = e.Button};
+          Point p = ScaleCursorPosition(e.Location);
+          var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y) {MouseButton = e.Button};
           GUIGraphicsContext.OnAction(action);
         }
       }
@@ -3281,11 +3303,12 @@ public class MediaPortalApp : D3D, IRender
     else
     {
       _lastCursorPosition = Cursor.Position;
+      Point p = ScaleCursorPosition(e.Location);
 
-      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
+      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y);
       GUIGraphicsContext.OnAction(actionMove);
 
-      var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+      var action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, p.X, p.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
       if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
         Utils.PlaySound(action.SoundFileName, false, true);
@@ -3313,8 +3336,9 @@ public class MediaPortalApp : D3D, IRender
       Action action;
       bool mouseButtonRightClick = false;
       _lastCursorPosition = Cursor.Position;
+      Point p = ScaleCursorPosition(e.Location);
 
-      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, e.X, e.Y);
+      var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y);
       GUIGraphicsContext.OnAction(actionMove);
 
       if (e.Button == MouseButtons.Left)
@@ -3335,7 +3359,7 @@ public class MediaPortalApp : D3D, IRender
         }
         else
         {
-          action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+          action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, p.X, p.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
           if (action.SoundFileName.Length > 0 && !g_Player.Playing)
           {
             Utils.PlaySound(action.SoundFileName, false, true);
@@ -3353,7 +3377,7 @@ public class MediaPortalApp : D3D, IRender
             (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_SLIDESHOW))
         {
           // Get context menu
-          action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, e.X, e.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
+          action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, p.X, p.Y) {MouseButton = e.Button, SoundFileName = "click.wav"};
           if (action.SoundFileName.Length > 0 && !g_Player.Playing)
           {
             Utils.PlaySound(action.SoundFileName, false, true);
@@ -3414,7 +3438,8 @@ public class MediaPortalApp : D3D, IRender
     if (_mouseClickFired)
     {
       _mouseClickFired = false;
-      var action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, e.X, e.Y) {MouseButton = _lastMouseClickEvent.Button, SoundFileName = "click.wav"};
+      Point p = ScaleCursorPosition(e.Location);
+      var action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, p.X, p.Y) {MouseButton = _lastMouseClickEvent.Button, SoundFileName = "click.wav"};
       if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
         Utils.PlaySound(action.SoundFileName, false, true);
