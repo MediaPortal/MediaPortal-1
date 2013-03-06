@@ -400,64 +400,6 @@ namespace MediaPortal
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="windowed"> </param>
-    /// <param name="force"> </param>
-    protected void UpdatePresentParams(bool windowed, bool force)
-    {
-      if (((_useExclusiveDirectXMode && !UseEnhancedVideoRenderer) || GUIGraphicsContext.IsDirectX9ExUsed()) && (windowed != Windowed || force)) 
-      {
-        // Force player to stop so as not to crash during device reset
-        if (GUIGraphicsContext.Vmr9Active)
-        {
-          Log.Info("D3D: Vmr9Active - Stopping media");
-          g_Player.Stop();
-        }
-
-        GUIGraphicsContext.DX9Device.DeviceLost  -= OnDeviceLost;
-        GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
-
-        BuildPresentParams(windowed);
-
-        Update();
-
-        try
-        {
-          GUIGraphicsContext.DX9Device.Reset(_presentParams);
-          if (GUIGraphicsContext.IsDirectX9ExUsed() && !UseEnhancedVideoRenderer)
-          {
-            GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-            GUIFontManager.InitializeDeviceObjects();
-          }
-
-          Log.Info(windowed
-                  ? "D3D: Updating presentation parameters for windowed mode successful"
-                  : "D3D: Updating presentation parameters for fullscreen mode successful");
-        }
-        catch (Exception ex)
-        {
-          Log.Error(windowed
-                     ? "D3D: Updating presentation parameters for windowed mode failed - {0}"
-                     : "D3D: Updating presentation parameters for fullscreen mode failed - {0}", ex.ToString());
-        }
-
-        OnDeviceReset(null, null);
-
-        GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
-        GUIGraphicsContext.DX9Device.DeviceLost  += OnDeviceLost;
-
-        if (windowed)
-        {
-          TopMost = _alwaysOnTop;
-        }
-        
-        Activate();
-      }
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
     protected void ToggleFullscreen()
     {
       Log.Info("D3D: Fullscreen / windowed mode toggled");
