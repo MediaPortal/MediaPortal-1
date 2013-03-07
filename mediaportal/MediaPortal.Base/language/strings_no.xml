@@ -2197,7 +2197,6 @@
     <String id="300094">Forsinkelse i sekunder før ny start</String>
     <String id="300095">Slå av monitor (når skjermen tømmes)</String>
     <String id="300096">Slå monitor/tv på (gjennoptakelse fra ventemodus)</String>
-    <String id="300098">Workaround for å fikse MediaPortal hvis den stopper opp ved gjennoptakelse</String>
     <String id="300099">Start MediaPortal på nytt ved gjennopptakelse</String>
     <String id="300100">Vis siste aktive modul etter oppvåkning</String>
     <String id="300101">Bruk skjerm velgeren til å velge skjerm MediaPortal skal startes på</String>

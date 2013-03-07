@@ -94,14 +94,12 @@ namespace MediaPortal.Configuration.Sections
                                             // 7 Turn off monitor when blanking screen	    
                                             new string[] {"general", "turnmonitoronafterresume", "true"},
                                             // 8 Turn monitor/tv on when resuming from standby
-                                            new string[] {"general", "enables3trick", "false"},
-                                            // 9 Apply workaround to fix MP freezing on resume on some systems
                                             new string[] {"general", "restartonresume", "false"},
-                                            // 10 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+                                            // 9 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
                                             new string[] {"general", "showlastactivemodule", "false"},
-                                            // 11 Show last active module when starting / resuming from standby
+                                            // 10 Show last active module when starting / resuming from standby
                                             new string[] {"screenselector", "usescreenselector", "false"}
-                                            // 12 Use screen selector to choose where to start MP
+                                            // 11 Use screen selector to choose where to start MP
                                           };
 
     /// <summary> 

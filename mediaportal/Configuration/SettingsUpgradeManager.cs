@@ -85,6 +85,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
       RemoveEntry(settings, "gui", "autosize");
       RemoveEntry(settings, "debug", "useS3Hack");
+      RemoveEntry(settings, "general", "enables3trick");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");

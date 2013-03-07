@@ -55,7 +55,6 @@ namespace MediaPortal.GUI.Settings
 
     [SkinControl(17)]protected GUICheckButton cmTurnoffmonitor = null;
     [SkinControl(18)]protected GUICheckButton cmTurnmonitoronafterresume = null;
-    [SkinControl(19)]protected GUICheckButton cmEnables3trick = null;
     [SkinControl(21)]protected GUICheckButton cmRestartonresume = null;
     [SkinControl(22)]protected GUICheckButton cmShowlastactivemodule = null;
     [SkinControl(23)]protected GUICheckButton cmUsescreenselector = null;
@@ -88,7 +87,6 @@ namespace MediaPortal.GUI.Settings
         // Resume settings
         cmTurnoffmonitor.Selected = xmlreader.GetValueAsBool("general", "turnoffmonitor", false);
         cmTurnmonitoronafterresume.Selected = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-        cmEnables3trick.Selected = xmlreader.GetValueAsBool("general", "enables3trick", false);
         cmRestartonresume.Selected = xmlreader.GetValueAsBool("general", "restartonresume", false);
         cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         cmUsescreenselector.Selected = xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
@@ -133,7 +131,6 @@ namespace MediaPortal.GUI.Settings
       {
         xmlwriter.SetValueAsBool("general", "turnoffmonitor", cmTurnoffmonitor.Selected);
         xmlwriter.SetValueAsBool("general", "turnmonitoronafterresume", cmTurnmonitoronafterresume.Selected);
-        xmlwriter.SetValueAsBool("general", "enables3trick", cmEnables3trick.Selected);
         xmlwriter.SetValueAsBool("general", "restartonresume", cmRestartonresume.Selected);
         xmlwriter.SetValueAsBool("general", "showlastactivemodule", cmShowlastactivemodule.Selected);
         xmlwriter.SetValueAsBool("screenselector", "usescreenselector", cmUsescreenselector.Selected);
@@ -191,10 +188,6 @@ namespace MediaPortal.GUI.Settings
         SettingsChanged(true);
       }
       if (control == cmTurnmonitoronafterresume)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmEnables3trick)
       {
         SettingsChanged(true);
       }

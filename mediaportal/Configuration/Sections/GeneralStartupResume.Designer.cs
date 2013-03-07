@@ -180,7 +180,6 @@
             "Minimize to tray on GUI exit",
             "Turn off monitor when blanking screen",
             "Turn monitor / tv on when resuming from standby",
-            "Apply workaround to fix MediaPortal freezing on resume on some systems",
             "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
             "Show last active module when starting / resuming from standby",
             "Use screen selector to choose on which screen MP should start"});

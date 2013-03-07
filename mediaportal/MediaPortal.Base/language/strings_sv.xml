@@ -2205,7 +2205,6 @@
     <String id="300094">Fördröjning före omstart</String>
     <String id="300095">Stäng av skärm (vid viloläge)</String>
     <String id="300096">Starta monitor/TV efter viloläge</String>
-    <String id="300098">Snabbfix om MediaPortal fryses efter viloläge</String>
     <String id="300099">Starta om MediaPortal efter vila</String>
     <String id="300100">Aktivera senast valda modul efter vila</String>
     <String id="300101">Använd skärmväljare för att välja startskärm om flera finns</String>
