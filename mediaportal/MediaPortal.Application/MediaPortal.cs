@@ -4059,9 +4059,6 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    // TODO: remove XP S3 registry hack, this is a system setting MP shouldn't touch
-    EnableS3Trick();
-
     GUIWindowManager.OnNewAction += OnAction;
     GUIWindowManager.Receivers   += OnMessage;
     GUIWindowManager.Callbacks   += MPProcess;
@@ -4158,59 +4155,5 @@ public class MediaPortalApp : D3D, IRender
     }
 
     GUIGraphicsContext.ResetLastActivity();
-  }
-
-
-  /// <summary>
-  /// Enables the S3 system power state for legacy XP systems. Instead of S3 a S1 state will be used.
-  /// See: http://support.microsoft.com/kb/841858/en-us 
-  /// if this option is enabled in the configuration.
-  /// </summary>
-  // TODO: remove method
-  private static void EnableS3Trick()
-  {
-    try
-    {
-      using (RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services", true))
-      {
-        if (services != null)
-        {
-          RegistryKey usb = services.OpenSubKey("usb", true) ?? services.CreateSubKey("usb");
-          if  (usb != null)
-          {
-            // Delete the USBBIOSHACKS value if it is still there.
-            if (usb.GetValue("USBBIOSHacks") != null)
-            {
-              usb.DeleteValue("USBBIOSHacks");
-            }
-
-            // Check the general.enables3trick configuration option and create/delete the USBBIOSx value accordingly
-            using (Settings xmlreader = new MPSettings())
-            {
-              bool enableS3Trick = xmlreader.GetValueAsBool("general", "enables3trick", false);
-              if (enableS3Trick)
-              {
-                usb.SetValue("USBBIOSx", 0);
-              }
-              else
-              {
-                if (usb.GetValue("USBBIOSx") != null)
-                {
-                  usb.DeleteValue("USBBIOSx");
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    catch (SecurityException)
-    {
-      Log.Info("Not enough permissions to enable/disable the S3 standby trick");
-    }
-    catch (UnauthorizedAccessException)
-    {
-      Log.Info("No write permissions to enable/disable the S3 standby trick");
-    }
   }
 }
