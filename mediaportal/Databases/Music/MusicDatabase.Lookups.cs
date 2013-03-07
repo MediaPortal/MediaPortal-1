@@ -211,6 +211,31 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
+
+    public void GetSongsBySQL(string aSQL, out List<Song> aSongs)
+    {
+      aSongs = new List<Song>();
+      try
+      {
+        SQLiteResultSet results = DirectExecute(aSQL);
+        Song song = null;
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          song = new Song();
+          SQLiteResultSet.Row fields = results.Rows[i];
+          int columnIndex = 0;
+          AssignAllSongFieldsFromResultSet(ref song, results, i);
+        }
+        aSongs.Add(song);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
     public void GetSongsByFilter(string aSQL, out List<Song> aSongs, string filter)
     {
       Log.Debug("MusicDatabase: GetSongsByFilter - SQL: {0}, Filter: {1}", aSQL, filter);

@@ -811,7 +811,7 @@ namespace MediaPortal.LastFM
                                                                   DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
       {
         List<Song> trackListing;
-        MusicDatabase.Instance.GetSongsByFilter(strSQL, out trackListing, "tracks");
+        MusicDatabase.Instance.GetSongsBySQL(strSQL, out trackListing);
 
         dbTrackListing.AddRange(trackListing);
       }
