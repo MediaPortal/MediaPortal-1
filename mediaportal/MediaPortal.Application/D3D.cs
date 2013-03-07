@@ -124,7 +124,7 @@ namespace MediaPortal
     protected bool           FirstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
     protected bool           AutoHideMouse;            // Should the mouse cursor be hidden automatically?
     protected bool           AppActive;                // set to true while MP is active     
-    protected bool           MouseCursor;          // holds the current mouse cursor state
+    protected bool           MouseCursor;              // holds the current mouse cursor state
     protected bool           Windowed;                 // are we in windowed mode?
     protected bool           AutoHideTaskbar;          // Should the Task Bar be hidden?
     protected bool           IsVisible;                // set to true if form is not minimized to tray
@@ -201,7 +201,7 @@ namespace MediaPortal
       MinimizeOnGuiExit         = false;
       ShuttingDown              = false;
       AutoHideMouse             = false;
-      MouseCursor           = true;
+      MouseCursor               = true;
       Windowed                  = true;
       Volume                    = -1;
       AppActive                 = false;
@@ -214,7 +214,7 @@ namespace MediaPortal
       MouseTimeOutTimer         = DateTime.Now;
       _lastActiveWindow         = -1;
       IsVisible                 = true;
-      _lastMouseCursor      = !MouseCursor;
+      _lastMouseCursor          = !MouseCursor;
       _showCursorWhenFullscreen = false;
       _currentPlayListType      = PlayListType.PLAYLIST_NONE;
       _enumerationSettings      = new D3DEnumeration();

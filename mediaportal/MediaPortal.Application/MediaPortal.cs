@@ -90,7 +90,7 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _showLastActiveModule;
   private readonly bool         _allowMinOOB;
   private readonly bool         _allowMaxOOB;
-  private bool                   _playingState;
+  private bool                  _playingState;
   private bool                  _showStats;
   private bool                  _showStatsPrevious;
   private bool                  _restoreTopMost;
@@ -2203,9 +2203,6 @@ public class MediaPortalApp : D3D, IRender
       Log.Info("Main: Resetting DX9 device");
 
       int activeWin = GUIWindowManager.ActiveWindow;
-      Log.Debug("TEST: " + activeWin);
-      Log.Debug("TEST: " + GUIWindowManager.HasPreviousWindow());
-
       if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow())
       {
         if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
@@ -2213,7 +2210,6 @@ public class MediaPortalApp : D3D, IRender
           activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
         }
       }
-      Log.Debug("TEST: " + activeWin);
 
       if (GUIGraphicsContext.DX9ExRealDeviceLost)
       {
@@ -2225,7 +2221,6 @@ public class MediaPortalApp : D3D, IRender
         activeWin = GUIWindowManager.GetPreviousActiveWindow();
         GUIWindowManager.ShowPreviousWindow();
       }
-      Log.Debug("TEST: " + activeWin);
 
       // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
       GUIWindowManager.UnRoute();
@@ -2238,8 +2233,6 @@ public class MediaPortalApp : D3D, IRender
       GUITextureManager.Init();
       GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
-
-      Log.Debug("TEST: " + activeWin);
 
       if (GUIGraphicsContext.DX9Device != null)
       {
