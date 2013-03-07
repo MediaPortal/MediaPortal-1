@@ -2198,7 +2198,6 @@
     <String id="300094">Délai d'attente avant redémarrage (en seconde(s))</String>
     <String id="300095">Extinction du moniteur (avec l'économiseur d'écran)</String>
     <String id="300096">Allumer moniteur/TV (Lors d'une sortie de mise en veille)</String>
-    <String id="300097">Permettre la mise en veille S3 (même si le réveil des dispositifs sont présents)</String>
     <String id="300098">Solution pour fixer le blocage de MediaPortal lors d'une sortie de veille</String>
     <String id="300099">Redémarrez MediaPortal lors d'une sortie de veille</String>
     <String id="300100">Afficher le dernier module actif sur de réveil</String>

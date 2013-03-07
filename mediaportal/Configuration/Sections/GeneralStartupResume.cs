@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -95,15 +95,13 @@ namespace MediaPortal.Configuration.Sections
                                             new string[] {"general", "turnmonitoronafterresume", "true"},
                                             // 8 Turn monitor/tv on when resuming from standby
                                             new string[] {"general", "enables3trick", "false"},
-                                            // 9 Allow S3 standby although wake up devices are present
-                                            new string[] {"debug", "useS3Hack", "false"},
-                                            // 10 Apply workaround to fix MP freezing on resume on some systems
+                                            // 9 Apply workaround to fix MP freezing on resume on some systems
                                             new string[] {"general", "restartonresume", "false"},
-                                            // 11 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+                                            // 10 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
                                             new string[] {"general", "showlastactivemodule", "false"},
-                                            // 12 Show last active module when starting / resuming from standby
+                                            // 11 Show last active module when starting / resuming from standby
                                             new string[] {"screenselector", "usescreenselector", "false"}
-                                            // 14 Use screen selector to choose where to start MP
+                                            // 12 Use screen selector to choose where to start MP
                                           };
 
     /// <summary> 
@@ -211,16 +209,6 @@ namespace MediaPortal.Configuration.Sections
             subkey.DeleteValue("MediaPortal", false);
           }
         }
-
-        //Int32 iValue = 1;
-        //if (settingsCheckedListBox.GetItemChecked(13)) // disable ballon tips
-        //{
-        //  iValue = 0;
-        //}
-        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
-        //{
-        //  subkey.SetValue("EnableBalloonTips", iValue);
-        //}
 
         if (settingsCheckedListBox.GetItemChecked(2)) // always on top
         {

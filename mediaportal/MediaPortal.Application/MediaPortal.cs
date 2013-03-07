@@ -1089,21 +1089,7 @@ public class MediaPortalApp : D3D, IRender
 
             // When resuming from hibernation, the OS always assume that a user is present. This is by design of Windows.
             case PBT_APMRESUMEAUTOMATIC:
-              bool useS3Hack;
-              using (Settings xmlreader = new MPSettings())
-              {
-                useS3Hack = xmlreader.GetValueAsBool("debug", "useS3Hack", false);
-              }
-            
-              if (useS3Hack)
-              {
-                Log.Info("Main: Resuming operation (useS3Hack enabled)");
-                OnResume();
-              }
-              else
-              {
-                Log.Info("Main: Automatic Resume - doing nothing");
-              }
+              OnResume(); // no special handling of automatic resume yet
               break;
 
             case PBT_APMRESUMECRITICAL:

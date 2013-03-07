@@ -2198,7 +2198,6 @@
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
     <String id="300096">Turn monitor/tv on (resume from standby)</String>
-    <String id="300097">Allow S3 standby (even if wake up devices are present)</String>
     <String id="300098">Workaround to fix MediaPortal freeze on resume</String>
     <String id="300099">Restart MediaPortal on resume</String>
     <String id="300100">Show last active module on wake up</String>

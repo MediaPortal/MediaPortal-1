@@ -46,13 +46,6 @@
         <width>637</width>
       </control>
       <control>
-        <description>S3 standby</description>
-        <type>checkbutton</type>
-        <id>19</id>
-        <label>300097</label>
-        <width>637</width>
-      </control>
-      <control>
         <description>Workaround ifx</description>
         <type>checkbutton</type>
         <id>20</id>

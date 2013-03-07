@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2013 Team MediaPortal
+
+// Copyright (C) 2005-2013 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Xml.Linq;
 using MediaPortal.Profile;
@@ -14,7 +34,7 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Singleton
     /// </summary>
-    private static SettingsUpgradeManager _instance = new SettingsUpgradeManager();
+    private static readonly SettingsUpgradeManager UpgradeManagerInstance = new SettingsUpgradeManager();
 
     #endregion
 
@@ -25,7 +45,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     internal static SettingsUpgradeManager Instance
     {
-      get { return _instance; }
+      get { return UpgradeManagerInstance; }
     }
 
     #endregion
@@ -64,6 +84,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
       RemoveEntry(settings, "gui", "autosize");
+      RemoveEntry(settings, "debug", "useS3Hack");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");
@@ -107,8 +128,8 @@ namespace MediaPortal.Configuration
       }
 
       // Delete beta Blue4/Blue4Wide and outdated Blue3/Blue3Wide folders
-      string[] skins3_4 = { "Blue3", "Blue3Wide", "Blue4", "Blue4Wide" };
-      foreach (string skin in skins3_4)
+      string[] skins34 = { "Blue3", "Blue3Wide", "Blue4", "Blue4Wide" };
+      foreach (string skin in skins34)
       {
         if (Directory.Exists(skinbase + skin))
         {
@@ -216,7 +237,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to remove entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to remove entry " + section + "/" + entry + "\r\n\r\n" + ex);
       }
     }
 
@@ -243,7 +264,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to move entry " + entry + " from section " + fromSection + "->" + toSection + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to move entry " + entry + " from section " + fromSection + "->" + toSection + "\r\n\r\n" + ex);
       }
     }
 
@@ -253,8 +274,8 @@ namespace MediaPortal.Configuration
     /// <param name="settings"></param>
     /// <param name="section"></param>
     /// <param name="entry"></param>
-    /// <param name="fromValue"></param>
-    /// <param name="toValue"></param>
+    /// <param name="fromDefaultValue"></param>
+    /// <param name="toDefaultValue"></param>
     private void UpdateEntryDefaultValue(ISettingsProvider settings, string section, string entry, object fromDefaultValue, object toDefaultValue)
     {
 
@@ -272,7 +293,7 @@ namespace MediaPortal.Configuration
       }
       catch (Exception ex)
       {
-        Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
+        Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex);
       }
     }
 
@@ -283,9 +304,9 @@ namespace MediaPortal.Configuration
     /// <param name="skin"></param>
     private void ZipDirectory(string skinbase, string skin)
     {
-      string _zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
-      Archiver archiver = new Archiver();
-      archiver.AddDirectory(skinbase + skin, _zipFile, true);
+      string zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
+      var archiver = new Archiver();
+      archiver.AddDirectory(skinbase + skin, zipFile, true);
     }
 
     #endregion
