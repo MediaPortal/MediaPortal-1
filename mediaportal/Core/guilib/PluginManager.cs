@@ -253,50 +253,21 @@ namespace MediaPortal.GUI.Library
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "dll");
 
-      int pluginsToLoad = strFiles.Length;
-      using (var resetEvent = new ManualResetEvent(false))
+      foreach (string strFile in strFiles)
       {
-        // initialize state list
-        var states = new List<int>();
-        for (int i = 0; i < strFiles.Length; i++)
-        {
-          states.Add(i);
-        }
+        // get relative plugin file name
+        string removeString = Config.GetFolder(Config.Dir.Plugins);
+        int index = strFile.IndexOf(removeString, StringComparison.Ordinal);
+        string pluginFile = (index < 0) ? strFile : strFile.Remove(index, removeString.Length);
 
-        // load all plugins using available worker threads
-        for (int i = 0; i < strFiles.Length; i++)
-        {
-          string file = strFiles[i];
-          DateTime queueTime = DateTime.Now;
-          ThreadPool.QueueUserWorkItem(x =>
-          {
-            // get relative plugin file name
-            string removeString = Config.GetFolder(Config.Dir.Plugins);
-            int index = file.IndexOf(removeString, StringComparison.Ordinal);
-            string pluginFile = (index < 0) ? file : file.Remove(index, removeString.Length);
+        DateTime startTime = DateTime.Now;
+        Log.Debug("PluginManager: Begin Loading '{0}'", pluginFile);
 
-            DateTime startTime = DateTime.Now;
-            TimeSpan delay = startTime - queueTime;
-            Log.Debug("PluginManager: Begin Loading '{0}' ({1} ms thread delay)", pluginFile, delay.TotalMilliseconds);
+        LoadPlugin(strFile);
 
-            LoadPlugin(file);
-
-            DateTime endTime = DateTime.Now;
-            TimeSpan runningTime = endTime - startTime;
-            Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
-
-            // safely decrement the counter
-            if (Interlocked.Decrement(ref pluginsToLoad) == 0)
-            {
-              // ReSharper disable AccessToDisposedClosure
-              resetEvent.Set();
-              // ReSharper restore AccessToDisposedClosure
-            }
-          }, states[i]);
-        }
-
-        // wait until all worker threads are finished
-        resetEvent.WaitOne();
+        DateTime endTime = DateTime.Now;
+        TimeSpan runningTime = endTime - startTime;
+        Log.Debug("PluginManager: End loading '{0}' ({1} ms running time)", pluginFile, runningTime.TotalMilliseconds);
       }
     }
 
@@ -399,59 +370,26 @@ namespace MediaPortal.GUI.Library
 
       _incompatibilities.Save();
 
-      int pluginsToStart = _nonGuiPlugins.Count;
-      using (var resetEvent = new ManualResetEvent(false))
+      foreach (IPlugin plugin in _nonGuiPlugins)
       {
-        // initialize state list
-        var states = new List<int>();
-        for (int i = 0; i < _nonGuiPlugins.Count; i++)
+        DateTime startTime = DateTime.Now;
+        Log.Debug("PluginManager: Begin starting '{0}'", plugin.ToString());
+
+        try
         {
-          states.Add(i);
+          plugin.Start();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PluginManager: Unable to start plugin: {0} exception: {1}", plugin.ToString(), ex.ToString());
         }
 
-        // load all window plugins using available worker threads
-        for (int i = 0; i < _nonGuiPlugins.Count; i++)
-        {
-          var plugin = _nonGuiPlugins[i] as IPlugin;
-          DateTime queueTime = DateTime.Now;
-          ThreadPool.QueueUserWorkItem(x =>
-          {
-
-            if (plugin != null)
-            {
-              DateTime startTime = DateTime.Now;
-              TimeSpan delay = startTime - queueTime;
-              Log.Debug("PluginManager: Begin starting '{0}' ({1} ms thread delay)", plugin.ToString(), delay.TotalMilliseconds);
-
-              try
-              {
-                plugin.Start();
-              }
-              catch (Exception ex)
-              {
-                Log.Error("PluginManager: Unable to start plugin: {0} exception: {1}", plugin.ToString(), ex.ToString());
-              }
-
-              DateTime endTime = DateTime.Now;
-              TimeSpan runningTime = endTime - startTime;
-              Log.Debug("PluginManager: End starting '{0}' ({1} ms running time)", plugin.ToString(), runningTime.TotalMilliseconds);
-            }
-
-            // safely decrement the counter
-            if (Interlocked.Decrement(ref pluginsToStart) == 0)
-            {
-              // ReSharper disable AccessToDisposedClosure
-              resetEvent.Set();
-              // ReSharper restore AccessToDisposedClosure
-            }
-          }, states[i]);
-        }
-
-        // wait until all worker threads are finished
-        resetEvent.WaitOne();
-      }      
-      _started = true;
-    }
+        DateTime endTime = DateTime.Now;
+        TimeSpan runningTime = endTime - startTime;
+        Log.Debug("PluginManager: End starting '{0}' ({1} ms running time)", plugin.ToString(), runningTime.TotalMilliseconds);
+     }
+     _started = true;
+   }
 
 
     /// <summary>
