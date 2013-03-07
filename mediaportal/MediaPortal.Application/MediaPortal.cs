@@ -482,7 +482,7 @@ public class MediaPortalApp : D3D, IRender
       // setting minimum worker threads
       int minWorker, minIOC;
       ThreadPool.GetMinThreads(out minWorker, out minIOC);
-      ThreadPool.SetMinThreads(minWorker * 4, minIOC * 2);
+      ThreadPool.SetMinThreads(minWorker * 2, minIOC * 1);
       ThreadPool.GetMinThreads(out minWorker, out minIOC);
       Log.Info("Main: Minimum number of worker threads to {0}/{1}", minWorker, minIOC);
 
