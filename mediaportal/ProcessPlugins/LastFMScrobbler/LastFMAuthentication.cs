@@ -33,6 +33,19 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
     private void btnSubmit_Click(object sender, EventArgs e)
     {
+      Submit();
+    }
+
+    private void txtPassword_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (e.KeyChar == (char) Keys.Return)
+      {
+        Submit();
+      }
+    }
+
+    private void Submit()
+    {
       var userName = txtUserName.Text;
       var password = txtPassword.Text;
 
@@ -50,7 +63,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
 
       this.Close();
-
     }
   }
 }
