@@ -1,71 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <Grabber>
- <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Info availableDays="1" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
-    <Channel id="3 24" siteId="3_24" />
-    <Channel id="40 Latino TV" siteId="40_Latino_TV" />
-    <Channel id="8 Madrid" siteId="8madrid" />
-    <Channel id="8 TV" siteId="8tv" />
-    <Channel id="A3 Neox" siteId="A3_Neox" />
-    <Channel id="A3 NOVA" siteId="A3_Nova" />
-    <Channel id="AprendeIngles TV" siteId="AprendeIngles_TV" />
-    <Channel id="Aragon Television" siteId="Aragon_Television" />
-    <Channel id="Antena 3" siteId="Antena_3" />
-    <Channel id="AXN" siteId="AXN" />
-    <Channel id="Barcelona TV" siteId="Barcelona_TV" />
-    <Channel id="Canal 24" siteId="Canal_24h" />
-    <Channel id="Canal 300" siteId="Canal_300" />
-    <Channel id="Canal 9" siteId="Canal_9" />
-    <Channel id="Canal Vasco" siteId="Canal_Vasco" />
-    <Channel id="Canal Sur" siteId="Canal_Sur" />
-    <Channel id="Canal Sur 2" siteId="Canal_Sur_2" />
-    <Channel id="Canal Extremadura" siteId="Canal_Extremadura" />
-    <Channel id="Clan TVE" siteId="Clan_TV" />
-    <Channel id="CMT" siteId="CMT" />
-    <Channel id="CNN+" siteId="CNN+" />
-    <Channel id="Cuatro" siteId="Cuatro" />
-    <Channel id="Disney Channel" siteId="Disney_Channel" />
-    <Channel id="Estil 9" siteId="Estil_9" />
-    <Channel id="ETB1" siteId="ETB1" />
-    <Channel id="ETB2" siteId="ETB2" />
-    <Channel id="ETB SAT" siteId="ETB-Sat" />
-    <Channel id="FDF" siteId="FDF" />
-    <Channel id="Galicia TV America" siteId="Galicia_TV_America" />
-    <Channel id="GolTV" siteId="GolTV" />
-    <Channel id="IB 3" siteId="IB3" />
-    <Channel id="Intereconomia TV" siteId="Intereconomia_TV" />
-    <Channel id="K3 33" siteId="K3_33" />
-    <Channel id="La 2" siteId="La_2" />
-    <Channel id="La Sexta" siteId="La_Sexta" />
-    <Channel id="La 7" siteId="La_Siete" />
-    <Channel id="La 10" siteId="La_10" />
-    <Channel id="La Otra" siteId="La_Otra" />
-    <Channel id="Libertad Digital TV" siteId="Libertad_Digital_TV" />
-    <Channel id="PopularTV" siteId="Popular_TV" />
-    <Channel id="Punt 2" siteId="Punt_2" />
-    <Channel id="Telecinco" siteId="Telecinco" />
-    <Channel id="Teledeporte" siteId="Teledeporte" />
-    <Channel id="Telemadrid" siteId="Telemadrid" />
-    <Channel id="TVG" siteId="TVG" />
-    <Channel id="TV Canaria" siteId="TV_Canaria" />
-    <Channel id="TVC" siteId="TVC" />
-    <Channel id="T5SPORT@telecinco.es" siteId="Tele_5_Sport" />
-    <Channel id="TV 3" siteId="TV3" />
-    <Channel id="TVE1" siteId="TVE1" />
-    <Channel id="Veo7" siteId="Veo7" />
+    <Channel id="13 TV" siteId="13_TV.html" />
+    <Channel id="3 24" siteId="3_24.html" />
+    <Channel id="3xl" siteId="3xl.html" />
+    <Channel id="7RM" siteId="7RM.html" />
+    <Channel id="8madrid" siteId="8madrid.html" />
+    <Channel id="8tv" siteId="8tv.html" />
+    <Channel id="A3 Neox" siteId="A3_Neox.html" />
+    <Channel id="A3 Nova" siteId="A3_Nova.html" />
+    <Channel id="Antena 3" siteId="Antena_3.html" />
+    <Channel id="AprendeIngles TV" siteId="AprendeIngles_TV.html" />
+    <Channel id="Aragon Television" siteId="Aragon_Television.html" />
+    <Channel id="AXN" siteId="AXN.html" />
+    <Channel id="Barcelona TV" siteId="Barcelona_TV.html" />
+    <Channel id="Boing" siteId="Boing.html" />
+    <Channel id="Canal 24h" siteId="Canal_24h.html" />
+    <Channel id="Canal 9" siteId="Canal_9.html" />
+    <Channel id="Canal Extremadura" siteId="Canal_Extremadura.html" />
+    <Channel id="Canal Super3" siteId="Canal_Super3.html" />
+    <Channel id="Canal Sur" siteId="Canal_Sur.html" />
+    <Channel id="Canal Vasco" siteId="Canal_Vasco.html" />
+    <Channel id="Clan TV" siteId="Clan_TV.html" />
+    <Channel id="CMT" siteId="CMT.html" />
+    <Channel id="Cuatro" siteId="Cuatro.html" />
+    <Channel id="cyl7" siteId="cyl7.html" />
+    <Channel id="cyl8" siteId="cyl8.html" />
+    <Channel id="Discovery Max" siteId="Discovery_Max.html" />
+    <Channel id="Disney Channel" siteId="Disney_Channel.html" />
+    <Channel id="Divinity" siteId="Divinity.html" />
+    <Channel id="Energy" siteId="Energy.html" />
+    <Channel id="Esport3" siteId="Esport3.html" />
+    <Channel id="Estil 9" siteId="Estil_9.html" />
+    <Channel id="ETB1" siteId="ETB1.html" />
+    <Channel id="ETB2" siteId="ETB2.html" />
+    <Channel id="ETB3" siteId="ETB3.html" />
+    <Channel id="FDF" siteId="FDF.html" />
+    <Channel id="Galicia TV America" siteId="Galicia_TV_America.html" />
+    <Channel id="GolTV" siteId="GolTV.html" />
+    <Channel id="IB3" siteId="IB3.html" />
+    <Channel id="Intereconomia TV" siteId="Intereconomia_TV.html" />
+    <Channel id="K3 33" siteId="K3_33.html" />
+    <Channel id="La 2" siteId="La_2.html" />
+    <Channel id="La Otra" siteId="La_Otra.html" />
+    <Channel id="La Sexta 3" siteId="La_Sexta_3.html" />
+    <Channel id="La Sexta" siteId="La_Sexta.html" />
+    <Channel id="La Siete" siteId="La_Siete.html" />
+    <Channel id="Libertad Digital TV" siteId="Libertad_Digital_TV.html" />
+    <Channel id="Lleida TV" siteId="Lleida_TV.html" />
+    <Channel id="Marca TV" siteId="Marca_TV.html" />
+    <Channel id="MTV" siteId="MTV.html" />
+    <Channel id="Nitro" siteId="Nitro.html" />
+    <Channel id="Noudos" siteId="Noudos.html" />
+    <Channel id="Paramount Channel" siteId="Paramount_Channel.html" />
+    <Channel id="Telecinco" siteId="Telecinco.html" />
+    <Channel id="Teledeporte" siteId="Teledeporte.html" />
+    <Channel id="Telemadrid" siteId="Telemadrid.html" />
+    <Channel id="TPA a7" siteId="TPA_a7.html" />
+    <Channel id="TV Canaria" siteId="TV_Canaria.html" />
+    <Channel id="TV3" siteId="TV3.html" />
+    <Channel id="TVC" siteId="TVC.html" />
+    <Channel id="TVE1" siteId="TVE1.html" />
+    <Channel id="TVG 2" siteId="TVG_2.html" />
+    <Channel id="TVG" siteId="TVG.html" />
+    <Channel id="TVR" siteId="TVR.html" />
+    <Channel id="V Television" siteId="V_Television.html" />
+    <Channel id="xplora" siteId="xplora.html" />
   </Channels>
-
   <Listing type="Html">
     <Site url="http://www.programacion-tdt.com/[ID].html" post="" external="false" encoding="" />
       <Html>
          <Template name="default" start="Parrilla hoy en" end="Web oficial de la cadena">
             <SectionTemplate tags="T">
                <TemplateText>
-                  &lt;tr&gt;
-	          &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	          &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
-	          &lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;/tr&gt;
                </TemplateText>
 	    </SectionTemplate>
          </Template>

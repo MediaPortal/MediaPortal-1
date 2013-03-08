@@ -29,7 +29,7 @@
 			<![CDATA[http://www.imdb.com/title/]]>
 		</string>
 		<string><!--1-->
-			<![CDATA[id="img_primary">.*?src='/rg/title-overview/primary/images.*?href="(?<defaultPic>.*?)"]]>
+			<![CDATA[(?<defaultPic>/media/rm[^/]*/tt\d{7})]]>
 		</string>
 		<string><!--2-->
 			<![CDATA[http://www.imdb.com]]>
@@ -65,7 +65,7 @@
 			<![CDATA[Writer[s]?:\s*</h4>[^<]*(?<writers_block>.*?)</div>]]>
 		</string>
 		<string><!--4-->
-			<![CDATA[/writer-\d/.*?/name/(?<imdbWriterId>nm\d{7})/"[\s]+>(?<writer>.*?)</a>\s+<span>(?<wrole>[(].*?[)])</span>|/writer-\d/.*?/name/(?<imdbWriterId>nm\d{7})/"[\s]+>(?<writer>.*?)</a>]]>
+			<![CDATA[href="/name/(?<imdbWriterId>nm\d{7})/[^>]*>(?<writer>[^<]+)</a>[^(]*(?<wrole>[^)]*\))|href="/name/(?<imdbWriterId>nm\d{7})/[^>]*>(?<writer>[^<]+)</a>(?<wrole>)]]>
 		</string>
 		<string><!--5-->
 			<![CDATA[<table class="cast">.*?</table>|<table class="cast_list">.*?</table>]]>

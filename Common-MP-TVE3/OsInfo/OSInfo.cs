@@ -589,7 +589,7 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 2, 9200, NT_WORKSTATION, 0))
       { // Windows 8 RTM
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
       }
       if (IsServer())
       { // any server OS

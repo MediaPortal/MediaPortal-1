@@ -7,11 +7,11 @@
       <type>image</type>
       <id>0</id>
       <posX>290</posX>
-      <posY>604</posY>
+      <posY>654</posY>
       <width>747</width>
       <height>71</height>
       <visible>!string.equals(topbar.visible,)+control.isvisible(10)|control.isvisible(11)|control.isvisible(12)</visible>
-      <texture>osd_mask3.png</texture>
+      <texture></texture>
       <colordiffuse>99ffffff</colordiffuse>
     </control>
     <control>
@@ -19,10 +19,10 @@
       <type>label</type>
       <id>10</id>
       <posX>0</posX>
-      <posY>639</posY>
+      <posY>665</posY>
       <width>1280</width>
       <label>-</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>center</align>
       <textcolor>ivory</textcolor>
       <visible>no</visible>
@@ -32,10 +32,10 @@
       <type>label</type>
       <id>11</id>
       <posX>0</posX>
-      <posY>639</posY>
+      <posY>665</posY>
       <width>1280</width>
       <label>-</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>center</align>
       <textcolor>ivory</textcolor>
       <visible>no</visible>
@@ -45,10 +45,10 @@
       <type>fadelabel</type>
       <id>12</id>
       <posX>0</posX>
-      <posY>639</posY>
+      <posY>665</posY>
       <width>1280</width>
       <label>-</label>
-      <font>font16</font>
+      <font>font14</font>
       <align>center</align>
       <textcolor>ivory</textcolor>
       <visible>no</visible>
