@@ -43,6 +43,9 @@ namespace MediaPortal.GUI.LastFMRadio
     protected static TempFileCollection tfc;
     private static PlayListPlayer _playlistPlayer;
 
+    private string _lastArtist;
+    private string _lastTag;
+
     #region ISetupForm Members
 
     // Returns the name of the plugin which is shown in the plugin menu
@@ -153,9 +156,20 @@ namespace MediaPortal.GUI.LastFMRadio
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+
+      _lastArtist = Profile.MPSettings.Instance.GetValueAsString("last.fm.Radio", "lastArtist", "");
+      _lastTag = Profile.MPSettings.Instance.GetValueAsString("last.fm.Radio", "lastTag", "");
+
       PlaylistControl.CurrentLayout = Layout.List;
       PlaylistControl.Clear();
       LoadPlaylist();
+    }
+
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      Profile.MPSettings.Instance.SetValue("last.fm.Radio", "lastArtist", _lastArtist);
+      Profile.MPSettings.Instance.SetValue("last.fm.Radio", "lastTag", _lastTag);
+      base.OnPageDestroy(new_windowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -174,22 +188,32 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       if (controlId == (int)SkinControls.ARTIST_BUTTON)
       {
-        string strArtist = GetInputFromUser("Select Artist");
+        string strArtist = GetInputFromUser(_lastArtist);
         if(!string.IsNullOrEmpty(strArtist))
         {
+          _lastArtist = strArtist;
           TuneToStation("lastfm://artist/" + strArtist +"/similarartists"); 
         }
       }
       if (controlId == (int)SkinControls.TAG_BUTTON)
       {
-        string strTag = GetInputFromUser("Select Tag");
+        string strTag = GetInputFromUser(_lastTag);
         if (!string.IsNullOrEmpty(strTag))
         {
+          _lastTag = strTag;
           TuneToStation("lastfm://globaltags/" + strTag);
         }
       }
       if (controlId == (int)SkinControls.PLAYLIST_CONTROL)
       {
+        if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
+        {
+          Log.Error("Last.fm Radio Playlist Control.  OnClicked called ????!!!!????");
+          Log.Error("=================================");
+          Log.Error(System.Environment.StackTrace);
+          Log.Error("=================================");
+          return;
+        }
         _playlistPlayer.Play(PlaylistControl.SelectedListItemIndex);
       }
 
@@ -418,10 +442,7 @@ namespace MediaPortal.GUI.LastFMRadio
       keyboard.IsSearchKeyboard = false;
       keyboard.Text = searchterm;
       keyboard.DoModal(GetID);
-      if (keyboard.IsConfirmed)
-      {
-        searchterm = keyboard.Text;
-      }
+      searchterm = keyboard.IsConfirmed ? keyboard.Text : string.Empty;
       return searchterm;
     }
 
@@ -490,7 +511,7 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       string strFileName = pItem.Path;
 
-      _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, strFileName);
+     _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, strFileName);
 
       LoadPlaylist();
 
@@ -507,7 +528,7 @@ namespace MediaPortal.GUI.LastFMRadio
     /// <param name="strTrackImgURL">The URL of the image for track</param>
     /// <param name="tmpThumbName">Full path to file to download image to</param>
     /// <param name="item">GUIListItem to which this thumb relates</param>
-    private static void ImageDownloadDoWork(string strTrackImgURL, string tmpThumbName, GUIListItem item)
+    private void ImageDownloadDoWork(string strTrackImgURL, string tmpThumbName, GUIListItem item)
     {
       Util.Utils.DownLoadImage(strTrackImgURL, tmpThumbName);
       tfc.AddFile(tmpThumbName, false);
@@ -520,7 +541,7 @@ namespace MediaPortal.GUI.LastFMRadio
     /// </summary>
     /// <param name="item">Item to update</param>
     /// <param name="strThumbFile">Thumb file to use</param>
-    private static void UpdateListItemImage(GUIListItem item, string strThumbFile)
+    private void UpdateListItemImage(GUIListItem item, string strThumbFile)
     {
       if (item == null) return;
 
@@ -528,6 +549,11 @@ namespace MediaPortal.GUI.LastFMRadio
       if (item.Path == pli.FileName)
       {
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumbFile);
+      }
+
+      if (GUIWindowManager.ActiveWindow == GetID && PlaylistControl.SelectedListItem != null && item == PlaylistControl.SelectedListItem)
+      {
+        GUIPropertyManager.SetProperty("#selectedthumb", strThumbFile);
       }
 
       item.ThumbnailImage = strThumbFile;
