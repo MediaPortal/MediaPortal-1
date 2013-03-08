@@ -214,6 +214,7 @@ namespace MediaPortal.GUI.LastFMRadio
           Log.Error("=================================");
           return;
         }
+        _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
         _playlistPlayer.Play(PlaylistControl.SelectedListItemIndex);
       }
 
@@ -514,8 +515,6 @@ namespace MediaPortal.GUI.LastFMRadio
      _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, strFileName);
 
       LoadPlaylist();
-
-      GUIControl.SelectItemControl(GetID, PlaylistControl.GetID, iItem);
     }
 
     #endregion
