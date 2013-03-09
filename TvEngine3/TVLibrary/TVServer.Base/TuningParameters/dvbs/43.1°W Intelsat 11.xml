@@ -453,7 +453,7 @@
   <Transponder>
     <CarrierFrequency>4078000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>7200</SymbolRate>
+    <SymbolRate>7000</SymbolRate>
     <Modulation>Mod8Psk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>On</Pilot>

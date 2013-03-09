@@ -343,10 +343,16 @@ namespace WindowPlugins.GUISettings
       }
     }
 
-    protected override void OnPageDestroy(int newWindowId)
+    protected override void OnPageDestroy(int new_windowId)
     {
       SaveSettings();
-      base.OnPageDestroy(newWindowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(new_windowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
+      base.OnPageDestroy(new_windowId);
     }
 
     public override void OnAction(Action action)

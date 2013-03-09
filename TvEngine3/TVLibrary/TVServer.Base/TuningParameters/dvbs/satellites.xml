@@ -1,4 +1,4 @@
-<satellites>
+﻿<satellites>
   <satellite name="3.1°E Eutelsat 3A,3C, Rascom QAF 1R" url="http://install.team-mediaportal.com/tvsetup/DVBS/0031.ini"/>
   <satellite name="4.9°E Astra 4A, SES 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0049.ini"/>
   <satellite name="7.0°E Eutelsat 7A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0070.ini"/>
@@ -9,6 +9,7 @@
   <satellite name="17.0°E Amos 5" url="http://install.team-mediaportal.com/tvsetup/DVBS/0170.ini"/>
   <satellite name="19.2°E Astra 1KR,1L,1M,2C" url="http://install.team-mediaportal.com/tvsetup/DVBS/0192.ini"/>
   <satellite name="20.0°E Arabsat 5C" url="http://install.team-mediaportal.com/tvsetup/DVBS/0200.ini"/>
+  <satellite name="21.5°E Eutelsat 21B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0215.ini"/>
   <satellite name="23.3°E Astra 1D,3B" url="http://install.team-mediaportal.com/tvsetup/DVBS/0233.ini"/>
   <satellite name="25.5°E Eutelsat 25A" url="http://install.team-mediaportal.com/tvsetup/DVBS/0255.ini"/>
   <satellite name="26.0°E Badr 4,5,6" url="http://install.team-mediaportal.com/tvsetup/DVBS/0260.ini"/>

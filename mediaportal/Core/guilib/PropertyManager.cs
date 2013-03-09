@@ -545,6 +545,14 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.TimesPlayed", string.Empty);
       SetProperty("#Play.Next.TrackTotal", string.Empty);
 
+      SetProperty("#currentplaytime", string.Empty);
+      SetProperty("#currentremaining", string.Empty);
+      SetProperty("#shortcurrentplaytime", string.Empty);
+      SetProperty("#shortcurrentremaining", string.Empty);
+      SetProperty("#duration", string.Empty);
+      SetProperty("#shortduration", string.Empty);
+      SetProperty("#percentage", "0.0");
+      
       _isChanged = true;
     }
 
