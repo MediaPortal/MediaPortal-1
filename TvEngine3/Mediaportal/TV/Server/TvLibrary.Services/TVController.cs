@@ -50,6 +50,7 @@ using Mediaportal.TV.Server.TVLibrary.Epg;
 using Mediaportal.TV.Server.TVLibrary.EventDispatchers;
 using Mediaportal.TV.Server.TVLibrary.Implementations;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
@@ -143,7 +144,8 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             return true;
           }
-          TvCardBase baseCard = card as TvCardBase;
+          // Using TvCardDvbBase here excludes analogue cards, as they don't support Conditional Access at all.
+          TvCardDvbBase baseCard = card as TvCardDvbBase;
           if (baseCard == null)
           {
             // Non-initialised HybridCard instances exit here.
@@ -173,9 +175,10 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private Dictionary<int, ITvCardHandler> _cards = new Dictionary<int, ITvCardHandler>();
 
-    /// 
-    // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
-    // used to speedup "mini EPG" channel state creation.
+    /// <summary>
+    /// contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
+    /// used to speedup "mini EPG" channel state creation.
+    /// </summary>
     private List<Channel> _tvChannelListGroups;
 
 
