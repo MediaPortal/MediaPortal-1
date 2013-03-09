@@ -55,24 +55,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12413000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4095</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12419000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4095</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>12455000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>4095</SymbolRate>
@@ -102,7 +84,16 @@
   <Transponder>
     <CarrierFrequency>12526000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
-    <SymbolRate>2056</SymbolRate>
+    <SymbolRate>5274</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>12542000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>5274</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -161,5 +152,23 @@
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>12418000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>11708</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>12724000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>7072</SymbolRate>
+    <Modulation>ModQpsk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>Off</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
 </ArrayOfTransponder>

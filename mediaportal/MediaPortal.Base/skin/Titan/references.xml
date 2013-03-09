@@ -99,6 +99,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_focus.png</textureFocus>
     <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -110,6 +111,7 @@
 		<textalign>center</textalign>
     <textureFocus>settings_button_small_focus.png</textureFocus>
     <textureNoFocus>settings_button_small_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -120,6 +122,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_medium_focus.png</textureFocus>
     <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -130,6 +133,7 @@
     <textYOff>11</textYOff>
     <textureFocus>settings_button_large_focus.png</textureFocus>
     <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -138,10 +142,12 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>43</textpadding>
     <textureFocus>settings_button_focus_toggleon.png</textureFocus>
     <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
     <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
     <AltTextureNoFocus>settings_button_nofocus_toggleoff.png</AltTextureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -150,8 +156,10 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>46</textpadding>
     <textureFocus>settings_button_focus.png</textureFocus>
     <textureNoFocus>settings_button_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <markXOff>23</markXOff>
@@ -162,8 +170,10 @@
     <height>58</height>
     <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>43</textpadding>
     <textureFocus>settings_button_medium_focus.png</textureFocus>
     <textureNoFocus>settings_button_medium_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
     <markXOff>23</markXOff>
@@ -172,10 +182,12 @@
   <style Name="SettingsCheckButtonLarge">
     <width>1137</width>
     <height>58</height>
-		<textXOff>33</textXOff>
+    <textXOff>33</textXOff>
     <textYOff>11</textYOff>
+    <textpadding>50</textpadding>
     <textureFocus>settings_button_large_focus.png</textureFocus>
     <textureNoFocus>settings_button_large_nofocus.png</textureNoFocus>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
@@ -348,13 +360,13 @@
     <font2>font2</font2>
     <shadedColor>ffffffff</shadedColor>
     <selectedColor>ffffffff</selectedColor>
-    <textcolor>FF85CFFF</textcolor>
-    <textcolor2>FF85CFFF</textcolor2>
-    <textcolor3>FF85CFFF</textcolor3>
+    <textcolor>FFFFFFFF</textcolor>
+    <textcolor2>FFFFFFFF</textcolor2>
+    <textcolor3>FFFFFFFF</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
-    <playedColor>FFFFFFFF</playedColor>
+    <playedColor>FF85CFFF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
 		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
@@ -643,6 +655,7 @@
     <font>font12</font>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <textcolor>white</textcolor>
+		<allowFadeIn>no</allowFadeIn>
     <wrapString> | </wrapString>
   </control>
   <control>

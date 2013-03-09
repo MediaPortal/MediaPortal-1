@@ -1,505 +1,912 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
-  <Info language="ru" availableDays="7" timezone="Russian Standard Time" version="1.0.3" />
- <Channels>
-<Channel id="1+1" siteId="3"/>
-<Channel id="1+1 \на укр.\" siteId="346"/>
-<Channel id="1+1 Международный" siteId="282"/>
-<Channel id="1+1 Международный \на укр.\" siteId="473"/>
-<Channel id="100ТВ" siteId="382"/>
-<Channel id="24 \Телеканал новостей 24\" siteId="298"/>
-<Channel id="24 \Телеканал новостей 24\ \на укр.\" siteId="387"/>
-<Channel id="24Док" siteId="263"/>
-<Channel id="24Техно" siteId="381"/>
-<Channel id="2+2 Кино" siteId="23"/>
-<Channel id="2+2 Кино \на укр.\" siteId="371"/>
-<Channel id="2Т" siteId="496"/>
-<Channel id="2Т \на укр.\" siteId="500"/>
-<Channel id="2х2" siteId="341"/>
-<Channel id="3 канал" siteId="336"/>
-<Channel id="3+ Латвия" siteId="174"/>
-<Channel id="3+ Эстония" siteId="252"/>
-<Channel id="365 дней ТВ" siteId="279"/>
-<Channel id="3Sat" siteId="251"/>
-<Channel id="5 канал" siteId="106"/>
-<Channel id="5 канал \на укр.\" siteId="363"/>
-<Channel id="5 канал \Россия\" siteId="308"/>
-<Channel id="5 канал \Россия +2\" siteId="640"/>
-<Channel id="5 канал \Россия +4\" siteId="641"/>
-<Channel id="5 канал \Россия +7\" siteId="642"/>
-<Channel id="7ТВ" siteId="89"/>
-<Channel id="7ТВ +2" siteId="645"/>
-<Channel id="7ТВ +7" siteId="646"/>
-<Channel id="A-one" siteId="316"/>
-<Channel id="A-one Украина" siteId="634"/>
-<Channel id="AB Moteurs" siteId="127"/>
-<Channel id="AXN Sci-Fi Россия" siteId="403"/>
-<Channel id="Adult channel" siteId="114"/>
-<Channel id="Al Jazeera International" siteId="240"/>
-<Channel id="Amazing life" siteId="347"/>
-<Channel id="Animal planet Europe" siteId="39"/>
-<Channel id="Animal planet Россия" siteId="484"/>
-<Channel id="ARD" siteId="167"/>
-<Channel id="Arte" siteId="179"/>
-<Channel id="BabyTV" siteId="528"/>
-<Channel id="BBC Entertainment" siteId="147"/>
-<Channel id="BBC World" siteId="46"/>
-<Channel id="Bebe TV" siteId="528"/>
-<Channel id="Bebe TV HD" siteId="657"/>
-<Channel id="BizTV" siteId="515"/>
-<Channel id="BizTV \на укр.\" siteId="516"/>
-<Channel id="Bloomberg" siteId="90"/>
-<Channel id="Blue Hustler" siteId="140"/>
-<Channel id="Blue Hustler (для Украины)" siteId="665"/>
-<Channel id="Boomerang" siteId="404"/>
-<Channel id="Bridge TV" siteId="409"/>
-<Channel id="C Music TV" siteId="582"/>
-<Channel id="CCTV Русский" siteId="598"/>
-<Channel id="Cartoon network" siteId="54"/>
-<Channel id="Cartoon network / TCM" siteId="577"/>
-<Channel id="CNBC Europe" siteId="70"/>
-<Channel id="CNL" siteId="125"/>
-<Channel id="CNL Сибирь" siteId="527"/>
-<Channel id="CNL Украина" siteId="392"/>
-<Channel id="CNN" siteId="47"/>
-<Channel id="Da Vinci Learning" siteId="644"/>
-<Channel id="Da Vinci Learning (на укр.)" siteId="659"/>
-<Channel id="Da Vinci Universitas" siteId="650"/>
-<Channel id="Deutsche Welle" siteId="84"/>
-<Channel id="Discovery Science" siteId="41"/>
-<Channel id="Discovery Travel Living" siteId="105"/>
-<Channel id="Discovery World" siteId="424"/>
-<Channel id="Discovery Восточная Европа" siteId="397"/>
-<Channel id="Discovery Россия" siteId="38"/>
-<Channel id="Disney channel Россия" siteId="44"/>
-<Channel id="Disney channel Украина" siteId="673"/>
-<Channel id="Diva Universal Россия" siteId="43"/>
-<Channel id="Doku \ZDF digital\" siteId="195"/>
-<Channel id="El Garage TV Россия" siteId="674"/>
-<Channel id="English Club TV" siteId="485"/>
-<Channel id="Enter" siteId="27"/>
-<Channel id="Enter \на укр.\" siteId="373"/>
-<Channel id="Enter-фильм" siteId="92"/>
-<Channel id="Enter-фильм \на укр.\" siteId="372"/>
-<Channel id="ESPN Classic" siteId="173"/>
-<Channel id="Euronews" siteId="37"/>
-<Channel id="Eurosport" siteId="36"/>
-<Channel id="Eurosport 2" siteId="229"/>
-<Channel id="Eurosport HD" siteId="535"/>
-<Channel id="Extreme sports" siteId="99"/>
-<Channel id="F men" siteId="343"/>
-<Channel id="Fashion TV Europe" siteId="342"/>
-<Channel id="Fashion TV Россия" siteId="86"/>
-<Channel id="Fine Living Network" siteId="406"/>
-<Channel id="Fox Crime Россия" siteId="413"/>
-<Channel id="Fox Life Россия" siteId="432"/>
-<Channel id="France 24" siteId="486"/>
-<Channel id="FTV HD" siteId="510"/>
-<Channel id="Gameland.TV" siteId="456"/>
-<Channel id="Gulli Россия" siteId="596"/>
-<Channel id="HD-Life" siteId="459"/>
-<Channel id="HD Спорт" siteId="591"/>
-<Channel id="HD Кино" siteId="590"/>
-<Channel id="High Life HD" siteId="622"/>
-<Channel id="Hustler TV Europe" siteId="120"/>
-<Channel id="Hustler TV Europe (для Украины)" siteId="666"/>
-<Channel id="Investigation Discovery" siteId="635"/>
-<Channel id="ICTV" siteId="5"/>
-<Channel id="ICTV \на укр.\" siteId="358"/>
-<Channel id="JimJam" siteId="454"/>
-<Channel id="KidsCo" siteId="391"/>
-<Channel id="KRT" siteId="149"/>
-<Channel id="KRT \на укр.\" siteId="368"/>
-<Channel id="Luxe.TV" siteId="475"/>
-<Channel id="Luxe.TV HD" siteId="536"/>
-<Channel id="MAN TV" siteId="456"/>
-<Channel id="Maxxi-TV" siteId="356"/>
-<Channel id="Maxxi-TV \на укр.\" siteId="425"/>
-<Channel id="MCM Top" siteId="116"/>
-<Channel id="Mezzo" siteId="85"/>
-<Channel id="Mezzo Live HD" siteId="672"/>
-<Channel id="MGM International" siteId="214"/>
-<Channel id="Motors" siteId="117"/>
-<Channel id="MTV Dance" siteId="224"/>
-<Channel id="MTV Europe" siteId="218"/>
-<Channel id="MTV Germany" siteId="207"/>
-<Channel id="MTV Hits" siteId="221"/>
-<Channel id="MTV ROCKS" siteId="222"/>
-<Channel id="MTV Россия" siteId="48"/>
-<Channel id="MTV Россия +2" siteId="625"/>
-<Channel id="MTV Россия +4" siteId="569"/>
-<Channel id="MTV Россия +7" siteId="626"/>
-<Channel id="MTV Украина" siteId="353"/>
-<Channel id="MTV Украина \на укр.\" siteId="428"/>
-<Channel id="MTVNHD" siteId="488"/>
-<Channel id="MusicBox RU" siteId="412"/>
-<Channel id="MusicBox TV" siteId="411"/>
-<Channel id="MusicBox UA" siteId="417"/>
-<Channel id="MusicBox UA \на укр.\" siteId="470"/>
-<Channel id="myZen.tv" siteId="534"/>
-<Channel id="myZen.tv HD" siteId="580"/>
-<Channel id="Nat Geo Music" siteId="593"/>
-<Channel id="Nat Geo Wild Россия" siteId="344"/>
-<Channel id="National Geographic HD" siteId="594"/>
-<Channel id="National Geographic Россия" siteId="295"/>
-<Channel id="NewsOne" siteId="416"/>
-<Channel id="NewsOne \на укр.\" siteId="471"/>
-<Channel id="Nickelodeon Россия" siteId="45"/>
-<Channel id="Nickelodeon СНГ" siteId="643"/>
-<Channel id="Ocean TV" siteId="414"/>
-<Channel id="OTV" siteId="64"/>
-<Channel id="OTV \на укр.\" siteId="374"/>
-<Channel id="Ocean TV" siteId="414"/>
-<Channel id="Playboy TV UK" siteId="172"/>
-<Channel id="Playboy TV UK (для Украины)" siteId="663"/>
-<Channel id="Private Spice" siteId="143"/>
-<Channel id="Pro Все" siteId="402"/>
-<Channel id="Pro Все \на укр.\" siteId="431"/>
-<Channel id="Pro Деньги" siteId="492"/>
-<Channel id="ProPoker" siteId="589"/>
-<Channel id="QTV" siteId="460"/>
-<Channel id="QTV \на укр.\" siteId="461"/>
-<Channel id="R1" siteId="405"/>
-<Channel id="Real Estate TV" siteId="481"/>
-<Channel id="RTG" siteId="605"/>
-<Channel id="RTVI" siteId="22"/>
-<Channel id="Ru.Music" siteId="388"/>
-<Channel id="Ru.Music \на укр.\" siteId="469"/>
-<Channel id="Rusong TV" siteId="668"/>
-<Channel id="Russia Today" siteId="301"/>
-<Channel id="SCI" siteId="654"/>
-<Channel id="Syfy Universal Россия" siteId="452"/>
-<Channel id="SET Россия" siteId="525"/>
-<Channel id="Smash!TV" siteId="393"/>
-<Channel id="Smash!TV \на укр.\" siteId="468"/>
-<Channel id="Spice" siteId="307"/>
-<Channel id="StarTV" siteId="513"/>
-<Channel id="StarTV \на укр.\" siteId="514"/>
-<Channel id="Style" siteId="178"/>
-<Channel id="TCM" siteId="87"/>
-<Channel id="Teen TV" siteId="448"/>
-<Channel id="TiJi Россия" siteId="597"/>
-<Channel id="Trace TV" siteId="230"/>
-<Channel id="Travel channel" siteId="88"/>
-<Channel id="TV1000 Action East" siteId="458"/>
-<Channel id="TV1000 Action East \-21\" siteId="512"/>
-<Channel id="TV1000 East" siteId="107"/>
-<Channel id="TV1000 Premium" siteId="423"/>
-<Channel id="TV1000 Русское кино" siteId="255"/>
-<Channel id="TV5 Monde Europe" siteId="74"/>
-<Channel id="TV5 Латвия" siteId="434"/>
-<Channel id="TV ARM ru" siteId="676"/>
-<Channel id="Universal Россия" siteId="453"/>
-<Channel id="VH1 Classic Europe" siteId="227"/>
-<Channel id="VH1 Europe" siteId="50"/>
-<Channel id="VH1 Россия" siteId="287"/>
-<Channel id="Viasat Explorer" siteId="152"/>
-<Channel id="Viasat Explorer / Spice" siteId="579"/>
-<Channel id="Viasat History" siteId="175"/>
-<Channel id="Viasat Sport Baltics" siteId="504"/>
-<Channel id="Viasat Sport Россия" siteId="332"/>
-<Channel id="Viasat Nature CEE" siteId="652"/>
-<Channel id="Viva Polska" siteId="267"/>
-<Channel id="World Fashion Channel" siteId="326"/>
-<Channel id="World Fashion Channel Россия" siteId="313"/>
-<Channel id="World Music Channel" siteId="401"/>
-<Channel id="XXL" siteId="133"/>
-<Channel id="XXL (для Украины)" siteId="664"/>
-<Channel id="ZeeTV Россия" siteId="442"/>
-<Channel id="Zone Reality" siteId="91"/>
-<Channel id="Zone Romantica" siteId="35"/>
-<Channel id="ZooПарк" siteId="331"/>
-<Channel id="Авто Плюс" siteId="311"/>
-<Channel id="Аджара ТВ" siteId="95"/>
-<Channel id="Беларусь ТВ" siteId="231"/>
-<Channel id="Бабай ТБ" siteId="611"/>
-<Channel id="Бабай ТБ (на укр.)" siteId="612"/>
-<Channel id="Бибигон" siteId="354"/>
-<Channel id="Боец" siteId="310"/>
-<Channel id="Бульвар ТВ" siteId="384"/>
-<Channel id="ВТВ" siteId="139"/>
-<Channel id="Война и мир" siteId="660"/>
-<Channel id="Вопросы и ответы" siteId="603"/>
-<Channel id="Время" siteId="303"/>
-<Channel id="Гамма" siteId="479"/>
-<Channel id="Гамма \на укр.\" siteId="480"/>
-<Channel id="Где и Кто" siteId="581"/>
-<Channel id="Глас" siteId="294"/>
-<Channel id="Глас \на укр.\" siteId="465"/>
-<Channel id="Глас \Одесса\ \на укр.\" siteId="457"/>
-<Channel id="Гумор ТБ" siteId="505"/>
-<Channel id="Гумор ТБ \на укр.\" siteId="506"/>
-<Channel id="Гумор ТБ / Бабай ТБ" siteId="613"/>
-<Channel id="Гумор ТБ / Бабай ТБ (на укр.)" siteId="614"/>
-<Channel id="Детский" siteId="246"/>
-<Channel id="Детский мир" siteId="31"/>
-<Channel id="Детский мир / Телеклуб" siteId="578"/>
-<Channel id="Днепропетровский Державный" siteId="380"/>
-<Channel id="Дом кино" siteId="302"/>
-<Channel id="Домашние животные" siteId="601"/>
-<Channel id="Домашний" siteId="124"/>
-<Channel id="Домашний +2" siteId="561"/>
-<Channel id="Домашний +4" siteId="562"/>
-<Channel id="Домашний +7" siteId="563"/>
-<Channel id="Донбасс" siteId="617"/>
-<Channel id="Драйв" siteId="241"/>
-<Channel id="ДТВ" siteId="56"/>
-<Channel id="ДТВ +2" siteId="396"/>
-<Channel id="ДТВ +7" siteId="537"/>
-<Channel id="Еврокино" siteId="487"/>
-<Channel id="Женский мир" siteId="618"/>
-<Channel id="Живи" siteId="511"/>
-<Channel id="Загородная жизнь" siteId="647"/>
-<Channel id="Загородный" siteId="662"/>
-<Channel id="Закон ТВ" siteId="408"/>
-<Channel id="Звезда" siteId="232"/>
-<Channel id="Звезда +2" siteId="566"/>
-<Channel id="Звезда +4" siteId="567"/>
-<Channel id="Звезда +7" siteId="568"/>
-<Channel id="Здоровое ТВ" siteId="242"/>
-<Channel id="Знание" siteId="493"/>
-<Channel id="Зоо ТВ" siteId="451"/>
-<Channel id="Идеальный мир" siteId="490"/>
-<Channel id="Израиль+ Россия" siteId="532"/>
-<Channel id="Иллюзион+" siteId="327"/>
-<Channel id="Индия ТВ" siteId="293"/>
-<Channel id="Интер" siteId="4"/>
-<Channel id="Интер \на укр.\" siteId="357"/>
-<Channel id="Интер+" siteId="69"/>
-<Channel id="Интер+ \на укр.\" siteId="430"/>
-<Channel id="Интересное ТВ" siteId="385"/>
-<Channel id="К+" siteId="616"/>
-<Channel id="К1" siteId="19"/>
-<Channel id="К1 \на укр.\" siteId="369"/>
-<Channel id="К2" siteId="20"/>
-<Channel id="К2 \на укр.\" siteId="370"/>
-<Channel id="КГРТРК" siteId="317"/>
-<Channel id="КГРТРК \на укр.\" siteId="466"/>
-<Channel id="Киев" siteId="75"/>
-<Channel id="Киев \на укр.\" siteId="375"/>
-<Channel id="КиКо" siteId="497"/>
-<Channel id="КиКо \на укр.\" siteId="501"/>
-<Channel id="Кино Плюс" siteId="608"/>
-<Channel id="Киномания" siteId="306"/>
-<Channel id="Кинопоказ" siteId="447"/>
-<Channel id="Кинопоказ +3" siteId="574"/>
-<Channel id="Кинопоказ HD1" siteId="620"/>
-<Channel id="Кинопоказ HD2" siteId="621"/>
-<Channel id="Киносоюз" siteId="261"/>
-<Channel id="Комеди ТВ" siteId="476"/>
-<Channel id="Комедия ТВ" siteId="292"/>
-<Channel id="Кто есть кто" siteId="399"/>
-<Channel id="Культура" siteId="15"/>
-<Channel id="Культура +2" siteId="552"/>
-<Channel id="Культура +4" siteId="553"/>
-<Channel id="Культура +7" siteId="555"/>
-<Channel id="Культура \Украина\" siteId="285"/>
-<Channel id="Культура \Украина\ \на укр.\" siteId="494"/>
-<Channel id="Кухня ТВ" siteId="383"/>
-<Channel id="КХЛ ТВ" siteId="604"/>
-<Channel id="Любимое кино" siteId="526"/>
-<Channel id="Ля-минор" siteId="297"/>
-<Channel id="М1" siteId="94"/>
-<Channel id="М1 \на укр.\" siteId="366"/>
-<Channel id="М2-Эстрада" siteId="445"/>
-<Channel id="М2-Эстрада \на укр.\" siteId="474"/>
-<Channel id="Малятко TV" siteId="606"/>
-<Channel id="Малятко TV (на укр.)" siteId="629"/>
-<Channel id="Мать и дитя" siteId="394"/>
-<Channel id="Мега" siteId="234"/>
-<Channel id="Мега \на укр.\" siteId="362"/>
-<Channel id="МЕНЮ-ТВ" siteId="348"/>
-<Channel id="МЕНЮ-ТВ \на укр.\" siteId="379"/>
-<Channel id="Мир сериала" siteId="637"/>
-<Channel id="МирТВ" siteId="176"/>
-<Channel id="МирТВ \+3\" siteId="529"/>
-<Channel id="Многосерийное ТВ" siteId="278"/>
-<Channel id="Моя планета" siteId="639"/>
-<Channel id="Мужской" siteId="648"/>
-<Channel id="Муз ТВ" siteId="49"/>
-<Channel id="Музыка Первого" siteId="439"/>
-<Channel id="Мультимания" siteId="286"/>
-<Channel id="Наше кино" siteId="29"/>
-<Channel id="Наше кино \НТВ+\" siteId="312"/>
-<Channel id="Наше новое кино" siteId="260"/>
-<Channel id="Недвижимость ТВ" siteId="530"/>
-<Channel id="Новый канал" siteId="7"/>
-<Channel id="Новый канал \на укр.\" siteId="360"/>
-<Channel id="Ностальгия" siteId="216"/>
-<Channel id="Ночной клуб" siteId="455"/>
-<Channel id="Ночной клуб +3" siteId="576"/>
-<Channel id="НСТ \Смешное\" siteId="233"/>
-<Channel id="НСТ \Страшное\" siteId="329"/>
-<Channel id="НТА \на укр.\" siteId="669"/>
-<Channel id="НТВ" siteId="10"/>
-<Channel id="НТВ +2" siteId="545"/>
-<Channel id="НТВ +3" siteId="509"/>
-<Channel id="НТВ +4" siteId="546"/>
-<Channel id="НТВ +7" siteId="547"/>
-<Channel id="НТВ+ Баскетбол" siteId="277"/>
-<Channel id="НТВ+ Киноклуб" siteId="30"/>
-<Channel id="НТВ+ Кинохит" siteId="213"/>
-<Channel id="НТВ+ Наш футбол" siteId="284"/>
-<Channel id="НТВ+ Премьера" siteId="34"/>
-<Channel id="НТВ+ Спорт" siteId="32"/>
-<Channel id="НТВ+ Спорт Классика" siteId="281"/>
-<Channel id="НТВ+ Спорт Онлайн" siteId="154"/>
-<Channel id="НТВ+ НТВ+ Спорт Союз" siteId="280"/>
-<Channel id="НТВ+ Теннис" siteId="276"/>
-<Channel id="НТВ+ Футбол" siteId="33"/>
-<Channel id="НТВ-Мир" siteId="82"/>
-<Channel id="НТН" siteId="212"/>
-<Channel id="НТН \на укр.\" siteId="367"/>
-<Channel id="О2ТВ" siteId="257"/>
-<Channel id="ОК" siteId="483"/>
-<Channel id="ОТВ Приморье" siteId="324"/>
-<Channel id="ОТВ (Екатеринбург)" siteId="655"/>
-<Channel id="Охота и рыбалка" siteId="243"/>
-<Channel id="Охотник и рыболов" siteId="628"/>
-<Channel id="Парк развлечений" siteId="351"/>
-<Channel id="Первый автомобильный" siteId="435"/>
-<Channel id="Первый автомобильный \на укр.\" siteId="436"/>
-<Channel id="Первый деловой" siteId="299"/>
-<Channel id="Первый деловой \на укр.\" siteId="378"/>
-<Channel id="Первый игровой" siteId="437"/>
-<Channel id="Первый канал \Россия\" siteId="8"/>
-<Channel id="Первый канал \Россия\ +2" siteId="541"/>
-<Channel id="Первый канал \Россия\ +4" siteId="542"/>
-<Channel id="Первый канал \Россия\ +6" siteId="543"/>
-<Channel id="Первый канал \Россия\ +8" siteId="544"/>
-<Channel id="Первый канал \Россия\ Европа" siteId="21"/>
-<Channel id="Первый канал \Россия\ СНГ" siteId="314"/>
-<Channel id="Первый канал \Россия\ Украина" siteId="339"/>
-<Channel id="Первый муниципальный (Донецк)" siteId="670"/>
-<Channel id="Первый национальный \Украина\" siteId="1"/>
-<Channel id="Первый национальный \Украина\ \на укр.\" siteId="345"/>
-<Channel id="Первый национальный / ТРК Эра" siteId="540"/>
-<Channel id="Первый национальный / ТРК Эра \на укр.\" siteId="592"/>
-<Channel id="Планета" siteId="498"/>
-<Channel id="Планета \на укр.\" siteId="502"/>
-<Channel id="Подмосковье" siteId="653"/>
-<Channel id="Психология21" siteId="602"/>
-<Channel id="РБК ТВ" siteId="146"/>
-<Channel id="РЕН ТВ" siteId="13"/>
-<Channel id="РЕН ТВ +2" siteId="570"/>
-<Channel id="РЕН ТВ +4" siteId="571"/>
-<Channel id="РЕН ТВ +7" siteId="572"/>
-<Channel id="Ретро" siteId="244"/>
-<Channel id="Россия" siteId="9"/>
-<Channel id="Россия +2" siteId="548"/>
-<Channel id="Россия +4" siteId="549"/>
-<Channel id="Россия +6" siteId="550"/>
-<Channel id="Россия +8" siteId="551"/>
-<Channel id="Россия 2" siteId="144"/>
-<Channel id="Россия 24" siteId="328"/>
-<Channel id="РТР-Планета" siteId="98"/>
-<Channel id="РТР-Планета СНГ" siteId="355"/>
-<Channel id="Русская ночь" siteId="296"/>
-<Channel id="Русский иллюзион" siteId="177"/>
-<Channel id="Русский экстрим" siteId="288"/>
-<Channel id="Сарафан" siteId="433"/>
-<Channel id="Свит" siteId="499"/>
-<Channel id="Свит \на укр.\" siteId="503"/>
-<Channel id="СГУ ТВ" siteId="215"/>
-<Channel id="Сити" siteId="24"/>
-<Channel id="Сити \на укр.\" siteId="376"/>
-<Channel id="Совершенно секретно" siteId="350"/>
-<Channel id="Союз \Екатеринбург\" siteId="235"/>
-<Channel id="Спас" siteId="238"/>
-<Channel id="Спорт 1 (Россия)" siteId="667"/>
-<Channel id="Спорт 1" siteId="270"/>
-<Channel id="Спорт 1 \на укр.\" siteId="426"/>
-<Channel id="Спорт 2" siteId="309"/>
-<Channel id="Спорт 2 \на укр.\" siteId="427"/>
-<Channel id="Спорт Плюс" siteId="595"/>
-<Channel id="СТБ" siteId="6"/>
-<Channel id="СТБ \на укр.\" siteId="359"/>
-<Channel id="СТВ" siteId="115"/>
-<Channel id="Столица" siteId="123"/>
-<Channel id="Страна" siteId="627"/>
-<Channel id="Страна советов \на укр.\" siteId="275"/>
-<Channel id="СТС" siteId="17"/>
-<Channel id="СТС \+2\" siteId="538"/>
-<Channel id="СТС \+4\" siteId="539"/>
-<Channel id="СТС \+7\" siteId="508"/>
-<Channel id="ТВ XXI" siteId="68"/>
-<Channel id="ТВ Клуб" siteId="607"/>
-<Channel id="ТВ Центр" siteId="11"/>
-<Channel id="ТВ Центр +2" siteId="559"/>
-<Channel id="ТВ Центр +4" siteId="560"/>
-<Channel id="ТВ Центр +7" siteId="624"/>
-<Channel id="ТВ Центр Международный \TVCI\" siteId="237"/>
-<Channel id="ТВ3 Россия" siteId="63"/>
-<Channel id="ТВ3 Россия +2" siteId="564"/>
-<Channel id="ТВ3 Россия +7" siteId="565"/>
-<Channel id="ТВi" siteId="438"/>
-<Channel id="ТВi \на укр.\" siteId="462"/>
-<Channel id="ТДК" siteId="142"/>
-<Channel id="Телекафе" siteId="415"/>
-<Channel id="Телеклуб" siteId="141"/>
-<Channel id="Теленяня" siteId="304"/>
-<Channel id="Телепутешествия" siteId="450"/>
-<Channel id="Телепутешествия HD" siteId="619"/>
-<Channel id="ТЕТ" siteId="18"/>
-<Channel id="ТЕТ \на укр.\" siteId="364"/>
-<Channel id="Тиса-1" siteId="315"/>
-<Channel id="Тиса-1 \на укр.\" siteId="467"/>
-<Channel id="ТНВ" siteId="145"/>
-<Channel id="ТНТ" siteId="14"/>
-<Channel id="ТНТ +2" siteId="556"/>
-<Channel id="ТНТ +4" siteId="557"/>
-<Channel id="ТНТ +7" siteId="558"/>
-<Channel id="Тонис" siteId="25"/>
-<Channel id="Тонис \на укр.\" siteId="365"/>
-<Channel id="Тонус ТВ" siteId="495"/>
-<Channel id="ТРК Эра" siteId="78"/>
-<Channel id="ТРК Эра \на укр.\" siteId="349"/>
-<Channel id="ТРК Буковина \на укр.\" siteId="633"/>
-<Channel id="ТРК Юнион" siteId="661"/>
-<Channel id="Твой ТВ Петербург" siteId="615"/>
-<Channel id="ТРО" siteId="491"/>
-<Channel id="ТурИнфо" siteId="600"/>
-<Channel id="УБР" siteId="609"/>
-<Channel id="УБР \на укр.\" siteId="610"/>
-<Channel id="Украина" siteId="108"/>
-<Channel id="Украина \на укр.\" siteId="361"/>
-<Channel id="Украинский бизнес канал \UBC\" siteId="386"/>
-<Channel id="Украинский бизнес канал \UBC\ \на укр.\" siteId="429"/>
-<Channel id="Улыбка ребенка" siteId="531"/>
-<Channel id="Усадьба" siteId="305"/>
-<Channel id="УТР \на укр.\" siteId="165"/>
-<Channel id="Успех" siteId="649"/>
-<Channel id="Феникс+Кино" siteId="390"/>
-<Channel id="Футбол \Россия\" siteId="440"/>
-<Channel id="Футбол \Украина\" siteId="507"/>
-<Channel id="Футбол \Украина\ \на укр.\" siteId="638"/>
-<Channel id="ЧП.INFO" siteId="446"/>
-<Channel id="ЧП.INFO \на укр.\" siteId="472"/>
-<Channel id="Школьник ТВ" siteId="122"/>
-<Channel id="Эксперт ТВ" siteId="489"/>
-<Channel id="Югра" siteId="128"/>
-<Channel id="Юмор ТВ" siteId="410"/>
-</Channels>
-<Listing type="Html">
- 	<Site url="http://www.vsetv.com/schedule_channel_[ID]_day_[YYYY]-[MM]-[DD]_print_wd.html" encoding="Windows-1251"/>   
+  <Info language="uk" availableDays="7" timezone="Moscow Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="8" siteId="681" />
+    <Channel id="+ТВ" siteId="701" />
+    <Channel id="1+1" siteId="3" />
+    <Channel id="1+1 (на укр.)" siteId="346" />
+    <Channel id="1+1 Международный" siteId="282" />
+    <Channel id="1+1 Международный (на укр.)" siteId="473" />
+    <Channel id="100ТВ" siteId="382" />
+    <Channel id="2+2" siteId="23" />
+    <Channel id="2+2 (на укр.)" siteId="371" />
+    <Channel id="21+" siteId="745" />
+    <Channel id="24 (Телеканал новостей 24)" siteId="298" />
+    <Channel id="24 (Телеканал новостей 24) (на укр.)" siteId="387" />
+    <Channel id="24 Техно" siteId="381" />
+    <Channel id="24ДОК" siteId="263" />
+    <Channel id="24Техно" siteId="381" />
+    <Channel id="2X2" siteId="341" />
+    <Channel id="2Т" siteId="496" />
+    <Channel id="2Т (на укр.)" siteId="500" />
+    <Channel id="2х2" siteId="341" />
+    <Channel id="2х2 (+2)" siteId="809" />
+    <Channel id="2х2 (+5)" siteId="734" />
+    <Channel id="365 дней ТВ" siteId="279" />
+    <Channel id="3D BY PANASONIC" siteId="702" />
+    <Channel id="5 канал" siteId="106" />
+    <Channel id="5 канал (на укр.)" siteId="363" />
+    <Channel id="5 канал (Россия)" siteId="308" />
+    <Channel id="5 канал (Россия) (+2)" siteId="640" />
+    <Channel id="5 канал (Россия) (+4)" siteId="641" />
+    <Channel id="5 канал (Россия) (+7)" siteId="642" />
+    <Channel id="5 канал (Украина)" siteId="106" />
+    <Channel id="8 канал" siteId="681" />
+    <Channel id="8 канал (+4)" siteId="755" />
+    <Channel id="8 канал (+7)" siteId="738" />
+    <Channel id="8 канал (Беларусь)" siteId="698" />
+    <!--Channel id="9 Волна" siteId="id" /-->
+    <Channel id="9 канал Орбита" siteId="782" />
+    <Channel id="A-One" siteId="316" />
+    <Channel id="A-one Украина" siteId="772" />
+    <Channel id="AB Moteurs" siteId="127" />
+    <Channel id="Adult channel" siteId="114" />
+    <Channel id="Al Jazeera International" siteId="240" />
+    <Channel id="Amazing Life" siteId="347" />
+    <Channel id="AMEDIA" siteId="727" />
+    <Channel id="Animal Planet" siteId="484" />
+    <Channel id="Animal planet Europe" siteId="39" />
+    <Channel id="Animal Planet HD" siteId="715" />
+    <Channel id="Animal planet Россия" siteId="484" />
+    <Channel id="Arirang" siteId="697" />
+    <Channel id="ATR" siteId="763" />
+    <Channel id="AXN Sci Fi" siteId="403" />
+    <Channel id="AXN Sci-Fi Россия" siteId="403" />
+    <Channel id="BabyTV" siteId="528" />
+    <Channel id="BBC Entertainment" siteId="147" />
+    <Channel id="BBC World News" siteId="46" />
+    <Channel id="BizTV" siteId="515" />
+    <Channel id="BizTV (на укр.)" siteId="516" />
+    <Channel id="Bloomberg" siteId="90" />
+    <Channel id="Blue Hustler" siteId="140" />
+    <Channel id="Blue Hustler (для Украины)" siteId="665" />
+    <Channel id="Boomerang" siteId="404" />
+    <Channel id="BRIDGE TV" siteId="409" />
+    <Channel id="Business" siteId="386" />
+    <Channel id="Business (на укр.)" siteId="429" />
+    <Channel id="C Music TV" siteId="582" />
+    <Channel id="Cartoon Network" siteId="54" />
+    <Channel id="Cartoon network (combo)" siteId="791" />
+    <Channel id="Cartoon network / TCM" siteId="577" />
+    <!--Channel id="CASPIO-NET" siteId="id" /-->
+    <Channel id="CBS Drama" siteId="35" />
+    <Channel id="CBS Reality" siteId="91" />
+    <Channel id="CCTV Русский" siteId="598" />
+    <!--Channel id="CCTV-News" siteId="id" /-->
+    <Channel id="CCTV-Русский" siteId="598" />
+    <!--Channel id="CCTV4" siteId="id" /-->
+    <Channel id="Cinema (Космос ТВ)" siteId="112" />
+    <Channel id="CNBC Europe" siteId="70" />
+    <Channel id="CNL Америка" siteId="802" />
+    <Channel id="CNL Европа" siteId="125" />
+    <Channel id="CNL Сибирь" siteId="527" />
+    <Channel id="CNL Украина" siteId="392" />
+    <Channel id="CNN" siteId="47" />
+    <Channel id="CNN International" siteId="47" />
+    <Channel id="Comedy TV" siteId="476" />
+    <Channel id="Da Vinci" siteId="651" />
+    <Channel id="Da Vinci Learning" siteId="644" />
+    <Channel id="Da Vinci Learning (на укр.)" siteId="659" />
+    <Channel id="Da Vinci Learning Россия" siteId="651" />
+    <Channel id="Daring!TV" siteId="696" />
+    <Channel id="Deutsche Welle" siteId="84" />
+    <Channel id="Discovery" siteId="38" />
+    <Channel id="Discovery HD Showcase" siteId="599" />
+    <Channel id="Discovery Science" siteId="41" />
+    <Channel id="Discovery World" siteId="424" />
+    <Channel id="Discovery Восточная Европа" siteId="397" />
+    <Channel id="Discovery Россия" siteId="38" />
+    <Channel id="Discovery Украина" siteId="678" />
+    <Channel id="Disney channel Украина" siteId="673" />
+    <Channel id="DIVA Universal" siteId="43" />
+    <Channel id="Diva Universal Россия" siteId="43" />
+    <Channel id="Dobro-tv" siteId="764" />
+    <Channel id="Dobro-tv (на укр.)" siteId="765" />
+    <Channel id="ducktv" siteId="656" />
+    <Channel id="ducktv HD" siteId="657" />
+    <Channel id="English Club TV" siteId="485" />
+    <Channel id="Enter-фильм" siteId="92" />
+    <Channel id="Enter-фильм (на укр.)" siteId="372" />
+    <Channel id="ESPN Classic" siteId="173" />
+    <Channel id="Euronews" siteId="37" />
+    <Channel id="Europa Plus TV" siteId="682" />
+    <Channel id="Eurosport" siteId="36" />
+    <Channel id="Eurosport 2" siteId="229" />
+    <Channel id="Eurosport 2 North-East" siteId="800" />
+    <Channel id="Eurosport 2 North-East HD" siteId="825" />
+    <Channel id="Eurosport HD" siteId="535" />
+    <Channel id="Extreme Sports" siteId="99" />
+    <Channel id="Fashion One" siteId="679" />
+    <Channel id="Fashion One HD" siteId="680" />
+    <Channel id="Fashion TV Europe" siteId="342" />
+    <Channel id="Fashion TV Network" siteId="86" />
+    <Channel id="Fashion TV Россия" siteId="86" />
+    <Channel id="Fine Living" siteId="406" />
+    <Channel id="FOX" siteId="413" />
+    <Channel id="Fox Life" siteId="432" />
+    <Channel id="Fox Life HD" siteId="750" />
+    <Channel id="Fox Life Россия" siteId="432" />
+    <Channel id="FOX Россия" siteId="413" />
+    <Channel id="FOX Россия HD" siteId="775" />
+    <Channel id="France 24" siteId="486" />
+    <Channel id="France 24 English" siteId="486" />
+    <Channel id="France 24 Francais" siteId="811" />
+    <Channel id="FTV HD" siteId="510" />
+    <Channel id="Galaxy" siteId="583" />
+    <Channel id="Galaxy-TV" siteId="583" />
+    <Channel id="Gulli" siteId="596" />
+    <Channel id="Gulli Россия" siteId="596" />
+    <Channel id="HD Life" siteId="459" />
+    <Channel id="HD Кино" siteId="590" />
+    <Channel id="HD Кино 2" siteId="776" />
+    <Channel id="HD Спорт" siteId="591" />
+    <Channel id="HD-Life" siteId="459" />
+    <Channel id="HTH" siteId="212" />
+    <!--Channel id="Hustler TV" siteId="id" /-->
+    <Channel id="Hustler TV Europe" siteId="120" />
+    <Channel id="Hustler TV Europe (для Украины)" siteId="666" />
+    <Channel id="iConcerts" siteId="797" />
+    <Channel id="ICTV" siteId="5" />
+    <Channel id="ICTV (на укр.)" siteId="358" />
+    <Channel id="Investigation Discovery" siteId="635" />
+    <Channel id="Jim Jam" siteId="454" />
+    <Channel id="JimJam" siteId="454" />
+    <Channel id="JN1" siteId="796" />
+    <Channel id="Karusel int" siteId="688" />
+    <Channel id="KidsCo" siteId="391" />
+    <!--Channel id="LIDER TV AZERBAIJAN" siteId="id" /-->
+    <Channel id="Look TV" siteId="726" />
+    <Channel id="LookTV" siteId="726" />
+    <!--Channel id="Love Story" siteId="id" /-->
+    <Channel id="Luxe.TV" siteId="475" />
+    <Channel id="Luxe.TV HD" siteId="536" />
+    <Channel id="Maxxi-TV" siteId="356" />
+    <Channel id="Maxxi-TV (на укр.)" siteId="425" />
+    <Channel id="MCM" siteId="116" />
+    <Channel id="MCM Pop" siteId="83" />
+    <Channel id="MCM Top" siteId="116" />
+    <Channel id="Mezzo" siteId="85" />
+    <Channel id="Mezzo (Muzzik)" siteId="85" />
+    <Channel id="Mezzo Live HD" siteId="672" />
+    <Channel id="MGM HD" siteId="780" />
+    <Channel id="MGM int." siteId="214" />
+    <Channel id="MGM International" siteId="214" />
+    <Channel id="Motors" siteId="117" />
+    <Channel id="MTV Dance" siteId="224" />
+    <Channel id="MTV European" siteId="218" />
+    <Channel id="MTV Hits" siteId="221" />
+    <Channel id="MTV Live HD" siteId="488" />
+    <Channel id="MTV ROCKS" siteId="222" />
+    <Channel id="MTV Russia" siteId="48" />
+    <Channel id="MTV Россия" siteId="48" />
+    <Channel id="MTV Россия (+2)" siteId="625" />
+    <Channel id="MTV Россия (+4)" siteId="569" />
+    <Channel id="MTV Россия (+7)" siteId="626" />
+    <Channel id="MTV Украина" siteId="353" />
+    <Channel id="MTV Украина (на укр.)" siteId="428" />
+    <Channel id="Music Box Ru" siteId="412" />
+    <Channel id="MUSICBOX" siteId="411" />
+    <Channel id="MusicBox UA" siteId="417" />
+    <Channel id="MusicBox UA (на укр.)" siteId="470" />
+    <Channel id="myZen.tv" siteId="534" />
+    <Channel id="myZen.tv HD" siteId="580" />
+    <Channel id="NANO TV" siteId="741" />
+    <Channel id="Nat Geo Wild" siteId="766" />
+    <Channel id="Nat Geo Wild Europe" siteId="344" />
+    <Channel id="Nat Geo Wild HD" siteId="671" />
+    <Channel id="Nat Geo Wild Россия" siteId="766" />
+    <Channel id="National Geographic" siteId="295" />
+    <Channel id="National Geographic HD" siteId="594" />
+    <Channel id="National Geographic Россия" siteId="295" />
+    <Channel id="National Geographic Украина" siteId="826" />
+    <Channel id="NBA TV" siteId="790" />
+    <!--Channel id="NEBISET" siteId="id" /-->
+    <Channel id="NewsOne" siteId="416" />
+    <Channel id="NewsOne (на укр.)" siteId="471" />
+    <Channel id="NHK World" siteId="789" />
+    <Channel id="NHK WORLD TV" siteId="789" />
+    <Channel id="Nick Jr" siteId="728" />
+    <Channel id="Nickelodeon" siteId="45" />
+    <Channel id="Nickelodeon HD" siteId="739" />
+    <Channel id="Nickelodeon Junior" siteId="728" />
+    <Channel id="Nickelodeon Россия" siteId="45" />
+    <Channel id="Nickelodeon СНГ" siteId="643" />
+    <Channel id="Ocean TV" siteId="414" />
+    <Channel id="OCEAN-TV" siteId="414" />
+    <Channel id="OTV" siteId="64" />
+    <Channel id="OTV (на укр.)" siteId="374" />
+    <Channel id="Outdoor Channel" siteId="732" />
+    <Channel id="Outdoor channel HD" siteId="801" />
+    <Channel id="Paramount Comedy Россия" siteId="770" />
+    <!--Channel id="Playboy TV" siteId="id" /-->
+    <Channel id="Playboy TV UK" siteId="172" />
+    <Channel id="Playboy TV UK (для Украины)" siteId="663" />
+    <Channel id="Private Spice" siteId="143" />
+    <Channel id="PRO Business" siteId="492" />
+    <Channel id="Pro Все" siteId="402" />
+    <Channel id="Pro Все (на укр.)" siteId="431" />
+    <!--Channel id="Promo" siteId="id" /-->
+    <Channel id="QTV" siteId="460" />
+    <Channel id="QTV (на укр.)" siteId="461" />
+    <Channel id="R1" siteId="405" />
+    <Channel id="RE: music" siteId="729" />
+    <Channel id="Real Estate TV" siteId="481" />
+    <Channel id="Real Estate TV (на укр.)" siteId="840" />
+    <Channel id="REN-TV" siteId="13" />
+    <Channel id="RT (английский)" siteId="301" />
+    <!--Channel id="RT (арабский)" siteId="id" /-->
+    <!--Channel id="RT (испанский)" siteId="id" /-->
+    <Channel id="RT Д" siteId="788" />
+    <Channel id="RTG" siteId="605" />
+    <Channel id="RTG TV" siteId="605" />
+    <Channel id="RTVI" siteId="22" />
+    <Channel id="RTД" siteId="788" />
+    <Channel id="Ru.Music" siteId="388" />
+    <Channel id="Ru.Music (на укр.)" siteId="469" />
+    <Channel id="RU.TV" siteId="334" />
+    <Channel id="RUSONG TV" siteId="668" />
+    <Channel id="Russia Today" siteId="301" />
+    <Channel id="Russian extreme TV" siteId="288" />
+    <Channel id="RUSSIAN MUSICBOX" siteId="412" />
+    <Channel id="SET Россия" siteId="525" />
+    <Channel id="SET Россия HD" siteId="783" />
+    <Channel id="Setanta Sports Eurasia" siteId="771" />
+    <Channel id="Shopping Live" siteId="752" />
+    <Channel id="Shopping TV" siteId="810" />
+    <Channel id="Sony Turbo" siteId="805" />
+    <Channel id="SONY ТВ" siteId="525" />
+    <Channel id="Spice" siteId="307" />
+    <Channel id="StarTV" siteId="513" />
+    <Channel id="StarTV (на укр.)" siteId="514" />
+    <Channel id="STV" siteId="384" />
+    <Channel id="Style" siteId="178" />
+    <Channel id="Style TV" siteId="178" />
+    <!--Channel id="SupermarketTV" siteId="id" /-->
+    <Channel id="Syfy Universal" siteId="452" />
+    <Channel id="Syfy Universal Россия" siteId="452" />
+    <Channel id="TCM" siteId="87" />
+    <Channel id="TCM (combo)" siteId="792" />
+    <Channel id="Teen TV" siteId="448" />
+    <Channel id="Teen TV (+3)" siteId="575" />
+    <Channel id="TiJi" siteId="597" />
+    <Channel id="TiJi Россия" siteId="597" />
+    <Channel id="TLC" siteId="691" />
+    <Channel id="TLC Pan Regional" siteId="777" />
+    <Channel id="TLC Россия" siteId="691" />
+    <!--Channel id="Top Shop" siteId="id" />
+    <Channel id="TOP SHOP TV" siteId="id" /-->
+    <Channel id="Trace Sports HD" siteId="798" />
+    <Channel id="Trace Urban" siteId="230" />
+    <Channel id="Travel Channel" siteId="88" />
+    <Channel id="Travel Channel HD" siteId="690" />
+    <Channel id="Travel+Adventure" siteId="832" />
+    <Channel id="Travel+Adventure HD" siteId="833" />
+    <!--Channel id="TV Arm" siteId="id" /-->
+    <!--Channel id="TV SALE" siteId="id" /-->
+    <Channel id="TV-21" siteId="68" />
+    <Channel id="TV1000" siteId="107" />
+    <Channel id="TV1000 Action" siteId="458" />
+    <Channel id="TV1000 Action (без блока X)" siteId="820" />
+    <Channel id="TV1000 Action East" siteId="458" />
+    <Channel id="TV1000 Action East (-21)" siteId="512" />
+    <Channel id="TV1000 Comedy" siteId="817" />
+    <Channel id="TV1000 Comedy HD" siteId="818" />
+    <Channel id="TV1000 East" siteId="107" />
+    <Channel id="TV1000 Megahit" siteId="815" />
+    <Channel id="TV1000 Megahit HD" siteId="816" />
+    <Channel id="TV1000 Premium" siteId="813" />
+    <Channel id="TV1000 Premium HD" siteId="814" />
+    <Channel id="TV1000 Русское кино" siteId="255" />
+    <Channel id="TV5" siteId="74" />
+    <Channel id="TV5 Monde Europe" siteId="74" />
+    <Channel id="TV5 Латвия" siteId="434" />
+    <Channel id="TVRus" siteId="799" />
+    <Channel id="Ukrainian Fashion" siteId="773" />
+    <Channel id="Universal" siteId="453" />
+    <Channel id="Universal Channel Россия" siteId="453" />
+    <Channel id="VH1" siteId="50" />
+    <Channel id="VH1 Classic" siteId="227" />
+    <Channel id="VH1 Classic Europe" siteId="227" />
+    <Channel id="VH1 Europe" siteId="50" />
+    <Channel id="Viasat Explorer" siteId="152" />
+    <Channel id="Viasat Explorer CEE" siteId="778" />
+    <Channel id="Viasat Explorer CEE / Spice" siteId="579" />
+    <Channel id="Viasat Explorer Россия" siteId="152" />
+    <Channel id="Viasat History" siteId="175" />
+    <Channel id="Viasat Nature" siteId="652" />
+    <Channel id="Viasat Nature CEE" siteId="652" />
+    <Channel id="Viasat Nature/History HD" siteId="716" />
+    <Channel id="Viasat Sport" siteId="332" />
+    <Channel id="Viasat Sport Baltics" siteId="504" />
+    <Channel id="Viasat Sport Россия" siteId="332" />
+    <Channel id="World Fashion" siteId="313" />
+    <Channel id="World Fashion Channel" siteId="326" />
+    <Channel id="World Fashion Channel Россия" siteId="313" />
+    <Channel id="XTRA KINO TEST" siteId="819" />
+    <Channel id="XXL" siteId="133" />
+    <Channel id="XXL (для Украины)" siteId="664" />
+    <Channel id="ZeeTV Россия" siteId="442" />
+    <Channel id="ZIK (на укр.)" siteId="684" />
+    <Channel id="Zone Reality" siteId="91" />
+    <Channel id="Zone Romantica" siteId="35" />
+    <Channel id="ZooПарк" siteId="331" />
+    <Channel id="Авто Плюс" siteId="311" />
+    <Channel id="Агро ТВ" siteId="721" />
+    <Channel id="Агро-ТВ" siteId="721" />
+    <!--Channel id="АРМЕНИЯ ТВ" siteId="id" /-->
+    <Channel id="Астро ТВ" siteId="742" />
+    <Channel id="Бабай ТБ" siteId="611" />
+    <Channel id="Бабай ТБ (на укр.)" siteId="612" />
+    <Channel id="Баскетбол" siteId="277" />
+    <Channel id="Беларусь 1" siteId="118" />
+    <Channel id="Беларусь 2" siteId="148" />
+    <Channel id="Беларусь ТВ" siteId="231" />
+    <Channel id="БелМузТВ" siteId="706" />
+    <Channel id="Боец" siteId="310" />
+    <Channel id="Боец ТВ" siteId="310" />
+    <Channel id="Бойцовский клуб" siteId="744" />
+    <Channel id="ВКТ" siteId="793" />
+    <Channel id="Воля Кино HD" siteId="834" />
+    <Channel id="Воля Кино HD (на укр.)" siteId="835" />
+    <Channel id="Воля Кино HD +1" siteId="836" />
+    <Channel id="Воля Кино HD +1 (на укр.)" siteId="837" />
+    <Channel id="Вопросы и ответы" siteId="603" />
+    <Channel id="Время" siteId="303" />
+    <!--Channel id="Время: далекое и близкое" siteId="id" /-->
+    <Channel id="Всегда с тобой" siteId="787" />
+    <Channel id="ВТВ" siteId="139" />
+    <Channel id="Гамма" siteId="479" />
+    <Channel id="Гамма (на укр.)" siteId="480" />
+    <Channel id="Глас" siteId="294" />
+    <Channel id="Глас (на укр.)" siteId="465" />
+    <Channel id="Глас (Одесса) (на укр.)" siteId="457" />
+    <Channel id="Гумор ТБ" siteId="505" />
+    <Channel id="Гумор ТБ (на укр.)" siteId="506" />
+    <Channel id="Гумор ТБ / Бабай ТБ" siteId="613" />
+    <Channel id="Гумор ТБ / Бабай ТБ (на укр.)" siteId="614" />
+    <!--Channel id="Дагестан" siteId="id" /-->
+    <Channel id="Девятый канал ОРБИТА" siteId="782" />
+    <Channel id="Детский" siteId="246" />
+    <Channel id="Детский мир" siteId="31" />
+    <Channel id="Детский мир / Телеклуб" siteId="578" />
+    <Channel id="Детский мир/Телеклуб" siteId="578" />
+    <Channel id="Днепропетровский Державный" siteId="380" />
+    <Channel id="Доверие" siteId="733" />
+    <Channel id="Дождь" siteId="675" />
+    <Channel id="Дождь. Optimistic channel" siteId="675" />
+    <Channel id="Дом Кино" siteId="302" />
+    <Channel id="ДОМАШНИЕ ЖИВОТНЫЕ" siteId="601" />
+    <Channel id="Домашний" siteId="124" />
+    <Channel id="Домашний (+2)" siteId="561" />
+    <Channel id="Домашний (+4)" siteId="562" />
+    <Channel id="Домашний (+7)" siteId="563" />
+    <Channel id="Домашний магазин" siteId="695" />
+    <Channel id="Донбасс" siteId="617" />
+    <Channel id="Драйв" siteId="241" />
+    <Channel id="ЕвроКино" siteId="487" />
+    <Channel id="Европа Плюс ТВ" siteId="682" />
+    <Channel id="Еда" siteId="794" />
+    <Channel id="Еда HD" siteId="795" />
+    <Channel id="Жест (Космос ТВ)" siteId="743" />
+    <Channel id="Живи" siteId="511" />
+    <Channel id="ЖИВИ!" siteId="511" />
+    <Channel id="Загородная жизнь" siteId="647" />
+    <Channel id="Загородный" siteId="662" />
+    <Channel id="Загородный ТВ" siteId="662" />
+    <Channel id="Закон ТВ" siteId="408" />
+    <Channel id="Закон-ТВ" siteId="408" />
+    <Channel id="Звезда" siteId="232" />
+    <Channel id="Звезда (+2)" siteId="566" />
+    <Channel id="Звезда (+3)" siteId="567" />
+    <Channel id="Звезда (+7)" siteId="568" />
+    <Channel id="Здоровое ТВ" siteId="242" />
+    <Channel id="Знание" siteId="493" />
+    <Channel id="Зоо ТВ" siteId="451" />
+    <Channel id="Израиль+ Россия" siteId="532" />
+    <Channel id="Иллюзион+" siteId="327" />
+    <!--Channel id="Инва Медиа ТВ" siteId="id" /-->
+    <Channel id="Индия ТВ" siteId="293" />
+    <Channel id="Интер" siteId="4" />
+    <Channel id="Интер (на укр.)" siteId="357" />
+    <Channel id="Интер+" siteId="69" />
+    <Channel id="Интер+ (на укр.)" siteId="430" />
+    <Channel id="Интересное ТВ" siteId="385" />
+    <!--Channel id="Инфоканал" siteId="id" /-->
+    <Channel id="Искушение" siteId="754" />
+    <Channel id="Искушение HD" siteId="754" />
+    <Channel id="К+" siteId="616" />
+    <Channel id="К1" siteId="19" />
+    <Channel id="К1 (на укр.)" siteId="369" />
+    <Channel id="К2" siteId="20" />
+    <Channel id="К2 (на укр.)" siteId="370" />
+    <Channel id="Канал Disney" siteId="89" />
+    <Channel id="Канал Disney (+2)" siteId="645" />
+    <Channel id="Канал Disney (+7)" siteId="646" />
+    <Channel id="Карусель" siteId="687" />
+    <Channel id="Карусель (+3)" siteId="730" />
+    <Channel id="Карусель (+7)" siteId="731" />
+    <Channel id="Карусель International" siteId="688" />
+    <Channel id="КГРТРК" siteId="317" />
+    <Channel id="КГРТРК (на укр.)" siteId="466" />
+    <Channel id="Киев" siteId="75" />
+    <Channel id="Киев (на укр.)" siteId="375" />
+    <Channel id="КиКо" siteId="497" />
+    <Channel id="КиКо (на укр.)" siteId="501" />
+    <Channel id="КИНО ПЛЮС" siteId="608" />
+    <Channel id="Киноклуб" siteId="30" />
+    <Channel id="КИНОЛЮКС" siteId="746" />
+    <Channel id="Киномания" siteId="306" />
+    <Channel id="Кинопоказ" siteId="447" />
+    <Channel id="Кинопоказ (+3)" siteId="574" />
+    <Channel id="Кинопоказ HD-1" siteId="620" />
+    <Channel id="Кинопоказ HD-2" siteId="621" />
+    <Channel id="Кинопоказ HD1" siteId="620" />
+    <Channel id="Кинопоказ HD2" siteId="621" />
+    <!--Channel id="Кинорейс 1" siteId="id" />
+    <Channel id="Кинорейс 2" siteId="id" />
+    <Channel id="Кинорейс 3" siteId="id" />
+    <Channel id="Кинорейс 4" siteId="id" />
+    <Channel id="Кинорейс 5" siteId="id" /-->
+    <Channel id="Киносоюз" siteId="261" />
+    <Channel id="Кинохит" siteId="213" />
+    <Channel id="Комеди ТВ" siteId="476" />
+    <Channel id="Комедия ТВ" siteId="292" />
+    <Channel id="Комсомольская правда" siteId="756" />
+    <Channel id="КРТ" siteId="149" />
+    <Channel id="КРТ (на укр.)" siteId="368" />
+    <Channel id="Кто есть кто" siteId="399" />
+    <Channel id="Культура" siteId="15" />
+    <Channel id="Культура (+2)" siteId="552" />
+    <Channel id="Культура (+4)" siteId="553" />
+    <Channel id="Культура (+7)" siteId="555" />
+    <Channel id="Культура (Украина)" siteId="285" />
+    <Channel id="Культура (Украина) (на укр.)" siteId="494" />
+    <Channel id="Кухня ТВ" siteId="383" />
+    <Channel id="КХЛ HD" siteId="806" />
+    <Channel id="КХЛ ТВ" siteId="604" />
+    <!--Channel id="ЛИДЕР ТВ - РФ" siteId="id" /-->
+    <Channel id="Любимое кино" siteId="526" />
+    <Channel id="Ля-минор" siteId="297" />
+    <Channel id="Ля-минор ТВ" siteId="297" />
+    <Channel id="М1" siteId="94" />
+    <Channel id="М1 (на укр.)" siteId="366" />
+    <Channel id="М2-Эстрада" siteId="445" />
+    <Channel id="М2-Эстрада (на укр.)" siteId="474" />
+    <Channel id="Малятко TV" siteId="606" />
+    <Channel id="Малятко TV (на укр.)" siteId="629" />
+    <Channel id="Мать и дитя" siteId="394" />
+    <Channel id="Мега" siteId="234" />
+    <Channel id="Мега (на укр.)" siteId="362" />
+    <Channel id="МЕНЮ-ТВ" siteId="348" />
+    <Channel id="МЕНЮ-ТВ (на укр.)" siteId="379" />
+    <Channel id="МИР" siteId="176" />
+    <Channel id="Мир 24" siteId="838" />
+    <Channel id="Мир сериала" siteId="637" />
+    <Channel id="МирТВ" siteId="176" />
+    <Channel id="МирТВ (+3)" siteId="529" />
+    <Channel id="МНОГОсерийное ТВ" siteId="278" />
+    <Channel id="Москва 24" siteId="123" />
+    <Channel id="Москва-24" siteId="123" />
+    <Channel id="Моя дитина" siteId="761" />
+    <Channel id="Моя дитина (на укр.)" siteId="762" />
+    <Channel id="Моя Планета" siteId="639" />
+    <Channel id="МТВ" siteId="710" />
+    <Channel id="Мужской" siteId="648" />
+    <Channel id="Муз-ТВ" siteId="808" />
+    <Channel id="Музыка Первого" siteId="439" />
+    <Channel id="Мультимания" siteId="286" />
+    <Channel id="Нано ТВ" siteId="741" />
+    <Channel id="Наука 2.0" siteId="712" />
+    <Channel id="НАШ" siteId="807" />
+    <Channel id="Наш футбол" siteId="284" />
+    <Channel id="Наше кино" siteId="29" />
+    <Channel id="Наше кино (НТВ+)" siteId="312" />
+    <Channel id="Наше новое кино" siteId="260" />
+    <!--Channel id="Новгород ТВ" siteId="id" /-->
+    <Channel id="Новый канал" siteId="7" />
+    <Channel id="Новый канал (на укр.)" siteId="360" />
+    <Channel id="Ностальгия" siteId="216" />
+    <Channel id="Ночной Клуб" siteId="455" />
+    <Channel id="Ночной клуб (+3)" siteId="576" />
+    <Channel id="НСТ (Страшное)" siteId="329" />
+    <!--Channel id="НСТВ" siteId="id" /-->
+    <Channel id="НТА" siteId="736" />
+    <Channel id="НТА (на укр.)" siteId="669" />
+    <Channel id="НТВ" siteId="10" />
+    <Channel id="НТВ (+2)" siteId="545" />
+    <Channel id="НТВ (+3)" siteId="509" />
+    <Channel id="НТВ (+4)" siteId="546" />
+    <Channel id="НТВ (+7)" siteId="547" />
+    <Channel id="НТВ Мир" siteId="82" />
+    <Channel id="НТВ-Беларусь" siteId="699" />
+    <Channel id="НТВ-Мир" siteId="82" />
+    <Channel id="НТВ-ПЛЮС 3D" siteId="702" />
+    <Channel id="НТВ-ПЛЮС СПОРТ" siteId="32" />
+    <Channel id="НТВ-ПЛЮС Футбол" siteId="33" />
+    <Channel id="НТВ-ПЛЮС Футбол 2 HD" siteId="753" />
+    <Channel id="НТВ+ 3D by Panasonic" siteId="702" />
+    <Channel id="НТВ+ Баскетбол" siteId="277" />
+    <Channel id="НТВ+ Киноклуб" siteId="30" />
+    <Channel id="НТВ+ Кинохит" siteId="213" />
+    <Channel id="НТВ+ Наш футбол" siteId="284" />
+    <Channel id="НТВ+ Премьера" siteId="34" />
+    <Channel id="НТВ+ Спорт" siteId="32" />
+    <Channel id="НТВ+ Спорт Онлайн" siteId="154" />
+    <Channel id="НТВ+ Спорт Союз" siteId="280" />
+    <Channel id="НТВ+ Теннис" siteId="276" />
+    <Channel id="НТВ+ Футбол" siteId="33" />
+    <Channel id="НТВ+ Футбол 2" siteId="707" />
+    <Channel id="НТВ+ Футбол 2 HD" siteId="753" />
+    <Channel id="НТВ+ Футбол HD" siteId="747" />
+    <Channel id="НТН" siteId="212" />
+    <Channel id="НТН (на укр.)" siteId="367" />
+    <Channel id="О2ТВ" siteId="257" />
+    <Channel id="ОК" siteId="483" />
+    <Channel id="ОНТ" siteId="111" />
+    <Channel id="Оружие" siteId="708" />
+    <Channel id="Оружие Спорт Техника" siteId="769" />
+    <Channel id="ОСТ ТВ (Оружие Спорт Техника)" siteId="769" />
+    <Channel id="ОТВ (Екатеринбург)" siteId="655" />
+    <!--Channel id="ОТВ Челябинск" siteId="id" /-->
+    <Channel id="Открытый мир" siteId="692" />
+    <Channel id="Охота и рыбалка" siteId="243" />
+    <Channel id="Охотник и рыболов" siteId="628" />
+    <Channel id="Парк развлечений" siteId="351" />
+    <Channel id="Первый" siteId="8" />
+    <Channel id="Первый Ukraine" siteId="827" />
+    <Channel id="Первый Ukraine (на укр.)" siteId="828" />
+    <Channel id="Первый автомобильный" siteId="435" />
+    <Channel id="Первый автомобильный (на укр.)" siteId="436" />
+    <Channel id="Первый деловой" siteId="299" />
+    <Channel id="Первый деловой (на укр.)" siteId="378" />
+    <Channel id="Первый канал (+2)" siteId="541" />
+    <Channel id="Первый канал (+4)" siteId="542" />
+    <Channel id="Первый канал (+6)" siteId="543" />
+    <Channel id="Первый канал (+8)" siteId="544" />
+    <Channel id="Первый канал (Россия)" siteId="8 selected" />
+    <Channel id="Первый канал (Россия) Европа" siteId="21" />
+    <Channel id="Первый канал (Россия) СНГ" siteId="314" />
+    <Channel id="Первый канал (Россия) Украина" siteId="339" />
+    <Channel id="Первый канал HD" siteId="839" />
+    <Channel id="Первый канал. Всемирная сеть" siteId="21" />
+    <!--Channel id="Первый МЕТЕО" siteId="id" /-->
+    <Channel id="Первый муниципальный (Донецк)" siteId="670" />
+    <Channel id="Первый национальный (Украина)" siteId="1" />
+    <Channel id="Первый национальный (Украина) (на укр.)" siteId="345" />
+    <Channel id="Первый национальный / ТРК Эра" siteId="540" />
+    <Channel id="Первый национальный / ТРК Эра (на укр.)" siteId="592" />
+    <Channel id="Первый образовательный" siteId="215" />
+    <Channel id="ПЕРЕЦ" siteId="56" />
+    <Channel id="Перец (+2)" siteId="396" />
+    <Channel id="Перец (+7)" siteId="537" />
+    <Channel id="Пиксель" siteId="27" />
+    <Channel id="Пиксель (на укр.)" siteId="373" />
+    <Channel id="Планета" siteId="498" />
+    <Channel id="Планета (на укр.)" siteId="502" />
+    <Channel id="ПлюсПлюс" siteId="24" />
+    <Channel id="ПлюсПлюс (на укр.)" siteId="376" />
+    <Channel id="Погода ТВ" siteId="759" />
+    <Channel id="Погода ТВ (на укр.)" siteId="760" />
+    <Channel id="Подмосковье" siteId="653" />
+    <Channel id="Премьера" siteId="34" />
+    <Channel id="ПРОСВЕЩЕНИЕ" siteId="774" />
+    <Channel id="ПСИХОЛОГИЯ21" siteId="602" />
+    <Channel id="Пятый канал" siteId="308" />
+    <Channel id="Рада" siteId="823" />
+    <Channel id="Рада (на укр.)" siteId="824" />
+    <Channel id="Радость моя" siteId="693" />
+    <Channel id="Раз ТВ" siteId="581" />
+    <Channel id="РазТВ" siteId="581" />
+    <Channel id="РБК ТВ" siteId="146" />
+    <Channel id="РБК-ТВ" siteId="146" />
+    <Channel id="РЕН ТВ" siteId="13" />
+    <Channel id="РЕН ТВ (+2)" siteId="570" />
+    <Channel id="РЕН ТВ (+4)" siteId="571" />
+    <Channel id="РЕН ТВ (+7)" siteId="572" />
+    <Channel id="Ретро" siteId="244" />
+    <Channel id="РЖД" siteId="713" />
+    <Channel id="РЖД ТВ" siteId="713" />
+    <Channel id="Россия 1" siteId="9" />
+    <Channel id="Россия 1 (+2)" siteId="548" />
+    <Channel id="Россия 1 (+4)" siteId="549" />
+    <Channel id="Россия 1 (+6)" siteId="550" />
+    <Channel id="Россия 1 (+8)" siteId="551" />
+    <Channel id="Россия 2" siteId="144" />
+    <Channel id="Россия 24" siteId="328" />
+    <Channel id="Россия HD" siteId="841" />
+    <Channel id="Россия К" siteId="15" />
+    <Channel id="РТР-Беларусь" siteId="700" />
+    <Channel id="РТР-Планета" siteId="98" />
+    <Channel id="РТР-Планета Америка" siteId="831" />
+    <Channel id="РТР-Планета Европа" siteId="98" />
+    <Channel id="РТР-Планета СНГ" siteId="355" />
+    <Channel id="Русская ночь" siteId="296" />
+    <Channel id="Русский бестселлер" siteId="812" />
+    <Channel id="Русский Иллюзион" siteId="177" />
+    <Channel id="Русский роман" siteId="757" />
+    <!--Channel id="Русский север" siteId="id" /-->
+    <Channel id="Русский экстрим" siteId="288" />
+    <Channel id="Сарафан" siteId="433" />
+    <Channel id="Свит" siteId="499" />
+    <Channel id="Свит (на укр.)" siteId="503" />
+    <!--Channel id="Север" siteId="id" /-->
+    <Channel id="Сигма" siteId="709" />
+    <Channel id="Совершенно секретно" siteId="350" />
+    <Channel id="Союз" siteId="235" />
+    <Channel id="Союз (Екатеринбург)" siteId="235" />
+    <Channel id="Спас" siteId="238" />
+    <Channel id="СПОРТ" siteId="711" />
+    <Channel id="Спорт 1" siteId="270" />
+    <Channel id="Спорт 1 (на укр.)" siteId="426" />
+    <Channel id="Спорт 1 (Россия)" siteId="667" />
+    <Channel id="Спорт 1 HD" siteId="724" />
+    <Channel id="Спорт 2" siteId="309" />
+    <Channel id="Спорт 2 (на укр.)" siteId="427" />
+    <Channel id="Спорт on-line" siteId="154" />
+    <Channel id="СПОРТ ПЛЮС" siteId="595" />
+    <Channel id="Спорт Союз" siteId="280" />
+    <Channel id="СТБ" siteId="6" />
+    <Channel id="СТБ (на укр.)" siteId="359" />
+    <Channel id="СТВ" siteId="115" />
+    <!--Channel id="СТВ Ставрополь" siteId="id" /-->
+    <!--Channel id="Стиль и мода" siteId="id" /-->
+    <Channel id="Страна" siteId="627" />
+    <Channel id="Страна советов (на укр.)" siteId="275" />
+    <Channel id="СТС" siteId="17" />
+    <Channel id="СТС (+2)" siteId="538" />
+    <Channel id="СТС (+4)" siteId="539" />
+    <Channel id="СТС (+7)" siteId="508" />
+    <Channel id="СТС International" siteId="758" />
+    <Channel id="СТС International Балтия" siteId="768" />
+    <Channel id="СТС-Москва" siteId="17" />
+    <Channel id="ТБН Россия" siteId="694" />
+    <Channel id="ТВ XXI" siteId="68" />
+    <Channel id="ТВ АРМ РУ" siteId="676" />
+    <Channel id="ТВ Клуб" siteId="607" />
+    <!--Channel id="ТВ Молл" siteId="id" /-->
+    <Channel id="ТВ Центр" siteId="11" />
+    <Channel id="ТВ Центр (+2)" siteId="559" />
+    <Channel id="ТВ Центр (+4)" siteId="560" />
+    <Channel id="ТВ Центр (+7)" siteId="624" />
+    <Channel id="ТВ Центр Международный (TVCI)" siteId="237" />
+    <Channel id="ТВ-7 (Мариуполь)" siteId="714" />
+    <Channel id="ТВ3" siteId="63" />
+    <Channel id="тв3 Россия" siteId="63" />
+    <Channel id="тв3 Россия (+2)" siteId="564" />
+    <Channel id="тв3 Россия (+7)" siteId="565" />
+    <Channel id="ТВi" siteId="438" />
+    <Channel id="ТВi (на укр.)" siteId="462" />
+    <Channel id="Твой ТВ Петербург" siteId="615" />
+    <Channel id="Твоя Недвижимость" siteId="830" />
+    <!--Channel id="ТВпоиск" siteId="id" /-->
+    <Channel id="ТВЦ" siteId="11" />
+    <Channel id="ТДК" siteId="142" />
+    <Channel id="Театр" siteId="829" />
+    <Channel id="Театр ТВ" siteId="829" />
+    <!--Channel id="Телеинструктор" siteId="id" /-->
+    <Channel id="Телеканал КХЛ" siteId="604" />
+    <Channel id="ТЕЛЕКАФЕ" siteId="415" />
+    <Channel id="Телеклуб" siteId="141" />
+    <Channel id="Телепутешествия" siteId="450" />
+    <Channel id="Телепутешествия HD" siteId="619" />
+    <Channel id="Теннис" siteId="276" />
+    <Channel id="ТЕТ" siteId="18" />
+    <Channel id="ТЕТ (на укр.)" siteId="364" />
+    <Channel id="Тиса-1" siteId="315" />
+    <Channel id="Тиса-1 (на укр.)" siteId="467" />
+    <Channel id="ТНВ-Планета" siteId="781" />
+    <Channel id="ТНВ-Татарстан" siteId="145" />
+    <Channel id="ТНТ" siteId="14" />
+    <Channel id="ТНТ (+2)" siteId="556" />
+    <Channel id="ТНТ (+3)" siteId="767" />
+    <Channel id="ТНТ (+4)" siteId="557" />
+    <Channel id="ТНТ (+7)" siteId="558" />
+    <Channel id="ТНТ Bravo" siteId="737" />
+    <Channel id="Тонис" siteId="25" />
+    <Channel id="Тонис (на укр.)" siteId="365" />
+    <Channel id="Тонис HD" siteId="803" />
+    <Channel id="Тонис HD (на укр.)" siteId="822" />
+    <Channel id="Тонус ТВ" siteId="495" />
+    <!--Channel id="Триколор ТВ" siteId="id" />
+    <Channel id="Триколор ТВ Full HD" siteId="id" /-->
+    <Channel id="ТРК Буковина= (на укр.)" siteId="633" />
+    <Channel id="ТРК Эра" siteId="78" />
+    <Channel id="ТРК Эра (на укр.)" siteId="349" />
+    <Channel id="ТРК Юнион" siteId="661" />
+    <Channel id="ТРО" siteId="491" />
+    <Channel id="ТТС" siteId="717" />
+    <Channel id="УБР" siteId="609" />
+    <Channel id="УБР (на укр.)" siteId="610" />
+    <Channel id="Украина" siteId="108" />
+    <Channel id="Украина (на укр.)" siteId="361" />
+    <Channel id="Улыбка ребенка" siteId="531" />
+    <Channel id="УНИАН ТВ" siteId="740" />
+    <Channel id="УНИАН ТВ (на укр.)" siteId="786" />
+    <Channel id="Усадьба" siteId="305" />
+    <Channel id="Успех" siteId="649" />
+    <Channel id="УТР" siteId="689" />
+    <Channel id="УТР (на укр.)" siteId="165" />
+    <Channel id="Феникс+Кино" siteId="390" />
+    <Channel id="Футбол" siteId="440" />
+    <Channel id="Футбол (Россия)" siteId="440" />
+    <Channel id="Футбол (Украина)" siteId="507" />
+    <Channel id="Футбол (Украина) (на укр.)" siteId="638" />
+    <Channel id="Футбол 2" siteId="707" />
+    <Channel id="Футбол HD" siteId="747" />
+    <Channel id="Футбол+" siteId="703" />
+    <Channel id="Футбол+ (на укр.)" siteId="704" />
+    <Channel id="Футбол+ HD" siteId="804" />
+    <Channel id="Футбол+ HD (на укр.)" siteId="821" />
+    <Channel id="Хоккей" siteId="748" />
+    <Channel id="Хоккей (на укр.)" siteId="749" />
+    <!--Channel id="ЧГТРК Грозный" siteId="id" /-->
+    <Channel id="Черноморская ТРК" siteId="751" />
+    <Channel id="ЧП.INFO" siteId="446" />
+    <Channel id="ЧП.INFO (на укр.)" siteId="472" />
+    <Channel id="Шансон ТВ" siteId="719" />
+    <!--Channel id="Эгоист ТВ" siteId="id" /-->
+    <Channel id="Эко-ТВ" siteId="685" />
+    <Channel id="Эко-ТВ (на укр.)" siteId="686" />
+    <!--Channel id="Экран 1. Кинозалы" siteId="id" />
+    <Channel id="Экран 2. Кинозалы" siteId="id" />
+    <Channel id="Экран 3. Кинозалы" siteId="id" />
+    <Channel id="Экран 4. Кинозалы" siteId="id" />
+    <Channel id="Экран 5. Кинозалы" siteId="id" />
+    <Channel id="Экран 6. Кинозалы" siteId="id" />
+    <Channel id="Экран 7. Кинозалы" siteId="id" />
+    <Channel id="Экран 8. Кинозалы" siteId="id" />
+    <Channel id="Экран 9. Кинозалы" siteId="id" />
+    <Channel id="Экран 10. Кинозалы" siteId="id" />
+    <Channel id="Экран 11. Кинозалы" siteId="id" />
+    <Channel id="Экран 12. Кинозалы" siteId="id" />
+    <Channel id="Экран 13. Кинозалы" siteId="id" />
+    <Channel id="Экран 14. Кинозалы" siteId="id" />
+    <Channel id="Экран 15. Кинозалы" siteId="id" />
+    <Channel id="Экран 16. Кинозалы" siteId="id" />
+    <Channel id="Экран 17. Кинозалы" siteId="id" />
+    <Channel id="Экран 18. Кинозалы" siteId="id" />
+    <Channel id="Экран 19. Кинозалы" siteId="id" />
+    <Channel id="Экран 20. Кинозалы" siteId="id" />
+    <Channel id="Экран 21. Кинозалы" siteId="id" />
+    <Channel id="Экран 22. Кинозалы" siteId="id" />
+    <Channel id="Экран 23. Кинозалы" siteId="id" />
+    <Channel id="Экран 24. Кинозалы" siteId="id" /-->
+    <Channel id="Эксперт ТВ" siteId="489" />
+    <Channel id="Ю" siteId="49" />
+    <Channel id="Ю (+2)" siteId="722" />
+    <Channel id="Ю (+7)" siteId="723" />
+    <Channel id="Ю-ТВ" siteId="49" />
+    <Channel id="Югра" siteId="128" />
+    <!--Channel id="Южный Регион Дон" siteId="id" /-->
+    <Channel id="ЮМОР BOX" siteId="410" />
+    <Channel id="Юмор Бокс" siteId="410" />
 
+    <!-- HotBird 13.0 -->
+    <Channel id="1TVRUS Europe" siteId="21" />
+    <Channel id="RTR" siteId="98" />
+    <Channel id="Rossiya 24" siteId="328" />
+    <Channel id="RBC-TV" siteId="146" />
+    <!--Channel id="Euronews" siteId="37" / -->
+    <Channel id="RU TV" siteId="334" />
+    <Channel id="Music Box Russia" siteId="412" />
+    <Channel id="ChildRussia" siteId="531" />
+    <Channel id="Shanson TV" siteId="719" />
+    <Channel id="STS International" siteId="758" />
+    <Channel id="NASCH TV" siteId="807" />
+    <Channel id="TVRUS" siteId="799" />
 
-      <Html> 
-		<Template name="default" start="&lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;" end="&lt;!-- Ячейка с основным контентом END --&gt;">	
-        <SectionTemplate tags="D">
-			<TemplateText>
-	         &lt;div class="time"&gt;&lt;#START&gt;&lt;/div&gt;&lt;div class="prname2"&gt;&lt;#TITLE&gt;&lt;/div&gt;&lt;z(&gt;&lt;div class="prdesc"&gt;&lt;div class="desc"&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/z)?&gt;
-			
-    </TemplateText>
+  </Channels>
 
-      </SectionTemplate>
-
+  <Listing type="Html">
+    <Site url="http://www.vsetv.com/schedule_channel_[ID]_day_[YYYY]-[MM]-[DD].html?dset11=0&amp;dset12=0&amp;dset21=0&amp;dset22=0" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="schedule_container" end="&lt;/div&gt;&lt;div class=&quot;clear&quot;&gt;&lt;/div&gt;">
+        <SectionTemplate tags="DA">
+          <TemplateText>
+            &lt;div&gt;&lt;#START&gt;&lt;/div&gt;
+            &lt;div&gt;
+            &lt;z(&gt;
+            &lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;
+            &lt;/div&gt;&lt;div&gt;
+            &lt;z|&gt;
+            &lt;#TITLE&gt;
+            &lt;z)&gt;
+            &lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
       </Template>
+      <Template name="description" start="" end="">
+        <SectionTemplate tags="DS">
+          <TemplateText>
+            &lt;/span&gt;
+            &lt;div&gt;
+            &lt;span&gt;
+            &lt;#DESCRIPTION&gt;
+            &lt;/span&gt;
+            &lt;z(&gt;&lt;span&gt;&lt;/span&gt;&lt;/z)?&gt;
+            &lt;/div&gt;
+            &lt;div&gt;&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search=".html" template="description">
+        </Sublink>
+      </Sublinks>
+      <Searches>
+        <Search match="[.,:]?[ ]*[0-9]{1,3}(-й)?[ ]*([фФ][іи]льм|[сС]езон)" field="#SEASON" remove="true" />
+        <Search match="[.,:]?[ ]*([фФ][іи]льм|[сС]езон)[ ]*[0-9]{1,3}(-й)?[ ]*" field="#SEASON" remove="true" />
 
+        <Search match="[.,:]?[ ]*([0-9]{1,3}[ ]*[-іи][ ]*)?[0-9]{1,3}(-а|-я)?[ ]*([сС][.]|[сС]ер[іи]я|[еЕэЭ]п(.|[іи]зод)|[вВ][ыи]п([.]|уск)?)" field="#EPISODE" remove="true" />
+        <Search match="[.,:]?[ ]*([сС][.]|[сС]ер[іи]я|[еЕэЭ]п(.|[іи]зод)|[вВ][ыи]п([.]|уск)?)[ ]*([0-9]{1,3}[ ]*[-іи][ ]*)?[0-9]{1,3}(-а|-я)?[ ]*" field="#EPISODE" remove="true" />
+        <Search match="[(][0-9]{1,3}[)]" field="#EPISODE" remove="true" />
+
+        <Search match="&quot;[.]? &quot;[^&lt;]+&quot;" field="#SUBTITLE" remove="true" />
+        <Search match="[ ]*[(][^()#/&amp;&lt;]+[)]" field="#SUBTITLE" remove="true" />
+
+        <Search match="[ ]*[ХхМмТтДд][/\\][ФфСс][ ]*" field="#GENRE" remove="true" />
+        <Search match="[ ]*Мультф[іи]льм[^(ы.|.)]" field="#GENRE" remove="true" />
+        <Search match="[Мм]ультф[іи]льм[ы]\." field="#GENRE" remove="false" />
+        <Search match="[Мм]ультсер[іи]ал[ ]*" field="#GENRE" remove="true" />
+        <Search match="[Мм]ультипл[іи]кац(ійний|ионный) [Сс]ер[іи]ал[ ]*" field="#GENRE" remove="true" />
+        <Search match="([Мм]ного|[Бб]агато)сер[іи]йн[ыи]й [Фф][іи]льм[ ]*" field="#GENRE" remove="true" />
+        <Search match="[Тт]ел\.сер[іи]ал[ ]*" field="#GENRE" remove="true" />
+        <Search match="[Сс]ер[іи]ал[ ]*" field="#GENRE" remove="true" />
+
+        <Search match="[Шш]оу" field="#GENRE" remove="false" />
+
+        <Search match="&lt;div class=&quot;[a-z]*prname[0-9]*&quot;&gt;([^&lt;]|&lt;img).*&lt;/div&gt;" field="#TITLE" remove="true" />
+      </Searches>
     </Html>
-
   </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search="&lt;a[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&lt;/a[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&lt;div[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&lt;/div[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&lt;img[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&amp;nbsp;" action="Replace">&#32;</Modify>
 
+    <Modify channel="*" field="#TITLE" search="[.]$" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="&quot;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="  " action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search="  " action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#TITLE" search=" [.]" action="Replace">.</Modify>
+    <Modify channel="*" field="#TITLE" search=" [,]" action="Replace">,</Modify>
+
+    <Modify channel="*" field="#TITLE" search="^Премьера. " action="Replace">&#32;</Modify>
+
+    <Modify channel="*" field="#SUBTITLE" search="&lt;a[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&lt;/a[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&lt;div[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&lt;/div[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&lt;img[^&gt;]*&gt;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&amp;nbsp;" action="Replace">&#32;</Modify>
+
+    <Modify channel="*" field="#SUBTITLE" search="^[(]" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="[)]$" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="^&quot;[.]" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="[.]$" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="&quot;" action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="  " action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search="  " action="Replace">&#32;</Modify>
+    <Modify channel="*" field="#SUBTITLE" search=" [.]" action="Replace">.</Modify>
+    <Modify channel="*" field="#SUBTITLE" search=" [,]" action="Replace">,</Modify>
+
+    <Modify channel="*" field="#GENRE" search="[ХхТт][/\\][Фф]" action="Replace">Фильм</Modify>
+
+    <Modify channel="*" field="#GENRE" search="[Тт][/\\][Сс]" action="Replace">Сериал</Modify>
+    <Modify channel="*" field="#GENRE" search="([Мм]ного|[Бб]агато)сер[іи]йн[ыи]й [Фф][іи]льм" action="Replace">Сериал</Modify>
+    <Modify channel="*" field="#GENRE" search="([Тт]ел.)?[Сс]ер[іи]ал" action="Replace">Сериал</Modify>
+
+    <Modify channel="*" field="#GENRE" search="[Дд][/\\][ФфСс]" action="Replace">Документальный</Modify>
+
+    <Modify channel="*" field="#GENRE" search="[Мм][/\\][ФфСс]" action="Replace">Для детей</Modify>
+    <Modify channel="*" field="#GENRE" search="[Мм]ультф[іи]льм[(ы.|.)]" action="Replace">Для детей</Modify>
+    <Modify channel="*" field="#GENRE" search="[Мм]ультсер[іи]ал" action="Replace">Для детей</Modify>
+    <Modify channel="*" field="#GENRE" search="[Мм]ультипл[іи]кац(ійний|ионный) [Сс]ер[іи]ал" action="Replace">Для детей</Modify>
+
+    <Modify channel="*" field="#GENRE" search="[Шш]оу" action="Replace">Развлекательный</Modify>
+  </Actions>
 </Grabber>
-
-                      

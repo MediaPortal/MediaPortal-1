@@ -168,16 +168,10 @@ namespace MediaPortal.GUI.Video
           if (sortby == null)
           {
             sortby = new VideoSort.SortMethod[handler.Views.Count,50];
-
+            // !!!!!!!!Sort items must be the same as in VideoSort.cs -> public enum SortMethod
             ArrayList sortStrings = new ArrayList();
-            sortStrings.Add("Name");
-            sortStrings.Add("NameAll");
-            sortStrings.Add("Date");
-            sortStrings.Add("Size");
-            sortStrings.Add("Year");
-            sortStrings.Add("Rating");
-            sortStrings.Add("Label");
-
+            sortStrings.AddRange(Enum.GetNames(typeof(VideoSort.SortMethod)));
+            
             for (int i = 0; i < handler.Views.Count; ++i)
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
@@ -735,7 +729,7 @@ namespace MediaPortal.GUI.Video
 
         if (actor != null)
         {
-          string restriction = "7"; // Refresh every week actor info and movies
+          string restriction = "30"; // Refresh every month actor info and movies
 
           TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
           DateTime searchDate = DateTime.Today - ts;
