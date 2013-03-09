@@ -70,12 +70,12 @@
       <playedColor>ff787878</playedColor>
       <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
-      <textcolorNoFocus>ff000000</textcolorNoFocus>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
       <colordiffuse>ffffffff</colordiffuse>
-      <remoteColor>ffff00ff00</remoteColor>
-      <remoteColor2>ffff00ff00</remoteColor2>
+      <remoteColor>ff00ff00</remoteColor>
+      <remoteColor2>ff00ff00</remoteColor2>
       <downloadColor>ff666666</downloadColor>
       <downloadColor2>ff80ff80</downloadColor2>
       <scrollOffset>2</scrollOffset>
@@ -124,13 +124,12 @@
       <playedColor>ff787878</playedColor>
       <playedColor2>ff787878</playedColor2>
       <textcolor>ffffffff</textcolor>
-      <textcolorNoFocus>ff000000</textcolorNoFocus>
+      <textcolorNoFocus>ffffffff</textcolorNoFocus>
       <textcolor2>ffffffff</textcolor2>
       <textcolor3>ffffffff</textcolor3>
       <colordiffuse>ffffffff</colordiffuse>
-      <remoteColor>ffff00ff00</remoteColor>
-      <remoteColor2>ffff00ff00</remoteColor2>
-      <downloadColor>ff666666</downloadColor>
+      <remoteColor>ff00ff00</remoteColor>
+      <remoteColor2>ff00ff00</remoteColor2>
       <downloadColor2>ff80ff80</downloadColor2>
       <scrollbarXOff>2035</scrollbarXOff>
       <scrollOffset>2</scrollOffset>

@@ -504,4 +504,13 @@ Overfør denne folderen til din HTPC. Start installasjonen ved å kjøre "MediaP
 Vær oppmerksom på at AERO trengs for å ungå hakking ved avspilling.
 Ved å aktivere AERO vil også CPU bruken gå ned, som igjen gjør at din HTPC er kaldere og mer stille.</value>
   </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Bruk eksisterende skinn (Vil bli sjekket om det er kompatibelt)</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Velg et skinn</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>SkinChoice_labelSectionHeader</value>
+  </data>
 </root>

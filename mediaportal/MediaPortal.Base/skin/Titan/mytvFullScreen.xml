@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>602</id>
+	<defaultcontrol>995</defaultcontrol>
+	<allowoverlay>no</allowoverlay>
+	<disabletopbar>false</disabletopbar>
+	<controls>
+
+		<control>
+			<description>background image (not used!)</description>
+			<type>image</type>
+			<id>105</id>
+			<posX>2000</posX>
+			<posY>10</posY>
+			<width>10</width>
+			<height>10</height>
+			<texture>empty.png</texture>
+			<visible>window.ispauseosdvisible|player.rewinding|player.forwarding</visible>
+		</control>
+
+		<control>
+			<description>background image when pause, forward, rewind</description>
+			<type>image</type>
+			<id>111</id>
+    		<posX>183</posX>
+    		<posY>820</posY>
+    		<width>1553</width>
+    		<height>238</height>
+			<texture>osd_pause_bg.png</texture>
+			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+		</control>
+
+    	<control>
+    		<type>label</type>
+    		<id>1</id>
+    		<description>Clock</description>
+    		<posX>275</posX>
+    		<posY>918</posY>
+    		<width>144</width>
+    		<font>TitanLight12</font>
+    		<align>center</align>
+    		<label>#time</label>
+    		<textcolor>ff00b7ff</textcolor>
+			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+    	</control>
+    	
+    	<control>
+    		<description>clock bg</description>
+    		<type>image</type>
+    		<id>0</id>
+    		<posX>252</posX>
+    		<posY>888</posY>
+    		<width>184</width>
+    		<height>49</height>
+    		<texture>osd_clock_pause_bg.png</texture>
+			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+    	</control>
+    	
+    	<control>
+    		<description>pause button</description>
+    		<type>image</type>
+    		<id>1</id>
+    		<posX>1482</posX>
+    		<posY>888</posY>
+    		<width>184</width>
+    		<height>49</height>
+    		<texture>osd_play_button.png</texture>
+			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+    	</control>
+  	  
+    	<control>
+    		<description>pause button</description>
+    		<type>image</type>
+    		<id>1</id>
+    		<posX>856</posX>
+    		<posY>295</posY>
+    		<width>209</width>
+    		<height>221</height>
+    		<texture>osd_pause.png</texture>
+    		<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused</visible>
+    	</control>
+
+    	<control>
+    		<description>progressbar bg</description>
+    		<type>image</type>
+    		<id>0</id>
+    		<posX>588</posX>
+    		<posY>907</posY>
+    		<width>737</width>
+    		<height>18</height>
+    		<texture>osd_progress_bg.png</texture>
+			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+    	</control>
+
+		<control>
+			<description>TV Progress Bar</description>
+			<type>tvprogress</type>
+			<id>100</id>
+    		<posX>578</posX>
+    		<posY>909</posY>
+    		<width>758</width>
+    		<height>15</height>
+			<toptexture>-</toptexture>
+			<TextureOffsetY>0</TextureOffsetY>
+			<bottomtexture>-</bottomtexture>
+			<texturetick>-</texturetick>
+			<lefttexture>osd_progress_left.png</lefttexture>
+			<midtexture>-</midtexture>
+			<righttexture>-</righttexture>
+			<logotexture>-</logotexture>
+			<fillbackgroundtexture>-</fillbackgroundtexture>
+			<fillbgxoff>-3</fillbgxoff>
+			<fillbgyoff>0</fillbgyoff>
+    		<filltexture1>osd_progress_mid.png</filltexture1>
+    		<filltexture2>osd_progress_mid.png</filltexture2>
+    		<filltexture3>osd_progress_mid_orange.png</filltexture3>
+			<fillheight>15</fillheight>
+			<label>#TV.Record.percent1</label>
+			<label1>#TV.Record.percent2</label1>
+			<label2>#TV.Record.percent3</label2>
+			<startlabel />
+			<endlabel />
+			<toplabel />
+			<font>font10</font>
+			<textcolor>ffffffff</textcolor>
+			<visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+		</control>
+
+		<control>
+			<description>Start Time Info</description>
+			<type>label</type>
+			<id>106</id>
+    		<posX>484</posX>
+    		<posY>899</posY>
+			<label>#TV.View.start</label>
+    		<textcolor>ff00b7ff</textcolor>
+    		<align>left</align>
+    		<font>font11</font>
+			<visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+		</control>
+
+		<control>
+			<description>Remaining time</description>
+			<type>label</type>
+			<id>107</id>
+    		<posX>1415</posX>
+    		<posY>899</posY>
+			<label>#TV.View.stop</label>
+    		<textcolor>ff00b7ff</textcolor>
+    		<align>right</align>
+    		<font>font11</font>
+			<visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
+		</control>
+
+    	<control>
+    		<description>row 1 label</description>
+    		<type>label</type>
+    		<id>10</id>
+    		<posX>738</posX>
+    		<posY>993</posY>
+    		<width>444</width>
+    		<font>fontB14</font>
+    		<align>center</align>
+    		<textcolor>ff393939</textcolor>
+    		<label>-</label>
+    	</control>
+    
+    	<control>
+    		<description>row 2 label</description>
+    		<type>label</type>
+    		<id>11</id>
+    		<posX>738</posX>
+    		<posY>993</posY>
+    		<width>444</width>
+    		<font>fontB14</font>
+    		<align>center</align>
+    		<textcolor>ff393939</textcolor>
+    		<label>-</label>
+    	</control>
+    
+    	<control>
+    		<description>row 3 label</description>
+    		<type>label</type>
+    		<id>12</id>
+    		<posX>738</posX>
+    		<posY>993</posY>
+    		<width>444</width>
+    		<font>fontB14</font>
+    		<align>center</align>
+    		<textcolor>ff393939</textcolor>
+    		<label>-</label>
+    	</control>
+
+		<!-- UNUSED -->
+		<control>
+			<description>Time Info</description>
+			<type>label</type>
+			<id>110</id>
+			<posX>2000</posX>
+			<posY>10</posY>
+			<label>-</label>
+			<visible>no</visible>
+		</control>
+		<control>
+			<description>background</description>
+			<type>image</type>
+			<id>104</id>
+			<posX>2000</posX>
+			<posY>10</posY>
+			<width>10</width>
+			<height>10</height>
+			<texture>-</texture>
+			<visible>no</visible>
+		</control>
+
+		<!-- **************************** PAUSE, REWIND ETC. FOR SMALL VIDEO OSD ********************************** -->
+		<control>
+			<description>Pause image</description>
+			<type>image</type>
+			<id>16</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.paused+control.isvisible(111)</visible>
+			<texture>video-pause.png</texture>
+		</control>
+
+		<control>
+			<description>2x image</description>
+			<type>image</type>
+			<id>17</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.forwarding2x+control.isvisible(111)</visible>
+			<texture>video+2x.png</texture>
+		</control>
+
+		<control>
+			<description>4x image</description>
+			<type>image</type>
+			<id>18</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.forwarding4x+control.isvisible(111)</visible>
+			<texture>video+4x.png</texture>
+		</control>
+
+		<control>
+			<description>8x image</description>
+			<type>image</type>
+			<id>19</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.forwarding8x+control.isvisible(111)</visible>
+			<texture>video+8x.png</texture>
+		</control>
+
+		<control>
+			<description>16x image</description>
+			<type>image</type>
+			<id>20</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.forwarding16x+control.isvisible(111)</visible>
+			<texture>video+16x.png</texture>
+		</control>
+
+		<control>
+			<description>32x image</description>
+			<type>image</type>
+			<id>21</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.forwarding32x+control.isvisible(111)</visible>
+			<texture>video+32x.png</texture>
+		</control>
+
+		<control>
+			<description>- 2x image</description>
+			<type>image</type>
+			<id>23</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.rewinding2x+control.isvisible(111)</visible>
+			<texture>video-2x.png</texture>
+		</control>
+
+		<control>
+			<description>- 4x image</description>
+			<type>image</type>
+			<id>24</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>!window.isosdvisible+player.rewinding4x+control.isvisible(111)</visible>
+			<texture>video-4x.png</texture>
+		</control>
+
+		<control>
+			<description>- 8x image</description>
+			<type>image</type>
+			<id>25</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.rewinding8x+control.isvisible(111)</visible>
+			<texture>video-8x.png</texture>
+		</control>
+
+		<control>
+			<description>- 16x image</description>
+			<type>image</type>
+			<id>26</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.rewinding16x+control.isvisible(111)</visible>
+			<texture>video-16x.png</texture>
+		</control>
+
+		<control>
+			<description>- 32x image</description>
+			<type>image</type>
+			<id>27</id>
+			<posX>934</posX>
+			<posY>976</posY>
+			<visible>player.rewinding32x+control.isvisible(111)</visible>
+			<texture>video-32x.png</texture>
+		</control>
+        
+    	<control>
+    		<type>image</type>
+    		<id>500</id>
+    		<posX>977</posX>
+    		<posY>18</posY>
+    		<width>32</width>
+    		<height>32</height>
+    		<texture>osdaudiomutenf.png</texture>
+    		<colordiffuse>White</colordiffuse>
+    		<visible>no</visible>
+    	</control>
+    
+    	<control>
+    		<type>volumebar</type>
+    		<id>501</id>
+    		<posX>1062</posX>
+    		<posY>60</posY>
+    		<align>right</align>
+    		<height>13</height>
+    		<imageHeight>3</imageHeight>
+    		<texture>volume.states.png</texture>
+    		<colordiffuse>White</colordiffuse>
+    		<visible>no</visible>
+    	</control>
+
+		********************************* PAUSE Screen ********************************************* -->
+		<control>
+			<description>MSGBox</description>
+			<type>button</type>
+			<id>2</id>
+			<posX>0</posX>
+			<posY>370</posY>
+			<width>1366</width>
+			<height>180</height>
+			<label>-</label>
+			<textureFocus>bar_hor.png</textureFocus>
+			<textureNoFocus>bar_hor.png</textureNoFocus>
+		</control>
+		<control>
+			<description>MSGBox label 1</description>
+			<type>label</type>
+			<id>3</id>
+			<posX>50</posX>
+			<posY>380</posY>
+			<width>650</width>
+			<label>-</label>
+			<align>left</align>
+			<font>dingbats</font>
+			<textcolor>ivory</textcolor>
+			<visible>yes</visible>
+		</control>
+		<control>
+			<description>MSGBox label 2</description>
+			<type>label</type>
+			<id>4</id>
+			<posX>50</posX>
+			<posY>420</posY>
+			<width>650</width>
+			<label>-</label>
+			<align>left</align>
+			<font>dingbats</font>
+			<textcolor>ivory</textcolor>
+			<visible>yes</visible>
+		</control>
+		<control>
+			<description>MSGBox label 3</description>
+			<type>label</type>
+			<id>5</id>
+			<posX>50</posX>
+			<posY>460</posY>
+			<width>650</width>
+			<label>-</label>
+			<align>left</align>
+			<font>dingbats</font>
+			<textcolor>ivory</textcolor>
+			<visible>yes</visible>
+		</control>
+		<control>
+			<description>MSGBox label 2</description>
+			<type>label</type>
+			<id>6</id>
+			<posX>50</posX>
+			<posY>500</posY>
+			<width>650</width>
+			<label>-</label>
+			<align>left</align>
+			<font>dingbats</font>
+			<textcolor>ivory</textcolor>
+			<visible>yes</visible>
+		</control>
+
+	</controls>
+</window>

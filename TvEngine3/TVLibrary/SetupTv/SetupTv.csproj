@@ -92,9 +92,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="TvLibrary.Utils">
-      <HintPath>..\TvLibrary.Utils\bin\Release\TvLibrary.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -197,6 +194,12 @@
     </Compile>
     <Compile Include="Sections\EpgGenreMap.Designer.cs">
       <DependentUpon>EpgGenreMap.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\EpgGrabber.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\EpgGrabber.Designer.cs">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\UserPriorities.cs">
       <SubType>UserControl</SubType>
@@ -323,6 +326,9 @@
       <DependentUpon>EpgGenreMap.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\EpgGrabber.resx">
+      <DependentUpon>EpgGrabber.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\UserPriorities.resx">
       <DependentUpon>UserPriorities.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -330,10 +336,6 @@
     <EmbeddedResource Include="Sections\TestService.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestService.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvEpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\RadioChannelMapping.resx">
       <SubType>Designer</SubType>
@@ -445,9 +447,6 @@
     <Compile Include="Sections\RadioEpgGrabber.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\RadioEpgGrabber.Designer.cs">
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\ScanSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -480,9 +479,6 @@
     </Compile>
     <Compile Include="Sections\TvEpgGrabber.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\TvEpgGrabber.Designer.cs">
-      <DependentUpon>TvEpgGrabber.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\RadioChannelMapping.cs">
       <SubType>UserControl</SubType>
@@ -563,6 +559,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvLibrary.Utils\TvLibrary.Utils.csproj">
+      <Project>{954F9929-7FDA-4F59-88E3-FD2B9A7B6E6E}</Project>
+      <Name>TvLibrary.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVLibrary\TVLibrary.csproj">
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
       <Name>TVLibrary</Name>
@@ -573,10 +573,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sections\RadioEpgGrabber.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RadioEpgGrabber.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\TvRecording.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TvRecording.cs</DependentUpon>

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
@@ -70,6 +71,10 @@ namespace MediaPortal.Picture.Database
 
     public int AddPicture(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       if (strPicture == null)
       {
         return -1;
@@ -134,6 +139,10 @@ namespace MediaPortal.Picture.Database
 
     public void DeletePicture(string strPicture)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return;
+
       string strSQL = "";
       try
       {
@@ -151,6 +160,10 @@ namespace MediaPortal.Picture.Database
 
     public int GetRotation(string strPicture)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return -1;
+
       string strSQL = "";
       try
       {
@@ -191,6 +204,10 @@ namespace MediaPortal.Picture.Database
 
     public void SetRotation(string strPicture, int iRotation)
     {
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+        return;
+
       string strSQL = "";
       try
       {

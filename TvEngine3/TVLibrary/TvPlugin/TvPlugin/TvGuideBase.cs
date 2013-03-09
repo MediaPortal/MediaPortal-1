@@ -991,6 +991,12 @@ namespace TvPlugin
       _cursorY = 1; // cursor should be on the program guide item
       ChannelOffset = 0;
 
+      if (_channelList == null || _currentChannel == null)
+      {
+         //Log.Error("PositionGuideCursorToCurrentChannel _channelList = {0} _currentChannel = {1}", _channelList, _currentChannel);
+         return;
+      }
+
       // Attempt to position to the current channel in the new list of channels.  If the channel is not in
       // the group then the first channel in the group is selected.
       bool channelInGroup = false;

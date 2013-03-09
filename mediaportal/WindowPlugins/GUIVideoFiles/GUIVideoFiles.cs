@@ -229,6 +229,15 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnSearchNew()
     {
+      if (_doNotUseDatabase)
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(string.Empty);
+        dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+        return;
+      }
+
       int maximumShares = 128;
       ArrayList availablePaths = new ArrayList();
 
@@ -497,6 +506,7 @@ namespace MediaPortal.GUI.Video
       }
 
       SaveFolderSettings(_currentFolder);
+      ReleaseResources();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -977,6 +987,18 @@ namespace MediaPortal.GUI.Video
         }
         else if (!Win32API.IsConnectedToInternet())
         {
+          if(File.Exists(movieDetails.MovieNfoFile))
+          {
+            // Try nfo file
+            VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
+            // Refresh movie info
+            VideoDatabase.GetMovieInfo(movieDetails.VideoFileName, ref movieDetails);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage msgNfo = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msgNfo);
+            return;
+          }
+
           GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(257);
           dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
@@ -985,31 +1007,41 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
-
-          if (isDedicatedMovieFolder)
+          if (File.Exists(movieDetails.MovieNfoFile))
           {
-            if (pItem.IsBdDvdFolder)
-            {
-              movieDetails.SearchString = pItem.Label;
-            }
-            else
-            {
-              movieDetails.SearchString = Path.GetFileName(movieDetails.VideoFilePath);
-            }
+            // Try nfo file
+            VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
+            // Refresh movie info
+            VideoDatabase.GetMovieInfo(movieDetails.VideoFileName, ref movieDetails);
           }
           else
           {
-            movieDetails.SearchString = pItem.Label;
-          }
+            bool isDedicatedMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(pItem.Path);
 
-          movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
-          Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
-                   movieDetails.Path);
+            if (isDedicatedMovieFolder)
+            {
+              if (pItem.IsBdDvdFolder)
+              {
+                movieDetails.SearchString = pItem.Label;
+              }
+              else
+              {
+                movieDetails.SearchString = Path.GetFileName(movieDetails.VideoFilePath);
+              }
+            }
+            else
+            {
+              movieDetails.SearchString = pItem.Label;
+            }
 
-          if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
-          {
-            return;
+            movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
+            Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
+                     movieDetails.Path);
+
+            if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
+            {
+              return;
+            }
           }
         }
         // Send global message that movie is refreshed/scanned
@@ -1263,6 +1295,15 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 102: //Scan
+          if (_doNotUseDatabase)
+          {
+            GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            dlgOk.SetHeading(string.Empty);
+            dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            return;
+          }
+
           if (facadeLayout.Focus)
           {
             if (item.IsFolder)
@@ -1282,52 +1323,74 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-
+          
           int currentIndex = facadeLayout.SelectedListItemIndex;
-          ArrayList availablePaths = new ArrayList();
-          availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+
+          if (_useOnlyNfoScraper)
+          {
+            ArrayList scanNfoFiles = new ArrayList();
+            GetNfoFiles(item.Path, ref scanNfoFiles);
+            IMDBFetcher scanFetcher = new IMDBFetcher(this);
+            scanFetcher.FetchNfo(scanNfoFiles, true, false);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage scanNfoMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(scanNfoMsg);
+            LoadDirectory(_currentFolder);
+            facadeLayout.SelectedListItemIndex = currentIndex;
+          }
+          else
+          {
+            ArrayList availablePaths = new ArrayList();
+            availablePaths.Add(item.Path);
+            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(scanMsg);
+            LoadDirectory(_currentFolder);
+            facadeLayout.SelectedListItemIndex = currentIndex;
+          }
+          break;
+
+        case 1280: //Scan using nfo files
+          if (_doNotUseDatabase)
+          {
+            GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+            dlgOk.SetHeading(string.Empty);
+            dlgOk.SetLine(1, GUILocalizeStrings.Get(416)); // Not available
+            dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+            return;
+          }
+
+          if (facadeLayout.Focus)
+          {
+            if (item.IsFolder)
+            {
+              if (item.Label == "..")
+              {
+                return;
+              }
+              if (item.IsRemote)
+              {
+                return;
+              }
+            }
+          }
+
+          if (!_virtualDirectory.RequestPin(item.Path))
+          {
+            return;
+          }
+          
+          currentIndex = facadeLayout.SelectedListItemIndex;
+          ArrayList nfoFiles = new ArrayList();
+          GetNfoFiles(item.Path, ref nfoFiles);
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
           // Send global message that movie is refreshed/scanned
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
           LoadDirectory(_currentFolder);
           facadeLayout.SelectedListItemIndex = currentIndex;
-          break;
-
-        case 1280: //Scan using nfo files
-          if (facadeLayout.Focus)
-          {
-            if (item.IsFolder)
-            {
-              if (item.Label == "..")
-              {
-                return;
-              }
-              if (item.IsRemote)
-              {
-                return;
-              }
-            }
-          }
-
-          if (!_virtualDirectory.RequestPin(item.Path))
-          {
-            return;
-          }
-
-          currentIndex = facadeLayout.SelectedListItemIndex;
-
-          ArrayList nfoFiles = new ArrayList();
-          GetNfoFiles(item.Path, ref nfoFiles);
-
-          IMDBFetcher fetcher = new IMDBFetcher(this);
-          fetcher.FetchNfo(nfoFiles, true, false);
-          // Send global message that movie is refreshed/scanned
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
-          LoadDirectory(_currentFolder);
-          facadeLayout.SelectedListItemIndex = currentIndex;
-
           break;
 
         case 830: // Reset watched status
@@ -1714,8 +1777,9 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if (g_Player.Playing && !g_Player.IsDVD)
-        g_Player.Stop();
+      // TODO Handle STP when it comes from MyMusic otherwise Video Playlist will not work
+      //if (g_Player.Playing && !g_Player.IsDVD)
+      //  g_Player.Stop();
 
       string currentFile = g_Player.CurrentFile;
       if (Util.Utils.IsISOImage(currentFile))
@@ -2155,10 +2219,10 @@ namespace MediaPortal.GUI.Video
       GUIDialogProgress progressDialog =
         (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       progressDialog.Reset();
-      progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
+      progressDialog.SetHeading(GUILocalizeStrings.Get(300030));
       progressDialog.ShowProgressBar(true);
-      progressDialog.SetLine(1, "Downloading the index file...");
-      progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetLine(1, GUILocalizeStrings.Get(300031));
+      progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
       progressDialog.SetPercentage(50);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
@@ -2170,28 +2234,28 @@ namespace MediaPortal.GUI.Video
         string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
 
         // VDB parser update
-        progressDialog.SetHeading("Updating VDBparser file......");
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316)); // Updating internal scripts...
         progressDialog.ShowProgressBar(true);
-        progressDialog.SetLine(1, "Downloading VDBparser file...");
-        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));// Downloading internal scripts...
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
         progressDialog.SetPercentage(75);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-        if (DownloadFile(parserIndexFile, parserIndexUrl) == false)
+        if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
         {
           progressDialog.Close();
           return;
         }
 
         // Internal grabber script update
-        progressDialog.SetHeading("Updating InternalGrabberScript file......");
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
         progressDialog.ShowProgressBar(true);
-        progressDialog.SetLine(1, "Downloading InternalGrabberScript file...");
-        progressDialog.SetLine(2, "Downloading...");
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032));
         progressDialog.SetPercentage(100);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl) == false)
+        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
         {
           progressDialog.Close();
           return;
@@ -2201,7 +2265,7 @@ namespace MediaPortal.GUI.Video
         progressDialog.Close();
       }
 
-      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
@@ -2237,13 +2301,13 @@ namespace MediaPortal.GUI.Video
 
           string url = sectionNodes[i].Attributes["url"].Value;
           string id = Path.GetFileName(url);
-          progressDialog.SetLine(1, "Downloading grabber: " + id);
-          progressDialog.SetLine(2, "Processing grabbers...");
+          progressDialog.SetLine(1, GUILocalizeStrings.Get(300034) + id); // Downloading grabber:
+          progressDialog.SetLine(2, GUILocalizeStrings.Get(300035));
           progressDialog.SetPercentage(percent);
           percent += 100 / (sectionNodes.Count - 1);
           progressDialog.Progress();
 
-          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url, Encoding.Default) == false)
           {
             progressDialog.Close();
             return;
@@ -2253,7 +2317,7 @@ namespace MediaPortal.GUI.Video
       progressDialog.Close();
     }
 
-    private static bool DownloadFile(string filepath, string url)
+    private static bool DownloadFile(string filepath, string url, Encoding enc)
     {
       string grabberTempFile = Path.GetTempFileName();
 
@@ -2282,7 +2346,7 @@ namespace MediaPortal.GUI.Video
           //Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())
           {
-            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            using (TextReader tin = new StreamReader(resStream, enc))
             {
               using (TextWriter tout = File.CreateText(grabberTempFile))
               {
@@ -3118,8 +3182,8 @@ namespace MediaPortal.GUI.Video
           }
 
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          dlgYesNo.SetHeading("Save subtitle");
-          dlgYesNo.SetLine(1, "Save modified subtitle file?");
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(1318));// Save subtitle
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(1319)); // Save modified subtitle?
           dlgYesNo.SetDefaultToYes(true);
           dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
           shouldSave = dlgYesNo.IsConfirmed;
@@ -3938,6 +4002,14 @@ namespace MediaPortal.GUI.Video
         nfoFiles.Add(file);
       }
     }
+
+    private void ReleaseResources()
+    {
+      if (facadeLayout != null)
+      {
+        facadeLayout.Clear();
+      }
+    }
     
     #endregion
 
@@ -4336,7 +4408,7 @@ namespace MediaPortal.GUI.Video
       GUIDialogSelect pDlgSelect = (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
       // more then 1 actor found
       // ask user to select 1
-      pDlgSelect.SetHeading("Select actor:"); //select actor
+      pDlgSelect.SetHeading(GUILocalizeStrings.Get(1310)); //select actor
       pDlgSelect.Reset();
       for (int i = 0; i < fetcher.Count; ++i)
       {

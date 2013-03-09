@@ -18,4 +18,13 @@
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
+  <Transponder>
+    <CarrierFrequency>4000000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>29125</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate2_3</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
 </ArrayOfTransponder>

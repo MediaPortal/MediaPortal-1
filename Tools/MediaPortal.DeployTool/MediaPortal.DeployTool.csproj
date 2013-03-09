@@ -17,7 +17,23 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <ApplicationManifest>MediaPortal.DeployTool.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +61,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>1</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -57,20 +73,32 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
       <Link>OSInfo.cs</Link>
     </Compile>
     <Compile Include="InstallationChecks\LAVFilterMPEInstall.cs" />
+    <Compile Include="InstallationChecks\MPEInstall.cs" />
     <Compile Include="InstallationChecks\OldVCRedistChecker.cs" />
+    <Compile Include="InstallationChecks\TitanExtensionInstall.cs" />
     <Compile Include="InstallationChecks\VCRedistChecker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
@@ -232,6 +260,12 @@
       <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\ExtensionChoice.resx">
+      <DependentUpon>ExtensionChoice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\SkinChoice.resx">
+      <DependentUpon>SkinChoice.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\UpgradeDlg.resx">
       <DependentUpon>UpgradeDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -300,6 +334,18 @@
     </Compile>
     <Compile Include="Sections\BaseInstallationTypeWithoutTvEngineDlg.Designer.cs">
       <DependentUpon>BaseInstallationTypeWithoutTvEngineDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\ExtensionChoice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\ExtensionChoice.designer.cs">
+      <DependentUpon>ExtensionChoice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\SkinChoice.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\SkinChoice.designer.cs">
+      <DependentUpon>SkinChoice.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\UpgradeDlg.cs">
       <SubType>UserControl</SubType>
@@ -436,6 +482,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Install.ico" />
+    <None Include="Resources\preview_default_wide.png" />
+    <None Include="Resources\preview_titan.png" />
+    <None Include="Resources\preview_default.png" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
     <None Include="Resources\MePo_average.png" />
     <None Include="Resources\MePo_smart.png" />
@@ -464,6 +513,23 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

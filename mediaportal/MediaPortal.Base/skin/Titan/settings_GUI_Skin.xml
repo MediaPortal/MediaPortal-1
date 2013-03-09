@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>705</id>
+	<defaultcontrol>10</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+  <define>#header.label:897</define>
+  <rememberLastFocusedControl>no</rememberLastFocusedControl>
+	<controls>
+	<import>common.time.settings.xml</import>
+	<import>settings.menu.xml</import>	
+  <import>common.settings.xml</import>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>500</width>
+		<label>300120</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>334</posY>
+		<width>500</width>
+		<label>101016</label>
+		<textcolor>00b7ff</textcolor>
+		<font>fontB14</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+		
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>386</posY>
+		<dimColor>ffffffff</dimColor>
+   	<layout>StackLayout(7, Vertical, true)</layout>
+		<animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+			
+			<control Style="SettingsButtonMedium">
+				<description>Skin</description>
+				<type>button</type>
+				<id>10</id>
+				<label>166</label>
+				<onup>29</onup>
+			</control>
+		
+			<control Style="SettingsButtonMedium">
+				<description>theme</description>
+				<type>menubutton</type>
+				<id>15</id>
+				<posX>99</posX>
+				<posY>233</posY>
+				<mode>dialoglist</mode>
+				<dialogTitle>90</dialogTitle>
+				<valueTextInButton>yes</valueTextInButton>
+				<valuePrefixText>94</valuePrefixText>
+				<onclick>#(skin.settheme(#selectedlabel15,15))</onclick>
+				<binding>#skin.currenttheme</binding>
+				<subitems>
+					<subitem>#skin.themes</subitem>
+				</subitems>
+			</control>
+			
+			<control Style="SettingsButtonMedium">
+				<description>Language</description>
+				<type>button</type>
+				<id>11</id>
+				<label>248</label>
+			</control>
+			
+			<control Style="SettingsCheckButtonMedium">
+				<description>Prefix My</description>
+				<type>checkbutton</type>
+				<id>14</id>
+				<label>300137</label>
+			</control>
+			
+	</control>
+		
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>658</posY>
+		<width>500</width>
+		<label>#(L(100035)) #(L(5))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>fontB14</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+		
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>1244</posX>
+		<posY>658</posY>
+		<width>500</width>
+		<label>Choose Movie Plugin</label>
+		<textcolor>00b7ff</textcolor>
+		<font>fontB14</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+ 		<visible>plugin.isenabled(MyFilms) | plugin.isenabled(Moving Pictures)</visible>
+	</control>
+  
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>1244</posX>
+		<posY>774</posY>
+		<width>500</width>
+		<label>#(L(600)) #(L(300160))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>fontB14</font>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+					
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable selected Backdrop</description>
+	  <type>menubutton</type>
+		<id>26</id>
+		<posX>655</posX>
+		<posY>711</posY>		
+		<mode>dialoglist</mode>
+		<dialogTitle>Choose selected Background</dialogTitle>
+		<valueTextInButton>yes</valueTextInButton>
+		<valuePrefixText>Selected Background: </valuePrefixText>
+		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel26))</onclick>
+		<binding>#skin.basichome.background</binding>
+		<subitems>
+			<subitem>none</subitem>
+			<subitem>default</subitem>
+		</subitems>
+		<onup>14</onup>
+		<ondown>27</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>!plugin.isenabled(Fanart Handler)</visible>
+	</control>
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable selected Backdrop</description>
+	  <type>menubutton</type>
+		<id>36</id>
+		<posX>655</posX>
+		<posY>711</posY>		
+		<mode>dialoglist</mode>
+		<dialogTitle>Choose selected Background</dialogTitle>
+		<valueTextInButton>yes</valueTextInButton>
+		<valuePrefixText>Selected Background: </valuePrefixText>
+		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel36))</onclick>
+		<binding>#skin.basichome.background</binding>
+		<subitems>
+			<subitem>none</subitem>
+			<subitem>default</subitem>
+			<subitem>FanartHandler</subitem>
+		</subitems>
+		<onup>14</onup>
+		<ondown>27</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>plugin.isenabled(Fanart Handler)</visible>
+	</control>
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable latest myVideo</description>
+		<type>checkbutton</type>
+		<id>27</id>
+		<posX>655</posX>
+		<posY>776</posY>
+		<label>Enable latest Videos</label>			
+		<selected>#(skin.hassetting('#skin.enable.latest.myVideo'))</selected>
+		<onclick>#(skin.togglesetting('#skin.enable.latest.myVideo'))</onclick>
+		<ondown>28</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable latest MovingPictures</description>
+		<type>checkbutton</type>
+		<id>28</id>
+		<posX>655</posX>
+		<posY>841</posY>
+		<label>Enable latest MovingPictures</label>			
+		<selected>#(skin.hassetting('#skin.enable.latest.MovingPictures'))</selected>
+		<onclick>#(skin.togglesetting('#skin.enable.latest.MovingPictures'))</onclick>
+		<onup>27</onup>
+		<ondown>29</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>string.equals(#latestMediaHandler.movingpicture.latest.enabled,true) + plugin.isenabled(Moving Pictures)</visible>
+	</control>
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable latest Series</description>
+		<type>checkbutton</type>
+		<id>29</id>
+		<posX>655</posX>
+		<posY>906</posY>
+		<label>Enable latest Series</label>			
+		<selected>#(skin.hassetting('#skin.enable.latest.Series'))</selected>
+		<onclick>#(skin.togglesetting('#skin.enable.latest.Series'))</onclick>
+		<onup>28</onup>
+		<ondown>10</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+	</control>
+		
+	<control Style="SettingsButtonMedium">
+	 <description>movie plugin</description>
+	 <type>menubutton</type>
+	 <id>32</id>
+		<posX>1214</posX>
+		<posY>711</posY>
+	 <mode>dialoglist</mode>
+	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <valueTextInButton>yes</valueTextInButton>
+	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel32))</onclick>
+	 <binding>#skin.basichome.moviePlugin</binding>
+	 <subitems>
+	   <subitem>MyVideo</subitem>
+	   <subitem>Moving Pictures</subitem>
+	 </subitems>
+	 <animation effect="fade" time="150">WindowOpen</animation>
+	 <animation effect="fade" time="150">WindowClose</animation>
+	 <visible>plugin.isenabled(Moving Pictures) + !plugin.isenabled(MyFilms)</visible>
+	</control>
+  
+	<control Style="SettingsButtonMedium">
+	 <description>movie plugin</description>
+	 <type>menubutton</type>
+	 <id>33</id>
+		<posX>1214</posX>
+		<posY>711</posY>
+	 <mode>dialoglist</mode>
+	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <valueTextInButton>yes</valueTextInButton>
+	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel33))</onclick>
+	 <binding>#skin.basichome.moviePlugin</binding>
+	 <subitems>
+	   <subitem>MyVideo</subitem>
+	   <subitem>MyFilms</subitem>
+	 </subitems>
+	 <animation effect="fade" time="150">WindowOpen</animation>
+	 <animation effect="fade" time="150">WindowClose</animation>
+	 <visible>plugin.isenabled(MyFilms) + !plugin.isenabled(Moving Pictures)</visible>
+	</control>
+  
+	<control Style="SettingsButtonMedium">
+	 <description>movie plugin</description>
+	 <type>menubutton</type>
+	 <id>34</id>
+		<posX>1214</posX>
+		<posY>711</posY>
+	 <mode>dialoglist</mode>
+	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <valueTextInButton>yes</valueTextInButton>
+	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel34))</onclick>
+	 <binding>#skin.basichome.moviePlugin</binding>
+	 <subitems>
+	   <subitem>MyVideo</subitem>
+	   <subitem>Moving Pictures</subitem>
+	   <subitem>MyFilms</subitem>
+	 </subitems>
+	 <animation effect="fade" time="150">WindowOpen</animation>
+	 <animation effect="fade" time="150">WindowClose</animation>
+	 <visible>plugin.isenabled(Moving Pictures) + plugin.isenabled(MyFilms)</visible>
+	</control>
+        
+	<control Style="SettingsButtonMedium">
+	 <description>tvguide rows</description>
+	 <type>menubutton</type>
+	 <id>35</id>
+		<posX>1214</posX>
+		<posY>827</posY>
+	 <mode>dialoglist</mode>
+	 <dialogTitle>#(L(600)) #(L(300160))</dialogTitle>
+	 <valueTextInButton>yes</valueTextInButton>
+	 <valuePrefixText>#(L(300160)): </valuePrefixText>
+	 <onclick>#(skin.setstring('#skin.tvguide.rows',#selectedlabel35))</onclick>
+	 <binding>#skin.tvguide.rows</binding>
+	 <subitems>
+	   <subitem> 7</subitem>
+	   <subitem> 11</subitem>
+	 </subitems>
+	 <animation effect="fade" time="150">WindowOpen</animation>
+	 <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+        
+	<control>
+		<description>Skin Preview</description>
+		<type>image</type>
+		<id>20</id>
+		<posX>1242</posX>
+		<posY>330</posY>
+		<width>552</width>
+		<height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+</controls>
+</window>

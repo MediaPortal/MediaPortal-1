@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>1015</id>
+  <defaultcontrol>6</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#header.label:897</define>		
+	<rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <controls>
+  
+	<import>settings.menu.xml</import>	
+	<import>common.settings.xml</import>	
+	<import>common.time.settings.xml</import>  
+
+	<control>
+		<type>label</type>
+		<id>1</id>
+		<posX>685</posX>
+		<posY>225</posY>
+		<width>800</width>
+		<label>#(L(1))/#(L(129))</label>
+		<textcolor>00b7ff</textcolor>
+		<font>TitanLight20</font>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+	</control>
+  
+  <control>
+    <description>Slideshow transition label</description>
+    <type>label</type>
+    <id>1</id>
+		<posX>685</posX>
+		<posY>333</posY>
+		<width>600</width>			
+    <label>300183</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>					
+  </control>
+
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>386</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Ken Buns transitions</description>
+      <type>checkbutton</type>
+      <id>6</id>
+      <onleft>9995</onleft>
+      <onright>2</onright>
+      <label>13008</label>
+      <onup>123</onup>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>X-fade transitions</description>
+      <type>checkbutton</type>
+      <id>5</id>
+      <onleft>9995</onleft>
+      <onright>3</onright>
+      <label>13010</label>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Random transitions</description>
+      <type>checkbutton</type>
+      <id>7</id>
+      <onleft>9995</onleft>
+      <onright>4</onright>
+      <label>13009</label>
+    </control>
+  </control>
+    
+    <!--Rotation settings group-->
+
+  <control>
+    <description>Rotation settings</description>
+    <type>label</type>
+    <id>1</id>
+	  <posX>685</posX>
+	  <posY>646</posY>
+    <label>300184</label>
+		<font>fontB14</font>
+    <textcolor>ff00b7ff</textcolor>
+		<animation effect="fade" time="150">WindowOpen</animation>
+		<animation effect="fade" time="150">WindowClose</animation>
+  </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+		<posX>655</posX>
+		<posY>711</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control Style="SettingsCheckButtonMedium">
+      <description>EXIF rotation</description>
+      <type>checkbutton</type>
+      <id>41</id>
+      <label>300185</label>
+      <onleft>9995</onleft>
+      <onright>43</onright>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Picasa.ini rotation</description>
+      <type>checkbutton</type>
+      <id>42</id>
+      <label>300186</label>
+      <onleft>9995</onleft>
+      <onright>44</onright>
+      <ondown>2</ondown>
+    </control>
+  </control>
+    <!--Slideshow Settings group-->
+
+    <control>
+      <description>Slideshow settings</description>
+      <type>label</type>
+      <id>1</id>
+  		<posX>1268</posX>
+  		<posY>333</posY>
+  		<width>600</width>			
+      <label>300187</label>
+  		<font>fontB14</font>
+      <textcolor>ff00b7ff</textcolor>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Speed label</description>
+      <type>label</type>
+      <id>100</id>
+      <posX>1268</posX>
+      <posY>386</posY>
+      <label>224</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Speed select</description>
+      <type>spincontrol</type>
+      <id>2</id>
+      <posX>1668</posX>
+      <posY>393</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>6</onleft>
+      <onright>6</onright>
+      <ondown>3</ondown>
+      <onup>42</onup>
+      <buddycontrolid>100</buddycontrolid>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Transition time label</description>
+      <type>label</type>
+      <id>101</id>
+      <posX>1268</posX>
+      <posY>436</posY>
+      <label>225</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>Transition time select</description>
+      <type>spincontrol</type>
+      <id>3</id>
+      <posX>1668</posX>
+      <posY>443</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <buddycontrolid>101</buddycontrolid>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>ken burns speed label</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>1268</posX>
+      <posY>486</posY>
+      <label>13011</label>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
+      <description>ken burns speed select</description>
+      <type>spincontrol</type>
+      <id>4</id>
+      <posX>1668</posX>
+      <posY>493</posY>
+      <textcolor>ffffffff</textcolor>
+      <onleft>7</onleft>
+      <onright>7</onright>
+      <onup>3</onup>
+      <ondown>8</ondown>
+      <buddycontrolid>102</buddycontrolid>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+  	<posX>1268</posX>
+    <posY>563</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control Style="SettingsCheckButtonMedium">
+      <description>Repeat/loop slideshows</description>
+      <type>checkbutton</type>
+      <id>8</id>
+      <onup>4</onup>
+      <ondown>9</ondown>
+      <label>6020</label>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Auto shuffle slideshow</description>
+      <type>checkbutton</type>
+      <id>9</id>
+      <onup>8</onup>
+      <label>6021</label>
+    </control>
+ </control>
+    <!--View settings group-->
+    <!--Slideshow Settings group-->
+
+    <control>
+      <description>View settings</description>
+      <type>label</type>
+      <id>1</id>
+  		<posX>1268</posX>
+      <posY>753</posY>
+  		<width>600</width>			
+      <label>300188</label>
+  		<font>fontB14</font>
+      <textcolor>ff00b7ff</textcolor>
+  		<animation effect="fade" time="150">WindowOpen</animation>
+  		<animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    
+	<control>
+		<description>buttons</description>
+		<type>group</type>
+  	<posX>1268</posX>
+    <posY>818</posY>
+		<dimColor>ffffffff</dimColor>
+    <layout>StackLayout(7, Vertical, true)</layout>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+    
+		<control Style="SettingsCheckButtonMedium">
+      <description>Group by day</description>
+      <type>checkbutton</type>
+      <id>43</id>
+      <label>300189</label>
+      <onup>9</onup>
+      <onleft>41</onleft>
+      <onright>41</onright>
+    </control>
+    
+		<control Style="SettingsCheckButtonMedium">
+      <description>Enable playing videos</description>
+      <type>checkbutton</type>
+      <id>44</id>
+      <label>300190</label>
+      <onleft>42</onleft>
+      <onright>42</onright>
+			<onup>43</onup>
+			<ondown>45</ondown>
+    </control>
+		<control Style="SettingsCheckButtonMedium">
+      <description>Play videos in slideshow</description>
+      <type>checkbutton</type>
+      <id>45</id>
+      <label>300191</label>
+      <onleft>42</onleft>
+      <onright>42</onright>
+      <ondown>6</ondown>
+      <onup>44</onup>
+    </control>
+  </control>
+  </controls>
+</window>

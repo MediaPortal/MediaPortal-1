@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	
+	<control>
+		<type>group</type>
+		<animation effect="fade" time="200">windowopen</animation>
+		<animation effect="fade" time="400">windowclose</animation>
+		<animation effect="slide" time="100" start="-600,0">visible</animation>
+		<animation effect="slide" time="0" end="-600,0">hidden</animation>
+					<control>
+						<type>image</type>
+						<id>0</id>
+						<posY>15</posY>
+						<posX>0</posX>
+						<width>631</width>
+						<height>1044</height>
+						<texture>menu_bg.png</texture>
+						<visible>!Control.HasFocus(50)+control.isvisible(50)</visible>
+					</control>
+				
+					<control>
+						<description>Heading text label</description>
+						<type>label</type>
+						<id>1</id>
+						<posX>136</posX>
+						<posY>128</posY>
+						<label>924</label>
+						<font>font22</font>
+						<textcolor>ffffff</textcolor>
+					</control>	
+				
+					<control>
+						<description>View-As</description>
+						<type>menubutton</type>
+						<id>2</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+						<label></label>	
+						<mode>dialoglist</mode>				
+						<dialogTitle>792</dialogTitle> 					
+						<valueTextInButton>yes</valueTextInButton>
+						<valuePrefixText>95</valuePrefixText>
+						<onright>50</onright>
+						<onleft>50</onleft>
+	          <ondown>5</ondown>
+	          <onup>15</onup>
+					</control>
+
+					<control>
+						<description>Switch View</description>
+						<type>menubutton</type>
+						<id>5</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<width>499</width>
+						<height>69</height>
+						<textXOff>62</textXOff>
+						<textYOff>16</textYOff>
+						<label></label>
+						<mode>dialoglist</mode>
+						<dialogTitle>499</dialogTitle>
+						<valueTextInButton>yes</valueTextInButton>
+						<valuePrefixText>97</valuePrefixText>
+						<onright>50</onright>
+						<onleft>50</onleft>
+		        <ondown>3</ondown>
+	          <onup>2</onup>
+					</control>
+
+					<control>
+						<description>Sort</description>
+						<type>sortbutton</type>
+						<id>3</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>355</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>103</label>
+						<offsetSortButtonX>260</offsetSortButtonX>
+						<offsetSortButtonY>27</offsetSortButtonY>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>5</onup>
+						<ondown>12</ondown>
+					</control>
+	
+					<control>
+						<description>Play CD</description>
+						<type>button</type>
+						<id>12</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>425</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>890</label>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>3</onup>
+						<ondown>13</ondown>
+					</control>
+	
+				<control>
+						<description>Eject Disc</description>
+						<type>button</type>
+						<id>13</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>495</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>654</label>
+						<action>100</action>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>12</onup>
+						<ondown>11</ondown>
+					</control>
+	
+					<control>
+						<description>Now playing</description>
+						<type>button</type>
+						<id>11</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>565</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>4540</label>
+						<hyperlink>510</hyperlink>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>12</onup>
+						<ondown>9</ondown>
+					</control>
+	
+					<control>
+						<description>Current Playlist</description>
+						<type>button</type>
+						<id>9</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>635</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>4555</label>
+						<action>33</action>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>11</onup>
+						<ondown>10</ondown>
+					</control>
+	
+					<control>
+						<description>My Playlists</description>
+						<type>button</type>
+						<id>10</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>705</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>983</label>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>9</onup>
+						<ondown>200</ondown>
+					</control>
+	
+					<control>
+						<description>Search</description>
+						<type>button</type>
+						<id>200</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>775</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>137</label>
+						<hyperlink>30885</hyperlink>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>10</onup>
+						<ondown>15</ondown>
+						<visible>plugin.isenabled(Search music)</visible>
+					</control>
+	
+	
+					<control>
+						<description>Lyrics</description>
+						<type>button</type>
+						<id>15</id>
+						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+						<textureNoFocus>-</textureNoFocus>
+						<posX>69</posX>
+						<posY>845</posY>
+						<width>497</width>
+						<height>70</height>
+						<textXOff>66</textXOff>
+						<textYOff>17</textYOff>
+						<label>Lyrics</label>
+						<hyperlink>90478</hyperlink>
+						<onright>50</onright>
+						<onleft>50</onleft>
+						<onup>200</onup>
+						<ondown>2</ondown>
+	          <visible>plugin.isenabled(My Lyrics)</visible>
+					</control>	
+
+			</control>
+</controls>
+</window>

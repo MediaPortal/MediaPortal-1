@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<id>35</id>
+<defaultcontrol>4</defaultcontrol>
+<allowoverlay>yes</allowoverlay>
+<disabletopbar>no</disabletopbar>
+<define>#useRandomGamesUserFanart:Yes</define>
+<define>#useRandomMoviesUserFanart:Yes</define>
+<define>#useRandomMoviesScraperFanart:Yes</define>
+<define>#useRandomMovingPicturesFanart:Yes</define>
+<define>#useRandomMusicUserFanart:Yes</define>
+<define>#useRandomMusicScraperFanart:Yes</define>
+<define>#useRandomPicturesUserFanart:Yes</define>
+<define>#useRandomPluginsUserFanart:Yes</define>
+<define>#useRandomScoreCenterUserFanart:Yes</define> 
+<define>#useRandomTVUserFanart:Yes</define>
+<define>#useRandomTVSeriesFanart:Yes</define>
+
+<define>#header.label:Home</define>
+<rememberLastFocusedControl>yes</rememberLastFocusedControl>
+
+
+<controls>	
+    <control>
+      <description>DEFAULT BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>background.png</texture>
+      <shouldCache>true</shouldCache>
+      </control>
+
+    
+		<include condition="#(eq(#skin.basichome.background,'default'))">BasicHome.BackgroundSelected.xml</include>	
+		<include condition="#(eq(#skin.basichome.background,'FanartHandler'))">BasicHome.FanartSelected.xml</include>	
+		<include condition="#skin.enable.latest.myVideo">BasicHome.LatestVideo.xml</include>
+		<include condition="#skin.enable.latest.MovingPictures">BasicHome.LatestMovingPictures.xml</include>
+		<include condition="#skin.enable.latest.Series">BasicHome.LatestTVSeries.xml</include>
+
+    <import>BasicHome.submenus.xml</import> 
+    
+    <control>
+      <description>DEFAULT BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>1080</height>
+      <texture>fanart_overlay.png</texture>
+      <shouldCache>true</shouldCache>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <import>common.time.xml</import> 
+    
+	<!-- :::::::::: GROUP 1 ::::::::::  -->
+    
+ 	<!--            :: ITEM IMAGES ::            -->
+		
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <dimColor>0xffffffff</dimColor>
+		
+		  <control>
+		    <description>BasicHome Music NoFocus</description>
+		    <type>image</type>
+		    <id>0</id>
+	 			<posX>43</posX>
+	      <posY>347</posY>
+		    <width>623</width>
+		    <height>271</height>
+		    <texture>basichome_button_music.png</texture>
+	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(2)">conditional</animation>
+ 				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+				<visible>![Control.IsVisible(100)|Control.IsVisible(2000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>                 
+		  </control>  
+	    
+	  	<control>
+		    <description>BasicHome Radio NoFocus</description>
+		    <type>image</type>
+		    <id>0</id>
+	 			<posX>42</posX>
+	      <posY>607</posY>
+		    <width>623</width>
+		    <height>271</height>
+		    <texture>basichome_button_radio.png</texture>
+	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
+ 				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+				<visible>![Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+		  </control>
+		  
+ 	  	<control>
+		    <description>BasicHome TV Focus</description>
+		    <type>image</type>
+		    <id>0</id>
+ 	 			<posX>653</posX>
+	      <posY>347</posY>
+   	    <width>624</width>
+    	  <height>271</height>
+		    <texture>basichome_button_tv.png</texture>
+	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+ 				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+				<visible>![Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>       
+		  </control> 
+		  
+  	  <control>
+		    <description>BasicHome Picture Focus</description>
+		    <type>image</type>
+		    <id>0</id>
+  	 		<posX>653</posX>
+	      <posY>607</posY>
+   	    <width>624</width>
+    	  <height>271</height>
+		    <texture>basichome_button_pictures.png</texture>
+	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(5)">conditional</animation>
+ 				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+				<visible>![Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>      
+		  </control> 
+		  
+   	  <control>
+		    <description>BasicHome Videos Focus</description>
+		    <type>image</type>
+		    <id>0</id>
+	 			<posX>1264</posX>
+	      <posY>347</posY>
+   	    <width>623</width>
+    	  <height>271</height>
+		    <texture>basichome_button_movies.png</texture>
+	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(6)">conditional</animation>
+ 				<animation effect="fade" time="250" reversible="false">visiblechange</animation> 
+				<visible>![control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)|control.hasfocus(1000)|control.hasfocus(1001)|control.hasfocus(1002)|control.hasfocus(1003)|control.hasfocus(1004)]</visible>           
+		  </control>		  
+  </control>
+		  
+		<!--            :: BUTTONS::            -->
+
+    <control>
+      <description>BasicHome Music</description>
+      <type>button</type>
+      <id>2</id>
+		  <posX>52</posX>
+	    <posY>353</posY>
+      <width>594</width>
+      <height>241</height>
+      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+      <hyperlink>501</hyperlink>
+      <label>2</label>
+      <font>TitanLight20</font>
+      <textcolor>FFFFFF</textcolor>
+			<textalign>center</textalign>   
+      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+   	  <onup>2</onup>
+      <ondown>3</ondown>
+      <textYOff>88</textYOff>
+			<onright>4</onright>
+			<onleft>6</onleft>
+ 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(100)|Control.IsVisible(2000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>   
+    </control>
+    <control>
+      <description>BasicHome Radio</description>
+      <type>button</type>
+      <id>3</id>
+			<posX>52</posX>
+	    <posY>613</posY>
+      <width>594</width>
+      <height>241</height>
+      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+      <hyperlink>30</hyperlink>
+      <label>665</label>
+      <font>TitanLight20</font>
+      <textcolor>FFFFFF</textcolor>
+			<textalign>center</textalign>   
+      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+      <textYOff>88</textYOff>
+			<onright>5</onright>
+			<onleft>7</onleft>
+      <onup>2</onup>
+			<ondown>12</ondown>  
+ 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+    </control>
+      
+    <control>
+      <description>BasicHome TV</description>
+      <type>button</type>
+      <id>4</id>
+			<posX>663</posX>
+	    <posY>353</posY>
+      <width>594</width>
+      <height>241</height>
+      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>   
+      <label>605</label>
+      <font>TitanLight20</font>
+      <textcolor>FFFFFF</textcolor>
+      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+      <textYOff>88</textYOff>
+      <onup>4</onup>
+      <ondown>5</ondown>
+			<onright>6</onright>
+			<onleft>2</onleft>
+			<onclick>#(skin.setfocus(35,1000))</onclick>								
+			<textalign>center</textalign>          
+ 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+    </control> 
+
+    <control>
+      <description>BasicHome Pictures</description>
+      <type>button</type>
+      <id>5</id>
+			<posX>663</posX>
+	    <posY>613</posY>
+      <width>594</width>
+      <height>241</height>       
+      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>  
+      <hyperlink>2</hyperlink>
+      <label>1</label>
+      <font>TitanLight20</font>
+      <textcolor>FFFFFF</textcolor>
+      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+      <textYOff>88</textYOff> 
+			<onright>7</onright>
+			<onleft>3</onleft>
+      <onup>4</onup>
+			<ondown>12</ondown>
+			<textalign>center</textalign>        
+ 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>       
+    </control>
+      
+    <include condition="#(eq(#skin.basichome.moviePlugin,'MyVideo'))">include.BasicHomeButton.myvideo.xml</include>
+    <include condition="#(eq(#skin.basichome.moviePlugin,'Moving Pictures'))">include.BasicHomeButton.movingpictures.xml</include>
+    <include condition="#(eq(#skin.basichome.moviePlugin,'MyFilms'))">include.BasicHomeButton.myfilms.xml</include>
+        
+    <include condition="#(plugin.isenabled('MP-TV Series'))">include.BasicHomeButton.tvseries.xml</include>
+    <include condition="#(not(plugin.isenabled('MP-TV Series')))">include.BasicHomeButton.plugins.xml</include>     
+		
+    <include condition="#(plugin.isenabled('Trakt'))">include.BasicHomeButton.trakt.xml</include>
+    <include condition="#(not(plugin.isenabled('Trakt')))">include.BasicHomeButton.trakt.dummy.xml</include> 
+        
+    <include condition="#(plugin.isenabled('InfoService'))">include.BasicHomeButton.infoservice.xml</include>
+    <include condition="#(not(plugin.isenabled('InfoService')))">include.BasicHomeButton.infoservice.dummy.xml</include> 
+        
+    <include condition="#(plugin.isenabled('OnlineVideos'))">include.BasicHomeButton.onlinevideos.xml</include>
+    <include condition="#(not(plugin.isenabled('OnlineVideos')))">include.BasicHomeButton.onlinevideos.dummy.xml</include>
+    
+    <include condition="#(plugin.isenabled('Extensions'))">include.BasicHomeButton.extensions.xml</include>
+    <include condition="#(not(plugin.isenabled('Extensions')))">include.BasicHomeButton.extensions.dummy.xml</include>
+   
+    
+	<!--            :: FOCUS FRAMES ::            -->
+    
+    <control>
+      <description>group element</description>
+      <type>group</type>
+			<dimColor>0xffffffff</dimColor>
+    
+	    <control>
+	      <description>BasicHome Music Focus</description>
+	      <type>image</type>
+	      <id>0</id>
+				<posX>17</posX>
+	      <posY>318</posY>
+	      <width>663</width>
+	      <height>311</height>
+	      <texture>basichome_button_focus.png</texture>
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(2)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(2)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(2) + control.isvisible(2)</visible>                
+	    </control>
+    
+      <control>
+        <description>BasicHome Radio Focus</description>
+        <type>image</type>
+        <id>0</id>
+				<posX>17</posX>
+	      <posY>578</posY>
+        <width>663</width>
+        <height>311</height>
+        <texture>basichome_button_focus.png</texture>                     
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(3)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(3)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(3) + control.isvisible(3)</visible>        
+      </control>
+      
+       <control>
+        <description>BasicHome TV Focus</description>
+        <type>image</type>
+        <id>80</id>
+				<posX>628</posX>
+	      <posY>318</posY>
+        <width>663</width>
+        <height>311</height>
+        <texture>basichome_button_focus.png</texture>                     
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(4)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(4) + control.isvisible(4)</visible>        
+      </control>
+      
+      <control>
+        <description>BasicHome Pictures Focus</description>
+        <type>image</type>
+        <id>0</id>
+				<posX>628</posX>
+	      <posY>578</posY>
+        <width>663</width>
+        <height>311</height>
+        <texture>basichome_button_focus.png</texture>                     
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(5)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(5)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(5) + control.isvisible(5)</visible>        
+      </control>
+      
+      <control>
+        <description>BasicHome Videos Focus</description>
+        <type>image</type>
+        <id>0</id>
+				<posX>1239</posX>
+	      <posY>318</posY>
+        <width>663</width>
+        <height>311</height>
+        <texture>basichome_button_focus.png</texture>                     
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(6)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(6)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(6) + control.isvisible(6)</visible>         
+      </control>
+      
+       <control>
+        <description>BasicHome Plugins Focus</description>
+        <type>image</type>
+        <id>0</id>
+				<posX>1239</posX>
+	      <posY>578</posY>
+        <width>663</width>
+        <height>311</height>
+        <texture>basichome_button_focus.png</texture>                     
+      	<animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(7)">conditional</animation>
+      	<animation effect="fade" time="250" condition="control.hasfocus(7)">conditional</animation>
+      	<animation effect="fade" time="0">hidden</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="150">WindowClose</animation>
+				<visible>control.hasfocus(7) + control.isvisible(7)</visible>        
+      </control>
+    </control>	
+
+	<!-- :::::::::: GROUP 2 ::::::::::  -->
+
+  <import>BasicHomeGroup2.xml</import>
+
+
+    <control>
+      <description>submenu indicator</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1208</posX>
+      <posY>557</posY>
+      <width>22</width>
+      <height>20</height>
+      <texture>basichome_submenu_indicator.png</texture>
+			<visible>![Control.IsVisible(100)|Control.IsVisible(2000)|Control.IsVisible(3000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+	    <animation effect="fade" time="250">WindowOpen</animation>
+	    <animation effect="fade" time="150">WindowClose</animation>
+    </control>	
+
+
+    <control>
+      <description>exit menu button</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>937</posX>
+      <posY>897</posY>
+      <width>46</width>
+      <height>50</height>
+      <texture>basichome_button_exit.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+  <control>
+    <description>second menu indicator</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>1890</posX>
+    <posY>529</posY>
+    <width>30</width>
+    <height>149</height>
+    <texture>basichome_nextpage_right.png</texture>
+    <visible>Control.HasFocus(6) | Control.HasFocus(7)</visible>
+		<animation effect="slide" start="60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+		<animation effect="slide" start="0,0" end="60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+  <control>
+    <description>second menu indicator</description>
+    <id>0</id>
+    <type>image</type>
+    <posX>0</posX>
+    <posY>529</posY>
+    <width>30</width>
+    <height>149</height>
+    <texture>basichome_nextpage_left.png</texture>
+    <visible>[Control.HasFocus(600) | Control.HasFocus(400)] + control.isvisible(999)</visible>
+		<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="0">visible</animation>
+		<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="0">hidden</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+  <include condition="#(eq(#Titan.ShowUpdateInd,'true'))">BasicHome.exitmenu.skinupdate.xml</include>
+  <include condition="#(not(eq(#Titan.ShowUpdateInd,'true')))">BasicHome.exitmenu.xml</include>
+
+    <control>
+      <description>Home ICON</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>66</posX>
+      <posY>38</posY>
+      <width>62</width>
+      <height>55</height>
+      <texture>icon_home.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <control>
+      <description>RSS BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>52</posX>
+      <posY>958</posY>
+      <width>1820</width>
+      <height>84</height>
+      <texture>BasicHomeSubBG.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+    <!-- RSS -->
+    
+    <control>
+      <description>RSS items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>1000</posY>
+      <width>1810</width>
+      <height>30</height>
+      <font>font11</font>
+      <textcolor>000000</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <import>common.overlay.xml</import>
+</controls>
+</window>

@@ -1022,16 +1022,8 @@ namespace MediaPortal.Configuration
                           MessageBoxIcon.Exclamation);
           return false;
         }
-        // is last.fm enabled but audioscrobbler is not? 
-        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        bool lastFmOn = xmlreader.GetValueAsBool("plugins", "Last.fm Radio", false);
-        if (lastFmOn && !audioScrobblerOn)
-        {
-          MessageBox.Show("Please configure the Audioscrobbler plugin to use Last.fm radio", "MediaPortal Settings",
-                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-          return false;
-        }
 
+        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
         if (audioScrobblerOn)
         {
           // Does Audioscrobbler have a user but no password (due to DB upgrades, restores, etc)
@@ -1048,6 +1040,21 @@ namespace MediaPortal.Configuration
             }
           }
         }
+
+        // Check hostname for tv server (empty hostname is invalid)
+        if (UseTvServer)
+        {
+          string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+          if (string.IsNullOrEmpty(hostName))
+          {
+            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Client\" section. " +
+              "It will not be saved." + Environment.NewLine + Environment.NewLine + "Do you want to review it before exiting?",
+              "MediaPortal Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+              return false;
+          }
+        }
+
       }
       return true;
     }

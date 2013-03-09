@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+	
+  <!--            :: LISTVIEW ::            -->
+	
+  <control>
+  	<description>Certification (MPAA) Logo</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>588</posX>
+    <posY>893</posY>
+    <width>50</width>
+    <height>50</height>
+    <texture>certification\#mpaarating.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+ 	<control>
+  	<description>Video resolution</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>660</posX>
+		<posY>886</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\resolution\#VideoResolution.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+  <control>
+  	<description>Video codec</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>750</posX>
+		<posY>886</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\video\#VideoCodec.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+ 	<control>
+  	<description>Audio codec</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>850</posX>
+		<posY>886</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\audio\#AudioCodec.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+	<control>
+  	<description>Audio channels</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>940</posX>
+		<posY>886</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\audio\#AudioChannels.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+	<control>
+  	<description>Aspect ratio</description>
+    <type>image</type>
+    <id>0</id>
+		<posX>1020</posX>
+		<posY>886</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\aspectratio\#AspectRatio.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+  <!--            :: THUMBVIEW ::            -->
+	
+  <control>
+  	<description>Certification (MPAA) Logo</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1060</posX>
+    <posY>887</posY>
+    <width>50</width>
+    <height>50</height>
+    <texture>certification\#mpaarating.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+ 	<control>
+  	<description>Video resolution</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1132</posX>
+    <posY>880</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\resolution\#VideoResolution.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+  <control>
+  	<description>Video codec</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1222</posX>
+    <posY>880</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\video\#VideoCodec.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+ 	<control>
+  	<description>Audio codec</description>
+    <type>image</type>
+    <id>0</id>
+   	<posX>1322</posX>
+    <posY>880</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\audio\#AudioCodec.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+	<control>
+  	<description>Audio channels</description>
+    <type>image</type>
+    <id>0</id>
+   	<posX>1412</posX>
+    <posY>880</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\audio\#AudioChannels.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+	<control>
+  	<description>Aspect ratio</description>
+    <type>image</type>
+    <id>0</id>
+   	<posX>1492</posX>
+    <posY>880</posY>
+    <width>99</width>
+    <height>65</height>
+    <texture>Logos\aspectratio\#AspectRatio.png</texture>
+    <keepaspectratio>yes</keepaspectratio>
+ 		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+	  <animation effect="fade" time="250">WindowOpen</animation>
+	  <animation effect="fade" time="250">WindowClose</animation>
+  </control>
+  
+</controls>
+</window>

@@ -41,6 +41,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Pictures;
 using MediaPortal.InputDevices;
 using MediaPortal.IR;
 using MediaPortal.Player;
@@ -370,7 +371,7 @@ public class MediaPortalApp : D3DApp, IRender
       UIntPtr res = UIntPtr.Zero;
 
       int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OSInfo.OSInfo.OsVersionInt() >= 52)
+      if (OSInfo.OSInfo.Xp64OrLater())
       {
         options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
       }
@@ -1812,7 +1813,7 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new MPSettings())
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
-      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
       bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
@@ -2481,6 +2482,12 @@ public class MediaPortalApp : D3DApp, IRender
           }
           homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           GUIWindowManager.SendThreadMessage(homeMsg);
+          // Stop Video for MyPictures when going to home
+          if (g_Player.IsPicture)
+          {
+            GUISlideShow._slideDirection = 0;
+            g_Player.Stop();
+          }
           return;
 
         case Action.ActionType.ACTION_MPRESTORE:
@@ -2702,10 +2709,19 @@ public class MediaPortalApp : D3DApp, IRender
               g_Player.OnAction(action);
               return;
             }
-
+            //When MyPictures Plugin shows the pictures/videos we don't want to change music track
             if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
-              playlistPlayer.PlayPrevious();
+              if (
+                (GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+                GUIWindow.Window.WINDOW_SLIDESHOW || g_Player.IsPicture)
+              {
+                break;
+              }
+              else
+              {
+                playlistPlayer.PlayPrevious();
+              }
             }
             break;
 
@@ -2719,10 +2735,19 @@ public class MediaPortalApp : D3DApp, IRender
               g_Player.OnAction(action);
               return;
             }
-
+            //When MyPictures Plugin shows the pictures/videos we don't want to change music track
             if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
-              playlistPlayer.PlayNext();
+              if (
+                (GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+                GUIWindow.Window.WINDOW_SLIDESHOW || g_Player.IsPicture)
+              {
+                break;
+              }
+              else
+              {
+                playlistPlayer.PlayNext();
+              }
             }
             break;
 
@@ -2737,9 +2762,20 @@ public class MediaPortalApp : D3DApp, IRender
               break;
             }
 
+            if (
+              (GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+              GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture)
+            {
+              break;
+            }
+
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
+              if (g_Player.IsPicture)
+              {
+                GUISlideShow._slideDirection = 0;
+              }
               g_Player.Stop();
               return;
             }

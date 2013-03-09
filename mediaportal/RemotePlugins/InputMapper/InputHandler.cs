@@ -207,7 +207,7 @@ namespace MediaPortal.InputDevices
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        _basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
       }
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);

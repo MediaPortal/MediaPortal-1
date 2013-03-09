@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>
+
+   	<control>
+		  <description>Background</description>
+		  <type>image</type>
+		  <id>3000</id>
+	 		<posX>8</posX>
+	    <posY>569</posY>
+		  <width>1859</width>
+		  <height>329</height>
+		  <texture>basichome_latestmedia_bg.png</texture>
+			<animation effect="fade" time="350" delay="550" reversible="false">visible</animation>
+			<animation effect="slide" start="600" end="0" time="350" delay="800" reversible="false">Visible</animation>
+	    <animation effect="fade" time="250">WindowOpen</animation>
+	    <animation effect="fade" time="250">WindowClose</animation>
+    	<visible>control.hasfocus(7) + plugin.isenabled(MP-TV Series)</visible>              
+		</control>
+
+    <control>
+      <description>latestMedia Movie Label</description>
+      <type>label</type>
+      <id>1</id>
+			<posX>544</posX>
+	    <posY>645</posY>
+      <width>585</width>
+      <font>TitanLight20</font>
+      <textcolor>FF000000</textcolor>
+      <label>#(L(4558))</label>
+    	<visible>control.hasfocus(7) + plugin.isenabled(MP-TV Series)</visible>  
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+   
+    <control>
+      <description>Poster 1</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>81</posX>
+			<posY>641</posY>
+			<width>134</width>
+			<height>191</height>
+      <texture>#latestMediaHandler.tvseries.latest1.serieThumb</texture>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Episode 1</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+			<posY>714</posY>
+			<width>600</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest1.serieName</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Episode 1 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+			<posY>714</posY>
+			<width>200</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
+    <control>
+      <description>Poster 2</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>226</posX>
+			<posY>641</posY>
+			<width>134</width>
+			<height>191</height>
+      <texture>#latestMediaHandler.tvseries.latest2.serieThumb</texture>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+   		<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Episode 2</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+			<posY>750</posY>
+			<width>600</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest2.serieName</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Episode 2 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+			<posY>750</posY>
+			<width>200</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+   
+    <control>
+      <description>Poster 3</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>370</posX>
+			<posY>641</posY>
+			<width>134</width>
+			<height>191</height>
+      <texture>#latestMediaHandler.tvseries.latest3.serieThumb</texture>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+   		<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Episode 3</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>544</posX>
+			<posY>788</posY>
+			<width>600</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+      <label>#latestMediaHandler.tvseries.latest3.serieName</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+    <control>
+      <description>Episode 3 year</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>1215</posX>
+			<posY>788</posY>
+			<width>200</width>
+			<textcolor>ff000000</textcolor>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex</label>
+      <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
+			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
+      <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
+			<animation effect="fade" start="0" end="100" time="450" reversible="false" delay="1200">Visible</animation>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+       
+</controls>
+</window>

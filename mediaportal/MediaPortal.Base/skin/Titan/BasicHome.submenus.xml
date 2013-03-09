@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>	
+	    
+ 	<!--            :: TV ::            -->
+ 	
+	<control>
+		<description>Background</description>
+    <id>0</id>
+		<type>image</type>
+		<posX>1203</posX>
+	  <posY>309</posY>
+		<width>709</width>
+		<height>329</height>
+		<texture>basichome_submenu_bg_r.png</texture>
+		<visible>control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="0">visible</animation>
+		<animation effect="slide" start="-300" end="0" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>	
+	</control>
+ 	
+  <control>
+    <description>group element</description>
+    <type>group</type>
+		<layout>StackLayout(Vertical,true)</layout>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>	
+    <dimColor>0xffffffff</dimColor>
+		<posX>1296</posX>
+	  <posY>378</posY>
+		
+		<control>
+  		<description>TV Home</description>
+      <type>button</type>
+      <id>1000</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <label>100001</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1001</ondown>
+			<onup>1004</onup>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+		
+		<control>
+  		<description>Recordings</description>
+      <type>button</type>
+      <id>1001</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>603</hyperlink>
+      <label>914</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1002</ondown>
+			<onup>1000</onup>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+    
+ 		<control>
+  		<description>TVGuide</description>
+      <type>button</type>
+      <id>1002</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>600</hyperlink>
+      <label>600</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1001</onup>
+			<ondown>1003</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+    
+ 		<control>
+  		<description>TV Timer</description>
+      <type>button</type>
+      <id>1003</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>601</hyperlink>
+      <label>646</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1002</onup>
+			<ondown>1004</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+      
+ 		<control>
+  		<description>TV Search</description>
+      <type>button</type>
+      <id>1004</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>604</hyperlink>
+      <label>724</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1003</onup>
+			<ondown>1000</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+      
+  </control>
+		
+		
+ 	<!--            :: Moving Pictures ::            -->
+ 	
+	<control>
+		<description>Background</description>
+    <id>0</id>
+		<type>image</type>
+		<posX>619</posX>
+	  <posY>309</posY>
+		<width>709</width>
+		<height>329</height>
+		<texture>basichome_submenu_bg.png</texture>
+		<visible>[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="0">visible</animation>
+		<animation effect="slide" start="300" end="0" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>		
+	</control>
+ 	
+  <control>
+    <description>group element</description>
+    <type>group</type>
+		<layout>StackLayout(Vertical,true)</layout>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="0">visible</animation>
+		<animation effect="slide" start="250" end="0" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>		
+    <dimColor>0xffffffff</dimColor>
+		<posX>728</posX>
+	  <posY>378</posY>
+				
+		<control>
+  		<description>Categories</description>
+      <type>button</type>
+      <id>1100</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>96742</hyperlink> 
+      <label>#(L(2053)) #(L(101))</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<textXOff>0</textXOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1101</ondown>
+			<onup>1104</onup>
+			<visible allowhiddenfocus="true">[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>   
+    </control>
+		
+		<control>
+  		<description>All Movies</description>
+      <type>button</type>
+      <id>1101</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>96742</hyperlink>
+			<hyperlinkParameter>categoryname:${AllMovies}</hyperlinkParameter>
+      <label>All Movies</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<textXOff>0</textXOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1102</ondown>
+			<onup>1100</onup>
+			<visible allowhiddenfocus="true">[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>   
+    </control>
+    
+  	<control>
+  		<description>Recently Added</description>
+      <type>button</type>
+      <id>1102</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>96742</hyperlink>
+			<hyperlinkParameter>categoryname:${RecentlyAddedMovies}</hyperlinkParameter>
+      <label>4558</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<textXOff>0</textXOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1101</onup>
+			<ondown>1103</ondown>
+			<visible allowhiddenfocus="true">[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>   
+    </control>
+    
+ 		<control>
+  		<description>Unwatched</description>
+      <type>button</type>
+      <id>1103</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>96742</hyperlink>
+			<hyperlinkParameter>categoryname:${UnwatchedMovies}</hyperlinkParameter>
+      <label>1267</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<textXOff>0</textXOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1102</onup>
+			<ondown>1104</ondown>
+			<visible allowhiddenfocus="true">[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>   
+    </control>
+      
+ 		<control>
+  		<description>Videos</description>
+      <type>button</type>
+      <id>1104</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>6</hyperlink>
+      <label>3</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<textXOff>0</textXOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1103</onup>
+			<ondown>1100</ondown>
+			<visible allowhiddenfocus="true">[control.HasFocus(1100) | control.HasFocus(1101) | control.HasFocus(1102) | control.HasFocus(1103) | control.HasFocus(1104)] + string.equals(#skin.basichome.moviePlugin,Moving Pictures)</visible>   
+    </control>
+      
+  </control>
+    
+</controls>
+</window>

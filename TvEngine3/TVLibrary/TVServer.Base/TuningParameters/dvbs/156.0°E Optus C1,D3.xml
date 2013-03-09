@@ -19,6 +19,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>11886000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>27800</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>11928000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>27800</SymbolRate>
@@ -30,6 +39,15 @@
   <Transponder>
     <CarrierFrequency>11969000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
+    <SymbolRate>27800</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>12011000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
     <SymbolRate>27800</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
@@ -217,6 +235,15 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>11969000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>29455</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>12011000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>29455</SymbolRate>
@@ -227,6 +254,15 @@
   </Transponder>
   <Transponder>
     <CarrierFrequency>12052000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>29455</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>12094000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>29455</SymbolRate>
     <Modulation>Mod8Psk</Modulation>

@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window>
+<controls>
+	
+    
+ 	<control Style="smallTitle">
+		<description>Selected item Label</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>510</posX>
+		<posY>1015</posY>
+		<label>#selecteditem</label>
+		<visible>Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<!--            :: LISTVIEW ::            -->
+	
+	<control>
+		<description>Poster shadow</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>105</posX>
+		<posY>347</posY>
+		<width>429</width>
+		<height>613</height>
+		<texture>list_poster_shadow.png</texture>
+		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Default Cover Art</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>123</posX>
+		<posY>360</posY>
+		<width>379</width>
+		<height>563</height>
+		<texture>defaultVideoBig.png</texture>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + !Control.HasThumb(60) + !string.contains(#selecteditem, ..)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Folder Back Cover Art</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>123</posX>
+		<posY>360</posY>
+		<width>379</width>
+		<height>563</height>
+		<texture>folderBackVideo.png</texture>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.contains(#selecteditem, ..)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<description>Cover Art</description>
+		<type>image</type>
+		<id>60</id>
+		<posX>123</posX>
+		<posY>360</posY>
+		<width>379</width>
+		<height>563</height>
+		<texture>#selectedthumb</texture>
+		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+    
+    
+	<!--            :: INFO LABELS ::            -->
+	
+	<control Style="InfoLabel">
+		<description>Release Date Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>565</posX>
+		<posY>387</posY>
+		<label>#(string.rtrim(L(172),' :'))</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control Style="InfoValueSmall">
+		<description>Release Date Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>387</posY>
+		<label>#year</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+	<control Style="InfoLabel">
+		<description>Runtime Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>565</posX>
+		<posY>419</posY>
+		<label>#(string.rtrim(L(299),' :'))</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<control Style="InfoValueSmall">
+		<description>Runtime Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>419</posY>
+		<label>#runtime</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<control Style="InfoLabel">
+		<description>Genre Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>565</posX>
+		<posY>451</posY>
+		<label>#(string.rtrim(L(135),' :'))</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<control Style="InfoValueSmall">
+		<description>Genre Value</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>451</posY>
+		<label>#genre</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<control Style="InfoLabel">
+		<description>Director Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>565</posX>
+		<posY>483</posY>
+		<label>#(string.rtrim(L(199),' :'))</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
+	<control Style="InfoValueSmall">
+		<description>Director Value</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>798</posX>
+		<posY>483</posY>
+		<label>#director</label>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	   
+	<control Style="textBox">
+		<description>Summary (list)</description>
+		<type>textboxscrollup</type>
+		<id>1025</id>
+		<posX>568</posX>
+		<posY>538</posY>
+		<height>305</height>
+		<label>#plot</label>
+		<seperator>---------------------------------------------------------------------------------------------------------</seperator>
+		<onleft>1026</onleft>
+		<onright>1026</onright>
+		<onup>1026</onup>
+		<ondown>1026</ondown>
+		<visible>[facadeview.list|facadeview.playlist]+Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>frame</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>569</posX>
+		<posY>882</posY>
+		<width>550</width>
+		<height>73</height>
+		<texture>logoframe.png</texture>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>561</posX>
+		<posY>345</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblack.png</subitem>
+		<subitem>starblue.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#rating</percentage>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>894</posX>
+		<posY>343</posY>
+		<label>#rating</label>
+		<font>fontB12</font>
+		<textcolor>FF00b7ff</textcolor>
+		<visible>[facadeview.list|facadeview.playlist] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>				
+	</control>
+	
+	<!--            :: THUMBVIEW ::            -->
+	
+	<control>
+		<description>Movie Title value</description>
+		<type>fadelabel</type>
+		<id>1</id>
+		<posX>1040</posX>
+		<posY>332</posY>
+		<width>700</width>
+		<label>#selecteditem</label>
+		<font>fontB16</font>
+    <textcolor>FF00b7ff</textcolor>
+    <shadowAngle>120</shadowAngle>
+    <shadowDistance>2</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control Style="InfoLabel">
+		<description>Release Date Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>445</posY>
+		<label>#(string.rtrim(L(172),' :'))</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+
+	<control Style="InfoValueWide">
+		<description>Release Date Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>445</posY>
+		<label>#year</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+
+	<control Style="InfoLabel">
+		<description>Runtime Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>481</posY>
+		<label>#(string.rtrim(L(299),' :'))</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoValueWide">
+		<description>Runtime Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>481</posY>
+		<label>#runtime</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoLabel">
+		<description>Genre Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>516</posY>
+		<label>135</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoValueWide">
+		<description>Genre Value</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>516</posY>
+		<label>#genre</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoLabel">
+		<description>Director Label</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1038</posX>
+		<posY>554</posY>
+		<label>#(string.rtrim(L(199),' :'))</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="InfoValueWide">
+		<description>Director Value</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>1270</posX>
+		<posY>554</posY>
+		<label>#director</label>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+	
+	<control Style="textBox">
+		<description>Summary (list)</description>
+		<type>textboxscrollup</type>
+		<id>1025</id>
+		<posX>1040</posX>
+		<posY>635</posY>
+		<width>790</width>
+		<height>225</height>
+		<label>#plot</label>
+		<seperator>---------------------------------------------------------------------------------------------------------</seperator>
+		<onleft>1026</onleft>
+		<onright>1026</onright>
+		<onup>1026</onup>
+		<ondown>1026</ondown>
+		<lineSpacing>0.92</lineSpacing>
+		<visible>[facadeview.smallicons | facadeview.largeicons]+Control.IsVisible(50)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+    
+	<control>
+		<description>frame</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1041</posX>
+		<posY>876</posY>
+		<width>550</width>
+		<height>73</height>
+		<texture>logoframe.png</texture>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+	</control>
+    
+  <control>
+  	<description>Unwatched Icon</description>
+    <type>image</type>
+    <id>0</id>
+    <posX>1754</posX>
+    <posY>320</posY>
+    <width>92</width>
+    <height>92</height>
+    <texture>unwatched_flag_big.png</texture>
+    <visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#iswatched,no) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+  </control>
+    	
+	<control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>1035</posX>
+		<posY>399</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblack.png</subitem>
+		<subitem>starblue.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#rating</percentage>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1368</posX>
+		<posY>394</posY>
+		<label>#rating</label>
+		<font>fontB12</font>
+		<textcolor>FF00b7ff</textcolor>
+		<visible>[facadeview.smallicons | facadeview.largeicons] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>				
+	</control>
+    	
+	<!--            :: FILMSTRIP ::            -->
+	
+	<control>
+		<description>Year / Runtime / Genre</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>122</posX>
+		<posY>996</posY>
+		<width>475</width>
+		<font>TitanLight12</font>
+		<textcolor>FF000000</textcolor>
+		<label>#year - #runtime min - #genre</label>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+    
+	<control>
+		<type>imagelist</type>
+		<id>101</id>
+		<posX>1460</posX>
+		<posY>1001</posY>
+		<width>315</width>
+		<height>29</height>
+		<textureWidth>32</textureWidth>
+		<textureHeight>27</textureHeight>
+		<subitems>
+		<subitem>starblue2.png</subitem>
+		<subitem>starblack2.png</subitem>
+		</subitems>
+		<orientation>horizontal</orientation>
+		<align>left</align>
+		<imagesToDraw>10</imagesToDraw>
+		<percentage>#rating</percentage>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+	</control>
+	
+	<control>
+		<description>Rating Value</description>
+		<type>label</type>
+		<id>0</id>
+		<posX>1790</posX>
+		<posY>998</posY>
+		<label>#rating</label>
+		<font>fontB12</font>
+		<textcolor>000000</textcolor>
+		<visible>[facadeview.filmstrip | facadeview.coverflow] + Control.IsVisible(50) + string.equals(#hideinfo, False)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>				
+	</control>
+        
+</controls>
+</window>
