@@ -811,7 +811,7 @@ namespace MediaPortal.Plugins.Process
       {
         switch (msg.WParam.ToInt32())
         {
-          // This event is triggered only on Windows XP
+          // Windows XP only - Requests permission to suspend the computer.
           case PowerManager.PBT_APMQUERYSUSPEND:
             Log.Debug("PS: QUERYSUSPEND");
             if (!_singleSeat && _denyQuerySuspend)
@@ -825,36 +825,39 @@ namespace MediaPortal.Plugins.Process
             }
             break;
 
+          // Notifies applications that the computer is about to enter a suspended state.
           case PowerManager.PBT_APMSUSPEND:
             Log.Debug("PS: SUSPEND");
             OnSuspend();
             break;
 
-          // This event is triggered only on Windows XP
+          // Windows XP only - Notifies applications that permission to suspend the computer was denied.
           case PowerManager.PBT_APMQUERYSUSPENDFAILED:
             Log.Debug("PS: QUERYSUSPENDFAILED");
             // Another application prevents our suspend
             _QuerySuspendFailedCount--;
             break;
 
+          // Notifies applications that the system is resuming from sleep or hibernation.
           case PowerManager.PBT_APMRESUMEAUTOMATIC:
             Log.Debug("PS: RESUMEAUTOMATIC");
             OnResume();
             break;
 
+          // Windows XP only - Notifies applications that the system has resumed operation.
           case PowerManager.PBT_APMRESUMECRITICAL:
             Log.Debug("PS: RESUMECRITICAL");
             OnResume();
             break;
 
+          // Notifies applications that the system has resumed operation due to user activity 
+          // Note: ResumeAutomatic has been triggered before
           case PowerManager.PBT_APMRESUMESUSPEND:
-            // Note: This event is triggered when the user has moved the mouse or hit a key
-            // ResumeAutomatic or ResumeCritical have triggered before, so no need to call OnResume()
-            Log.Debug("PS: RESUMESUSPEND - reset time of last user activity and system idle timer");
-            _lastUserTime = DateTime.Now;
-            PowerManager.ResetIdleTimer();
+            Log.Debug("PS: RESUMESUSPEND");
+            OnResumeSuspend();
             break;
 
+          // Power setting change event
           case PowerManager.PBT_POWERSETTINGCHANGE:
             Log.Debug("PS: POWERSETTINGCHANGE");
             PowerManager.POWERBROADCAST_SETTING ps = (PowerManager.POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(PowerManager.POWERBROADCAST_SETTING));
@@ -1262,6 +1265,15 @@ namespace MediaPortal.Plugins.Process
         GUIGraphicsContext.SendMessage(message);
       }
 
+      // Save audio mute state
+      if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
+      {
+        using (MasterVolume _masterVolume = new MasterVolume())
+        {
+          _mute = _masterVolume.IsMuted;
+        }
+      }
+
       // Run external command
       Log.Debug("PS: Run external command");
       RunExternalCommand("Command", "suspend");
@@ -1296,6 +1308,32 @@ namespace MediaPortal.Plugins.Process
       Log.Debug("PS: Send \"ResumedFromStandby\" event");
       _standby = false;
       SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
+    }
+
+    /// <summary>
+    /// Called on ResumeSuspend
+    /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void OnResumeSuspend()
+    {
+      Log.Debug("PS: System has resumed from standby due to user activity");
+
+      // Reset time of last user activity
+      Log.Debug("PS: System has resumed from standby due to user activity - reset time of last user activity");
+      _lastUserTime = DateTime.Now;
+
+      // Restore master volume mute state
+      if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
+      {
+        using (MasterVolume _masterVolume = new MasterVolume())
+        {
+          if (_masterVolume.IsMuted && !_mute)
+          {
+            Log.Debug("PS: Master volume was unmuted when suspending - unmute master volume");
+            _masterVolume.IsMuted = false;
+          }
+        }
+      }
     }
 
     /// <summary>
