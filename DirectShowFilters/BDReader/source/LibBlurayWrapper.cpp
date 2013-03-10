@@ -925,8 +925,21 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
   case BD_EVENT_MENU:
     LogDebug("    BD_EVENT_MENU - %d", pEvent.param);
     break;
+  case BD_EVENT_STEREOSCOPIC_STATUS:
+    LogDebug("    BD_EVENT_STEREOSCOPIC_STATUS - %d", pEvent.param);
+    break;
+  case BD_EVENT_DISCONTINUITY:
+    LogDebug("    BD_EVENT_DISCONTINUITY - %d", pEvent.param);
+    break;
+  case BD_EVENT_IDLE:
+    //LogDebug("    BD_EVENT_IDLE - %d", pEvent.param);
+    break;
+  case BD_EVENT_PLAYMARK:
+    LogDebug("    BD_EVENT_PLAYMARK - %d", pEvent.param);
+    break;
+
   default:
-    LogDebug("    ERROR - no event!");
+    LogDebug("    ERROR - unknown event: %d param %d", pEvent.event, pEvent.param);
   }
 }
 
