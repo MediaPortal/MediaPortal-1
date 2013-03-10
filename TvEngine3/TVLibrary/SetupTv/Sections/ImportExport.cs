@@ -107,13 +107,20 @@ namespace SetupTv.Sections
           XmlNode nodeCard = xmlDoc.CreateElement("card");
           AddAttribute(nodeCard, "IdCard", card.IdCard);
           AddAttribute(nodeCard, "DevicePath", card.DevicePath);
-          AddAttribute(nodeCard, "Enabled", card.Enabled);
-          AddAttribute(nodeCard, "CamType", card.CamType);
-          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
-          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "Name", card.Name);
           AddAttribute(nodeCard, "Priority", card.Priority);
+          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
+          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
           AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
+          AddAttribute(nodeCard, "Enabled", card.Enabled);
+          AddAttribute(nodeCard, "CamType", card.CamType);
+          AddAttribute(nodeCard, "TimeShiftFolder", card.TimeShiftFolder);
+          AddAttribute(nodeCard, "RecordingFormat", card.RecordingFormat);
+          AddAttribute(nodeCard, "DecryptLimit", card.DecryptLimit);
+          AddAttribute(nodeCard, "PreloadCard", card.PreloadCard);
+          AddAttribute(nodeCard, "CAM", card.CAM);
+          AddAttribute(nodeCard, "netProvider", card.netProvider);
+          AddAttribute(nodeCard, "StopGraph", card.StopGraph);
           nodeCards.AppendChild(nodeCard);
         }
         nodeServer.AppendChild(nodeCards);
@@ -330,6 +337,7 @@ namespace SetupTv.Sections
         CountryCollection collection = new CountryCollection();
         TvBusinessLayer layer = new TvBusinessLayer();
         bool mergeChannels = false; // every exported channel will be imported on its own.
+        int cardCount = 0;
         int channelCount = 0;
         int scheduleCount = 0;
         int settingCount = 0;
@@ -351,11 +359,38 @@ namespace SetupTv.Sections
         XmlDocument doc = new XmlDocument();
         Log.Info("Import: Trying to import channels from {0}", openFileDialog1.FileName);
         doc.Load(openFileDialog1.FileName);
+        XmlNodeList cardList = doc.SelectNodes("/tvserver/servers/server/cards/card");
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
         XmlNodeList tvChannelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
         XmlNodeList radioChannelGroupList = doc.SelectNodes("/tvserver/radiochannelgroups/radiochannelgroup");
         XmlNodeList scheduleList = doc.SelectNodes("/tvserver/schedules/schedule");
         XmlNodeList settingList = doc.SelectNodes("/tvserver/settings/setting");
+
+        if (cardList != null)
+        {
+          foreach (XmlNode nodeCard in cardList)
+          {
+            Card card = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
+            if (card != null)
+            {
+              card.Priority = Int32.Parse(nodeCard.Attributes["Priority"].Value);
+              card.GrabEPG = (nodeCard.Attributes["GrabEPG"].Value == "True");
+              card.RecordingFolder = nodeCard.Attributes["RecordingFolder"].Value;
+              card.Enabled = (nodeCard.Attributes["Enabled"].Value == "True");
+              card.CamType = Int32.Parse(nodeCard.Attributes["CamType"].Value);
+              card.TimeShiftFolder = nodeCard.Attributes["TimeShiftFolder"].Value;
+              card.RecordingFormat = Int32.Parse(nodeCard.Attributes["RecordingFormat"].Value);
+              card.DecryptLimit = Int32.Parse(nodeCard.Attributes["DecryptLimit"].Value);
+              card.PreloadCard = (nodeCard.Attributes["PreloadCard"].Value == "True");
+              card.CAM = (nodeCard.Attributes["CAM"].Value == "True");
+            }
+            else
+            {
+              Log.Error("Import: Failed to import settings for card \"{0}\"", nodeCard.Attributes["Name"].Value);
+            }
+          }
+        }       
+        
         if (channelList != null)
         {
           foreach (XmlNode nodeChannel in channelList)
@@ -783,6 +818,20 @@ namespace SetupTv.Sections
         MessageBox.Show(
           String.Format("Imported {0} channels, {1} tv channel groups, {2} radio channel groups, {3} schedules and {4} settings",
           channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount, settingCount));
+
+        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
+        }
+
       }
       catch (Exception ex)
       {
