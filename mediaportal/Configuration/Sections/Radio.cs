@@ -209,11 +209,11 @@ namespace MediaPortal.Configuration.Sections
       this.cbHideAllChannelsGroup.UseVisualStyleBackColor = true;
       this.cbHideAllChannelsGroup.Click += new System.EventHandler(this.cbHideAllChannelsGroup_Click);
       // 
-      // TVRadio
+      // Radio
       // 
       this.Controls.Add(this.groupBoxRadioScreen);
       this.Controls.Add(this.groupBoxChannelGroups);
-      this.Name = "TVRadio";
+      this.Name = "Radio";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxRadioScreen.ResumeLayout(false);
       this.groupBoxRadioScreen.PerformLayout();
@@ -258,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       comboBoxGroups.Items.Add("(none)");
 
       int selectedIdx = 0;
-      TvServerRemote.HostName = TVServer.Hostname;
+      TvServerRemote.HostName = TVRadio.Hostname;
       foreach (string groupName in TvServerRemote.GetRadioChannelGroupNames())
       {
         int idx = comboBoxGroups.Items.Add(groupName);

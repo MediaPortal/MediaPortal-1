@@ -421,26 +421,26 @@ namespace MediaPortal.Configuration
         Log.Info("add tv section");
         if (splashScreen != null)
         {
-          splashScreen.SetInformation("Adding television section...");
+          splashScreen.SetInformation("Adding TV/Radio section...");
         }
 
-        SectionSettings television = new TV();
-        AddSection(new ConfigPage(null, television, false));
+        SectionSettings tvradio = new TVRadio();
+        AddSection(new ConfigPage(null, tvradio, false));
 
-        Log.Info("  add tv server section");
-        AddSection(new ConfigPage(television, new TVServer(), false));
+        Log.Info("  add tv section");
+        AddSection(new ConfigPage(tvradio, new TV(), false));
         Log.Info("  add radio section");
-        AddSection(new ConfigPage(television, new Radio(), false));
+        AddSection(new ConfigPage(tvradio, new Radio(), false));
         Log.Info("  add tv zoom section");
-        AddSection(new ConfigPage(television, new TVZoom(), false));
+        AddSection(new ConfigPage(tvradio, new TVZoom(), false));
         Log.Info("  add tv postprocessing section");
-        AddSection(new ConfigPage(television, new TVPostProcessing(), true));
+        AddSection(new ConfigPage(tvradio, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
-        AddSection(new ConfigPage(television, new TVTeletext(), true));
+        AddSection(new ConfigPage(tvradio, new TVTeletext(), true));
         if (ShowDebugOptions)
         {
           Log.Info("  add tv debug options section");
-          AddSection(new ConfigPage(television, new TVDebugOptions(), true));
+          AddSection(new ConfigPage(tvradio, new TVDebugOptions(), true));
         }
       }
     }
@@ -1052,27 +1052,21 @@ namespace MediaPortal.Configuration
           if (string.IsNullOrEmpty(hostName))
           {
             // Show message box
-            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Server\" section. " +
+            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV/Radio\" section. " +
               "It will not be saved." + Environment.NewLine + Environment.NewLine + "Do you want to review it before exiting?",
               "MediaPortal Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            // If user wants to review hostname select "TV Server" section and return false
+            // If user wants to review hostname select "TV/Radio" section and return false
             if (result == DialogResult.Yes)
             {
-              // Loop through the tree to find the "TV -> TV Server" node and select it
+              // Loop through the tree to find the "TV/Radio" node and select it
               foreach (TreeNode parentNode in sectionTree.Nodes)
               {
-                if (parentNode.Text == "TV")
+                if (parentNode.Text == "TV/Radio")
                 {
-                  foreach (TreeNode node in parentNode.Nodes)
-                  {
-                    if (node.Text == "TV Server")
-                    {
-                      sectionTree.SelectedNode = node;
-                      node.EnsureVisible();
+                      sectionTree.SelectedNode = parentNode;
+                      parentNode.EnsureVisible();
                       return false;
-                    }
-                  }
                 }
               }
               return false;

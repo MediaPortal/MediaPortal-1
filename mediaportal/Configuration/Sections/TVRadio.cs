@@ -21,10 +21,12 @@
 #region Using
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
@@ -37,7 +39,7 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class TVServer : SectionSettings
+  public class TVRadio : SectionSettings
   {
     #region Variables
 
@@ -57,10 +59,10 @@ namespace MediaPortal.Configuration.Sections
 
     #region Constructor
 
-    public TVServer()
-      : this("TV Server") {}
+    public TVRadio()
+      : this("TV/Radio") {}
 
-    public TVServer(string name)
+    public TVRadio(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -80,17 +82,17 @@ namespace MediaPortal.Configuration.Sections
         if (string.IsNullOrEmpty(_settingsHostname))
         {
           // Set hostname to local host
-          mpTextBoxHostname.Text = Dns.GetHostName();
+          mpComboBoxHostname.Text = Dns.GetHostName();
           _verifiedHostname = string.Empty;
-          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpTextBoxHostname.Text);
+          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpComboBoxHostname.Text);
         }
         else
         {
           // Take verified hostname from MediaPortal.xml
-          mpTextBoxHostname.Text = _settingsHostname;
-          _verifiedHostname = mpTextBoxHostname.Text;
-          mpTextBoxHostname.BackColor = Color.YellowGreen;    // verified
-          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpTextBoxHostname.Text);
+          mpComboBoxHostname.Text = _settingsHostname;
+          _verifiedHostname = mpComboBoxHostname.Text;
+          mpComboBoxHostname.BackColor = Color.YellowGreen;    // verified
+          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpComboBoxHostname.Text);
         }
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
@@ -108,26 +110,26 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         // If hostname is empty, use local hostname
-        if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
-          mpTextBoxHostname.Text = Dns.GetHostName();
+        if (string.IsNullOrEmpty(mpComboBoxHostname.Text))
+          mpComboBoxHostname.Text = Dns.GetHostName();
 
         // Save hostname only, if it is verified
-        if (mpTextBoxHostname.BackColor == Color.YellowGreen ||
-          (mpTextBoxHostname.BackColor != Color.Red && VerifyHostname(mpTextBoxHostname.Text)))
+        if (mpComboBoxHostname.BackColor == Color.YellowGreen ||
+          (mpComboBoxHostname.BackColor != Color.Red && VerifyHostname(mpComboBoxHostname.Text, verbose)))
         {
           // Hostname is valid, update database connection
           Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
-          if (UpdateGentleConfig(mpTextBoxHostname.Text, mpTextBoxHostname.Text.Equals(_settingsHostname)))
+          if (UpdateGentleConfig(mpComboBoxHostname.Text, mpComboBoxHostname.Text.Equals(_settingsHostname)))
           {
             Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
-            xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
-            _verifiedHostname = mpTextBoxHostname.Text;
+            xmlwriter.SetValue("tvservice", "hostname", mpComboBoxHostname.Text);
+            _verifiedHostname = mpComboBoxHostname.Text;
           }
           else
           {
             Log.Debug("SaveSettings: error in updating gentle.config - save empty string");
             xmlwriter.SetValue("tvservice", "hostname", string.Empty);
-            mpTextBoxHostname.BackColor = Color.Red;
+            mpComboBoxHostname.BackColor = Color.Red;
             _verifiedHostname = string.Empty;
           }
         }
@@ -135,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
         {
           // Hostname is invalid  
           Log.Debug("SaveSettings: hostname is invalid - save empty string");
-          mpTextBoxHostname.BackColor = Color.Red;
+          mpComboBoxHostname.BackColor = Color.Red;
           xmlwriter.SetValue("tvservice", "hostname", string.Empty);
           _verifiedHostname = string.Empty;
         }
@@ -158,8 +160,7 @@ namespace MediaPortal.Configuration.Sections
 
     private MPRadioButton radioButton1;
     private MPGroupBox mpGroupBox2;
-    private MPButton mpButtonTestConnectioname;
-    private MPTextBox mpTextBoxHostname;
+    private MPButton mpButtonTestConnection;
     private MPLabel mpLabel3;
     private MPGroupBox mpGroupBox900;
     private MPNumericTextBox mpNumericTextBoxWOLTimeOut;
@@ -168,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel400;
     private MPCheckBox mpCheckBoxIsAutoMacAddressEnabled;
     private MPCheckBox mpCheckBoxIsWakeOnLanEnabled;
+    private MPComboBox mpComboBoxHostname;
 
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -177,8 +179,8 @@ namespace MediaPortal.Configuration.Sections
     {
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpButtonTestConnectioname = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.mpComboBoxHostname = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpButtonTestConnection = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox900 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
@@ -203,8 +205,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Controls.Add(this.mpButtonTestConnectioname);
-      this.mpGroupBox2.Controls.Add(this.mpTextBoxHostname);
+      this.mpGroupBox2.Controls.Add(this.mpComboBoxHostname);
+      this.mpGroupBox2.Controls.Add(this.mpButtonTestConnection);
       this.mpGroupBox2.Controls.Add(this.mpLabel3);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(6, 0);
@@ -214,25 +216,28 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
       // 
-      // mpButtonTestConnectioname
+      // mpComboBoxHostname
       // 
-      this.mpButtonTestConnectioname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonTestConnectioname.Location = new System.Drawing.Point(325, 20);
-      this.mpButtonTestConnectioname.Name = "mpButtonTestConnectioname";
-      this.mpButtonTestConnectioname.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonTestConnectioname.TabIndex = 9;
-      this.mpButtonTestConnectioname.Text = "Test connection";
-      this.mpButtonTestConnectioname.UseVisualStyleBackColor = true;
-      this.mpButtonTestConnectioname.Click += new System.EventHandler(this.mpButtonTestHostname_Click);
+      this.mpComboBoxHostname.BorderColor = System.Drawing.Color.Empty;
+      this.mpComboBoxHostname.FormattingEnabled = true;
+      this.mpComboBoxHostname.Location = new System.Drawing.Point(126, 22);
+      this.mpComboBoxHostname.Name = "mpComboBoxHostname";
+      this.mpComboBoxHostname.Size = new System.Drawing.Size(164, 21);
+      this.mpComboBoxHostname.TabIndex = 19;
+      this.mpComboBoxHostname.DropDown += new System.EventHandler(this.mpComboBoxHostname_DropDown);
+      this.mpComboBoxHostname.SelectionChangeCommitted += new System.EventHandler(this.mpComboBoxHostname_SelectionChangeCommitted);
+      this.mpComboBoxHostname.TextUpdate += new System.EventHandler(this.mpComboBoxHostname_TextUpdate);
       // 
-      // mpTextBoxHostname
+      // mpButtonTestConnection
       // 
-      this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxHostname.Location = new System.Drawing.Point(126, 22);
-      this.mpTextBoxHostname.Name = "mpTextBoxHostname";
-      this.mpTextBoxHostname.Size = new System.Drawing.Size(152, 20);
-      this.mpTextBoxHostname.TabIndex = 6;
-      this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
+      this.mpButtonTestConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonTestConnection.Location = new System.Drawing.Point(325, 20);
+      this.mpButtonTestConnection.Name = "mpButtonTestConnection";
+      this.mpButtonTestConnection.Size = new System.Drawing.Size(131, 23);
+      this.mpButtonTestConnection.TabIndex = 9;
+      this.mpButtonTestConnection.Text = "Test connection";
+      this.mpButtonTestConnection.UseVisualStyleBackColor = true;
+      this.mpButtonTestConnection.Click += new System.EventHandler(this.mpButtonTestConnection_Click);
       // 
       // mpLabel3
       // 
@@ -336,11 +341,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsWakeOnLanEnabled.UseVisualStyleBackColor = true;
       this.mpCheckBoxIsWakeOnLanEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsWakeOnLanEnabled_CheckedChanged);
       // 
-      // TV
+      // TVRadio
       // 
       this.Controls.Add(this.mpGroupBox900);
       this.Controls.Add(this.mpGroupBox2);
-      this.Name = "TV";
+      this.Name = "TVRadio";
       this.Size = new System.Drawing.Size(472, 427);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
@@ -354,36 +359,17 @@ namespace MediaPortal.Configuration.Sections
 
     #region Private methods
 
+    const bool silent = false;
+    const bool verbose = true;
+
     /// <summary>
     /// Verifies that the given hostname is a working tv server
     /// </summary>
     /// <param name="hostname">The TV server's hostname</param>
-    /// <returns>Returns treu, if the hostname is a tv server</returns>
-    private bool VerifyHostname(string hostname)
+    /// <param name="verbose">Indicates if a messagebox should be displayed or not</param>
+    /// <returns></returns>
+    private bool VerifyHostname(string hostname, bool verbose)
     {
-      // See if hostname is an active client
-      Ping ping = new Ping();
-      PingOptions pingOptions = new PingOptions() { DontFragment = true, Ttl = 1 };
-      PingReply rep;
-      try
-      {
-        rep = ping.Send(hostname, 100, new byte[] { 1 }, pingOptions);
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("VerifyHostname: unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message);
-        MessageBox.Show(string.Format("Unable to detect host \"{0}\"" + Environment.NewLine + "{1}", hostname, ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-      if (rep.Status == IPStatus.TtlExpired || rep.Status == IPStatus.TimedOut || rep.Status == IPStatus.TimeExceeded)
-      {
-        Log.Debug("VerifyHostname: unable to detect host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to detect host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        return false;
-      }
-
       // See if the tv server port is accessible
       TcpClient client = new TcpClient();
       try
@@ -393,8 +379,9 @@ namespace MediaPortal.Configuration.Sections
       catch (Exception)
       {
         Log.Debug("VerifyHostname: unable to connect to TV server on host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to connect to TV server on host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        if (verbose)
+          MessageBox.Show(string.Format("Unable to connect to TV server on host \"{0}\"", hostname),
+            "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
       client.Close();
@@ -408,8 +395,9 @@ namespace MediaPortal.Configuration.Sections
       if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(provider))
       {
         Log.Debug("VerifyHostname: unable to get data from TV server on host \"{0}\"", hostname);
-        MessageBox.Show(string.Format("Unable to get data from TV server on host \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        if (verbose)
+          MessageBox.Show(string.Format("Unable to get data from TV server on host \"{0}\"", hostname),
+            "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -455,7 +443,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Verify tvServer (could be down at the moment)
-      if (!VerifyHostname(hostname))
+      if (!VerifyHostname(hostname, verbose))
       {
         Log.Error("UpdateGentleConfig: unable to contact TV server on host \"{0}\"", hostname);
         return false;
@@ -490,6 +478,97 @@ namespace MediaPortal.Configuration.Sections
       Log.Debug("UpdateGentleConfig: updated gentle.config with connectionString \"{0}\" for provider \"{1}\"", connectionString, provider);
       return true;
     }
+
+    /// <summary>
+    /// The NetServerEnum function lists all servers of the specified type that are visible in a domain.
+    /// </summary>
+    [DllImport("Netapi32", CharSet = CharSet.Auto,
+    SetLastError = true),
+    SuppressUnmanagedCodeSecurityAttribute]
+    public static extern int NetServerEnum(
+      string ServerNane, // must be null
+      int dwLevel,
+      ref IntPtr pBuf,
+      int dwPrefMaxLen,
+      out int dwEntriesRead,
+      out int dwTotalEntries,
+      int dwServerType,
+      string domain, // null for login domain
+      out int dwResumeHandle
+      );
+
+    /// <summary>
+    /// The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. 
+    /// </summary>
+    [DllImport("Netapi32", SetLastError = true),
+    SuppressUnmanagedCodeSecurityAttribute]
+    public static extern int NetApiBufferFree(IntPtr pBuf);
+
+    /// <summary>
+    /// SERVER_INFO_100 STRUCTURE
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct _SERVER_INFO_100
+    {
+      internal int sv100_platform_id;
+      [MarshalAs(UnmanagedType.LPWStr)]
+      internal string sv100_name;
+    }
+
+    /// <summary>
+    /// Retrieves a list of domain SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's (thx to Sacha Barber)
+    /// </summary>
+    /// <returns>Arraylist that represents all the SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's in the Domain</returns>
+    private ArrayList GetNetworkComputers()
+    {
+      //local fields
+      ArrayList networkComputers = new ArrayList();
+      const int MAX_PREFERRED_LENGTH = -1;
+      int SV_TYPE_WORKSTATION = 1;
+      int SV_TYPE_SERVER = 2;
+      IntPtr buffer = IntPtr.Zero;
+      IntPtr tmpBuffer = IntPtr.Zero;
+      int entriesRead = 0;
+      int totalEntries = 0;
+      int resHandle = 0;
+      int sizeofINFO = Marshal.SizeOf(typeof(_SERVER_INFO_100));
+
+      try
+      {
+        //Call NetServerEnum
+        int ret = NetServerEnum(null, 100, ref buffer, MAX_PREFERRED_LENGTH, out entriesRead, out totalEntries,
+          SV_TYPE_WORKSTATION | SV_TYPE_SERVER, null, out resHandle);
+        if (ret == 0)
+        {
+          //Loop through all SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's
+          for (int i = 0; i < totalEntries; i++)
+          {
+            //Get Pointer to the buffer that received the data
+            tmpBuffer = new IntPtr((int)buffer + (i * sizeofINFO));
+            _SERVER_INFO_100 svrInfo = (_SERVER_INFO_100)Marshal.PtrToStructure(tmpBuffer, typeof(_SERVER_INFO_100));
+
+            // Check if the PC is a MP TV server
+            if (VerifyHostname(svrInfo.sv100_name, silent))
+              networkComputers.Add(svrInfo.sv100_name.ToLower());
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("GetNetworkComputers: {0}", ex.Message);
+        return new ArrayList();
+      }
+      finally
+      {
+        //Free the memory that the NetApiBufferAllocate function allocates
+        NetApiBufferFree(buffer);
+      }
+      return networkComputers;
+    }
+
+    #endregion
+
+    #region Control event handlers
 
     private void mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged(object sender, EventArgs e)
     {
@@ -527,43 +606,43 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void mpButtonTestHostname_Click(object sender, EventArgs e)
+    private void mpButtonTestConnection_Click(object sender, EventArgs e)
     {
       // Save current cursor, display wait cursor and disable button
       Cursor currentCursor = Cursor.Current;
       Cursor.Current = Cursors.WaitCursor;
-      mpButtonTestConnectioname.Enabled = false;
+      mpButtonTestConnection.Enabled = false;
 
       // Save hostname from textbox
-      string text = mpTextBoxHostname.Text;
+      string text = mpComboBoxHostname.Text;
 
       // If hostname is empty, try local hostname
       if (string.IsNullOrEmpty(text))
       {
         text = Dns.GetHostName();
-        mpTextBoxHostname.Text = "Trying local host...";
+        mpComboBoxHostname.Text = "Trying local host...";
       }
       else
-        mpTextBoxHostname.Text = "Trying " + text + "...";
-      mpTextBoxHostname.Refresh();
+        mpComboBoxHostname.Text = "Trying " + text + "...";
+      mpComboBoxHostname.Refresh();
 
       // Restore hostname to textbox and verify it
-      mpTextBoxHostname.Text = text;
-      if (!VerifyHostname(mpTextBoxHostname.Text))
+      mpComboBoxHostname.Text = text;
+      if (!VerifyHostname(mpComboBoxHostname.Text, verbose))
       {
         // No connection to tv server
-        mpTextBoxHostname.BackColor = Color.Red;
+        mpComboBoxHostname.BackColor = Color.Red;
         _verifiedHostname = string.Empty;
 
         // Reset cursor, enable button
         Cursor.Current = currentCursor;
-        mpButtonTestConnectioname.Enabled = true;
+        mpButtonTestConnection.Enabled = true;
       }
       else
       {
         // Connection to tv server successful
-        mpTextBoxHostname.BackColor = Color.YellowGreen;
-        _verifiedHostname = mpTextBoxHostname.Text;
+        mpComboBoxHostname.BackColor = Color.YellowGreen;
+        _verifiedHostname = mpComboBoxHostname.Text;
 
         // Disable WOL for localhost
         try
@@ -575,7 +654,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Reset cursor, enable button
         Cursor.Current = currentCursor;
-        mpButtonTestConnectioname.Enabled = true;
+        mpButtonTestConnection.Enabled = true;
 
         // Show success message
         MessageBox.Show("Connection to the TV server successful",
@@ -583,9 +662,50 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
+    private void mpComboBoxHostname_DropDown(object sender, EventArgs e)
     {
-      mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+      Log.Debug("mpComboBoxHostname_DropDown");
+      // Reset background color, save current cursor and display wait cursor
+      mpComboBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+      Cursor currentCursor = Cursor.Current;
+      Cursor.Current = Cursors.WaitCursor;
+
+      // Fill comboBox with hostnames of TV servers
+      mpComboBoxHostname.Items.Clear();
+      int selectedIdx = -1;
+      foreach (string hostname in GetNetworkComputers())
+      {
+        int idx = mpComboBoxHostname.Items.Add(hostname);
+        // Preselect verified hostname or local hostname
+        if (hostname == _verifiedHostname || (_verifiedHostname == string.Empty && hostname == Dns.GetHostName()))
+          selectedIdx = idx;
+      }
+      mpComboBoxHostname.SelectedIndex = selectedIdx;
+
+      // Reset cursor
+      Cursor.Current = currentCursor;
+    }
+
+    private void mpComboBoxHostname_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      Log.Debug("mpComboBoxHostname_SelectionChangeCommitted");
+      // Take selected hostname as verified hostname
+      mpComboBoxHostname.BackColor = Color.YellowGreen;
+      _verifiedHostname = mpComboBoxHostname.Text;
+
+      // Disable WOL for localhost
+      try
+      {
+        if (Dns.GetHostEntry(_verifiedHostname).HostName == Dns.GetHostName())
+          mpCheckBoxIsWakeOnLanEnabled.Checked = false;
+      }
+      catch { }
+    }
+
+    private void mpComboBoxHostname_TextUpdate(object sender, System.EventArgs e)
+    {
+      mpComboBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+      _verifiedHostname = string.Empty;
     }
 
     #endregion

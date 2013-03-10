@@ -1001,7 +1001,7 @@ namespace MediaPortal.Configuration.Sections
     public void LoadSettings(string selectedSkin)
     {
       // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
-      TvServerRemote.HostName = TVServer.Hostname;
+      TvServerRemote.HostName = TVRadio.Hostname;
 
       // Get the MediaPortal genres from the TV server.
       _mpGenres = TvServerRemote.GetMpGenres();

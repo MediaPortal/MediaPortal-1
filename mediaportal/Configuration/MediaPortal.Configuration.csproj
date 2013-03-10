@@ -617,7 +617,7 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVServer.cs">
+    <Compile Include="Sections\TVRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
@@ -980,8 +980,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVServer.resx">
-      <DependentUpon>TVServer.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TVRadio.resx">
+      <DependentUpon>TVRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
