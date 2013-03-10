@@ -226,8 +226,8 @@ namespace MediaPortal.Music.Database
           SQLiteResultSet.Row fields = results.Rows[i];
           int columnIndex = 0;
           AssignAllSongFieldsFromResultSet(ref song, results, i);
+          aSongs.Add(song);
         }
-        aSongs.Add(song);
       }
       catch (Exception ex)
       {
