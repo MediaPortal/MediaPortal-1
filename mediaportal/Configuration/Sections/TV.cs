@@ -544,7 +544,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(166, 19);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(259, 21);
-      this.cbDeinterlace.TabIndex = 15;
+      this.cbDeinterlace.TabIndex = 0;
       // 
       // label8
       // 
@@ -645,7 +645,7 @@ namespace MediaPortal.Configuration.Sections
             0});
       this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
       this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
-      this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
+      this.channelNumberMaxLengthNumUpDn.TabIndex = 2;
       this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
             3,
             0,
@@ -706,7 +706,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbContinuousScrollGuide.Location = new System.Drawing.Point(22, 40);
       this.cbContinuousScrollGuide.Name = "cbContinuousScrollGuide";
       this.cbContinuousScrollGuide.Size = new System.Drawing.Size(210, 17);
-      this.cbContinuousScrollGuide.TabIndex = 2;
+      this.cbContinuousScrollGuide.TabIndex = 1;
       this.cbContinuousScrollGuide.Text = "Loop guide seamlessly (top and bottom)";
       this.cbContinuousScrollGuide.UseVisualStyleBackColor = true;
       // 
@@ -740,7 +740,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboboxShowEpisodeInfo.Location = new System.Drawing.Point(126, 64);
       this.comboboxShowEpisodeInfo.Name = "comboboxShowEpisodeInfo";
       this.comboboxShowEpisodeInfo.Size = new System.Drawing.Size(229, 21);
-      this.comboboxShowEpisodeInfo.TabIndex = 1;
+      this.comboboxShowEpisodeInfo.TabIndex = 2;
       // 
       // mpGroupBox5
       // 
@@ -1229,10 +1229,10 @@ namespace MediaPortal.Configuration.Sections
       this.txtNotifyBefore.TabIndex = 7;
       this.txtNotifyBefore.Text = "300";
       // 
-      // TVClient
+      // TV
       // 
       this.Controls.Add(this.tabControlTVGeneral);
-      this.Name = "TVClient";
+      this.Name = "TV";
       this.Size = new System.Drawing.Size(510, 450);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();

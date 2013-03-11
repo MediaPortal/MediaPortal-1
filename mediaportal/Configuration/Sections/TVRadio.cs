@@ -82,17 +82,17 @@ namespace MediaPortal.Configuration.Sections
         if (string.IsNullOrEmpty(_settingsHostname))
         {
           // Set hostname to local host
-          mpComboBoxHostname.Text = Dns.GetHostName();
+          mpTextBoxHostname.Text = Dns.GetHostName();
           _verifiedHostname = string.Empty;
-          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpComboBoxHostname.Text);
+          Log.Debug("LoadSettings: set hostname to local host: \"{0}\"", mpTextBoxHostname.Text);
         }
         else
         {
           // Take verified hostname from MediaPortal.xml
-          mpComboBoxHostname.Text = _settingsHostname;
-          _verifiedHostname = mpComboBoxHostname.Text;
-          mpComboBoxHostname.BackColor = Color.YellowGreen;    // verified
-          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpComboBoxHostname.Text);
+          mpTextBoxHostname.Text = _settingsHostname;
+          _verifiedHostname = mpTextBoxHostname.Text;
+          mpTextBoxHostname.BackColor = Color.YellowGreen;
+          Log.Debug("LoadSettings: take hostname from settings: \"{0}\"", mpTextBoxHostname.Text);
         }
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
@@ -110,26 +110,26 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         // If hostname is empty, use local hostname
-        if (string.IsNullOrEmpty(mpComboBoxHostname.Text))
-          mpComboBoxHostname.Text = Dns.GetHostName();
+        if (string.IsNullOrEmpty(mpTextBoxHostname.Text))
+          mpTextBoxHostname.Text = Dns.GetHostName();
 
         // Save hostname only, if it is verified
-        if (mpComboBoxHostname.BackColor == Color.YellowGreen ||
-          (mpComboBoxHostname.BackColor != Color.Red && VerifyHostname(mpComboBoxHostname.Text, verbose)))
+        if (mpTextBoxHostname.BackColor == Color.YellowGreen ||
+          (mpTextBoxHostname.BackColor != Color.Red && VerifyHostname(mpTextBoxHostname.Text, verbose)))
         {
           // Hostname is valid, update database connection
           Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
-          if (UpdateGentleConfig(mpComboBoxHostname.Text, mpComboBoxHostname.Text.Equals(_settingsHostname)))
+          if (UpdateGentleConfig(mpTextBoxHostname.Text, mpTextBoxHostname.Text.Equals(_settingsHostname)))
           {
             Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
-            xmlwriter.SetValue("tvservice", "hostname", mpComboBoxHostname.Text);
-            _verifiedHostname = mpComboBoxHostname.Text;
+            xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
+            _verifiedHostname = mpTextBoxHostname.Text;
           }
           else
           {
             Log.Debug("SaveSettings: error in updating gentle.config - save empty string");
             xmlwriter.SetValue("tvservice", "hostname", string.Empty);
-            mpComboBoxHostname.BackColor = Color.Red;
+            mpTextBoxHostname.BackColor = Color.Red;
             _verifiedHostname = string.Empty;
           }
         }
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
         {
           // Hostname is invalid  
           Log.Debug("SaveSettings: hostname is invalid - save empty string");
-          mpComboBoxHostname.BackColor = Color.Red;
+          mpTextBoxHostname.BackColor = Color.Red;
           xmlwriter.SetValue("tvservice", "hostname", string.Empty);
           _verifiedHostname = string.Empty;
         }
@@ -161,6 +161,8 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton radioButton1;
     private MPGroupBox mpGroupBox2;
     private MPButton mpButtonTestConnection;
+    private MPTextBox mpTextBoxHostname;
+    private MPComboBox mpComboBoxHostname;
     private MPLabel mpLabel3;
     private MPGroupBox mpGroupBox900;
     private MPNumericTextBox mpNumericTextBoxWOLTimeOut;
@@ -169,7 +171,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel400;
     private MPCheckBox mpCheckBoxIsAutoMacAddressEnabled;
     private MPCheckBox mpCheckBoxIsWakeOnLanEnabled;
-    private MPComboBox mpComboBoxHostname;
 
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -179,9 +180,10 @@ namespace MediaPortal.Configuration.Sections
     {
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpComboBoxHostname = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpTextBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpButtonTestConnection = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxHostname = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpGroupBox900 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.mpLabelWOLTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -205,9 +207,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Controls.Add(this.mpComboBoxHostname);
+      this.mpGroupBox2.Controls.Add(this.mpTextBoxHostname);
       this.mpGroupBox2.Controls.Add(this.mpButtonTestConnection);
       this.mpGroupBox2.Controls.Add(this.mpLabel3);
+      this.mpGroupBox2.Controls.Add(this.mpComboBoxHostname);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox2.Name = "mpGroupBox2";
@@ -216,25 +219,24 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "TV-Server";
       // 
-      // mpComboBoxHostname
+      // mpTextBoxHostname
       // 
-      this.mpComboBoxHostname.BorderColor = System.Drawing.Color.Empty;
-      this.mpComboBoxHostname.FormattingEnabled = true;
-      this.mpComboBoxHostname.Location = new System.Drawing.Point(126, 22);
-      this.mpComboBoxHostname.Name = "mpComboBoxHostname";
-      this.mpComboBoxHostname.Size = new System.Drawing.Size(164, 21);
-      this.mpComboBoxHostname.TabIndex = 19;
-      this.mpComboBoxHostname.DropDown += new System.EventHandler(this.mpComboBoxHostname_DropDown);
-      this.mpComboBoxHostname.SelectionChangeCommitted += new System.EventHandler(this.mpComboBoxHostname_SelectionChangeCommitted);
-      this.mpComboBoxHostname.TextUpdate += new System.EventHandler(this.mpComboBoxHostname_TextUpdate);
+      this.mpTextBoxHostname.BorderColor = System.Drawing.Color.Empty;
+      this.mpTextBoxHostname.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.mpTextBoxHostname.Location = new System.Drawing.Point(129, 25);
+      this.mpTextBoxHostname.Multiline = true;
+      this.mpTextBoxHostname.Name = "mpTextBoxHostname";
+      this.mpTextBoxHostname.Size = new System.Drawing.Size(141, 15);
+      this.mpTextBoxHostname.TabIndex = 1;
+      this.mpTextBoxHostname.TextChanged += new System.EventHandler(this.mpTextBoxHostname_TextChanged);
       // 
       // mpButtonTestConnection
       // 
       this.mpButtonTestConnection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonTestConnection.Location = new System.Drawing.Point(325, 20);
+      this.mpButtonTestConnection.Location = new System.Drawing.Point(325, 21);
       this.mpButtonTestConnection.Name = "mpButtonTestConnection";
       this.mpButtonTestConnection.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonTestConnection.TabIndex = 9;
+      this.mpButtonTestConnection.TabIndex = 3;
       this.mpButtonTestConnection.Text = "Test connection";
       this.mpButtonTestConnection.UseVisualStyleBackColor = true;
       this.mpButtonTestConnection.Click += new System.EventHandler(this.mpButtonTestConnection_Click);
@@ -247,6 +249,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel3.Size = new System.Drawing.Size(58, 13);
       this.mpLabel3.TabIndex = 5;
       this.mpLabel3.Text = "Hostname:";
+      // 
+      // mpComboBoxHostname
+      // 
+      this.mpComboBoxHostname.BorderColor = System.Drawing.Color.Empty;
+      this.mpComboBoxHostname.FormattingEnabled = true;
+      this.mpComboBoxHostname.Location = new System.Drawing.Point(126, 22);
+      this.mpComboBoxHostname.Name = "mpComboBoxHostname";
+      this.mpComboBoxHostname.Size = new System.Drawing.Size(164, 21);
+      this.mpComboBoxHostname.TabIndex = 2;
+      this.mpComboBoxHostname.DropDown += new System.EventHandler(this.mpComboBoxHostname_DropDown);
+      this.mpComboBoxHostname.SelectionChangeCommitted += new System.EventHandler(this.mpComboBoxHostname_SelectionChangeCommitted);
       // 
       // mpGroupBox900
       // 
@@ -283,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpNumericTextBoxWOLTimeOut.MaxLength = 4;
       this.mpNumericTextBoxWOLTimeOut.Name = "mpNumericTextBoxWOLTimeOut";
       this.mpNumericTextBoxWOLTimeOut.Size = new System.Drawing.Size(45, 20);
-      this.mpNumericTextBoxWOLTimeOut.TabIndex = 9;
+      this.mpNumericTextBoxWOLTimeOut.TabIndex = 1;
       this.mpNumericTextBoxWOLTimeOut.Tag = "Default timeout is 10 seconds";
       this.mpNumericTextBoxWOLTimeOut.Text = "10";
       this.mpNumericTextBoxWOLTimeOut.Value = 10;
@@ -305,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTextBoxMacAddress.MaxLength = 17;
       this.mpTextBoxMacAddress.Name = "mpTextBoxMacAddress";
       this.mpTextBoxMacAddress.Size = new System.Drawing.Size(97, 20);
-      this.mpTextBoxMacAddress.TabIndex = 7;
+      this.mpTextBoxMacAddress.TabIndex = 3;
       this.mpTextBoxMacAddress.Text = "00:00:00:00:00:00";
       // 
       // mpLabel400
@@ -324,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsAutoMacAddressEnabled.Location = new System.Drawing.Point(44, 68);
       this.mpCheckBoxIsAutoMacAddressEnabled.Name = "mpCheckBoxIsAutoMacAddressEnabled";
       this.mpCheckBoxIsAutoMacAddressEnabled.Size = new System.Drawing.Size(192, 17);
-      this.mpCheckBoxIsAutoMacAddressEnabled.TabIndex = 1;
+      this.mpCheckBoxIsAutoMacAddressEnabled.TabIndex = 2;
       this.mpCheckBoxIsAutoMacAddressEnabled.Text = "Auto-configure server MAC Address";
       this.mpCheckBoxIsAutoMacAddressEnabled.UseVisualStyleBackColor = true;
       this.mpCheckBoxIsAutoMacAddressEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged);
@@ -614,24 +627,24 @@ namespace MediaPortal.Configuration.Sections
       mpButtonTestConnection.Enabled = false;
 
       // Save hostname from textbox
-      string text = mpComboBoxHostname.Text;
+      string text = mpTextBoxHostname.Text;
 
       // If hostname is empty, try local hostname
       if (string.IsNullOrEmpty(text))
       {
         text = Dns.GetHostName();
-        mpComboBoxHostname.Text = "Trying local host...";
+        mpTextBoxHostname.Text = "Trying local host...";
       }
       else
-        mpComboBoxHostname.Text = "Trying " + text + "...";
-      mpComboBoxHostname.Refresh();
+        mpTextBoxHostname.Text = "Trying " + text + "...";
+      mpTextBoxHostname.Refresh();
 
       // Restore hostname to textbox and verify it
-      mpComboBoxHostname.Text = text;
-      if (!VerifyHostname(mpComboBoxHostname.Text, verbose))
+      mpTextBoxHostname.Text = text;
+      if (!VerifyHostname(mpTextBoxHostname.Text, verbose))
       {
         // No connection to tv server
-        mpComboBoxHostname.BackColor = Color.Red;
+        mpTextBoxHostname.BackColor = Color.Red;
         _verifiedHostname = string.Empty;
 
         // Reset cursor, enable button
@@ -641,8 +654,8 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         // Connection to tv server successful
-        mpComboBoxHostname.BackColor = Color.YellowGreen;
-        _verifiedHostname = mpComboBoxHostname.Text;
+        mpTextBoxHostname.BackColor = Color.YellowGreen;
+        _verifiedHostname = mpTextBoxHostname.Text;
 
         // Disable WOL for localhost
         try
@@ -662,11 +675,26 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private bool _textChangedByComboBox = false;
+
+    private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
+    {
+      // If text was changed by selection from combobox then hostname is varified
+      if (_textChangedByComboBox)
+      {
+        mpTextBoxHostname.BackColor = Color.YellowGreen;
+        _verifiedHostname = mpTextBoxHostname.Text;
+      }
+      else
+      {
+        mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+        _verifiedHostname = string.Empty;
+      }
+    }
+
     private void mpComboBoxHostname_DropDown(object sender, EventArgs e)
     {
-      Log.Debug("mpComboBoxHostname_DropDown");
-      // Reset background color, save current cursor and display wait cursor
-      mpComboBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+      // Save current cursor and display wait cursor
       Cursor currentCursor = Cursor.Current;
       Cursor.Current = Cursors.WaitCursor;
 
@@ -688,24 +716,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void mpComboBoxHostname_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-      Log.Debug("mpComboBoxHostname_SelectionChangeCommitted");
-      // Take selected hostname as verified hostname
-      mpComboBoxHostname.BackColor = Color.YellowGreen;
-      _verifiedHostname = mpComboBoxHostname.Text;
+      // Take selected hostname to hostname textbox
+      _textChangedByComboBox = true;
+      mpTextBoxHostname.Text = mpComboBoxHostname.SelectedItem.ToString();
+      _textChangedByComboBox = false;
 
       // Disable WOL for localhost
       try
       {
-        if (Dns.GetHostEntry(_verifiedHostname).HostName == Dns.GetHostName())
+        if (mpTextBoxHostname.Text == Dns.GetHostName())
           mpCheckBoxIsWakeOnLanEnabled.Checked = false;
       }
       catch { }
-    }
-
-    private void mpComboBoxHostname_TextUpdate(object sender, System.EventArgs e)
-    {
-      mpComboBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
-      _verifiedHostname = string.Empty;
     }
 
     #endregion

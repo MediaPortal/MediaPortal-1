@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbRememberLastGroup.Location = new System.Drawing.Point(13, 42);
       this.cbRememberLastGroup.Name = "cbRememberLastGroup";
       this.cbRememberLastGroup.Size = new System.Drawing.Size(124, 17);
-      this.cbRememberLastGroup.TabIndex = 3;
+      this.cbRememberLastGroup.TabIndex = 1;
       this.cbRememberLastGroup.Text = "Remember last group";
       this.cbRememberLastGroup.UseVisualStyleBackColor = true;
       this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
@@ -194,7 +194,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(10, 67);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(140, 13);
-      this.label1.TabIndex = 1;
+      this.label1.TabIndex = 3;
       this.label1.Text = "Group to show in root menu:";
       // 
       // cbHideAllChannelsGroup
