@@ -853,7 +853,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         mpButtonAddSvideoChannels.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
-        IUser user = new User();
+        IUser user = new User(string.Empty, UserType.Scanner);
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
