@@ -35,7 +35,7 @@ namespace MediaPortal.LastFM
   public class LastFMLibrary
   {
 
-    private static string _theSK = String.Empty;
+    private static string _sessionKey = String.Empty;
     private static string _currentUser = string.Empty;
     internal static string BaseURL = "http://ws.audioscrobbler.com/2.0/";
     internal static string BaseURLHttps = "https://ws.audioscrobbler.com/2.0/";
@@ -72,14 +72,14 @@ namespace MediaPortal.LastFM
     private static void LoadSettings()
     {
       var mdb = MusicDatabase.Instance;
-      _theSK = mdb.GetLastFMSK();
+      _sessionKey = mdb.GetLastFMSK();
       _currentUser = mdb.GetLastFMUser();
     }
 
     private static void SaveSettings()
     {
       var mdb = MusicDatabase.Instance;
-      mdb.AddLastFMUser(_currentUser, _theSK);
+      mdb.AddLastFMUser(_currentUser, _sessionKey);
     }
 
     #endregion
@@ -114,10 +114,10 @@ namespace MediaPortal.LastFM
           var sk = sessionElement.Element("key");
           Log.Info("Saved last.fm session key for: {0}", username);
 
-          if (sk != null) _theSK = sk.Value;
+          if (sk != null) _sessionKey = sk.Value;
           _currentUser = username;
 
-          return MusicDatabase.Instance.AddLastFMUser(username, _theSK);
+          return MusicDatabase.Instance.AddLastFMUser(username, _sessionKey);
         }
       }
 
@@ -141,7 +141,7 @@ namespace MediaPortal.LastFM
     /// <param name="strDuration">duration of track being played</param>
     public static void UpdateNowPlaying(String strArtist, String strTrack, String strAlbum, String strDuration)
     {
-      if (string.IsNullOrEmpty(_theSK))
+      if (string.IsNullOrEmpty(_sessionKey))
       {
         Log.Warn("Attempted to announce track: {0} - {1}", strArtist, strTrack);
         Log.Warn("But last.fm has not been authorised so aborting");
@@ -160,7 +160,7 @@ namespace MediaPortal.LastFM
       {
         parms.Add("duration", strDuration);
       }
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -244,7 +244,8 @@ namespace MediaPortal.LastFM
       const string methodName = "track.scrobble";
       int i = 0;
 
-      foreach (var track in tracks)
+      var scrobbleTracks = tracks as IList<LastFMScrobbleTrack> ?? tracks.ToList();
+      foreach (var track in scrobbleTracks)
       {
         var span = (track.DatePlayed.ToUniversalTime() - new DateTime(1970, 1, 1));
         var unixEpoch = (int) span.TotalSeconds;
@@ -266,12 +267,11 @@ namespace MediaPortal.LastFM
         i++;
       }
 
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
       var lastFMResponseXML = HttpPost(buildLastFMString);
-      Log.Info(lastFMResponseXML);
 
       if (!IsValidReponse(lastFMResponseXML))
       {
@@ -280,7 +280,10 @@ namespace MediaPortal.LastFM
       }
       else
       {
-        //Log.Info("Submitted last.fm scobble for: {0} - {1}", strArtist, strTrack);
+        foreach (var track in scrobbleTracks)
+        {
+          Log.Info("Submitted last.fm scrobble for: {0}-{1} @{3} - {4}", track.ArtistName, track.AlbumName, track.DatePlayed.ToShortDateString(), track.DatePlayed.ToLongTimeString());
+        }
       }
 
     }
@@ -300,7 +303,7 @@ namespace MediaPortal.LastFM
       var parms = new Dictionary<string, string>();
       const string methodName = "radio.tune";
       parms.Add("station", strStationName);
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -326,7 +329,7 @@ namespace MediaPortal.LastFM
       var parms = new Dictionary<string, string>();
       const string methodName = "radio.getPlaylist";
       parms.Add("bitrate", "128");
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -343,12 +346,12 @@ namespace MediaPortal.LastFM
       var z = (from a in y.Descendants(ns + "track")
                select new LastFMStreamingTrack
                         {
-                          ArtistName = a.Element(ns + "creator").Value,
-                          TrackTitle = a.Element(ns + "title").Value,
-                          TrackURL = a.Element(ns + "location").Value,
-                          Duration = Int32.Parse(a.Element(ns + "duration").Value) / 1000,
-                          Identifier = Int32.Parse(a.Element(ns + "identifier").Value),
-                          ImageURL = a.Element(ns + "image").Value
+                          ArtistName = (string) a.Element(ns + "creator"),
+                          TrackTitle = (string) a.Element(ns + "title"),
+                          TrackURL = (string) a.Element(ns + "location"),
+                          Duration = Int32.Parse((string) a.Element(ns + "duration")) / 1000,
+                          Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
+                          ImageURL = (string) a.Element(ns + "image")
                         }).ToList();
       tracks = z;
       return true;
@@ -424,8 +427,8 @@ namespace MediaPortal.LastFM
                      let artistNameElement = artistElement.Element("name")
                      where artistNameElement != null
                      select new LastFMTrack(
-                       (string) artistNameElement.Value,
-                       (string) trackElement.Value
+                       (string) artistNameElement,
+                       (string) trackElement
                        )).ToList();
 
       return tracks;
@@ -443,7 +446,7 @@ namespace MediaPortal.LastFM
       const string methodName = "track.love";
       parms.Add("artist", strArtist);
       parms.Add("track", strTrack);
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -473,7 +476,7 @@ namespace MediaPortal.LastFM
       const string methodName = "track.unlove";
       parms.Add("artist", strArtist);
       parms.Add("track", strTrack);
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -503,7 +506,7 @@ namespace MediaPortal.LastFM
       const string methodName = "track.ban";
       parms.Add("artist", strArtist);
       parms.Add("track", strTrack);
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -533,7 +536,7 @@ namespace MediaPortal.LastFM
       const string methodName = "track.unban";
       parms.Add("artist", strArtist);
       parms.Add("track", strTrack);
-      parms.Add("sk", _theSK);
+      parms.Add("sk", _sessionKey);
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
@@ -634,7 +637,7 @@ namespace MediaPortal.LastFM
       }
       else
       {
-        parms.Add("sk", _theSK);
+        parms.Add("sk", _sessionKey);
       }
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
 
@@ -648,11 +651,12 @@ namespace MediaPortal.LastFM
 
       var xDoc = XDocument.Parse(lastFMResponseXML);
 
+      //TODO: This needs to be descendants ??
       var user = xDoc.Root.Element("user");
       if (user == null) return null;
 
       var userName = (string) user.Element("name");
-      var subscriber = (string) user.Element("subscriber") == "1";
+      var subscriber = ((string) user.Element("subscriber")) == "1";
       int playcount;
       Int32.TryParse((string) user.Element("playcount"), out playcount);
       var userImgURL = (from img in user.Elements("image")
@@ -682,8 +686,8 @@ namespace MediaPortal.LastFM
     /// <returns>Text response from server</returns>
     private static string HttpGet(string querystring)
     {
+      
       // TODO this should be replaced with a simple call to XDocument.Load (only for GET calls)
-      //TODO: need to add check for no internet connection?
       var lastFMResponse = String.Empty;
       var myWebClient = new WebClient {Encoding = Encoding.UTF8};
       try
@@ -735,7 +739,6 @@ namespace MediaPortal.LastFM
 
     private static string HttpPost(string postData, bool useHttps)
     {
-      //TODO: need to add check for no internet connection?
       var lastFMResponse = String.Empty;
       var postArray = Encoding.UTF8.GetBytes(postData);
       using(var myWebClient = new WebClient {Encoding = Encoding.UTF8})
