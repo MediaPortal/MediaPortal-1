@@ -27,6 +27,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
@@ -383,13 +384,8 @@ namespace MediaPortal.Configuration.Sections
     /// <returns></returns>
     private bool VerifyHostname(string hostname, bool verbose)
     {
-      // See if the tv server port is accessible
-      TcpClient client = new TcpClient();
-      try
-      {
-        client.Connect(hostname, 31456);
-      }
-      catch (Exception)
+      // See if the tv server port is accessible (with timeout)
+      if (!CanConnect(hostname))
       {
         Log.Debug("VerifyHostname: unable to connect to TV server on host \"{0}\"", hostname);
         if (verbose)
@@ -397,7 +393,6 @@ namespace MediaPortal.Configuration.Sections
             "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
-      client.Close();
 
       // Set the hostname of the TV server
       TvServerRemote.HostName = hostname;
@@ -418,6 +413,44 @@ namespace MediaPortal.Configuration.Sections
       return true;
     }
 
+    private string _hostname;
+    private bool _connected;
+
+    private bool CanConnect(string hostname)
+    {
+      _hostname = hostname;
+      _connected = false;
+
+      // kick off the thread that tries to connect
+      Thread thread = new Thread(new ThreadStart(ConnectThread));
+      thread.IsBackground = true; // So that a failed connection attempt 
+      // wont prevent the process from terminating while it does the long timeout
+      thread.Start();
+
+      // wait for either the timeout or the thread to finish
+      if (thread.Join(2000))
+        return _connected;
+
+      // Timeout, so abort thread
+      thread.Abort();
+      return false;
+    }
+
+    private void ConnectThread()
+    {
+      TcpClient connection = new TcpClient();
+      try
+      {
+        connection.Connect(_hostname, 31456);
+        _connected = true;
+      }
+      catch (Exception) { }
+      finally
+      {
+        connection.Close();
+      }
+    }
+    
     /// <summary>
     /// Updates the database connection string in the gentle.config file
     /// if the hostname has been changed or gentle.config contains "-" as server name.
@@ -561,8 +594,9 @@ namespace MediaPortal.Configuration.Sections
             _SERVER_INFO_100 svrInfo = (_SERVER_INFO_100)Marshal.PtrToStructure(tmpBuffer, typeof(_SERVER_INFO_100));
 
             // Check if the PC is a MP TV server
-            if (VerifyHostname(svrInfo.sv100_name, silent))
-              networkComputers.Add(svrInfo.sv100_name.ToLower());
+            string hostname = svrInfo.sv100_name.ToLower();
+            if (VerifyHostname(hostname, silent))
+              networkComputers.Add(hostname);
           }
         }
       }
@@ -675,21 +709,10 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private bool _textChangedByComboBox = false;
-
     private void mpTextBoxHostname_TextChanged(object sender, EventArgs e)
     {
-      // If text was changed by selection from combobox then hostname is varified
-      if (_textChangedByComboBox)
-      {
-        mpTextBoxHostname.BackColor = Color.YellowGreen;
-        _verifiedHostname = mpTextBoxHostname.Text;
-      }
-      else
-      {
-        mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
-        _verifiedHostname = string.Empty;
-      }
+      mpTextBoxHostname.BackColor = mpTextBoxMacAddress.BackColor;
+      _verifiedHostname = string.Empty;
     }
 
     private void mpComboBoxHostname_DropDown(object sender, EventArgs e)
@@ -698,28 +721,41 @@ namespace MediaPortal.Configuration.Sections
       Cursor currentCursor = Cursor.Current;
       Cursor.Current = Cursors.WaitCursor;
 
+      // Save hostname and color from textbox
+      string text = mpTextBoxHostname.Text;
+      Color color = mpTextBoxHostname.BackColor;
+
+      // Display scanning ...
+      mpTextBoxHostname.Text = "Scanning network ...";
+      mpTextBoxHostname.Refresh();
+
       // Fill comboBox with hostnames of TV servers
       mpComboBoxHostname.Items.Clear();
       int selectedIdx = -1;
       foreach (string hostname in GetNetworkComputers())
       {
         int idx = mpComboBoxHostname.Items.Add(hostname);
+
         // Preselect verified hostname or local hostname
         if (hostname == _verifiedHostname || (_verifiedHostname == string.Empty && hostname == Dns.GetHostName()))
           selectedIdx = idx;
       }
       mpComboBoxHostname.SelectedIndex = selectedIdx;
 
-      // Reset cursor
+      // Restore hostname and color of textbox and reset cursor
+      mpTextBoxHostname.Text = text;
+      mpTextBoxHostname.BackColor = color;
+      if (color == Color.YellowGreen)
+        _verifiedHostname = text;
       Cursor.Current = currentCursor;
     }
 
     private void mpComboBoxHostname_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       // Take selected hostname to hostname textbox
-      _textChangedByComboBox = true;
       mpTextBoxHostname.Text = mpComboBoxHostname.SelectedItem.ToString();
-      _textChangedByComboBox = false;
+      mpTextBoxHostname.BackColor = Color.YellowGreen;
+      _verifiedHostname = mpTextBoxHostname.Text;
 
       // Disable WOL for localhost
       try
