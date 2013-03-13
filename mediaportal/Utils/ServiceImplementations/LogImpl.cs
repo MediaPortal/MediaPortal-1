@@ -64,7 +64,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "2"));
       }
       bConfiguration = false;
     }

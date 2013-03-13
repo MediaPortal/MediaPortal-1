@@ -2,12 +2,12 @@
 <Grabber>
   <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
-	<Channel id="40 Latino" siteId="40-latino" />
 	<Channel id="40 TV" siteId="los40" />
 	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
 	<Channel id="Andalucia TV" siteId="andalucia-tv" />
 	<Channel id="Animax" siteId="animax" />
 	<Channel id="Antena 3" siteId="antena3" />
+	<Channel id="Aragon Television" siteId="aragon-television" />
 	<Channel id="AXN" siteId="axn" />
 	<Channel id="AXN HD" siteId="axn-hd" />
 	<Channel id="Baby First" siteId="baby-first" />
@@ -57,7 +57,7 @@
 	<Channel id="Disney Cinemagic" siteId="disney-cinemagic" />
 	<Channel id="Disney Cinemagic HD" siteId="disney-cinemagic-hd" />
 	<Channel id="Disney XD" siteId="disney-xd" />
-	<Channel id="EHS" siteId="ehs" />
+	<Channel id="Divinity" siteId="divinity" />
 	<Channel id="ETB1" siteId="etb1" />
 	<Channel id="ETB2" siteId="etb2" />
 	<Channel id="Euronews" siteId="euronews" />
@@ -75,7 +75,9 @@
 	<Channel id="Canal Historia" siteId="historia" />
 	<Channel id="Hollywood" siteId="hollywood" />
 	<Channel id="HollywoodHD" siteId="hollywood-hd" />
+	<Channel id="IB3" siteId="ib3-televisio" />
 	<Channel id="La Sexta" siteId="la-sexta" />
+	<Channel id="La Sexta 3" siteId="la-sexta-3" />
 	<Channel id="La Siete" siteId="la-siete" />
 	<Channel id="La 2" siteId="la2" />
 	<Channel id="Mezzo" siteId="mezzo" />
@@ -94,6 +96,7 @@
 	<Channel id="Canal Odisea" siteId="odisea" />
 	<Channel id="Panda" siteId="panda" />
 	<Channel id="Par. Comedy" siteId="paramount" />
+	<Channel id="Paramount Comedy" siteId="paramount" />
 	<Channel id="Playboy TV" siteId="playboy-tv" />
 	<Channel id="Disney Junior" siteId="playhouse-disney" />
 	<Channel id="Punt 2" siteId="punt-2" />
@@ -103,7 +106,6 @@
 	<Channel id="SONY TV" siteId="sony-entertainment" />
 	<Channel id="Sportmanía" siteId="sportmania" />
 	<Channel id="TCM" siteId="tcm" />
-	<Channel id="TCM Clásico" siteId="tcm-clasico" />
 	<Channel id="Telecinco" siteId="telecinco" />
 	<Channel id="Teledeporte" siteId="teledeporte" />
 	<Channel id="TeleMadrid" siteId="telemadrid" />
@@ -121,17 +123,20 @@
 	<Channel id="Viajar HD" siteId="viajar-hd" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.miguiatv.com/[YYYY][MM][DD]/[ID]" post="" external="false" encoding="" />
+    <Site url="http://www.miguiatv.com/[YYYY][MM][DD]/[ID]" post="" external="false" encoding="utf-8" />
     <Html>
       <Template name="default" start="listing" end="listing_sky">
-        <SectionTemplate tags="T">
+        <SectionTemplate tags="TS">
           <TemplateText>
-	&lt;tr&gt;&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;table&gt;&lt;tr&gt;
-	&lt;td&gt;&lt;strong&gt;&lt;#TITLE&gt;&lt;/strong&gt;&lt;/td&gt;
-	&lt;td&gt;&lt;strong&gt;&lt;#GENRE&gt;&lt;/strong&gt;&lt;/td&gt;&lt;/tr&gt;
-	&lt;tr&gt;&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;/tr&gt;
-	&lt;/table&gt;&lt;/td&gt;&lt;/tr&gt;
+	&lt;td valign="top"&gt;&lt;#START&gt;&lt;/td&gt;
+	&lt;td valign="top"&gt;
+	&lt;p&gt;&lt;strong&gt;
+	&lt;a href=""&gt;&lt;#TITLE&gt;&lt;/a&gt;
+	&lt;/strong&gt;&lt;/p&gt;
+	&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+	&lt;p&gt;&lt;strong&gt;&lt;#GENRE&gt;&lt;/strong&gt;&lt;/p&gt;
+	&lt;/td&gt;
+	&lt;/tr&gt;
     </TemplateText>
         </SectionTemplate>
       </Template>
