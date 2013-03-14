@@ -37,8 +37,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public static string Convert(IntPtr ptr, string lang)
     {
-      if (ptr == (IntPtr) 0)
-        return "";
+      if (ptr == IntPtr.Zero)
+        return string.Empty;
 
       int len = 0;
       int pos = 0;
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "Error while converting dvb text");        
+        Log.Error(ex, "Error while converting dvb text");
       }
       byte[] text = new byte[len - pos];
       for (int i = 0; i < len - pos; i++)

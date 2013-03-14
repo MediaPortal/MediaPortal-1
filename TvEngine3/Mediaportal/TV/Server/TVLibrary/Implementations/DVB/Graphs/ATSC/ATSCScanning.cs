@@ -21,6 +21,7 @@
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 {
@@ -101,19 +102,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       // switch-off. They don't necessarily have any relationship to the physical channel number (6 MHz frequency
       // slot - in TV Server, ATSCChannel.PhysicalChannel) that the service is transmitted in.
 
+      // Morpheus, 2013/03: enabled code again, until better implementation is available (otherwise ATSC channel will have many empty names)
       //TODO redo
+
       // If possible we use <major channel>-<minor channel> labelling.
-      /*int majorChannel = atscChannel.MajorChannel;
+      int majorChannel = atscChannel.MajorChannel;
       int minorChannel = atscChannel.MinorChannel;
       if (atscChannel.MajorChannel > 0)
       {
-        Log.this.LogDebug("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
+        this.LogDebug("AtscScanning: service name not set, translated with VCT info to {0}", atscChannel.Name);
       }
       else
       {
         // If we don't have the major and minor channel numbers or the name then use the physical channel number or
         // frequency for the major channel substitute.
-        Log.this.LogDebug("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
+        this.LogDebug("AtscScanning: service name not set, translated with other info to {0}", atscChannel.Name);
         if (atscChannel.PhysicalChannel > 0)
         {
           majorChannel = atscChannel.PhysicalChannel;
@@ -142,7 +145,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
         }
       }
 
-      atscChannel.Name = majorChannel + "-" + minorChannel;*/
+      atscChannel.Name = majorChannel + "-" + minorChannel;
     }
   }
 }
