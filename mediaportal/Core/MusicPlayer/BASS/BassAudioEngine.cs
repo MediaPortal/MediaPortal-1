@@ -1588,6 +1588,7 @@ namespace MediaPortal.MusicPlayer.BASS
               // The new stream has a different frequency or number of channels
               // We need a new mixer
               _mixer.Dispose();
+              _mixer = null;
               _mixer = new MixerStream(this);
               if (!_mixer.CreateMixer(stream))
               {
@@ -1811,9 +1812,6 @@ namespace MediaPortal.MusicPlayer.BASS
           stream.Dispose();
         }
 
-        _mixer.Dispose();
-        _mixer = null;
-
         if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
         {
           Log.Debug("BASS: Stopping ASIO Device");
@@ -1835,17 +1833,27 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
-          Log.Debug("BASS: Stopping WASAPI Device");
-          if (!BassWasapi.BASS_WASAPI_Stop(true))
+          try
           {
-            Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
-          }
+            Log.Debug("BASS: Stopping WASAPI Device");
+            if (!BassWasapi.BASS_WASAPI_Stop(true))
+            {
+              Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+            }
 
-          if (!BassWasapi.BASS_WASAPI_Free())
+            if (!BassWasapi.BASS_WASAPI_Free())
+            {
+              Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
+            }
+          }
+          catch (Exception ex)
           {
-            Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
+            Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
           }
         }
+
+        _mixer.Dispose();
+        _mixer = null;
 
         // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
         if (_isCDDAFile)

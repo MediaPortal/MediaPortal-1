@@ -74,7 +74,15 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        BassWasapi.BASS_WASAPI_Free();
+        try
+        {
+          BassWasapi.BASS_WASAPI_Free();
+          Log.Info("BASS: Freed WASAPI device");
+        }
+        catch (Exception ex)
+        {
+          Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+        }
       }
 
       BASSFlag mixerFlags = BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_MIXER_NORAMPIN;
