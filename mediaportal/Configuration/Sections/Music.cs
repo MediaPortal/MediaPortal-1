@@ -268,7 +268,7 @@ namespace MediaPortal.Configuration.Sections
 
         #region BASS WASAPI
 
-        WasapiExclusiveModeCkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
+        WasapiExclusiveModeCkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", true);
 
         #endregion
 
