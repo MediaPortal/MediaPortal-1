@@ -111,8 +111,17 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Debug("BASS: Creating {0} channel mixer with sample rate of {1}", outputChannels, stream.ChannelInfo.freq);
 
       _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, outputChannels, mixerFlags);
+      if (_mixer == 0)
+      {
+        Log.Error("BASS: Unable to create Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+        return false;
+      }
 
-      Bass.BASS_ChannelPlay(_mixer, false);
+      if (!Bass.BASS_ChannelPlay(_mixer, false))
+      {
+        Log.Error("BASS: Unable to start Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+        return false;
+      }
 
       switch (Config.MusicPlayer)
       {
@@ -593,13 +602,21 @@ namespace MediaPortal.MusicPlayer.BASS
     public void Dispose()
     {
       Log.Debug("BASS: Disposing Mixer Stream");
-      if (!Bass.BASS_ChannelStop(_mixer))
+
+      try
       {
-        Log.Error("BASS: Error stopping mixer: {0}", Bass.BASS_ErrorGetCode());
+        if (!Bass.BASS_ChannelStop(_mixer))
+        {
+          Log.Error("BASS: Error stopping mixer: {0}", Bass.BASS_ErrorGetCode());
+        }
+        if (!Bass.BASS_StreamFree(_mixer))
+        {
+          Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+        }
       }
-      if (!Bass.BASS_StreamFree(_mixer))
+      catch (Exception ex)
       {
-        Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+        Log.Error("BASS: Exception disposing mixer - {0}. {1}", ex.Message, ex.StackTrace);
       }
     }
 

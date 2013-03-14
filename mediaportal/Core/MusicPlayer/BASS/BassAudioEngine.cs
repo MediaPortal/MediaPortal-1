@@ -1873,7 +1873,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       catch (Exception ex)
       {
-        Log.Error("BASS: Stop command caused an exception - {0}", ex.Message);
+        Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
       }
 
       NotifyPlaying = false;
