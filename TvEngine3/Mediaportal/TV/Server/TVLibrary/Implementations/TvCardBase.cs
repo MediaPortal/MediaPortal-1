@@ -20,14 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
@@ -134,7 +129,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Context reference
     /// </summary>
-    protected object m_context;
+    protected object _context;
 
     /// <summary>
     /// Indicates, if the tuner is locked
@@ -242,7 +237,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Enable or disable the use of conditional access interface(s).
     /// </summary>
-    protected bool _useConditionalAccessInterace = true;
+    protected bool _useConditionalAccessInterface = true;
 
     /// <summary>
     /// The type of conditional access module available to the conditional access interface.
@@ -355,15 +350,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _cardId = c.IdCard;
           _name = c.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
           _preloadCard = c.PreloadCard;
-          _idleMode = (DeviceIdleMode)c.IdleMode;
-          _pidFilterMode = (PidFilterMode)c.PidFilterMode;
+          _idleMode = (DeviceIdleMode) c.IdleMode;
+          _pidFilterMode = (PidFilterMode) c.PidFilterMode;
           _useCustomTuning = c.UseCustomTuning;
 
           // Conditional access...
-          _useConditionalAccessInterace = c.UseConditionalAccess;
-          _camType = (CamType)c.CamType;
+          _useConditionalAccessInterface = c.UseConditionalAccess;
+          _camType = (CamType) c.CamType;
           _decryptLimit = c.DecryptLimit;
-          _multiChannelDecryptMode = (MultiChannelDecryptMode)c.MultiChannelDecryptMode;
+          _multiChannelDecryptMode = (MultiChannelDecryptMode) c.MultiChannelDecryptMode;
         }
       }
     }
@@ -538,19 +533,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        if (!_useConditionalAccessInterace)
+        if (!_useConditionalAccessInterface)
         {
           return false;
         }
         // Return true if any interface implements IConditionalAccessProvider.
-        foreach (ICustomDevice d in _customDeviceInterfaces)
-        {
-          if (d is IConditionalAccessProvider)
-          {
-            return true;
-          }
-        }
-        return false;
+        return _customDeviceInterfaces.OfType<IConditionalAccessProvider>().Any();
       }
     }
 
@@ -563,20 +551,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        if (!_useConditionalAccessInterace)
+        if (!_useConditionalAccessInterface)
         {
           return null;
         }
         // Return the first interface that implements ICiMenuActions.
-        foreach (ICustomDevice d in _customDeviceInterfaces)
-        {
-          ICiMenuActions caMenuInterface = d as ICiMenuActions;
-          if (caMenuInterface != null)
-          {
-            return caMenuInterface;
-          }
-        }
-        return null;
+        return _customDeviceInterfaces.OfType<ICiMenuActions>().FirstOrDefault();
       }
     }
 
@@ -712,8 +692,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <value>The context.</value>
     public object Context
     {
-      get { return m_context; }
-      set { m_context = value; }
+      get { return _context; }
+      set { _context = value; }
     }
 
     /// <summary>
@@ -787,7 +767,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       IEnumerable<ICustomDevice> plugins = customDeviceLoader.Plugins;
 
       this.LogDebug("TvCardBase: checking for supported plugins");
-      _customDeviceInterfaces = new List<ICustomDevice>();      
+      _customDeviceInterfaces = new List<ICustomDevice>();
       foreach (ICustomDevice d in plugins)
       {
         if (!d.Initialise(mainFilter, _tunerType, _devicePath))
@@ -844,7 +824,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected void OpenPlugins()
     {
       this.LogDebug("TvCardBase: open custom device plugins");
-      if (_useConditionalAccessInterace)
+      if (_useConditionalAccessInterface)
       {
         foreach (ICustomDevice plugin in _customDeviceInterfaces)
         {
@@ -1019,7 +999,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           else
           {
-            throw new TvException("TvCardBase: service type not recognised, unable to assemble decrypt service list\r\n" + service.ToString());
+            throw new TvException("TvCardBase: service type not recognised, unable to assemble decrypt service list\r\n" + service);
           }
         }
 
@@ -1033,7 +1013,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             DVBBaseChannel digitalService = service as DVBBaseChannel;
             if (digitalService != null)
             {
-              if (digitalService.ServiceId == ((DVBBaseChannel)serviceToDecrypt.CurrentChannel).ServiceId)
+              if (digitalService.ServiceId == ((DVBBaseChannel) serviceToDecrypt.CurrentChannel).ServiceId)
               {
                 exists = true;
                 break;
@@ -1044,8 +1024,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
               AnalogChannel analogService = service as AnalogChannel;
               if (analogService != null)
               {
-                if (analogService.Frequency == ((AnalogChannel)serviceToDecrypt.CurrentChannel).Frequency &&
-                  analogService.ChannelNumber == ((AnalogChannel)serviceToDecrypt.CurrentChannel).ChannelNumber)
+                if (analogService.Frequency == ((AnalogChannel) serviceToDecrypt.CurrentChannel).Frequency &&
+                  analogService.ChannelNumber == ((AnalogChannel) serviceToDecrypt.CurrentChannel).ChannelNumber)
                 {
                   exists = true;
                   break;
