@@ -168,35 +168,34 @@ void CLvctParser::OnNewSection(CSection& sections)
         }
       }
 
-      int major_channel = ((section[pointer] & 0xf) << 6) + (section[pointer + 1] >> 6);
-      pointer += 2;
-      int minor_channel = ((section[pointer] & 0x3) << 8) + section[pointer + 1];
-      pointer += 2;
+      int major_channel = ((section[pointer] & 0xf) << 8) + (section[pointer + 1] >> 2);
+      int minor_channel = ((section[pointer + 1] & 0x3) << 8) + section[pointer + 2];
+      pointer += 3;
 
       // Frequency and modulation might be useful as part of an ATSC network
       // scan... except that the standard says that the frequency is deprecated
       // and should be set to zero. There is no other known ATSC NIT standard.
-      int modulation_mode = section[pointer++];
-      int carrier_frequency = section[pointer++] << 24;
-      carrier_frequency += (section[pointer++] << 16);
-      carrier_frequency += (section[pointer++] << 8);
-      carrier_frequency += section[pointer++];
+      int modulation_mode = section[pointer++]; // +3
+      int carrier_frequency = section[pointer++] << 24; // +4
+      carrier_frequency += (section[pointer++] << 16); // +5
+      carrier_frequency += (section[pointer++] << 8); // +6
+      carrier_frequency += section[pointer++]; // +7
 
-      int channel_tsid = ((section[pointer]) << 8) + section[pointer + 1];
+      int channel_tsid = ((section[pointer]) << 8) + section[pointer + 1]; // +8
       pointer += 2;
-      int program_number = ((section[pointer]) << 8) + section[pointer + 1];
+      int program_number = ((section[pointer]) << 8) + section[pointer + 1]; // +10
       pointer += 2;
-      int etm_location = (section[pointer] >> 6);
-      int access_controlled = ((section[pointer] >> 5) & 0x1);
-      int hidden = ((section[pointer] >> 4) & 0x1);
+      int etm_location = (section[pointer] >> 6); // +12
+      int access_controlled = ((section[pointer] >> 5) & 0x1); // +12
+      int hidden = ((section[pointer] >> 4) & 0x1);// +12
 
       // cable only
-      int path_select = ((section[pointer] >> 3) & 0x1);
-      int out_of_band = ((section[pointer] >> 2) & 0x1);
+      int path_select = ((section[pointer] >> 3) & 0x1);// +12
+      int out_of_band = ((section[pointer] >> 2) & 0x1);// +12
+      int hide_guide = ((section[pointer++] >> 1) & 0x1);// +12
 
-      int hide_guide = ((section[pointer++] >> 1) & 0x1);
-      int service_type = (section[pointer++] & 0x3f);
-      int source_id = ((section[pointer]) << 8) + section[pointer + 1];
+      int service_type = (section[pointer++] & 0x3f); // +13
+      int source_id = ((section[pointer]) << 8) + section[pointer + 1]; // +14
       pointer += 2;
       LogDebug("LvctParser: short name = %s, major channel = %d, minor channel = %d, modulation = %d, carrier frequency = %d, channel TSID = 0x%x, program number = 0x%x, ETM location = %d, access controlled = %d, hidden = %d, path select = %d, out of band = %d, hide guide = %d, service type = 0x%x, source ID = 0x%x",
                   short_name, major_channel, minor_channel, modulation_mode, carrier_frequency, channel_tsid, program_number,
