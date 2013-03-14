@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
@@ -30,9 +29,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC/QAM tuners with BDA drivers.
+  /// Implementation of <see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.ITVCard"/> which handles ATSC/QAM tuners with BDA drivers.
   /// </summary>
-  public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardATSC : TvCardDvbBase
   {
     #region variables
 
@@ -40,11 +39,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     /// A pre-configured tuning space, used to speed up the tuning process. 
     /// </summary>
     private IATSCTuningSpace _tuningSpace = null;
-
-    /// <summary>
-    /// A tune request template, used to speed up the tuning process.
-    /// </summary>
-    private IATSCChannelTuneRequest _tuneRequest = null;
 
     #endregion
 
@@ -81,9 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
         return;
       }
 
-      ITuner tuner = (ITuner)_filterNetworkProvider;
-      ITuneRequest request;
-
+      ITuner tuner = (ITuner) _filterNetworkProvider;
       IEnumTuningSpaces enumTuning;
       container.get_EnumTuningSpaces(out enumTuning);
       try
@@ -102,10 +94,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
           if (name.Equals("MediaPortal ATSC TuningSpace"))
           {
             this.LogDebug("TvCardAtsc: found correct tuningspace");
-            _tuningSpace = (IATSCTuningSpace)spaces[0];
+            _tuningSpace = (IATSCTuningSpace) spaces[0];
             tuner.put_TuningSpace(_tuningSpace);
-            _tuningSpace.CreateTuneRequest(out request);
-            _tuneRequest = (IATSCChannelTuneRequest)request;
             Release.ComObject("TuningSpaceContainer", container);
             return;
           }
@@ -119,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 
       // We didn't find our tuning space registered in the system, so create a new one.
       this.LogDebug("TvCardAtsc: create new tuningspace");
-      _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
+      _tuningSpace = (IATSCTuningSpace) new ATSCTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
       _tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
@@ -132,7 +122,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       _tuningSpace.put_MinPhysicalChannel(1);    // 1 for ATSC, 2 for cable (QAM)
       _tuningSpace.put_MinChannel(1);
 
-      IATSCLocator locator = (IATSCLocator)new ATSCLocator();
+      IATSCLocator locator = (IATSCLocator) new ATSCLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_PhysicalChannel(-1);
       locator.put_SymbolRate(-1);
@@ -150,8 +140,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       Release.ComObject("TuningSpaceContainer", container);
 
       tuner.put_TuningSpace(_tuningSpace);
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IATSCChannelTuneRequest)request;
     }
 
     protected override DVBBaseChannel CreateChannel()
@@ -178,22 +166,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
       }
 
       ILocator locator;
+      ITuneRequest request;
+
       int hr = _tuningSpace.get_DefaultLocator(out locator);
-      IATSCLocator atscLocator = (IATSCLocator)locator;
-      hr |= atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+      IATSCLocator atscLocator = (IATSCLocator) locator;
+
+      hr |= _tuningSpace.CreateTuneRequest(out request); // Attention: tune request must not be stored, it needs to be created for each new tuning!
+      IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest) request;
+
+      hr |= atscLocator.put_CarrierFrequency((int) atscChannel.Frequency);
       hr |= atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
       hr |= atscLocator.put_Modulation(atscChannel.ModulationType);
 
-      hr |= _tuneRequest.put_Channel(atscChannel.MajorChannel);
-      hr |= _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-      hr |= _tuneRequest.put_Locator(locator);
+      hr |= tuneRequest.put_Channel(atscChannel.MajorChannel);
+      hr |= tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+      hr |= tuneRequest.put_Locator(locator);
 
       if (hr != 0)
       {
         Log.Error("TvCardAtsc: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      return _tuneRequest;
+      return tuneRequest;
     }
 
     /// <summary>
