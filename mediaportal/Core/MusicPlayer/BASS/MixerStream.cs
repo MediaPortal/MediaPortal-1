@@ -116,17 +116,17 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Error("BASS: Unable to create Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
         return false;
       }
-
-      if (!Bass.BASS_ChannelPlay(_mixer, false))
-      {
-        Log.Error("BASS: Unable to start Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
-        return false;
-      }
-
+      
       switch (Config.MusicPlayer)
       {
         case AudioPlayer.Bass:
         case AudioPlayer.DShow:
+
+          if (!Bass.BASS_ChannelPlay(_mixer, false))
+          {
+            Log.Error("BASS: Unable to start Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+            return false;
+          }
 
           result = true;
 
@@ -209,41 +209,25 @@ namespace MediaPortal.MusicPlayer.BASS
 
           int frequency = stream.ChannelInfo.freq;
           int chans = outputChannels;
+          bool wasApiExclusiveSupported = true;
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (Config.WasApiExclusiveMode)
           {
+            initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
+            _wasapiSwitchedToShared = false;
+            _wasapiMixedChans = 0;
+            _wasapiMixedFreq = 0;
+
             BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_bassPlayer.DeviceNumber,
                                                                                stream.ChannelInfo.freq,
                                                                                stream.ChannelInfo.chans,
                                                                                BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
-
             if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
             {
-              Log.Warn("BASS: Stream can't be played in WASAPI exclusive mode. Switch to WASAPI shared mode.");
-
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | BASSWASAPIInit.BASS_WASAPI_EVENT;
-
-              BASS_WASAPI_DEVICEINFO deviceinfo = BassWasapi.BASS_WASAPI_GetDeviceInfo(_bassPlayer.DeviceNumber);
-              frequency = deviceinfo.mixfreq;
-              chans = deviceinfo.mixchans;
-
-              // Save the original frequency, so that we don't need to recreate the mixer every time
+              Log.Warn("BASS: WASAPI exclusive mode not directly supported. Let BASS WASAPI choose better mode.");
+              wasApiExclusiveSupported = false;
               _wasapiSwitchedToShared = true;
-              _wasapiMixedChans = stream.ChannelInfo.chans;
-              _wasapiMixedFreq = stream.ChannelInfo.freq;
-
-              // Recreate Mixer with new value
-              Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", chans, frequency);
-              _mixer = BassMix.BASS_Mixer_StreamCreate(frequency, chans, mixerFlags);
-              Bass.BASS_ChannelPlay(_mixer, false);
-            }
-            else
-            {
-              initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
-              _wasapiSwitchedToShared = false;
-              _wasapiMixedChans = 0;
-              _wasapiMixedFreq = 0;
             }
           }
           else
@@ -252,7 +236,7 @@ namespace MediaPortal.MusicPlayer.BASS
             initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | BASSWASAPIInit.BASS_WASAPI_EVENT;
           }
 
-          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, frequency, chans,
+          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
                                       initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
@@ -266,6 +250,14 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
             Log.Info("BASS: ---------------------------------------------");
             Log.Info("BASS: WASAPI Device successfully initialised");
+
+            // Now we need to check, if WASAPI decided to switch to a different mode
+            if (Config.WasApiExclusiveMode && !wasApiExclusiveSupported)
+            {
+              // Recreate Mixer with new value
+              Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", wasapiInfo.chans, wasapiInfo.freq);
+              _mixer = BassMix.BASS_Mixer_StreamCreate(wasapiInfo.freq, wasapiInfo.chans, mixerFlags);
+            }
 
             BassWasapi.BASS_WASAPI_SetVolume(BASSWASAPIVolume.BASS_WASAPI_CURVE_DB, (float)Config.StreamVolume / 100f);
             BassWasapi.BASS_WASAPI_Start();
