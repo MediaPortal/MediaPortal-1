@@ -29,6 +29,7 @@ using MediaPortal.Database;
 using MediaPortal.Music.Database;
 using MediaPortal.GUI.Library;
 using System.Xml.Linq;
+using MediaPortal.Util;
 
 namespace MediaPortal.LastFM
 {
@@ -216,8 +217,16 @@ namespace MediaPortal.LastFM
         DatePlayed = DateTime.UtcNow,
         UserSelected = true
       };
-      var tracks = new List<LastFMScrobbleTrack> { track };
-      ScrobbleTracks(tracks);
+
+      if (Win32API.IsConnectedToInternet())
+      {
+        var tracks = new List<LastFMScrobbleTrack> { track };
+        ScrobbleTracks(tracks);        
+      }
+      else
+      {
+        CacheScrobble(strArtist, strTrack, strAlbum, isUserSubmitted, dtPlayed);
+      }
     }
 
     /// <summary>
@@ -286,6 +295,37 @@ namespace MediaPortal.LastFM
         }
       }
 
+    }
+
+    private static void CacheScrobble(string strArtist, string strTrack, String strAlbum, bool isUserSubmitted, DateTime dtPlayed)
+    {
+      //TODO: write to cache file (or database?)
+    }
+
+    private static void SumbitCachedScrobbles()
+    {
+      var tracks = new List<LastFMScrobbleTrack>();
+
+
+      string strArtist;
+      string strAlbum;
+      string strTrack;
+      DateTime dtPlayed;
+      bool bUserSelected;
+
+      //TODO: read cache and turn into LastFMScrobbleTrack instances
+      {
+        var track = new LastFMScrobbleTrack
+          {
+            ArtistName = strArtist,
+            TrackTitle = strTrack,
+            AlbumName = strAlbum,
+            DatePlayed = dtPlayed,
+            UserSelected = bUserSelected
+          };
+        tracks.Add(track);
+      }
+      ScrobbleTracks(tracks);
     }
 
     #endregion
@@ -614,9 +654,16 @@ namespace MediaPortal.LastFM
 
     #region user methods
 
-
+    /// <summary>
+    /// Get details of the current user
+    /// </summary>
+    /// <returns>User details returned from last.fm</returns>
     public static LastFMUser GetUserInfo()
     {
+      // Last.fm API states that if no user is specified that details of the current user will be returned
+      // This is not quite true as it only works if the user is authenticated and the getUserInfo API
+      // call is by default not authenticated.   Passing an empty string to internal function will authenticate
+      // the call so this will return details of current user
       return GetUserInfo(string.Empty);
     }
 
@@ -624,7 +671,7 @@ namespace MediaPortal.LastFM
     /// Get details of named user
     /// </summary>
     /// <param name="strUser">Name of user</param>
-    /// <returns>XDocument returned from last.fm</returns>
+    /// <returns>User details returned from last.fm</returns>
     public static LastFMUser GetUserInfo(string strUser)
     {
       Log.Debug("LastFM.GetUserInfo: get info for: {0}", strUser);
@@ -658,7 +705,7 @@ namespace MediaPortal.LastFM
       var userName = (string) user.Element("name");
       var subscriber = ((string) user.Element("subscriber")) == "1";
       int playcount;
-      Int32.TryParse((string) user.Element("playcount"), out playcount);
+      int.TryParse((string) user.Element("playcount"), out playcount);
       var userImgURL = (from img in user.Elements("image")
                         where (string) img.Attribute("size") == "medium"
                         select img.Value).First();
@@ -678,6 +725,29 @@ namespace MediaPortal.LastFM
     #endregion
 
     #region HTTP methods
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="querystring"></param>
+    /// <returns></returns>
+    private static XDocument GetXml(string querystring)
+    {
+      var xDoc = new XDocument();
+      try
+      {
+        xDoc = XDocument.Load(BaseURL + "?" + querystring);
+      }
+      catch (Exception e)
+      {
+        Log.Error(e);
+        throw;
+      }
+
+
+      return xDoc;
+    }
+
 
     /// <summary>
     /// Calls the last.fm API using a HTTP GET call
@@ -826,8 +896,18 @@ namespace MediaPortal.LastFM
 
   }
 
+
   internal static class ExtensionMethods
   {
+    /// <summary>
+    /// LINQ extension method to chunk a collection into smaller lists of a fixed size
+    /// Eg. last.fm submissions can contain at most 50 tracks but there might be more than
+    /// 50 tracks to submit so chunk the input into n lists of max size 50
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source">Collection to split into chunks</param>
+    /// <param name="max">Max number of elements list can contain</param>
+    /// <returns>Lists that have at most max elements</returns>
     internal static IEnumerable<List<T>> InSetsOf<T>(this IEnumerable<T> source, int max)
     {
       var toReturn = new List<T>(max);
@@ -846,5 +926,3 @@ namespace MediaPortal.LastFM
   }
 
 }
-
-
