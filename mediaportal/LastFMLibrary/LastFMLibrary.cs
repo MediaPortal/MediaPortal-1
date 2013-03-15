@@ -307,11 +307,11 @@ namespace MediaPortal.LastFM
       var tracks = new List<LastFMScrobbleTrack>();
 
 
-      string strArtist;
-      string strAlbum;
-      string strTrack;
-      DateTime dtPlayed;
-      bool bUserSelected;
+      string strArtist = string.Empty;
+      string strAlbum = string.Empty;
+      string strTrack = string.Empty;
+      DateTime dtPlayed = DateTime.UtcNow;
+      bool bUserSelected = true;
 
       //TODO: read cache and turn into LastFMScrobbleTrack instances
       {
