@@ -388,7 +388,7 @@ namespace MediaPortal.LastFM
                         {
                           ArtistName = (string) a.Element(ns + "creator"),
                           TrackTitle = (string) a.Element(ns + "title"),
-                          TrackURL = (string) a.Element(ns + "location"),
+                          TrackStreamingURL = (string) a.Element(ns + "location"),
                           Duration = Int32.Parse((string) a.Element(ns + "duration")) / 1000,
                           Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
                           ImageURL = (string) a.Element(ns + "image")
@@ -407,24 +407,28 @@ namespace MediaPortal.LastFM
     /// </summary>
     /// <param name="strArtist">Artist Name</param>
     /// <param name="strTrack">Track Title</param>
-    public static void GetTrackInfo(string strArtist, string strTrack)
+    public static LastFMTrackInfo GetTrackInfo(string strArtist, string strTrack)
     {
-      //TODO: what to return?
       var parms = new Dictionary<string, string>();
       const string methodName = "track.getInfo";
       parms.Add("artist", strArtist);
       parms.Add("track", strTrack);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpGet(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        var xDoc = GetXml(buildLastFMString);
+      }
+      catch (Exception e)
+      {
+        Log.Error(e);
+        return null;
       }
 
-      var xDoc = XDocument.Parse(lastFMResponseXML);      
+      //TODO need parse code here (or as part of LastFMTrack class?)
+
+      var r = new LastFMTrackInfo();
+      return r;
     }
 
 
@@ -436,7 +440,7 @@ namespace MediaPortal.LastFM
     /// <returns>A list of similar tracks from last.fm.  
     ///          There is no check to see if the user has access to these tracks
     ///          See GetSimilarTracksInDatabase to only return tracks in music database</returns>
-    public static List<LastFMTrack> GetSimilarTracks(string strTrack, string strArtist)
+    public static List<LastFMSimilarTrack> GetSimilarTracks(string strTrack, string strArtist)
     {
       var parms = new Dictionary<string, string>();
       const string methodName = "track.getSimilar";
@@ -444,32 +448,47 @@ namespace MediaPortal.LastFM
       parms.Add("artist", strArtist);
       parms.Add("autocorrect", "1");
 
+      XDocument xDoc;
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
-      var lastFMResponseXML = HttpGet(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        xDoc = GetXml(buildLastFMString);
+      }
+      catch (Exception e)
+      {
+        Log.Error(e);
         return null;
       }
 
-      //turn response into XML doc
-      var lastFMXML = XDocument.Parse(lastFMResponseXML);
-
-      //get a collection of tracks returned by last.fm API
-      var tracks = (
-                     from n in lastFMXML.Descendants("track")
-                     let artistElement = n.Element("artist")
+      var tracks = (from t in xDoc.Descendants("track")
+                     let trackName = (string) t.Element("name")
+                     let playcount = (int) t.Element("playcount")
+                     let mbid = (string) t.Element("mbid")
+                     let duration = (int) t.Element("duration")
+                     let match = (float) t.Element("match")
+                     let trackURL = (string) t.Element("url")
+                     let artistElement = t.Element("artist")
                      where artistElement != null
-                     let trackElement = n.Element("name")
-                     where trackElement != null
-                     let artistNameElement = artistElement.Element("name")
-                     where artistNameElement != null
-                     select new LastFMTrack(
-                       (string) artistNameElement,
-                       (string) trackElement
-                       )).ToList();
+                     let artistName = (string) artistElement.Element("name")
+                     let images = (
+                                    from i in t.Elements("image")
+                                    select new LastFMImage(
+                                      LastFMImage.GetImageSizeEnum((string) i.Attribute("size")),
+                                      (string) i
+                                      )
+                                  ).ToList()
+                     select new LastFMSimilarTrack
+                       {
+                         TrackTitle = trackName,
+                         Playcount = playcount,
+                         MusicBrainzID = mbid,
+                         Duration = duration,
+                         Match = match,
+                         TrackURL = trackURL,
+                         ArtistName = artistName,
+                         Images = images
+                       }
+                    ).ToList();
 
       return tracks;
     }
@@ -602,23 +621,26 @@ namespace MediaPortal.LastFM
     /// Get artist details from last.fm
     /// </summary>
     /// <param name="strArtist">Artist Name</param>
-    public static void GetArtistInfo(string strArtist)
+    public static LastFMFullArtist GetArtistInfo(string strArtist)
     {
-      //TODO: what to return?
       var parms = new Dictionary<string, string>();
       const string methodName = "artist.getInfo";
       parms.Add("artist", strArtist);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpGet(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      LastFMFullArtist artist;
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        var xDoc = GetXml(buildLastFMString);
+        artist = new LastFMFullArtist(xDoc);
+      }
+      catch (Exception e)
+      {
+        Log.Error(e);
+        return null;
       }
 
-      var xDoc = XDocument.Parse(lastFMResponseXML);
+      return artist;
     }
 
     #endregion
@@ -639,15 +661,17 @@ namespace MediaPortal.LastFM
       parms.Add("album", strAlbum);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpGet(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      XDocument xDoc;
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        xDoc = GetXml(buildLastFMString);
+      }
+      catch (Exception e)
+      {
+        Log.Error(e);
+        return;
       }
 
-      var xDoc = XDocument.Parse(lastFMResponseXML);
     }
     
     #endregion
@@ -688,35 +712,18 @@ namespace MediaPortal.LastFM
       }
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
 
-      var lastFMResponseXML = HttpGet(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      LastFMUser lastFMUser;
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        var xDoc = GetXml(buildLastFMString);
+        lastFMUser = new LastFMUser(xDoc);
       }
-
-      var xDoc = XDocument.Parse(lastFMResponseXML);
-
-      //TODO: This needs to be descendants ??
-      var user = xDoc.Root.Element("user");
-      if (user == null) return null;
-
-      var userName = (string) user.Element("name");
-      var subscriber = ((string) user.Element("subscriber")) == "1";
-      int playcount;
-      int.TryParse((string) user.Element("playcount"), out playcount);
-      var userImgURL = (from img in user.Elements("image")
-                        where (string) img.Attribute("size") == "medium"
-                        select img.Value).First();
-
-      var lastFMUser = new LastFMUser
-                         {
-                           Username = userName,
-                           UserImgURL = userImgURL,
-                           Subscriber = subscriber,
-                           PlayCount = playcount
-                         };
+      catch (Exception e)
+      {
+        Log.Error(e);
+        //TODO: Parse errors
+        return null;
+      }
 
       return lastFMUser;
 
@@ -727,74 +734,31 @@ namespace MediaPortal.LastFM
     #region HTTP methods
 
     /// <summary>
-    /// 
+    /// Connect to last.fm webservice and convert results in an XDocument
+    /// Only possible for HTTP GET methods (non write or radio ones)
     /// </summary>
-    /// <param name="querystring"></param>
-    /// <returns></returns>
+    /// <param name="querystring">method signature required by last.fm API</param>
+    /// <returns>xml returned by last.fm on success</returns>
     private static XDocument GetXml(string querystring)
     {
-      var xDoc = new XDocument();
+      XDocument xDoc;
       try
       {
         xDoc = XDocument.Load(BaseURL + "?" + querystring);
       }
       catch (Exception e)
       {
-        Log.Error(e);
-        throw;
+        var ex = new LastFMException("Error in HTTP Get", e);
+        throw ex;
       }
 
+      if ((string) xDoc.Root.Attribute("status") != "ok")
+      {
+        throw GetException(xDoc);
+      }
 
       return xDoc;
-    }
 
-
-    /// <summary>
-    /// Calls the last.fm API using a HTTP GET call
-    /// </summary>
-    /// <param name="querystring">querystring to pass to server</param>
-    /// <returns>Text response from server</returns>
-    private static string HttpGet(string querystring)
-    {
-      
-      // TODO this should be replaced with a simple call to XDocument.Load (only for GET calls)
-      var lastFMResponse = String.Empty;
-      var myWebClient = new WebClient {Encoding = Encoding.UTF8};
-      try
-      {
-        var st = myWebClient.OpenRead(BaseURL + "?" + querystring);
-        if (st != null)
-        {
-          var sr = new StreamReader(st, Encoding.UTF8);
-          lastFMResponse = sr.ReadToEnd();
-        }
-      }
-      catch (WebException ex)
-      {
-        // last.fm returns a HTTP error if not successful but still returns a response with details of the error.
-        var res = (HttpWebResponse)ex.Response;
-        var st = res.GetResponseStream();
-        if (st != null)
-        {
-          var reader = new StreamReader(st);
-          var ttt = reader.ReadToEnd();
-          lastFMResponse = ttt;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error(ex);
-      }
-      finally
-      {
-        myWebClient.Dispose();
-      }
-
-#if DEBUG
-      Log.Debug(lastFMResponse);
-#endif
-
-      return lastFMResponse;
     }
 
     /// <summary>
@@ -873,7 +837,7 @@ namespace MediaPortal.LastFM
     /// </summary>
     /// <param name="tracks">List of last FM tracks to check</param>
     /// <returns>List of matched songs from input that exist in the users database</returns>
-    public static List<Song> GetSimilarTracksInDatabase(List<LastFMTrack> tracks)
+    public static List<Song> GetSimilarTracksInDatabase(List<LastFMSimilarTrack> tracks)
     {
       // list contains songs which exist in users collection
       var dbTrackListing = new List<Song>();
@@ -894,8 +858,27 @@ namespace MediaPortal.LastFM
 
     #endregion
 
-  }
+    #region exception handling
 
+    /// <summary>
+    /// Parse xml error returned from last.fm and convert into an exception
+    /// </summary>
+    /// <param name="xDoc">xml error returned from last.fm</param>
+    /// <returns></returns>
+    private static LastFMException GetException(XContainer xDoc)
+    {
+      var error = xDoc.Descendants("error").FirstOrDefault();
+      int i = 999;
+      if (error != null)
+      {
+        i = (int)error.Attribute("code");
+      }
+      return new LastFMException((string)error) { LastFMError = (LastFMException.LastFMErrorCode)i };
+    }
+
+    #endregion
+
+  }
 
   internal static class ExtensionMethods
   {

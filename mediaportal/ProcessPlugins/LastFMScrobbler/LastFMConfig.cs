@@ -29,8 +29,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
   public partial class LastFMConfig : Form
   {
 
-    private string _token;
-
     public LastFMConfig()
     {
       InitializeComponent();

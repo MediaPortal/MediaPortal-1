@@ -80,7 +80,9 @@
     <Compile Include="LastFMClasses\LastFMArtist.cs" />
     <Compile Include="LastFMClasses\LastFMBio.cs" />
     <Compile Include="LastFMClasses\LastFMImage.cs" />
+    <Compile Include="LastFMClasses\LastFMTag.cs" />
     <Compile Include="LastFMClasses\LastFMUser.cs" />
+    <Compile Include="LastFMException.cs" />
     <Compile Include="LastFMLibrary.cs" />
     <Compile Include="LastFMClasses\LastFMTrack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

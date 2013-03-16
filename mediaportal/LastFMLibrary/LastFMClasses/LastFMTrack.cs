@@ -19,53 +19,60 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace MediaPortal.LastFM
 {
-  public class LastFMTrack
+  public class LastFMTrackBase
   {
     public string ArtistName { get; set; }
     public string TrackTitle { get; set; }
-
-    public LastFMTrack (string strArtist, string strTrack)
-    {
-      ArtistName = strArtist;
-      TrackTitle = strTrack;
-    }
-
-    public LastFMTrack() { }
-
+    public int Duration { get; set; }
+    public string TrackURL { get; set; }
   }
 
-  public class LastFMStreamingTrack : LastFMTrack
+  public class LastFMTrackInfo
   {
-    public string TrackURL { get; set; }
-    public string ImageURL { get; set; }
+    public string TrackTitle { get; set; }
+    public LastFMArtist Artist { get; set; }
+    public string MusicBrainzID { get; set; }
+    public List<LastFMTag> Tags { get; set; }
+    public List<LastFMImage> Images { get; set; }
     public int Duration { get; set; }
     public int Identifier { get; set; }
+    public int Playcount { get; set; }
+    public int Listeners { get; set; }
 
-    public LastFMStreamingTrack(string strArtist, string strTrack, string strURL, string strImageUrl, int iDuration, int iIdentifier)
+    public LastFMTrackInfo()  { }
+
+    public LastFMTrackInfo(XDocument xDoc)
     {
-      ArtistName = strArtist;
-      TrackTitle = strTrack;
-      TrackURL = strURL;
-      Duration = iDuration;
-      Identifier = iIdentifier;
-      ImageURL = strImageUrl;
+      
     }
-
-    public LastFMStreamingTrack()   { }
 
   }
 
-  public class LastFMScrobbleTrack : LastFMTrack
+  public class LastFMSimilarTrack : LastFMTrackBase
+  {
+    public string MusicBrainzID { get; set; }
+    public List<LastFMImage> Images { get; set; }
+    public int Playcount { get; set; }
+    public float Match { get; set; }
+  }
+
+  public class LastFMStreamingTrack : LastFMTrackBase
+  {
+    public int Identifier { get; set; }
+    public string TrackStreamingURL { get; set; }
+    public string ImageURL { get; set; }
+  }
+
+  public class LastFMScrobbleTrack : LastFMTrackBase
   {
     public DateTime DatePlayed { get; set; }
     public bool UserSelected { get; set; }
     public string AlbumName { get; set; }
-
-    public LastFMScrobbleTrack() { }
-
   }
 
 }

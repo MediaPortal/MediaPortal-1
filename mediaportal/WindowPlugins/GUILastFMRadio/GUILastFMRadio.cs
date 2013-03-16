@@ -271,20 +271,20 @@ namespace MediaPortal.GUI.LastFMRadio
           AlbumArtist = lastFMTrack.ArtistName,
           Artist = lastFMTrack.ArtistName,
           Title = lastFMTrack.TrackTitle,
-          FileName = lastFMTrack.TrackURL,
+          FileName = lastFMTrack.TrackStreamingURL,
           Duration = lastFMTrack.Duration,
           Lyrics = lastFMTrack.ImageURL //TODO: this should not be lyrics
         };
         var pli = new PlayListItem
         {
           Type = PlayListItem.PlayListItemType.Audio,
-          FileName = lastFMTrack.TrackURL,
+          FileName = lastFMTrack.TrackStreamingURL,
           Description = lastFMTrack.ArtistName + " - " + lastFMTrack.TrackTitle,
           Duration = lastFMTrack.Duration,
           MusicTag = tag
         };
 
-        Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackURL);
+        Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackStreamingURL);
 
         var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
         pl.Add(pli);

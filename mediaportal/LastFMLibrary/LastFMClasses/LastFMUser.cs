@@ -18,6 +18,10 @@
 
 #endregion
 
+using System;
+using System.Linq;
+using System.Xml.Linq;
+
 namespace MediaPortal.LastFM
 {
   public class LastFMUser
@@ -36,5 +40,25 @@ namespace MediaPortal.LastFM
     }
 
     public LastFMUser() { }
+
+    public LastFMUser(XContainer xDoc)
+    {
+      var user = xDoc.Descendants("user").FirstOrDefault();
+      if (user == null) return;
+
+      var userName = (string) user.Element("name");
+      var subscriber = ((string) user.Element("subscriber")) == "1";
+      int playcount;
+      int.TryParse((string) user.Element("playcount"), out playcount);
+      var userImgURL = (from img in user.Elements("image")
+                        where (string) img.Attribute("size") == "medium"
+                        select img.Value).First();
+
+      Username = userName;
+      UserImgURL = userImgURL;
+      Subscriber = subscriber;
+      PlayCount = playcount;
+    }
+
   }
 }
