@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace MediaPortal.LastFM
@@ -32,14 +33,11 @@ namespace MediaPortal.LastFM
     public string TrackURL { get; set; }
   }
 
-  public class LastFMTrackInfo
+  public class LastFMTrackInfo : LastFMTrackBase
   {
-    public string TrackTitle { get; set; }
-    public LastFMArtist Artist { get; set; }
     public string MusicBrainzID { get; set; }
-    public List<LastFMTag> Tags { get; set; }
+    public List<LastFMTag> TopTags { get; set; }
     public List<LastFMImage> Images { get; set; }
-    public int Duration { get; set; }
     public int Identifier { get; set; }
     public int Playcount { get; set; }
     public int Listeners { get; set; }
@@ -48,16 +46,43 @@ namespace MediaPortal.LastFM
 
     public LastFMTrackInfo(XDocument xDoc)
     {
-      
+      if (xDoc.Root == null) return;
+      var track = xDoc.Root.Element("track");
+      if (track == null) return;
+
+      Identifier = (int) track.Element("id");
+      TrackTitle = (string) track.Element("name");
+      MusicBrainzID = (string) track.Element("mbid");
+      TrackURL = (string) track.Element("url");
+      Duration = (int) track.Element("duration");
+      Listeners = (int) track.Element("listeners");
+      Playcount = (int) track.Element("playcount");
+
+      var artistElement = track.Element("artist");
+      if (artistElement != null) ArtistName = (string) artistElement.Element("name");
+
+      TopTags = (from tagElement in track.Descendants("tag")
+                 let tagName = (string) tagElement.Element("name")
+                 let tagURL = (string) tagElement.Element("url")
+                 select new LastFMTag(tagName, tagURL)
+                ).ToList();
+
+      var albumElement = track.Element("album");
+      if (albumElement != null)
+      {
+        Images = (from i in albumElement.Elements("image")
+                  select new LastFMImage(
+                    LastFMImage.GetImageSizeEnum((string) i.Attribute("size")),
+                    (string) i
+                    )
+                 ).ToList();
+      }
     }
 
   }
 
-  public class LastFMSimilarTrack : LastFMTrackBase
+  public class LastFMSimilarTrack : LastFMTrackInfo
   {
-    public string MusicBrainzID { get; set; }
-    public List<LastFMImage> Images { get; set; }
-    public int Playcount { get; set; }
     public float Match { get; set; }
   }
 

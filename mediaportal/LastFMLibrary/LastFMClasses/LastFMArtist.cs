@@ -53,20 +53,22 @@ namespace MediaPortal.LastFM
     public LastFMFullArtist(XDocument xDoc)
     {
       if (xDoc.Root == null) return;
+      var artistElement = xDoc.Root.Element("artist");
+      if (artistElement == null) return;
 
-      MusicBrainzID = (string) xDoc.Root.Element("mbid");
-      ArtistName = (string) xDoc.Root.Element("name");
-      ArtistURL = (string) xDoc.Root.Element("url");
+      MusicBrainzID = (string) artistElement.Element("mbid");
+      ArtistName = (string) artistElement.Element("name");
+      ArtistURL = (string) artistElement.Element("url");
 
 
-      Images = (from i in xDoc.Root.Elements("image")
+      Images = (from i in artistElement.Elements("image")
                 select new LastFMImage(
                   LastFMImage.GetImageSizeEnum((string) i.Attribute("size")),
                   (string) i
                   )).ToList();
 
 
-      var stats = xDoc.Root.Element("stats");
+      var stats = artistElement.Element("stats");
       if (stats != null)
       {
         Listeners = (int) stats.Element("listeners");
