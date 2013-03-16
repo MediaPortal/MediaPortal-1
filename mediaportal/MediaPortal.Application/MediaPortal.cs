@@ -1728,13 +1728,6 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
-    // Force restore of MP main window as soon as possible
-    if (!Windowed)
-    {
-      IsVisible = false;
-      RestoreFromTray();
-    }
-
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
@@ -1767,6 +1760,13 @@ public class MediaPortalApp : D3D, IRender
       GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
+
+      // Force restore of MP main window as soon as possible
+      if (!Windowed)
+      {
+        IsVisible = false;
+        RestoreFromTray();
+      }
 
       // stop splash screen thread
       if (SplashScreen != null)
