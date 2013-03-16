@@ -2823,9 +2823,9 @@ namespace MediaPortal.GUI.Pictures
       //MediaPortal.TagReader.MusicTag tag = MediaPortal.TagReader.TagReader.ReadTag(g_Player.CurrentFile);
       Song song = new Song();
 
-      // If we don't have a tag in the db, we use the filename without the extension as song.title
-      song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
-      mDB.GetSongByFileName(g_Player.CurrentFile, ref song);
+      // If we don't have a tag in the db, we use the filename without the extension as song.title      
+      if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
+        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
 
       // Show Dialog
       dlg.Reset();
