@@ -49,7 +49,7 @@ namespace MediaPortal.MusicPlayer.BASS
       else if (IsWebStream(filePath))
       {
         fileType.FileMainType = FileMainType.WebStream;
-        if (Util.Utils.IsLastFMStream(filePath)))
+        if (Util.Utils.IsLastFMStream(filePath))
           fileType.FileSubType = FileSubType.LastFmWebStream;
         else
           fileType.FileSubType = FileSubType.None;
