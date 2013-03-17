@@ -41,7 +41,7 @@ namespace MediaPortal.LastFM
     public string MusicBrainzID { get; set; }
     public List<LastFMBandMember> BandMembers { get; set; }
     public int Listeners { get; set; }
-    public int PlayCount { get; set; }
+    public int Playcount { get; set; }
     public List<LastFMArtist> SimilarArtists { get; set; }
     public List<LastFMTag> Tags { get; set; }
     public LastFMBio Bio { get; set; } //TODO: last.fm have truncated this to 300 chars due to miuse.   Not sure this is worth it now
@@ -72,7 +72,7 @@ namespace MediaPortal.LastFM
       if (stats != null)
       {
         Listeners = (int) stats.Element("listeners");
-        PlayCount = (int) stats.Element("playcount");
+        Playcount = (int) stats.Element("playcount");
       }
 
       SimilarArtists = (from similarArtistElement in xDoc.Descendants("similar").Elements("artist")
