@@ -49,7 +49,7 @@ namespace MediaPortal.MusicPlayer.BASS
       else if (IsWebStream(filePath))
       {
         fileType.FileMainType = FileMainType.WebStream;
-        if (IsLastFmWebStream(filePath))
+        if (Util.Utils.IsLastFMStream(filePath)))
           fileType.FileSubType = FileSubType.LastFmWebStream;
         else
           fileType.FileSubType = FileSubType.None;
@@ -135,13 +135,6 @@ namespace MediaPortal.MusicPlayer.BASS
         filePath.StartsWith(@"https://") ||
         filePath.StartsWith(@"mms://") ||
         filePath.StartsWith(@"rtsp://"));
-    }
-
-    private static bool IsLastFmWebStream(string filePath)
-    {
-      return
-        (filePath.Contains(@".last.fm/") ||
-        filePath.Contains(@"/last.mp3?session="));
     }
 
     private static bool IsCDDA(string filePath)
