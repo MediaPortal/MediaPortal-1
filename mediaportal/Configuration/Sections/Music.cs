@@ -269,6 +269,7 @@ namespace MediaPortal.Configuration.Sections
         #region BASS WASAPI
 
         WasapiExclusiveModeCkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", true);
+        WasApiSpeakersCombo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "wasApiSpeakers", 1);
 
         #endregion
 
@@ -452,6 +453,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("audioplayer", "asiobalance", hScrollBarBalance.Value);
 
         xmlwriter.SetValueAsBool("audioplayer", "wasapiExclusive", WasapiExclusiveModeCkBox.Checked);
+        xmlwriter.SetValue("audioplayer", "wasApiSpeakers", WasApiSpeakersCombo.SelectedIndex);
 
         xmlwriter.SetValue("audioplayer", "upMixMono", cbUpmixMono.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "upMixStereo", cbUpmixStereo.SelectedIndex);
@@ -886,6 +888,66 @@ namespace MediaPortal.Configuration.Sections
                             trackBarBuffering.Minimum = info.minbuf;
                           }
                         }
+
+                        // Detect WASAPI Speaker Setup
+                        if (audioPlayerComboBox.SelectedIndex == 2)
+                        {
+                          Bass.BASS_Free();
+                          Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty); // No sound device
+                          BASS_WASAPI_DEVICEINFO[] wasapiDevices = BassWasapi.BASS_WASAPI_GetDeviceInfos();
+
+                          int i = 0;
+                          // Check if the WASAPI device read is amongst the one retrieved
+                          for (i = 0; i < wasapiDevices.Length; i++)
+                          {
+                            if (wasapiDevices[i].name == soundDeviceComboBox.Text)
+                            {
+                              sounddevice = i;
+                              break;
+                            }
+                          }
+
+                          int channels = 0;
+
+                          // Let's assume a maximum of 8 speakers attached to the device
+                          for (int c = 1; c < 9; c++)
+                          {
+                            BASSWASAPIFormat format = BassWasapi.BASS_WASAPI_CheckFormat(sounddevice, 44100, c,
+                                                                                         BASSWASAPIInit.
+                                                                                           BASS_WASAPI_SHARED);
+
+                            if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
+                            {
+                              channels = c;
+                            }
+                          }
+                          if (channels > WasApiSpeakersCombo.SelectedIndex + 1)
+                          {
+                            switch (channels)
+                            {
+                              case 1:
+                                WasApiSpeakersCombo.SelectedIndex = 0;
+                                break;
+
+                              case 2:
+                                WasApiSpeakersCombo.SelectedIndex = 1;
+                                break;
+
+                              case 4:
+                                WasApiSpeakersCombo.SelectedIndex = 2;
+                                break;
+
+                              case 6:
+                                WasApiSpeakersCombo.SelectedIndex = 3;
+                                break;
+
+                              case 8:
+                                WasApiSpeakersCombo.SelectedIndex = 4;
+                                break;
+                            }
+                          }
+                        }
+                        Bass.BASS_Free();
                       }
         ).Start();
     }

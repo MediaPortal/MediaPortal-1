@@ -64,6 +64,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private static float _asioBalance;
 
     private static bool _wasApiExclusiveMode = false;
+    private static int _wasApiSpeakers = 2;
 
     private static bool _softStop;
     private static bool _useSkipSteps;
@@ -135,6 +136,11 @@ namespace MediaPortal.MusicPlayer.BASS
     public static bool WasApiExclusiveMode
     {
       get { return _wasApiExclusiveMode; }
+    }
+
+    public static int WasApiSpeakers
+    {
+      get { return _wasApiSpeakers; }
     }
 
     public static bool SoftStop
@@ -275,6 +281,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
         _wasApiExclusiveMode = xmlreader.GetValueAsBool("audioplayer", "wasapiExclusive", false);
+        _wasApiSpeakers = xmlreader.GetValueAsInt("audioplayer", "wasApiSpeakers", 1);
 
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
 
