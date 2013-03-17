@@ -45,12 +45,6 @@ namespace MediaPortal.LastFM
 
     public LastFMLibrary()
     {
-      // Expect 100 continue headers cause the last.fm server to not respond
-      var baseURI = new Uri(BaseURL);
-      ServicePointManager.Expect100Continue = false;
-      var servicePoint = ServicePointManager.FindServicePoint(baseURI);
-      servicePoint.Expect100Continue = false;
-
       LoadSettings();
     }
 
@@ -95,37 +89,31 @@ namespace MediaPortal.LastFM
       parms.Add("password", password);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString, true);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      XDocument xDoc;
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        xDoc = GetXmlPost(buildLastFMString, true);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Error Getting Last.FM Session");
+        Log.Error("Error: {0} - {1}", ex.LastFMError, ex.Message);
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
         return false;
       }
 
-      var lastFMXML = XDocument.Parse(lastFMResponseXML);
+      var sk = xDoc.Descendants("key").FirstOrDefault();
 
-      var lfmElement = lastFMXML.Element("lfm");
-      if (lfmElement != null)
-      {
-        var sessionElement = lfmElement.Element("session");
-        if (sessionElement != null)
-        {
-          var sk = sessionElement.Element("key");
-          Log.Info("Saved last.fm session key for: {0}", username);
+      Log.Info("Saving last.fm session key for: {0}", username);
 
-          if (sk != null) _sessionKey = sk.Value;
-          _currentUser = username;
+      if (sk != null) _sessionKey = sk.Value;
+      _currentUser = username;
 
-          return MusicDatabase.Instance.AddLastFMUser(username, _sessionKey);
-        }
-      }
-
-      Log.Error("AuthGetMobileSession: Valid response but unexpeceted xml");
-      Log.Error("{0}", lastFMResponseXML);
-
-      return false;      
+      return MusicDatabase.Instance.AddLastFMUser(username, _sessionKey);
 
     }
 
@@ -165,16 +153,21 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
       }
-      else
+      catch (LastFMException ex)
       {
-        Log.Info("Submitted last.fm now playing update for: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error updating now playing status update for: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error returned was: {0} - {1}", ex.LastFMError, ex.Message);
       }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+      }
+
+      Log.Info("Submitted last.fm now playing update for: {0} - {1}", strArtist, strTrack);
     }
 
 
@@ -280,19 +273,22 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
       }
-      else
+      catch (LastFMException ex)
       {
-        foreach (var track in scrobbleTracks)
-        {
-          Log.Info("Submitted last.fm scrobble for: {0}-{1} @{3} - {4}", track.ArtistName, track.AlbumName, track.DatePlayed.ToShortDateString(), track.DatePlayed.ToLongTimeString());
-        }
+        Log.Error("Error scrobbling track(s)");
+        Log.Error("Error was: {0} - {1}", ex.LastFMError, ex.Message);
+        //TODO need to handle offline scrobbling here and cache failed scrobbles
+        throw;
+      }
+
+      foreach (var track in scrobbleTracks)
+      {
+        Log.Info("Submitted last.fm scrobble for: {0}-{1} @{3} - {4}", track.ArtistName, track.AlbumName,
+                 track.DatePlayed.ToShortDateString(), track.DatePlayed.ToLongTimeString());
       }
 
     }
@@ -302,29 +298,10 @@ namespace MediaPortal.LastFM
       //TODO: write to cache file (or database?)
     }
 
-    private static void SumbitCachedScrobbles()
+    public static void SumbitCachedScrobbles()
     {
       var tracks = new List<LastFMScrobbleTrack>();
-
-
-      string strArtist = string.Empty;
-      string strAlbum = string.Empty;
-      string strTrack = string.Empty;
-      DateTime dtPlayed = DateTime.UtcNow;
-      bool bUserSelected = true;
-
-      //TODO: read cache and turn into LastFMScrobbleTrack instances
-      {
-        var track = new LastFMScrobbleTrack
-          {
-            ArtistName = strArtist,
-            TrackTitle = strTrack,
-            AlbumName = strAlbum,
-            DatePlayed = dtPlayed,
-            UserSelected = bUserSelected
-          };
-        tracks.Add(track);
-      }
+      //TODO: code to load cached tracks
       ScrobbleTracks(tracks);
     }
 
@@ -347,14 +324,23 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        var xDoc = GetXmlPost(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        //TODO: need to just throw and let client handle ??
+        // or check for situations such as not subscriber and then throw ???
+        Log.Error("Error in Tune Radio: {0} - {1}", ex.LastFMError, ex.Message);
         return false;
       }
-
+      catch (Exception ex)
+      {
+        Log.Error(ex);
+        return false;
+      }
+      
       Log.Info("LastFM.TuneRadio: Tuned to last.fm Radio Station: {0}", strStationName);
       return true;
     }
@@ -373,17 +359,26 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      XDocument xDoc;
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        xDoc = GetXml(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        //Should not get here as only get playlist after successful tune???
+        Log.Error(ex);
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex);
         return false;
       }
 
-      var y = XDocument.Parse(lastFMResponseXML);
+
       XNamespace ns = "http://xspf.org/ns/0/";
-      var z = (from a in y.Descendants(ns + "track")
+      var z = (from a in xDoc.Descendants(ns + "track")
                select new LastFMStreamingTrack
                         {
                           ArtistName = (string) a.Element(ns + "creator"),
@@ -415,20 +410,19 @@ namespace MediaPortal.LastFM
       parms.Add("track", strTrack);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
+      LastFMTrackInfo trackInfo;
       try
       {
         var xDoc = GetXml(buildLastFMString);
+        trackInfo = new LastFMTrackInfo(xDoc);
       }
       catch (Exception e)
       {
         Log.Error(e);
         return null;
       }
-
-      //TODO need parse code here (or as part of LastFMTrack class?)
-
-      var r = new LastFMTrackInfo();
-      return r;
+      
+      return trackInfo;
     }
 
 
@@ -509,17 +503,18 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Error whilst loving track: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error was : {0} - {1}", ex.LastFMError, ex.Message);
         return false;
       }
-      else
-      {
-        Log.Info("Loved Track: {0} - {1}", strArtist, strTrack);
-      }
+
+      Log.Info("Loved Track: {0} - {1}", strArtist, strTrack);
       return true;
     }
 
@@ -539,17 +534,18 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Error whilst loving track: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error was : {0} - {1}", ex.LastFMError, ex.Message);
         return false;
       }
-      else
-      {
-        Log.Info("Unloved Track: {0} - {1}", strArtist, strTrack);
-      }
+
+      Log.Info("Unloved Track: {0} - {1}", strArtist, strTrack);
       return true;
     }
 
@@ -569,17 +565,18 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Error whilst loving track: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error was : {0} - {1}", ex.LastFMError, ex.Message);
         return false;
       }
-      else
-      {
-        Log.Info("Banned Track: {0} - {1}", strArtist, strTrack);
-      }
+
+      Log.Info("Banned Track: {0} - {1}", strArtist, strTrack);
       return true;
     }
 
@@ -599,17 +596,18 @@ namespace MediaPortal.LastFM
 
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      var lastFMResponseXML = HttpPost(buildLastFMString);
-      if (!IsValidReponse(lastFMResponseXML))
+      try
       {
-        Log.Error("Invalid Response from last.fm request");
-        Log.Error("{0}", lastFMResponseXML);
+        GetXmlPost(buildLastFMString);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Error whilst loving track: {0} - {1}", strArtist, strTrack);
+        Log.Error("Error was : {0} - {1}", ex.LastFMError, ex.Message);
         return false;
       }
-      else
-      {
-        Log.Info("Unbanned Track: {0} - {1}", strArtist, strTrack);
-      }
+
+      Log.Info("Unbanned Track: {0} - {1}", strArtist, strTrack);
       return true;
     }
 
@@ -652,26 +650,27 @@ namespace MediaPortal.LastFM
     /// </summary>
     /// <param name="strArtist">Artist Naae</param>
     /// <param name="strAlbum">Album Name</param>
-    public static void GetAlbumInfo(string strArtist, string strAlbum)
+    public static LastFMAlbum GetAlbumInfo(string strArtist, string strAlbum)
     {
-      //TODO: what to return?
       var parms = new Dictionary<string, string>();
       const string methodName = "album.getInfo";
       parms.Add("artist", strArtist);
       parms.Add("album", strAlbum);
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
 
-      XDocument xDoc;
+      LastFMAlbum album;
       try
       {
-        xDoc = GetXml(buildLastFMString);
+        var xDoc = GetXml(buildLastFMString);
+        album = new LastFMAlbum(xDoc);
       }
       catch (Exception e)
       {
         Log.Error(e);
-        return;
+        return null;
       }
 
+      return album;
     }
     
     #endregion
@@ -761,71 +760,76 @@ namespace MediaPortal.LastFM
 
     }
 
+
     /// <summary>
-    /// Calls the last.fm API using a HTTP POST call
+    /// Connect to last.fm webservice and convert results in an XDocument
+    /// via HTTP POST request using standard HTTP
     /// </summary>
-    /// <param name="postData">data to be sent to server</param>
-    /// <returns>Text response from server</returns>
-    private static string HttpPost(string postData)
+    /// <param name="postData">data to be sent to last.fm web service</param>
+    /// <returns>xml returned by last.fm on success</returns>
+    private static XDocument GetXmlPost(string postData)
     {
-      return HttpPost(postData, false);
+      return GetXmlPost(postData, false);
     }
 
-    private static string HttpPost(string postData, bool useHttps)
+    /// <summary>
+    /// Connect to last.fm webservice and convert results in an XDocument
+    /// via HTTP POST request
+    /// </summary>
+    /// <param name="postData">data to be sent to last.fm web service</param>
+    /// <param name="useHttps">Whether to use HTTPS or not</param>
+    /// <returns>xml returned by last.fm on success</returns>
+    private static XDocument GetXmlPost(string postData, bool useHttps)
     {
-      var lastFMResponse = String.Empty;
       var postArray = Encoding.UTF8.GetBytes(postData);
-      using(var myWebClient = new WebClient {Encoding = Encoding.UTF8})
-      {
-        try
-        {
-          myWebClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+      var url = useHttps ? BaseURLHttps : BaseURL;
+      HttpWebResponse response;
+      XDocument xDoc;
 
-          var url = useHttps ? BaseURLHttps : BaseURL;
-          var responseArray = myWebClient.UploadData(url, postArray);
-          lastFMResponse = Encoding.UTF8.GetString(responseArray);
-        }
-        catch (WebException ex)
+      try
+      {
+        var request = (HttpWebRequest)WebRequest.Create(url);
+        request.Method = "POST";
+        request.ContentType = "application/x-www-form-urlencoded";
+        request.ContentLength = postArray.Length;
+        request.ServicePoint.Expect100Continue = false;
+        var s = request.GetRequestStream();
+        s.Write(postArray, 0, postArray.Length);
+        s.Close();
+        response = (HttpWebResponse) request.GetResponse();
+      }
+      catch (WebException ex)
+      {
+        if (ex.Status == WebExceptionStatus.ProtocolError)
         {
-          try
-          {
-            //last.fm API returns a HTTP error is not successful but still returns a response
-            var res = (HttpWebResponse) ex.Response;
-            var st = res.GetResponseStream();
-            if (st != null)
-            {
-              var reader = new StreamReader(st, Encoding.UTF8);
-              var ttt = reader.ReadToEnd();
-              lastFMResponse = ttt;
-            }
-          }
-          catch (Exception)
-          {
-            Log.Error(ex);
-          }
+          // errors on last.fm side such as invalid API key, are returned as HTTP errors
+          // just process these as a standard return
+          response = (HttpWebResponse) ex.Response;
         }
-        catch (Exception ex)
+        else
         {
-          Log.Error(ex);
+          throw new LastFMException("Error in HTTP Post", ex);
         }
       }
 
-#if DEBUG
-      Log.Debug("HttpPost Response");
-      Log.Debug(lastFMResponse);
-#endif
-      //TODO should return XDocument rather than string ???
-      return lastFMResponse;
-    }
+      try
+      {
+        var s = response.GetResponseStream();
+        var sr = new StreamReader(s);
+        var xml = sr.ReadToEnd();
+        xDoc = XDocument.Parse(xml);
+      }
+      catch (Exception ex)
+      {
+        throw new LastFMException("Error in HTTP Post response", ex);
+      }
 
-    /// <summary>
-    /// Checks that the response from last.fm is valid and contains data
-    /// </summary>
-    /// <param name="lastFMResponse">xml returned from last.fm API call</param>
-    /// <returns>Whether response includes a status="ok" element</returns>
-    public static bool IsValidReponse(String lastFMResponse)
-    {//TODO this should use XML to Linq
-      return lastFMResponse.Contains("<lfm status=\"ok\">");
+      if ((string)xDoc.Root.Attribute("status") != "ok")
+      {
+        throw GetException(xDoc);
+      }
+
+      return xDoc;
     }
 
     #endregion
@@ -843,12 +847,12 @@ namespace MediaPortal.LastFM
       var dbTrackListing = new List<Song>();
 
       //identify which are available in users collection (ie. we can use they for auto DJ mode)
-      foreach (var strSQL in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
                                                                   DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
       {
         List<Song> trackListing;
-        MusicDatabase.Instance.GetSongsBySQL(strSQL, out trackListing);
+        MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
 
         dbTrackListing.AddRange(trackListing);
       }
@@ -867,13 +871,16 @@ namespace MediaPortal.LastFM
     /// <returns></returns>
     private static LastFMException GetException(XContainer xDoc)
     {
+      //default values just in case xml is malformed or corrupted
+      var errorMsg = "Last.fm Error";
+      int i = 999; 
       var error = xDoc.Descendants("error").FirstOrDefault();
-      int i = 999;
       if (error != null)
       {
         i = (int)error.Attribute("code");
+        errorMsg = (string) error;
       }
-      return new LastFMException((string)error) { LastFMError = (LastFMException.LastFMErrorCode)i };
+      return new LastFMException(errorMsg) { LastFMError = (LastFMException.LastFMErrorCode)i };
     }
 
     #endregion

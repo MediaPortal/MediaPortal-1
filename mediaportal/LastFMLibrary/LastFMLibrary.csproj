@@ -77,6 +77,7 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="LastFMClasses\LastFMAlbum.cs" />
     <Compile Include="LastFMClasses\LastFMArtist.cs" />
     <Compile Include="LastFMClasses\LastFMBio.cs" />
     <Compile Include="LastFMClasses\LastFMImage.cs" />
