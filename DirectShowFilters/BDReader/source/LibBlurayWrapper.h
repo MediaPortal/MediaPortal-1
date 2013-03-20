@@ -90,6 +90,7 @@ typedef int (*API_bd_user_input)(BLURAY *, int64_t, uint32_t);
 typedef int (*API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
 typedef struct meta_dl* (*API_bd_get_meta)(BLURAY *);
 typedef int (*API_bd_get_clip_infos)(BLURAY *, int, uint64_t *, uint64_t *, uint64_t *, uint64_t *);
+typedef int (*API_bd_register_argb_overlay_proc)(BLURAY *, void *, bd_argb_overlay_proc_f, struct bd_argb_buffer_s *);
 
 class CLibBlurayWrapper
 {
@@ -128,6 +129,7 @@ public:
   bd_player_settings& GetBDPlayerSettings();
 
   static void __cdecl StaticOverlayProc(void* this_gen, const BD_OVERLAY* const ov);
+  static void __cdecl StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVERLAY* const ov);
 
   void LogAction(int pKey);
   void LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent);
@@ -220,4 +222,5 @@ private:
   API_bd_mouse_select _bd_mouse_select;
   API_bd_get_meta _bd_get_meta;
   API_bd_get_clip_infos _bd_get_clip_infos;
+  API_bd_register_argb_overlay_proc _bd_register_argb_overlay_proc;
 };

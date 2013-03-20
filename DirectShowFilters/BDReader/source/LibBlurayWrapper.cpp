@@ -87,7 +87,8 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_user_input(NULL),
   _bd_mouse_select(NULL),
   _bd_get_meta(NULL),
-  _bd_get_clip_infos(NULL)
+  _bd_get_clip_infos(NULL),
+  _bd_register_argb_overlay_proc(NULL)
 {
   m_pOverlayRenderer = new COverlayRenderer(this);
   ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
@@ -101,23 +102,28 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
   if (m_pBd)
   {
     _bd_register_overlay_proc(m_pBd, NULL, NULL);
+    _bd_register_argb_overlay_proc(m_pBd, NULL, NULL, NULL);
     _bd_close(m_pBd);
   }
 
   delete m_pOverlayRenderer;
 
   if (m_pTitleInfo)
-  {
     _bd_free_title_info(m_pTitleInfo);
-  }
 
   FreeLibrary(m_hDLL);
 }
 
-void CLibBlurayWrapper::StaticOverlayProc(void *this_gen, const BD_OVERLAY * const ov)
+void CLibBlurayWrapper::StaticOverlayProc(void* this_gen, const BD_OVERLAY* const ov)
 {
   CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
   ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->OverlayProc(ov);
+}
+
+void CLibBlurayWrapper::StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVERLAY* const ov)
+{
+  CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
+  ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->ARGBOverlayProc(ov);
 }
 
 bool CLibBlurayWrapper::Initialize()
@@ -185,6 +191,7 @@ bool CLibBlurayWrapper::Initialize()
   _bd_user_input = (API_bd_user_input)GetProcAddress(m_hDLL, "bd_user_input");
   _bd_mouse_select = (API_bd_mouse_select)GetProcAddress(m_hDLL, "bd_mouse_select");
   _bd_get_meta = (API_bd_get_meta)GetProcAddress(m_hDLL, "bd_get_meta");
+  _bd_register_argb_overlay_proc = (API_bd_register_argb_overlay_proc)GetProcAddress(m_hDLL, "bd_register_argb_overlay_proc");
 
   // This method is not available in the vanilla libbluray 
   _bd_get_clip_infos = (API_bd_get_clip_infos)GetProcAddress(m_hDLL, "bd_get_clip_infos");
@@ -226,7 +233,8 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_user_input ||
       !_bd_mouse_select ||
       !_bd_get_meta ||
-      !_bd_get_clip_infos)
+      !_bd_get_clip_infos ||
+      !_bd_register_argb_overlay_proc)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
     m_bLibInitialized = false;
@@ -310,7 +318,11 @@ bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
 
   m_numTitles = GetTitles(TITLES_ALL);
 
-  _bd_register_overlay_proc(m_pBd, this, StaticOverlayProc);
+  if (_bd_register_overlay_proc(m_pBd, this, StaticOverlayProc) != 0)
+    LogDebug("CLibBlurayWrapper - failed to register the overlay proc");
+
+  if (_bd_register_argb_overlay_proc(m_pBd, this, StaticARGBOverlayProc, NULL) != 0)
+    LogDebug("CLibBlurayWrapper - failed to register ARGB overlay proc");
 
   return true;
 }
@@ -869,7 +881,7 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
     LogDebug("    BD_EVENT_CHAPTER - %d", pEvent.param);
     break;
   case BD_EVENT_END_OF_TITLE:
-    LogDebug("    BD_EVENT_NONE - %d", pEvent.param);
+    LogDebug("    BD_EVENT_END_OF_TITLE - %d", pEvent.param);
     break;
   case BD_EVENT_AUDIO_STREAM:
     LogDebug("    BD_EVENT_AUDIO_STREAM - %d", pEvent.param);

@@ -39,26 +39,36 @@ public:
   ~COverlayRenderer();
 
   void OverlayProc(const BD_OVERLAY* ov);
+  void ARGBOverlayProc(const BD_ARGB_OVERLAY* ov);
+
   void SetD3DDevice(IDirect3DDevice9* device);
 
 private:
 
   void OpenOverlay(const BD_OVERLAY* pOv);
+  void OpenOverlay(const BD_ARGB_OVERLAY* pOv);
   void CloseOverlay(const int pPlane);
+
+  void CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv);
   void ClearOverlay();
   void DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv);
+  void DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY* pOv);
+
+  void DrawToTexture(OSDTexture* pPlane, IDirect3DTexture9* pTexture, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void DecodePalette(const BD_OVERLAY* ov);
 
   void CopyToFrontBuffer();
   void ResetDirtyRect();
-  void ResetDirtyRect(const BD_OVERLAY* pOv);
-  void AdjustDirtyRect(const BD_OVERLAY* pOv);
+  void ResetDirtyRect(uint16_t w, uint16_t h);
+  void AdjustDirtyRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void LogCommand(const BD_OVERLAY* ov);
-  LPCTSTR CommandAsString(int pCmd);
+  void LogARGBCommand(const BD_ARGB_OVERLAY* ov);
+  char* CommandAsString(int cmd);
+  char* ARGBCommandAsString(int cmd);
 
   uint32_t m_palette[PALETTE_SIZE];
 
