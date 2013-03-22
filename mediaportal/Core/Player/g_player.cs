@@ -523,8 +523,15 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnEnded()");
         RefreshRateChanger.AdaptRefreshRate();
         PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
-        currentFileName = String.Empty;
-        _mediaInfo = null;
+        if (_player != null && _player.Playing)
+        {
+          // Don't reset currentFileName and _mediaInfo
+        }
+        else
+        {
+          currentFileName = String.Empty;
+          _mediaInfo = null;
+        }
       }
     }
 
@@ -2234,12 +2241,12 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIGraphicsContext.IsPlaying = false;
           GUIGraphicsContext.IsPlayingVideo = false;
-          OnEnded();
           return;
         }
         Stop();
