@@ -1168,11 +1168,10 @@ namespace MediaPortal.GUI.Music
                 dlgProgress.SetPercentage(80);
                 dlgProgress.Progress();
               }
-              var ai = artistInfo.Get();
               // set values to actual artist to ensure they match track data
               // rather than values that might be returned from allmusic.com
-              ai.Artist = artistName;
-              m_database.AddArtistInfo(ai);
+              artistInfo.Artist = artistName;
+              m_database.AddArtistInfo(artistInfo.Get());
               errorEncountered = false;
             }
           }
@@ -1471,13 +1470,11 @@ namespace MediaPortal.GUI.Music
                 dlgProgress.SetPercentage(80);
                 dlgProgress.Progress();
               }
-              var ai = albumInfo.Get();
               // set values to actual artist and album name to ensure they match track data
               // rather than values that might be returned from allmusic.com
-              ai.Artist = artistName;
-              ai.AlbumArtist = artistName;
-              ai.Album = albumName;
-              m_database.AddAlbumInfo(ai);
+              albumInfo.Artist = artistName;
+              albumInfo.Title = albumName;
+              m_database.AddAlbumInfo(albumInfo.Get());
               errorEncountered = false;
             }
 
