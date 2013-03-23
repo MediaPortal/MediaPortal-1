@@ -1238,7 +1238,7 @@ namespace MediaPortal.GUI.Music
                      {AlbumInfoTag = song, MusicTag = tag, IsFolder = false, Label = song.Title, Path = song.FileName};
         item.AlbumInfoTag = song;
         item.MusicTag = t;
-        GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Name);
+        GUIMusicBaseWindow.SetTrackLabels(ref item, MusicSort.SortMethod.Album);
         dbTracks.RemoveAt(trackNo);  // remove song after adding to playlist to prevent the same sone being added twice
 
         if (g_Player.currentFileName != filename) return;  // track has changed since request so ignore

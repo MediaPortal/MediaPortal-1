@@ -40,7 +40,7 @@
       <id>155</id>
       <description>list of tagged tracks</description>
       <type>listcontrol</type>
-      <onleft>166</onleft>
+      <onleft>155</onleft>
       <onright>6103</onright>
       <onup>6103</onup>
       <ondown>6103</ondown>
