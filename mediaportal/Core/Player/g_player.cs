@@ -501,6 +501,10 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnStopped()");
         if (PlayBackStopped != null)
         {
+          if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording))
+          {
+            RefreshRateChanger.AdaptRefreshRate();
+          }
           PlayBackStopped(_currentMedia, (int)CurrentPosition,
                           (!String.IsNullOrEmpty(currentFileName) ? currentFileName : CurrentFile));
           currentFileName = String.Empty;
@@ -517,8 +521,8 @@ namespace MediaPortal.Player
       {
         //yes, then raise event
         Log.Info("g_Player.OnEnded()");
-        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
         RefreshRateChanger.AdaptRefreshRate();
+        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
         currentFileName = String.Empty;
         _mediaInfo = null;
       }
@@ -1275,6 +1279,42 @@ namespace MediaPortal.Player
             }
         }
 
+
+        Starting = true;
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+        _isInitialized = true;
+        _subs = null;
+
+        if (_player != null)
+        {
+          GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strFile);
+          OnStopped();
+          bool doStop = true;
+          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
+          {
+            if (type == MediaType.Unknown)
+            {
+              type = MediaType.Music;
+            }
+            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
+            {
+              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+            }
+          }
+          if (doStop)
+          {
+            if (_player != null)
+            {
+              _player.Stop();
+            }
+            CachePlayer();
+            _player = null;
+          }
+        }
+
         if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
         {
           ChangeDriveSpeed(strFile, DriveType.CD);
@@ -1313,41 +1353,6 @@ namespace MediaPortal.Player
             {
               return true;
             }
-          }
-        }
-
-        Starting = true;
-        _currentStep = 0;
-        _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
-        _isInitialized = true;
-        _subs = null;
-
-        if (_player != null)
-        {
-          GUIGraphicsContext.ShowBackground = true;
-          OnChanged(strFile);
-          OnStopped();
-          bool doStop = true;
-          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
-          {
-            if (type == MediaType.Unknown)
-            {
-              type = MediaType.Music;
-            }
-            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
-            {
-              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
-            }
-          }
-          if (doStop)
-          {
-            if (_player != null)
-            {
-              _player.Stop();
-            }
-            CachePlayer();
-            _player = null;
           }
         }
 
