@@ -1618,7 +1618,9 @@ namespace MediaPortal.Player
     {
       if (bdevent.Event != 0 && 
         bdevent.Event != (int)BDEvents.BD_EVENT_STILL &&
-        bdevent.Event != (int)BDEvents.BD_EVENT_STILL_TIME)
+        bdevent.Event != (int)BDEvents.BD_EVENT_STILL_TIME &&
+        bdevent.Event != (int)BDEvents.BD_EVENT_END_OF_TITLE &&
+        bdevent.Event != (int)BDEvents.BD_EVENT_IDLE)
       {
         eventBuffer.Set(bdevent);
         //Log.Debug("BDPlayer OnBDEvent: {0}, param: {1}", bdevent.Event, bdevent.Param);
