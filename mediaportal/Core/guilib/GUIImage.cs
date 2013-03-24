@@ -37,43 +37,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIImage : GUIControl
   {
-    public enum FontEngineBlendMode
-    {
-      BLEND_NONE = 0,
-      BLEND_DIFFUSE = 1,
-      BLEND_OVERLAY = 2
-    }
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, uint color,
-                                                            float[,] matrix);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                             float uoff, float voff, float umax, float vmax, uint color,
-                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
-                                                             float umax2, float vmax2,
-                                                             FontEngineBlendMode blendMode);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
-                                                                  float uoff, float voff, float umax, float vmax,
-                                                                  uint color,
-                                                                  float[,] matrix, int textureNo2, float uoff2,
-                                                                  float voff2,
-                                                                  float umax2, float vmax2);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawMaskedTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                                   float uoff, float voff, float umax, float vmax,
-                                                                   uint color,
-                                                                   float[,] matrix, int textureNo2, float uoff2,
-                                                                   float voff2,
-                                                                   float umax2, float vmax2, int textureNo3, float uoff3,
-                                                                   float voff3, float umax3, float vmax3,
-                                                                   FontEngineBlendMode blendMode);
-
     /// <summary>
     /// enum to specify the border position
     /// </summary>
@@ -1491,16 +1454,16 @@ namespace MediaPortal.GUI.Library
                   umaxm = _masktexUmax + _masktexUoff;
                   vmaxm = _masktexVmax + _masktexVoff;
 
-                  FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
-                                              color, matrix,
-                                              _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                  DXNative.FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
+                                                       color, matrix,
+                                                       _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                 }
               }
               else
               {
                 // Default behavior, draw the image texture with no mask.
-                FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
-                                    matrix);
+                DXNative.FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
+                                               matrix);
               }
             }
 
@@ -1576,18 +1539,18 @@ namespace MediaPortal.GUI.Library
                     umaxm = _masktexUmax + _masktexUoff;
                     vmaxm = _masktexVmax + _masktexVoff;
 
-                    FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                 color, m,
-                                                 _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                                 _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
-                                                 _blendMode);
+                    DXNative.FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                          color, m,
+                                                          _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                          _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
+                                                          _blendMode);
                   }
                 }
                 else
                 {
-                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
-                                         _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                         _blendMode);
+                  DXNative.FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
+                                                  _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                  _blendMode);
                 }
 
                 // Draw flipped image border.
@@ -1778,19 +1741,18 @@ namespace MediaPortal.GUI.Library
                       umaxm = _masktexUmax + _masktexUoff;
                       vmaxm = _masktexVmax + _masktexVoff;
 
-                      FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                   color, matrix,
-                                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                                   _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
-                                                   _blendMode);
+                      DXNative.FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                            color, matrix,
+                                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                            _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm, _blendMode);
                     }
                   }
                   else
                   {
-                    FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color,
-                                           matrix,
-                                           _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                           _blendMode);
+                    DXNative.FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color,
+                                                    matrix,
+                                                    _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                    _blendMode);
                   }
                 }
                 
@@ -2221,30 +2183,30 @@ namespace MediaPortal.GUI.Library
           if (flip)
           {
             // Upper left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
 
             // Upper right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
           }
           else
           {
             // Upper left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
 
             // Upper right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
           }
         }
       }
@@ -2375,30 +2337,30 @@ namespace MediaPortal.GUI.Library
           if (flip)
           {
             // Lower left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
 
             // Lower right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
           }
           else
           {
             // Lower left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
 
             // Lower right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
           }
         }
       }

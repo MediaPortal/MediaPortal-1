@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+enum BLEND_MODE
+{
+  BLEND_NONE = 0,
+  BLEND_DIFFUSE = 1,
+  BLEND_OVERLAY = 2
+};
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the FONTENGINE_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
@@ -47,6 +54,10 @@ void FontEngineDrawSurface( int fx, int fy, int nw, int nh,
                             int dstX, int dstY, int dstWidth, int dstHeight,void* surface);
 void FontEngineSetClipEnable();
 void FontEngineSetClipDisable();
+
+void FontEngineSetRenderState(D3DRENDERSTATETYPE state, DWORD dwValue);
+void FontEngineSetSamplerState(DWORD dwStage, D3DSAMPLERSTATETYPE d3dSamplerState, DWORD dwValue);
+void FontEngineSetTextureStageState(DWORD dwStage, D3DTEXTURESTAGESTATETYPE d3dTextureStageState, DWORD dwValue);
 
 void PrintStatistics();
 void Cleanup();

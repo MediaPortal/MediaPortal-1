@@ -979,9 +979,6 @@ namespace MediaPortal
         }
 
         // Cache our local objects
-        //renderState = GUIGraphicsContext.DX9Device.RenderState;
-        //sampleState = GUIGraphicsContext.DX9Device.SamplerState;
-        //textureStates = GUIGraphicsContext.DX9Device.TextureState;
         // When moving from fullscreen to windowed mode, it is important to
         // adjust the window size after recreating the device rather than
         // beforehand to ensure that you get the window size you want.  For
@@ -1189,7 +1186,7 @@ namespace MediaPortal
 
       int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType,
                                       windowed ? ourRenderTarget.Handle : this.Handle,
-                                      createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
+                                      createFlags | CreateFlags.PureDevice | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
                                       windowed ? IntPtr.Zero : prt, out dev);
       GUIGraphicsContext.DX9Device = new Device(dev);
 
