@@ -5111,6 +5111,7 @@ namespace MediaPortal.Configuration.Sections
         mpDeleteGrabber.Enabled = true;
         mpComboBoxAvailableDatabases.Enabled = true;
         mpButtonAddGrabber.Enabled = true;
+        chbDoNotUseDatabase.Checked = false;
         chbDoNotUseDatabase.Enabled = false;
       }
       else

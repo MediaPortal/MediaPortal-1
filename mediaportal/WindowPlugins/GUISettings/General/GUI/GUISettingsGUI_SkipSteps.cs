@@ -155,6 +155,12 @@ namespace WindowPlugins.GUISettings
     protected override void OnPageDestroy(int newWindowId)
     {
       base.OnPageDestroy(newWindowId);
+
+      if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
+      {
+        MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
+      }
+
       SaveSettings();
     }
     

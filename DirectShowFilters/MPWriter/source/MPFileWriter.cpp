@@ -28,6 +28,7 @@
 #include <streams.h>
 #include <initguid.h>
 #include <shlobj.h>
+#include <tchar.h>
 #include "MPFileWriter.h"
 #include "liveMedia.hh"
 #include "ChannelScan.h"
@@ -77,7 +78,8 @@ const AMOVIESETUP_FILTER sudDump =
 	L"MediaPortal File Writer",	// String name
 	MERIT_DO_NOT_USE,           // Filter merit
 	2,                          // Number pins
-	sudPins						// Pin details
+	sudPins,						// Pin details
+  CLSID_LegacyAmFilterCategory
 };
 
 static char logbuffer[2000]; 
@@ -401,7 +403,7 @@ m_pTeletextInputPin(NULL)
 {
 	LogDebug("CMPFileWriter::ctor()");
 
-	DeleteFile("MPFileWriter.log");
+	DeleteFile(_T("MPFileWriter.log"));
 	m_id=0;
 	m_pFilter = new CMPFileWriterFilter(this, GetOwner(), &m_Lock, phr);
 	if (m_pFilter == NULL) 

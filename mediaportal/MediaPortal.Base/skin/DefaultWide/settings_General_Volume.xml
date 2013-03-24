@@ -132,9 +132,9 @@
       <description>Custom values label</description>
       <type>fadelabel</type>
       <id>1</id>
-      <posX>600</posX>
-      <posY>510</posY>
-      <width>600</width>
+      <posX>500</posX>
+      <posY>503</posY>
+      <width>300</width>
       <font>font10</font>
       <label>#customScalevalues</label>
       <visible>control.hasfocus(8)</visible>

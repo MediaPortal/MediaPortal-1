@@ -32,7 +32,6 @@
     <height>325</height>
     <width>650</width>
     <texture>BluRay_regions.png</texture>
-		<visible>control.hasfocus(2)</visible>
 	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>
   </control>

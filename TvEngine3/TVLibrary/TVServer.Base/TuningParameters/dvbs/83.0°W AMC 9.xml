@@ -28,6 +28,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>3817000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>2879</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>11735000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>4439</SymbolRate>
@@ -127,15 +136,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11826000</CarrierFrequency>
-    <Polarisation>LinearH</Polarisation>
-    <SymbolRate>5632</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>11864000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>3979</SymbolRate>
@@ -148,6 +148,15 @@
     <CarrierFrequency>11871000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>13000</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>11874000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>6111</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -213,15 +222,6 @@
     <SymbolRate>13022</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>12140000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>30000</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>

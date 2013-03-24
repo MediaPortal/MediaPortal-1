@@ -774,9 +774,10 @@ bool CDeMultiplexer::AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip)
 {
   bool hasAudio = false;
 
-  for (int i = 0; i < pClip->raw_stream_count; i++) 
+  // TODO check if we can always rely on the audio_stream_count > 0
+  for (int i = 0; i < pClip->audio_stream_count; i++) 
   {
-    switch (pClip->raw_streams[i].coding_type)
+    switch (pClip->audio_streams[i].coding_type)
     {
       case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
       case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
