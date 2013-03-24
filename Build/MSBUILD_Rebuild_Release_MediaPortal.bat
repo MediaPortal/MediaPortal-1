@@ -12,7 +12,7 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 
 echo.
 echo Building MediaPortal...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /tv:3.5 /p:TargetFrameworkVersion=v3.5 /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
 
 echo.
 echo Reverting assemblies...
