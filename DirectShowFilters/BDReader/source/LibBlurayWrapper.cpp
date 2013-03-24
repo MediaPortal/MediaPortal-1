@@ -116,13 +116,13 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
 
 void CLibBlurayWrapper::StaticOverlayProc(void* this_gen, const BD_OVERLAY* const ov)
 {
-  CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
+  //CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
   ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->OverlayProc(ov);
 }
 
 void CLibBlurayWrapper::StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVERLAY* const ov)
 {
-  CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
+  //CAutoLock cRendertLock(&(((CLibBlurayWrapper *)this_gen)->m_csRenderLock));
   ((CLibBlurayWrapper *)this_gen)->m_pOverlayRenderer->ARGBOverlayProc(ov);
 }
 
