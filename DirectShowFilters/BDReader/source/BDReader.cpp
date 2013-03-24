@@ -765,17 +765,18 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
 
 STDMETHODIMP CBDReaderFilter::Start()
 {
-  m_bFirstPlay = true;
+  //m_bFirstPlay = true;
+  m_bFirstPlay = false;
   lib.Play();
 
   HRESULT hr = m_demultiplexer.Start();
   TriggerOnMediaChanged();
   // Close BD so the HDVM etc. are reset completely after querying the initial data.
   // This is required so we wont lose the initial events.
-  lib.CloseBluray();
+//  lib.CloseBluray();
   m_bFirstPlay = false;
-  lib.OpenBluray(m_pathToBD);
-  lib.Play();
+//  lib.OpenBluray(m_pathToBD);
+//  lib.Play();
 
   return hr;
 }
