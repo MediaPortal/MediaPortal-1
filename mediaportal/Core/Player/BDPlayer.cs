@@ -718,36 +718,36 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_LEFT:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
+            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
+              //return false;
             Log.Debug("BDPlayer: Move left");
             _ireader.Action((int)BDKeys.BD_VK_LEFT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_RIGHT:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
+            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
+              //return false;
             Log.Debug("BDPlayer: Move right");
             _ireader.Action((int)BDKeys.BD_VK_RIGHT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_UP:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
+            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
+              //return false;
             Log.Debug("BDPlayer: Move up");
             _ireader.Action((int)BDKeys.BD_VK_UP);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_DOWN:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
+            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
+            //  return false;
             Log.Debug("BDPlayer: Move down");
             _ireader.Action((int)BDKeys.BD_VK_DOWN);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
+            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
+              //return false;
             Log.Debug("BDPlayer: Select");
             _ireader.Action((int)BDKeys.BD_VK_ENTER);
             return true;
@@ -762,12 +762,13 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_BD_POPUP_MENU:
-            if (!Playing || _forceTitle || !_bPopupMenuAvailable)
-              return true;
+            //if (!Playing || _forceTitle || !_bPopupMenuAvailable)
+              //return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Popup menu toggle");
-            if (_ireader.Action((int)BDKeys.BD_VK_POPUP) == 0)
-              menuState = MenuState.PopUp;
+            //if (_ireader.Action((int)BDKeys.BD_VK_POPUP) == 0)
+              _ireader.Action((int)BDKeys.BD_VK_POPUP);
+              //menuState = MenuState.PopUp;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
