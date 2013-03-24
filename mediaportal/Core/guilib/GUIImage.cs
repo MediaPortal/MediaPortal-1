@@ -46,12 +46,12 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color,
+                                                            float uoff, float voff, float umax, float vmax, uint color,
                                                             float[,] matrix);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                             float uoff, float voff, float umax, float vmax, int color,
+                                                             float uoff, float voff, float umax, float vmax, uint color,
                                                              float[,] matrix, int textureNo2, float uoff2, float voff2,
                                                              float umax2, float vmax2,
                                                              FontEngineBlendMode blendMode);
@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
                                                                   float uoff, float voff, float umax, float vmax,
-                                                                  int color,
+                                                                  uint color,
                                                                   float[,] matrix, int textureNo2, float uoff2,
                                                                   float voff2,
                                                                   float umax2, float vmax2);
@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawMaskedTexture2(int textureNo1, float x, float y, float nw, float nh,
                                                                    float uoff, float voff, float umax, float vmax,
-                                                                   int color,
+                                                                   uint color,
                                                                    float[,] matrix, int textureNo2, float uoff2,
                                                                    float voff2,
                                                                    float umax2, float vmax2, int textureNo3, float uoff3,
@@ -1465,7 +1465,7 @@ namespace MediaPortal.GUI.Library
               // Compute the number of textures to draw in the control and draw the texture.
               float umax = _nw / x;
               float vmax = _nh / x;
-              texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+              texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
             }
             else
             {
@@ -1492,14 +1492,14 @@ namespace MediaPortal.GUI.Library
                   vmaxm = _masktexVmax + _masktexVoff;
 
                   FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
-                                              (int)color, matrix,
+                                              color, matrix,
                                               _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                 }
               }
               else
               {
                 // Default behavior, draw the image texture with no mask.
-                FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
+                FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
                                     matrix);
               }
             }
@@ -1577,7 +1577,7 @@ namespace MediaPortal.GUI.Library
                     vmaxm = _masktexVmax + _masktexVoff;
 
                     FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                 (int)color, m,
+                                                 color, m,
                                                  _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                                  _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
                                                  _blendMode);
@@ -1585,7 +1585,7 @@ namespace MediaPortal.GUI.Library
                 }
                 else
                 {
-                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m,
+                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
                                          _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                          _blendMode);
                 }
@@ -1671,7 +1671,7 @@ namespace MediaPortal.GUI.Library
                 // Compute the number of textures to draw in the control and draw the texture.
                 float umax = _nw / x;
                 float vmax = _nh / x;
-                frame.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+                frame.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
               }
               else
               {
@@ -1693,13 +1693,13 @@ namespace MediaPortal.GUI.Library
                     umaxm = _masktexUmax + _masktexUoff;
                     vmaxm = _masktexVmax + _masktexVoff;
 
-                    frame.DrawMasked(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
+                    frame.DrawMasked(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
                                      _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                   }
                 }
                 else
                 {
-                  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
+                  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color);
                 }
               }
 
@@ -1779,7 +1779,7 @@ namespace MediaPortal.GUI.Library
                       vmaxm = _masktexVmax + _masktexVoff;
 
                       FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                   (int)color, matrix,
+                                                   color, matrix,
                                                    _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                                    _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
                                                    _blendMode);
@@ -1787,7 +1787,7 @@ namespace MediaPortal.GUI.Library
                   }
                   else
                   {
-                    FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
+                    FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color,
                                            matrix,
                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
                                            _blendMode);
@@ -1860,7 +1860,7 @@ namespace MediaPortal.GUI.Library
 
       CachedTexture.Frame texture = null;
       CachedTexture.Frame cornerTexture = null;
-      int mergedBorderColorKey = (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
+      uint mergedBorderColorKey = GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
       int itw, ith;
       int ictw, icth;
       float textureWidth;
