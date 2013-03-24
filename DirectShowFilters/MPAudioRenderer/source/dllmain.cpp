@@ -60,7 +60,8 @@ const AMOVIESETUP_FILTER sudFilter[] =
     L"MediaPortal - Audio Renderer",
     0x30000000,
     NULL,
-    sudpPins
+    sudpPins,
+    CLSID_AudioRendererCategory
   }
 };
 
@@ -102,22 +103,25 @@ STDAPI DllUnregisterServer()
 // To be replaced when MP2 has generic C++ log framework available
 //
 
-void LogPath(char* dest, char* name)
+const int MAX_LOG_LINE_LENGHT = 1000;
+const int LOG_LINE_RESERVED = 32;
+
+void LogPath(TCHAR* dest, TCHAR* name)
 {
   TCHAR folder[MAX_PATH];
   SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-  sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\AudioRenderer.%s",folder,name);
+  _stprintf(dest, _T("%s\\Team Mediaportal\\MediaPortal\\log\\AudioRenderer.%s"), folder, name);
 }
 
 void LogRotate()
 {
   TCHAR fileName[MAX_PATH];
-  LogPath(fileName, "log");
+  LogPath(fileName, _T("log"));
   TCHAR bakFileName[MAX_PATH];
-  LogPath(bakFileName, "bak");
-  remove(bakFileName);
+  LogPath(bakFileName, _T("bak"));
+  _tremove(bakFileName);
   // ignore if rename fails 
-  (void)rename(fileName, bakFileName);
+  (void)_trename(fileName, bakFileName);
 }
 
 CCritSec m_qLock;
@@ -142,7 +146,7 @@ UINT CALLBACK LogThread(void* param)
   SetThreadName(0, "LoggerThread");
 
   TCHAR fileName[MAX_PATH];
-  LogPath(fileName, "log");
+  LogPath(fileName, _T("log"));
 
   HANDLE handles[2];
   handles[0] = m_eLog;
@@ -152,7 +156,7 @@ UINT CALLBACK LogThread(void* param)
   {
     if (m_logQueue.size() > 0)
     {
-      FILE* pFile = fopen(fileName, "a+");
+      FILE* pFile = _tfopen(fileName, _T("a+"));
       if (pFile)
       {
         SYSTEMTIME systemTime;
@@ -171,7 +175,7 @@ UINT CALLBACK LogThread(void* param)
     if (result == WAIT_FAILED)
     {
       DWORD error = GetLastError();
-      FILE* pFile = fopen(fileName, "a+");
+      FILE* pFile = _tfopen(fileName, _T("a+"));
       if (pFile)
       {
         fprintf(pFile, "LoggerThread - WaitForMultipleObjects failed, result: %d error: %d\n", result, error);
@@ -212,10 +216,10 @@ void Log(const char *fmt, ...)
     m_bLoggerRunning = true;
     StartLogger();
   }
-  char buffer[1000]; 
+  char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
   int ret;
   va_start(ap, fmt);
-  ret = vsprintf(buffer, fmt, ap);
+  ret = _vsnprintf(buffer, MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED, fmt, ap);
   va_end(ap); 
 
   if (ret < 0)
@@ -223,8 +227,8 @@ void Log(const char *fmt, ...)
 
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
-  char msg[500];
-  sprintf_s(msg, 500,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
+  char msg[MAX_LOG_LINE_LENGHT];
+  sprintf_s(msg, MAX_LOG_LINE_LENGHT,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
     systemTime.wMilliseconds,
