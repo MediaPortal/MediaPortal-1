@@ -627,13 +627,13 @@ int CDeMultiplexer::ReadFromFile()
       m_filter.NotifyEvent(EC_ERRORABORT, 0, 0);
     }
   }
-  else if (!pause)
+  /*else if (!pause)
   {
     LogDebug("Read failed...EOF");
     m_bEndOfFile = true;
 
     m_filter.NotifyEvent(EC_ERRORABORT, 0, 0);
-  }
+  }*/
   else if (pause && m_bFlushBuffersOnPause)
   {
     m_bFlushBuffersOnPause = false;
@@ -734,7 +734,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
         bool interrupted = false;
 
-        if (!m_bStarting)
+        //if (!m_bStarting)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
