@@ -766,9 +766,31 @@ namespace MediaPortal
     /// </summary>
     public void BuildPresentParamsFromSettings(bool bwindowed)
     {
-      presentParams.BackBufferCount = 2;
+      bool isWindows7OrLater = OSInfo.OSInfo.Win7OrLater();
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
+
+      if (isWindows7OrLater)
+      {
+        if (_doNotWaitForVSync)
+        {
+          // Allow performance measorements when DWM is not blocking Present()
+          presentParams.BackBufferCount = 20;
+          int hr = DXNative.FontEngineSetMaximumFrameLatency(20);
+          if (hr != 0)
+          {
+            Log.Info("D3D: BuildPresentParamsFromSettings failed to set max frame latency - error: {0}", hr);
+          }
+        }
+        else
+        {  
+          presentParams.BackBufferCount = 4;    // FLIPEX will benefit from more backbuffers
+        }
+      }
+      else
+      {
+        presentParams.BackBufferCount = 2;
+      }
 
       if (bwindowed)
       {
@@ -781,7 +803,7 @@ namespace MediaPortal
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
         presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
-        presentParams.SwapEffect = SwapEffect.Discard;
+        presentParams.SwapEffect = isWindows7OrLater ? (SwapEffect)5 : SwapEffect.Discard; // 5 == FLIPEX
         presentParams.PresentFlag = PresentFlag.Video; //PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = ourRenderTarget;
         presentParams.Windowed = true;
@@ -799,7 +821,7 @@ namespace MediaPortal
         presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
         presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
-        presentParams.SwapEffect = SwapEffect.Discard;
+        presentParams.SwapEffect = isWindows7OrLater ? (SwapEffect)5 : SwapEffect.Discard; // 5 == FLIPEX
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = this;
         presentParams.Windowed = false;
