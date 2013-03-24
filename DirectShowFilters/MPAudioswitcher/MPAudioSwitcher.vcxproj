@@ -63,6 +63,7 @@
       <ProgramDataBaseFileName>.\bin\Debug/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <RegisterOutput>false</RegisterOutput>
@@ -91,6 +92,7 @@
       <ObjectFileName>.\obj\Release/</ObjectFileName>
       <ProgramDataBaseFileName>.\bin\Release/</ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <RegisterOutput>false</RegisterOutput>

@@ -59,13 +59,14 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>../../include;../BaseClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_AFXDLL;WIN32;_DEBUG;_WINDOWS;_USRDLL;MPCSUBS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>strmbasd.lib;Winmm.lib;vfw32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
