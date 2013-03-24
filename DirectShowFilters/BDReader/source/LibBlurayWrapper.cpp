@@ -295,12 +295,12 @@ bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
     return false;
   }
 
-  if (!m_pDiscInfo->first_play_supported)
+  /*if (!m_pDiscInfo->first_play_supported)
   {
     LogDebug("CLibBlurayWrapper - First play is not supported - cannot play in navigation mode!");
     m_playbackMode = TitleBased;
   }
-  else
+  else*/
   {
     LogDebug("CLibBlurayWrapper - Using HDMV playback mode");
     m_playbackMode = Navigation;
