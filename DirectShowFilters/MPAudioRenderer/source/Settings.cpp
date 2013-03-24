@@ -138,8 +138,6 @@ AudioRendererSettings::~AudioRendererSettings()
 
 void AudioRendererSettings::LoadSettingsFromRegistry()
 {
-  USES_CONVERSION; // this is required for T2W macro
-  
   Log("Loading settings from registry");
 
   HKEY hKey;
@@ -367,13 +365,15 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
     
-    wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
+    _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
 
     delete[] WASAPIPreferredDeviceData;
   }
   else // no settings in registry, create default values
   {
-    Log("Failed to open %s", folder);
+    USES_CONVERSION;
+
+    Log("Failed to open %s", T2A(folder));
     Log("Initializing registry with default settings");
 
     LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, folder, 0, NULL, REG_OPTION_NON_VOLATILE,
@@ -411,7 +411,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
       delete[] m_wWASAPIPreferredDeviceId;
       m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
-      wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
+      _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
 
       WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
@@ -494,6 +494,8 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
 
 void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
+  USES_CONVERSION;
+
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
@@ -501,26 +503,30 @@ void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, D
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", lpSubKey);
+      Log("   create default value for %s", T2A(lpSubKey));
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
-      Log("   faíled to create default value for %s", lpSubKey);
+      Log("   faíled to create default value for %s", T2A(lpSubKey));
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
-{  
+{
+  USES_CONVERSION;
+
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", lpSubKey);
+    Log("Success writing to Registry: %s", T2A(lpSubKey));
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
+    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
 }
 
 void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {
+  USES_CONVERSION;
+
   DWORD dwSize = MAX_REG_LENGTH;
   DWORD dwType = REG_SZ;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
@@ -529,23 +535,25 @@ void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, 
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", lpSubKey);
+      Log("   create default value for %s", T2A(lpSubKey));
       WriteRegistryKeyString(hKey, lpSubKey, data);
     }
     else if (error == ERROR_MORE_DATA)
-      Log("   too much data, corrupted registry setting(?):  %s", lpSubKey);      
+      Log("   too much data, corrupted registry setting(?):  %s", T2A(lpSubKey));
     else
-      Log("   error: %d subkey: %s", error, lpSubKey);       
+      Log("   error: %d subkey: %s", error, T2A(lpSubKey));
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, strlen(data)+1);
+  USES_CONVERSION;
+
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", lpSubKey);
+    Log("Success writing to Registry: %s", T2A(lpSubKey));
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
+    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
 }
 
 bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate)
@@ -747,8 +755,8 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
   {
     if (hDialog)
     {
-      LPSTR defaultDevice = "<OS default audio device>";
-      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)defaultDevice);
+      TCHAR* pDefaultDevice = _T("<OS default audio device>");
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)pDefaultDevice);
       SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, 0, 0);
     }
 

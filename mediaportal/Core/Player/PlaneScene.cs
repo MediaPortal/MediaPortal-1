@@ -50,16 +50,6 @@ namespace MediaPortal.Player
   /// </summary>
   public class PlaneScene : IVMR9PresentCallback, IRenderLayer
   {
-    #region imports
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetTexture(void* texture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
-
-    #endregion
-
     #region variables
 
     private bool _stopPainting = false;
@@ -733,16 +723,17 @@ namespace MediaPortal.Player
       unsafe
       {
         IntPtr ptr = new IntPtr(texAddr);
-        FontEngineSetTexture(ptr.ToPointer());
+        DXNative.FontEngineSetTexture(ptr.ToPointer());
 
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].AddressU = TextureAddress.Clamp;
-        GUIGraphicsContext.DX9Device.SamplerState[0].AddressV = TextureAddress.Clamp;
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MINFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MAGFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_MIPFILTER, (int)D3DTEXTUREFILTERTYPE.D3DTEXF_LINEAR);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_ADDRESSU, (int)D3DTEXTUREADDRESS.D3DTADDRESS_CLAMP);
+        DXNative.FontEngineSetSamplerState(0, (int)D3DSAMPLERSTATETYPE.D3DSAMP_ADDRESSV, (int)D3DTEXTUREADDRESS.D3DTADDRESS_CLAMP);
+
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 
-        FontEngineSetAlphaBlend(0); //FALSE
+        DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHABLENDENABLE, 0);
 
         if (_useNonLinearStretch)
         {

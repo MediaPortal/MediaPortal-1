@@ -2,6 +2,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
+#include <tchar.h>
 #include "MemoryBuffer.h"
 
 #define MAX_MEMORY_BUFFER_SIZE (500000)
@@ -9,7 +10,7 @@
 extern void LogDebug(const char *fmt, ...) ;
 
 CMemoryBuffer::CMemoryBuffer(void)
-:m_event(NULL,TRUE,FALSE,"memevent")
+:m_event(NULL,TRUE,FALSE,_T("memevent"))
 {
   m_BytesInBuffer=0;
   m_pcallback=NULL;

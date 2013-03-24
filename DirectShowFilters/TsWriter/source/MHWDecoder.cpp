@@ -21,6 +21,7 @@
 #pragma warning(disable: 4786)
 #pragma warning(disable : 4995)
 #include <windows.h>
+#include <atlconv.h>
 #include ".\mhwparser.h"
 #include "entercriticalSection.h"  
 
@@ -240,6 +241,8 @@ int CMhwDecoder::GetTitleCount()
 
 void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
+  USES_CONVERSION;
+
 	CEnterCriticalSection lock (m_critSection);
 	*id = 0;
 	*transportId=0;
@@ -274,7 +277,7 @@ void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* netwo
 	*timeStart=prog.timeStart;
 	*title=(char*)prog.Title.c_str();
 	char tmp[128];
-	sprintf(tmp,"got:prog.id:%lu\n",prog.ID);OutputDebugString(tmp);
+	sprintf(tmp,"got:prog.id:%lu\n",prog.ID);OutputDebugString(A2T(tmp));
 	//LogDebug("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
 	//	program,m_vecTitles.size(),
 	//	*channelId, *programId, *title);
@@ -316,8 +319,9 @@ void CMhwDecoder::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, U
 
 void CMhwDecoder::GetSummary(ULONG programId, char** summary)
 {
+  USES_CONVERSION;
 	char tmp[128];
-	sprintf(tmp,"get:prog.id:%lu\n",programId);OutputDebugString(tmp);
+	sprintf(tmp,"get:prog.id:%lu\n",programId);OutputDebugString(A2T(tmp));
 	CEnterCriticalSection lock (m_critSection);
 	*summary="";
 	imapSummaries it=m_mapSummaries.find(programId);

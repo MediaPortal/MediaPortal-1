@@ -39,9 +39,9 @@ DEFINE_GUID(CLSID_MPIptvSource,
 
 // url format: udp://[interface]@ip:port, example: udp://192.168.1.44@233.2.3.4:1000, rtp://@233.2.3.4:1000
 
-#define EMPTY_STRING ""
-#define UDP_PROTOCOL "udp"
-#define RTP_PROTOCOL "rtp"
+#define EMPTY_STRING _T("")
+#define UDP_PROTOCOL _T("udp")
+#define RTP_PROTOCOL _T("rtp")
 #define IPTV_BUFFER_SIZE 128 * 1024 //By default 64KB buffer size
 #define IPTV_SOCKET_BUFFER_SIZE 32 * 1024 //Socket receive buffer size - not related to read buffer size above
 #define FILL_DIRECTLY_INTO_BUFFER

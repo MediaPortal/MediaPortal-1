@@ -1,3 +1,3 @@
 @echo off
 
-call "VS_Rebuild_Release_DirectShowFilters.bat" Debug
+call "VS_build_DirectShowFilters.bat" debug rebuild

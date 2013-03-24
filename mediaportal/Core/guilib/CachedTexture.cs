@@ -38,38 +38,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class CachedTexture : IDisposable
   {
-    #region imports
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color,
-                                                            float[,] matrix);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
-                                                                  float uoff, float voff, float umax, float vmax,
-                                                                  int color,
-                                                                  float[,] matrix, int textureNo2, float uoff2,
-                                                                  float voff2,
-                                                                  float umax2, float vmax2);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                             float uoff, float voff, float umax, float vmax,
-                                                             int color,
-                                                             float[,] matrix, int textureNo2, float uoff2,
-                                                             float voff2,
-                                                             float umax2, float vmax2,
-                                                             GUIImage.FontEngineBlendMode blendMode);
-    #endregion
-
     #region events / delegates
 
     public event EventHandler Disposed;
@@ -116,7 +84,7 @@ namespace MediaPortal.GUI.Library
             _image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-            _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+            _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
             if (logTextures)
             {
               Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
@@ -172,7 +140,7 @@ namespace MediaPortal.GUI.Library
             unsafe
             {
               IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-              _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+              _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
               if (logTextures)
               {
                 Log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
@@ -254,7 +222,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_textureNumber >= 0)
             {
-              FontEngineRemoveTexture(_textureNumber);
+              DXNative.FontEngineRemoveTexture(_textureNumber);
               _textureNumber = -1;
             }
 
@@ -291,14 +259,14 @@ namespace MediaPortal.GUI.Library
       /// <param name="umax"></param>
       /// <param name="vmax"></param>
       /// <param name="color"></param>
-      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
+      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, uint color)
       {
         //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
         //Trace.WriteLine(logline);
         if (_textureNumber >= 0)
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-          FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+          DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
         }
         else
         {
@@ -323,7 +291,7 @@ namespace MediaPortal.GUI.Library
       /// <param name="vmax"></param>
       /// <param name="color"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
-                       int color)
+                       uint color)
       {
         if (_textureNumber >= 0)
         {
@@ -333,7 +301,7 @@ namespace MediaPortal.GUI.Library
           TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
           localTransform = finalTransform.multiply(localTransform);
 
-          FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, localTransform.Matrix);
+          DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, localTransform.Matrix);
         }
         else
         {
@@ -363,8 +331,8 @@ namespace MediaPortal.GUI.Library
       /// <param name="umaxd"></param>
       /// <param name="vmaxd"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
-                       int color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
-                       GUIImage.FontEngineBlendMode blendMode)
+                       uint color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
+                       FontEngineBlendMode blendMode)
       {
         if (_textureNumber >= 0)
         {
@@ -374,7 +342,7 @@ namespace MediaPortal.GUI.Library
           TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
           localTransform = finalTransform.multiply(localTransform);
 
-          FontEngineDrawTexture2(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
+          DXNative.FontEngineDrawTexture2(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
                                  color, localTransform.Matrix,
                                  blendableTextureNo, uoffd, voffd, umaxd, vmaxd,
                                  blendMode);
@@ -406,14 +374,14 @@ namespace MediaPortal.GUI.Library
       /// <param name="umaxm"></param>
       /// <param name="vmaxm"></param>
       public void DrawMasked(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
-                             int color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
+                             uint color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
       {
         if (_textureNumber >= 0)
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-          FontEngineDrawMaskedTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
-                                      color, matrix,
-                                      maskTextureNo, uoffm, voffm, umaxm, vmaxm);
+          DXNative.FontEngineDrawMaskedTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
+                                                      color, matrix,
+                                                      maskTextureNo, uoffm, voffm, umaxm, vmaxm);
         }
         else
         {
