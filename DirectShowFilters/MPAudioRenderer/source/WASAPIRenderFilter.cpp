@@ -58,7 +58,7 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
     Log("Disabling WASAPI - OS version earlier than Vista detected");
 
   // Load Vista specifics DLLs
-  m_hLibAVRT = LoadLibrary ("AVRT.dll");
+  m_hLibAVRT = LoadLibrary (_T("AVRT.dll"));
   if (m_hLibAVRT && bWASAPIAvailable)
   {
     pfAvSetMmThreadCharacteristicsW   = (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (m_hLibAVRT, "AvSetMmThreadCharacteristicsW");

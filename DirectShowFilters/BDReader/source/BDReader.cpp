@@ -40,8 +40,8 @@
 #include "..\..\alloctracing.h"
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
-extern void LogDebug(const char *fmt, ...);
-extern void GetLogFile(char *pLog);
+extern void LogDebug(const char* fmt, ...);
+extern void GetLogFile(TCHAR* pLog);
 
 const AMOVIESETUP_MEDIATYPE acceptAudioPinTypes =
 {
@@ -69,7 +69,7 @@ const AMOVIESETUP_PIN pins[] =
 
 const AMOVIESETUP_FILTER BDReader =
 {
-  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 3, pins
+  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 3, pins, CLSID_LegacyAmFilterCategory
 };
 
 CFactoryTemplate g_Templates[] =
