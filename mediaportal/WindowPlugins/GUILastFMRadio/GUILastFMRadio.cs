@@ -544,27 +544,31 @@ namespace MediaPortal.GUI.LastFMRadio
     {
       if (item == null) return;
 
-      var pli = _playlistPlayer.GetCurrentItem();
-      if (item.Path == pli.FileName)
-      {
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumbFile);
-      }
+      var strThumb = strThumbFile;
 
-      if (GUIWindowManager.ActiveWindow == GetID && PlaylistControl.SelectedListItem != null && item == PlaylistControl.SelectedListItem)
-      {
-        GUIPropertyManager.SetProperty("#selectedthumb", strThumbFile);
-      }
-
-      item.ThumbnailImage = strThumbFile;
-      item.IconImageBig = strThumbFile;
-      item.IconImage = strThumbFile;
+      item.IconImageBig = strThumb;
+      item.IconImage = strThumb;
 
       // let us test if there is a larger cover art image
       string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumbFile);
       if (Util.Utils.FileExistsInCache(strLarge))
       {
-        item.ThumbnailImage = strLarge;
+        strThumb = strLarge;
       }
+      item.ThumbnailImage = strThumb;
+
+      var pli = _playlistPlayer.GetCurrentItem();
+      if (item.Path == pli.FileName)
+      {
+        GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumb);
+      }
+
+      if (GUIWindowManager.ActiveWindow == GetID && PlaylistControl.SelectedListItem != null &&
+          item == PlaylistControl.SelectedListItem)
+      {
+        GUIControl.SelectItemControl(GetID, PlaylistControl.GetID, item.ItemId);
+      }
+
     }
 
     /// <summary>
