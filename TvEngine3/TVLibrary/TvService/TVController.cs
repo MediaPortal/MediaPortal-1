@@ -3784,6 +3784,18 @@ namespace TvService
       return (List<MpGenre>)layer.GetMpGenres();
     }
 
+    /// <summary>
+    /// Returns a list of radio channel group names.
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetRadioChannelGroupNames()
+    {
+      List<string> groupNames = new List<string>();
+      foreach (RadioChannelGroup group in RadioChannelGroup.ListAll())
+        groupNames.Add(group.GroupName);
+      return groupNames;
+    }
+
     #endregion
 
     #region streaming
