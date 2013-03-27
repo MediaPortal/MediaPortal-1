@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Controls
@@ -29,6 +30,9 @@ namespace MediaPortal.Configuration.Controls
   /// </summary>
   public class ListViewItemComparer : IComparer
   {
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+    private static extern int StrCmpLogicalW(string x, string y);
+
     private readonly int col;
 
     public ListViewItemComparer()
@@ -48,7 +52,7 @@ namespace MediaPortal.Configuration.Controls
         sortCol = 0;
       if (sortCol >= ((ListViewItem)y).SubItems.Count)
         sortCol = 0;
-      return String.Compare(((ListViewItem)x).SubItems[sortCol].Text, ((ListViewItem)y).SubItems[sortCol].Text);
+      return StrCmpLogicalW(((ListViewItem)x).SubItems[sortCol].Text, ((ListViewItem)y).SubItems[sortCol].Text);
     }
   }
 
