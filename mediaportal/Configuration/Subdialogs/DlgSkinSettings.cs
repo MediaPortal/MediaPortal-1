@@ -119,6 +119,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox cbBorderHighlight;
     private CheckBox cbColoredGuide;
     private Label labelTVPluginNotInstalled;
+    private Label labelNoConnectionToServer;
 
     /// <summary>
     /// Required designer variable.
@@ -149,6 +150,9 @@ namespace MediaPortal.Configuration.Sections
 
         this.labelTVPluginNotInstalled.Visible = false;
         this.labelTVPluginNotInstalled.Enabled = false;
+
+        this.labelNoConnectionToServer.Visible = false;
+        this.labelNoConnectionToServer.Enabled = false;
       }
 
       // Identify the selected skin.
@@ -202,6 +206,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbGenreColoring = new System.Windows.Forms.CheckBox();
       this.tabPageTvGuideColors = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupGenreColors = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelNoConnectionToServer = new System.Windows.Forms.Label();
       this.listViewGuideGenres = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -454,6 +459,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupGenreColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupGenreColors.Controls.Add(this.labelNoConnectionToServer);
       this.groupGenreColors.Controls.Add(this.listViewGuideGenres);
       this.groupGenreColors.Controls.Add(this.mpButtonOnLaterColor);
       this.groupGenreColors.Controls.Add(this.mpButtonOnNowColor);
@@ -464,6 +470,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupGenreColors.TabIndex = 0;
       this.groupGenreColors.TabStop = false;
       this.groupGenreColors.Text = "Program genre colors";
+      // 
+      // labelNoConnectionToServer
+      // 
+      this.labelNoConnectionToServer.AutoSize = true;
+      this.labelNoConnectionToServer.Location = new System.Drawing.Point(15, 53);
+      this.labelNoConnectionToServer.Name = "labelNoConnectionToServer";
+      this.labelNoConnectionToServer.Size = new System.Drawing.Size(320, 13);
+      this.labelNoConnectionToServer.TabIndex = 15;
+      this.labelNoConnectionToServer.Text = "The program genre colors could not be loaded from the TV Server.";
       // 
       // listViewGuideGenres
       // 
@@ -934,6 +949,17 @@ namespace MediaPortal.Configuration.Sections
 
     private void PopulateGuideGenreList()
     {
+      if (_mpGenres.Count == 0)
+      {
+        labelNoConnectionToServer.Visible = true;
+        labelNoConnectionToServer.Enabled = true;
+      }
+      else
+      {
+        labelNoConnectionToServer.Visible = false;
+        labelNoConnectionToServer.Enabled = false;
+      }
+
       // Populate the guide genre list with names and colors.
       listViewGuideGenres.BeginUpdate();
       listViewGuideGenres.Items.Clear();
@@ -975,10 +1001,7 @@ namespace MediaPortal.Configuration.Sections
     public void LoadSettings(string selectedSkin)
     {
       // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
-      using (Settings xmlreader = new MPSettings())
-      {
-        TvServerRemote.HostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
-      }
+      TvServerRemote.HostName = TVRadio.Hostname;
 
       // Get the MediaPortal genres from the TV server.
       _mpGenres = TvServerRemote.GetMpGenres();

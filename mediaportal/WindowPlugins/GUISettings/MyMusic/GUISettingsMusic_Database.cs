@@ -404,7 +404,7 @@ namespace MediaPortal.GUI.Settings
       // Now create a Settings Object with the Settings checked to pass to the Import
       MusicDatabaseSettings setting = new MusicDatabaseSettings();
       setting.CreateMissingFolderThumb = btnCreateMissingFolderThumbs.Selected;
-      setting.ExtractEmbeddedCoverArt = btnUseAllImages.Selected;
+      setting.ExtractEmbeddedCoverArt = btnExtractthumbs.Selected;
       setting.StripArtistPrefixes = btnStripartistprefixes.Selected;
       setting.TreatFolderAsAlbum = btnTreatFolderAsAlbum.Selected;
       setting.UseFolderThumbs = btnUseFolderThumbs.Selected;

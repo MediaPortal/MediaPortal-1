@@ -260,6 +260,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sections\Radio.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="TvServerRemote.cs" />
     <Compile Include="Sections\BD.cs">
       <SubType>UserControl</SubType>
@@ -503,7 +506,7 @@
     <Compile Include="Sections\RemoteUSBUIRT.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TVClient.cs">
+    <Compile Include="Sections\TV.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVTeletext.cs">
@@ -614,7 +617,7 @@
     <Compile Include="Sections\Remote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TV.cs">
+    <Compile Include="Sections\TVRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\TVPostProcessing.cs">
@@ -715,6 +718,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Radio.resx">
+      <DependentUpon>Radio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicShares.resx">
@@ -885,9 +892,9 @@
       <DependentUpon>RemoteUSBUIRT.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TVClient.resx">
+    <EmbeddedResource Include="Sections\TV.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TVClient.cs</DependentUpon>
+      <DependentUpon>TV.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVTeletext.resx">
       <DependentUpon>TVTeletext.cs</DependentUpon>
@@ -973,8 +980,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TV.resx">
-      <DependentUpon>TV.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\TVRadio.resx">
+      <DependentUpon>TVRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Weather.resx">
