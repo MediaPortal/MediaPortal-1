@@ -260,6 +260,7 @@
       <onright>4</onright>
       <onup>6</onup>
       <ondown>6</ondown>
+	  <label>#(L(183)) /#(L(182))</label>
     </control>
     <control Style="NoShadow">
       <description>Refresh</description>

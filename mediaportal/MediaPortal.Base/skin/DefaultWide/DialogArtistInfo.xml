@@ -276,7 +276,7 @@
       <posX>50</posX>
       <posY>180</posY>
       <width>200</width>
-      <label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), 689, 132)))</label>
+      <label>#(L(689)) / #(L(132))</label>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>6</onup>

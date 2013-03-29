@@ -278,6 +278,7 @@
       <onup>6</onup>
       <ondown>6</ondown>
       <onclick>#(skin.togglesetting('#AlbumInfo.ShowTracks'))</onclick>
+	  <label>#(L(183)) /#(L(182))</label>
     </control>
     <control Style="NoShadow">
       <description>Refresh</description>
