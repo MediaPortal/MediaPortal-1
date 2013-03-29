@@ -255,8 +255,8 @@
 		<height>300</height>
 		<onleft>5</onleft>
 		<onright>5</onright>
-		<onup>4</onup>
-		<ondown>4</ondown>
+		<onup>40</onup>
+		<ondown>40</ondown>
 		<spinWidth>18</spinWidth>
 		<spinHeight>16</spinHeight>
 		<spinPosX>750</spinPosX>
@@ -293,7 +293,7 @@
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 		<onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
-		<label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), 689, 132)))</label>
+		<label>689</label>
 	</control>
   
 	<control>

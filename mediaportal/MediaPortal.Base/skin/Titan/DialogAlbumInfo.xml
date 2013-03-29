@@ -279,8 +279,36 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-		<label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), #AlbumInfo.Review, #AlbumInfo.Tracks)))</label>
+		<label>#AlbumInfo.Review</label>
+		<visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
 	</control>
+	<control>
+		<description>textarea</description>
+		<type>textbox</type>
+		<id>40</id>
+		<posX>750</posX>
+		<posY>468</posY>
+		<width>860</width>
+		<height>300</height>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>40</onup>
+		<ondown>40</ondown>
+		<spinWidth>18</spinWidth>
+		<spinHeight>16</spinHeight>
+		<spinPosX>750</spinPosX>
+		<spinPosY>760</spinPosY>
+		<spinAlign>left</spinAlign>
+		<spinColor>FF393939</spinColor>
+		<textXOff2>100</textXOff2>
+		<textcolor>FF393939</textcolor>
+    <font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<label>#AlbumInfo.Tracks</label>
+		<visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+	</control>	
 
 	<control>
 		<description>Tracks/Review</description>
@@ -303,7 +331,7 @@
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 		<onclick>#(skin.togglesetting('#AlbumInfo.ShowTracks'))</onclick>
-		<label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), 689, 132)))</label>
+		<label>689</label>
 	</control>
 	
 	<control>
