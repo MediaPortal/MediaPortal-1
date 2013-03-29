@@ -50,9 +50,16 @@ namespace TvThumbnails
     {
       lock (_lock)
       {
-        foreach (string task in tasks)
+        if (tasks != null)
         {
-          _tasks.Enqueue(task);
+          foreach (string task in tasks)
+          {
+            _tasks.Enqueue(task);
+          }
+        }
+        else
+        {
+          _tasks.Enqueue(null);
         }
       }
 
