@@ -365,7 +365,7 @@ namespace MediaPortal.Music.Database
       {
         Album = strAlbum,
         Artist = strAlbumArtist,
-        Genre = string.Empty,
+        Genre = strGenres,
         Tones = strMoods,
         Styles = strStyles,
         Review = strReview,
@@ -409,17 +409,17 @@ namespace MediaPortal.Music.Database
       {
         int iYear;
 
-        album.Artist = Artist;
-        album.Album = Title;
-        Int32.TryParse(DateOfRelease, out iYear);
+        album.Artist = _artist;
+        album.Album = _strTitle;
+        Int32.TryParse(_strDateOfRelease, out iYear);
         album.Year = iYear;
-        album.Genre = Genre;
-        album.Tones = Tones;
-        album.Styles = Styles;
-        album.Review = Review;
-        album.Image = ImageURL;
-        album.Rating = Rating;
-        album.Tracks = Tracks;
+        album.Genre = _strGenre;
+        album.Tones = _strTones;
+        album.Styles = _strStyles;
+        album.Review = _strReview;
+        album.Image = _strImageURL;
+        album.Rating = _iRating;
+        album.Tracks = _strTracks;
 
       }
       return album;
