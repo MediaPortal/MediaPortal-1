@@ -142,20 +142,6 @@
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
   </control>
- 
-  <control>
-    <description>Instruments</description>
-    <type>label</type>
-    <id>1</id>
-		<posX>-2000</posX>
-		<posY>462</posY>
-		<label>688</label>
-		<textcolor>FF393939</textcolor>
-		<font>TitanLight12</font>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-  </control>
   
   <control>
     <description>Born value</description>
@@ -251,13 +237,42 @@
 		<spinColor>FF393939</spinColor>
 		<textXOff2>100</textXOff2>
 		<textcolor>FF393939</textcolor>
-    <font>TitanLight12</font>
+        <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-		<label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), #ArtistInfo.Bio, #ArtistInfo.Albums)</label>
+		<label>#ArtistInfo.Bio</label>
+		<visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+		<visible></visible>
 	</control>
- 
+	<control>
+		<description>textarea</description>
+		<type>textbox</type>
+		<id>40</id>
+		<posX>750</posX>
+		<posY>468</posY>
+		<width>860</width>
+		<height>300</height>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>4</onup>
+		<ondown>4</ondown>
+		<spinWidth>18</spinWidth>
+		<spinHeight>16</spinHeight>
+		<spinPosX>750</spinPosX>
+		<spinPosY>760</spinPosY>
+		<spinAlign>left</spinAlign>
+		<spinColor>FF393939</spinColor>
+		<textXOff2>100</textXOff2>
+		<textcolor>FF393939</textcolor>
+        <font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>	
+		<label>#ArtistInfo.Albums</label>
+		<visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+	</control>
+	
 	<control>
 		<description>Bio/Albums</description>
 		<type>button</type>
@@ -277,6 +292,7 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
 		<label>#(L(iif(skin.hassetting('#ArtistInfo.ShowAlbums'), 689, 132)))</label>
 	</control>
   

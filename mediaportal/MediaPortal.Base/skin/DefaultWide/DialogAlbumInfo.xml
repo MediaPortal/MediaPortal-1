@@ -233,37 +233,37 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>332</posX>
-      <posY>300</posY>
-      <width>900</width>
-      <height>400</height>      
+      <posX>285</posX>
+      <posY>350</posY>
+      <width>680</width>
+      <height>250</height>      
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>1150</spinPosX>
-      <spinPosY>680</spinPosY>
+      <spinPosX>880</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#AlbumInfo.Review</label>
-      <visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+      <visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
       <type>textbox</type>
       <id>40</id>
-      <posX>332</posX>
-      <posY>300</posY>
-      <width>900</width>
-      <height>400</height>      
+      <posX>285</posX>
+      <posY>350</posY>
+      <width>680</width>
+      <height>250</height>      
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>1150</spinPosX>
-      <spinPosY>680</spinPosY>
+      <spinPosX>880</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#AlbumInfo.Tracks</label>
-      <visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+      <visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
     </control>	
     <control Style="NoShadow">
       <description>Tracks/Review</description>

@@ -217,35 +217,34 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>186</posX>
-      <posY>240</posY>
-      <width>506</width>
-      <height>320</height>
+      <posX>213</posX>
+      <posY>350</posY>
+      <width>510</width>
+      <height>250</height>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>646</spinPosX>
-      <spinPosY>544</spinPosY>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#AlbumInfo.Review</label>
       <visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
-      <type>textbox</type>
-      <id>40</id>
-      <posX>186</posX>
-      <posY>240</posY>
-      <width>506</width>
-      <height>320</height>
+      <id>4</id>
+      <posX>213</posX>
+      <posY>350</posY>
+      <width>510</width>
+      <height>250</height>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>646</spinPosX>
-      <spinPosY>544</spinPosY>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#AlbumInfo.Tracks</label>
       <visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
     </control>	

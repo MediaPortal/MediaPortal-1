@@ -237,17 +237,17 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>186</posX>
-      <posY>240</posY>
-      <height>320</height>
-      <width>506</width>
+      <posX>213</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>510</width>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>646</spinPosX>
-      <spinPosY>544</spinPosY>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#ArtistInfo.Bio</label>
 	  <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>  
     </control>
@@ -255,17 +255,17 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>40</id>
-      <posX>186</posX>
-      <posY>240</posY>
-      <height>320</height>
-      <width>506</width>
+      <posX>213</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>510</width>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>646</spinPosX>
-      <spinPosY>544</spinPosY>
+      <spinPosX>660</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#ArtistInfo.Albums</label>
 	  <visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
     </control>

@@ -237,37 +237,37 @@
       <description>textarea</description>
       <type>textbox</type>
       <id>4</id>
-      <posX>332</posX>
-      <posY>300</posY>
-      <height>400</height>
-      <width>900</width>
+      <posX>285</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>680</width>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>1150</spinPosX>
-      <spinPosY>680</spinPosY>
+      <spinPosX>880</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#ArtistInfo.Bio</label>
-	  <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+	  <visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
       <type>textbox</type>
       <id>40</id>
-      <posX>332</posX>
-      <posY>300</posY>
-      <height>400</height>
-      <width>900</width>
+      <posX>285</posX>
+      <posY>350</posY>
+      <height>250</height>
+      <width>680</width>
       <onleft>5</onleft>
       <onright>5</onright>
       <onup>5</onup>
       <ondown>5</ondown>
       <font>font13</font>
-      <spinPosX>1150</spinPosX>
-      <spinPosY>680</spinPosY>
+      <spinPosX>880</spinPosX>
+      <spinPosY>590</spinPosY>
 	  <label>#ArtistInfo.Albums</label>
-	  <visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+	  <visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
     </control>	
     <control Style="NoShadow">
       <description>Bio/Albums</description>
