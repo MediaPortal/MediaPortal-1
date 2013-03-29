@@ -19,15 +19,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
 namespace MediaPortal.Music.Database
 {
