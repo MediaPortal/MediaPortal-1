@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Music
       var rating = string.Empty;
       if (albumInfo.Rating > 0)
       {
-        rating = String.Format("{0}/9", albumInfo.Rating);
+        rating = String.Format("{0}", albumInfo.Rating);
       }
 
       string thumbNailFileName = Util.Utils.GetAlbumThumbName(albumInfo.Artist, albumInfo.Title);
