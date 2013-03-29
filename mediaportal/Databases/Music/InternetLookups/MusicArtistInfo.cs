@@ -172,147 +172,28 @@ namespace MediaPortal.Music.Database
       set { _strAMGBiography = value.Trim(); }
     }
 
-    public ArrayList DiscographyAlbums
-    {
-      get { return _discographyAlbum; }
-      set { _discographyAlbum = value; }
-    }
-
-    public ArrayList DiscographyCompilations
-    {
-      get { return _discographyCompilations; }
-      set { _discographyCompilations = value; }
-    }
-
-    public ArrayList DiscographySingles
-    {
-      get { return _discographySingles; }
-      set { _discographySingles = value; }
-    }
-
-    public ArrayList DiscographyMisc
-    {
-      get { return _discographyMisc; }
-      set { _discographyMisc = value; }
-    }
-
     public string Albums
     {
-      get
-      {
-        if (_albums != null && _albums.Length > 0)
-        {
-          return _albums;
-        }
-
-        StringBuilder strLine = new StringBuilder(2048);
-        string strTmp = null;
-        ArrayList list = null;
-        list = DiscographyAlbums;
-        for (int i = 0; i < list.Count; ++i)
-        {
-          string[] listInfo = (string[])list[i];
-          strTmp = String.Format("{0} - {1} ({2})\n",
-                                 listInfo[0], // year 
-                                 listInfo[1], // title
-                                 listInfo[2]); // label
-          strLine.Append(strTmp);
-        }
-        ;
-        strLine.Append('\n');
-        _albums = strLine.ToString();
-        return _albums;
-      }
+      get { return _albums; }
       set { _albums = value; }
     }
 
     public string Compilations
     {
-      get
-      {
-        if (_compilations != null && _compilations.Length > 0)
-        {
-          return _compilations;
-        }
-
-        StringBuilder strLine = new StringBuilder(2048);
-        string strTmp = null;
-        ArrayList list = null;
-        list = DiscographyCompilations;
-        for (int i = 0; i < list.Count; ++i)
-        {
-          string[] listInfo = (string[])list[i];
-          strTmp = String.Format("{0} - {1} ({2})\n",
-                                 listInfo[0], // year 
-                                 listInfo[1], // title
-                                 listInfo[2]); // label
-          strLine.Append(strTmp);
-        }
-        ;
-        strLine.Append('\n');
-        _compilations = strLine.ToString();
-        return _compilations;
-      }
+      get { return _compilations; }
       set { _compilations = value; }
     }
 
     public string Singles
     {
-      get
-      {
-        if (_singles != null && _singles.Length > 0)
-        {
-          return _singles;
-        }
-
-        StringBuilder strLine = new StringBuilder(2048);
-        string strTmp = null;
-        ArrayList list = null;
-        list = DiscographySingles;
-        for (int i = 0; i < list.Count; ++i)
-        {
-          string[] listInfo = (string[])list[i];
-          strTmp = String.Format("{0} - {1} ({2})\n",
-                                 listInfo[0], // year 
-                                 listInfo[1], // title
-                                 listInfo[2]); // label
-          strLine.Append(strTmp);
-        }
-        ;
-        strLine.Append('\n');
-        _singles = strLine.ToString();
-        return _singles;
-      }
+      get { return _singles; }
       set { _singles = value; }
     }
 
     public string Misc
     {
       get
-      {
-        if (_misc != null && _misc.Length > 0)
-        {
-          return _misc;
-        }
-
-        StringBuilder strLine = new StringBuilder(2048);
-        string strTmp = null;
-        ArrayList list = null;
-        list = DiscographyMisc;
-        for (int i = 0; i < list.Count; ++i)
-        {
-          string[] listInfo = (string[])list[i];
-          strTmp = String.Format("{0} - {1} ({2})\n",
-                                 listInfo[0], // year 
-                                 listInfo[1], // title
-                                 listInfo[2]); // label
-          strLine.Append(strTmp);
-        }
-        ;
-        strLine.Append('\n');
-        _misc = strLine.ToString();
-        return _misc;
-      }
+      { return _misc; }
       set { _misc = value; }
     }
 

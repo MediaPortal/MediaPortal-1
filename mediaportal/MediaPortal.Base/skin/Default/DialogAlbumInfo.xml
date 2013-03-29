@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2001</id>
   <defaultcontrol>5</defaultcontrol>
@@ -40,13 +39,13 @@
     </control>
     <control Style="NoShadow">
       <description>Album value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>20</id>
       <posX>0</posX>
       <posY>93</posY>
       <width>960</width>
       <align>center</align>
-      <label>-</label>
+      <label>#AlbumInfo.Album</label>
       <font>font16</font>
       <textcolor>ff6FAFE1</textcolor>
     </control>
@@ -118,41 +117,41 @@
     </control>
     <control Style="NoShadow">
       <description>Artist value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>21</id>
       <posX>363</posX>
       <posY>180</posY>
-      <label>-</label>
+      <label>#AlbumInfo.Artist</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Date of Release value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>22</id>
       <posX>363</posX>
       <posY>205</posY>
-      <label>-</label>
+      <label>#AlbumInfo.Year</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Rating value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>23</id>
       <posX>363</posX>
       <posY>230</posY>
-      <label>-</label>
+      <label>#AlbumInfo.Rating</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
     <control Style="NoShadow">
       <description>Genre value</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>24</id>
       <posX>363</posX>
       <posY>255</posY>
-      <label>-</label>
+      <label>#AlbumInfo.Genre</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
@@ -163,7 +162,7 @@
       <posX>363</posX>
       <posY>280</posY>
       <width>360</width>
-      <label>-</label>
+      <label>#AlbumInfo.Tones</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
@@ -174,25 +173,9 @@
       <posX>363</posX>
       <posY>305</posY>
       <width>360</width>
-      <label>-</label>
+      <label>#AlbumInfo.Tones</label>
       <font>font13</font>
       <textcolor>ivory</textcolor>
-    </control>
-    <control Style="NoShadow">
-      <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
-      <posX>213</posX>
-      <posY>350</posY>
-      <width>510</width>
-      <height>250</height>
-      <onleft>5</onleft>
-      <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      <font>font12</font>
-      <spinPosX>660</spinPosX>
-      <spinPosY>590</spinPosY>
     </control>
     <control>
       <id>1</id>
@@ -216,7 +199,7 @@
       <height>180</height>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <texture mask="cdthumbmask.png">#AlbumInfo.Thumb</texture>
       <zoom>yes</zoom>
       <colorkey>FFFFFFFF</colorkey>
     </control>
@@ -230,6 +213,42 @@
       <height>180</height>
       <texture>cdthumbframe.png</texture>
     </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textbox</type>
+      <id>4</id>
+      <posX>186</posX>
+      <posY>240</posY>
+      <width>506</width>
+      <height>320</height>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>646</spinPosX>
+      <spinPosY>544</spinPosY>
+	  <label>#AlbumInfo.Review</label>
+      <visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+    </control>
+    <control Style="NoShadow">
+      <description>textarea</description>
+      <type>textbox</type>
+      <id>40</id>
+      <posX>186</posX>
+      <posY>240</posY>
+      <width>506</width>
+      <height>320</height>
+      <onleft>5</onleft>
+      <onright>5</onright>
+      <onup>5</onup>
+      <ondown>5</ondown>
+      <font>font13</font>
+      <spinPosX>646</spinPosX>
+      <spinPosY>544</spinPosY>
+	  <label>#AlbumInfo.Tracks</label>
+      <visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+    </control>	
     <control Style="NoShadow">
       <description>Tracks/Review</description>
       <type>button</type>
@@ -250,24 +269,12 @@
       <posX>37</posX>
       <posY>220</posY>
       <width>150</width>
-      <label>182</label>
       <label>184</label>
       <font>font13</font>
       <onleft>4</onleft>
       <onright>4</onright>
       <onup>5</onup>
       <ondown>5</ondown>
-    </control>
-    <!-- NOT USED -->
-    <control>
-      <description>Album Art (Not Use)</description>
-      <type>image</type>
-      <id>3</id>
-      <posX>1537</posX>
-      <posY>313</posY>
-      <width>7</width>
-      <height>10</height>
-      <visible>no</visible>
     </control>
   </controls>
 </window>

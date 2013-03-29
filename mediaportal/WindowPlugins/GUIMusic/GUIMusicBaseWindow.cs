@@ -1496,7 +1496,6 @@ namespace MediaPortal.GUI.Music
         if (null != pDlgAlbumInfo)
         {
           pDlgAlbumInfo.Album = albumInfo;
-          pDlgAlbumInfo.Tag = tag;
 
           pDlgAlbumInfo.DoModal(parentWindowID);
           if (pDlgAlbumInfo.NeedsRefresh)

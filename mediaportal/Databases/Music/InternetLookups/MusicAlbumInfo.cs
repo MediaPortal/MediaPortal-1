@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,19 +38,19 @@ namespace MediaPortal.Music.Database
   {
     #region Variables
 
-    private string _artist = "";
-    private string _strTitle = "";
-    private string _strTitle2 = "";
-    private string _strDateOfRelease = "";
-    private string _strGenre = "";
-    private string _strTones = "";
-    private string _strStyles = "";
-    private string _strReview = "";
-    private string _strImageURL = "";
-    private string _albumUrl = "";
-    private string _strAlbumPath = "";
+    private string _artist = string.Empty;
+    private string _strTitle = string.Empty;
+    private string _strTitle2 = string.Empty;
+    private string _strDateOfRelease = string.Empty;
+    private string _strGenre = string.Empty;
+    private string _strTones = string.Empty;
+    private string _strStyles = string.Empty;
+    private string _strReview = string.Empty;
+    private string _strImageURL = string.Empty;
+    private string _albumUrl = string.Empty;
+    private string _strAlbumPath = string.Empty;
     private int _iRating = 0;
-    private ArrayList _songs = new ArrayList();
+    private string _strTracks = string.Empty;
     private bool _bLoaded = false;
     private Match _match = null;
 
@@ -180,63 +181,28 @@ namespace MediaPortal.Music.Database
       set { _iRating = value; }
     }
 
-    public int NumberOfSongs
-    {
-      get { return _songs.Count; }
-    }
-
     public string Tracks
     {
       get
       {
-        string strTracks = "";
-        foreach (MusicSong song in _songs)
+        string strFormattedTracks = string.Empty;
+        string[] strTracks = _strTracks.Split(new char[] {'|'});
+        foreach (string track in strTracks)
         {
-          string strTmp = String.Format("{0}@{1}@{2}|", song.Track, song.SongName, song.Duration);
-          strTracks = strTracks + strTmp;
-        }
-        return strTracks;
-      }
-      set
-      {
-        _songs.Clear();
-        Tokens token = new Tokens(value, new char[] {'|'});
-        foreach (string strToken in token)
-        {
-          Tokens token2 = new Tokens(strToken, new char[] {'@'});
-          MusicSong song = new MusicSong();
-          int iTok = 0;
-          foreach (string strCol in token2)
-          {
-            switch (iTok)
-            {
-              case 0:
-                try
-                {
-                  song.Track = Int32.Parse(strCol);
-                }
-                catch (Exception) {}
-                break;
-              case 1:
-                song.SongName = strCol;
-                break;
+          string[] strTrackParts = track.Split(new char[] {'@'});
 
-              case 2:
-                try
-                {
-                  song.Duration = Int32.Parse(strCol);
-                }
-                catch (Exception) {}
-                break;
-            }
-            iTok++;
-          }
-          if (song.Track > 0)
+          if( strTrackParts.Count() < 3)
           {
-            _songs.Add(song);
+            continue;
           }
+          int iDuration;
+          int.TryParse(strTrackParts[2], out iDuration);
+          string strDuration = MediaPortal.Util.Utils.SecondsToHMSString(iDuration);
+          strFormattedTracks = strFormattedTracks + strTrackParts[0] + " - " + strTrackParts[1] + " " + strDuration + "\n";
         }
+        return strFormattedTracks;
       }
+      set { _strTracks = value; }
     }
 
     public bool Loaded
@@ -277,11 +243,6 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Public Methods
-
-    public MusicSong GetSong(int iSong)
-    {
-      return (MusicSong)_songs[iSong];
-    }
 
     public bool Parse(string html)
     {
@@ -468,15 +429,6 @@ namespace MediaPortal.Music.Database
 
       }
       return album;
-    }
-
-    public void SetSongs(ArrayList list)
-    {
-      _songs.Clear();
-      foreach (MusicSong song in list)
-      {
-        _songs.Add(song);
-      }
     }
 
     #endregion
