@@ -400,6 +400,12 @@ namespace TvControl
     /// <returns></returns>
     List<MpGenre> GetMpGenres();
 
+    /// <summary>
+    /// Returns a list of radio channel group names.
+    /// </summary>
+    /// <returns></returns>
+    List<string> GetRadioChannelGroupNames();
+
     #endregion
 
     #region streaming

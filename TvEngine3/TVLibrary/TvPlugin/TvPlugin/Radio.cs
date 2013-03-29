@@ -910,7 +910,7 @@ namespace TvPlugin
 
     public bool HasSetup()
     {
-      return true;
+      return false;
     }
 
     public bool DefaultEnabled()
@@ -943,11 +943,7 @@ namespace TvPlugin
       return "Connect to TV service to listen to analog, DVB and internet radio";
     }
 
-    public void ShowPlugin()
-    {
-      RadioSetupForm setup = new RadioSetupForm();
-      setup.ShowDialog();
-    }
+    public void ShowPlugin() { }
 
     #endregion
 
