@@ -12,10 +12,10 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%TVLibrary%" >> %log%
 
 echo.
 echo Building TV Server...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
+"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /tv:3.5 /p:TargetFrameworkVersion=v3.5 /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvLibrary.sln" >> %log%
 echo.
 echo Building TV Client plugin...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
+"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /tv:3.5 /p:TargetFrameworkVersion=v3.5 /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%TVLibrary%\TvPlugin\TvPlugin.sln" >> %log%
 
 echo.
 echo Reverting assemblies...

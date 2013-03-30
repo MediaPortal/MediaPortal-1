@@ -3319,6 +3319,12 @@ namespace MediaPortal.GUI.Video
       // Get all video files in selected folder and it's subfolders
       ArrayList playFiles = new ArrayList();
       AddVideoFiles(path, ref playFiles);
+
+      if(playFiles.Count == 0)
+      {
+        return;
+      }
+
       int selectedOption = 0;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -3364,21 +3370,28 @@ namespace MediaPortal.GUI.Video
         //
         case 0: // By name == 103
         case 103:
-          IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
-          // Add all files in temporary playlist
-          AddToPlayList(tmpPlayList, sortedPlayList);
+          AddToPlayList(tmpPlayList, playFiles.ToArray());
+          List<PlayListItem> sortedPlayListItems = new List<PlayListItem>();
+          sortedPlayListItems.AddRange(tmpPlayList);
+          sortedPlayListItems.Sort((item1, item2) => StringLogicalComparer.Compare(item1.Description, item2.Description));
+          tmpPlayList.Clear();
+
+          foreach (PlayListItem playListItem in sortedPlayListItems)
+          {
+            tmpPlayList.Add(playListItem);
+          }
+
           break;
 
         case 1: // By date (date modified) == 104
         case 104:
-          sortedPlayList = GetSortedPlayListbyDate(playFiles);
+          IOrderedEnumerable<object> sortedPlayList = playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
           AddToPlayList(tmpPlayList, sortedPlayList);
           break;
 
         case 2: // Shuffle == 191
         case 191:
-          sortedPlayList = GetSortedPlayListbyName(playFiles);
-          AddToPlayList(tmpPlayList, sortedPlayList);
+          AddToPlayList(tmpPlayList, playFiles.ToArray());
           tmpPlayList.Shuffle();
           break;
       }
@@ -3386,7 +3399,7 @@ namespace MediaPortal.GUI.Video
       PlayMovieFromPlayList(false, true);
     }
 
-    private void AddToPlayList(PlayList tmpPlayList, IOrderedEnumerable<object> sortedPlayList)
+    private void AddToPlayList(PlayList tmpPlayList, IEnumerable<object> sortedPlayList)
     {
       foreach (string file in sortedPlayList)
       {
@@ -3424,19 +3437,7 @@ namespace MediaPortal.GUI.Video
         tmpPlayList.Add(newItem);
       }
     }
-
-    // Sort by item description (Filename or DVD folder)
-    private IOrderedEnumerable<object> GetSortedPlayListbyName(ArrayList playFiles)
-    {
-      return playFiles.ToArray().OrderBy(fn => new PlayListItem().Description);
-    }
-
-    // Sort by modified date without path
-    private IOrderedEnumerable<object> GetSortedPlayListbyDate(ArrayList playFiles)
-    {
-      return playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
-    }
-
+    
     /// <summary>
     /// Adds file (full path) and it's stacked parts (method will search
     /// for them inside strFile folder) into videodatabase (movie table)

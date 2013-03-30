@@ -186,9 +186,6 @@ namespace MediaPortal.Player.Subtitles
 
   public class SubtitleRenderer
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
-
     private bool _useBitmap = false; // if false use teletext
     private int _activeSubPage = -1; // if use teletext, what page
     private static SubtitleRenderer _instance = null;
@@ -797,7 +794,7 @@ namespace MediaPortal.Player.Subtitles
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
           // enable alpha blending so that the subtitle is rendered with transparent background
-          FontEngineSetAlphaBlend(1); //TRUE
+          DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHABLENDENABLE, 1);
 
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering

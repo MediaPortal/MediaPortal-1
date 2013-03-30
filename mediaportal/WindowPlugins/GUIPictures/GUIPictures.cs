@@ -1157,11 +1157,11 @@ namespace MediaPortal.GUI.Pictures
 
           if (sortAsc)
           {
-            return String.Compare(item1.Label, item2.Label, true);
+            return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
           }
           else
           {
-            return String.Compare(item2.Label, item1.Label, true);
+            return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
           }
 
 
