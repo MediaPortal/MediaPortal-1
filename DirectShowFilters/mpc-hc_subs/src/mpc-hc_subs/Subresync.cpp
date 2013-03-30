@@ -41,6 +41,7 @@ void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
 
 		m_mode = VOBSUB;
 
+		ASSERT(pVSF->m_iLang >= 0);
 		CAtlArray<CVobSubFile::SubPos>& sp = pVSF->m_langs[pVSF->m_iLang].subpos;
 
 		for(int i = 0, j = sp.GetCount(); i < j; i++)
