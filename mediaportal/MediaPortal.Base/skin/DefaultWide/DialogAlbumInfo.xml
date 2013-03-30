@@ -137,7 +137,7 @@
     </control>
     <control Style="NoShadow">
       <description>Rating value</description>
-      <type>faelabel</type>
+      <type>fadelabel</type>
       <id>23</id>
       <posX>485</posX>
       <posY>230</posY>
