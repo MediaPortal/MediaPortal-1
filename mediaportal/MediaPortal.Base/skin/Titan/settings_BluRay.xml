@@ -27,8 +27,8 @@
     <description>Bluray regions</description>
     <type>image</type>
     <id>1</id>
-		<posX>986</posX>
-		<posY>685</posY>
+		<posX>1036</posX>
+		<posY>715</posY>
     <height>325</height>
     <width>650</width>
     <texture>BluRay_regions.png</texture>
@@ -84,9 +84,17 @@
 					<type>checkbutton</type>
 					<id>6</id>
 					<label>1196</label>
-					<ondown>7</ondown>
+					<ondown>8</ondown>
 					<onleft>#defaultcontrol.onleft</onleft>
 				</control>	
+				<control Style="SettingsCheckButtonLarge">
+					<description>Internal Blu_ray On/Off</description>
+					<type>checkbutton</type>
+					<id>8</id>
+					<label>1199</label>
+					<ondown>7</ondown>
+					<onleft>#defaultcontrol.onleft</onleft>
+				</control>
 			</control>
 			
   <control>
@@ -94,7 +102,7 @@
     <type>label</type>
     <id>1</id>
     <posX>686</posX>
-  	<posY>646</posY>
+  	<posY>706</posY>
 		<label>300220</label>
 		<textcolor>00b7ff</textcolor>
 		<font>fontB14</font>
@@ -107,9 +115,9 @@
 	  <type>spincontrol</type>
 	  <id>7</id>
     <posX>820</posX>
-  	<posY>706</posY>
+  	<posY>766</posY>
 		<onleft>7</onleft>
-		<onup>6</onup>
+		<onup>8</onup>
 		<ondown>2</ondown>
 		<align>right</align>
     <textcolor>ffffff</textcolor>

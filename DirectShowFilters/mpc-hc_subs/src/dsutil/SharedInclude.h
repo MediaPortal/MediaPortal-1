@@ -1,31 +1,36 @@
-#ifndef IncDSUtil_SharedInclude_h
-#define IncDSUtil_SharedInclude_h
+/*
+ * (C) 2009-2012 see Authors.txt
+ *
+ * This file is part of MPC-HC.
+ *
+ * MPC-HC is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MPC-HC is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-#pragma warning(disable:4018)
-#pragma warning(disable:4800)
-#pragma warning(disable:4355)
-#pragma warning(disable:4244)
+#pragma once
+
 #pragma warning(disable:4995)
-#pragma warning(disable:4996)
-#pragma warning(disable:4305)
-#pragma warning(disable:4200)
-#pragma warning(disable:4101)
-#pragma warning(disable:4101)
-#pragma warning(disable:4267)
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN // Exclude rarely-used stuff from Windows headers
+#endif
+
+#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN        // Exclude rarely-used stuff from Windows headers
+#endif
 
 #ifdef _DEBUG
-	#define _CRTDBG_MAP_ALLOC // include Microsoft memory leak detection procedures
-
-	#if 0
-		#include <crtdbg.h>
-		#define DNew new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	#else
-		#define DNew new(__FILE__, __LINE__)
-	#endif
-
-#else
-
-	#define DNew new
-
+#define _CRTDBG_MAP_ALLOC   // include Microsoft memory leak detection procedures
+#include <crtdbg.h>
 #endif
-#endif // IncDSUtil_SharedInclude_h
