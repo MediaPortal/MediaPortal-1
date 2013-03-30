@@ -27,8 +27,8 @@
     <description>Bluray regions</description>
     <type>image</type>
     <id>1</id>
-		<posX>986</posX>
-		<posY>685</posY>
+		<posX>1036</posX>
+		<posY>715</posY>
     <height>325</height>
     <width>650</width>
     <texture>BluRay_regions.png</texture>
