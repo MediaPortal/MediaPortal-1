@@ -1427,7 +1427,7 @@ namespace MediaPortal.Player
           if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
         }
         PostProcessFilterMPAudio.Clear();
-        Log.Info("VideoPlayer9: Cleanup MP Audio Swither");
+        Log.Info("VideoPlayer9: Cleanup PostProcess MediaPortal AudioSwitcher");
 
         if (_FFDShowAudio != null)
         {
@@ -1439,7 +1439,7 @@ namespace MediaPortal.Player
         {
           DirectShowUtil.ReleaseComObject(_audioSwitcher);
           _audioSwitcher = null;
-          Log.Info("VideoPlayer9: Cleanup _AudioSwitcher");
+          Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
 
         #endregion
@@ -1465,7 +1465,6 @@ namespace MediaPortal.Player
         GC.Collect();
         GC.Collect();
         GC.Collect();
-        GC.WaitForPendingFinalizers();
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;

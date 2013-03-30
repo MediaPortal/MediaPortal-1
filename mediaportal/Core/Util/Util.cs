@@ -39,6 +39,7 @@ using System.ServiceProcess;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Player;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
@@ -640,7 +641,8 @@ namespace MediaPortal.Util
     {
       if (item == null || String.IsNullOrEmpty(item.Path))
       {
-        Log.Debug("SetThumbnails: nothing to do.");
+        //Disable verbose logging
+        //Log.Debug("SetThumbnails: nothing to do.");
         return;
       }
 
@@ -650,7 +652,8 @@ namespace MediaPortal.Util
       {
         if (!IsVideo(item.Path))
         {
-          Log.Debug("SetThumbnails: nothing to do.");
+          //Disable verbose logging
+          //Log.Debug("SetThumbnails: nothing to do.");
           return;
         }
 
@@ -2066,6 +2069,15 @@ namespace MediaPortal.Util
                 OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
+              if (IsISOImage(strFile))
+              {
+                if (!String.IsNullOrEmpty(DaemonTools.GetVirtualDrive()) &&
+                    (g_Player.IsBDDirectory(DaemonTools.GetVirtualDrive()) ||
+                    g_Player.IsDvdDirectory(DaemonTools.GetVirtualDrive())))
+                {
+                  DaemonTools.UnMount();
+                }
+              }
               return true;
             }
             else
@@ -4659,6 +4671,43 @@ namespace MediaPortal.Util
     {
       return source.Select(i => actionOnItem.DoAsync(i))
         .ToArray();
+    }
+  }
+  
+  public class StringLogicalComparer : IComparer, IComparer<string>
+  {
+    public static int Compare(string x, string y)
+    {
+      return CompareStrings(x, y);
+    }
+
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+    private static extern int StrCmpLogicalW(string x, string y);
+
+    private static int CompareStrings(string x, string y)
+    {
+      return StrCmpLogicalW(x, y);
+    }
+
+    private static int CompareObjects(object x, object y)
+    {
+      return StrCmpLogicalW((string) x, (string) y);
+    }
+
+    int IComparer<string>.Compare(string x, string y)
+    {
+      if (null == x && null == y) return 0;
+      if (null == x) return -1;
+      if (null == y) return 1;
+      return Compare(x, y);
+    }
+
+    int IComparer.Compare(object x, object y)
+    {
+      if (null == x && null == y) return 0;
+      if (null == x) return -1;
+      if (null == y) return 1;
+      return CompareObjects(x, y);
     }
   }
 }

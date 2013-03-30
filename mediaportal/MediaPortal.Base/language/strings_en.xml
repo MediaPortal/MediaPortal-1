@@ -995,6 +995,7 @@
     <String id="1196">Enable Subtitles</String>
     <String id="1197">Turn off DXVA</String>
     <String id="1198">DVD Navigator</String>
+    <String id="1199">Enable Internal Blu-ray Player</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
     <String id="1202">Auto</String>
@@ -1089,6 +1090,7 @@
     <String id="1317">Downloading internal scripts...</String>
     <String id="1318">Save subtitle</String>
     <String id="1319">Save modified subtitle file?</String>
+    <String id="1320">{0} as {1} &#10;</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -1946,9 +1948,9 @@
     <String id="101007">Volume</String>
     <String id="101008">General - Dynamic refresh rate</String>
     <String id="101010">Videos - Database</String>
-    <String id="101011">Music- Database</String>
-    <String id="101012">Pictures- Database</String>
-    <String id="101013">Music- Now Playing</String>
+    <String id="101011">Music - Database</String>
+    <String id="101012">Pictures - Database</String>
+    <String id="101013">Music - Now Playing</String>
     <String id="101014">Playlist</String>
     <String id="101015">Pictures - Slideshow</String>
     <String id="101016">General</String>
@@ -2269,7 +2271,7 @@
     <String id="300166">Strip artist prefix (The Who -&gt; Who, The)</String>
     <String id="300167">Treat tracks in folder as an album</String>
     <String id="300168">Use for thumb creation</String>
-    <String id="300169">folder.jpg (recommended)</String>
+    <String id="300169">folder.jpg</String>
     <String id="300170">*.png, *jpg (prefers front cover)</String>
     <String id="300171">Cover art embedded in ID3-Tags</String>
     <String id="300172">Create genre preview thumbs</String>

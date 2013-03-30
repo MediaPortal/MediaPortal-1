@@ -60,9 +60,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>714</posY>
-			<width>250</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.tvseries.latest1.serieName</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -76,13 +76,13 @@
       <description>Episode 1 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>714</posY>
-			<width>300</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
-      <label>S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex/#latestMediaHandler.tvseries.latest1.episodeName</label>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest1.seasonIndexE#latestMediaHandler.tvseries.latest1.episodeIndex</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
       <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
@@ -114,9 +114,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>750</posY>
-			<width>350</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.tvseries.latest2.serieName</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -130,13 +130,13 @@
       <description>Episode 2 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>750</posY>
-			<width>300</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
-      <label>S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex/#latestMediaHandler.tvseries.latest2.episodeName</label>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest2.seasonIndexE#latestMediaHandler.tvseries.latest2.episodeIndex</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
       <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>
@@ -168,9 +168,9 @@
       <id>0</id>
       <posX>544</posX>
 			<posY>788</posY>
-			<width>350</width>
+			<width>600</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
+			<font>font12</font>
       <label>#latestMediaHandler.tvseries.latest3.serieName</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
@@ -184,13 +184,13 @@
       <description>Episode 3 year</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>950</posX>
+      <posX>1215</posX>
 			<posY>788</posY>
-			<width>300</width>
+			<width>200</width>
 			<textcolor>ff000000</textcolor>
-			<font>fontB12</font>
-			<textalign>right</textalign>
-      <label>S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex/#latestMediaHandler.tvseries.latest3.episodeName</label>
+			<font>font12</font>
+			<align>right</align>
+      <label>S#latestMediaHandler.tvseries.latest3.seasonIndexE#latestMediaHandler.tvseries.latest3.episodeIndex</label>
       <visible>control.hasfocus(7)+string.equals(#latestMediaHandler.tvseries.latest.enabled,true) + plugin.isenabled(MP-TV Series)</visible>
 			<animation effect="fade" start="100" end="0" time="0">Hidden</animation>
       <animation effect="zoom" start="100,100" end="102,102" time="200">Visible</animation>

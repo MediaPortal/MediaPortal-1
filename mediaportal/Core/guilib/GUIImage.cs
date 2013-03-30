@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Animation;
-using System.Xml;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing.Imaging;
@@ -38,43 +37,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIImage : GUIControl
   {
-    public enum FontEngineBlendMode
-    {
-      BLEND_NONE = 0,
-      BLEND_DIFFUSE = 1,
-      BLEND_OVERLAY = 2
-    }
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color,
-                                                            float[,] matrix);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                             float uoff, float voff, float umax, float vmax, int color,
-                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
-                                                             float umax2, float vmax2,
-                                                             FontEngineBlendMode blendMode);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
-                                                                  float uoff, float voff, float umax, float vmax,
-                                                                  int color,
-                                                                  float[,] matrix, int textureNo2, float uoff2,
-                                                                  float voff2,
-                                                                  float umax2, float vmax2);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawMaskedTexture2(int textureNo1, float x, float y, float nw, float nh,
-                                                                   float uoff, float voff, float umax, float vmax,
-                                                                   int color,
-                                                                   float[,] matrix, int textureNo2, float uoff2,
-                                                                   float voff2,
-                                                                   float umax2, float vmax2, int textureNo3, float uoff3,
-                                                                   float voff3, float umax3, float vmax3,
-                                                                   FontEngineBlendMode blendMode);
-
     /// <summary>
     /// enum to specify the border position
     /// </summary>
@@ -682,14 +644,16 @@ namespace MediaPortal.GUI.Library
       */
       try
       {
-        if (GUIGraphicsContext.DX9Device == null)
+        if (GUIGraphicsContext.DX9Device == null )
         {
           return;
         }
+
         if (GUIGraphicsContext.DX9Device.Disposed)
         {
           return;
         }
+
         if (string.IsNullOrEmpty(_textureFileNameTag))
         {
           return;
@@ -697,137 +661,114 @@ namespace MediaPortal.GUI.Library
 
         if (_registeredForEvent == false && _containsProperty)
         {
-          GUIPropertyManager.OnPropertyChanged -=
-            new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-          GUIPropertyManager.OnPropertyChanged +=
-            new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+          GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
+          GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
           _registeredForEvent = true;
         }
         _propertyChanged = false;
 
-        //reset animation
+        // reset animation
         BeginAnimation();
-
         _listTextures = null;
 
-        string textureFiles = _textureFileNameTag;
-        if (textureFiles.ToUpper().Contains(".XML"))
+        if (_blendableFileName != "" &&
+            GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
+                                               out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth, out _blendableTexHeight,
+                                               out _blendableTexture, out _packedBlendableTextureNo))
         {
-          LoadAnimation(ref textureFiles);
-        }
-        if (_blendableFileName != "")
-        {
-          if (GUITextureManager.GetPackedTexture(_blendableFileName, out _blendabletexUoff, out _blendabletexVoff,
-                                                 out _blendabletexUmax, out _blendabletexVmax, out _blendableTexWidth,
-                                                 out _blendableTexHeight, out _blendableTexture, out _packedBlendableTextureNo))
-          {
-            _reCalculate = true;
-          }
+          _reCalculate = true;
         }
 
-        foreach (string file in textureFiles.Split(';'))
+        // get the filename of the texture
+        string fileName = _textureFileNameTag;
+        if (_containsProperty)
         {
-          //get the filename of the texture
-          string fileName = file;
-          if (_containsProperty)
-          {
-            fileName = _cachedTextureFileName = GUIPropertyManager.Parse(file);
-          }
-          if (fileName.Length == 0)
-          {
-            continue;
-          }
+          fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
+        }
 
-          if (logtextures)
-          {
-            Log.Info("GUIImage:AllocResources:{0} {1}", fileName, _debugGuid);
-            Log.Info("stacktrace: {0} ", _debugCaller);
-          }
-          if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
-                                                 out _textureWidth, out _textureHeight, out _packedTexture,
-                                                 out _packedTextureNo))
-          {
-            _reCalculate = true;
-            _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
-            _packedTexture.Disposing += new EventHandler(OnPackedTexturesDisposedEvent);
-            return;
-          }
+        if (logtextures)
+        {
+          Log.Debug("GUIImage:AllocResources:{0} {1}", fileName, _debugGuid);
+          Log.Debug("stacktrace: {0} ", _debugCaller);
+        }
 
-          //load the texture
-          int frameCount = 0;
-          if (fileName.StartsWith("["))
-          {
-            if (_memoryImageWidth != 0 && _memoryImageHeight != 0)
-            {
-              Bitmap bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
-              using (Image memoryImage = bitmap)
-              {
-                frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey,
-                                                                out _memoryImageTexture);
-              }
-            }
-            else
-              frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey,
-                                                              out _memoryImageTexture);
+        if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
+                                               out _textureWidth, out _textureHeight,
+                                               out _packedTexture, out _packedTextureNo))
+        {
+          _reCalculate = true;
+          _packedTexture.Disposing -= OnPackedTexturesDisposedEvent;
+          _packedTexture.Disposing += OnPackedTexturesDisposedEvent;
+          return;
+        }
 
-            if (0 == frameCount)
-            {
-              continue; // unable to load texture
-            }
+        // load the texture
+        int frameCount;
+        if (fileName.StartsWith("["))
+        {
+          if (_memoryImageWidth != 0 && _memoryImageHeight != 0)
+          {
+            var bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, PixelFormat.Format32bppArgb);
+            Image memoryImage = bitmap;
+            frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
           }
           else
           {
-            //Log.Info("load:{0}", fileName);
-            frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
-            if (0 == frameCount)
-            {
-              continue; // unable to load texture
-            }
+            frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey, out _memoryImageTexture);
           }
-          //get each frame of the texture
-          int iStartCopy = 0;
-          CachedTexture.Frame[] _saveList = null;
-          if (_listTextures == null)
+        }
+        else
+        {
+          frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
+        }
+
+        if (frameCount == 0)
+        {
+          return; // unable to load texture
+        }
+        
+        // get each frame of the texture
+        int iStartCopy = 0;
+        CachedTexture.Frame[] saveList = null;
+        if (_listTextures == null)
+        {
+          _listTextures = new CachedTexture.Frame[frameCount];
+        }
+        else
+        {
+          int newLength = _listTextures.Length + frameCount;
+          iStartCopy    = _listTextures.Length;
+          var newList   = new CachedTexture.Frame[newLength];
+          saveList      = new CachedTexture.Frame[_listTextures.Length];
+          _listTextures.CopyTo(saveList, 0);
+          _listTextures.CopyTo(newList, 0);
+          _listTextures = new CachedTexture.Frame[newLength];
+          newList.CopyTo(_listTextures, 0);
+        }
+        for (int i = 0; i < frameCount; i++)
+        {
+          _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);
+          if (_listTextures[i + iStartCopy] != null)
           {
-            _listTextures = new CachedTexture.Frame[frameCount];
+            _listTextures[i + iStartCopy].Disposed += OnListTexturesDisposedEvent;
           }
           else
           {
-            int newLength = _listTextures.Length + frameCount;
-            iStartCopy = _listTextures.Length;
-            CachedTexture.Frame[] _newList = new CachedTexture.Frame[newLength];
-            _saveList = new CachedTexture.Frame[_listTextures.Length];
-            _listTextures.CopyTo(_saveList, 0);
-            _listTextures.CopyTo(_newList, 0);
-            _listTextures = new CachedTexture.Frame[newLength];
-            _newList.CopyTo(_listTextures, 0);
-          }
-          for (int i = 0; i < frameCount; i++)
-          {
-            _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth,
-                                                                         out _textureHeight); //,m_pPalette);
-            if (_listTextures[i + iStartCopy] != null)
+            Log.Debug("GUIImage.AllocResources -> Filename={0} i={1} FrameCount={2}", fileName, i, frameCount);
+            if (saveList != null)
             {
-              _listTextures[i + iStartCopy].Disposed += new EventHandler(OnListTexturesDisposedEvent);
+              _listTextures = new CachedTexture.Frame[saveList.Length];
+              saveList.CopyTo(_listTextures, 0);
             }
             else
             {
-              Log.Debug("GUIImage.AllocResources -> Filename = (" + fileName + ") i=" + i.ToString() + " FrameCount=" +
-                        frameCount.ToString());
-              if (_saveList != null)
-              {
-                _listTextures = new CachedTexture.Frame[_saveList.Length];
-                _saveList.CopyTo(_listTextures, 0);
-              }
-              else
-              {
-                UnsubscribeAndReleaseListTextures();
-              }
-              _currentFrameNumber = 0;
-              break;
+              UnsubscribeAndReleaseListTextures();
             }
+            _currentFrameNumber = 0;
+            break;
           }
         }
+        
         // Set state to render the image
         _reCalculate = true;
         base.AllocResources();
@@ -1487,7 +1428,7 @@ namespace MediaPortal.GUI.Library
               // Compute the number of textures to draw in the control and draw the texture.
               float umax = _nw / x;
               float vmax = _nh / x;
-              texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+              texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
             }
             else
             {
@@ -1513,16 +1454,16 @@ namespace MediaPortal.GUI.Library
                   umaxm = _masktexUmax + _masktexUoff;
                   vmaxm = _masktexVmax + _masktexVoff;
 
-                  FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
-                                              (int)color, matrix,
-                                              _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                  DXNative.FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
+                                                       color, matrix,
+                                                       _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                 }
               }
               else
               {
                 // Default behavior, draw the image texture with no mask.
-                FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
-                                    matrix);
+                DXNative.FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
+                                               matrix);
               }
             }
 
@@ -1598,18 +1539,18 @@ namespace MediaPortal.GUI.Library
                     umaxm = _masktexUmax + _masktexUoff;
                     vmaxm = _masktexVmax + _masktexVoff;
 
-                    FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                 (int)color, m,
-                                                 _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                                 _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
-                                                 _blendMode);
+                    DXNative.FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                          color, m,
+                                                          _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                          _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
+                                                          _blendMode);
                   }
                 }
                 else
                 {
-                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m,
-                                         _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                         _blendMode);
+                  DXNative.FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color, m,
+                                                  _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                  _blendMode);
                 }
 
                 // Draw flipped image border.
@@ -1693,7 +1634,7 @@ namespace MediaPortal.GUI.Library
                 // Compute the number of textures to draw in the control and draw the texture.
                 float umax = _nw / x;
                 float vmax = _nh / x;
-                frame.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+                frame.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, color);
               }
               else
               {
@@ -1715,13 +1656,13 @@ namespace MediaPortal.GUI.Library
                     umaxm = _masktexUmax + _masktexUoff;
                     vmaxm = _masktexVmax + _masktexVoff;
 
-                    frame.DrawMasked(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
+                    frame.DrawMasked(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
                                      _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                   }
                 }
                 else
                 {
-                  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
+                  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color);
                 }
               }
 
@@ -1800,19 +1741,18 @@ namespace MediaPortal.GUI.Library
                       umaxm = _masktexUmax + _masktexUoff;
                       vmaxm = _masktexVmax + _masktexVoff;
 
-                      FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
-                                                   (int)color, matrix,
-                                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                                   _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm,
-                                                   _blendMode);
+                      DXNative.FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                            color, matrix,
+                                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                            _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm, _blendMode);
                     }
                   }
                   else
                   {
-                    FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
-                                           matrix,
-                                           _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                           _blendMode);
+                    DXNative.FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, color,
+                                                    matrix,
+                                                    _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                                    _blendMode);
                   }
                 }
                 
@@ -1882,7 +1822,7 @@ namespace MediaPortal.GUI.Library
 
       CachedTexture.Frame texture = null;
       CachedTexture.Frame cornerTexture = null;
-      int mergedBorderColorKey = (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
+      uint mergedBorderColorKey = GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
       int itw, ith;
       int ictw, icth;
       float textureWidth;
@@ -2243,30 +2183,30 @@ namespace MediaPortal.GUI.Library
           if (flip)
           {
             // Upper left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
 
             // Upper right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
           }
           else
           {
             // Upper left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
 
             // Upper right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
           }
         }
       }
@@ -2397,30 +2337,30 @@ namespace MediaPortal.GUI.Library
           if (flip)
           {
             // Lower left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
 
             // Lower right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
-                                   FontEngineBlendMode.BLEND_DIFFUSE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            _packedBlendableTextureNo, _blendabletexUoffCalc, _blendabletexVoffCalc, _blendabletexUmaxCalc, _blendabletexVmaxCalc,
+                                            FontEngineBlendMode.BLEND_DIFFUSE);
           }
           else
           {
             // Lower left corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                   cvmaxLeft, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                            cvmaxLeft, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
 
             // Lower right corner
-            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                   cumaxRight, cvmaxRight, mergedBorderColorKey, m,
-                                   cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
-                                   FontEngineBlendMode.BLEND_NONE);
+            DXNative.FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                            cumaxRight, cvmaxRight, mergedBorderColorKey, m,
+                                            cornerTexture.TextureNumber, cuRight, cvRight, cumaxRight, cvmaxRight,
+                                            FontEngineBlendMode.BLEND_NONE);
           }
         }
       }
@@ -2814,68 +2754,6 @@ namespace MediaPortal.GUI.Library
       _memoryImageTexture = null;
       GUITextureManager.ReleaseTexture(_textureFileNameTag);
       _textureFileNameTag = String.Empty;
-    }
-
-    protected void LoadAnimation(ref string textureFiles)
-    {
-      string fileName = GUIGraphicsContext.GetThemedSkinFile("\\" + textureFiles);
-      try
-      {
-        XmlTextReader reader = new XmlTextReader(fileName);
-        reader.WhitespaceHandling = WhitespaceHandling.None;
-        // Parse the file and display each of the nodes.
-        while (reader.Read())
-        {
-          if (reader.NodeType == XmlNodeType.Element)
-          {
-            switch (reader.Name)
-            {
-              case "textures":
-                {
-                  while (reader.Read())
-                  {
-                    if (reader.NodeType == XmlNodeType.EndElement)
-                    {
-                      break;
-                    }
-                    if (reader.NodeType == XmlNodeType.Text)
-                    {
-                      textureFiles = reader.Value;
-                    }
-                  }
-                  break;
-                }
-              case "RepeatBehavior":
-                {
-                  while (reader.Read())
-                  {
-                    if (reader.NodeType == XmlNodeType.EndElement)
-                    {
-                      break;
-                    }
-                    if (reader.NodeType == XmlNodeType.Text)
-                    {
-                      if (reader.Value.CompareTo("Forever") == 0)
-                      {
-                        _repeatBehavior = RepeatBehavior.Forever;
-                      }
-                      else
-                      {
-                        _repeatBehavior = new RepeatBehavior(double.Parse(reader.Value));
-                      }
-                    }
-                  }
-                  break;
-                }
-            }
-          }
-        }
-      }
-      catch (FileNotFoundException)
-      {
-        //ignore
-        return;
-      }
     }
 
     public bool TileFill
