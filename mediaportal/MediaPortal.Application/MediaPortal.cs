@@ -346,16 +346,21 @@ public class MediaPortalApp : D3D, IRender
         }
 
         #if !DEBUG
-        _avoidVersionChecking = false;
-        if (arg.ToLowerInvariant() == "/avoidversioncheck")
-        {
-          _avoidVersionChecking = true;
-          Log.Warn("Version check is disabled by command line switch \"/avoidVersionCheck\"");
-        }
-        #endif
+        _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
+         #endif
       }
     }
 
+    // check if MediaPotal is already running
+    using (var processLock = new ProcessLock(MPMutex))
+    {
+      if (processLock.AlreadyExists)
+      {
+        Log.Warn("Main: MediaPortal is already running");
+        Win32API.ActivatePreviousInstance();
+      }
+    }
+   
     if (string.IsNullOrEmpty(_alternateConfig))
     {
       Log.BackupLogFiles();
@@ -538,13 +543,11 @@ public class MediaPortalApp : D3D, IRender
 
       var mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
       Log.Info("Main: Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
+
+      #pragma warning disable 168
       using (var processLock = new ProcessLock(MPMutex))
+      #pragma warning restore 168
       {
-        if (processLock.AlreadyExists)
-        {
-          Log.Warn("Main: MediaPortal is already running");
-          Win32API.ActivatePreviousInstance();
-        }
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
 

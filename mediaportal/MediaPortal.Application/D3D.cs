@@ -711,7 +711,8 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = false;
         }
-        Show();
+        // TODO: REMOVE
+        //Show();
         WindowState = FormWindowState.Normal;
         Activate();
 
@@ -758,7 +759,8 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = true;
         }
-        Hide();
+        // TODO: REMOVE
+        //Hide();
         WindowState = FormWindowState.Minimized;
  
         // pause player and mute audio
