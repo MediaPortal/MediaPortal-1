@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Thumbs.cs" />
     <Compile Include="VideoThumbCreator\ImageFast.cs" />
     <Compile Include="ThumbProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,6 +60,10 @@
     <ProjectReference Include="..\Plugins\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
+      <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>
+      <Name>TvBusinessLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TVDatabase.csproj">
       <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>

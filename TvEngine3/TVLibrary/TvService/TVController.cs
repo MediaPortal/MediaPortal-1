@@ -868,6 +868,14 @@ namespace TvService
           _streamer = null;
           Log.Info("Controller: streamer stopped...");
         }
+        //stop the thumbnail processor
+        if (_thumbProcessor != null)
+        {
+          Log.Info("Controller: stop thumb processor...");
+          _thumbProcessor.Stop();
+          _thumbProcessor = null;
+          Log.Info("Controller: thumb processor stopped...");
+        }
         //stop the recording scheduler
         if (_scheduler != null)
         {
@@ -875,12 +883,6 @@ namespace TvService
           _scheduler.Stop();
           _scheduler = null;
           Log.Info("Controller: scheduler stopped...");
-        }
-        //stop the thumbnail processor
-        if (_thumbProcessor != null)
-        {
-          _thumbProcessor.Stop();
-          _thumbProcessor = null;
         }
         //stop the epg grabber
         StopEPGgrabber();

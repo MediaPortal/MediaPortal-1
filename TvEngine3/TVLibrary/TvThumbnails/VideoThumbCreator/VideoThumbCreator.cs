@@ -36,12 +36,6 @@ namespace TvThumbnails.VideoThumbCreator
 
     private static readonly string _extractorPath = ExtractorPath();
 
-    private static int _previewColumns = 2;
-
-    private static int _previewRows = 2;
-
-    private static bool _leaveShareThumb = false;
-
     public static string ExtractorPath()
     {
       string currentPath = Assembly.GetCallingAssembly().Location;
@@ -87,9 +81,28 @@ namespace TvThumbnails.VideoThumbCreator
 
       bool Success = false;
       string strFilenamewithoutExtension = Path.ChangeExtension(aVideoPath, null);
-      string ffmpegArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",5),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", _previewColumns, _previewRows);
-      string ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_s.jpg\"", preGapSec, aVideoPath, ffmpegArgs, strFilenamewithoutExtension);
-      string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_s.jpg\"", 5, aVideoPath, ffmpegArgs, strFilenamewithoutExtension);
+
+      string ffmpegArgs =
+        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,5),") +
+        string.Format("yadif=0:-1:0,") +
+        string.Format("scale={0}:{1},", 600, 337) +
+        string.Format("setsar=1:1,") +
+        string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
+
+      string ExtractorArgs =
+        string.Format("-loglevel quiet -ss {0} ", preGapSec) +
+        string.Format("-i \"{0}\" ", aVideoPath) + 
+        string.Format("-vf {0} ", ffmpegArgs) + 
+        string.Format("-vframes 1 -vsync 0 ") +
+        string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
+
+      string ExtractorFallbackArgs =
+        string.Format("-loglevel quiet -ss 5 ") +
+        string.Format("-i \"{0}\" ", aVideoPath) +
+        string.Format("-vf {0} ", ffmpegArgs) +
+        string.Format("-vframes 1 -vsync 0 ") +
+        string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
+
       try
       {
         // Use this for the working dir to be on the safe side
@@ -97,8 +110,8 @@ namespace TvThumbnails.VideoThumbCreator
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        if ((_leaveShareThumb && !File.Exists(ShareThumb)) // No thumb in share although it should be there
-            || (!_leaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
+        if ((Thumbs.LeaveShareThumb && !File.Exists(ShareThumb)) // No thumb in share although it should be there
+            || (!Thumbs.LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
           Success = StartProcess(_extractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
@@ -140,7 +153,7 @@ namespace TvThumbnails.VideoThumbCreator
         else
         {
           // We have a thumbnail in share but the cache was wiped out - make sure it is recreated
-          if (_leaveShareThumb && !File.Exists(aThumbPath)) // && !File.Exists(aThumbPath))
+          if (Thumbs.LeaveShareThumb && !File.Exists(aThumbPath)) // && !File.Exists(aThumbPath))
             Success = true;
         }
 
@@ -150,12 +163,13 @@ namespace TvThumbnails.VideoThumbCreator
         {
           if (Success)
           {
-            CreateThumbnail(ShareThumb, aThumbPath, 400, 400, 0);
+            int width = (int)Thumbs.ThumbLargeResolution;
+            CreateThumbnail(ShareThumb, aThumbPath, width, width, 0);
             //CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
             //                        (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
           }
 
-          if (!_leaveShareThumb)
+          if (!Thumbs.LeaveShareThumb)
           {
             try
             {
@@ -270,9 +284,9 @@ namespace TvThumbnails.VideoThumbCreator
           //myBitmap.SetResolution(aDrawingImage.HorizontalResolution, aDrawingImage.VerticalResolution);
           using (Graphics g = Graphics.FromImage(myBitmap))
           {
-            g.CompositingQuality = CompositingQuality.Default;
-            g.InterpolationMode = InterpolationMode.Default;
-            g.SmoothingMode = SmoothingMode.Default;
+            g.CompositingQuality = Thumbs.Compositing;
+            g.InterpolationMode = Thumbs.Interpolation;
+            g.SmoothingMode = Thumbs.Smoothing;
             g.DrawImage(aDrawingImage, new Rectangle(0, 0, iWidth, iHeight));
             myTargetThumb = myBitmap;
           }

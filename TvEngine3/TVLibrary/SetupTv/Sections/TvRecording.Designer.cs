@@ -66,6 +66,24 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tpDiskQuota = new System.Windows.Forms.TabPage();
+      this.groupBoxThumbQuality = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelRecommendedCurrent = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelRecommendedHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelHigh = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelLow = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelQualityHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.trackBarQuality = new System.Windows.Forms.TrackBar();
+      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.numericUpDownThumbRows = new System.Windows.Forms.NumericUpDown();
+      this.numericUpDownThumbColumns = new System.Windows.Forms.NumericUpDown();
+      this.checkBoxShareThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelRows = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonClearTVThumbs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelCol = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tpRecording = new System.Windows.Forms.TabPage();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.enableDiskQuota = new System.Windows.Forms.CheckBox();
       this.mpNumericTextBoxDiskQuota = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
@@ -76,7 +94,6 @@ namespace SetupTv.Sections
       this.labelTotalDiskSpace = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
       this.label11 = new System.Windows.Forms.Label();
-      this.tpRecording = new System.Windows.Forms.TabPage();
       this.groupBoxRecordSettings = new System.Windows.Forms.GroupBox();
       this.buttonSameRecFolder = new System.Windows.Forms.Button();
       this.textBoxRecordingFormat = new System.Windows.Forms.TextBox();
@@ -95,6 +112,14 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.labelCurrentSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCurrentResolution = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelResolution = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -108,7 +133,13 @@ namespace SetupTv.Sections
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.tpDiskQuota.SuspendLayout();
+      this.groupBoxThumbQuality.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarQuality)).BeginInit();
+      this.groupBox5.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbRows)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbColumns)).BeginInit();
       this.tpRecording.SuspendLayout();
+      this.groupBox4.SuspendLayout();
       this.groupBoxRecordSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.tpRecordImport.SuspendLayout();
@@ -144,8 +175,7 @@ namespace SetupTv.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxRecording);
       this.groupBox1.Controls.Add(this.groupBoxScheduler);
@@ -153,7 +183,7 @@ namespace SetupTv.Sections
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(451, 492);
+      this.groupBox1.Size = new System.Drawing.Size(451, 363);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
@@ -549,122 +579,234 @@ namespace SetupTv.Sections
       // 
       // tpDiskQuota
       // 
-      this.tpDiskQuota.Controls.Add(this.mpLabel5);
-      this.tpDiskQuota.Controls.Add(this.enableDiskQuota);
-      this.tpDiskQuota.Controls.Add(this.mpNumericTextBoxDiskQuota);
-      this.tpDiskQuota.Controls.Add(this.label14);
-      this.tpDiskQuota.Controls.Add(this.comboBoxDrive);
-      this.tpDiskQuota.Controls.Add(this.labelFreeDiskspace);
-      this.tpDiskQuota.Controls.Add(this.label9);
-      this.tpDiskQuota.Controls.Add(this.labelTotalDiskSpace);
-      this.tpDiskQuota.Controls.Add(this.label10);
-      this.tpDiskQuota.Controls.Add(this.label11);
+      this.tpDiskQuota.Controls.Add(this.groupBoxThumbQuality);
+      this.tpDiskQuota.Controls.Add(this.groupBox5);
       this.tpDiskQuota.Location = new System.Drawing.Point(4, 22);
       this.tpDiskQuota.Name = "tpDiskQuota";
       this.tpDiskQuota.Size = new System.Drawing.Size(463, 501);
       this.tpDiskQuota.TabIndex = 2;
-      this.tpDiskQuota.Text = "Disk quota";
+      this.tpDiskQuota.Text = "Thumbs";
       this.tpDiskQuota.UseVisualStyleBackColor = true;
       // 
-      // mpLabel5
+      // groupBoxThumbQuality
       // 
-      this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(302, 163);
-      this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
-      this.mpLabel5.TabIndex = 10;
-      this.mpLabel5.Text = "MB free space.";
+      this.groupBoxThumbQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentSmoothing);
+      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentInterpolation);
+      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentCompositing);
+      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentResolution);
+      this.groupBoxThumbQuality.Controls.Add(this.labelSmoothing);
+      this.groupBoxThumbQuality.Controls.Add(this.labelInterpolation);
+      this.groupBoxThumbQuality.Controls.Add(this.labelCompositing);
+      this.groupBoxThumbQuality.Controls.Add(this.labelResolution);
+      this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedCurrent);
+      this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedHint);
+      this.groupBoxThumbQuality.Controls.Add(this.labelHigh);
+      this.groupBoxThumbQuality.Controls.Add(this.labelLow);
+      this.groupBoxThumbQuality.Controls.Add(this.labelQualityHint);
+      this.groupBoxThumbQuality.Controls.Add(this.trackBarQuality);
+      this.groupBoxThumbQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxThumbQuality.Location = new System.Drawing.Point(6, 163);
+      this.groupBoxThumbQuality.Name = "groupBoxThumbQuality";
+      this.groupBoxThumbQuality.Size = new System.Drawing.Size(446, 196);
+      this.groupBoxThumbQuality.TabIndex = 29;
+      this.groupBoxThumbQuality.TabStop = false;
+      this.groupBoxThumbQuality.Text = "Quality settings";
       // 
-      // enableDiskQuota
+      // labelRecommendedCurrent
       // 
-      this.enableDiskQuota.AccessibleName = "";
-      this.enableDiskQuota.AutoSize = true;
-      this.enableDiskQuota.Location = new System.Drawing.Point(30, 75);
-      this.enableDiskQuota.Name = "enableDiskQuota";
-      this.enableDiskQuota.Size = new System.Drawing.Size(111, 17);
-      this.enableDiskQuota.TabIndex = 11;
-      this.enableDiskQuota.Text = "Enable disk quota";
-      this.enableDiskQuota.UseVisualStyleBackColor = true;
-      this.enableDiskQuota.CheckedChanged += new System.EventHandler(this.enableDiskQuota_CheckedChanged);
+      this.labelRecommendedCurrent.AutoSize = true;
+      this.labelRecommendedCurrent.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelRecommendedCurrent.Location = new System.Drawing.Point(9, 156);
+      this.labelRecommendedCurrent.Name = "labelRecommendedCurrent";
+      this.labelRecommendedCurrent.Size = new System.Drawing.Size(78, 13);
+      this.labelRecommendedCurrent.TabIndex = 2;
+      this.labelRecommendedCurrent.Text = "LCDs, Plasmas";
       // 
-      // mpNumericTextBoxDiskQuota
+      // labelRecommendedHint
       // 
-      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(234, 160);
-      this.mpNumericTextBoxDiskQuota.Name = "mpNumericTextBoxDiskQuota";
-      this.mpNumericTextBoxDiskQuota.Size = new System.Drawing.Size(62, 20);
-      this.mpNumericTextBoxDiskQuota.TabIndex = 9;
-      this.mpNumericTextBoxDiskQuota.Text = "13";
-      this.mpNumericTextBoxDiskQuota.Value = 13;
-      this.mpNumericTextBoxDiskQuota.Leave += new System.EventHandler(this.mpNumericTextBoxDiskQuota_Leave);
+      this.labelRecommendedHint.AutoSize = true;
+      this.labelRecommendedHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelRecommendedHint.Location = new System.Drawing.Point(9, 139);
+      this.labelRecommendedHint.Name = "labelRecommendedHint";
+      this.labelRecommendedHint.Size = new System.Drawing.Size(113, 13);
+      this.labelRecommendedHint.TabIndex = 1;
+      this.labelRecommendedHint.Text = "Recommended for:";
       // 
-      // label14
+      // labelHigh
       // 
-      this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(27, 163);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(201, 13);
-      this.label14.TabIndex = 6;
-      this.label14.Text = "Delete recordings when there is less than";
+      this.labelHigh.AutoSize = true;
+      this.labelHigh.Location = new System.Drawing.Point(208, 22);
+      this.labelHigh.Name = "labelHigh";
+      this.labelHigh.Size = new System.Drawing.Size(39, 13);
+      this.labelHigh.TabIndex = 3;
+      this.labelHigh.Text = "Quality";
       // 
-      // comboBoxDrive
+      // labelLow
       // 
-      this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDrive.FormattingEnabled = true;
-      this.comboBoxDrive.Location = new System.Drawing.Point(30, 43);
-      this.comboBoxDrive.Name = "comboBoxDrive";
-      this.comboBoxDrive.Size = new System.Drawing.Size(355, 21);
-      this.comboBoxDrive.TabIndex = 1;
-      this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
+      this.labelLow.AutoSize = true;
+      this.labelLow.Location = new System.Drawing.Point(208, 156);
+      this.labelLow.Name = "labelLow";
+      this.labelLow.Size = new System.Drawing.Size(38, 13);
+      this.labelLow.TabIndex = 5;
+      this.labelLow.Text = "Speed";
       // 
-      // labelFreeDiskspace
+      // labelQualityHint
       // 
-      this.labelFreeDiskspace.AutoSize = true;
-      this.labelFreeDiskspace.Location = new System.Drawing.Point(147, 134);
-      this.labelFreeDiskspace.Name = "labelFreeDiskspace";
-      this.labelFreeDiskspace.Size = new System.Drawing.Size(93, 13);
-      this.labelFreeDiskspace.TabIndex = 5;
-      this.labelFreeDiskspace.Text = "Checking space...";
+      this.labelQualityHint.Location = new System.Drawing.Point(9, 22);
+      this.labelQualityHint.Name = "labelQualityHint";
+      this.labelQualityHint.Size = new System.Drawing.Size(163, 76);
+      this.labelQualityHint.TabIndex = 0;
+      this.labelQualityHint.Text = "Depending on your display size \r\nyou might want to decrease \r\nthumbnail quality f" +
+          "or faster \r\nthumbnail generation and \r\nbetter browsing / scrolling";
       // 
-      // label9
+      // trackBarQuality
       // 
-      this.label9.AutoSize = true;
-      this.label9.Location = new System.Drawing.Point(27, 24);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(35, 13);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "Drive:";
+      this.trackBarQuality.BackColor = System.Drawing.SystemColors.Window;
+      this.trackBarQuality.LargeChange = 2;
+      this.trackBarQuality.Location = new System.Drawing.Point(211, 38);
+      this.trackBarQuality.Maximum = 4;
+      this.trackBarQuality.Name = "trackBarQuality";
+      this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
+      this.trackBarQuality.Size = new System.Drawing.Size(45, 114);
+      this.trackBarQuality.TabIndex = 4;
+      this.trackBarQuality.Value = 3;
+      this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
       // 
-      // labelTotalDiskSpace
+      // groupBox5
       // 
-      this.labelTotalDiskSpace.AutoSize = true;
-      this.labelTotalDiskSpace.Location = new System.Drawing.Point(147, 116);
-      this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
-      this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
-      this.labelTotalDiskSpace.TabIndex = 4;
-      this.labelTotalDiskSpace.Text = "Checking space...";
+      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox5.AutoSize = true;
+      this.groupBox5.Controls.Add(this.numericUpDownThumbRows);
+      this.groupBox5.Controls.Add(this.numericUpDownThumbColumns);
+      this.groupBox5.Controls.Add(this.checkBoxShareThumb);
+      this.groupBox5.Controls.Add(this.mpLabel6);
+      this.groupBox5.Controls.Add(this.labelRows);
+      this.groupBox5.Controls.Add(this.buttonClearTVThumbs);
+      this.groupBox5.Controls.Add(this.labelCol);
+      this.groupBox5.Controls.Add(this.checkBoxTVThumbs);
+      this.groupBox5.Location = new System.Drawing.Point(7, 10);
+      this.groupBox5.Name = "groupBox5";
+      this.groupBox5.Size = new System.Drawing.Size(445, 147);
+      this.groupBox5.TabIndex = 28;
+      this.groupBox5.TabStop = false;
+      this.groupBox5.Text = "TV Thumbs";
       // 
-      // label10
+      // numericUpDownThumbRows
       // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(27, 116);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(85, 13);
-      this.label10.TabIndex = 2;
-      this.label10.Tag = "";
-      this.label10.Text = "Total diskspace:";
+      this.numericUpDownThumbRows.Location = new System.Drawing.Point(339, 72);
+      this.numericUpDownThumbRows.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbRows.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbRows.Name = "numericUpDownThumbRows";
+      this.numericUpDownThumbRows.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownThumbRows.TabIndex = 28;
+      this.numericUpDownThumbRows.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbRows.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
-      // label11
+      // numericUpDownThumbColumns
       // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(27, 134);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(82, 13);
-      this.label11.TabIndex = 3;
-      this.label11.Tag = "";
-      this.label11.Text = "Free diskspace:";
+      this.numericUpDownThumbColumns.Location = new System.Drawing.Point(339, 47);
+      this.numericUpDownThumbColumns.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbColumns.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.numericUpDownThumbColumns.Name = "numericUpDownThumbColumns";
+      this.numericUpDownThumbColumns.Size = new System.Drawing.Size(55, 20);
+      this.numericUpDownThumbColumns.TabIndex = 27;
+      this.numericUpDownThumbColumns.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.numericUpDownThumbColumns.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // checkBoxShareThumb
+      // 
+      this.checkBoxShareThumb.AutoSize = true;
+      this.checkBoxShareThumb.Checked = true;
+      this.checkBoxShareThumb.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxShareThumb.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShareThumb.Location = new System.Drawing.Point(12, 47);
+      this.checkBoxShareThumb.Name = "checkBoxShareThumb";
+      this.checkBoxShareThumb.Size = new System.Drawing.Size(182, 17);
+      this.checkBoxShareThumb.TabIndex = 17;
+      this.checkBoxShareThumb.Text = "Leave a thumb in recording folder";
+      this.checkBoxShareThumb.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel6
+      // 
+      this.mpLabel6.AutoSize = true;
+      this.mpLabel6.Location = new System.Drawing.Point(225, 24);
+      this.mpLabel6.Name = "mpLabel6";
+      this.mpLabel6.Size = new System.Drawing.Size(106, 13);
+      this.mpLabel6.TabIndex = 26;
+      this.mpLabel6.Text = "Preview Appearance";
+      // 
+      // labelRows
+      // 
+      this.labelRows.AutoSize = true;
+      this.labelRows.Location = new System.Drawing.Point(225, 74);
+      this.labelRows.Name = "labelRows";
+      this.labelRows.Size = new System.Drawing.Size(81, 13);
+      this.labelRows.TabIndex = 25;
+      this.labelRows.Text = "Number of rows";
+      // 
+      // buttonClearTVThumbs
+      // 
+      this.buttonClearTVThumbs.Location = new System.Drawing.Point(12, 105);
+      this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
+      this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
+      this.buttonClearTVThumbs.TabIndex = 16;
+      this.buttonClearTVThumbs.Text = "Clear TV thumbs";
+      this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
+      this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
+      // 
+      // labelCol
+      // 
+      this.labelCol.AutoSize = true;
+      this.labelCol.Location = new System.Drawing.Point(225, 49);
+      this.labelCol.Name = "labelCol";
+      this.labelCol.Size = new System.Drawing.Size(98, 13);
+      this.labelCol.TabIndex = 24;
+      this.labelCol.Text = "Number of columns";
+      // 
+      // checkBoxTVThumbs
+      // 
+      this.checkBoxTVThumbs.AutoSize = true;
+      this.checkBoxTVThumbs.Checked = true;
+      this.checkBoxTVThumbs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxTVThumbs.Location = new System.Drawing.Point(12, 22);
+      this.checkBoxTVThumbs.Name = "checkBoxTVThumbs";
+      this.checkBoxTVThumbs.Size = new System.Drawing.Size(113, 17);
+      this.checkBoxTVThumbs.TabIndex = 15;
+      this.checkBoxTVThumbs.Text = "Autocreate thumbs";
+      this.checkBoxTVThumbs.UseVisualStyleBackColor = true;
       // 
       // tpRecording
       // 
+      this.tpRecording.Controls.Add(this.groupBox4);
       this.tpRecording.Controls.Add(this.groupBoxRecordSettings);
       this.tpRecording.Location = new System.Drawing.Point(4, 22);
       this.tpRecording.Name = "tpRecording";
@@ -672,6 +814,123 @@ namespace SetupTv.Sections
       this.tpRecording.TabIndex = 3;
       this.tpRecording.Text = "Folders";
       this.tpRecording.UseVisualStyleBackColor = true;
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox4.AutoSize = true;
+      this.groupBox4.Controls.Add(this.mpLabel5);
+      this.groupBox4.Controls.Add(this.enableDiskQuota);
+      this.groupBox4.Controls.Add(this.mpNumericTextBoxDiskQuota);
+      this.groupBox4.Controls.Add(this.label14);
+      this.groupBox4.Controls.Add(this.comboBoxDrive);
+      this.groupBox4.Controls.Add(this.labelFreeDiskspace);
+      this.groupBox4.Controls.Add(this.label9);
+      this.groupBox4.Controls.Add(this.labelTotalDiskSpace);
+      this.groupBox4.Controls.Add(this.label10);
+      this.groupBox4.Controls.Add(this.label11);
+      this.groupBox4.Location = new System.Drawing.Point(6, 215);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(445, 175);
+      this.groupBox4.TabIndex = 27;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Disk quota";
+      // 
+      // mpLabel5
+      // 
+      this.mpLabel5.AutoSize = true;
+      this.mpLabel5.Location = new System.Drawing.Point(306, 139);
+      this.mpLabel5.Name = "mpLabel5";
+      this.mpLabel5.Size = new System.Drawing.Size(79, 13);
+      this.mpLabel5.TabIndex = 20;
+      this.mpLabel5.Text = "MB free space.";
+      // 
+      // enableDiskQuota
+      // 
+      this.enableDiskQuota.AccessibleName = "";
+      this.enableDiskQuota.AutoSize = true;
+      this.enableDiskQuota.Location = new System.Drawing.Point(34, 71);
+      this.enableDiskQuota.Name = "enableDiskQuota";
+      this.enableDiskQuota.Size = new System.Drawing.Size(111, 17);
+      this.enableDiskQuota.TabIndex = 21;
+      this.enableDiskQuota.Text = "Enable disk quota";
+      this.enableDiskQuota.UseVisualStyleBackColor = true;
+      // 
+      // mpNumericTextBoxDiskQuota
+      // 
+      this.mpNumericTextBoxDiskQuota.Location = new System.Drawing.Point(238, 136);
+      this.mpNumericTextBoxDiskQuota.Name = "mpNumericTextBoxDiskQuota";
+      this.mpNumericTextBoxDiskQuota.Size = new System.Drawing.Size(62, 20);
+      this.mpNumericTextBoxDiskQuota.TabIndex = 19;
+      this.mpNumericTextBoxDiskQuota.Text = "13";
+      this.mpNumericTextBoxDiskQuota.Value = 13;
+      // 
+      // label14
+      // 
+      this.label14.AutoSize = true;
+      this.label14.Location = new System.Drawing.Point(31, 139);
+      this.label14.Name = "label14";
+      this.label14.Size = new System.Drawing.Size(201, 13);
+      this.label14.TabIndex = 18;
+      this.label14.Text = "Delete recordings when there is less than";
+      // 
+      // comboBoxDrive
+      // 
+      this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDrive.FormattingEnabled = true;
+      this.comboBoxDrive.Location = new System.Drawing.Point(12, 38);
+      this.comboBoxDrive.Name = "comboBoxDrive";
+      this.comboBoxDrive.Size = new System.Drawing.Size(369, 21);
+      this.comboBoxDrive.TabIndex = 13;
+      this.comboBoxDrive.SelectedIndexChanged += new System.EventHandler(this.comboBoxDrive_SelectedIndexChanged);
+      // 
+      // labelFreeDiskspace
+      // 
+      this.labelFreeDiskspace.AutoSize = true;
+      this.labelFreeDiskspace.Location = new System.Drawing.Point(151, 114);
+      this.labelFreeDiskspace.Name = "labelFreeDiskspace";
+      this.labelFreeDiskspace.Size = new System.Drawing.Size(93, 13);
+      this.labelFreeDiskspace.TabIndex = 17;
+      this.labelFreeDiskspace.Text = "Checking space...";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(9, 22);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(35, 13);
+      this.label9.TabIndex = 12;
+      this.label9.Text = "Drive:";
+      // 
+      // labelTotalDiskSpace
+      // 
+      this.labelTotalDiskSpace.AutoSize = true;
+      this.labelTotalDiskSpace.Location = new System.Drawing.Point(151, 96);
+      this.labelTotalDiskSpace.Name = "labelTotalDiskSpace";
+      this.labelTotalDiskSpace.Size = new System.Drawing.Size(93, 13);
+      this.labelTotalDiskSpace.TabIndex = 16;
+      this.labelTotalDiskSpace.Text = "Checking space...";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(31, 96);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(85, 13);
+      this.label10.TabIndex = 14;
+      this.label10.Tag = "";
+      this.label10.Text = "Total diskspace:";
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(31, 114);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(82, 13);
+      this.label11.TabIndex = 15;
+      this.label11.Tag = "";
+      this.label11.Text = "Free diskspace:";
       // 
       // groupBoxRecordSettings
       // 
@@ -687,19 +946,18 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.Controls.Add(this.textBoxFolder);
       this.groupBoxRecordSettings.Controls.Add(this.label13);
       this.groupBoxRecordSettings.Controls.Add(this.buttonBrowse);
-      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 3);
+      this.groupBoxRecordSettings.Location = new System.Drawing.Point(6, 6);
       this.groupBoxRecordSettings.Name = "groupBoxRecordSettings";
-      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 365);
+      this.groupBoxRecordSettings.Size = new System.Drawing.Size(445, 203);
       this.groupBoxRecordSettings.TabIndex = 26;
       this.groupBoxRecordSettings.TabStop = false;
-      this.groupBoxRecordSettings.Text = "Card settings";
+      this.groupBoxRecordSettings.Text = "Recording folders";
       // 
       // buttonSameRecFolder
       // 
-      this.buttonSameRecFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonSameRecFolder.Location = new System.Drawing.Point(110, 258);
+      this.buttonSameRecFolder.Location = new System.Drawing.Point(12, 161);
       this.buttonSameRecFolder.Name = "buttonSameRecFolder";
-      this.buttonSameRecFolder.Size = new System.Drawing.Size(185, 20);
+      this.buttonSameRecFolder.Size = new System.Drawing.Size(369, 23);
       this.buttonSameRecFolder.TabIndex = 28;
       this.buttonSameRecFolder.Text = "Same recording folder for all cards";
       this.buttonSameRecFolder.UseVisualStyleBackColor = true;
@@ -707,17 +965,17 @@ namespace SetupTv.Sections
       // 
       // textBoxRecordingFormat
       // 
-      this.textBoxRecordingFormat.Location = new System.Drawing.Point(23, 109);
+      this.textBoxRecordingFormat.Location = new System.Drawing.Point(63, 71);
       this.textBoxRecordingFormat.Name = "textBoxRecordingFormat";
       this.textBoxRecordingFormat.ReadOnly = true;
-      this.textBoxRecordingFormat.Size = new System.Drawing.Size(326, 20);
+      this.textBoxRecordingFormat.Size = new System.Drawing.Size(318, 20);
       this.textBoxRecordingFormat.TabIndex = 26;
       this.textBoxRecordingFormat.Text = " Transport Stream (.ts)";
       // 
       // pictureBox1
       // 
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-      this.pictureBox1.Location = new System.Drawing.Point(23, 43);
+      this.pictureBox1.Location = new System.Drawing.Point(12, 22);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(33, 23);
       this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -730,16 +988,16 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxCards.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCards.FormattingEnabled = true;
-      this.comboBoxCards.Location = new System.Drawing.Point(74, 43);
+      this.comboBoxCards.Location = new System.Drawing.Point(63, 22);
       this.comboBoxCards.Name = "comboBoxCards";
-      this.comboBoxCards.Size = new System.Drawing.Size(352, 21);
+      this.comboBoxCards.Size = new System.Drawing.Size(318, 21);
       this.comboBoxCards.TabIndex = 0;
       this.comboBoxCards.SelectedIndexChanged += new System.EventHandler(this.comboBoxCards_SelectedIndexChanged);
       // 
       // label23
       // 
       this.label23.AutoSize = true;
-      this.label23.Location = new System.Drawing.Point(20, 93);
+      this.label23.Location = new System.Drawing.Point(60, 55);
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(91, 13);
       this.label23.TabIndex = 23;
@@ -749,17 +1007,17 @@ namespace SetupTv.Sections
       // 
       this.textBoxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxFolder.Location = new System.Drawing.Point(23, 186);
+      this.textBoxFolder.Location = new System.Drawing.Point(63, 120);
       this.textBoxFolder.Name = "textBoxFolder";
       this.textBoxFolder.ReadOnly = true;
-      this.textBoxFolder.Size = new System.Drawing.Size(326, 20);
+      this.textBoxFolder.Size = new System.Drawing.Size(275, 20);
       this.textBoxFolder.TabIndex = 2;
       this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
       // 
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(20, 168);
+      this.label13.Location = new System.Drawing.Point(60, 104);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(88, 13);
       this.label13.TabIndex = 3;
@@ -768,11 +1026,11 @@ namespace SetupTv.Sections
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(355, 186);
+      this.buttonBrowse.Location = new System.Drawing.Point(355, 118);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(51, 20);
+      this.buttonBrowse.Size = new System.Drawing.Size(26, 23);
       this.buttonBrowse.TabIndex = 4;
-      this.buttonBrowse.Text = "Browse";
+      this.buttonBrowse.Text = "...";
       this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
@@ -877,6 +1135,82 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
+      // labelCurrentSmoothing
+      // 
+      this.labelCurrentSmoothing.AutoSize = true;
+      this.labelCurrentSmoothing.Location = new System.Drawing.Point(361, 140);
+      this.labelCurrentSmoothing.Name = "labelCurrentSmoothing";
+      this.labelCurrentSmoothing.Size = new System.Drawing.Size(64, 13);
+      this.labelCurrentSmoothing.TabIndex = 21;
+      this.labelCurrentSmoothing.Text = "High Quality";
+      // 
+      // labelCurrentInterpolation
+      // 
+      this.labelCurrentInterpolation.AutoSize = true;
+      this.labelCurrentInterpolation.Location = new System.Drawing.Point(361, 108);
+      this.labelCurrentInterpolation.Name = "labelCurrentInterpolation";
+      this.labelCurrentInterpolation.Size = new System.Drawing.Size(64, 13);
+      this.labelCurrentInterpolation.TabIndex = 19;
+      this.labelCurrentInterpolation.Text = "High Quality";
+      // 
+      // labelCurrentCompositing
+      // 
+      this.labelCurrentCompositing.AutoSize = true;
+      this.labelCurrentCompositing.Location = new System.Drawing.Point(361, 77);
+      this.labelCurrentCompositing.Name = "labelCurrentCompositing";
+      this.labelCurrentCompositing.Size = new System.Drawing.Size(76, 13);
+      this.labelCurrentCompositing.TabIndex = 17;
+      this.labelCurrentCompositing.Text = "Assume Linear";
+      // 
+      // labelCurrentResolution
+      // 
+      this.labelCurrentResolution.AutoSize = true;
+      this.labelCurrentResolution.Location = new System.Drawing.Point(361, 47);
+      this.labelCurrentResolution.Name = "labelCurrentResolution";
+      this.labelCurrentResolution.Size = new System.Drawing.Size(25, 13);
+      this.labelCurrentResolution.TabIndex = 15;
+      this.labelCurrentResolution.Text = "500";
+      // 
+      // labelSmoothing
+      // 
+      this.labelSmoothing.AutoSize = true;
+      this.labelSmoothing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSmoothing.Location = new System.Drawing.Point(279, 139);
+      this.labelSmoothing.Name = "labelSmoothing";
+      this.labelSmoothing.Size = new System.Drawing.Size(66, 13);
+      this.labelSmoothing.TabIndex = 20;
+      this.labelSmoothing.Text = "Smoothing";
+      // 
+      // labelInterpolation
+      // 
+      this.labelInterpolation.AutoSize = true;
+      this.labelInterpolation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelInterpolation.Location = new System.Drawing.Point(279, 107);
+      this.labelInterpolation.Name = "labelInterpolation";
+      this.labelInterpolation.Size = new System.Drawing.Size(78, 13);
+      this.labelInterpolation.TabIndex = 18;
+      this.labelInterpolation.Text = "Interpolation";
+      // 
+      // labelCompositing
+      // 
+      this.labelCompositing.AutoSize = true;
+      this.labelCompositing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelCompositing.Location = new System.Drawing.Point(279, 76);
+      this.labelCompositing.Name = "labelCompositing";
+      this.labelCompositing.Size = new System.Drawing.Size(75, 13);
+      this.labelCompositing.TabIndex = 16;
+      this.labelCompositing.Text = "Compositing";
+      // 
+      // labelResolution
+      // 
+      this.labelResolution.AutoSize = true;
+      this.labelResolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelResolution.Location = new System.Drawing.Point(279, 46);
+      this.labelResolution.Name = "labelResolution";
+      this.labelResolution.Size = new System.Drawing.Size(67, 13);
+      this.labelResolution.TabIndex = 14;
+      this.labelResolution.Text = "Resolution";
+      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -905,8 +1239,17 @@ namespace SetupTv.Sections
       this.groupBox3.PerformLayout();
       this.tpDiskQuota.ResumeLayout(false);
       this.tpDiskQuota.PerformLayout();
+      this.groupBoxThumbQuality.ResumeLayout(false);
+      this.groupBoxThumbQuality.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarQuality)).EndInit();
+      this.groupBox5.ResumeLayout(false);
+      this.groupBox5.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbRows)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbColumns)).EndInit();
       this.tpRecording.ResumeLayout(false);
       this.tpRecording.PerformLayout();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.groupBoxRecordSettings.ResumeLayout(false);
       this.groupBoxRecordSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -935,13 +1278,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox comboBoxMovies;
     private System.Windows.Forms.TabPage tpDiskQuota;
-    private System.Windows.Forms.Label label14;
-    private System.Windows.Forms.Label labelFreeDiskspace;
-    private System.Windows.Forms.Label labelTotalDiskSpace;
-    private System.Windows.Forms.Label label11;
-    private System.Windows.Forms.Label label10;
-    private System.Windows.Forms.ComboBox comboBoxDrive;
-    private System.Windows.Forms.Label label9;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
@@ -954,11 +1290,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Label label23;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
-    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
     private System.Windows.Forms.NumericUpDown numericUpDownPostRec;
     private System.Windows.Forms.NumericUpDown numericUpDownPreRec;
-    private System.Windows.Forms.CheckBox enableDiskQuota;
     private System.Windows.Forms.TabPage tpRecordImport;
     private System.Windows.Forms.Button btnImport;
     private System.Windows.Forms.Label lblImportItems;
@@ -984,5 +1317,40 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label lblMaxFreeCards;
     private System.Windows.Forms.ComboBox comboBoxWeekend;
     private System.Windows.Forms.Label lblWeekend;
+    private System.Windows.Forms.GroupBox groupBox5;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShareThumb;
+    private MediaPortal.UserInterface.Controls.MPButton buttonClearTVThumbs;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTVThumbs;
+    private System.Windows.Forms.GroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+    private System.Windows.Forms.CheckBox enableDiskQuota;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxDiskQuota;
+    private System.Windows.Forms.Label label14;
+    private System.Windows.Forms.ComboBox comboBoxDrive;
+    private System.Windows.Forms.Label labelFreeDiskspace;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.Label labelTotalDiskSpace;
+    private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.Label label11;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxThumbQuality;
+    private MediaPortal.UserInterface.Controls.MPLabel labelRecommendedCurrent;
+    private MediaPortal.UserInterface.Controls.MPLabel labelRecommendedHint;
+    private MediaPortal.UserInterface.Controls.MPLabel labelHigh;
+    private MediaPortal.UserInterface.Controls.MPLabel labelLow;
+    private MediaPortal.UserInterface.Controls.MPLabel labelQualityHint;
+    private System.Windows.Forms.TrackBar trackBarQuality;
+    private System.Windows.Forms.NumericUpDown numericUpDownThumbRows;
+    private System.Windows.Forms.NumericUpDown numericUpDownThumbColumns;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
+    private MediaPortal.UserInterface.Controls.MPLabel labelRows;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCol;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentSmoothing;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentInterpolation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentCompositing;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentResolution;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSmoothing;
+    private MediaPortal.UserInterface.Controls.MPLabel labelInterpolation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCompositing;
+    private MediaPortal.UserInterface.Controls.MPLabel labelResolution;
   }
 }

@@ -32,55 +32,65 @@ namespace TvThumbnails
 {
   public class ThumbProcessor
   {
-    private readonly string _recTvThumbsFolder;
-
     private readonly ProcessingQueue _queue;
 
     public ThumbProcessor()
     {
-      FileInfo fileInfo = new FileInfo(Assembly.GetCallingAssembly().Location);
-
-      _recTvThumbsFolder = fileInfo.DirectoryName + "\\Thumbs";
-
-      if (!Directory.Exists(_recTvThumbsFolder))
-      {
-        Directory.CreateDirectory(_recTvThumbsFolder);
-      }
-
       _queue = new ProcessingQueue(DoWork);
+    }
+
+    ~ThumbProcessor()
+    {
+      _queue.Dispose();
     }
 
     public void Start()
     {
-      _queue.EnqueueTask(Recording.ListAll().Select(recording => recording.FileName).ToList());
+      Log.Info("ThumbProcessor.Start()");
+      Thumbs.LoadSettings();
 
-      GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += OnTvServerEvent;
+      if (Thumbs.Enabled)
+      {
+        Log.Info("ThumbProcessor.Start: Create folder");
+        Thumbs.CreateFolders();
+
+        List<string> recordings = Recording.ListAll().Select(recording => recording.FileName).ToList();
+        _queue.EnqueueTask(recordings);
+        Log.Debug("ThumbProcessor.Start: Enqueued {0} recordings", recordings.Count); 
+
+        GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent += OnTvServerEvent;
+      }
+      else
+      {
+        Log.Info("ThumbProcessor.Start: Thumbs creation disabled");
+        Stop();
+      }
     }
 
     public void Stop()
     {
+      Log.Info("ThumbProcessor.Stop()");
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
         GlobalServiceProvider.Instance.Get<ITvServerEvent>().OnTvServerEvent -= OnTvServerEvent;
       }
-      _queue.Dispose();
     }
 
     public string GetThumbnailFolder()
     {
-      return _recTvThumbsFolder;
+      return Thumbs.ThumbnailFolder;
     }
 
     // TODO Clean up old thumbs ???
 
     private void DoWork(string recFileName)
     {
-      Log.Info("ThumbProcessor - creating thumb for {0}", recFileName);
+      Log.Info("ThumbProcessor.DoWork: Creating thumb for {0}", recFileName);
 
       try
       {
-        string thumbNail = string.Format("{0}\\{1}{2}", _recTvThumbsFolder,
-                                         Path.ChangeExtension(Path.GetFileName(recFileName), null), ".jpg");
+        string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.ThumbnailFolder,
+          Path.ChangeExtension(Path.GetFileName(recFileName), null), ".jpg");
 
         if (!File.Exists(thumbNail))
         {                    
@@ -88,22 +98,22 @@ namespace TvThumbnails
           {
             if (VideoThumbCreator.VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true))
             {
-              Log.Info("ThumbProcessor - Thumbnail successfully created for - {0}", recFileName);
+              Log.Info("ThumbProcessor.DoWork: Thumbnail successfully created for - {0}", recFileName);
             }
             else
             {
-              Log.Info("ThumbProcessor - No thumbnail created for - {0}", recFileName);
+              Log.Info("ThumbProcessor.DoWork: No thumbnail created for - {0}", recFileName);
             }            
           }
           catch (Exception ex)
           {
-            Log.Error("ThumbProcessor - No thumbnail created for {0} - {1}", recFileName, ex.Message);
+            Log.Error("ThumbProcessor.DoWork: No thumbnail created for {0} - {1}", recFileName, ex.Message);
           }
         }      
       }
       catch(Exception ex)
       {
-        Log.Error("ThumbProcessor - No thumbnail created for {0} - {1}", recFileName, ex.Message);
+        Log.Error("ThumbProcessor.DoWork: No thumbnail created for {0} - {1}", recFileName, ex.Message);
       }
     }
 
@@ -113,6 +123,7 @@ namespace TvThumbnails
 
       if (tvEvent.EventType == TvServerEventType.RecordingEnded)
       {
+        Log.Debug("ThumbProcessor.OnTvServerEvent: Enqueue recording {0}", tvEvent.Recording.FileName);
         _queue.EnqueueTask(new List<string> { tvEvent.Recording.FileName });
       }   
     }
