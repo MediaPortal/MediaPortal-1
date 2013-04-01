@@ -24,7 +24,7 @@
       <layout>StackLayout</layout>
       <control>
         <description>Use Equalizer</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>20</id>
         <width>300</width>
         <label>9132</label>
@@ -39,14 +39,14 @@
       </control>
       <control>
         <description>Use Equalizer Smoothing</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>22</id>
         <width>300</width>
         <label>9134</label>
       </control>
       <control>
         <description>Delay Start</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>23</id>
         <width>300</width>
         <label>9135</label>
@@ -60,7 +60,7 @@
       </control>
       <control>
         <description>Show Title</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>25</id>
         <width>300</width>
         <label>9137</label>

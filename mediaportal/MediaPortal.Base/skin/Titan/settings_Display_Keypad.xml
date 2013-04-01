@@ -51,7 +51,7 @@
 
 		<control>
 			<description>Enable Keypad</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>60</id>
 			<width>334</width>
 			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
@@ -65,7 +65,7 @@
 
 		<control>
 			<description>Custom Mapping</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>61</id>
 			<width>334</width>
 			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>

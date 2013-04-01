@@ -41,7 +41,7 @@
 		<layout>GridLayout(2, 7, 42, 0, 1)</layout>
 		<control>
 			<description>Blank Display with Video</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>40</id>
 			<width>334</width>
 			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
@@ -56,7 +56,7 @@
 
 		<control>
 			<description>Enable Display Actions</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>41</id>
 			<width>334</width>
 			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
@@ -86,7 +86,7 @@
 
 		<control>
 			<description>Blank Display on Idle</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>43</id>
 			<width>334</width>
 			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
