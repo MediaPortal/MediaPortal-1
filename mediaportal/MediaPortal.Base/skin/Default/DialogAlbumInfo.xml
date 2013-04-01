@@ -9,7 +9,7 @@
     <control>
       <description>background image</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <width>960</width>
       <height>720</height>
     </control>
@@ -52,7 +52,7 @@
     <control Style="NoShadow">
       <description>Artist</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>180</posY>
       <label>171</label>
@@ -63,7 +63,7 @@
     <control Style="NoShadow">
       <description>Date of Release</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>205</posY>
       <label>201</label>
@@ -74,7 +74,7 @@
     <control Style="NoShadow">
       <description>Rating</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>230</posY>
       <label>173</label>
@@ -85,7 +85,7 @@
     <control Style="NoShadow">
       <description>Genre</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>255</posY>
       <label>174</label>
@@ -96,7 +96,7 @@
     <control Style="NoShadow">
       <description>Tones</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>280</posY>
       <label>175</label>
@@ -107,7 +107,7 @@
     <control Style="NoShadow">
       <description>Styles</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>305</posY>
       <label>176</label>
@@ -118,7 +118,7 @@
     <control Style="NoShadow">
       <description>Artist value</description>
       <type>fadelabel</type>
-      <id>21</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>180</posY>
       <label>#AlbumInfo.Artist</label>
@@ -128,7 +128,7 @@
     <control Style="NoShadow">
       <description>Date of Release value</description>
       <type>fadelabel</type>
-      <id>22</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>205</posY>
       <label>#AlbumInfo.Year</label>
@@ -138,7 +138,7 @@
     <control Style="NoShadow">
       <description>Rating value</description>
       <type>fadelabel</type>
-      <id>23</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>230</posY>
       <label>#AlbumInfo.Rating</label>
@@ -148,7 +148,7 @@
     <control Style="NoShadow">
       <description>Genre value</description>
       <type>fadelabel</type>
-      <id>24</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>255</posY>
       <label>#AlbumInfo.Genre</label>
@@ -158,7 +158,7 @@
     <control Style="NoShadow">
       <description>Tones value</description>
       <type>fadelabel</type>
-      <id>25</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>280</posY>
       <width>360</width>
@@ -169,7 +169,7 @@
     <control Style="NoShadow">
       <description>Styles value</description>
       <type>fadelabel</type>
-      <id>26</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>305</posY>
       <width>360</width>
@@ -178,7 +178,7 @@
       <textcolor>ivory</textcolor>
     </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>750</posX>
       <posY>180</posY>
@@ -192,7 +192,7 @@
     <control>
       <description>Album art (Thumb)</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>750</posX>
       <posY>180</posY>
       <width>180</width>
@@ -206,7 +206,7 @@
     <control>
       <description>CD-Case</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>750</posX>
       <posY>180</posY>
       <width>180</width>
@@ -215,8 +215,8 @@
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
+      <type>textboxscrollup</type>
+      <id>0</id>
       <posX>213</posX>
       <posY>350</posY>
       <width>510</width>
@@ -233,7 +233,8 @@
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
-      <id>4</id>
+      <type>textboxscrollup</type>
+      <id>0</id>
       <posX>213</posX>
       <posY>350</posY>
       <width>510</width>

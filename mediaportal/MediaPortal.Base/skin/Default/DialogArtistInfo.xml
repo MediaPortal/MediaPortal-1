@@ -9,7 +9,7 @@
     <control>
       <description>background image</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <width>960</width>
       <height>720</height>
       <texture>BH Music.jpg</texture>
@@ -53,7 +53,7 @@
     <control Style="NoShadow">
       <description>Born</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>180</posY>
       <label>686</label>
@@ -64,7 +64,7 @@
     <control Style="NoShadow">
       <description>Years Active</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>205</posY>
       <label>687</label>
@@ -75,7 +75,7 @@
     <control Style="NoShadow">
       <description>Genres</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>230</posY>
       <label>135</label>
@@ -86,7 +86,7 @@
     <control Style="NoShadow">
       <description>Tones</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>255</posY>
       <label>175</label>
@@ -97,7 +97,7 @@
     <control Style="NoShadow">
       <description>Styles</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>280</posY>
       <label>176</label>
@@ -108,7 +108,7 @@
     <control Style="NoShadow">
       <description>Instruments</description>
       <type>label</type>
-      <id>1</id>
+      <id>0</id>
       <posX>213</posX>
       <posY>305</posY>
       <label>688</label>
@@ -119,7 +119,7 @@
     <control Style="NoShadow">
       <description>Born value</description>
       <type>fadelabel</type>
-      <id>22</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>180</posY>
       <label>#ArtistInfo.Born</label>
@@ -130,7 +130,7 @@
     <control Style="NoShadow">
       <description>Years Active value</description>
       <type>fadelabel</type>
-      <id>23</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>205</posY>
       <label>#ArtistInfo.YearsActive</label>
@@ -141,7 +141,7 @@
     <control Style="NoShadow">
       <description>Genres value</description>
       <type>fadelabel</type>
-      <id>24</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>230</posY>
       <label>#ArtistInfo.Genres</label>
@@ -152,7 +152,7 @@
     <control Style="NoShadow">
       <description>Tones value</description>
       <type>fadelabel</type>
-      <id>25</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>255</posY>
       <width>360</width>
@@ -163,7 +163,7 @@
     <control Style="NoShadow">
       <description>Styles value</description>
       <type>fadelabel</type>
-      <id>26</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>280</posY>
       <width>360</width>
@@ -174,7 +174,7 @@
     <control Style="NoShadow">
       <description>Instruments value</description>
       <type>fadelabel</type>
-      <id>27</id>
+      <id>0</id>
       <posX>363</posX>
       <posY>305</posY>
       <label>#ArtistInfo.Instruments</label>
@@ -182,24 +182,8 @@
       <font>font13</font>
       <textcolor>ivory</textcolor>
     </control>
-    <control Style="NoShadow">
-      <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
-      <posX>213</posX>
-      <posY>350</posY>
-      <width>510</width>
-      <height>250</height>
-      <onleft>5</onleft>
-      <onright>5</onright>
-      <onup>5</onup>
-      <ondown>5</ondown>
-      <font>font12</font>
-      <spinPosX>660</spinPosX>
-      <spinPosY>590</spinPosY>
-    </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>750</posX>
       <posY>180</posY>
@@ -213,7 +197,7 @@
     <control>
       <description>artist image (Thumb)</description>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>750</posX>
       <posY>180</posY>
       <width>180</width>
@@ -225,7 +209,7 @@
       <colorkey>FFFFFFFF</colorkey>
     </control>
     <control>
-      <id>1</id>
+      <id>0</id>
       <type>image</type>
       <posX>750</posX>
       <posY>180</posY>
@@ -235,8 +219,8 @@
     </control>
     <control Style="NoShadow">
       <description>textarea</description>
-      <type>textbox</type>
-      <id>4</id>
+      <type>textboxscrollup</type>
+      <id>0</id>
       <posX>213</posX>
       <posY>350</posY>
       <height>250</height>
@@ -253,8 +237,8 @@
     </control>
 	<control Style="NoShadow">
       <description>textarea</description>
-      <type>textbox</type>
-      <id>40</id>
+      <type>textboxscrollup</type>
+      <id>0</id>
       <posX>213</posX>
       <posY>350</posY>
       <height>250</height>
