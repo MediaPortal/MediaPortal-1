@@ -85,10 +85,10 @@ namespace MpeCore.Classes.ActionType
           return SectionResponseEnum.Ok;
       }
 
-      // download new version
+      // download new version when none embedded and (none installed none or lower version than required installed)
       if (embeddedPackage == null && !string.IsNullOrEmpty(actionItem.Params[Const_Guid].Value) &&
         (installedPak == null ||
-        (!string.IsNullOrEmpty(actionItem.Params[Const_Version].Value) && installedPak.GeneralInfo.Version.CompareTo(new Version(actionItem.Params[Const_Version].Value)) >= 0)))
+        (!string.IsNullOrEmpty(actionItem.Params[Const_Version].Value) && installedPak.GeneralInfo.Version.CompareTo(VersionInfo.Parse(actionItem.Params[Const_Version].Value)) < 0)))
       {
         // we don't want incompatible versions
         MpeInstaller.KnownExtensions.HideByDependencies();

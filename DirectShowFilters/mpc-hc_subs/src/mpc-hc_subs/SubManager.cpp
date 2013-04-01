@@ -13,6 +13,7 @@
 #include "TextPassThruFilter.h"
 #include "IPinHook.h"
 #include "ITrackInfo.h"
+#include "../DSUtil/WinAPIUtils.h"
 
 STSStyle g_style;
 BOOL g_overrideUserStyles;
@@ -34,7 +35,7 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	m_lastSize(size)
 {
 	ATLTRACE("CSubManager constructor: texture size %dx%d, buffer ahead: %d, pow2tex: %d", g_textureSize.cx, g_textureSize.cy, g_subPicsBufferAhead, g_pow2tex);
-	m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex/*AfxGetAppSettings().fSPCPow2Tex*/);
+	m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, g_pow2tex/*AfxGetAppSettings().fSPCPow2Tex*/, false);
 	hr = S_OK;
 	if (g_subPicsBufferAhead > 0)
 		m_pSubPicQueue = new CSubPicQueue(g_subPicsBufferAhead, g_disableAnim, m_pAllocator, &hr);
@@ -265,6 +266,7 @@ void CSubManager::Render(int x, int y, int width, int height)
 		ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
 		m_pAllocator->ChangeDevice(m_d3DDev);
 		//m_pAllocator->SetMaxTextureSize(g_textureSize);
+		m_pAllocator->SetCurSize(size);
 		m_pAllocator->SetCurVidRect(CRect(CPoint(0,0), size));
 		m_pSubPicQueue->Invalidate(m_rtNow+1000000);
 		m_lastSize = size;

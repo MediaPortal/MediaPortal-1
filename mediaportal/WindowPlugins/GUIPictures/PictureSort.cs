@@ -59,7 +59,15 @@ namespace MediaPortal.GUI.Pictures
       using (Profile.Settings xmlreader = new MPSettings())
       {
         KeepFoldersTogether = xmlreader.GetValueAsBool("movies", "keepfolderstogether", false);
-        UseSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
+        {
+          UseSortTitle = xmlreader.GetValueAsBool("moviedatabase", "usesorttitle", false);
+        }
+        else
+        {
+          UseSortTitle = false;
+        }
       }
     }
 
@@ -156,12 +164,12 @@ namespace MediaPortal.GUI.Pictures
           {
             if (!UseSortTitle)
             {
-              return String.Compare(item1.Label, item2.Label, true);
+              return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
             }
             else
             {
               {
-                return String.Compare(item1.Label, item2.Label, true);
+                return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
               }
             }
           }
@@ -169,12 +177,12 @@ namespace MediaPortal.GUI.Pictures
           {
             if (!UseSortTitle)
             {
-              return String.Compare(item2.Label, item1.Label, true);
+              return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
             }
             else
             {
               {
-                return String.Compare(item2.Label, item1.Label, true);
+                return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
               }
             }
           }
@@ -219,11 +227,11 @@ namespace MediaPortal.GUI.Pictures
         case SortMethod.Label:
           if (SortAscending)
           {
-            return String.Compare(item1.DVDLabel, item2.DVDLabel, true);
+            return Util.StringLogicalComparer.Compare(item1.DVDLabel, item2.DVDLabel);
           }
           else
           {
-            return String.Compare(item2.DVDLabel, item1.DVDLabel, true);
+            return Util.StringLogicalComparer.Compare(item2.DVDLabel, item1.DVDLabel);
           }
         case SortMethod.Size:
           if (item1.FileInfo == null || item2.FileInfo == null)
@@ -335,12 +343,12 @@ namespace MediaPortal.GUI.Pictures
               {
                 if (!UseSortTitle)
                 {
-                  return String.Compare(item1.Label, item2.Label, true);
+                  return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
                 }
                 else
                 {
                   {
-                    return String.Compare(item1.Label, item2.Label, true);
+                    return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
                   }
                 }
               }
@@ -348,12 +356,12 @@ namespace MediaPortal.GUI.Pictures
               {
                 if (!UseSortTitle)
                 {
-                  return String.Compare(item2.Label, item1.Label, true);
+                  return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
                 }
                 else
                 {
                   {
-                    return String.Compare(item2.Label, item1.Label, true);
+                    return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
                   }
                 }
               }

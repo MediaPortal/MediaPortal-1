@@ -119,7 +119,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>../h;.\h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_AFXDLL;_DEBUG;_LIB;WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;WIN32;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>
@@ -196,6 +196,7 @@
     <ClInclude Include="..\h\VD2\system\cpuaccel.h" />
     <ClInclude Include="..\h\vd2\system\Error.h" />
     <ClInclude Include="..\h\VD2\system\memory.h" />
+    <ClInclude Include="..\h\vd2\system\seh.h" />
     <ClInclude Include="..\h\vd2\system\thread.h" />
     <ClInclude Include="..\h\VD2\system\vdtypes.h" />
     <ClInclude Include="h\stdafx.h" />
