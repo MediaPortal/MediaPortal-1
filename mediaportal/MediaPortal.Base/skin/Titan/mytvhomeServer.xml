@@ -53,7 +53,7 @@
 	
 		<control>
 			<description>TV On/Off button</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>8</id>
 			<label>707</label>
       <textureFocus>button_tv_on_focus.png</textureFocus>

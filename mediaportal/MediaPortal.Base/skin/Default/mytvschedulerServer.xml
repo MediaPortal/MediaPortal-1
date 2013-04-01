@@ -91,7 +91,7 @@
         </control>
         <control>
           <description>Toggle button series</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>11</id>
           <label>3019</label>
           <onleft>10</onleft>
