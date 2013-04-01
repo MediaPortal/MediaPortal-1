@@ -82,6 +82,61 @@ HRESULT FileWriter::SetFileName(LPCWSTR pszFileName)
 	return S_OK;
 }
 
+HRESULT FileWriter::OpenFileWithShare()
+{
+  // Is the file already opened
+  if (m_hFile != INVALID_HANDLE_VALUE)
+  {
+    return NOERROR;
+  }
+
+  // Has a filename been set yet
+  if (m_pFileName == NULL)
+  {
+    return ERROR_INVALID_NAME;
+  }
+
+  // See the file is being read.
+  m_hFile = CreateFileW(m_pFileName,                  // The filename
+             (DWORD) GENERIC_WRITE,         // File access
+             (DWORD) FILE_SHARE_READ,       // Share access
+             NULL,                          // Security
+             (DWORD) OPEN_ALWAYS,           // Open flags
+             (DWORD) 0,                     // More flags
+             NULL);                         // Template
+  if (m_hFile == INVALID_HANDLE_VALUE)
+  {
+    DWORD dwErr = GetLastError();
+    if (dwErr == ERROR_SHARING_VIOLATION)
+    {
+      return HRESULT_FROM_WIN32(dwErr);
+    }
+    return HRESULT_FROM_WIN32(dwErr);
+  }
+  CloseHandle(m_hFile);
+  // Try to open the file
+  m_hFile = CreateFileW(m_pFileName,                  // The filename
+             (DWORD) GENERIC_WRITE,         // File access
+             (DWORD) FILE_SHARE_READ,       // Share access
+             NULL,                          // Security
+             (DWORD) OPEN_ALWAYS,           // Open flags
+             (DWORD) 0,                     // More flags
+             NULL);                         // Template
+
+  if (m_hFile == INVALID_HANDLE_VALUE)
+  {
+    DWORD dwErr = GetLastError();
+    return HRESULT_FROM_WIN32(dwErr);
+  }
+
+  SetFilePointer(0, FILE_END);
+  m_chunkReserveFileSize = GetFilePointer();
+  SetFilePointer(0, FILE_BEGIN);
+
+  return S_OK;
+}
+
+
 //
 // OpenFile
 //

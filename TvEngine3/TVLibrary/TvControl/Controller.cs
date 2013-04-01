@@ -745,6 +745,16 @@ namespace TvControl
     TvResult StartTimeShifting(ref IUser user, ref string fileName);
 
     /// <summary>
+    /// Start timeshifting.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="fileName">Name of the timeshiftfile.</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    TvResult StartTimeShiftingWithCustom(ref IUser user, ref string fileName, ref string CustomFileName, ref List<int> Pids);
+ 
+    /// <summary>
     /// Stops the card.
     /// </summary>
     /// <param name="user">The user.</param>
@@ -802,6 +812,47 @@ namespace TvControl
     /// </returns>
     TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card);
 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">user credentials.</param>
+     /// <param name="idChannel">The id channel.</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <param name="forceCardId">Indicated, if the card should be forced</param>
+     /// <param name="CustomFileName">CustomFilename</param>
+     /// <param name="Pids">List of Pids</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, bool forceCardId,string CustomFileName, List<int> Pids);
+ 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">user credentials.</param>
+     /// <param name="idChannel">The id channel.</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <param name="cardChanged">indicates if card was changed</param>
+     /// <param name="CustomFileName">CustomFilename</param>
+     /// <param name="Pids">List of Pids</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, out bool cardChanged, string CustomFileName, List<int> Pids);
+ 
+     /// <summary>
+     /// Start timeshifting on a specific channel
+     /// </summary>
+     /// <param name="user">user credentials.</param>
+     /// <param name="idChannel">The id channel.</param>
+     /// <param name="card">returns on which card timeshifting is started</param>
+     /// <param name="CustomFileName">CustomFilename</param>
+     /// <param name="Pids">List of Pids</param>
+     /// <returns>
+     /// TvResult indicating whether method succeeded
+     /// </returns>
+     TvResult StartTimeShiftingWithCustom(ref IUser user, int idChannel, out VirtualCard card, string CustomFileName, List<int> Pids);
+ 
 
     /// <summary>
     /// Stops the time shifting.

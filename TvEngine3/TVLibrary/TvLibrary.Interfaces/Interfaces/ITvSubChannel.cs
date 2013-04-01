@@ -118,6 +118,15 @@ namespace TvLibrary.Interfaces
     /// <returns>true if succeeded else false</returns>
     bool StartTimeShifting(string fileName);
 
+     /// <summary>
+     /// Starts timeshifting. Note card has to be tuned first
+     /// </summary>
+     /// <param name="fileName">filename used for the timeshiftbuffer</param>
+     /// <param name="CustomFileName">Custom Filename</param>
+     /// <param name="Pids">List of Pids</param>
+     /// <returns>true if succeeded else false</returns>
+     bool StartTimeShiftingWithCustom(string fileName, string CustomFileName, List<int> Pids);
+      
     /// <summary>
     /// Stops timeshifting
     /// </summary>
