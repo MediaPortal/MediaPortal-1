@@ -980,15 +980,24 @@ namespace SetupTv.Sections
       Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
       if (setting.Value == "yes")
       {
-        foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
-        {
-          if (motor.IdSatellite == context.Satellite.IdSatellite)
+          setting = layer.GetSetting("dvbs" + _cardNumber + "useUsals", "no");
+          if (setting.Value.ToUpper() == "TRUE")
           {
-            position = motor.Position;
-            break;
+              position = context.Satellite.IdSatellite;
           }
-        }
+          else
+          {
+              foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
+              {
+                  if (motor.IdSatellite == context.Satellite.IdSatellite)
+                  {
+                      position = motor.Position;
+                      break;
+                  }
+              }
+          }
       }
+  
 
       // what to scan
       switch (ActiveScanType)
@@ -1145,7 +1154,7 @@ namespace SetupTv.Sections
           {
             //add new channel
             exists = false;
-            dbChannel = layer.AddNewChannel(channel.Name, channel.LogicalChannelNumber);
+            dbChannel = layer.AddNewChannel(channel.Name);
             dbChannel.SortOrder = 10000;
             if (channel.LogicalChannelNumber >= 1)
             {
@@ -1278,6 +1287,23 @@ namespace SetupTv.Sections
       int index;
       Int32.TryParse(setting.Value, out index);
 
+      setting = layer.GetSetting("dvbs" + _cardNumber + "useUsals", "0");
+      bool BoolValue;
+      bool.TryParse(setting.Value, out BoolValue);
+      checkBox2.Checked = BoolValue;
+
+      setting = layer.GetSetting("dvbs" + _cardNumber + "siteLat", "0");
+      decimal Lat;
+      Decimal.TryParse(setting.Value, out Lat);
+      siteLatitude.Value = Lat;
+      setting = layer.GetSetting("dvbs" + _cardNumber + "siteLong", "0");
+      decimal Long;
+      Decimal.TryParse(setting.Value, out Long);
+      siteLongitude.Value = Long;
+
+
+
+
       List<SatelliteContext> satellites = LoadSatellites();
 
       foreach (SatelliteContext sat in satellites)
@@ -1342,16 +1368,38 @@ namespace SetupTv.Sections
 
       Card card = Card.Retrieve(_cardNumber);
       IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
-      foreach (DiSEqCMotor motor in motorSettings)
+      if (checkBox2.Checked)
       {
-        if (motor.IdSatellite == sat.Satellite.IdSatellite)
-        {
-          RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
-          MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
-                          MessageBoxIcon.Information);
-          comboBox1_SelectedIndexChanged(null, null);
-          return;
-        }
+
+          double SatLong;
+          SatLong = sat.Satellite.SatelliteLongitude;
+          if (SatLong != 9999)
+          {
+              RemoteControl.Instance.DiSEqCGotoUSALSPosition(_cardNumber, sat.Satellite.SatelliteLongitude, true);
+              MessageBox.Show("Satellite moving to :" + sat.Satellite.SatelliteName + " via USALS", "Info", MessageBoxButtons.OK,
+                              MessageBoxIcon.Information);
+              comboBox1_SelectedIndexChanged(null, null);
+          }
+          else
+          {
+              MessageBox.Show("Error Moving to Satellite : " + sat.Satellite.SatelliteName + ", try changing Satellite in drop down box", "Info", MessageBoxButtons.OK,
+                             MessageBoxIcon.Information);
+          }
+              return;
+      }
+      else
+      {
+          foreach (DiSEqCMotor motor in motorSettings)
+          {
+              if (motor.IdSatellite == sat.Satellite.IdSatellite)
+              {  
+                  RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
+                  MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
+                                      MessageBoxIcon.Information);
+                  comboBox1_SelectedIndexChanged(null, null);
+                  return;
+              }
+          }
       }
       MessageBox.Show("No position stored for this satellite", "Warning", MessageBoxButtons.OK,
                       MessageBoxIcon.Exclamation);
@@ -1572,6 +1620,7 @@ namespace SetupTv.Sections
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
     {
+      
       comboBoxSat.Enabled = checkBox1.Checked;
       comboBox1.Enabled = checkBox1.Checked;
       buttonGoto.Enabled = checkBox1.Checked;
@@ -1587,7 +1636,12 @@ namespace SetupTv.Sections
       buttonSetWestLimit.Enabled = checkBox1.Checked;
       buttonSetEastLimit.Enabled = checkBox1.Checked;
       buttonReset.Enabled = checkBox1.Checked;
-
+      siteLatitude.Enabled = checkBox1.Checked;
+      siteLongitude.Enabled = checkBox1.Checked;
+      checkBox2.Enabled = checkBox1.Checked;
+      label19.Enabled = checkBox1.Checked;
+      label20.Enabled = checkBox1.Checked;
+     
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("dvbs" + _cardNumber + "motorEnabled", "no");
       setting.Value = checkBox1.Checked ? "yes" : "no";
@@ -1966,5 +2020,50 @@ namespace SetupTv.Sections
       mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked;
       SetControlStates();
     }
+
+    private void checkBox2_CheckedChanged(object sender, EventArgs e)
+    {
+        if (_enableEvents == false)
+            return;
+        if (checkBox1.Checked == false)
+            return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber + "useUsals", "0");
+        setting.Value = checkBox2.Checked.ToString();
+        setting.Persist();
+    }
+
+    private void siteLatitude_ValueChanged(object sender, EventArgs e)
+    {
+        if (_enableEvents == false)
+            return;
+        if (checkBox1.Checked == false)
+            return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber + "siteLat", "0");
+        setting.Value = siteLatitude.Value.ToString();
+        setting.Persist();
+
+        Double Lat;
+        Double.TryParse(siteLatitude.Value.ToString(), out Lat);
+        RemoteControl.Instance.DiSEqCSetSiteLat(_cardNumber, Lat);     
+    }
+
+    private void siteLongitude_ValueChanged(object sender, EventArgs e)
+    {
+        if (_enableEvents == false)
+            return;
+        if (checkBox1.Checked == false)
+            return;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("dvbs" + _cardNumber + "siteLong", "0");
+
+        setting.Value = siteLongitude.Value.ToString();
+        setting.Persist();
+        Double Lat;
+        Double.TryParse(siteLongitude.Value.ToString(), out Lat);
+        RemoteControl.Instance.DiSEqCSetSiteLong(_cardNumber, Lat);    
+    }
+
   }
 }
