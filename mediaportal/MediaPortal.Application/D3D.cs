@@ -1115,9 +1115,7 @@ namespace MediaPortal
       var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
                                           DeviceType.Hardware, 
                                           _renderTarget.Handle,
-                                          // TODO: remove
-                                          //CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
-                                          CreateFlags.PureDevice | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          CreateFlags.PureDevice | CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                           ref param,
                                           IntPtr.Zero,
                                           out dev);
