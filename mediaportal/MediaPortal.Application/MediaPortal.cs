@@ -408,6 +408,8 @@ public class MediaPortalApp : D3D, IRender
         return;
       }
 
+      // TODO: check if config is valid. If you create a config file > 10000 bytes full of spaces MP will crash as Utils.dll does nearly no error checking
+
       using (Settings xmlreader = new MPSettings())
       {
         string threadPriority = xmlreader.GetValueAsString("general", "ThreadPriority", "Normal");
@@ -1283,7 +1285,7 @@ public class MediaPortalApp : D3D, IRender
                 }
               }
 
-              // TODO
+              // TODO: Option to stop playback on lost audio renderer
               if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
               {
                 switch (msg.WParam.ToInt32())
@@ -1728,9 +1730,10 @@ public class MediaPortalApp : D3D, IRender
   /// <summary>
   /// OnStartup() gets called just before the application starts
   /// </summary>
-  // TODO
   protected override void OnStartup()
   {
+    // TODO: taskbar may overlay the splashscreen, hide taskbar issue with splashscreen running as at thread
+
     Log.Info("Main: Starting up");
 
     // Initializing input devices...
@@ -1826,7 +1829,7 @@ public class MediaPortalApp : D3D, IRender
     _deviceNotificationHandle = RegisterDeviceNotification(Handle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
     if (_deviceNotificationHandle == IntPtr.Zero)
     {
-      // TODO error handling
+      // TODO: error handling
     }
   }
 
@@ -2408,14 +2411,15 @@ public class MediaPortalApp : D3D, IRender
       {
         GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
         GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
-        var fPercentage = (float)(100.0d * g_Player.CurrentPosition / g_Player.Duration);
-        GUIPropertyManager.SetProperty("#percentage", fPercentage.ToString(CultureInfo.InvariantCulture));
+        double percent = 100 * g_Player.CurrentPosition / g_Player.Duration;
+        var nfi = new NumberFormatInfo { NumberDecimalSeparator = "," };
+        GUIPropertyManager.SetProperty("#percentage", percent.ToString(nfi));
       }
       else
       {
         GUIPropertyManager.SetProperty("#duration", string.Empty);
         GUIPropertyManager.SetProperty("#shortduration", string.Empty);
-        GUIPropertyManager.SetProperty("#percentage", "0.0");
+        GUIPropertyManager.SetProperty("#percentage", "0,0");
       }
 
       GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString(CultureInfo.InvariantCulture));

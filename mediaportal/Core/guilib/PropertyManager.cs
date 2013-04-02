@@ -551,7 +551,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#shortcurrentremaining", string.Empty);
       SetProperty("#duration", string.Empty);
       SetProperty("#shortduration", string.Empty);
-      SetProperty("#percentage", "0.0");
+      SetProperty("#percentage", "0,0");
       
       _isChanged = true;
     }

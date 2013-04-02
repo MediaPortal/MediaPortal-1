@@ -146,6 +146,7 @@ namespace MediaPortal
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
     private readonly bool              _showCursorWhenFullscreen; // should the mouse cursor be shown in full screen?
+    private readonly bool              _reduceFrameRate;          // reduce frame rate when not in focus?
     private bool                       _miniTvMode;               // 
     private bool                       _isClosing;                //
     private bool                       _lastMouseCursor;          // holds the last mouse cursor state to keep state balance
@@ -153,7 +154,6 @@ namespace MediaPortal
     private bool                       _needReset;                // set to true when the D3D device needs a reset
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
-    private bool                       _reduceFrameRate;          // reduce frame rate when not in focus?
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
@@ -715,8 +715,6 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = false;
         }
-        // TODO: REMOVE
-        //Show();
         WindowState = FormWindowState.Normal;
         Activate();
 
@@ -763,8 +761,6 @@ namespace MediaPortal
         {
           _notifyIcon.Visible = true;
         }
-        // TODO: REMOVE
-        //Hide();
         WindowState = FormWindowState.Minimized;
  
         // pause player and mute audio
@@ -1422,8 +1418,7 @@ namespace MediaPortal
           {
             _alwaysOnTop  = xmlreader.GetValueAsBool("general", "alwaysontop", false);
           }
-          size            = CalcMaxClientArea();
-          //TODO: UpdatePresentParams(Windowed, false);
+          size  = CalcMaxClientArea();
         }
         ClientSize = size;
         TopMost    = _alwaysOnTop;
