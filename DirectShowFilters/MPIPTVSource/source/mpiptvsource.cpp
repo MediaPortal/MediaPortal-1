@@ -25,6 +25,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <shlobj.h>
+#include <AtlBase.h>
+#include <AtlConv.h>
 #include "mpiptvsource.h"
 
 //#define logging
@@ -212,6 +214,7 @@ HRESULT CMPIptvSourceStream::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_P
 
 HRESULT CMPIptvSourceStream::DoBufferProcessingLoop(void) 
 {
+  USES_CONVERSION;
   Command com;
 
   OnThreadStartPlay();
@@ -226,16 +229,16 @@ HRESULT CMPIptvSourceStream::DoBufferProcessingLoop(void)
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   if (localip) {
-    addr.sin_addr.s_addr = inet_addr(localip);
+    addr.sin_addr.s_addr = inet_addr(T2A(localip));
   } else {
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
   }
   addr.sin_port = htons((u_short)port);
 
   ip_mreq imr; 
-  imr.imr_multiaddr.s_addr = inet_addr(ip);
+  imr.imr_multiaddr.s_addr = inet_addr(T2A(ip));
   if (localip) {
-    imr.imr_interface.s_addr = inet_addr(localip);
+    imr.imr_interface.s_addr = inet_addr(T2A(localip));
   } else {
     imr.imr_interface.s_addr = INADDR_ANY;
   }
@@ -446,19 +449,19 @@ bool CMPIptvSourceStream::Load(const TCHAR* fn)
     return false;
   }
   memset(ip, 0, (url.dwHostNameLength + 1) * sizeof(TCHAR));
-  strncat(ip, url.lpszHostName, url.dwHostNameLength);
+  _tcsncat(ip, url.lpszHostName, url.dwHostNameLength);
   if (url.dwUserNameLength > 0) {
     if (!(localip = (TCHAR*) CoTaskMemAlloc((url.dwUserNameLength + 1) * sizeof(TCHAR)))) {
       return false;
     }
     memset(localip, 0, (url.dwUserNameLength + 1) * sizeof(TCHAR));
-    strncat(localip, url.lpszUserName, url.dwUserNameLength);
+    _tcsncat(localip, url.lpszUserName, url.dwUserNameLength);
   }
   if (!(protocol = (TCHAR*) CoTaskMemAlloc((url.dwSchemeLength + 1) * sizeof(TCHAR)))) {
     return false;
   }
   memset(protocol, 0, (url.dwSchemeLength + 1) * sizeof(TCHAR));
-  strncat(protocol, url.lpszScheme, url.dwSchemeLength);
+  _tcsncat(protocol, url.lpszScheme, url.dwSchemeLength);
   port = url.nPort;
 
   return true;
@@ -504,10 +507,13 @@ STDMETHODIMP CMPIptvSource::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 
 STDMETHODIMP CMPIptvSource::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE* pmt) 
 {
-  size_t length = wcstombs(NULL, pszFileName, 0);
+  size_t length = _tcslen(pszFileName);
+
   if(!(m_fn = (TCHAR*)CoTaskMemAlloc((length+1)*sizeof(TCHAR))))
     return E_OUTOFMEMORY;
-  wcstombs(m_fn, pszFileName, length + 1);
+  
+  _tcsncpy(m_fn, pszFileName, length);
+
   if(!m_stream->Load(m_fn))
     return E_FAIL;
 
@@ -518,10 +524,11 @@ STDMETHODIMP CMPIptvSource::GetCurFile(LPOLESTR* ppszFileName, AM_MEDIA_TYPE* pm
 {
   if(!ppszFileName) return E_POINTER;
 
-  if(!(*ppszFileName = (LPOLESTR)CoTaskMemAlloc((strlen(m_fn)+1)*sizeof(WCHAR))))
+  if(!(*ppszFileName = (LPOLESTR)CoTaskMemAlloc((_tcslen(m_fn)+1)*sizeof(WCHAR))))
     return E_OUTOFMEMORY;
 
-  mbstowcs(*ppszFileName, m_fn, strlen(m_fn) + 1);
+  size_t length = _tcslen(m_fn);
+  _tcsncpy(*ppszFileName, m_fn, length);
 
   return S_OK;
 }

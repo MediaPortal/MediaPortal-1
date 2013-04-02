@@ -334,6 +334,7 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\DXNative.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
@@ -486,6 +487,7 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="guilib\DXEnums.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />

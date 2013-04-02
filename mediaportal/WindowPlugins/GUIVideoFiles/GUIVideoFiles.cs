@@ -110,6 +110,8 @@ namespace MediaPortal.GUI.Video
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
     private static PlayListPlayer _playlistPlayer;
+    private static PlayListType _currentPlaylistType;
+    private static int _currentPlaylistIndex = -1;
 
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
@@ -773,6 +775,9 @@ namespace MediaPortal.GUI.Video
 
                   if (result == GUIResumeDialog.Result.Abort)
                   {
+                    _playlistPlayer.Reset();
+                    _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                    _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                     return;
                   }
 
@@ -844,6 +849,11 @@ namespace MediaPortal.GUI.Video
           {
             MovieDuration(movies, false);
           }
+
+          // Get current playlist
+          _currentPlaylistType = new PlayListType();
+          _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+          _currentPlaylistIndex = _playlistPlayer.CurrentSong;
           
           _playlistPlayer.Reset();
           _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -870,6 +880,12 @@ namespace MediaPortal.GUI.Video
 
         // play movie...(only 1 file)
         AddFileToDatabase(movieFileName);
+
+        // Get current playlist
+        _currentPlaylistType = new PlayListType();
+        _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+        _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+
         _playlistPlayer.Reset();
         _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
         PlayList newPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
@@ -1712,6 +1728,8 @@ namespace MediaPortal.GUI.Video
         filename = _playlistPlayer.Get(iMovieIndex);
       }
 
+      _playlistPlayer.Reset();
+
       // If the file is an image file, it should be mounted before playing
       bool isImage = false;
       if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(filename)))
@@ -1768,7 +1786,12 @@ namespace MediaPortal.GUI.Video
                                                  GUIResumeDialog.MediaType.Video);
 
               if (result == GUIResumeDialog.Result.Abort)
+              {
+                _playlistPlayer.Reset();
+                _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                 return;
+              }
 
               if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 timeMovieStopped = 0;
@@ -1777,7 +1800,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      // TODO Handle STP when it comes from MyMusic otherwise Video Playlist will not work
+      // TODO Handle STOP when it comes from MyMusic otherwise Video Playlist will not work
       //if (g_Player.Playing && !g_Player.IsDVD)
       //  g_Player.Stop();
 
@@ -2096,7 +2119,12 @@ namespace MediaPortal.GUI.Video
                                                    GUIResumeDialog.MediaType.Video);
 
                 if (result == GUIResumeDialog.Result.Abort)
+                {
+                  _playlistPlayer.Reset();
+                  _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                  _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                   return;
+                }
 
                 if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 {
@@ -2131,6 +2159,11 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      // Get current playlist
+      _currentPlaylistType = new PlayListType();
+      _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+      _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+      
       _playlistPlayer.Reset();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
       PlayList playlist = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
@@ -3319,6 +3352,12 @@ namespace MediaPortal.GUI.Video
       // Get all video files in selected folder and it's subfolders
       ArrayList playFiles = new ArrayList();
       AddVideoFiles(path, ref playFiles);
+
+      if(playFiles.Count == 0)
+      {
+        return;
+      }
+
       int selectedOption = 0;
 
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -3350,6 +3389,11 @@ namespace MediaPortal.GUI.Video
         selectedOption = _howToPlayAll;
       }
 
+      // Get current playlist
+      _currentPlaylistType = new PlayListType();
+      _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+      _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+
       // Reset playlist
       _playlistPlayer.Reset();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -3364,21 +3408,28 @@ namespace MediaPortal.GUI.Video
         //
         case 0: // By name == 103
         case 103:
-          IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
-          // Add all files in temporary playlist
-          AddToPlayList(tmpPlayList, sortedPlayList);
+          AddToPlayList(tmpPlayList, playFiles.ToArray());
+          List<PlayListItem> sortedPlayListItems = new List<PlayListItem>();
+          sortedPlayListItems.AddRange(tmpPlayList);
+          sortedPlayListItems.Sort((item1, item2) => StringLogicalComparer.Compare(item1.Description, item2.Description));
+          tmpPlayList.Clear();
+
+          foreach (PlayListItem playListItem in sortedPlayListItems)
+          {
+            tmpPlayList.Add(playListItem);
+          }
+
           break;
 
         case 1: // By date (date modified) == 104
         case 104:
-          sortedPlayList = GetSortedPlayListbyDate(playFiles);
+          IOrderedEnumerable<object> sortedPlayList = playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
           AddToPlayList(tmpPlayList, sortedPlayList);
           break;
 
         case 2: // Shuffle == 191
         case 191:
-          sortedPlayList = GetSortedPlayListbyName(playFiles);
-          AddToPlayList(tmpPlayList, sortedPlayList);
+          AddToPlayList(tmpPlayList, playFiles.ToArray());
           tmpPlayList.Shuffle();
           break;
       }
@@ -3386,7 +3437,7 @@ namespace MediaPortal.GUI.Video
       PlayMovieFromPlayList(false, true);
     }
 
-    private void AddToPlayList(PlayList tmpPlayList, IOrderedEnumerable<object> sortedPlayList)
+    private void AddToPlayList(PlayList tmpPlayList, IEnumerable<object> sortedPlayList)
     {
       foreach (string file in sortedPlayList)
       {
@@ -3424,19 +3475,7 @@ namespace MediaPortal.GUI.Video
         tmpPlayList.Add(newItem);
       }
     }
-
-    // Sort by item description (Filename or DVD folder)
-    private IOrderedEnumerable<object> GetSortedPlayListbyName(ArrayList playFiles)
-    {
-      return playFiles.ToArray().OrderBy(fn => new PlayListItem().Description);
-    }
-
-    // Sort by modified date without path
-    private IOrderedEnumerable<object> GetSortedPlayListbyDate(ArrayList playFiles)
-    {
-      return playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
-    }
-
+    
     /// <summary>
     /// Adds file (full path) and it's stacked parts (method will search
     /// for them inside strFile folder) into videodatabase (movie table)
