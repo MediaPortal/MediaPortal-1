@@ -76,30 +76,32 @@ namespace MediaPortal.Configuration.Sections
 
     private string[][] sectionEntries = new string[][]
                                           {
-                                            new string[] {"general", "startfullscreen", "true"},
                                             // 0 Start MediaPortal in fullscreen mode
-                                            new string[] {"general", "usefullscreensplash", "true"},
+                                            new string[] {"general", "startfullscreen", "true"},
                                             // 1 Use screenselector to choose on which screen MP should start
-                                            new string[] {"general", "alwaysontop", "false"},
+                                            new string[] {"general", "usefullscreensplash", "true"},
                                             // 2 Keep MediaPortal always on top
-                                            new string[] {"general", "hidetaskbar", "false"},
+                                            new string[] {"general", "alwaysontop", "false"},
                                             // 3 Hide taskbar in fullscreen mode      
-                                            new string[] {"general", "autostart", "false"},
+                                            new string[] {"general", "hidetaskbar", "false"},
                                             // 4 Autostart MediaPortal on Windows startup
-                                            new string[] {"general", "minimizeonstartup", "false"},
+                                            new string[] {"general", "autostart", "false"},
                                             // 5 Minimize to tray on start up
-                                            new string[] {"general", "minimizeonexit", "false"},
+                                            new string[] {"general", "minimizeonstartup", "false"},
                                             // 6 Minimize to tray on GUI exit
+                                            new string[] {"general", "minimizeonexit", "false"},
+                                            // 7 Minimize to tray on focus loss (fullscreen only)
+                                            new string[] {"general", "minimizeonfocusloss", "false"},
+                                            // 8 Turn off monitor when blanking screen	    
                                             new string[] {"general", "turnoffmonitor", "false"},
-                                            // 7 Turn off monitor when blanking screen	    
+                                            // 9 Turn monitor/tv on when resuming from standby
                                             new string[] {"general", "turnmonitoronafterresume", "true"},
-                                            // 8 Turn monitor/tv on when resuming from standby
+                                            // 10 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
                                             new string[] {"general", "restartonresume", "false"},
-                                            // 9 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+                                            // 11 Show last active module when starting / resuming from standby
                                             new string[] {"general", "showlastactivemodule", "false"},
-                                            // 10 Show last active module when starting / resuming from standby
+                                            // 12 Use screen selector to choose where to start MP
                                             new string[] {"screenselector", "usescreenselector", "false"}
-                                            // 11 Use screen selector to choose where to start MP
                                           };
 
     /// <summary> 

@@ -172,12 +172,13 @@
       this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
-            "Use alternative fullscreen Splashscreen (only if started in fullscreen mode)",
+            "Use alternative fullscreen Splashscreen (fullscreen only)",
             "Keep MediaPortal always on top",
             "Hide taskbar in fullscreen mode",
             "Autostart MediaPortal on Windows startup",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
+            "Minimize to tray on focus loss (fullscreen only)",
             "Turn off monitor when blanking screen",
             "Turn monitor / tv on when resuming from standby",
             "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",

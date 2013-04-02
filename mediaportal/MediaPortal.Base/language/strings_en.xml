@@ -2326,5 +2326,6 @@
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
     <String id="300227">Clear Blacklisted thumbs</String>
+    <String id="300228">Minimize to tray on focus loss</String>
    </Section>
 </Language>

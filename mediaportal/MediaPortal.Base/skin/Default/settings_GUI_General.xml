@@ -38,28 +38,28 @@
       <control>
         <description>Hide extensions</description>
         <type>checkbutton</type>
-        <id>32</id>
+        <id>31</id>
         <label>300124</label>
         <width>525</width>
       </control>
       <control>
         <description>File cache</description>
         <type>checkbutton</type>
-        <id>33</id>
+        <id>32</id>
         <label>300125</label>
         <width>525</width>
       </control>
       <control>
         <description>Skin sounds</description>
         <type>checkbutton</type>
-        <id>34</id>
+        <id>33</id>
         <label>300126</label>
         <width>525</width>
       </control>
       <control>
         <description>Mouse controls</description>
         <type>checkbutton</type>
-        <id>35</id>
+        <id>34</id>
         <label>300127</label>
         <width>525</width>
       </control>
@@ -80,7 +80,7 @@
       <id>40</id>
       <posX>262</posX>
       <posY>500</posY>
-      <onup>35</onup>
+      <onup>34</onup>
       <ondown>30</ondown>
       <label />
       <width>525</width>

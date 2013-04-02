@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(14)] protected GUICheckButton cmAutostart = null;
     [SkinControl(15)] protected GUICheckButton cmMinimizeonstartup = null;
     [SkinControl(16)] protected GUICheckButton cmMinimizeonexit = null;
+    [SkinControl(17)] protected GUICheckButton cmMinimizeonfocusloss = null;
 
     public GUISettingsGeneralStartup()
     {
@@ -63,6 +64,7 @@ namespace MediaPortal.GUI.Settings
         cmAutostart.Selected = xmlreader.GetValueAsBool("general", "autostart", false);
         cmMinimizeonstartup.Selected = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
         cmMinimizeonexit.Selected = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
+        cmMinimizeonfocusloss.Selected = xmlreader.GetValueAsBool("general", "minimizeonfocusloss", false);
       }
     }
 
@@ -115,6 +117,7 @@ namespace MediaPortal.GUI.Settings
 
         xmlwriter.SetValueAsBool("general", "minimizeonstartup", cmMinimizeonstartup.Selected);
         xmlwriter.SetValueAsBool("general", "minimizeonexit", cmMinimizeonexit.Selected);
+        xmlwriter.SetValueAsBool("general", "minimizeonfocusloss", cmMinimizeonfocusloss.Selected);
       }
     }
 
@@ -187,6 +190,10 @@ namespace MediaPortal.GUI.Settings
         SettingsChanged(true);
       }
       if (control == cmMinimizeonexit)
+      {
+        SettingsChanged(true);
+      }
+      if (control == cmMinimizeonfocusloss)
       {
         SettingsChanged(true);
       }

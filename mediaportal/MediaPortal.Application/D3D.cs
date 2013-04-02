@@ -120,6 +120,7 @@ namespace MediaPortal
     protected string         FrameStatsLine2;          // 2nd string to hold frame stats
     protected bool           MinimizeOnStartup;        // minimize to tray on startup?
     protected bool           MinimizeOnGuiExit;        // minimize to tray on GUI exit?
+    protected bool           MinimizeOnFocusLoss;      // minimize to tray when focus in fullscreen mode is lost?
     protected bool           ShuttingDown;             // set to true if MP is shutting down
     protected bool           FirstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
     protected bool           AutoHideMouse;            // Should the mouse cursor be hidden automatically?
@@ -199,6 +200,7 @@ namespace MediaPortal
       FirstTimeWindowDisplayed  = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;
+      MinimizeOnFocusLoss       = false;
       ShuttingDown              = false;
       AutoHideMouse             = false;
       MouseCursor               = true;

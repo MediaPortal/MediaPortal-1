@@ -34,10 +34,10 @@ namespace WindowPlugins.GUISettings
   public class GUISettingsGUIGeneral : GUIInternalWindow
   {
     [SkinControl(30)] protected GUICheckButton cmAllowRememberLastFocusedItem = null;
-    [SkinControl(32)] protected GUICheckButton cmHideextensions = null;
-    [SkinControl(33)] protected GUICheckButton cmFileexistscache = null;
-    [SkinControl(34)] protected GUICheckButton cmEnableguisounds = null;
-    [SkinControl(35)] protected GUICheckButton cmMousesupport = null;
+    [SkinControl(31)] protected GUICheckButton cmHideextensions = null;
+    [SkinControl(32)] protected GUICheckButton cmFileexistscache = null;
+    [SkinControl(33)] protected GUICheckButton cmEnableguisounds = null;
+    [SkinControl(34)] protected GUICheckButton cmMousesupport = null;
 
     [SkinControl(40)] protected GUIButtonControl btnHomeUsage = null;
 

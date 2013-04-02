@@ -53,12 +53,12 @@ namespace MediaPortal.GUI.Settings
     public static extern bool EnumDisplayDevices(string lpDevice,
                                                  int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
-    [SkinControl(17)]protected GUICheckButton cmTurnoffmonitor = null;
-    [SkinControl(18)]protected GUICheckButton cmTurnmonitoronafterresume = null;
-    [SkinControl(21)]protected GUICheckButton cmRestartonresume = null;
-    [SkinControl(22)]protected GUICheckButton cmShowlastactivemodule = null;
-    [SkinControl(23)]protected GUICheckButton cmUsescreenselector = null;
-    [SkinControl(24)]protected GUIButtonControl btnShowScreens = null;
+    [SkinControl(18)]protected GUICheckButton cmTurnoffmonitor = null;
+    [SkinControl(19)]protected GUICheckButton cmTurnmonitoronafterresume = null;
+    [SkinControl(20)]protected GUICheckButton cmRestartonresume = null;
+    [SkinControl(21)]protected GUICheckButton cmShowlastactivemodule = null;
+    [SkinControl(22)]protected GUICheckButton cmUsescreenselector = null;
+    [SkinControl(23)]protected GUIButtonControl btnShowScreens = null;
     [SkinControl(30)]protected GUIButtonControl btnDelayStartup = null;
     [SkinControl(31)]protected GUICheckButton cmDelayStartup = null;
     [SkinControl(32)]protected GUICheckButton cmDelayResume = null;
