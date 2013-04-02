@@ -153,6 +153,7 @@ namespace MediaPortal
     private bool                       _needReset;                // set to true when the D3D device needs a reset
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
+    private bool                       _reduceFrameRate;          // reduce frame rate when not in focus?
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
@@ -230,6 +231,7 @@ namespace MediaPortal
         _disableMouseEvents      = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
         AutoHideTaskbar          = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
       }
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
@@ -503,7 +505,7 @@ namespace MediaPortal
         try
         {
         #endif
-          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST || ActiveForm != this || GUIGraphicsContext.SaveRenderCycles || !IsVisible)
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST || (ActiveForm != this && _reduceFrameRate)  || GUIGraphicsContext.SaveRenderCycles || !IsVisible)
           {
             Thread.Sleep(100);
           }
@@ -537,7 +539,7 @@ namespace MediaPortal
       else
       {
         // if form isn't active then don't use all the CPU unless we are visible
-        if (ActiveForm != this || GUIGraphicsContext.SaveRenderCycles || !IsVisible)
+        if ((ActiveForm != this && _reduceFrameRate) || GUIGraphicsContext.SaveRenderCycles || !IsVisible)
         {
           Thread.Sleep(100);
         }

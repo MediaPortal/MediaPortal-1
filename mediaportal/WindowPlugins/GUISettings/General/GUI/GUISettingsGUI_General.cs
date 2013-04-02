@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ namespace WindowPlugins.GUISettings
     [SkinControl(32)] protected GUICheckButton cmFileexistscache = null;
     [SkinControl(33)] protected GUICheckButton cmEnableguisounds = null;
     [SkinControl(34)] protected GUICheckButton cmMousesupport = null;
+    [SkinControl(35)] protected GUICheckButton cmReduceFrameRate = null;
 
     [SkinControl(40)] protected GUIButtonControl btnHomeUsage = null;
 
@@ -91,6 +92,7 @@ namespace WindowPlugins.GUISettings
         cmFileexistscache.Selected = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
         cmEnableguisounds.Selected = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
         cmMousesupport.Selected = xmlreader.GetValueAsBool("gui", "mousesupport", false);
+        cmReduceFrameRate.Selected = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
 
         bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
@@ -111,6 +113,7 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValueAsBool("gui", "fileexistscache", cmFileexistscache.Selected);
         xmlwriter.SetValueAsBool("gui", "enableguisounds", cmEnableguisounds.Selected);
         xmlwriter.SetValueAsBool("gui", "mousesupport", cmMousesupport.Selected);
+        xmlwriter.SetValueAsBool("gui", "reduceframerate", cmReduceFrameRate.Selected);
       }
     }
 
@@ -137,6 +140,10 @@ namespace WindowPlugins.GUISettings
         SettingsChanged(true);
       }
       if (control == cmMousesupport)
+      {
+        SettingsChanged(true);
+      }
+      if (control == cmReduceFrameRate)
       {
         SettingsChanged(true);
       }
