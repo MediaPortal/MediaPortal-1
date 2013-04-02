@@ -256,6 +256,7 @@
     <height>40</height>
     <textXOff>10</textXOff>
     <textYOff>6</textYOff>
+    <textpadding>30</textpadding>
     <textureFocus>togglebutton-on-focus.png</textureFocus>
     <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
     <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -753,7 +754,7 @@
     <posY>567</posY>
     <width>693</width>
     <height>137</height>
-    <seperator>&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;	&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;&#8901;</seperator>
+    <seperator>. . . . . . .  . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . .</seperator>
     <textalign>left</textalign>
     <font>font13</font>
     <textcolor>ivory</textcolor>
@@ -871,6 +872,7 @@
     <height>40</height>
     <textXOff>10</textXOff>
     <textYOff>6</textYOff>
+    <textpadding>30</textpadding>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>

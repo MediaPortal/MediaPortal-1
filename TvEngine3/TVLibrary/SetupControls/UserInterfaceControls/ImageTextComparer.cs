@@ -18,6 +18,7 @@
 
 #endregion
 
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Collections;
@@ -26,8 +27,11 @@ namespace MediaPortal.UserInterface.Controls
 {
   public class ImageTextComparer : IComparer
   {
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+    private static extern int StrCmpLogicalW(string x, string y);
+
     //private CaseInsensitiveComparer ObjectCompare;
-    private readonly NumberCaseInsensitiveComparer ObjectCompare;
+    private readonly  NumberCaseInsensitiveComparer ObjectCompare;
 
     public ImageTextComparer()
     {
@@ -49,7 +53,7 @@ namespace MediaPortal.UserInterface.Controls
       }
       if (image1 == image2)
       {
-        return ObjectCompare.Compare(listviewX.Text, listviewY.Text);
+        return StrCmpLogicalW(listviewX.Text, listviewY.Text);
       }
       return 1;
     }

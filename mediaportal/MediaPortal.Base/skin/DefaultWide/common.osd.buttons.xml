@@ -141,8 +141,10 @@
       <description>label Info</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>1020</label>
       <font>font11</font>
       <align>center</align>
@@ -153,8 +155,10 @@
       <description>label Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>924</label>
       <font>font11</font>
       <align>center</align>
@@ -165,8 +169,10 @@
       <description>label Subtitles</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>287</label>
       <font>font11</font>
       <align>center</align>
@@ -177,8 +183,10 @@
       <description>label Bookmarks</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>1064</label>
       <font>font11</font>
       <align>center</align>
@@ -189,8 +197,10 @@
       <description>label Video Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>Video</label>
       <font>font11</font>
       <align>center</align>
@@ -201,8 +211,10 @@
       <description>label Audio Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>Audio</label>
       <font>font11</font>
       <align>center</align>
@@ -213,8 +225,10 @@
       <description>label Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>1118</posX>
-      <posY>668</posY>
+      <posX>1036</posX>
+      <posY>654</posY>
+      <height>29</height>
+      <width>159</width>
       <label>924</label>
       <font>font11</font>
       <align>center</align>
@@ -553,8 +567,10 @@
       <description>label Subtitles</description>
       <type>label</type>
       <id>1</id>
-      <posX>201</posX>
-      <posY>602</posY>
+      <posX>139</posX>
+      <posY>586</posY>
+      <height>29</height>
+      <width>126</width>
       <label>287</label>
       <font>font11</font>
       <align>center</align>
@@ -565,8 +581,10 @@
       <description>label Video Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>201</posX>
-      <posY>602</posY>
+      <posX>139</posX>
+      <posY>586</posY>
+      <height>29</height>
+      <width>126</width>
       <label>Video</label>
       <font>font11</font>
       <align>center</align>
@@ -577,8 +595,10 @@
       <description>label Audio Menu</description>
       <type>label</type>
       <id>1</id>
-      <posX>201</posX>
-      <posY>602</posY>
+      <posX>139</posX>
+      <posY>586</posY>
+      <height>29</height>
+      <width>126</width>
       <label>Audio</label>
       <font>font11</font>
       <align>center</align>

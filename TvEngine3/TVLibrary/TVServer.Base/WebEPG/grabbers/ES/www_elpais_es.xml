@@ -3,6 +3,7 @@
   <Info availableDays="3" timezone="W. Europe Standard Time" />
   <Channels>
 	<Channel id="La 1" siteId="tve-1" />
+	<Channel id="Tve1" siteId="tve-1" />
 	<Channel id="La 2" siteId="la-2" />
 	<Channel id="Antena 3" siteId="antena-3" />
 	<Channel id="Cuatro" siteId="cuatro" />
@@ -29,6 +30,7 @@
 	<Channel id="Arirang TV" siteId="arirang-tv" />
 	<Channel id="AXN" siteId="axn" />
 	<Channel id="AXN HD" siteId="axn-hd" />
+	<Channel id="AXN White" siteId="axn-white" />
 	<Channel id="Al Jazeera English" siteId="al-jazeera-english" />
 	<Channel id="Animax" siteId="animax" />
 	<Channel id="BBC World" siteId="bbc-world" />
@@ -38,6 +40,10 @@
 	<Channel id="Barça TV" siteId="barca-tv" />
 	<Channel id="Bloomberg" siteId="bloomberg" />
 	<Channel id="Boing" siteId="boing" />
+	<Channel id="C+ Liga de Campeones" siteId="cplus-liga-de-campeones" />
+	<Channel id="C+ Liga de Campeones 2" siteId="cplus-liga-de-campeones-2" />
+	<Channel id="C+ Liga de Campeones 2 HD" siteId="cplus-liga-de-campeones-2-hd" />
+	<Channel id="C+ Liga de Campeones 3 HD" siteId="cplus-liga-de-campeones-3-hd" />
 	<Channel id="Multicine" siteId="cplus-multicine" />
 	<Channel id="Multideporte" siteId="cplus-multidep." />
 	<Channel id="Canal+ Radios" siteId="cplus-radios" />
@@ -130,8 +136,9 @@
 	<Channel id="Nitro" siteId="nitro" />
 	<Channel id="Nova" siteId="nova" />
 	<Channel id="Canal Odisea" siteId="odisea" />
-	<Channel id="Panda" siteId="panda" />
+	<Channel id="Panda" siteId="canal-panda" />
 	<Channel id="Par. Comedy" siteId="paramount-comedy" />
+	<Channel id="Paramount Comedy" siteId="paramount-comedy" />
 	<Channel id="Playboy TV" siteId="playboy-tv" />
 	<Channel id="Punt 2" siteId="punt-2" />
 	<Channel id="Russia Today" siteId="rt" />
@@ -139,9 +146,7 @@
 	<Channel id="R. Madrid TV" siteId="real-madrid-tv" />
 	<Channel id="SyFy" siteId="syfy" />
 	<Channel id="SyFy HD" siteId="syfy-hd" />
-	<Channel id="La Sexta 2" siteId="sexta-2" />
 	<Channel id="La Sexta 3" siteId="sexta-3" />
-	<Channel id="Sony TV" siteId="sony-entertainment-tv" />
 	<Channel id="Sportmania" siteId="sportmania" />
 	<Channel id="Super 3" siteId="super-3" />
 	<Channel id="TCM" siteId="tcm" />
@@ -164,6 +169,7 @@
 	<Channel id="VH1" siteId="vh1" />
 	<Channel id="Viajar" siteId="viajar" />
 	<Channel id="Viajar HD" siteId="viajar-hd" />
+	<Channel id="Xplora" siteId="xplora" />
   </Channels>
   <Listing type="Html">
     <Site url="http://servicios.elpais.com/programacion-tv/canal/[ID]/" post="" external="false" encoding="" />

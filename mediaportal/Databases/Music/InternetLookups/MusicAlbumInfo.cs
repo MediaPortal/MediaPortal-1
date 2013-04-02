@@ -76,7 +76,7 @@ namespace MediaPortal.Music.Database
     private static readonly Regex AlbumMoodsRegEx = new Regex(AlbumMoodsRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private const string AlbumReviewRegExp = @"<div class=""editorial-text collapsible-content"" itemprop=""description"">(?<review>.*?)</div>";
     private static readonly Regex AlbumReviewRegEx = new Regex(AlbumReviewRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumTracksRegExp = @"<div id=""tracks"">.*<tbody>(?<tracks>.*?)</tbody>";
+    private const string AlbumTracksRegExp = @"<div id=""tracks"">.*?<tbody>(?<tracks>.*?)</tbody>";
     private static readonly Regex AlbumTracksRegEx = new Regex(AlbumTracksRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private const string TrackRegExp = @"<tr>.*?<td class=""tracknum"">(?<trackNo>.*?)</td>.*?<div class=""title"">\s*<a.*?>\s*(?<title>.*?)?\s*</a>.*?<td class=""time"">\s*(?<time>.*?)\s*</td>.*?</tr>";
     private static readonly Regex TrackRegEx = new Regex(TrackRegExp, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);

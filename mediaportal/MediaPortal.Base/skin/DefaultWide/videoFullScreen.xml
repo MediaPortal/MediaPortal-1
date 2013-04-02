@@ -27,7 +27,7 @@
       <width>1124</width>
       <texture>osd_mask3.png</texture>
       <colordiffuse>ddffffff</colordiffuse>
-      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding]</visible>
+      <visible>!window.isosdvisible+[window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)]</visible>
     </control>
     <control>
       <description>movie title</description>
@@ -47,7 +47,7 @@
       <type>image</type>
       <id>104</id>
       <posX>219</posX>
-      <posY>646</posY>
+      <posY>626</posY>
       <width>689</width>
       <height>19</height>
       <texture>osd_progress_background.png</texture>
@@ -58,7 +58,7 @@
       <type>progress</type>
       <id>1</id>
       <posX>220</posX>
-      <posY>647</posY>
+      <posY>627</posY>
       <width>686</width>
       <offset>0</offset>
       <height>17</height>
@@ -74,7 +74,7 @@
       <type>label</type>
       <id>101</id>
       <posX>109</posX>
-      <posY>640</posY>
+      <posY>620</posY>
       <label>#currentplaytime</label>
       <align>left</align>
       <font>font14</font>
@@ -86,7 +86,7 @@
       <type>label</type>
       <id>102</id>
       <posX>928</posX>
-      <posY>640</posY>
+      <posY>620</posY>
       <label>#currentremaining</label>
       <align>left</align>
       <font>font14</font>

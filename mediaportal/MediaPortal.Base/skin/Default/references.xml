@@ -257,6 +257,7 @@
     <height>40</height>
     <textXOff>7</textXOff>
     <textYOff>6</textYOff>
+    <textpadding>30</textpadding>
     <textureFocus>togglebutton-on-focus.png</textureFocus>
     <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
     <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
@@ -271,6 +272,7 @@
     <shadowAngle>45</shadowAngle>
     <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
   </control>
   <control>
     <description>sort button</description>
@@ -754,7 +756,7 @@
     <posY>567</posY>
     <width>519</width>
     <height>137</height>
-    <seperator>⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅	⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅⋅</seperator>
+    <seperator>. . . . . . .  . . . . . . . . . . . . . . . .  . . . . . . . . . . . . . . . . . . . .</seperator>
     <textalign>left</textalign>
     <font>font13</font>
     <textcolor>ivory</textcolor>
@@ -872,6 +874,7 @@
     <height>40</height>
     <textXOff>7</textXOff>
     <textYOff>6</textYOff>
+    <textpadding>30</textpadding>
     <textureFocus>button_focus.png</textureFocus>
     <textureNoFocus>button_nofocus.png</textureNoFocus>
     <font>font12</font>
@@ -896,5 +899,6 @@
     <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
     <textalign>left</textalign>
     <textvalign>middle</textvalign>
+    <scrollStartDelaySec>0</scrollStartDelaySec>
   </control>
 </controls>
