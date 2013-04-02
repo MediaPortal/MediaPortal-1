@@ -113,30 +113,30 @@ namespace MediaPortal
 
     #region protected attributes
 
-    protected static bool    FullscreenOverride;       // fullscreen mode overridden by command line argument?
-    protected static bool    WindowedOverride;         // window mode overridden by command line argument?
-    protected static string  SkinOverride;             // skin overridden by command line argument
-    protected string         FrameStatsLine1;          // 1st string to hold frame stats
-    protected string         FrameStatsLine2;          // 2nd string to hold frame stats
-    protected bool           MinimizeOnStartup;        // minimize to tray on startup?
-    protected bool           MinimizeOnGuiExit;        // minimize to tray on GUI exit?
-    protected bool           MinimizeOnFocusLoss;      // minimize to tray when focus in fullscreen mode is lost?
-    protected bool           ShuttingDown;             // set to true if MP is shutting down
-    protected bool           FirstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
-    protected bool           AutoHideMouse;            // Should the mouse cursor be hidden automatically?
-    protected bool           AppActive;                // set to true while MP is active     
-    protected bool           MouseCursor;              // holds the current mouse cursor state
-    protected bool           Windowed;                 // are we in windowed mode?
-    protected bool           AutoHideTaskbar;          // Should the Task Bar be hidden?
-    protected bool           IsVisible;                // set to true if form is not minimized to tray
-    protected bool           UseEnhancedVideoRenderer; // should EVR be used?
-    protected int            Frames;                   // number of frames since our last update
-    protected int            Volume;                   // used to save old volume level in case we mute audio
-   
-    protected PlayListPlayer      PlaylistPlayer;    // 
-    protected DateTime            MouseTimeOutTimer; // tracks the time of the last mouse activity
-    protected RECT                LastRect;          // tracks last rectangle size for window resizing
-    protected static SplashScreen SplashScreen;      // splash screen object
+    protected static bool          FullscreenOverride;       // fullscreen mode overridden by command line argument?
+    protected internal static bool WindowedOverride;         // window mode overridden by command line argument?
+    protected static string        SkinOverride;             // skin overridden by command line argument
+    protected string               FrameStatsLine1;          // 1st string to hold frame stats
+    protected string               FrameStatsLine2;          // 2nd string to hold frame stats
+    protected bool                 MinimizeOnStartup;        // minimize to tray on startup?
+    protected bool                 MinimizeOnGuiExit;        // minimize to tray on GUI exit?
+    protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in fullscreen mode is lost?
+    protected bool                 ShuttingDown;             // set to true if MP is shutting down
+    protected bool                 FirstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
+    protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
+    protected bool                 AppActive;                // set to true while MP is active     
+    protected bool                 MouseCursor;              // holds the current mouse cursor state
+    protected bool                 Windowed;                 // are we in windowed mode?
+    protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
+    protected bool                 IsVisible;                // set to true if form is not minimized to tray
+    protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
+    protected int                  Frames;                   // number of frames since our last update
+    protected int                  Volume;                   // used to save old volume level in case we mute audio
+    protected PlayListPlayer       PlaylistPlayer;           // 
+    protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
+    protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
+    protected static SplashScreen  SplashScreen;             // splash screen object
+
     #endregion
 
     #region private attributes
@@ -145,6 +145,7 @@ namespace MediaPortal
     private readonly D3DEnumeration    _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
+    private readonly bool              _doNotWaitForVSync;        // debug setting
     private readonly bool              _showCursorWhenFullscreen; // should the mouse cursor be shown in full screen?
     private readonly bool              _reduceFrameRate;          // reduce frame rate when not in focus?
     private bool                       _miniTvMode;               // 
@@ -232,6 +233,7 @@ namespace MediaPortal
         AutoHideTaskbar          = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
+        _doNotWaitForVSync       = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
       }
 
       _useExclusiveDirectXMode = !UseEnhancedVideoRenderer && _useExclusiveDirectXMode;
@@ -964,7 +966,30 @@ namespace MediaPortal
       _presentParams.BackBufferWidth           = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
       _presentParams.BackBufferHeight          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
       _presentParams.BackBufferFormat          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Format;
-      _presentParams.BackBufferCount           = 2;
+
+      if (OSInfo.OSInfo.Win7OrLater())
+      {
+        if (!_doNotWaitForVSync)
+        {
+          // FLIPEX will benefit from more back buffers
+          _presentParams.BackBufferCount = 4;
+        }
+        else
+        {
+          // Allow performance measurements when DWM is not blocking Present()
+          _presentParams.BackBufferCount = 20;
+          int hr = DXNative.FontEngineSetMaximumFrameLatency(20);
+          if (hr != 0)
+          {
+            Log.Info("D3D: BuildPresentParams() failed to set maximum frame latency - error: {0}", hr);
+          }
+        }
+      }
+      else
+      {
+        _presentParams.BackBufferCount = 2;
+      }
+
       _presentParams.MultiSample               = MultiSampleType.None;
       _presentParams.MultiSampleQuality        = 0;
       _presentParams.SwapEffect                = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
@@ -975,7 +1000,7 @@ namespace MediaPortal
       _presentParams.AutoDepthStencilFormat    = DepthFormat.D24S8;
       _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = 0;
-      _presentParams.PresentationInterval      = PresentInterval.One;
+      _presentParams.PresentationInterval      = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.One;
       _presentParams.ForceNoMultiThreadedFlag  = false;
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
@@ -1090,10 +1115,13 @@ namespace MediaPortal
       var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
                                           DeviceType.Hardware, 
                                           _renderTarget.Handle,
-                                          CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          // TODO: remove
+                                          //CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          CreateFlags.PureDevice | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                           ref param,
                                           IntPtr.Zero,
                                           out dev);
+
       if (hr == 0)
       {
         GUIGraphicsContext.DX9Device = new Device(dev);
@@ -1729,10 +1757,13 @@ namespace MediaPortal
     /// <summary>
     /// 
     /// </summary>
-    private static void StartFrameClock()
+    private void StartFrameClock()
     {
-      ClockWatch.Reset();
-      ClockWatch.Start();
+      if (!_doNotWaitForVSync)
+      {
+        ClockWatch.Reset();
+        ClockWatch.Start();
+      }
     }
 
 

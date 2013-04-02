@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
@@ -35,7 +35,9 @@ using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// Summary description for TexturePacker.
@@ -46,25 +48,18 @@ namespace MediaPortal.GUI.Library
 
     public event DisposeEventHandler Disposing;
 
-    #region imports
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    #endregion
-
     #region PackedTexture Class
 
     [Serializable]
+    // ReSharper disable InconsistentNaming
     public class PackedTexture
     {
+
       public PackedTextureNode root;
       public int textureNo;
       [NonSerialized] public Texture texture;
-    } ;
+    };
+    // ReSharper restore InconsistentNaming
 
     #endregion
 
@@ -102,8 +97,6 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Insert(string fileName, Image img, Image rootImage)
       {
-        //Log.Info("rect:({0},{1}) {2}x{3} img:{4}x{5} filename:{6} left:{7} right:{8}",
-        //				Rect.Left,Rect.Top,Rect.Width,Rect.Height,img.Width,img.Height,FileName, ChildLeft,ChildRight);
         if (ChildLeft != null && ChildRight != null)
         {
           PackedTextureNode node = ChildLeft.Insert(fileName, img, rootImage);
@@ -174,7 +167,9 @@ namespace MediaPortal.GUI.Library
 
     private List<PackedTexture> _packedTextures;   // A list of packed textures
     private List<string> _texturesNotPacked;       // A list of textures that could not be packed
+    // ReSharper disable InconsistentNaming
     private const int MAXTEXTUREDIMENSION = 2048;
+    // ReSharper restore InconsistentNaming
     private int _maxTextureWidth;
     private int _maxTextureHeight;
 
@@ -240,19 +235,19 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    private void SavePackedSkin(string skinName)
+    private void SavePackedSkin()
     {
       // Save the packed texture files.
       string packedXml = string.Format(@"{0}\packedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
-      using (FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (var fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
       {
-        ArrayList packedTextures = new ArrayList();
+        var packedTextures = new ArrayList();
         foreach (PackedTexture packed in _packedTextures)
         {
           packedTextures.Add(packed);
         }
-        BinaryFormatter formatter = new BinaryFormatter();
+        var formatter = new BinaryFormatter();
         formatter.Serialize(fileStream, packedTextures);
         fileStream.Close();
       }
@@ -260,20 +255,20 @@ namespace MediaPortal.GUI.Library
       // Save a list of the images that were not able to be packed.
       string notPackedXml = string.Format(@"{0}\notpackedgfx2.bxml", GUIGraphicsContext.SkinCacheFolder);
 
-      using (FileStream fileStream = new FileStream(notPackedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
+      using (var fileStream = new FileStream(notPackedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
       {
-        ArrayList notPackedTextures = new ArrayList();
+        var notPackedTextures = new ArrayList();
         foreach (string notPacked in _texturesNotPacked)
         {
           notPackedTextures.Add(notPacked);
         }
-        BinaryFormatter formatter = new BinaryFormatter();
+        var formatter = new BinaryFormatter();
         formatter.Serialize(fileStream, notPackedTextures);
         fileStream.Close();
       }
     }
 
-    private bool LoadPackedSkin(string skinName)
+    private bool LoadPackedSkin()
     {
       bool loadedPacked = false;
       Log.Debug("Skin Folder : {0}", GUIGraphicsContext.Skin);
@@ -287,13 +282,13 @@ namespace MediaPortal.GUI.Library
             MediaPortal.Util.Utils.FileExistsInCache(packedXml))
         {
           // Load textures that were packed.
-          using (FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          using (var fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
             try
             {
               _packedTextures = new List<PackedTexture>();
-              BinaryFormatter formatter = new BinaryFormatter();
-              ArrayList packedTextures = (ArrayList)formatter.Deserialize(fileStream);
+              var formatter = new BinaryFormatter();
+              var packedTextures = (ArrayList)formatter.Deserialize(fileStream);
               foreach (PackedTexture packed in packedTextures)
               {
                 _packedTextures.Add(packed);
@@ -304,20 +299,20 @@ namespace MediaPortal.GUI.Library
           }
 
           // Load the list of textures that were not able to be packed.
-          using (FileStream fileStream = new FileStream(notPackedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+          using (var fileStream = new FileStream(notPackedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
             try
             {
               _texturesNotPacked = new List<string>();
-              BinaryFormatter formatter = new BinaryFormatter();
-              ArrayList notPackedTextures = (ArrayList)formatter.Deserialize(fileStream);
+              var formatter = new BinaryFormatter();
+              var notPackedTextures = (ArrayList)formatter.Deserialize(fileStream);
               foreach (string notPacked in notPackedTextures)
               {
                 _texturesNotPacked.Add(notPacked);
               }
               fileStream.Close();
             }
-            catch { }
+            catch {}
           }
           loadedPacked = true;
         }
@@ -328,7 +323,7 @@ namespace MediaPortal.GUI.Library
     public void PackSkinGraphics(string skinName)
     {
       Cleanup();
-      if (LoadPackedSkin(skinName))
+      if (LoadPackedSkin())
       {
         return;
       }
@@ -336,7 +331,7 @@ namespace MediaPortal.GUI.Library
       // Create the list of textures to pack.
       _packedTextures = new List<PackedTexture>();
       _texturesNotPacked = new List<string>();
-      List<string> files = new List<string>();
+      var files = new List<string>();
 
       string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
       files.AddRange(skinFiles);
@@ -366,9 +361,9 @@ namespace MediaPortal.GUI.Library
       // Determine maximum texture dimensions
       try
       {
-        Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
-        _maxTextureWidth = d3dcaps.MaxTextureWidth;
-        _maxTextureHeight = d3dcaps.MaxTextureHeight;
+        Caps capabilities = GUIGraphicsContext.DX9Device.DeviceCaps;
+        _maxTextureWidth = capabilities.MaxTextureWidth;
+        _maxTextureHeight = capabilities.MaxTextureHeight;
         Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
       }
       catch (Exception)
@@ -393,11 +388,8 @@ namespace MediaPortal.GUI.Library
       {
         bool imagesLeft = false;
 
-        PackedTexture bigOne = new PackedTexture();
-        bigOne.root = new PackedTextureNode();
-        bigOne.texture = null;
-        bigOne.textureNo = -1;
-        using (Bitmap rootImage = new Bitmap(_maxTextureWidth, _maxTextureHeight))
+        var bigOne = new PackedTexture {root = new PackedTextureNode(), texture = null, textureNo = -1};
+        using (var rootImage = new Bitmap(_maxTextureWidth, _maxTextureHeight))
         {
           bigOne.root.Rect = new Rectangle(0, 0, _maxTextureWidth, _maxTextureHeight);
           for (int i = 0; i < files.Count; ++i)
@@ -410,7 +402,7 @@ namespace MediaPortal.GUI.Library
             if (files[i] != string.Empty)
             {
               // Ignore files not needed for MP
-              if (files[i].IndexOf("preview.") >= 0)
+              if (files[i].IndexOf("preview.", StringComparison.Ordinal) >= 0)
               {
                 files[i] = string.Empty;
                 continue;
@@ -454,7 +446,7 @@ namespace MediaPortal.GUI.Library
           break;
         }
       }
-      SavePackedSkin(skinName);
+      SavePackedSkin();
     }
 
     private void LoadPackedGraphics(int index)
@@ -473,7 +465,7 @@ namespace MediaPortal.GUI.Library
 
         string fileName = String.Format(@"{0}\packedgfx2{1}.png", GUIGraphicsContext.SkinCacheFolder, index);
 
-        ImageInformation info2 = new ImageInformation();
+        var info2 = new ImageInformation();
         Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
                                              fileName,
                                              0, 0, //width/height
@@ -483,7 +475,7 @@ namespace MediaPortal.GUI.Library
                                              GUIGraphicsContext.GetTexturePoolType(),
                                              Filter.None,
                                              Filter.None,
-                                             (int)0,
+                                             0,
                                              ref info2);
         bigOne.texture = tex;
         bigOne.texture.Disposing -= TextureDisposing;
@@ -507,7 +499,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
-            FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);
@@ -545,14 +537,14 @@ namespace MediaPortal.GUI.Library
       }
 
       string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
-      int pos = file.IndexOf(skinName);
+      int pos = file.IndexOf(skinName, StringComparison.Ordinal);
       if (pos >= 0)
       {
         file = file.Remove(pos, skinName.Length);
       }
 
       string themeName = String.Format(@"{0}\themes", GUIGraphicsContext.Skin).ToLower();
-      pos = file.IndexOf(themeName);
+      pos = file.IndexOf(themeName, StringComparison.Ordinal);
       if (pos >= 0)
       {
         file = file.Remove(pos, themeName.Length);
@@ -570,11 +562,11 @@ namespace MediaPortal.GUI.Library
     }
 
     public bool Get(string fileName, out float uoffs, out float voffs, out float umax, out float vmax, out int iWidth,
-                    out int iHeight, out Texture tex, out int TextureNo)
+                    out int iHeight, out Texture tex, out int textureNo)
     {
       uoffs = voffs = umax = vmax = 0.0f;
       iWidth = iHeight = 0;
-      TextureNo = -1;
+      textureNo = -1;
       tex = null;
       if (_packedTextures == null)
       {
@@ -655,11 +647,11 @@ namespace MediaPortal.GUI.Library
           unsafe
           {
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
-            bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, ptr.ToPointer());
+            bigOne.textureNo = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, ptr.ToPointer());
             Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
           }
         }
-        TextureNo = bigOne.textureNo;
+        textureNo = bigOne.textureNo;
         return true;
       }
       return false;
@@ -668,14 +660,7 @@ namespace MediaPortal.GUI.Library
     private bool IsTexturePacked(string textureFile)
     {
       // Look through the textures that wee not packed (likely a shorter list).
-      foreach (string texture in _texturesNotPacked)
-      {
-        if (texture.IndexOf(textureFile) > 0)
-        {
-          return false;
-        }
-      }
-      return true;
+      return _texturesNotPacked.All(texture => texture.IndexOf(textureFile, StringComparison.Ordinal) <= 0);
     }
 
     public void Dispose()
@@ -688,7 +673,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
-            FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);
@@ -709,18 +694,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-    }
-
-    private bool IsCompressedTextureFormatOk(Format textureFormat)
-    {
-      if (Manager.CheckDeviceFormat(0, DeviceType.Hardware, GUIGraphicsContext.DirectXPresentParameters.BackBufferFormat,
-                                    Usage.None, ResourceType.Textures,
-                                    textureFormat))
-      {
-        Log.Info("TexurePacker: Using compressed textures");
-        return true;
-      }
-      return false;
     }
   }
 }

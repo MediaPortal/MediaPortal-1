@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -117,8 +117,10 @@ namespace MediaPortal
           screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
         }
 
-        if (D3DApp._windowedOverride)
+        if (D3D.WindowedOverride)
+        {
           startFullScreen = false;
+        }
 
         if (useFullScreenSplash && screennumber > 0)
         {

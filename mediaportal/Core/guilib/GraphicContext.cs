@@ -24,7 +24,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
@@ -55,12 +54,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern void FontEngineSetClipEnable();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern void FontEngineSetClipDisable();
-
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
     
@@ -122,7 +115,6 @@ namespace MediaPortal.GUI.Library
     private static int _saturation = -1;
     private static int _sharpness = -1;
     private static bool _mouseSupport = true;
-    //TODO: don't use hard coded values
     private static Size _skinSize = new Size(720, 576);
     private static bool _showBackGround = true; // show the GUI or live tv in the background
     private static int _scrollSpeedVertical = 4;
@@ -1660,7 +1652,6 @@ namespace MediaPortal.GUI.Library
       var offset = new Point(camera.X - (Width / 2), camera.Y - (Height / 2));
 
       // grab the viewport dimensions and location
-      // TODO: DX9Device.Viewport should not be used to get current resolution of form
       Viewport viewport = DX9Device.Viewport;
       float w = viewport.Width * 0.5f;
       float h = viewport.Height * 0.5f;
@@ -1863,7 +1854,7 @@ namespace MediaPortal.GUI.Library
       // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
       ClipRectangleStack.Push(r3);
       DX9Device.ScissorRectangle = ClipRectangleStack.Peek();
-      FontEngineSetClipEnable();
+      DXNative.FontEngineSetClipEnable();
     }
 
     /// <summary>
@@ -1877,7 +1868,7 @@ namespace MediaPortal.GUI.Library
       // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
       if (ClipRectangleStack.Count == 0)
       {
-        FontEngineSetClipDisable();
+        DXNative.FontEngineSetClipDisable();
       }
       else
       {

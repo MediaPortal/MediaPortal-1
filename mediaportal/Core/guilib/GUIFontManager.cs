@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2012 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET.Helper;
 using MediaPortal.Util;
@@ -46,12 +45,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIFontManager
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern void FontEnginePresentTextures();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetDevice(void* device);
-
     #region Constructors
 
     // singleton. Dont allow any instance of this class
@@ -102,7 +95,7 @@ namespace MediaPortal.GUI.Library
     {
       unsafe
       {
-        FontEngineSetDevice(null);
+        DXNative.FontEngineSetDevice(null);
       }
     }
 
@@ -246,7 +239,6 @@ namespace MediaPortal.GUI.Library
         {
           return ListFonts[iFont];
         }
-        //return GetFont("debug"); // TODO: crashes config on save, is this really needed?
         return null;
       }
     }
@@ -271,8 +263,6 @@ namespace MediaPortal.GUI.Library
 
           return ListFonts.FirstOrDefault(font => font.FontName == fn);
         }
-
-        //return GetFont("debug"); // TODO: crashes config on save, is this really needed?
         return null;
       }
     }
@@ -494,7 +484,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        FontEnginePresentTextures();
+        DXNative.FontEnginePresentTextures();
         foreach (GUIFont font in ListFonts)
         {
           font.Present();
@@ -600,7 +590,9 @@ namespace MediaPortal.GUI.Library
         string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
+      // ReSharper disable EmptyGeneralCatchClause
       catch (Exception) {}
+      // ReSharper restore EmptyGeneralCatchClause
     }
 
     /// <summary>
@@ -613,7 +605,7 @@ namespace MediaPortal.GUI.Library
 
       unsafe
       {
-        FontEngineSetDevice(upDevice.ToPointer());
+        DXNative.FontEngineSetDevice(upDevice.ToPointer());
       }
     }
 
@@ -629,7 +621,7 @@ namespace MediaPortal.GUI.Library
 
         unsafe
         {
-          FontEngineSetDevice(upDevice.ToPointer());
+          DXNative.FontEngineSetDevice(upDevice.ToPointer());
         }
         foreach (GUIFont font in ListFonts)
         {
