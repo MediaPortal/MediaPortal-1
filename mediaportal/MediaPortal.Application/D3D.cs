@@ -752,7 +752,7 @@ namespace MediaPortal
       }
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode
-      if (IsVisible && ((_lostFocus && Windowed) || !Windowed))
+      if (IsVisible && ((_lostFocus && Windowed) || (!Windowed && MinimizeOnFocusLoss)))
       {
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;

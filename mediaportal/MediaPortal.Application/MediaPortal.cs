@@ -934,7 +934,7 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
       MinimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
       MinimizeOnGuiExit = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
-      MinimizeOnFocusLoss = xmlreader.GetValueAsBool("geberal", "minimizeonfocusloss", false);
+      MinimizeOnFocusLoss = xmlreader.GetValueAsBool("general", "minimizeonfocusloss", false);
 
     }
 

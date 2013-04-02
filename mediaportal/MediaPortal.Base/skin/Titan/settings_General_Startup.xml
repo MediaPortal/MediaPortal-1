@@ -82,7 +82,6 @@
         <id>16</id>
         <label>300111</label>
       </control>
-      </control>
 			
 			<control Style="SettingsCheckButtonLarge">
         <description>Minimize to tray GUI on focus loss</description>
