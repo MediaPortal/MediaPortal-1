@@ -144,7 +144,7 @@ namespace MediaPortal.Localisation
     public StringLocalised Get(string section, int id)
     {
       Dictionary<int, StringLocalised> localList = null;
-      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
+      if (_languageStrings.TryGetValue(section.ToLowerInvariant(), out localList))
       {
         StringLocalised stringLocalised = null;
         if (localList.TryGetValue(id, out stringLocalised))
@@ -159,7 +159,7 @@ namespace MediaPortal.Localisation
     public string GetString(string section, int id)
     {
       Dictionary<int, StringLocalised> localList = null;
-      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
+      if (_languageStrings.TryGetValue(section.ToLowerInvariant(), out localList))
       {
         StringLocalised stringLocalised = null;
         if (localList.TryGetValue(id, out stringLocalised))
@@ -410,7 +410,7 @@ namespace MediaPortal.Localisation
         foreach (StringSection section in strings.sections)
         {
           // convert section name tolower -> no case matching.
-          section.name = section.name.ToLower();
+          section.name = section.name.ToLowerInvariant();
 
           Dictionary<int, StringLocalised> newSection;
           if (_languageStrings.TryGetValue(section.name, out newSection))

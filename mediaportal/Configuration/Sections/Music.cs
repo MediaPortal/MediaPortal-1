@@ -524,7 +524,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "playlistIsCurrent", PlaylistCurrentCheckBox.Checked);
 
         //Play behaviour
-        xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLower());
+        xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLowerInvariant());
         xmlwriter.SetValueAsBool("musicfiles", "addall", chkAddAllTracks.Checked);
 
         // Misc Settings
@@ -616,7 +616,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override object GetSetting(string name)
     {
-      switch (name.ToLower())
+      switch (name.ToLowerInvariant())
       {
         case "audioplayer":
           return audioPlayerComboBox.SelectedItem.ToString();

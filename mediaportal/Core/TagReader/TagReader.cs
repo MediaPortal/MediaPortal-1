@@ -321,7 +321,7 @@ namespace MediaPortal.TagReader
 
     private static bool IsAudio(string fileName)
     {
-      string ext = System.IO.Path.GetExtension(fileName).ToLower();
+      string ext = System.IO.Path.GetExtension(fileName).ToLowerInvariant();
 
       switch (ext)
       {

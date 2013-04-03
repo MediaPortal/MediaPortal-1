@@ -172,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override object GetSetting(string name)
     {
-      switch (name.ToLower())
+      switch (name.ToLowerInvariant())
       {
         case "extensions":
           return Extensions;

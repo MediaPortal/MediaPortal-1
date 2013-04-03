@@ -279,16 +279,16 @@ namespace MediaPortal.Configuration.Sections
           string strDrive = strFileName.Substring(0, 2);
           strMovieName = Util.Utils.GetDriveName(strDrive);
         }
-        else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
+        else if (strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
         {
           // DVD folder
-          string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+          string dvdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           strMovieName = Path.GetFileName(dvdFolder);
         }
-        else if (strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
+        else if (strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
         {
           // BD folder
-          string bdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV"));
+          string bdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV"));
           strMovieName = Path.GetFileName(bdFolder);
         }
         else

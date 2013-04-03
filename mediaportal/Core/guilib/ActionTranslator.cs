@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Library
 
       if (nodeGamepad != null)
       {
-        string strButton = nodeGamepad.InnerText.ToLower();
+        string strButton = nodeGamepad.InnerText.ToLowerInvariant();
         if (strButton.Length == 1)
         {
           but.eKeyChar = (int)strButton[0];
@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           but.eKeyChar = 0;
-          strButton = strButton.ToLower();
+          strButton = strButton.ToLowerInvariant();
 
           switch (strButton)
           {

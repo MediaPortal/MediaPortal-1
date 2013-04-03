@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      text = text.ToLower();
+      text = text.ToLowerInvariant();
       text = text.Replace("screencenterx", GUIGraphicsContext.OutputScreenCenter.X.ToString());
       text = text.Replace("screencentery", GUIGraphicsContext.OutputScreenCenter.Y.ToString());
 
@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.Library
 
     public bool Create(XmlNode node)
     {
-      string animType = node.InnerText.ToLower();
+      string animType = node.InnerText.ToLowerInvariant();
       if (String.Compare(animType, "visible", true) == 0)
       {
         _type = AnimationType.Visible;

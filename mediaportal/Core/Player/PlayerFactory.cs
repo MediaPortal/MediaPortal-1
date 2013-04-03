@@ -253,7 +253,7 @@ namespace MediaPortal.Player
             }
           }
 
-          if (aFileName.ToLower().IndexOf("rtsp:") >= 0)
+          if (aFileName.ToLowerInvariant().IndexOf("rtsp:") >= 0)
           {
             if (aMediaType != null)
             {
@@ -277,7 +277,7 @@ namespace MediaPortal.Player
             }
           }
 
-          string extension = Path.GetExtension(aFileName).ToLower();
+          string extension = Path.GetExtension(aFileName).ToLowerInvariant();
           if (extension == ".bdmv")
           {
             if (InternalBDPlayer)
@@ -291,7 +291,7 @@ namespace MediaPortal.Player
           }
 
           if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
-              aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+              aFileName.ToLowerInvariant().IndexOf(".tsbuffer") < 0 && aFileName.ToLowerInvariant().IndexOf("radio.tsbuffer") < 0)
           {
             IPlayer newPlayer = GetExternalPlayer(aFileName);
             if (newPlayer != null)
@@ -324,7 +324,7 @@ namespace MediaPortal.Player
           if (extension == ".tsbuffer" || extension == ".ts" || extension == ".rec")
             //new support for Topfield recordings
           {
-            if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            if (aFileName.ToLowerInvariant().IndexOf("radio.tsbuffer") >= 0)
             {
               if (aMediaType != null)
               {

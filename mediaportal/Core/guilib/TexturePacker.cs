@@ -536,14 +536,14 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
-      string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
+      string skinName = String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLowerInvariant();
       int pos = file.IndexOf(skinName, StringComparison.Ordinal);
       if (pos >= 0)
       {
         file = file.Remove(pos, skinName.Length);
       }
 
-      string themeName = String.Format(@"{0}\themes", GUIGraphicsContext.Skin).ToLower();
+      string themeName = String.Format(@"{0}\themes", GUIGraphicsContext.Skin).ToLowerInvariant();
       pos = file.IndexOf(themeName, StringComparison.Ordinal);
       if (pos >= 0)
       {
@@ -577,7 +577,7 @@ namespace MediaPortal.GUI.Library
       {
         fileName = fileName.Remove(0, 1);
       }
-      fileName = fileName.ToLower();
+      fileName = fileName.ToLowerInvariant();
       if (fileName == string.Empty)
       {
         return false;
@@ -592,7 +592,7 @@ namespace MediaPortal.GUI.Library
       if (!GUIThemeManager.CurrentThemeIsDefault)
       {
         string skinThemeTexturePath = GUIThemeManager.CurrentTheme + @"\media\";
-        skinThemeTexturePath = skinThemeTexturePath.ToLower();
+        skinThemeTexturePath = skinThemeTexturePath.ToLowerInvariant();
 
         // If a theme texture exists but was not able to be packed then avoid trying to unpack the texture all together.  This prevents
         // a base skin texture from being unpacked and returned when the base texture could be packed but the overriding theme texture

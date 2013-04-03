@@ -102,7 +102,7 @@ namespace MediaPortal.Configuration
       {
         foreach (string argument in arguments)
         {
-          string trimmedArgument = argument.ToLower();
+          string trimmedArgument = argument.ToLowerInvariant();
 
           if (trimmedArgument.StartsWith("/wizard"))
           {

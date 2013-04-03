@@ -222,7 +222,7 @@ namespace WindowPlugins.GUISettings
         EnableControls();
         SettingsChanged(true);
       }
-      if (_name.ToLower().IndexOf("tv") < 1)
+      if (_name.ToLowerInvariant().IndexOf("tv") < 1)
       {
         // Remove
         if (control == btnRemove)

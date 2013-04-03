@@ -225,7 +225,7 @@ namespace WatchDog
       string[] args = Environment.GetCommandLineArgs();
       for (int i = 1; i < args.Length;)
       {
-        switch (args[i].ToLower())
+        switch (args[i].ToLowerInvariant())
         {
           case "-zipfile":
             _zipFile = args[++i];

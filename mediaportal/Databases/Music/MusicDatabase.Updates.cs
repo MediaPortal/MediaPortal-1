@@ -735,11 +735,11 @@ namespace MediaPortal.Music.Database
 
           if (SharePath.Length > 0)
           {
-            if (ShareType.ToLower() == "yes")
+            if (ShareType.ToLowerInvariant() == "yes")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of Remote Share: {0}", SharePath);
             }
-            else if (ShareScan.ToLower() == "no")
+            else if (ShareScan.ToLowerInvariant() == "no")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of non-selected Share: {0}", SharePath);
             }
@@ -1128,7 +1128,7 @@ namespace MediaPortal.Music.Database
       bool fileinCluded = false;
       try
       {
-        string ext = Path.GetExtension(file).ToLower();
+        string ext = Path.GetExtension(file).ToLowerInvariant();
         if (ext == ".m3u")
         {
           return false;

@@ -1058,7 +1058,7 @@ namespace MediaPortal.GUI.Video
         foreach (Match m in mc)
         {
           // Get cover - using mid quality cover
-          if (m.Groups["cover"].Value.ToLower().Contains("mid.jpg"))
+          if (m.Groups["cover"].Value.ToLowerInvariant().Contains("mid.jpg"))
           {
             thumb = m.Groups["cover"].Value;
             break;

@@ -92,7 +92,7 @@ namespace MediaPortal.GUI.Home
               }
               else
               {
-                if (showInHome.ToLower().Equals("no"))
+                if (showInHome.ToLowerInvariant().Equals("no"))
                 {
                   myPluginsCount++;
                   continue;

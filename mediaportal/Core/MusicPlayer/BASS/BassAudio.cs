@@ -1107,7 +1107,7 @@ namespace MediaPortal.Player
 
       foreach (FileInfo file in decoders)
       {
-        if (Path.GetExtension(file.Name).ToLower() != ".dll")
+        if (Path.GetExtension(file.Name).ToLowerInvariant() != ".dll")
         {
           continue;
         }
@@ -1143,7 +1143,7 @@ namespace MediaPortal.Player
       List<BASS_MIDI_FONT> tmpFonts = new List<BASS_MIDI_FONT>();
       foreach (FileInfo file in decoders)
       {
-        if (Path.GetExtension(file.Name).ToLower() != ".sf2")
+        if (Path.GetExtension(file.Name).ToLowerInvariant() != ".sf2")
         {
           continue;
         }
@@ -1686,7 +1686,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     private bool IsMODFile(string filePath)
     {
-      string ext = Path.GetExtension(filePath).ToLower();
+      string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
       switch (ext)
       {
@@ -1711,7 +1711,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     private bool IsMidiFile(string filePath)
     {
-      string ext = Path.GetExtension(filePath).ToLower();
+      string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
       switch (ext)
       {
@@ -2062,12 +2062,12 @@ namespace MediaPortal.Player
       {
         foreach (string item in tags)
         {
-          if (item.ToLower().StartsWith("icy-name:"))
+          if (item.ToLowerInvariant().StartsWith("icy-name:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Album", item.Substring(9));
           }
 
-          if (item.ToLower().StartsWith("icy-genre:"))
+          if (item.ToLowerInvariant().StartsWith("icy-genre:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
           }
@@ -2189,7 +2189,7 @@ namespace MediaPortal.Player
 
       try
       {
-        if (filePath.ToLower().CompareTo(FilePath.ToLower()) == 0 && stream != 0)
+        if (filePath.ToLowerInvariant().CompareTo(FilePath.ToLowerInvariant()) == 0 && stream != 0)
         {
           // Selected file is equal to current stream
           if (_State == PlayState.Paused)
@@ -2358,8 +2358,8 @@ namespace MediaPortal.Player
             if (stream == 0)
               Log.Error("BASS: CD: {0}.", Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
           }
-          else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
-                   filePath.ToLower().StartsWith("mms") || filePath.ToLower().StartsWith("rtsp"))
+          else if (filePath.ToLowerInvariant().Contains(@"http://") || filePath.ToLowerInvariant().Contains(@"https://") ||
+                   filePath.ToLowerInvariant().StartsWith("mms") || filePath.ToLowerInvariant().StartsWith("rtsp"))
           {
             // We're playing Internet Radio Stream
             _isLastFMRadio = Util.Utils.IsLastFMStream(filePath);

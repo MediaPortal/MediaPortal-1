@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Drawing;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -594,7 +595,7 @@ namespace MediaPortal.Configuration.Sections
             _SERVER_INFO_100 svrInfo = (_SERVER_INFO_100)Marshal.PtrToStructure(tmpBuffer, typeof(_SERVER_INFO_100));
 
             // Check if the PC is a MP TV server
-            string hostname = svrInfo.sv100_name.ToLower();
+            string hostname = svrInfo.sv100_name.ToLower(CultureInfo.CurrentCulture);
             if (VerifyHostname(hostname, silent))
               networkComputers.Add(hostname);
           }

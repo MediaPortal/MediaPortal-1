@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
           {
             foreach (string invalidDirectory in invalidDirectoryNames)
             {
-              if (invalidDirectory.Equals(directoryName.ToLower()))
+              if (invalidDirectory.Equals(directoryName.ToLowerInvariant()))
               {
                 isInvalidDirectory = true;
                 break;

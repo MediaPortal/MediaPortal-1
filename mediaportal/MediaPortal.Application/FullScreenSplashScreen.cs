@@ -124,7 +124,7 @@ namespace MediaPortal
             XmlNode selectSingleNode = control.SelectSingleNode("type/text()");
             XmlNode singleNode = control.SelectSingleNode("id/text()");
             // if the background image control is found
-            if (singleNode != null && (selectSingleNode != null && (selectSingleNode.Value.ToLower() == "image" && singleNode.Value == "1"))) 
+            if (singleNode != null && (selectSingleNode != null && (selectSingleNode.Value.ToLowerInvariant() == "image" && singleNode.Value == "1"))) 
             {
               XmlNode xmlNode = control.SelectSingleNode("texture/text()");
               if (xmlNode != null)
@@ -143,7 +143,7 @@ namespace MediaPortal
             XmlNode node = control.SelectSingleNode("type/text()");
             XmlNode selectSingleNode1 = control.SelectSingleNode("id/text()");
             // if the center label control is found
-            if (selectSingleNode1 != null && (node != null && (node.Value.ToLower() == "label" && selectSingleNode1.Value == "2")))
+            if (selectSingleNode1 != null && (node != null && (node.Value.ToLowerInvariant() == "label" && selectSingleNode1.Value == "2")))
             {
               if (control.SelectSingleNode("textsize") != null)
               {
@@ -193,7 +193,7 @@ namespace MediaPortal
           foreach (XmlNode control in controlsList)
           {
             XmlNode selectSingleNode = control.SelectSingleNode("type/text()");
-            if (selectSingleNode != null && selectSingleNode.Value.ToLower() == "image")
+            if (selectSingleNode != null && selectSingleNode.Value.ToLowerInvariant() == "image")
             {
               XmlNode singleNode = control.SelectSingleNode("texture/text()");
               if (singleNode != null)

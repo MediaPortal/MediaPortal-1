@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
       // ToDo: add searchstring property
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
       }
     }
 
@@ -623,7 +623,7 @@ namespace MediaPortal.GUI.Library
         }
         else if (!string.IsNullOrEmpty(scrollItem.Label))
         {
-          scrollLabel = scrollItem.Label.Substring(0, 1).ToUpper();
+          scrollLabel = scrollItem.Label.Substring(0, 1).ToUpperInvariant();
         }
 
         if (string.IsNullOrEmpty(scrollLabel))
@@ -1960,7 +1960,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpper().StartsWith(searchKey.ToUpper()))
+        if (pItem.Label.ToUpperInvariant().StartsWith(searchKey.ToUpperInvariant()))
         {
           bItemFound = true;
           break;

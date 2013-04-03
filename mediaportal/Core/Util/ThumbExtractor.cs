@@ -532,7 +532,7 @@ namespace MediaPortal.Util
       try
       {
         string pidlPath = PathFromPidl(pidl);
-        if (Path.GetFileName(pidlPath).ToUpper().Equals(Path.GetFileName(file).ToUpper()))
+        if (Path.GetFileName(pidlPath).ToUpperInvariant().Equals(Path.GetFileName(file).ToUpperInvariant()))
         {
           // we have the item:
           IUnknown iunk = null;

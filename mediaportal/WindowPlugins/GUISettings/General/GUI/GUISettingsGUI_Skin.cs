@@ -159,7 +159,7 @@ namespace WindowPlugins.GUISettings
         
         for (int i = 0; i < languages.Length; i++)
         {
-          if (languages[i].ToLower() == currentLanguage.ToLower())
+          if (languages[i].ToLowerInvariant() == currentLanguage.ToLowerInvariant())
           {
             dlg.SelectedLabel = i;
             break;

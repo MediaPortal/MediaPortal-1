@@ -531,11 +531,11 @@ namespace MediaPortal.GUI.Library
         {
           foreach (XmlNode nodeAnimation in nodeListAnimations)
           {
-            if (nodeAnimation.InnerText.ToLower() == "windowopen")
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowopen")
             {
               _showAnimation.Create(nodeAnimation);
             }
-            if (nodeAnimation.InnerText.ToLower() == "windowclose")
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowclose")
             {
               _closeAnimation.Create(nodeAnimation);
             }
@@ -596,7 +596,7 @@ namespace MediaPortal.GUI.Library
         XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
         if (nodeOverlay != null)
         {
-          string allowed = nodeOverlay.InnerText.ToLower();
+          string allowed = nodeOverlay.InnerText.ToLowerInvariant();
           switch (allowed)
           {
             case "true":
@@ -624,7 +624,7 @@ namespace MediaPortal.GUI.Library
         if (nodeAutoHideTopbar != null)
         {
           _autoHideTopbarType = AutoHideTopBar.UseDefault;
-          string allowed = nodeAutoHideTopbar.InnerText.ToLower();
+          string allowed = nodeAutoHideTopbar.InnerText.ToLowerInvariant();
           if (allowed == "yes" || allowed == "true")
           {
             _autoHideTopbarType = AutoHideTopBar.Yes;
@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.Library
         _disableTopBar = false;
         if (nodeDisableTopbar != null)
         {
-          string allowed = nodeDisableTopbar.InnerText.ToLower();
+          string allowed = nodeDisableTopbar.InnerText.ToLowerInvariant();
           if (allowed == "yes" || allowed == "true")
           {
             _disableTopBar = true;
@@ -652,7 +652,7 @@ namespace MediaPortal.GUI.Library
           XmlNode nodeRememberLastFocusedControl = doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
           if (nodeRememberLastFocusedControl != null)
           {
-            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLower();
+            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLowerInvariant();
             if (rememberLastFocusedControlStr == "yes" || rememberLastFocusedControlStr == "true")
             {
               _rememberLastFocusedControl = true;

@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.Library
       // ToDo: add searchstring property
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
       }
     }
 
@@ -1547,7 +1547,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;

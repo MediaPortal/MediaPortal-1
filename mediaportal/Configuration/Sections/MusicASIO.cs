@@ -220,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
     /// <returns></returns>
     public override object GetSetting(string name)
     {
-      switch (name.ToLower())
+      switch (name.ToLowerInvariant())
       {
         case "useasio":
           return useASIOCheckBox.Checked;
