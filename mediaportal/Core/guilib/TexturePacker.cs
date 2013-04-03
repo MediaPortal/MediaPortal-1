@@ -527,8 +527,7 @@ namespace MediaPortal.GUI.Library
         bmp = Image.FromFile(file);
       }
 
-      //if (bmp.Width > (_maxTextureHeight / 2) || bmp.Height > (_maxTextureWidth / 2))
-      if (bmp.Width > (_maxTextureHeight / 2) && bmp.Height > (_maxTextureWidth / 2))
+      if (bmp.Width > (_maxTextureHeight / 2) || bmp.Height > (_maxTextureWidth / 2))
       {
         Log.Warn("TexturePacker: Texture {0} is too large to be cached. Texture {1}x{2} - limit {3}x{4}",
                  file, bmp.Width, bmp.Height, _maxTextureHeight / 2, _maxTextureWidth / 2);
