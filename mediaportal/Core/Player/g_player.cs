@@ -555,6 +555,7 @@ namespace MediaPortal.Player
             _currentMedia = MediaType.Video;
           }
         }
+
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted != null)
         {
@@ -3286,6 +3287,14 @@ namespace MediaPortal.Player
         Log.Info("g_Player: ShowFullScreenWindow switching to fullscreen tv");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         GUIGraphicsContext.IsFullScreenVideo = true;
+
+        // If muted show OSD volume overlay
+        if (VolumeHandler.Instance.IsMuted)
+        {
+          var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
+          GUIWindowManager.OnAction(showVolume);
+        }
+        
         return true;
       }
       return false;
@@ -3332,6 +3341,14 @@ namespace MediaPortal.Player
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
       }
       GUIGraphicsContext.IsFullScreenVideo = true;
+      
+      // If muted show OSD volume overlay
+      if (VolumeHandler.Instance.IsMuted)
+      {
+        var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
+        GUIWindowManager.OnAction(showVolume);
+      }
+      
       return true;
     }
 
