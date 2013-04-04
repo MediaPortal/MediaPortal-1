@@ -61,22 +61,29 @@
         <id>21</id>
         <label>300100</label>
       </control>
+      
+      <control Style="SettingsCheckButtonLarge">
+        <description>Show last module</description>
+        <type>checkbutton</type>
+        <id>22</id>
+        <label>300229</label>
+      </control>
 			
 			<control Style="SettingsCheckButtonLarge">
         <description>Screen selector</description>
         <type>checkbutton</type>
-        <id>22</id>
+        <id>23</id>
         <label>300101</label>
-				<ondown>23</ondown>
+				<ondown>24</ondown>
       </control>
     </control>
 		
 		<control Style="SettingsButtonLarge">
       <description>Screen button</description>
       <type>button</type>
-      <id>23</id>
+      <id>24</id>
 		  <posX>655</posX>
-      <posY>775</posY>
+      <posY>710</posY>
 			<ondown>30</ondown>
 			<animation effect="fade" time="150">WindowOpen</animation>
 			<animation effect="fade" time="150">WindowClose</animation>
@@ -85,7 +92,7 @@
       <type>fadelabel</type>
       <id>1</id>
 		  <posX>683</posX>
-			<posY>786</posY>
+			<posY>721</posY>
 			<width>940</width>
       <label>#defScreen</label>
       <align>left</align>
@@ -101,8 +108,8 @@
       <type>button</type>
       <id>30</id>
 		  <posX>655</posX>
-      <posY>840</posY>
-			<onup>23</onup>
+      <posY>775</posY>
+			<onup>24</onup>
 			<ondown>31</ondown>
       <label>300102</label>
 			<animation effect="fade" time="150">WindowOpen</animation>
@@ -112,7 +119,7 @@
       <type>label</type>
       <id>1</id>
 			<posX>1770</posX>
-      <posY>852</posY>
+      <posY>787</posY>
       <label>#delayStartup</label>
       <align>right</align>
 			<font>TitanLight12</font>
@@ -124,7 +131,7 @@
       <type>checkbutton</type>
       <id>31</id>
 		  <posX>655</posX>
-      <posY>905</posY>
+      <posY>840</posY>
       <label>300103</label>
       <onup>30</onup>
 			<ondown>32</ondown>
@@ -136,7 +143,7 @@
       <type>checkbutton</type>
       <id>32</id>
 		  <posX>655</posX>
-      <posY>970</posY>
+      <posY>905</posY>
       <label>300104</label>
       <onup>31</onup>
 			<ondown>18</ondown>

@@ -102,6 +102,7 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _ignoreContextMenuAction;
   private bool                  _supportsFiltering;
   private bool                  _supportsAlphaBlend;
+  private bool                  _stopOnLostAudioRenderer;
   // ReSharper disable NotAccessedField.Local
   private bool                  _lastActiveModuleFullscreen;
   // ReSharper restore NotAccessedField.Local
@@ -898,6 +899,8 @@ public class MediaPortalApp : D3D, IRender
       _lastActiveModule           = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       _lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+      _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
+
     }
     if (GUIGraphicsContext._useScreenSelector)
     {
@@ -1292,7 +1295,10 @@ public class MediaPortalApp : D3D, IRender
                 {
                   case DBT_DEVICEREMOVECOMPLETE:
                     Log.Debug("Main: Audio Renderer {0} removed", deviceName);
-                    //g_Player.Stop();
+                    if (_stopOnLostAudioRenderer)
+                    {
+                      g_Player.Stop();
+                    }
                     break;
                   case DBT_DEVICEARRIVAL:
                     Log.Debug("Main: Audio Renderer {0} connected", deviceName);

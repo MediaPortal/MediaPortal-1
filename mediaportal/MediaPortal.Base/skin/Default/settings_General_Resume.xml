@@ -60,9 +60,16 @@
         <width>637</width>
       </control>
       <control>
-        <description>Screen selector</description>
+        <description>Stop playback in removal of audio renderer</description>
         <type>checkbutton</type>
         <id>22</id>
+        <label>300229</label>
+        <width>637</width>
+      </control> 
+      <control>
+        <description>Screen selector</description>
+        <type>checkbutton</type>
+        <id>23</id>
         <label>300101</label>
         <width>637</width>
       </control>
@@ -70,9 +77,9 @@
     <control>
       <description>Screen button</description>
       <type>button</type>
-      <id>23</id>
+      <id>24</id>
       <posX>150</posX>
-      <posY>465</posY>
+      <posY>410</posY>
       <width>30</width>
       <textureFocus>osd_play_focus.png</textureFocus>
       <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
@@ -81,7 +88,7 @@
       <type>label</type>
       <id>1</id>
       <posX>176</posX>
-      <posY>468</posY>
+      <posY>413</posY>
       <label>#defScreen</label>
       <align>left</align>
       <font>font11</font>
@@ -94,7 +101,7 @@
       <type>button</type>
       <id>30</id>
       <posX>150</posX>
-      <posY>520</posY>
+      <posY>465</posY>
       <width>315</width>
       <label>300102</label>
     </control>
@@ -102,7 +109,7 @@
       <type>label</type>
       <id>1</id>
       <posX>360</posX>
-      <posY>528</posY>
+      <posY>473</posY>
       <label>#delayStartup</label>
       <align>left</align>
       <font>font11</font>
@@ -112,7 +119,7 @@
       <type>checkbutton</type>
       <id>31</id>
       <posX>150</posX>
-      <posY>560</posY>
+      <posY>505</posY>
       <label>300103</label>
       <width>315</width>
       <onup>30</onup>
@@ -122,7 +129,7 @@
       <type>checkbutton</type>
       <id>32</id>
       <posX>150</posX>
-      <posY>605</posY>
+      <posY>550</posY>
       <label>300104</label>
       <width>315</width>
       <onup>31</onup>

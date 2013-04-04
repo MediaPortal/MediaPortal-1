@@ -181,9 +181,10 @@
             "Minimize to tray on focus loss (fullscreen only)",
             "Turn off monitor when blanking screen",
             "Turn monitor / tv on when resuming from standby",
-            "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
+            "Restart MediaPortal on resume",
             "Show last active module when starting / resuming from standby",
-            "Use screen selector to choose on which screen MP should start"});
+            "Use screen selector to choose on which screen MP should start",
+            "Stop playback on removal of an audio renderer"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 214);

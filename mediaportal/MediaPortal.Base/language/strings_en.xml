@@ -2328,5 +2328,6 @@
     <String id="300226">Use only internal nfo scraper</String>
     <String id="300227">Clear Blacklisted thumbs</String>
     <String id="300228">Minimize to tray on focus loss</String>
+    <String id="300228">Stop playback on removal of an audio renderer</String>
    </Section>
 </Language>
