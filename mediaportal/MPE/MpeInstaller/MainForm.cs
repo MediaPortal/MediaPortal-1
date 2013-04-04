@@ -555,7 +555,7 @@ Do you want to continue ?",packageClass.GeneralInfo.Name, pak.GeneralInfo.Versio
           }
           else
           {
-            MpeCore.MpeInstaller.InstalledExtensions.Remove(pak);
+			  MpeCore.MpeInstaller.InstalledExtensions.Remove(installedPak);
           }
         }
         if (gui)
