@@ -758,11 +758,11 @@ namespace MediaPortal.Configuration.Sections
         // Change the Text of Item 0 in the Sound device box for Bass Player or DirectShow Player
         if (audioPlayerComboBox.SelectedIndex == 0)
         {
-          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default DirectSound Device", "");
+          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default Sound Device", "");
         }
         else if (audioPlayerComboBox.SelectedIndex == 3)
         {
-          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default Sound Device", "");
+          soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default DirectSound Device", "");
         }
       }
     }
