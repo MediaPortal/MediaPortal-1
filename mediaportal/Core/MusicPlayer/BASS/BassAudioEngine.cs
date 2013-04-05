@@ -655,24 +655,7 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Initialize BASS environment ...");
         LoadSettings();
 
-        BassRegistration.BassRegistration.Register();
-
         result = BassRegistration.BassRegistration.Register();
-        if (result)
-        {
-          // Initialize BASS to "no sound"
-          // If Playing later via Directsound, we will init it in the InitDirectSoundDevice section
-          result = Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty);
-          if (!result)
-          {
-            if (Bass.BASS_ErrorGetCode() == BASSError.BASS_ERROR_ALREADY)
-            {
-              result = true;
-            }
-            else
-              HandleBassError("Initialze");
-          }
-        }
 
         if (result)
         {
@@ -735,7 +718,7 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Initializing BASS audio engine...");
         bool initOK = false;
 
-        if (_bassFreed)
+        if (_bassFreed && Config.MusicPlayer != AudioPlayer.Bass)
         {
           Log.Debug("BASS: BASS audio engine was previously freed. Re-Init");
           if (!Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty))
