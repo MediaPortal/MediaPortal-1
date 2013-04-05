@@ -21,7 +21,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private ASIOPROC _asioProc = null;
     private WASAPIPROC _wasapiProc = null;
 
-    private bool _wasapiSwitchedToShared = false;
+    private bool _wasapiShared = false;
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
 
@@ -37,9 +37,9 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _mixer; }
     }
 
-    public bool WasApiSwitchedtoShared
+    public bool WasApiShared
     {
-      get { return _wasapiSwitchedToShared; }
+      get { return _wasapiShared; }
     }
 
     public int WasApiMixedChans
@@ -53,7 +53,7 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     #endregion
-    
+
     #region Constructor
 
     public MixerStream(BassAudioEngine bassPlayer)
@@ -98,7 +98,8 @@ namespace MediaPortal.MusicPlayer.BASS
       // See, if we need Upmixing
       if (outputChannels > stream.ChannelInfo.chans)
       {
-        Log.Info("BASS: Found more output channels ({0}) than input channels ({1}). Check for upmixing.", outputChannels, stream.ChannelInfo.chans);
+        Log.Info("BASS: Found more output channels ({0}) than input channels ({1}). Check for upmixing.", outputChannels,
+                 stream.ChannelInfo.chans);
         _mixingMatrix = CreateMixingMatrix(stream.ChannelInfo.chans);
         if (_mixingMatrix != null)
         {
@@ -112,19 +113,20 @@ namespace MediaPortal.MusicPlayer.BASS
       else if (outputChannels < stream.ChannelInfo.chans)
       {
         // Downmix to Stereo
-        Log.Info("BASS: Found more input channels ({0}) than output channels ({1}). Downmix.", stream.ChannelInfo.chans, outputChannels);
+        Log.Info("BASS: Found more input channels ({0}) than output channels ({1}). Downmix.", stream.ChannelInfo.chans,
+                 outputChannels);
         outputChannels = Math.Min(outputChannels, 2);
       }
 
       Log.Debug("BASS: Creating {0} channel mixer with sample rate of {1}", outputChannels, stream.ChannelInfo.freq);
-
       _mixer = BassMix.BASS_Mixer_StreamCreate(stream.ChannelInfo.freq, outputChannels, mixerFlags);
       if (_mixer == 0)
       {
-        Log.Error("BASS: Unable to create Mixer.  Reason: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+        Log.Error("BASS: Unable to create Mixer.  Reason: {0}.",
+                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
         return false;
       }
-      
+
       switch (Config.MusicPlayer)
       {
         case AudioPlayer.Bass:
@@ -223,7 +225,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.WasApiExclusiveMode)
           {
             initFlags |= BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
-            _wasapiSwitchedToShared = false;
+            _wasapiShared = false;
             _wasapiMixedChans = 0;
             _wasapiMixedFreq = 0;
 
@@ -235,20 +237,32 @@ namespace MediaPortal.MusicPlayer.BASS
             {
               Log.Warn("BASS: WASAPI exclusive mode not directly supported. Let BASS WASAPI choose better mode.");
               wasApiExclusiveSupported = false;
-              _wasapiSwitchedToShared = true;
             }
           }
           else
           {
             Log.Debug("BASS: Init WASAPI shared mode with Event driven system enabled.");
             initFlags |= BASSWASAPIInit.BASS_WASAPI_SHARED | BASSWASAPIInit.BASS_WASAPI_EVENT;
+
+            // In case of WASAPI Shared mode we need to setup the mixer to use the same sample rate as set in 
+            // the Windows Mixer, otherwise we wioll have increased playback speed
+            BASS_WASAPI_DEVICEINFO devInfo = BassWasapi.BASS_WASAPI_GetDeviceInfo(_bassPlayer.DeviceNumber);
+            Log.Debug("BASS: Creating {0} channel mixer for frequency {1}", devInfo.mixchans, devInfo.mixfreq);
+            _mixer = BassMix.BASS_Mixer_StreamCreate(devInfo.mixfreq, devInfo.mixchans, mixerFlags);
+            if (_mixer == 0)
+            {
+              Log.Error("BASS: Unable to create Mixer.  Reason: {0}.",
+                        Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+              return false;
+            }
+            _wasapiShared = true;
           }
 
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
                                       initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
-            
+
             Log.Info("BASS: ---------------------------------------------");
             Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
             Log.Info("BASS: Channels: {0}", wasapiInfo.chans);
@@ -265,6 +279,12 @@ namespace MediaPortal.MusicPlayer.BASS
               // Recreate Mixer with new value
               Log.Debug("BASS: Creating new {0} channel mixer for frequency {1}", wasapiInfo.chans, wasapiInfo.freq);
               _mixer = BassMix.BASS_Mixer_StreamCreate(wasapiInfo.freq, wasapiInfo.chans, mixerFlags);
+              if (_mixer == 0)
+              {
+                Log.Error("BASS: Unable to create Mixer.  Reason: {0}.",
+                          Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                return false;
+              }
             }
 
             BassWasapi.BASS_WASAPI_SetVolume(BASSWASAPIVolume.BASS_WASAPI_CURVE_DB, (float)Config.StreamVolume / 100f);
@@ -292,7 +312,7 @@ namespace MediaPortal.MusicPlayer.BASS
       bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                         BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
                                         BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
-        
+
       if (result && _mixingMatrix != null)
       {
         Log.Debug("BASS: Setting mixing matrix...");

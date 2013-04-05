@@ -1585,9 +1585,9 @@ namespace MediaPortal.MusicPlayer.BASS
         else
         {
           BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans)
+          if (!_mixer.WasApiShared && (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
           {
-            if (!_mixer.WasApiSwitchedtoShared || stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+            if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
               Log.Info("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
               // The new stream has a different frequency or number of channels
