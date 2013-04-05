@@ -67,6 +67,8 @@ namespace SetupTv.Sections
       this.comboBoxMovies = new System.Windows.Forms.ComboBox();
       this.tpDiskQuota = new System.Windows.Forms.TabPage();
       this.groupBoxThumbQuality = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelCurrentResolution = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelResolution = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRecommendedCurrent = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRecommendedHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelHigh = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -112,14 +114,6 @@ namespace SetupTv.Sections
       this.lblRecFolders = new System.Windows.Forms.Label();
       this.cbRecPaths = new System.Windows.Forms.ComboBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.labelCurrentSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelCurrentInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelCurrentCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelCurrentResolution = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelSmoothing = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelInterpolation = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelCompositing = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelResolution = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -592,27 +586,45 @@ namespace SetupTv.Sections
       // 
       this.groupBoxThumbQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentSmoothing);
-      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentInterpolation);
-      this.groupBoxThumbQuality.Controls.Add(this.labelCurrentCompositing);
+      this.groupBoxThumbQuality.Controls.Add(this.numericUpDownThumbRows);
       this.groupBoxThumbQuality.Controls.Add(this.labelCurrentResolution);
-      this.groupBoxThumbQuality.Controls.Add(this.labelSmoothing);
-      this.groupBoxThumbQuality.Controls.Add(this.labelInterpolation);
-      this.groupBoxThumbQuality.Controls.Add(this.labelCompositing);
+      this.groupBoxThumbQuality.Controls.Add(this.numericUpDownThumbColumns);
       this.groupBoxThumbQuality.Controls.Add(this.labelResolution);
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedCurrent);
+      this.groupBoxThumbQuality.Controls.Add(this.mpLabel6);
+      this.groupBoxThumbQuality.Controls.Add(this.labelRows);
       this.groupBoxThumbQuality.Controls.Add(this.labelRecommendedHint);
       this.groupBoxThumbQuality.Controls.Add(this.labelHigh);
+      this.groupBoxThumbQuality.Controls.Add(this.labelCol);
       this.groupBoxThumbQuality.Controls.Add(this.labelLow);
       this.groupBoxThumbQuality.Controls.Add(this.labelQualityHint);
       this.groupBoxThumbQuality.Controls.Add(this.trackBarQuality);
       this.groupBoxThumbQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxThumbQuality.Location = new System.Drawing.Point(6, 163);
+      this.groupBoxThumbQuality.Location = new System.Drawing.Point(6, 138);
       this.groupBoxThumbQuality.Name = "groupBoxThumbQuality";
-      this.groupBoxThumbQuality.Size = new System.Drawing.Size(446, 196);
+      this.groupBoxThumbQuality.Size = new System.Drawing.Size(446, 221);
       this.groupBoxThumbQuality.TabIndex = 29;
       this.groupBoxThumbQuality.TabStop = false;
       this.groupBoxThumbQuality.Text = "Quality settings";
+      // 
+      // labelCurrentResolution
+      // 
+      this.labelCurrentResolution.AutoSize = true;
+      this.labelCurrentResolution.Location = new System.Drawing.Point(92, 111);
+      this.labelCurrentResolution.Name = "labelCurrentResolution";
+      this.labelCurrentResolution.Size = new System.Drawing.Size(25, 13);
+      this.labelCurrentResolution.TabIndex = 15;
+      this.labelCurrentResolution.Text = "500";
+      // 
+      // labelResolution
+      // 
+      this.labelResolution.AutoSize = true;
+      this.labelResolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelResolution.Location = new System.Drawing.Point(10, 110);
+      this.labelResolution.Name = "labelResolution";
+      this.labelResolution.Size = new System.Drawing.Size(67, 13);
+      this.labelResolution.TabIndex = 14;
+      this.labelResolution.Text = "Resolution";
       // 
       // labelRecommendedCurrent
       // 
@@ -637,7 +649,7 @@ namespace SetupTv.Sections
       // labelHigh
       // 
       this.labelHigh.AutoSize = true;
-      this.labelHigh.Location = new System.Drawing.Point(208, 22);
+      this.labelHigh.Location = new System.Drawing.Point(188, 22);
       this.labelHigh.Name = "labelHigh";
       this.labelHigh.Size = new System.Drawing.Size(39, 13);
       this.labelHigh.TabIndex = 3;
@@ -646,7 +658,7 @@ namespace SetupTv.Sections
       // labelLow
       // 
       this.labelLow.AutoSize = true;
-      this.labelLow.Location = new System.Drawing.Point(208, 156);
+      this.labelLow.Location = new System.Drawing.Point(188, 156);
       this.labelLow.Name = "labelLow";
       this.labelLow.Size = new System.Drawing.Size(38, 13);
       this.labelLow.TabIndex = 5;
@@ -665,7 +677,7 @@ namespace SetupTv.Sections
       // 
       this.trackBarQuality.BackColor = System.Drawing.SystemColors.Window;
       this.trackBarQuality.LargeChange = 2;
-      this.trackBarQuality.Location = new System.Drawing.Point(211, 38);
+      this.trackBarQuality.Location = new System.Drawing.Point(191, 38);
       this.trackBarQuality.Maximum = 4;
       this.trackBarQuality.Name = "trackBarQuality";
       this.trackBarQuality.Orientation = System.Windows.Forms.Orientation.Vertical;
@@ -680,24 +692,19 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.AutoSize = true;
-      this.groupBox5.Controls.Add(this.numericUpDownThumbRows);
-      this.groupBox5.Controls.Add(this.numericUpDownThumbColumns);
       this.groupBox5.Controls.Add(this.checkBoxShareThumb);
-      this.groupBox5.Controls.Add(this.mpLabel6);
-      this.groupBox5.Controls.Add(this.labelRows);
       this.groupBox5.Controls.Add(this.buttonClearTVThumbs);
-      this.groupBox5.Controls.Add(this.labelCol);
       this.groupBox5.Controls.Add(this.checkBoxTVThumbs);
       this.groupBox5.Location = new System.Drawing.Point(7, 10);
       this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(445, 147);
+      this.groupBox5.Size = new System.Drawing.Size(445, 122);
       this.groupBox5.TabIndex = 28;
       this.groupBox5.TabStop = false;
       this.groupBox5.Text = "TV Thumbs";
       // 
       // numericUpDownThumbRows
       // 
-      this.numericUpDownThumbRows.Location = new System.Drawing.Point(339, 72);
+      this.numericUpDownThumbRows.Location = new System.Drawing.Point(370, 70);
       this.numericUpDownThumbRows.Maximum = new decimal(new int[] {
             3,
             0,
@@ -720,7 +727,7 @@ namespace SetupTv.Sections
       // 
       // numericUpDownThumbColumns
       // 
-      this.numericUpDownThumbColumns.Location = new System.Drawing.Point(339, 47);
+      this.numericUpDownThumbColumns.Location = new System.Drawing.Point(370, 45);
       this.numericUpDownThumbColumns.Maximum = new decimal(new int[] {
             3,
             0,
@@ -757,7 +764,7 @@ namespace SetupTv.Sections
       // mpLabel6
       // 
       this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(225, 24);
+      this.mpLabel6.Location = new System.Drawing.Point(256, 22);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(106, 13);
       this.mpLabel6.TabIndex = 26;
@@ -766,7 +773,7 @@ namespace SetupTv.Sections
       // labelRows
       // 
       this.labelRows.AutoSize = true;
-      this.labelRows.Location = new System.Drawing.Point(225, 74);
+      this.labelRows.Location = new System.Drawing.Point(256, 72);
       this.labelRows.Name = "labelRows";
       this.labelRows.Size = new System.Drawing.Size(81, 13);
       this.labelRows.TabIndex = 25;
@@ -774,7 +781,7 @@ namespace SetupTv.Sections
       // 
       // buttonClearTVThumbs
       // 
-      this.buttonClearTVThumbs.Location = new System.Drawing.Point(12, 105);
+      this.buttonClearTVThumbs.Location = new System.Drawing.Point(11, 80);
       this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
       this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
       this.buttonClearTVThumbs.TabIndex = 16;
@@ -785,7 +792,7 @@ namespace SetupTv.Sections
       // labelCol
       // 
       this.labelCol.AutoSize = true;
-      this.labelCol.Location = new System.Drawing.Point(225, 49);
+      this.labelCol.Location = new System.Drawing.Point(256, 47);
       this.labelCol.Name = "labelCol";
       this.labelCol.Size = new System.Drawing.Size(98, 13);
       this.labelCol.TabIndex = 24;
@@ -1135,82 +1142,6 @@ namespace SetupTv.Sections
       // 
       this.openFileDialog1.FileName = "openFileDialog1";
       // 
-      // labelCurrentSmoothing
-      // 
-      this.labelCurrentSmoothing.AutoSize = true;
-      this.labelCurrentSmoothing.Location = new System.Drawing.Point(361, 140);
-      this.labelCurrentSmoothing.Name = "labelCurrentSmoothing";
-      this.labelCurrentSmoothing.Size = new System.Drawing.Size(64, 13);
-      this.labelCurrentSmoothing.TabIndex = 21;
-      this.labelCurrentSmoothing.Text = "High Quality";
-      // 
-      // labelCurrentInterpolation
-      // 
-      this.labelCurrentInterpolation.AutoSize = true;
-      this.labelCurrentInterpolation.Location = new System.Drawing.Point(361, 108);
-      this.labelCurrentInterpolation.Name = "labelCurrentInterpolation";
-      this.labelCurrentInterpolation.Size = new System.Drawing.Size(64, 13);
-      this.labelCurrentInterpolation.TabIndex = 19;
-      this.labelCurrentInterpolation.Text = "High Quality";
-      // 
-      // labelCurrentCompositing
-      // 
-      this.labelCurrentCompositing.AutoSize = true;
-      this.labelCurrentCompositing.Location = new System.Drawing.Point(361, 77);
-      this.labelCurrentCompositing.Name = "labelCurrentCompositing";
-      this.labelCurrentCompositing.Size = new System.Drawing.Size(76, 13);
-      this.labelCurrentCompositing.TabIndex = 17;
-      this.labelCurrentCompositing.Text = "Assume Linear";
-      // 
-      // labelCurrentResolution
-      // 
-      this.labelCurrentResolution.AutoSize = true;
-      this.labelCurrentResolution.Location = new System.Drawing.Point(361, 47);
-      this.labelCurrentResolution.Name = "labelCurrentResolution";
-      this.labelCurrentResolution.Size = new System.Drawing.Size(25, 13);
-      this.labelCurrentResolution.TabIndex = 15;
-      this.labelCurrentResolution.Text = "500";
-      // 
-      // labelSmoothing
-      // 
-      this.labelSmoothing.AutoSize = true;
-      this.labelSmoothing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelSmoothing.Location = new System.Drawing.Point(279, 139);
-      this.labelSmoothing.Name = "labelSmoothing";
-      this.labelSmoothing.Size = new System.Drawing.Size(66, 13);
-      this.labelSmoothing.TabIndex = 20;
-      this.labelSmoothing.Text = "Smoothing";
-      // 
-      // labelInterpolation
-      // 
-      this.labelInterpolation.AutoSize = true;
-      this.labelInterpolation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelInterpolation.Location = new System.Drawing.Point(279, 107);
-      this.labelInterpolation.Name = "labelInterpolation";
-      this.labelInterpolation.Size = new System.Drawing.Size(78, 13);
-      this.labelInterpolation.TabIndex = 18;
-      this.labelInterpolation.Text = "Interpolation";
-      // 
-      // labelCompositing
-      // 
-      this.labelCompositing.AutoSize = true;
-      this.labelCompositing.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelCompositing.Location = new System.Drawing.Point(279, 76);
-      this.labelCompositing.Name = "labelCompositing";
-      this.labelCompositing.Size = new System.Drawing.Size(75, 13);
-      this.labelCompositing.TabIndex = 16;
-      this.labelCompositing.Text = "Compositing";
-      // 
-      // labelResolution
-      // 
-      this.labelResolution.AutoSize = true;
-      this.labelResolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelResolution.Location = new System.Drawing.Point(279, 46);
-      this.labelResolution.Name = "labelResolution";
-      this.labelResolution.Size = new System.Drawing.Size(67, 13);
-      this.labelResolution.TabIndex = 14;
-      this.labelResolution.Text = "Resolution";
-      // 
       // TvRecording
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1344,13 +1275,7 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
     private MediaPortal.UserInterface.Controls.MPLabel labelRows;
     private MediaPortal.UserInterface.Controls.MPLabel labelCol;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentSmoothing;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentInterpolation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCurrentCompositing;
     private MediaPortal.UserInterface.Controls.MPLabel labelCurrentResolution;
-    private MediaPortal.UserInterface.Controls.MPLabel labelSmoothing;
-    private MediaPortal.UserInterface.Controls.MPLabel labelInterpolation;
-    private MediaPortal.UserInterface.Controls.MPLabel labelCompositing;
     private MediaPortal.UserInterface.Controls.MPLabel labelResolution;
   }
 }

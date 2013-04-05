@@ -313,7 +313,7 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("TVThumbnailsEnabled", "yes");
       if (setting.Value != (checkBoxTVThumbs.Checked ? "yes" : "no"))
-        _needRestart = true;
+        _needRestart = checkBoxTVThumbs.Checked;
       setting.Value = checkBoxTVThumbs.Checked ? "yes" : "no";
       setting.Persist();
 
@@ -322,20 +322,14 @@ namespace SetupTv.Sections
       setting.Persist();
 
       setting = layer.GetSetting("TVThumbnailsColumns", "1");
-      if (setting.Value != numericUpDownThumbColumns.Value.ToString())
-        _needRestart = true;
       setting.Value = numericUpDownThumbColumns.Value.ToString();
       setting.Persist();
 
       setting = layer.GetSetting("TVThumbnailsRows", "1");
-      if (setting.Value != numericUpDownThumbRows.Value.ToString())
-        _needRestart = true;
       setting.Value = numericUpDownThumbRows.Value.ToString();
       setting.Persist();
 
       setting = layer.GetSetting("TVThumbnailsQuality", "4");
-      if (setting.Value != trackBarQuality.Value.ToString())
-        _needRestart = true;
       setting.Value = trackBarQuality.Value.ToString();
       setting.Persist();
     }
@@ -573,6 +567,7 @@ namespace SetupTv.Sections
       {
         foreach (FileInfo f in new DirectoryInfo(Thumbs.ThumbnailFolder).GetFiles("*.jpg"))
           f.Delete();
+        _needRestart = true;
       }
       catch (Exception ex)
       {
@@ -610,37 +605,37 @@ namespace SetupTv.Sections
       {
         case 0:
           labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
-          labelCurrentCompositing.Text = "High Speed";
-          labelCurrentInterpolation.Text = "Nearest Neighbor";
-          labelCurrentSmoothing.Text = "None";
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Nearest Neighbor";
+          // labelCurrentSmoothing.Text = "None";
           labelRecommendedCurrent.Text = @"Small CRTs";
           break;
         case 1:
           labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
-          labelCurrentCompositing.Text = "High Speed";
-          labelCurrentInterpolation.Text = "Low";
-          labelCurrentSmoothing.Text = "High Speed";
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Low";
+          // labelCurrentSmoothing.Text = "High Speed";
           labelRecommendedCurrent.Text = "Small wide CRTs, medium CRTs";
           break;
         case 2:
           labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
-          labelCurrentCompositing.Text = "Default";
-          labelCurrentInterpolation.Text = "Default";
-          labelCurrentSmoothing.Text = "Default";
+          // labelCurrentCompositing.Text = "Default";
+          // labelCurrentInterpolation.Text = "Default";
+          // labelCurrentSmoothing.Text = "Default";
           labelRecommendedCurrent.Text = "Large wide CRTs, small LCDs";
           break;
         case 3:
           labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
-          labelCurrentCompositing.Text = "Assume Linear";
-          labelCurrentInterpolation.Text = "High Quality";
-          labelCurrentSmoothing.Text = "High Quality";
+          // labelCurrentCompositing.Text = "Assume Linear";
+          // labelCurrentInterpolation.Text = "High Quality";
+          // labelCurrentSmoothing.Text = "High Quality";
           labelRecommendedCurrent.Text = "LCDs, Plasmas";
           break;
         case 4:
           labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
-          labelCurrentCompositing.Text = "High Quality";
-          labelCurrentInterpolation.Text = "High Quality Bicubic";
-          labelCurrentSmoothing.Text = "High Quality";
+          // labelCurrentCompositing.Text = "High Quality";
+          // labelCurrentInterpolation.Text = "High Quality Bicubic";
+          // labelCurrentSmoothing.Text = "High Quality";
           labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
           break;
       }
