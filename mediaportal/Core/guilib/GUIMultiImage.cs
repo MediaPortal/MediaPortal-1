@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Library
               }
               catch (Exception ex)
               {
-                Log.Error("GUIMultiIage - error loading next image: {0}", ex.Message);
+                Log.Error("GUIMultiImage - error loading next image: {0}", ex.Message);
               }
             });
           }
