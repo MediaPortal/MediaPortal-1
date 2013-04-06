@@ -913,7 +913,7 @@ public class MediaPortalApp : D3D, IRender
         screenNumber = 0;
       }
       GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
-      Log.Info("Main: MP is using screen: {0}", GUIGraphicsContext.currentScreen.ToString());
+      Log.Info("Main: MP is using screen: {0}", GUIGraphicsContext.currentScreen.DeviceName);
     }
 
     // check if MediaPortal is already running...
@@ -1118,7 +1118,7 @@ public class MediaPortalApp : D3D, IRender
           Screen screen = Screen.FromControl(this);
           if (!Equals(screen, GUIGraphicsContext.currentScreen))
           {
-            Log.Info("Main: Screen MP is displayed on changed to: ", screen.ToString());
+            Log.Info("Main: Screen MP is displayed on changed from {0} to {1}",GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
             if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
             {
               Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
@@ -3626,7 +3626,7 @@ public class MediaPortalApp : D3D, IRender
   #endregion
   
   #region helper funcs
-  
+
   /// <summary>
   /// 
   /// </summary>
