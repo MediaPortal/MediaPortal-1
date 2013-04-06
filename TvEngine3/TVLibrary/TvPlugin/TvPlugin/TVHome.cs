@@ -298,6 +298,10 @@ namespace TvPlugin
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
+      // Delete local tv thumbs
+      Log.Debug("TVHome.OnAdded: Delete thumb files in {0}", Thumbs.TVRecorded);
+      MediaPortal.Util.Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", MediaPortal.Util.Utils.GetThumbExtension()));
+
       try
       {
         // Make sure that we have valid hostname for the TV server

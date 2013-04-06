@@ -681,7 +681,7 @@ namespace MediaPortal.Util
           
         using (Settings xmlreader = new MPSettings())
         {
-          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
           //
           //Get movies shares and check for video thumb create
           //
@@ -938,7 +938,7 @@ namespace MediaPortal.Util
       {
         using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
-          if (!xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true))
+          if (!xmlreader.GetValueAsBool("thumbnails", "videoondemand", true))
             return;
 
           string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", "");
