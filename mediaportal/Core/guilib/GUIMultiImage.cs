@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
 
@@ -224,11 +225,19 @@ namespace MediaPortal.GUI.Library
           // check if we should be loading a new image yet
           if (_imageTimer.IsRunning && _imageTimer.ElapsedMilliseconds > _timePerImage)
           {
-            _imageTimer.Stop();
-            // grab a new image
-            LoadImage(nextImage);
-            // start the fade timer
-            _fadeTimer.StartZero();
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+              try
+              {
+                _imageTimer.Stop();
+                LoadImage(nextImage);
+                _fadeTimer.StartZero();
+              }
+              catch (Exception ex)
+              {
+                Log.Error("GUIMultiIage - error loading next image: {0}", ex.Message);
+              }
+            });
           }
 
           // check if we are still fading
@@ -337,16 +346,13 @@ namespace MediaPortal.GUI.Library
 
     public void LoadImage(int image)
     {
-      if (_imageList != null)
+      if (_imageList == null || (image < 0 || image >= _imageList.Count))
       {
-        if (image < 0 || image >= _imageList.Count)
-        {
-          return;
-        }
-
-        _imageList[image].AllocResources();
-        _imageList[image].ColourDiffuse = ColourDiffuse;
+        return;
       }
+
+      _imageList[image].AllocResources();
+      _imageList[image].ColourDiffuse = ColourDiffuse;
     }
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
