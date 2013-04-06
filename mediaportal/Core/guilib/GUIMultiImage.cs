@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,7 +24,9 @@ using System.IO;
 using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// A GUIControl for displaying MultiImages.
@@ -38,19 +40,19 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("fadetime")] private uint _fadeTime;
     [XMLSkinElement("randomize")] private bool _randomized;
     [XMLSkinElement("loop")] private bool _loop;
-    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
+    [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio;
 
-    private List<GUIImage> _imageList = new List<GUIImage>();
+    private readonly List<GUIImage> _imageList = new List<GUIImage>();
     private List<string> _fileList = new List<string>();
     private bool _directoryLoaded;
     private bool _isAllocated;
-    private int _Info;
+    private int _info;
     private int _currentImage;
-    private StopWatch _imageTimer = new StopWatch();
-    private StopWatch _fadeTimer = new StopWatch();
-    private bool _registeredForEvent = false;
-    private bool _containsProperty = false;
-    private bool _propertyChanged = false;
+    private readonly StopWatch _imageTimer = new StopWatch();
+    private readonly StopWatch _fadeTimer = new StopWatch();
+    private bool _registeredForEvent;
+    private bool _containsProperty;
+    private bool _propertyChanged;
     private string _cachedPath = "";
     private string _newPath;
 
@@ -58,10 +60,7 @@ namespace MediaPortal.GUI.Library
 
     #region ctor
 
-    private GUIMultiImage() {}
-
-    public GUIMultiImage(int dwParentID)
-      : base(dwParentID) {}
+    public GUIMultiImage(int dwParentID) : base(dwParentID) {}
 
 
     /// <summary>
@@ -96,9 +95,8 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// This method gets called when the control is created and all properties has been set
-    /// It allows the control todo any initialization
-    /// </summary>
-    public override void FinalizeConstruction()
+  /// </summary>
+    public override sealed void FinalizeConstruction()
     {
       base.FinalizeConstruction();
       if (_texturePath == null)
@@ -106,7 +104,7 @@ namespace MediaPortal.GUI.Library
         _texturePath = string.Empty;
       }
 
-      if (_texturePath.IndexOf("#") >= 0)
+      if (_texturePath.IndexOf("#", StringComparison.Ordinal) >= 0)
       {
         _containsProperty = true;
       }
@@ -154,8 +152,8 @@ namespace MediaPortal.GUI.Library
 
     public new int Info
     {
-      get { return _Info; }
-      set { _Info = value; }
+      get { return _info; }
+      set { _info = value; }
     }
 
     #endregion
@@ -197,7 +195,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (_cachedPath.IndexOf("#") >= 0)
+        if (_cachedPath.IndexOf("#", StringComparison.Ordinal) >= 0)
         {
           base.Render(timePassed);
           return;
@@ -288,7 +286,7 @@ namespace MediaPortal.GUI.Library
           _registeredForEvent = true;
         }
         _currentImage = 0;
-        _Info = 0;
+        _info = 0;
         _directoryLoaded = false;
         _isAllocated = false;
         _newPath = _texturePath;
@@ -315,10 +313,12 @@ namespace MediaPortal.GUI.Library
         Random_Shuffle(ref _fileList);
       }
 
-      for (int i = 0; i < _fileList.Count; i++)
+      foreach (string file in _fileList)
       {
-        GUIImage pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, _fileList[i], 0);
-        pImage.KeepAspectRatio = _keepAspectRatio;
+        var pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, file, 0)
+        {
+          KeepAspectRatio = _keepAspectRatio
+        };
         _imageList.Add(pImage);
       }
 
@@ -355,7 +355,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      if (_texturePath.IndexOf(tag) >= 0)
+      if (_texturePath.IndexOf(tag, StringComparison.Ordinal) >= 0)
       {
         _propertyChanged = true;
       }
@@ -367,8 +367,7 @@ namespace MediaPortal.GUI.Library
       //_currentImage = 0;      
 
 
-      GUIPropertyManager.OnPropertyChanged -=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
       _registeredForEvent = false;
 
       _currentImage = 0;
@@ -383,13 +382,7 @@ namespace MediaPortal.GUI.Library
     public bool KeepAspectRatio
     {
       get { return _keepAspectRatio; }
-      set
-      {
-        if (_keepAspectRatio != value)
-        {
-          _keepAspectRatio = value;
-        }
-      }
+      set { _keepAspectRatio = value; }
     }
 
     public void LoadDirectory()
@@ -440,11 +433,11 @@ namespace MediaPortal.GUI.Library
 
           // Load the image files
           string[] files = Directory.GetFiles(imageFolder);
-          for (int i = 0; i < files.Length; ++i)
+          foreach (string file in files)
           {
-            if (MediaPortal.Util.Utils.IsPicture(files[i]))
+            if (MediaPortal.Util.Utils.IsPicture(file))
             {
-              _fileList.Add(files[i]);
+              _fileList.Add(file);
             }
           }
         }
@@ -468,10 +461,12 @@ namespace MediaPortal.GUI.Library
       // flag as loaded - no point in antly reloading them
       _directoryLoaded = true;
 
-      for (int i = 0; i < _fileList.Count; i++)
+      foreach (string file in _fileList)
       {
-        GUIImage pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, _fileList[i], 0);
-        pImage.KeepAspectRatio = _keepAspectRatio;
+        var pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, file, 0)
+        {
+          KeepAspectRatio = _keepAspectRatio
+        };
         _imageList.Add(pImage);
       }
 
@@ -490,7 +485,7 @@ namespace MediaPortal.GUI.Library
     // Shuffles inplace
     public void Random_Shuffle(ref List<string> listToShuffle)
     {
-      Random r = new Random();
+      var r = new Random();
       for (int i = listToShuffle.Count - 1; i > 1; --i)
       {
         int randIndx = r.Next(i);
