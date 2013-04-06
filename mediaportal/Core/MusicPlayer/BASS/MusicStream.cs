@@ -756,6 +756,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
+                     Thread.CurrentThread.Name = "BASS X-Fade";
                      Log.Debug("BASS: X-Fading out stream {0}", _filePath);
 
                      if (Config.CrossFadeIntervalMs > 0)
@@ -789,6 +790,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
+                     Thread.CurrentThread.Name = "BASS X-FadeEnded";
                      _crossFading = false;
                      Log.Debug("BASS: Fading of stream finished.");
                    }
@@ -807,6 +809,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
+                     Thread.CurrentThread.Name = "BASS SongEnd";
                      Log.Debug("BASS: End of stream {0}", _filePath);
                      _crossFading = false;
 
@@ -839,6 +842,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
+                     Thread.CurrentThread.Name = "BASS CueEnd";
                      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
 
                      if (Config.CrossFadeIntervalMs > 0)
@@ -906,6 +910,7 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
+                     Thread.CurrentThread.Name = "BASS MetaSync";
                      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
                      if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false,
                                                  false))
