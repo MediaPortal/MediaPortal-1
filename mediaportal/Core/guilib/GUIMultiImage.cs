@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
@@ -190,6 +191,7 @@ namespace MediaPortal.GUI.Library
           }
           _cachedPath = _newPath;
         }
+
         if (_cachedPath == null)
         {
           base.Render(timePassed);
@@ -201,6 +203,7 @@ namespace MediaPortal.GUI.Library
           base.Render(timePassed);
           return;
         }
+
         Dispose();
         LoadDirectory();
       }
@@ -225,6 +228,7 @@ namespace MediaPortal.GUI.Library
           // check if we should be loading a new image yet
           if (_imageTimer.IsRunning && _imageTimer.ElapsedMilliseconds > _timePerImage)
           {
+            // load image in a worker thread
             ThreadPool.QueueUserWorkItem(delegate
             {
               try
@@ -322,12 +326,9 @@ namespace MediaPortal.GUI.Library
         Random_Shuffle(ref _fileList);
       }
 
-      foreach (string file in _fileList)
+      foreach (var pImage in _fileList.Select(file => new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, file, 0)))
       {
-        var pImage = new GUIImage(ParentID, GetID, _positionX, _positionY, _width, _height, file, 0)
-        {
-          KeepAspectRatio = _keepAspectRatio
-        };
+        pImage.KeepAspectRatio = _keepAspectRatio;
         _imageList.Add(pImage);
       }
 
