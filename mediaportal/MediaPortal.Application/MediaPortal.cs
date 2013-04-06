@@ -88,6 +88,7 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useScreenSaver = true;
   private readonly bool         _useIdleblankScreen;
   private readonly bool         _showLastActiveModule;
+  private readonly bool         _stopOnLostAudioRenderer; 
   private readonly bool         _allowMinOOB;
   private readonly bool         _allowMaxOOB;
   private bool                  _playingState;
@@ -102,7 +103,6 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _ignoreContextMenuAction;
   private bool                  _supportsFiltering;
   private bool                  _supportsAlphaBlend;
-  private bool                  _stopOnLostAudioRenderer;
   // ReSharper disable NotAccessedField.Local
   private bool                  _lastActiveModuleFullscreen;
   // ReSharper restore NotAccessedField.Local
@@ -898,7 +898,7 @@ public class MediaPortalApp : D3D, IRender
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       _lastActiveModule           = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       _lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
-      screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+      screenNumber               = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
 
     }
@@ -912,8 +912,8 @@ public class MediaPortalApp : D3D, IRender
       {
         screenNumber = 0;
       }
-      Log.Info("currentScreenNr:" + screenNumber);
       GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+      Log.Info("Main: MP is using screen: {0}", GUIGraphicsContext.currentScreen.ToString());
     }
 
     // check if MediaPortal is already running...
@@ -1114,6 +1114,19 @@ public class MediaPortalApp : D3D, IRender
         // set maximum and minimum form size in windowed mode
         case WM_GETMINMAXINFO:
           Log.Debug("Main: WM_GETMINMAXINFO");
+
+          Screen screen = Screen.FromControl(this);
+          if (!Equals(screen, GUIGraphicsContext.currentScreen))
+          {
+            Log.Info("Main: Screen MP is displayed on changed to: ", screen.ToString());
+            if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+            {
+              Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+              Rectangle newBounds = screen.Bounds;
+              Log.Info("Main: Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+            }
+            GUIGraphicsContext.currentScreen = screen;
+          }
 
           if (Windowed)
           {
