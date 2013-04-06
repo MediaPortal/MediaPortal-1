@@ -1772,107 +1772,113 @@ namespace MediaPortal.MusicPlayer.BASS
         return;
       }
 
-      MusicStream stream = GetCurrentStream();
-      try
-      {
-        if (stream != null && !stream.IsDisposed)
-        {
-          Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
-          if (Config.SoftStop && !stream.IsDisposed && !stream.IsCrossFading)
-          {
-            Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
-            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
-                                            Config.CrossFadeIntervalMs);
+      // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
+      new Thread(() =>
+                   {
+                     Thread.CurrentThread.Name = "BASS Stop";
+                     MusicStream stream = GetCurrentStream();
+                     try
+                     {
+                       if (stream != null && !stream.IsDisposed)
+                       {
+                         Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
+                         if (Config.SoftStop && !stream.IsDisposed && !stream.IsCrossFading)
+                         {
+                           Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
+                           Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                                           Config.CrossFadeIntervalMs);
 
-            // Wait until the slide is done
-            // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
-            DateTime start = DateTime.Now;
-            while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
-            {
-              System.Threading.Thread.Sleep(20);
-              if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
-              {
-                break;
-              }
-            }
-          }
-          BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
-          stream.Dispose();
-        }
+                           // Wait until the slide is done
+                           // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
+                           DateTime start = DateTime.Now;
+                           while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+                           {
+                             System.Threading.Thread.Sleep(20);
+                             if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
+                             {
+                               break;
+                             }
+                           }
+                         }
+                         BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
+                         stream.Dispose();
+                       }
 
-        if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
-        {
-          Log.Debug("BASS: Stopping ASIO Device");
-          if (!BassAsio.BASS_ASIO_Stop())
-          {
-            Log.Error("BASS: Error freeing ASIO: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-          Log.Debug("BASS: unjoin ASIO CHannels");
-          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN))
-          {
-            Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-          Log.Debug("BASS: disabling ASIO CHannels");
-          if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_ENABLE))
-          {
-            Log.Error("BASS: Error disabling Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
-          }
-        }
+                       if (Config.MusicPlayer == AudioPlayer.Asio && BassAsio.BASS_ASIO_IsStarted())
+                       {
+                         Log.Debug("BASS: Stopping ASIO Device");
+                         if (!BassAsio.BASS_ASIO_Stop())
+                         {
+                           Log.Error("BASS: Error freeing ASIO: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+                         }
+                         Log.Debug("BASS: unjoin ASIO CHannels");
+                         if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_JOIN))
+                         {
+                           Log.Error("BASS: Error unjoining Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+                         }
+                         Log.Debug("BASS: disabling ASIO CHannels");
+                         if (!BassAsio.BASS_ASIO_ChannelReset(false, -1, BASSASIOReset.BASS_ASIO_RESET_ENABLE))
+                         {
+                           Log.Error("BASS: Error disabling Asio Channels: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+                         }
+                       }
 
-        if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
-        {
-          try
-          {
-            Log.Debug("BASS: Stopping WASAPI Device");
-            if (!BassWasapi.BASS_WASAPI_Stop(true))
-            {
-              Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
-            }
+                       if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+                       {
+                         try
+                         {
+                           Log.Debug("BASS: Stopping WASAPI Device");
+                           if (!BassWasapi.BASS_WASAPI_Stop(true))
+                           {
+                             Log.Error("BASS: Error stopping WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+                           }
 
-            if (!BassWasapi.BASS_WASAPI_Free())
-            {
-              Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-          }
-        }
+                           if (!BassWasapi.BASS_WASAPI_Free())
+                           {
+                             Log.Error("BASS: Error freeing WASAPI: {0}", Bass.BASS_ErrorGetCode());
+                           }
+                         }
+                         catch (Exception ex)
+                         {
+                           Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+                         }
+                       }
 
-        _mixer.Dispose();
-        _mixer = null;
+                       _mixer.Dispose();
+                       _mixer = null;
 
-        // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
-        if (_isCDDAFile)
-        {
-          int driveCount = BassCd.BASS_CD_GetDriveCount();
-          for (int i = 0; i < driveCount; i++)
-          {
-            BassCd.BASS_CD_Release(i);
-          }
-        }
+                       // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
+                       if (_isCDDAFile)
+                       {
+                         int driveCount = BassCd.BASS_CD_GetDriveCount();
+                         for (int i = 0; i < driveCount; i++)
+                         {
+                           BassCd.BASS_CD_Release(i);
+                         }
+                       }
 
-        if (PlaybackStop != null)
-        {
-          PlaybackStop(this);
-        }
+                       if (PlaybackStop != null)
+                       {
+                         PlaybackStop(this);
+                       }
 
-        HandleSongEnded();
+                       HandleSongEnded();
 
-        // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
-        RemoveVisualizationWindow();
+                       // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
+                       RemoveVisualizationWindow();
 
-        // Switching back to normal playback mode
-        SwitchToDefaultPlaybackMode();
-      }
+                       // Switching back to normal playback mode
+                       SwitchToDefaultPlaybackMode();
+                     }
 
-      catch (Exception ex)
-      {
-        Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
-      }
+                     catch (Exception ex)
+                     {
+                       Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
+                     }
 
-      NotifyPlaying = false;
+                     NotifyPlaying = false;
+                   }
+        ).Start();
     }
 
     /// <summary>
