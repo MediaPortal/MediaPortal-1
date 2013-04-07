@@ -36,10 +36,6 @@ namespace MediaPortal.Configuration.Sections
   {
     #region Variables
 
-    private string _preferredAudioLanguages;
-    private string _preferredSubLanguages;
-    private List<string> _languageCodes;
-    private List<string> _languagesAvail;
     private string[] ShowEpisodeOptions = new string[]
                                             {
                                               "[None]", // Dont show episode info
@@ -72,6 +68,9 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       //Load parameters from XML File
+      string preferredAudioLanguages;
+      string preferredSubLanguages;
+
       using (Settings xmlreader = new MPSettings())
       {
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -91,8 +90,8 @@ namespace MediaPortal.Configuration.Sections
 
         mpCheckBoxPrefAC3.Checked = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         mpCheckBoxPrefAudioOverLang.Checked = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-        _preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
-        _preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
+        preferredAudioLanguages = xmlreader.GetValueAsString("tvservice", "preferredaudiolanguages", "");
+        preferredSubLanguages = xmlreader.GetValueAsString("tvservice", "preferredsublanguages", "");
 
         mpCheckBoxEnableDVBSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         mpCheckBoxEnableTTXTSub.Checked = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
@@ -120,100 +119,35 @@ namespace MediaPortal.Configuration.Sections
       Enabled = true;
 
       // Retrieve the languages and language codes for the Epg.
-      TvServerRemote.GetLanguages(out _languagesAvail, out _languageCodes);
-
-      if (_languagesAvail == null || _languageCodes == null)
-      {
-        Log.Debug("Failed to load languages");
-        return;
-      }
-      else
-      {
-        mpListViewAvailAudioLang.Items.Clear();
-        mpListViewPreferredAudioLang.Items.Clear();
-        for (int i = 0; i < _languagesAvail.Count; i++)
-        {
-          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-          item.Name = _languageCodes[i];
-          if (!_preferredAudioLanguages.Contains(item.Name))
-          {
-            if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
-            {
-              mpListViewAvailAudioLang.Items.Add(item);
-            }
-          }
-        }
-        mpListViewAvailAudioLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-        _columnSorter.SortColumn = 0;
-        _columnSorter.Order = SortOrder.Ascending;
-        mpListViewAvailAudioLang.Sort();
-
-        if (_preferredAudioLanguages.Length > 0)
-        {
-          string[] langArr = _preferredAudioLanguages.Split(';');
-
-          for (int i = 0; i < langArr.Length; i++)
-          {
-            string langStr = langArr[i];
-            if (langStr.Trim().Length > 0)
-            {
-              for (int j = 0; j < _languagesAvail.Count; j++)
-              {
-                if (_languageCodes[j].Contains(langStr))
-                {
-                  ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                  item.Name = _languageCodes[j];
-                  mpListViewPreferredAudioLang.Items.Add(item);
-                  break;
-                }
-              }
-            }
-          }
-        }
-
-        mpListViewAvailSubLang.Items.Clear();
-        mpListViewPreferredSubLang.Items.Clear();
-        for (int i = 0; i < _languagesAvail.Count; i++)
-        {
-          ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
-          item.Name = _languageCodes[i];
-          if (!_preferredSubLanguages.Contains(item.Name))
-          {
-            if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
-            {
-              mpListViewAvailSubLang.Items.Add(item);
-            }
-          }
-        }
-        mpListViewAvailSubLang.ListViewItemSorter = _columnSorter = new ListViewColumnSorter();
-        _columnSorter.SortColumn = 0;
-        _columnSorter.Order = SortOrder.Ascending;
-        mpListViewAvailSubLang.Sort();
-
-        if (_preferredSubLanguages.Length > 0)
-        {
-          string[] langArr = _preferredSubLanguages.Split(';');
-
-          for (int i = 0; i < langArr.Length; i++)
-          {
-            string langStr = langArr[i];
-            if (langStr.Trim().Length > 0)
-            {
-              for (int j = 0; j < _languagesAvail.Count; j++)
-              {
-                if (_languageCodes[j].Contains(langStr))
-                {
-                  ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
-                  item.Name = _languageCodes[j];
-                  mpListViewPreferredSubLang.Items.Add(item);
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
+      List<KeyValuePair<String, String>> langs = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
+      FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, langs);
+      FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, langs);
       _SingleSeat = Network.IsSingleSeat();
+    }
+
+    private void FillLists(MPListView availList, MPListView preferredList, string preferredLanguages, List<KeyValuePair<string, string>> languages)
+    {
+      availList.Items.Clear();
+      preferredList.Items.Clear();
+      foreach (KeyValuePair<string, string> kv in languages)
+      {
+        ListViewItem item = new ListViewItem(new string[] { kv.Value, kv.Key });
+        item.Name = kv.Key;
+
+        MPListView list;
+        if (preferredLanguages.Contains(item.Name))
+          list = preferredList;
+        else
+          list = availList;
+
+        if (!list.Items.ContainsKey(item.Name))
+        {
+          list.Items.Add(item);
+        }
+      }
+
+      availList.ListViewItemSorter = new ListViewColumnSorter() { SortColumn = 0, Order = SortOrder.Ascending };
+      availList.Sort();
     }
 
     public override void SaveSettings()
