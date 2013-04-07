@@ -71,7 +71,6 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
 ,m_filter(filter)
 {
-  LogRotate();
   //Initialise m_tGTStartTime for GET_TIME_NOW() macro.
   //The macro is used to avoid having to handle timeGetTime()
   //rollover issues in the body of the code
@@ -143,7 +142,12 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 
   m_mpegPesParser = new CMpegPesParser();
   
+  LogDebug(" ");
+  LogDebug("=================== New filter instance =========================");
+  LogDebug("  Logging format: Date Time [InstanceID] [ThreadID] Message....  ");
+  LogDebug("=================================================================");
   LogDebug("demux: Start file read thread");
+  
   StartThread();
 }
 
@@ -2555,10 +2559,6 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       {
         pDVBSubtitleFilter->SetHDMV(false);
         LogDebug(" done - DVBSub3 - SetHDMV");
-      }
-      else if (m_filter.m_subtitleCLSID == CLSID_DVBSub2)
-      {
-        LogDebug(" done - DVBSub2");
       }
     }
   }

@@ -54,11 +54,16 @@ DEFINE_MP_DEBUG_SETTING(DoNotAllowSlowMotionDuringZapping)
 
 //-------------------- Async logging methods -------------------------------------------------
 
+
+WORD logFileParsed = -1;
+WORD logFileDate = -1;
+
+CTsReaderFilter* instanceID = 0;
+
 CCritSec m_qLock;
-CCritSec m_logFileLock;
+static CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning = false;
-BOOL m_bLogsRotated = false;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
@@ -73,16 +78,33 @@ void LogPath(TCHAR* dest, TCHAR* name)
 void LogRotate()
 {   
   CAutoLock lock(&m_logFileLock);
-  if (m_bLogsRotated) 
-    return;
     
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, _T("log"));
+  
+  // Get the last file write date
+  WIN32_FILE_ATTRIBUTE_DATA fileInformation; 
+  if (GetFileAttributesEx(fileName, GetFileExInfoStandard, &fileInformation))
+  {  
+    // Convert the write time to local time.
+    SYSTEMTIME fileTime;
+    FileTimeToSystemTime(&fileInformation.ftLastWriteTime, &fileTime);
+    
+    logFileDate = fileTime.wDay;
+  
+    SYSTEMTIME systemTime;
+    GetLocalTime(&systemTime);
+    if(fileTime.wDay == systemTime.wDay)
+    {
+      //file date is today - no rotation needed
+      return;
+    }
+  }  
+  
   TCHAR bakFileName[MAX_PATH];
   LogPath(bakFileName, _T("bak"));
   _tremove(bakFileName);
   _trename(fileName, bakFileName);
-  m_bLogsRotated = true;
 }
 
 
@@ -107,6 +129,15 @@ UINT CALLBACK LogThread(void* param)
   {
     if ( m_logQueue.size() > 0 ) 
     {
+      SYSTEMTIME systemTime;
+      GetLocalTime(&systemTime);
+      if(logFileParsed != systemTime.wDay)
+      {
+        LogRotate();
+        logFileParsed=systemTime.wDay;
+        LogPath(fileName, _T("log"));
+      }
+
       CAutoLock lock(&m_logFileLock);
       FILE* fp = _tfopen(fileName, _T("a+"));
       if (fp!=NULL)
@@ -184,14 +215,18 @@ void LogDebug(const char *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[5000];
-  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
+  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%8x] [%4x] %s\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
     systemTime.wMilliseconds,
+    instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
-  m_logQueue.push((string)msg);
+  if (m_logQueue.size() < 2000) 
+  {
+    m_logQueue.push((string)msg);
+  }
 };
 
 //------------------------------------------------------------------------------------
@@ -266,13 +301,13 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
     //rollover issues in the body of the code
     m_tGTStartTime = (timeGetTime() - 0x40000000); 
   }
+
+  instanceID = this;  
   
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogRotate();
-
-  LogDebug("---------- v0.5.%d XXX -------------------", TSREADER_VERSION);
+  LogDebug("------------- v0.5.%d -------------", TSREADER_VERSION);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -455,7 +490,7 @@ CTsReaderFilter::~CTsReaderFilter()
   if (m_fileDuration != NULL)
     delete m_fileDuration;
   LogDebug("CTsReaderFilter::dtor - finished");
-  //StopLogger();
+  //StopLogger() is called from demux thread
 }
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
@@ -2003,18 +2038,11 @@ HRESULT CTsReaderFilter::GetSubInfoFromPin(IPin* pPin)
       FILTER_INFO filterInfo;
       if (pi.pFilter->QueryFilterInfo(&filterInfo) == S_OK)
       {
-       if (clsid == CLSID_DVBSub3)
+        if (clsid == CLSID_DVBSub3)
         {
           fhr = pi.pFilter->QueryInterface( IID_IDVBSubtitle3, ( void**)&m_pDVBSubtitle );
           assert( fhr == S_OK);
           LogDebug("DVBSub3 interface OK");
-          m_pDVBSubtitle->Test(1);
-        }
-        else if (clsid == CLSID_DVBSub2)
-        {
-          fhr = pi.pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );
-          assert( fhr == S_OK);
-          LogDebug("DVBSub2 interface OK");
           m_pDVBSubtitle->Test(1);
         }
         filterInfo.pGraph->Release();

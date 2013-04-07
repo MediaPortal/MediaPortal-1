@@ -206,9 +206,9 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
   }
 
   CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
-  if ((ref != CLSID_DVBSub2) && (ref != CLSID_DVBSub3))
+  if (ref != CLSID_DVBSub3)
   {
-    //LogDebug("sub pin: CheckConnect() fail - Not DVBSub2/DVBSub3 CLSID");
+    //LogDebug("sub pin: CheckConnect() fail - Not DVBSub3 CLSID");
     return E_FAIL;
   }
 
@@ -239,9 +239,9 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
   }
 
   CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
-  if ((ref != CLSID_DVBSub2) && (ref != CLSID_DVBSub3))
+  if (ref != CLSID_DVBSub3)
   {
-    LogDebug("sub pin: CompleteConnect() fail - Not DVBSub2/DVBSub3 CLSID");
+    LogDebug("sub pin: CompleteConnect() fail - Not DVBSub3 CLSID");
     return E_FAIL;
   }
 
