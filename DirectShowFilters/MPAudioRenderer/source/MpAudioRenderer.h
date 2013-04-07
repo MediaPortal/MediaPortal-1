@@ -37,7 +37,6 @@
 #include "AC3EncoderFilter.h"
 #include "TimeStretchFilter.h"
 #include "SampleRateConverterFilter.h"
-#include "StreamSanitizerFilter.h"
 #include "ChannelMixer.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
@@ -111,7 +110,7 @@ public:
   STDMETHOD(GetClockData)(CLOCKDATA* pClockData);
   STDMETHOD(SetEVRPresentationDelay)(DOUBLE pEVRDelay);
 
-  HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
+  HRESULT AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow);
 
   // CMpcAudioRenderer
 private:
@@ -142,7 +141,6 @@ private:
   CBitDepthAdapter*     m_pOutBitDepthAdapter;
   CTimeStretchFilter*   m_pTimestretchFilter;
   CSampleRateConverter* m_pSampleRateConverter;
-  CStreamSanitizer*     m_pStreamSanitizer;
   CChannelMixer*        m_pChannelMixer;
 
   IRenderFilter* m_pRenderer;

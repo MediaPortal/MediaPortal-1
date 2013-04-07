@@ -42,7 +42,7 @@ public:
   HRESULT BeginStop();
 
   // IRenderFilter implementation
-  HRESULT AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc);
+  HRESULT AudioClock(ULONGLONG& ullTimestamp, ULONGLONG& ullQpc, ULONGLONG ullQpcNow);
   REFERENCE_TIME Latency();
   void ReleaseDevice();
   REFERENCE_TIME BufferredDataDuration();
@@ -124,10 +124,6 @@ private:
 
   REFERENCE_TIME      m_rtNextSampleTime;
   REFERENCE_TIME      m_rtHwStart;
-  REFERENCE_TIME      m_rtHwPauseTime;
-  REFERENCE_TIME      m_rtPauseTime;
-
-  bool                m_bResyncHwClock;
 
   // Audio HW clock data
   CCritSec            m_csClockLock;
