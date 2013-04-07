@@ -90,11 +90,11 @@ HRESULT CSettingsProp::OnActivate()
   // Expand mono to stereo
   SendDlgItemMessage(m_Dlg, IDC_EXPAND_MONO, BM_SETCHECK, m_pSettings->GetExpandMonoToStereo() , 0);
 
-  CHAR settingString[256] = "";
+  TCHAR settingString[512] = _T("");
 
-  CHAR stringAuto[] = "Auto";
-  CHAR stringDisabled[] = "Disabled";
-  CHAR stringForced[] = "Forced";
+  TCHAR stringAuto[] = _T("Auto");
+  TCHAR stringDisabled[] = _T("Disabled");
+  TCHAR stringForced[] = _T("Forced");
 
   // AC3 encoding mode
   SendDlgItemMessage(m_Dlg, IDC_AC3_MODE, CB_RESETCONTENT, 0, 0);
@@ -110,20 +110,20 @@ HRESULT CSettingsProp::OnActivate()
 
   for (unsigned int i = 0; i < numOfBitrates; i++) 
   {
-    sprintf_s(settingString, "%d", gAllowedAC3bitrates[i]);
+    _stprintf_s(settingString, _T("%d"), gAllowedAC3bitrates[i]);
     SendDlgItemMessage(m_Dlg, IDC_AC3_BITRATE, CB_ADDSTRING, 0, (LPARAM)settingString);
     if (AC3Bitrate == gAllowedAC3bitrates[i])
       SendDlgItemMessage(m_Dlg, IDC_AC3_BITRATE, CB_SETCURSEL, i, 0);
   }
 
   // Audio delay
-  sprintf_s(settingString, "%d", m_pSettings->GetAudioDelay());
+  _stprintf_s(settingString, _T("%d"), m_pSettings->GetAudioDelay());
   SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_SETTEXT, 0, (LPARAM)settingString);
 
   // Bit depth
-  CHAR string16[] = "16";
-  CHAR string24[] = "24";
-  CHAR string32[] = "32";
+  TCHAR string16[] = _T("16");
+  TCHAR string24[] = _T("24");
+  TCHAR string32[] = _T("32");
   
   SendDlgItemMessage(m_Dlg, IDC_BITDEPTH, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(m_Dlg, IDC_BITDEPTH, CB_ADDSTRING, 0, (LPARAM)stringAuto);
@@ -161,7 +161,7 @@ HRESULT CSettingsProp::OnActivate()
 
   for (unsigned int i = 0; i < nNumOfSampleRates; i++)
   {
-    sprintf_s(settingString, "%d", gAllowedSampleRates[i]);
+    _stprintf_s(settingString, _T("%d"), gAllowedSampleRates[i]);
     SendDlgItemMessage(m_Dlg, IDC_SAMPLERATE, CB_ADDSTRING, 0, (LPARAM)settingString);
     if (nSampleRate == gAllowedSampleRates[i])
       SendDlgItemMessage(m_Dlg, IDC_SAMPLERATE, CB_SETCURSEL, i + 1, 0);
@@ -191,7 +191,7 @@ HRESULT CSettingsProp::OnActivate()
   for (unsigned int i = 0; i < nNumOfSpeakerConfigs; i++)
   {
     int nConfig = speakerConfigs[i];
-    sprintf_s(settingString, "%d", nConfig);
+    _stprintf_s(settingString, _T("%d"), nConfig);
     SendDlgItemMessage(m_Dlg, IDC_SPEAKER_SETUP, CB_ADDSTRING, 0, (LPARAM)m_pSettings->SpeakerConfigAsString(nConfig));
     if (nSpeakerSetup == speakerConfigs[i])
       SendDlgItemMessage(m_Dlg, IDC_SPEAKER_SETUP, CB_SETCURSEL, i, 0);
@@ -252,9 +252,9 @@ HRESULT CSettingsProp::OnApplyChanges()
   m_pSettings->SetAC3Bitrate(gAllowedAC3bitrates[nValue]);
    
   // Audio delay
-  CHAR delay[50];
+  TCHAR delay[50];
   SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_GETTEXT, 50, (LPARAM)&delay);
-  m_pSettings->SetAudioDelay(atoi(delay));
+  m_pSettings->SetAudioDelay(_ttoi(delay));
 
   nValue = (int)SendDlgItemMessage(m_Dlg, IDC_BITDEPTH, CB_GETCURSEL, 0, 0);
 
@@ -330,9 +330,9 @@ INT_PTR CSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
       }
       else if (LOWORD(wParam) == IDC_AUDIO_DELAY && HIWORD(wParam) == EN_CHANGE)
       {
-        CHAR delay[50];
+        TCHAR delay[50];
         SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_GETTEXT, 50, (LPARAM)&delay);
-        if (atoi(delay) != m_pSettings->GetAudioDelay())
+        if (_ttoi(delay) != m_pSettings->GetAudioDelay())
         {  
           m_bDirty = TRUE;
           if (m_pPageSite)
