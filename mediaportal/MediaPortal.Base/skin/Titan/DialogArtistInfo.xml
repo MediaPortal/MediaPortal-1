@@ -53,7 +53,7 @@
     <posY>201</posY>
     <width>409</width>
     <height>409</height>
-    <texture>#selectedthumb</texture>
+    <texture>#ArtistInfo.Thumb</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -67,7 +67,7 @@
 		<posY>194</posY>
 		<textcolor>FF393939</textcolor>
 		<font>font22</font>
-    <label>-</label>
+    <label>#ArtistInfo.Artist</label>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -142,20 +142,6 @@
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
   </control>
- 
-  <control>
-    <description>Instruments</description>
-    <type>label</type>
-    <id>1</id>
-		<posX>-2000</posX>
-		<posY>462</posY>
-		<label>688</label>
-		<textcolor>FF393939</textcolor>
-		<font>TitanLight12</font>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-  </control>
   
   <control>
     <description>Born value</description>
@@ -164,7 +150,7 @@
     <posX>951</posX>
     <posY>280</posY>
     <width>800</width>
-  	<label>-</label>
+  	<label>#ArtistInfo.Born</label>
   	<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -179,7 +165,7 @@
 		<posX>951</posX>
 		<posY>318</posY>
 		<width>560</width>
-		<label>-</label>
+		<label>#ArtistInfo.YearsActive</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -193,7 +179,7 @@
     <id>24</id>
 		<posX>951</posX>
 		<posY>354</posY>
-		<label>-</label>
+		<label>#ArtistInfo.Genres</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -208,7 +194,7 @@
 		<posX>951</posX>
 		<posY>390</posY>
 		<width>680</width>
-		<label>-</label>
+		<label>#ArtistInfo.Tones</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -223,22 +209,7 @@
 		<posX>951</posX>
 		<posY>426</posY>
     <width>680</width>
-		<label>-</label>
-		<textcolor>FF393939</textcolor>
-		<font>TitanLight12</font>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-  </control>
-  
-  <control>
-    <description>Instruments value</description>
-    <type>label</type>
-    <id>27</id>
-		<posX>-2000</posX>
-		<posY>462</posY>
-    <width>680</width>
-		<label>-</label>
+		<label>#ArtistInfo.Styles</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -266,12 +237,42 @@
 		<spinColor>FF393939</spinColor>
 		<textXOff2>100</textXOff2>
 		<textcolor>FF393939</textcolor>
-    <font>TitanLight12</font>
+        <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<label>#ArtistInfo.Bio</label>
+		<visible>!skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+		<visible></visible>
 	</control>
- 
+	<control>
+		<description>textarea</description>
+		<type>textbox</type>
+		<id>40</id>
+		<posX>750</posX>
+		<posY>468</posY>
+		<width>860</width>
+		<height>300</height>
+		<onleft>5</onleft>
+		<onright>5</onright>
+		<onup>40</onup>
+		<ondown>40</ondown>
+		<spinWidth>18</spinWidth>
+		<spinHeight>16</spinHeight>
+		<spinPosX>750</spinPosX>
+		<spinPosY>760</spinPosY>
+		<spinAlign>left</spinAlign>
+		<spinColor>FF393939</spinColor>
+		<textXOff2>100</textXOff2>
+		<textcolor>FF393939</textcolor>
+        <font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>	
+		<label>#ArtistInfo.Albums</label>
+		<visible>skin.hassetting(#ArtistInfo.ShowAlbums)</visible>
+	</control>
+	
 	<control>
 		<description>Bio/Albums</description>
 		<type>button</type>
@@ -280,7 +281,6 @@
 		<posY>653</posY>
     <width>261</width>
     <height>58</height>
-		<label>182</label>
 		<onleft>5</onleft>
 		<onright>4</onright>
 		<onup>6</onup>
@@ -292,6 +292,8 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<onclick>#(skin.togglesetting('#ArtistInfo.ShowAlbums'))</onclick>
+		<label>#(L(689)) / #(L(132))</label>
 	</control>
   
 	<control>
@@ -315,49 +317,5 @@
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 	</control>
-    <!-- NOT USED -->
-    <control>
-      <description>Artist</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>2300</posX>
-      <posY>133</posY>
-      <label>171</label>
-      <font>font13</font>
-      <align>left</align>
-      <textcolor>ff6FAFE1</textcolor>
-    </control>
-    <control>
-      <description>Artist value</description>
-      <type>label</type>
-      <id>20</id>
-      <posX>2300</posX>
-      <posY>66</posY>
-      <label>-</label>
-      <font>font16</font>
-      <align>left</align>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>Artist value</description>
-      <type>label</type>
-      <id>21</id>
-      <posX>2332</posX>
-      <posY>133</posY>
-      <label>-</label>
-      <font>font13</font>
-      <width>480</width>
-      <textcolor>ivory</textcolor>
-    </control>
-    <control>
-      <description>ArtistImage (Not Use)</description>
-      <type>image</type>
-      <id>3</id>
-      <posX>2050</posX>
-      <posY>10</posY>
-      <width>10</width>
-      <height>10</height>
-      <visible>no</visible>
-    </control>
   </controls>
 </window>
