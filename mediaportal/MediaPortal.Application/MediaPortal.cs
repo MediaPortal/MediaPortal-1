@@ -159,6 +159,12 @@ public class MediaPortalApp : D3D, IRender
   private const int WMSZ_BOTTOM              = 6;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
   private const int WMSZ_BOTTOMLEFT          = 7;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
   private const int WMSZ_BOTTOMRIGHT         = 8;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632647(v=vs.85).aspx
+  private const int WM_SIZE                  = 0x0005; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
+  private const int SIZE_RESTORED            = 0;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
+  private const int SIZE_MINIMIZED           = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
+  private const int SIZE_MAXIMIZED           = 2;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
+  private const int SIZE_MAXSHOW             = 3;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
+  private const int SIZE_MAXHIDE             = 4;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
   private const int WM_GETMINMAXINFO         = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
   private const int WM_MOVING                = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
   private const int WM_POWERBROADCAST        = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
@@ -1085,6 +1091,9 @@ public class MediaPortalApp : D3D, IRender
       RECT rc;
       Rectangle bounds;
 
+      Size border;
+      int width;
+      int height;
       switch (msg.Msg)
       {
         // power management
@@ -1181,17 +1190,42 @@ public class MediaPortalApp : D3D, IRender
           msg.Result = (IntPtr)1;
           break;
         
+        // verify window size in case it was not resized by the user
+        case WM_SIZE:
+          Log.Debug("Main WM_SIZE");
+          int x = unchecked((short)msg.LParam);
+          int y = unchecked((short)((uint)msg.LParam >> 16));
+          switch (msg.WParam.ToInt32())
+          {
+            case SIZE_RESTORED:
+              border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
+              height = (int)((double)x * GUIGraphicsContext.SkinSize.Height / GUIGraphicsContext.SkinSize.Width);
+              if (height != y && Windowed)
+              {
+                Log.Info("Main: Overriding size from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
+                ClientSize = new Size(x, height);
+              }
+              break;
+            case SIZE_MINIMIZED:
+            case SIZE_MAXIMIZED:
+            case SIZE_MAXSHOW:
+            case SIZE_MAXHIDE:
+              break;
+          }
+          msg.Result = (IntPtr)0;
+          break;
+
         // aspect ratio save window resizing
         case WM_SIZING:
           Log.Debug("Main WM_SIZING");
-          rc = (RECT) Marshal.PtrToStructure(msg.LParam, typeof(RECT));
-          var border       = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
-          int width        = rc.right  - rc.left - border.Width;
-          int height       = rc.bottom - rc.top  - border.Height;
-          long gcd         = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          double ratioX    = (double) GUIGraphicsContext.SkinSize.Width  / gcd;
-          double ratioY    = (double) GUIGraphicsContext.SkinSize.Height / gcd;
-          bounds           = GUIGraphicsContext.currentScreen.WorkingArea;
+          rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
+          border        = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
+          width         = rc.right  - rc.left - border.Width;
+          height        = rc.bottom - rc.top  - border.Height;
+          long gcd      = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          double ratioX = (double)GUIGraphicsContext.SkinSize.Width  / gcd;
+          double ratioY = (double)GUIGraphicsContext.SkinSize.Height / gcd;
+          bounds        = GUIGraphicsContext.currentScreen.WorkingArea;
 
           switch (msg.WParam.ToInt32())
           {
@@ -1217,6 +1251,7 @@ public class MediaPortalApp : D3D, IRender
               break;
           }
 
+          // TODO: compensate for negative positions without allowing the form to grow beyond size of current bounds e.g. when window is partly on one screen
           // out of bounds check
           if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
           {
@@ -1343,7 +1378,8 @@ public class MediaPortalApp : D3D, IRender
         // handle activation and deactivation requests
         case WM_ACTIVATE:
           Log.Debug("Main: WM_ACTIVATE");
-          switch (msg.WParam.ToInt32())
+          int loword = unchecked((short)msg.WParam);
+          switch (loword)
           {
             case WA_INACTIVE:
               Log.Info("Main: Deactivation Request Received");
