@@ -303,7 +303,7 @@ REFERENCE_TIME SynchCorrection::GetReferenceTimeFromAudioSamples(REFERENCE_TIME 
   {
     INT64 duration = sampleTime->rtOriginalSampleEnd - sampleTime->rtOriginalSampleStart;
     INT64 adjustedDuration = sampleTime->rtAdjustedSampleEnd - sampleTime->rtAdjustedSampleStart;
-    ret = sampleTime->rtAdjustedSampleStart + ((rtAHwtime - sampleTime->rtOriginalSampleStart) * adjustedDuration) / duration;
+    ret = sampleTime->rtOriginalSampleStart + ((rtAHwtime - sampleTime->rtAdjustedSampleStart) * duration) / adjustedDuration;
   }
   return ret;
 }
@@ -312,7 +312,7 @@ SampleTimeData* SynchCorrection::GetMatchingSampleForTime(REFERENCE_TIME rtAHwti
 {
   SampleTimeData* ret = NULL;
 
-  while (m_qSampleTimes.size() > 1 && m_qSampleTimes.front()->rtOriginalSampleEnd < rtAHwtime)
+  while (m_qSampleTimes.size() > 1 && m_qSampleTimes.front()->rtAdjustedSampleEnd < rtAHwtime)
   {
     SampleTimeData * oldSample = m_qSampleTimes.front();
     m_qSampleTimes.pop();
@@ -350,6 +350,6 @@ INT64 SynchCorrection::CalculateDrift(REFERENCE_TIME rtAHwTime, REFERENCE_TIME r
   }
   
   REFERENCE_TIME preCalculatedTime = GetReferenceTimeFromAudioSamples(rtAHwTime);
-  return preCalculatedTime- rtRCTime - (m_rtQueueDuration * bias) + m_rtQueueAdjustedDuration;
+  return preCalculatedTime - rtRCTime + (m_rtQueueDuration - m_rtQueueAdjustedDuration * bias) ;
 }
 
