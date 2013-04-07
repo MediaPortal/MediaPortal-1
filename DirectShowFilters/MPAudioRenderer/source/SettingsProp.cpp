@@ -25,11 +25,14 @@ extern unsigned int gAllowedBitDepths[4];
 extern unsigned int gAllowedResamplingQualities[5];
 extern unsigned int speakerConfigs[7];
 
+#define MAX_INPUT_LENGTH 25
+
 CUnknown* WINAPI CSettingsProp::CreateInstance(LPUNKNOWN pUnk, HRESULT* pHr)
 {
   CSettingsProp* pNewObject = new CSettingsProp(pUnk);
   if (!pNewObject) 
     *pHr = E_OUTOFMEMORY;
+
   return pNewObject;
 }
 
@@ -119,6 +122,10 @@ HRESULT CSettingsProp::OnActivate()
   // Audio delay
   _stprintf_s(settingString, _T("%d"), m_pSettings->GetAudioDelay());
   SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_SETTEXT, 0, (LPARAM)settingString);
+
+  // Output buffer
+  _stprintf_s(settingString, _T("%d"), m_pSettings->GetOutputBuffer());
+  SendDlgItemMessage(m_Dlg, IDC_OUTPUT_BUFFER, WM_SETTEXT, 0, (LPARAM)settingString);
 
   // Bit depth
   TCHAR string16[] = _T("16");
@@ -252,9 +259,14 @@ HRESULT CSettingsProp::OnApplyChanges()
   m_pSettings->SetAC3Bitrate(gAllowedAC3bitrates[nValue]);
    
   // Audio delay
-  TCHAR delay[50];
-  SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_GETTEXT, 50, (LPARAM)&delay);
+  TCHAR delay[MAX_INPUT_LENGTH];
+  SendDlgItemMessage(m_Dlg, IDC_AUDIO_DELAY, WM_GETTEXT, MAX_INPUT_LENGTH, (LPARAM)&delay);
   m_pSettings->SetAudioDelay(_ttoi(delay));
+
+  // Output buffer
+  TCHAR buffer[MAX_INPUT_LENGTH];
+  SendDlgItemMessage(m_Dlg, IDC_OUTPUT_BUFFER, WM_GETTEXT, MAX_INPUT_LENGTH, (LPARAM)&buffer);
+  m_pSettings->SetOutputBuffer(_ttoi(buffer));
 
   nValue = (int)SendDlgItemMessage(m_Dlg, IDC_BITDEPTH, CB_GETCURSEL, 0, 0);
 
@@ -339,6 +351,18 @@ INT_PTR CSettingsProp::OnReceiveMessage(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
             m_pPageSite->OnStatusChange(PROPPAGESTATUS_DIRTY);
         }
       }
+      else if (LOWORD(wParam) == IDC_OUTPUT_BUFFER && HIWORD(wParam) == EN_CHANGE)
+      {
+        TCHAR delay[MAX_INPUT_LENGTH];
+        SendDlgItemMessage(m_Dlg, IDC_OUTPUT_BUFFER, WM_GETTEXT, MAX_INPUT_LENGTH, (LPARAM)&delay);
+        if (_ttoi(delay) != m_pSettings->GetOutputBuffer())
+        {  
+          m_bDirty = TRUE;
+          if (m_pPageSite)
+            m_pPageSite->OnStatusChange(PROPPAGESTATUS_DIRTY);
+        }
+      }
+
     }
   }
 

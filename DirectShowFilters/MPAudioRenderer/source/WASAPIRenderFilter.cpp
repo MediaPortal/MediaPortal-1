@@ -44,7 +44,8 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
   m_nDataLeftInSample(0),
   m_llPosError(0),
   m_ullPrevQpc(0),
-  m_ullPrevPos(0)
+  m_ullPrevPos(0),
+  m_hNeedMoreSamples(NULL)
 {
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
@@ -72,6 +73,11 @@ CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSync
     pSettings->GetAvailableAudioDevices(&devices, NULL, true);
     SAFE_RELEASE(devices); // currently only log available devices
   }
+
+  // We are the end point in the pipeline so we cannot ever have passtru
+  m_bNextFormatPassthru = false; 
+
+  m_nOutBufferCount = WASAPI_OUT_BUFFER_COUNT;
 }
 
 CWASAPIRenderFilter::~CWASAPIRenderFilter(void)
@@ -234,7 +240,7 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
     // We must use incoming format so the WAVEFORMATEXTENSIBLE to WAVEFORMATEXT difference
     // that some audio drivers require is not causing an infinite loop of format changes
     SetInputFormat(pwfx);
-    SetOutputFormat(&outFormat);    
+    SetOutputFormat(&outFormat);
 
     // Reinitialize audio client
     hr = CreateAudioClient(true);
@@ -246,6 +252,36 @@ HRESULT CWASAPIRenderFilter::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, i
   SAFE_DELETE_WAVEFORMATEX(pwfxAccepted);
 
   return hr;
+}
+
+// Buffer negotiation
+HRESULT CWASAPIRenderFilter::NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize)
+{
+  REFERENCE_TIME rtBufferLength = m_pSettings->m_msOutputBuffer * 10000;
+
+  if (rtBufferLength < m_pSettings->m_hnsPeriod * 2)
+    rtBufferLength = m_pSettings->m_hnsPeriod * 2;
+
+  if (bCanModifyBufferSize)
+  {
+    UINT32 nFrames = rtBufferLength / (UNITS / pwfx->Format.nSamplesPerSec);
+    *pBufferSize = nFrames / m_nOutBufferCount * pwfx->Format.nBlockAlign;
+    *pBufferCount = m_nOutBufferCount;
+  }
+  else
+  {
+    UINT32 nFrames = *pBufferSize / pwfx->Format.nBlockAlign;
+    REFERENCE_TIME rtProposedBufferLength = nFrames * UNITS / pwfx->Format.nSamplesPerSec;
+
+    if (rtProposedBufferLength > 0)
+      *pBufferCount =  max(rtBufferLength / rtProposedBufferLength, 2) + 1;
+    else
+      *pBufferCount = 10;
+
+    m_nOutBufferCount = *pBufferCount;
+  }
+
+  return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::IsFormatSupported(const WAVEFORMATEXTENSIBLE* pwfx, WAVEFORMATEXTENSIBLE** pwfxAccepted)
@@ -616,7 +652,10 @@ HRESULT CWASAPIRenderFilter::PutSample(IMediaSample* pSample)
  HRESULT hr = CQueuedAudioSink::PutSample(pSample);
 
   if (m_filterState != State_Running)
-    Log("Buffering...%6.3f", BufferredDataDuration() / 10000000.0);
+  {
+    CheckBufferStatus();
+    Log("Buffering...%6.3f ms", BufferredDataDuration() / 10000000.0);
+  }
 
   return hr;
 }
@@ -691,8 +730,13 @@ DWORD CWASAPIRenderFilter::ThreadProc()
     }
     
     m_csResources.Unlock();
+
+    CheckBufferStatus();
+
     hr = WaitForEvents(INFINITE, &m_hDataEvents, &m_dwDataWaitObjects);
     m_csResources.Lock();
+
+    CheckBufferStatus();
 
     if (hr == MPAR_S_THREAD_STOPPING || !m_pAudioClient)
     {
@@ -819,6 +863,9 @@ DWORD CWASAPIRenderFilter::ThreadProc()
 
             RenderSilence(data, bufferSizeInBytes, writeSilence, bytesFilled);
           }
+
+        CheckBufferStatus();
+
         } while (bytesFilled < bufferSizeInBytes);
 
         hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, flags);
@@ -870,11 +917,11 @@ void CWASAPIRenderFilter::StopRenderThread()
 
 REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
 {
-  CAutoLock queueLock(&m_inputQueueLock);
-
   REFERENCE_TIME rtDuration = 0;
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
+
+  CAutoLock queueLock(&m_inputQueueLock);
 
   vector<TQueueEntry>::iterator it = m_inputQueue.begin();
   while (it != m_inputQueue.end())
@@ -891,6 +938,32 @@ REFERENCE_TIME CWASAPIRenderFilter::BufferredDataDuration()
   }
 
   return rtDuration;
+}
+
+void CWASAPIRenderFilter::CheckBufferStatus()
+{
+  REFERENCE_TIME bufferedAmount = BufferredDataDuration();
+  if (m_hNeedMoreSamples && bufferedAmount < m_pSettings->m_msOutputBuffer * 10000)
+  {
+    //Log("CWASAPIRenderFilter::Render -      need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+    SetEvent(*m_hNeedMoreSamples);
+  }
+  else
+  {
+    //Log("CWASAPIRenderFilter::Render - dont need more data - buffer: %6.3f", bufferedAmount / 10000000.0);
+    ResetEvent(*m_hNeedMoreSamples);
+  }
+}
+
+HRESULT CWASAPIRenderFilter::SetMoreSamplesEvent(HANDLE* hEvent)
+{
+  m_hNeedMoreSamples = hEvent;
+  
+  // Request the initial sample as soon as it is available
+  if (m_hNeedMoreSamples)
+    SetEvent(*m_hNeedMoreSamples);
+
+  return S_OK;
 }
 
 HRESULT CWASAPIRenderFilter::GetWASAPIBuffer(UINT32& bufferSize, UINT32& currentPadding, UINT32& bufferSizeInBytes, BYTE** pData)

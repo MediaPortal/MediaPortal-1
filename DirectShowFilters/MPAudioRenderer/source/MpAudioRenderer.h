@@ -50,6 +50,8 @@
 #define AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED      AUDCLNT_ERR(0x019)
 #endif
 
+#define SAMPLE_RECEIVE_TIMEOUT 500000 // 50 ms
+
 [uuid("EC9ED6FC-7B03-4cb6-8C01-4EABE109F26B")]
 class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock, IAMFilterMiscFlags
 {
@@ -145,6 +147,9 @@ private:
 
   IRenderFilter* m_pRenderer;
   ITimeStretch* m_pTimeStretch;
+
+  HANDLE m_hRendererStarving;
+  HANDLE m_hStopWaitingRenderer;
   
   AM_MEDIA_TYPE* m_pMediaType;
 };
