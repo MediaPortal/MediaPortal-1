@@ -44,16 +44,10 @@
     <ClCompile Include="AE_mixer\AERemap.cpp">
       <Filter>AE Mixer</Filter>
     </ClCompile>
-    <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
     <ClCompile Include="SoundTouch\source\AAFilter.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
     <ClCompile Include="SoundTouch\source\BPMDetect.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\cpu_detect_x86_win.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
     <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp">
@@ -87,6 +81,9 @@
       <Filter>AC3_encoder</Filter>
     </ClCompile>
     <ClCompile Include="source\SettingsProp.cpp" />
+    <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AC3EncoderFilter.h" />

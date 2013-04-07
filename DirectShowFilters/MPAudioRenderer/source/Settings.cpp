@@ -132,7 +132,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v1.1.4");
+  Log("MP Audio Renderer - v1.1.5");
 
   LoadSettingsFromRegistry();
 }
