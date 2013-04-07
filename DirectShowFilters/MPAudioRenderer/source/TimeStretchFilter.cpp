@@ -498,6 +498,7 @@ DWORD CTimeStretchFilter::ThreadProc()
           m_pClock->GetHWTime(&rtRCTime, &rtAHwTime);
 
           sample->GetTime(&rtStart, &rtEnd);
+          REFERENCE_TIME sampleDuration = rtEnd - rtStart;
 
           uint unprocessedSamplesBefore = numUnprocessedSamples();
           uint unprocessedSamplesAfter = 0;
@@ -510,7 +511,7 @@ DWORD CTimeStretchFilter::ThreadProc()
           setTempoInternal(AVMult, 1.0);
 
           if (m_rtLastOuputEnd == -1)
-            m_rtLastOuputEnd = rtStart * AVMult - 1;
+            m_rtLastOuputEnd = rtStart / AVMult - 1;
 
           m_rtLastOuputStart = m_rtLastOuputEnd + 1;
 
@@ -524,12 +525,16 @@ DWORD CTimeStretchFilter::ThreadProc()
           
           // TODO: Soundtouch can provide less samples than asked (but never more) so a cummulative error is possible.  This will not happen over the course of a long TV stint, but could be solved for correctness
           // m_rtLastOuputEnd += (nOutFrames + unprocessedSamplesAfter - unprocessedSamplesBefore) * UNITS / m_pOutputFormat->Format.nSamplesPerSec;
-          m_rtLastOuputEnd += (rtEnd - rtStart) * AVMult;
+
+          //rtStart = m_rtInSampleTime;
+          rtEnd = rtStart + sampleDuration;
+          rtAdjustedStart = m_rtLastOuputEnd +1;
+          rtAdjustedEnd = rtAdjustedStart + sampleDuration / AVMult;
+
+          m_rtLastOuputEnd += sampleDuration / AVMult;
 
           CreateOutput(nInFrames, nOutFrames, bias, adjustment, AVMult, false);
 
-          rtAdjustedStart = m_rtLastOuputStart;
-          rtAdjustedEnd = m_rtLastOuputEnd;
 
           m_pClock->AddSample(rtStart, rtAdjustedStart, rtEnd, rtAdjustedEnd);
         }
