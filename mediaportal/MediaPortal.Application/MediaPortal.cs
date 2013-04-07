@@ -1191,9 +1191,9 @@ public class MediaPortalApp : D3D, IRender
         
         // verify window size in case it was not resized by the user
         case WM_SIZE:
-          Log.Debug("Main WM_SIZE");
           int x = unchecked((short)msg.LParam);
           int y = unchecked((short)((uint)msg.LParam >> 16));
+          Log.Debug("Main WM_SIZE ({0}x{1})",x, y);
           switch (msg.WParam.ToInt32())
           {
             case SIZE_RESTORED:
@@ -1741,21 +1741,6 @@ public class MediaPortalApp : D3D, IRender
   
   #endregion
 
-  /// <summary>
-  /// 
-  /// </summary>
-  /// <param name="e"></param>
-  protected override void OnShown(EventArgs e)
-  {
-    if (MinimizeOnStartup && FirstTimeWindowDisplayed)
-    {
-      Log.Info("D3D: Minimizing to tray on startup");
-      MinimizeToTray();
-      FirstTimeWindowDisplayed = false;
-    }
-    base.OnShown(e);
-  }
-
   #region process
 
   /// <summary>
@@ -1819,8 +1804,6 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   protected override void OnStartup()
   {
-    // TODO: taskbar may overlay the splashscreen, hide taskbar issue with splashscreen running as at thread
-
     Log.Info("Main: Starting up");
 
     // Initializing input devices...
@@ -1855,25 +1838,6 @@ public class MediaPortalApp : D3D, IRender
       GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
-
-      // Force restore of MP main window as soon as possible
-      if (!Windowed)
-      {
-        IsVisible = false;
-        RestoreFromTray();
-      }
-
-      // stop splash screen thread
-      if (SplashScreen != null)
-      {
-        SplashScreen.Stop();
-        Activate();
-        while (!SplashScreen.IsStopped())
-        {
-          Thread.Sleep(100);
-        }
-        SplashScreen = null;
-      }
 
       // disable screen saver when MP running and internal selected
       if (_useScreenSaver)
@@ -2563,8 +2527,7 @@ public class MediaPortalApp : D3D, IRender
       }
       if (_useScreenSaver)
       {
-        if ((GUIGraphicsContext.IsFullScreenVideo && g_Player.Paused == false) ||
-            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+        if ((GUIGraphicsContext.IsFullScreenVideo && g_Player.Paused == false) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
         {
           GUIGraphicsContext.ResetLastActivity();
         }

@@ -42,7 +42,7 @@ namespace MediaPortal
   {
     public string Version;
     private bool _stopRequested;
-    private bool _bringToFront;
+    private bool _alwaysOnTop;
     private SplashForm _frm;
     private FullScreenSplashScreen _frmFull;
     private string _info;
@@ -80,14 +80,6 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// Brings the splash screen to front of the z-order
-    /// </summary>
-    public void BringToFront()
-    {
-      _bringToFront = true;
-    }
-
-    /// <summary>
     /// Set the contents of the information label of the splash screen
     /// </summary>
     /// <param name="information">the information to set</param>
@@ -115,6 +107,7 @@ namespace MediaPortal
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
           startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);
           screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+          _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         }
 
         if (D3D.WindowedOverride)
@@ -151,7 +144,7 @@ namespace MediaPortal
     /// </summary>
     private void ShowNormalSplash()
     {
-      _frm = new SplashForm();
+      _frm = new SplashForm {TopMost = _alwaysOnTop};
       _frm.SetVersion(Version);
       _frm.Show();
       _frm.Update();
@@ -161,13 +154,6 @@ namespace MediaPortal
       // run until stop of splash screen is requested
       while (!_stopRequested && _frm.Focused) 
       {
-        // bring splash screen to front when request is pending
-        if (_bringToFront)
-        {
-          _frm.TopMost = true;
-          _bringToFront = false;
-        }
-
         if (oldInfo != _info)
         {
           _frm.SetInformation(_info);
@@ -182,13 +168,14 @@ namespace MediaPortal
     }
 
     /// <summary>
-    /// handles the fullscreen splash
+    /// handles the full screen splash
     /// </summary>
     private void ShowFullScreenSplashScreen()
     {
       Cursor.Hide();
       _frmFull = new FullScreenSplashScreen();
       _frmFull.RetrieveSplashScreenInfo();
+      _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - _frmFull.Width / 2) + 1;
       _frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - _frmFull.Height / 2) + 1;
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
@@ -204,14 +191,6 @@ namespace MediaPortal
       // run until stop of splash screen is requested
       while (!_stopRequested && _frmFull.Focused)
       {
-        // bring splash screen to front when request is pending
-        if (_bringToFront)
-        {
-          _frmFull.TopMost = true;
-          _bringToFront = false;
-          //Cursor.Hide();
-         }
-
         if (oldInfo != _info)
         {
           _frmFull.SetInformation(_info);
@@ -219,8 +198,6 @@ namespace MediaPortal
         }
         Thread.Sleep(25);
       }
-
-      Cursor.Show();
       _frmFull.Close();
       _frmFull = null;
     }
@@ -413,7 +390,7 @@ namespace MediaPortal
         this.ShowInTaskbar = false;
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "SplashScreen";
-        this.TopMost = true;
+        this.TopMost = false;
         this.TransparencyKey = System.Drawing.Color.FromArgb(0, 0, 0, 0);
         this._panel1.ResumeLayout(false);
         this.ResumeLayout(false);

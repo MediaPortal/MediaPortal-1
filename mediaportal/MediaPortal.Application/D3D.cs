@@ -56,11 +56,6 @@ namespace MediaPortal
   {
     #region Win32 Imports
 
-    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633548(v=vs.85).aspx
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
     // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145065(v=vs.85).aspx
     [StructLayout(LayoutKind.Sequential)]
     public struct MonitorInformation
@@ -84,7 +79,6 @@ namespace MediaPortal
     #region constants
 
     // ReSharper disable InconsistentNaming
-    private const int SW_MINIMIZE          = 6;
     private const int D3DSWAPEFFECT_FLIPEX = 5;
     // ReSharper restore InconsistentNaming
 
@@ -122,7 +116,6 @@ namespace MediaPortal
     protected bool                 MinimizeOnGuiExit;        // minimize to tray on GUI exit?
     protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in fullscreen mode is lost?
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
-    protected bool                 FirstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
     protected bool                 AppActive;                // set to true while MP is active     
     protected bool                 MouseCursor;              // holds the current mouse cursor state
@@ -150,11 +143,14 @@ namespace MediaPortal
     private readonly bool              _reduceFrameRate;          // reduce frame rate when not in focus?
     private bool                       _miniTvMode;               // 
     private bool                       _isClosing;                //
+    private bool                       _isLoaded;                 //
     private bool                       _lastMouseCursor;          // holds the last mouse cursor state to keep state balance
     private bool                       _lostFocus;                // set to true if form lost focus
     private bool                       _needReset;                // set to true when the D3D device needs a reset
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
+    private bool                       _firstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
+    private bool                       _exitToTray;               //
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
@@ -185,7 +181,7 @@ namespace MediaPortal
     private Point                      _lastCursorPosition;       // track cursor position of last move move event
 
     private static readonly Stopwatch ClockWatch = new Stopwatch();
-    
+
     #endregion
 
     #region constructor
@@ -199,7 +195,7 @@ namespace MediaPortal
       WindowedOverride          = false;
       FullscreenOverride        = false;
       ScreenNumberOverride      = -1;
-      FirstTimeWindowDisplayed  = true;
+      _firstTimeWindowDisplayed  = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;
       MinimizeOnFocusLoss       = false;
@@ -262,12 +258,6 @@ namespace MediaPortal
 
     #region protected methods
     
-    /// <summary>
-    /// 
-    /// </summary>
-    protected virtual void Initialize() { }
-
-
     /// <summary>
     /// 
     /// </summary>
@@ -480,12 +470,11 @@ namespace MediaPortal
     protected void FullRender()
     {
       // don't render if form is minimized and not visible to the user
-      if (WindowState == FormWindowState.Minimized && !IsVisible)
+      if (!IsVisible)
       {
         Thread.Sleep(100);
         return;
       }
-
       ResumePlayer();
       UpdateMouseCursor();
 
@@ -754,7 +743,7 @@ namespace MediaPortal
       }
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode
-      if (IsVisible && ((_lostFocus && Windowed) || (!Windowed && MinimizeOnFocusLoss)))
+      if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || _exitToTray)
       {
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
@@ -784,6 +773,10 @@ namespace MediaPortal
         MouseCursor = true;
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
+
+        ShowMouseCursor(true);
+
+        _exitToTray = false;
       }
     }
 
@@ -905,7 +898,6 @@ namespace MediaPortal
       KeyPreview = true;
       Name = "D3D";
       Load             += OnLoad;
-      Closing          += OnClosing;
       MouseMove        += OnMouseMove;
       MouseDown        += OnClick;
       MouseDoubleClick += OnMouseDoubleClick;
@@ -1045,15 +1037,6 @@ namespace MediaPortal
                                                   _presentParams);
       }
 
-      // minimize currently empty main form for fullscreen
-      if (!Windowed)
-      {
-        ShowWindow(Handle, SW_MINIMIZE);
-      }
-
-      // bring splash screen to front of z-order
-      SplashScreen.BringToFront();
-      
       // set always on top parameter
       TopMost = _alwaysOnTop;
 
@@ -1447,7 +1430,7 @@ namespace MediaPortal
           size  = CalcMaxClientArea();
         }
         ClientSize = size;
-        TopMost    = _alwaysOnTop;
+        TopMost = _alwaysOnTop;
       }
     }
 
@@ -1702,7 +1685,6 @@ namespace MediaPortal
       Log.Debug("D3D: OnLoad()");
       Application.Idle += OnIdle;
 
-      Initialize();
       OnStartup();
 
       try
@@ -1719,15 +1701,54 @@ namespace MediaPortal
         handle.Set();
         handle.Close();
       }
-      // suppress any errors
       // ReSharper disable EmptyGeneralCatchClause
       catch { }
       // ReSharper restore EmptyGeneralCatchClause
 
       _lastCursorPosition = Cursor.Position;
       ShowLastActiveModule();
+
+      Log.Debug("D3D: Activating main form");
+      FrameMove();
+      FullRender();
+      Activate();
+
+      _isLoaded = true;
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="e"></param>
+    protected override void OnPaint(PaintEventArgs e)
+    {
+      Log.Debug("D3D: OnPaint()");
+      base.OnPaint(e);
+
+      if (_isLoaded)
+      {
+        // stop the splash screen thread it it is still running
+        if (SplashScreen != null)
+        {
+          Log.Info("D3D: Stopping splash screen thread");
+          SplashScreen.Stop();
+          while (!SplashScreen.IsStopped())
+          {
+            Thread.Sleep(10);
+          }
+          SplashScreen = null;
+        }
+
+        if (MinimizeOnStartup && _firstTimeWindowDisplayed)
+        {
+          Log.Info("D3D: Minimizing to tray on startup");
+          _exitToTray = true;
+          MinimizeToTray();
+          _firstTimeWindowDisplayed = false;
+        }
+      }
+    }
 
     /// <summary>
     /// 
@@ -1795,18 +1816,6 @@ namespace MediaPortal
         sleepTime = 1;
       }
       Thread.Sleep(sleepTime);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private static void OnClosing(object sender, CancelEventArgs e)
-    {
-      Log.Debug("D3D: OnClosing()");
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-      g_Player.Stop();
     }
 
 
@@ -2049,23 +2058,29 @@ namespace MediaPortal
     }
 
 
+    // TODO
     /// <summary>
-    /// Raises the Closing event.
-    /// http://msdn.microsoft.com/en-us/library/system.windows.forms.form.onclosing.aspx
+    ///  http://msdn.microsoft.com/en-us/library/system.windows.forms.form.onformclosing.aspx
     /// </summary>
-    /// <param name="e">A CancelEventArgs that contains the event data.</param>
-    protected override void OnClosing(CancelEventArgs e)
+    /// <param name="formClosingEventArgs"></param>
+    protected override void OnFormClosing(FormClosingEventArgs formClosingEventArgs)
     {
-      Log.Debug("D3D: OnClosing()");
+      Log.Debug("D3D: OnFormClosing()");
       if (MinimizeOnGuiExit && !ShuttingDown)
       {
         Log.Info("D3D: Minimizing to tray on GUI exit");
         _isClosing = false;
-        e.Cancel = true;
+        formClosingEventArgs.Cancel = true;
+        _exitToTray = true;
         MinimizeToTray();
       }
-      _isClosing = true;
-      base.OnClosing(e);
+      else
+      {
+        _isClosing = true;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+        g_Player.Stop();
+      }
+      base.OnFormClosing(formClosingEventArgs);
     }
 
 
