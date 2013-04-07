@@ -1092,7 +1092,6 @@ public class MediaPortalApp : D3D, IRender
       Rectangle bounds;
 
       Size border;
-      int width;
       int height;
       switch (msg.Msg)
       {
@@ -1220,7 +1219,7 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main WM_SIZING");
           rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
           border        = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
-          width         = rc.right  - rc.left - border.Width;
+          int width     = rc.right  - rc.left - border.Width;
           height        = rc.bottom - rc.top  - border.Height;
           long gcd      = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
           double ratioX = (double)GUIGraphicsContext.SkinSize.Width  / gcd;
@@ -1336,22 +1335,48 @@ public class MediaPortalApp : D3D, IRender
                 }
               }
 
-              // TODO: Option to stop playback on lost audio renderer
               if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
               {
                 switch (msg.WParam.ToInt32())
                 {
                   case DBT_DEVICEREMOVECOMPLETE:
-                    Log.Debug("Main: Audio Renderer {0} removed", deviceName);
+                    Log.Info("Main: Audio Renderer {0} removed", deviceName);
+
+                    try
+                    {
+                      VolumeHandler.Dispose();
+                      #pragma warning disable 168
+                      VolumeHandler vh = VolumeHandler.Instance;
+                      #pragma warning restore 168
+                    }
+                    catch (Exception exception)
+                    {
+                      Log.Info("Main: Could not initialize volume handler: ", exception.Message);
+                    } 
+                   
                     if (_stopOnLostAudioRenderer)
                     {
                       g_Player.Stop();
                     }
                     break;
+                  
                   case DBT_DEVICEARRIVAL:
-                    Log.Debug("Main: Audio Renderer {0} connected", deviceName);
+                    Log.Info("Main: Audio Renderer {0} connected", deviceName);
+
+                    try
+                    {
+                      VolumeHandler.Dispose();
+                      #pragma warning disable 168
+                      VolumeHandler vh = VolumeHandler.Instance;
+                      #pragma warning restore 168
+                    }
+                    catch (Exception exception)
+                    {
+                      Log.Info("Main: Could not initialize volume handler: ", exception.Message);
+                    }
+
                     break;
-                }  
+                }
               }
             }
           }
@@ -1696,10 +1721,17 @@ public class MediaPortalApp : D3D, IRender
       AutoPlay.StartListening();
 
       Log.Debug("Main: OnResume - Initializing volume handler");
-      #pragma warning disable 168
-      VolumeHandler vh = VolumeHandler.Instance;
-      #pragma warning restore 168
-
+      try
+      {
+        #pragma warning disable 168
+        VolumeHandler vh = VolumeHandler.Instance;
+        #pragma warning restore 168
+      }
+      catch (Exception exception)
+      {
+        Log.Info("Main: OnResume - Could not initialize volume handler: ", exception.Message);
+      }
+      
       _lastOnresume = DateTime.Now;
 
       Log.Info("Main: OnResume - Done");
