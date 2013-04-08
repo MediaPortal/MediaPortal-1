@@ -49,7 +49,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_pCurrentAudioBuffer = new Packet();
   m_pCurrentSubtitleBuffer = new Packet();
   m_iAudioStream = 0;
-  m_AudioStreamType = -1;
+  m_AudioStreamType = NO_STREAM;
   m_iSubtitleStream = 0;
   m_audioPid = 0;
   m_currentSubtitlePid = 0;
@@ -782,10 +782,9 @@ bool CDeMultiplexer::AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip)
 {
   bool hasAudio = false;
 
-  // TODO check if we can always rely on the audio_stream_count > 0
-  for (int i = 0; i < pClip->audio_stream_count; i++) 
+  for (int i = 0; i < pClip->raw_stream_count; i++) 
   {
-    switch (pClip->audio_streams[i].coding_type)
+    switch (pClip->raw_streams[i].coding_type)
     {
       case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
       case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
