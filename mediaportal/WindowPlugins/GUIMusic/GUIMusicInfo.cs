@@ -116,6 +116,11 @@ namespace MediaPortal.GUI.Music
       string thumbNailFileName = Util.Utils.GetAlbumThumbName(albumInfo.Artist, albumInfo.Title);
       if (Util.Utils.FileExistsInCache(thumbNailFileName))
       {
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(thumbNailFileName);
+        if (Util.Utils.FileExistsInCache(strLarge))
+        {
+          thumbNailFileName = strLarge;
+        }
         GUIPropertyManager.SetProperty("#AlbumInfo.Thumb", thumbNailFileName);
       }
       else if (!string.IsNullOrEmpty(albumInfo.ImageURL))

@@ -113,6 +113,11 @@ namespace MediaPortal.GUI.Music
       string coverArtFileName = GUIMusicBaseWindow.GetArtistCoverArtName(artistInfo.Artist);
       if (Util.Utils.FileExistsInCache(coverArtFileName))
       {
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(coverArtFileName);
+        if (Util.Utils.FileExistsInCache(strLarge))
+        {
+          coverArtFileName = strLarge;
+        }
         GUIPropertyManager.SetProperty("#ArtistInfo.Thumb", coverArtFileName);
       }
       else if (!string.IsNullOrEmpty(artistInfo.ImageURL))
