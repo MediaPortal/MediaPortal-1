@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
       // ToDo: add searchstring property
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
       }
     }
 
@@ -490,7 +490,18 @@ namespace MediaPortal.GUI.Library
           GUIControl btn = _listButtons[buttonNr];
           if (btn != null)
           {
-            btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
+            if (gotFocus || !Focus)
+            {
+              btn.ColourDiffuse = Color.FromArgb((int)_diffuseColor).ToArgb();
+            }
+            else
+            {
+              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)_diffuseColor)).ToArgb();
+            }
+            if (_listItems[buttonNr].Selected && !gotFocus && _unfocusedAlphaApplyToAll)
+            {
+              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)_diffuseColor)).ToArgb();
+            }
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);

@@ -35,12 +35,16 @@ unsigned int speakerConfigs[7]              = {4, 3, 51, 263, 63, 1551, 1599};
 LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 
 #define DEFAULT_AC3_BITRATE 448000
+#define DEFAULT_OUTPUT_BUFFER 500
+#define MAX_OUTPUT_BUFFER 5000
+#define MIN_OUTPUT_BUFFER 100
 
 // Registry setting names
 LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
 LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
 LPCTSTR WASAPIUseEventMode = TEXT("WASAPIUseEventMode");
 LPCTSTR devicePeriod = TEXT("DevicePeriod");
+LPCTSTR outputBufferSize = TEXT("OutputBufferSize");
 LPCTSTR AC3Encoding = TEXT("AC3Encoding");
 LPCTSTR AC3bitrate = TEXT("AC3bitrate");
 LPCTSTR maxBias = TEXT("MaxBias");
@@ -69,12 +73,13 @@ LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
 DWORD enableTimestretchingData = 1;
 DWORD WASAPIExclusiveData = 1;
 DWORD WASAPIUseEventModeData = 1;
-DWORD devicePeriodData = 500000;  // 50 ms
-DWORD AC3EncodingData = 0;        // 0 = disabled, 1 = auto, 2 = forced
-DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
-DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
-DWORD minBiasData = 9000;         // divide with 10000 to get real double value
-DWORD audioDelayData = 0;         // in ms
+DWORD devicePeriodData = 500000;      // 50 ms
+DWORD outputBufferSizeData = 500;     // 500 ms
+DWORD AC3EncodingData = 0;            // 0 = disabled, 1 = auto, 2 = forced
+DWORD AC3bitrateData = 448;           // maximum based on the DVD spec
+DWORD maxBiasData = 11000;            // divide with 10000 to get real double value
+DWORD minBiasData = 9000;             // divide with 10000 to get real double value
+DWORD audioDelayData = 0;             // in ms
 DWORD logSampleTimesData = 0;
 DWORD logDebugData = 0;
 DWORD HWBasedRefClockData = 1;
@@ -109,7 +114,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lQuality_SEQUENCE_MS(82),
   m_lQuality_SEEKWINDOW_MS(28),
   m_lQuality_OVERLAP_MS(28),
-  m_hnsPeriod(0),
+  m_hnsPeriod(devicePeriodData),
+  m_msOutputBuffer(outputBufferSizeData),
   m_AC3bitrate(DEFAULT_AC3_BITRATE),
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
@@ -126,7 +132,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v1.0.5");
+  Log("MP Audio Renderer - v1.1.5");
 
   LoadSettingsFromRegistry();
 }
@@ -168,6 +174,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+    ReadRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
     ReadRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -220,6 +227,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   quality_SEQUENCE_MS:      %d", quality_SEQUENCE_MSData);
     Log("   quality_SEEKWINDOW_MS:    %d", quality_SEEKWINDOW_MSData);
     Log("   quality_OVERLAP_MS:       %d", quality_OVERLAP_MSData);
+    Log("   Output buffer (ms):       %d", outputBufferSizeData);
     Log("   DevicePeriod:             %d (1 = minimal, 0 = driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:    %s", WASAPIPreferredDeviceData);
 
@@ -325,6 +333,32 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     }
 
     m_hnsPeriod = devicePeriodData;
+    
+    if (devicePeriodData == 0 || devicePeriodData == 1)
+    {
+      m_msOutputBuffer = DEFAULT_OUTPUT_BUFFER;
+      Log("   devicePeriodData: %d - using default (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+    }
+    else
+    {
+      if ((outputBufferSizeData * 10000) < (devicePeriodData * 2))
+      {
+        m_msOutputBuffer = max((devicePeriodData / 10000) * 2, MIN_OUTPUT_BUFFER);
+        Log("   too small output buffer - devicePeriodData: %d - using (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData > MAX_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MAX_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData < MIN_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MIN_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else
+        m_msOutputBuffer = outputBufferSizeData;
+    }
 
     if (forceChannelMixingData > 0)
       m_bForceChannelMixing = true;
@@ -386,6 +420,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+      WriteRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
       WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -442,6 +477,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   maxBiasData = m_dMaxBias * 10000;
   minBiasData = m_dMinBias * 10000;
   audioDelayData = m_lAudioDelay;
+  outputBufferSizeData = m_msOutputBuffer;
   logSampleTimesData = m_bLogSampleTimes ? 1 : 0;
   logDebugData = m_bLogDebug ? 1: 0;
   HWBasedRefClockData = m_bHWBasedRefClock ? 1 : 0;
@@ -466,6 +502,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
   WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
   //WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+  WriteRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
   WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
   WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
   WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -991,6 +1028,16 @@ int AudioRendererSettings::GetAudioDelay()
 void AudioRendererSettings::SetAudioDelay(int setting)
 {
   m_lAudioDelay = setting;
+}
+
+int AudioRendererSettings::GetOutputBuffer()
+{
+  return m_msOutputBuffer;
+}
+
+void AudioRendererSettings::SetOutputBuffer(int setting)
+{
+  m_msOutputBuffer = setting;
 }
 
 int AudioRendererSettings::GetSampleRate()
