@@ -533,8 +533,8 @@ namespace MediaPortal.GUI.Pictures
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
-        xmlreader.SetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+        _tempLeaveThumbsInFolder = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
+        xmlreader.SetValueAsBool("thumbnails", "videosharepreview", false);
       }
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
@@ -615,10 +615,10 @@ namespace MediaPortal.GUI.Pictures
       selectedItemIndex = GetSelectedItemNo();
       SaveSettings();
       SaveFolderSettings(currentFolder);
-      // set back tvrecordedsharepreview value
+      // set back videosharepreview value
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", _tempLeaveThumbsInFolder);
+        xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", _tempLeaveThumbsInFolder);
       }
       base.OnPageDestroy(newWindowId);
     }

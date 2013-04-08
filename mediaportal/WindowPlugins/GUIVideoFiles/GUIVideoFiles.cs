@@ -3866,11 +3866,11 @@ namespace MediaPortal.GUI.Video
         // Temporary disable thumbcreation
         using (Profile.Settings xmlreader = new MPSettings())
         {
-          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
         }
         using (Profile.Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", false);
         }
 
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
@@ -3913,7 +3913,7 @@ namespace MediaPortal.GUI.Video
         // Restore thumbcreation setting
         using (Profile.Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", currentCreateVideoThumbs);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", currentCreateVideoThumbs);
         }
       }
     }
