@@ -1,6 +1,6 @@
 [submodule "libbluray"]
 	path = libbluray
-	url = git://git.1f0.de/libbluray.git
+	url = git://git.videolan.org/libbluray.git
 [submodule "Build/BuildReport"]
 	path = Build/BuildReport
 	url = https://github.com/MediaPortal/BuildReport.git
