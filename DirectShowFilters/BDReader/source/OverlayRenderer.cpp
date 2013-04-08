@@ -189,6 +189,9 @@ void COverlayRenderer::OpenOverlay(const BD_ARGB_OVERLAY* pOv)
 
 void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
+  if (!m_pD3DDevice)
+    return;
+
   // Create front and back buffer textures
   for (int i = 0; i < 2; i++)
   {
@@ -335,7 +338,7 @@ void COverlayRenderer::ClearOverlay()
 
 void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
 {
-  if (!pPlane)
+  if (!pPlane || !m_pD3DDevice)
     return;
 
   if (pOv->palette)
@@ -397,7 +400,7 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
 
 void COverlayRenderer::DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY* pOv)
 {
-  if (!pPlane)
+  if (!pPlane || !m_pD3DDevice)
     return;
 
   if (pOv->argb)
@@ -445,7 +448,7 @@ void COverlayRenderer::DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY*
 
 void COverlayRenderer::DrawToTexture(OSDTexture* pPlane, IDirect3DTexture9* pTexture, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
-  if (!pPlane || !pTexture)
+  if (!pPlane || !pTexture || !m_pD3DDevice)
     return;
 
   RECT sourceRect;
@@ -496,6 +499,9 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
 
 void COverlayRenderer::CopyToFrontBuffer()
 {
+  if (!m_pD3DDevice)
+    return;
+
   IDirect3DSurface9* sourceSurface = NULL;
   IDirect3DSurface9* dstSurface = NULL;
 
