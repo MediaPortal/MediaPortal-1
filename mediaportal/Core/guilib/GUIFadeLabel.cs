@@ -498,8 +498,8 @@ namespace MediaPortal.GUI.Library
           case Alignment.ALIGN_RIGHT:
             float fwt = 0;
             GetShortenedText(originalText, _width, ref fwt);
-            if (textWidth >= _width) xoff = 0;
-            else xoff = _width - fwt;
+            //xoff = textWidth >= _width ? 0 : _width - fwt;
+            xoff = textWidth >= _width ? -fwt : _width - fwt;
             xclipoff = xoff;
             xpos = positionX + xoff - _scrollPosititionX + _scrollOffset;
             _labelControl.SetPosition((int)xpos, (int)positionY);
@@ -547,7 +547,8 @@ namespace MediaPortal.GUI.Library
         double xoff = 0;
         if (_textAlignment == Alignment.ALIGN_RIGHT)
         {
-          xoff = textWidth >= maxWidth ? fwt : maxWidth;
+          //xoff = textWidth >= maxWidth ? fwt : maxWidth;
+          xoff = textWidth >= maxWidth ? 0 : maxWidth;
         }
         _labelControl.SetPosition((int)positionX + (int)xoff, (int)positionY);          
         _labelControl.Render(timePassed);
