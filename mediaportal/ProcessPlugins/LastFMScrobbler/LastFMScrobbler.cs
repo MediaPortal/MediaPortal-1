@@ -50,7 +50,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static BackgroundWorker _scrobbleWorker;
     private static readonly Random Randomizer = new Random();
     private static int _randomness = 100;
-    private static bool _autoDJEnabled = true;
     private static bool _announceTracks = false;
     private static bool _scrobbleTracks = false;
 
@@ -58,7 +57,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     {
       using (var xmlreader = new MPSettings())
       {
-        _autoDJEnabled = MusicState.AutoDJEnabled;
         //TODO: Is randomness still required?
         _randomness = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
@@ -193,7 +191,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
       // only carry on if there is actually something to do
-      if (!_announceTracks && !_autoDJEnabled) return;
+      if (!_announceTracks && !MusicState.AutoDJEnabled) return;
 
       if (type != g_Player.MediaType.Music) return;
 
@@ -283,7 +281,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
                                        currentSong.Duration.ToString(CultureInfo.InvariantCulture));
       }
 
-      if (_autoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
+      if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
       {
         AutoDJ(currentSong.Title, currentSong.Artist);
       }
