@@ -296,6 +296,11 @@ public class MediaPortalApp : D3D, IRender
   {
     Thread.CurrentThread.Name = "MPMain";
 
+    SkinOverride         = string.Empty;
+    WindowedOverride     = false;
+    FullscreenOverride   = false;
+    ScreenNumberOverride = -1;
+
     if (args.Length > 0)
     {
       foreach (string arg in args)

@@ -84,12 +84,6 @@ namespace MediaPortal
 
     #endregion
 
-    #region internal attributes
-
-    internal static int ScreenNumberOverride; // 0 or higher means it is set
-    
-    #endregion
-
     #region protected structs
 
     [StructLayout(LayoutKind.Sequential)]
@@ -107,7 +101,8 @@ namespace MediaPortal
 
     #region protected attributes
 
-    protected static bool          FullscreenOverride;       // fullscreen mode overridden by command line argument?
+    protected internal static int  ScreenNumberOverride;     // 0 or higher means it is set
+    protected internal static bool FullscreenOverride;       // fullscreen mode overridden by command line argument?
     protected internal static bool WindowedOverride;         // window mode overridden by command line argument?
     protected static string        SkinOverride;             // skin overridden by command line argument
     protected string               FrameStatsLine1;          // 1st string to hold frame stats
@@ -191,10 +186,6 @@ namespace MediaPortal
     /// </summary>
     protected D3D()
     {
-      SkinOverride              = string.Empty;
-      WindowedOverride          = false;
-      FullscreenOverride        = false;
-      ScreenNumberOverride      = -1;
       _firstTimeWindowDisplayed  = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;

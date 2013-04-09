@@ -99,26 +99,26 @@ namespace MediaPortal
       {
         bool useFullScreenSplash;
         bool startFullScreen;
-        int screennumber;
+        int screenNumber;
         bool shouldUseNormalSplashScreen = false;
 
         using (Settings xmlreader = new MPSettings())
         {
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
-          startFullScreen = xmlreader.GetValueAsBool("general", "startfullscreen", true);
-          screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+          startFullScreen = !D3D.WindowedOverride && (D3D.FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", true));
+          screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
           _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         }
 
-        if (D3D.WindowedOverride)
+        if (D3D.ScreenNumberOverride >= 0)
         {
-          startFullScreen = false;
+          screenNumber = D3D.ScreenNumberOverride;
         }
 
-        if (useFullScreenSplash && screennumber > 0)
+        if (useFullScreenSplash && screenNumber > 0)
         {
           int availableScreensNumber = Screen.AllScreens.Count();
-          if (availableScreensNumber < screennumber + 1)
+          if (availableScreensNumber < screenNumber + 1)
           {
             shouldUseNormalSplashScreen = true;
           }
