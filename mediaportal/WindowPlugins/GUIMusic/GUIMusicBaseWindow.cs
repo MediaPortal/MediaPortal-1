@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.Music
     [SkinControl(8)] protected GUIButtonControl btnSearch = null;
     [SkinControl(12)] protected GUIButtonControl btnPlayCd = null;
     [SkinControl(10)] protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(18)] protected GUICheckButton btnAutoDJ;
 
     #endregion
 
@@ -198,6 +199,7 @@ namespace MediaPortal.GUI.Music
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.AutoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", false);
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
@@ -395,6 +397,10 @@ namespace MediaPortal.GUI.Music
       {
         OnShowSavedPlaylists(m_strPlayListPath);
       }
+      if (control == btnAutoDJ)
+      {
+        MusicState.AutoDJEnabled = !MusicState.AutoDJEnabled;
+      }
     }
 
     protected override void UpdateButtonStates()
@@ -556,6 +562,11 @@ namespace MediaPortal.GUI.Music
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       }
 
+      if (btnAutoDJ != null)
+      {
+        btnAutoDJ.Selected = MusicState.AutoDJEnabled;
+      }
+
       base.OnPageLoad();
     }
 
@@ -568,6 +579,7 @@ namespace MediaPortal.GUI.Music
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);
+        xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", MusicState.AutoDJEnabled);
       }
       base.OnPageDestroy(newWindowId);
     }

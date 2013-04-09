@@ -25,6 +25,7 @@ using System.Globalization;
 using System.Linq;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.GUI.Music;
 using MediaPortal.Music.Database;
 using MediaPortal.Profile;
 using MediaPortal.Player;
@@ -57,7 +58,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     {
       using (var xmlreader = new MPSettings())
       {
-        _autoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", true);
+        _autoDJEnabled = MusicState.AutoDJEnabled;
+        //TODO: Is randomness still required?
         _randomness = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
@@ -400,7 +402,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         var maxSize = Math.Min(dbTracks.Count, _randomness);
         var trackNo = Randomizer.Next(0, maxSize);
-        pl.Add(dbTracks[trackNo].ToPlayListItem());
+        var pli = dbTracks[trackNo].ToPlayListItem();
+        pli.Source = PlayListItem.PlayListItemSource.Recommendation;
+        pli.SourceDescription = "LastFM:AutoDJ";
+        pl.Add(pli);
         Log.Info("Auto DJ: Added to playlist: {0} - {1}", dbTracks[trackNo].Artist, dbTracks[trackNo].Title);
         dbTracks.RemoveAt(trackNo);  // remove song after adding to playlist to prevent the same sone being added twice
       }
