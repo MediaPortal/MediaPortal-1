@@ -37,10 +37,6 @@ CChannelMixer::~CChannelMixer(void)
 
 HRESULT CChannelMixer::Init()
 {
-  HRESULT hr = InitAllocator();
-  if (FAILED(hr))
-    return hr;
-
   return CBaseAudioSink::Init();
 }
 
@@ -87,10 +83,13 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
         hr = SetupConversion(*pChOrder);
       }
 
+      m_bNextFormatPassthru = true;
       m_chOrder = *pChOrder;
       return hr;
     }
   }
+
+  m_bNextFormatPassthru = false;
 
   WAVEFORMATEXTENSIBLE* pOutWfx;
   CopyWaveFormatEx(&pOutWfx, pwfx);
@@ -123,6 +122,8 @@ HRESULT CChannelMixer::NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nAp
   if (bApplyChanges)
   {
     LogWaveFormat(pwfx, "MIX  - applying ");
+
+    m_pNextSink->NegotiateBuffer(pOutWfx, &m_nOutBufferSize, &m_nOutBufferCount, true);
 
     m_bPassThrough = false;
     SetInputFormat(pwfx);

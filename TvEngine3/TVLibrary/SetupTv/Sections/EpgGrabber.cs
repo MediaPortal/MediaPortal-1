@@ -63,18 +63,15 @@ namespace SetupTv.Sections
       try
       {
         mpListView2.Items.Clear();
-        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
-        List<String> codes = languages.GetLanguageCodes();
-        List<String> list = languages.GetLanguages();
+        List<KeyValuePair<String, String>> languages = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
 
         TvBusinessLayer layer = new TvBusinessLayer();
         Setting setting = layer.GetSetting(languagesSettingsKey);
-
-        for (int j = 0; j < list.Count; j++)
+        foreach (KeyValuePair<String, String> language in languages)
         {
-          ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+          ListViewItem item = new ListViewItem(new string[] { language.Value, language.Key });
           mpListView2.Items.Add(item);
-          item.Tag = codes[j];
+          item.Tag = language.Key;
           item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
         }
         mpListView2.Sort();
