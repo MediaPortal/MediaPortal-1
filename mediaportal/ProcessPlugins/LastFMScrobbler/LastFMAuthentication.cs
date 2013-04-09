@@ -62,6 +62,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
+      //details should now be added.   Confirm
+      if (LastFMLibrary.GetUserInfo() != null)
+      {
+        MessageBox.Show("User: " + userName + " Added", "User Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+      }
+
       this.Close();
     }
   }
