@@ -226,11 +226,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+
     /// <summary>
-    /// Gets a GUIFont.
+    /// 
     /// </summary>
-    /// <param name="iFont">The font number</param>
-    /// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
+    /// <param name="iFont"></param>
+    /// <returns></returns>
     public static GUIFont GetFont(int iFont)
     {
       lock (Renderlock)
@@ -239,9 +240,11 @@ namespace MediaPortal.GUI.Library
         {
           return ListFonts[iFont];
         }
-        return null;
+        Log.Error("GUIFontManager: could load load font with index '{0}'", iFont);
+        return GetFont("debug");
       }
     }
+
 
     /// <summary>
     /// Gets a GUIFont.
@@ -261,8 +264,20 @@ namespace MediaPortal.GUI.Library
             fn = strFontName;
           }
 
-          return ListFonts.FirstOrDefault(font => font.FontName == fn);
+          foreach (GUIFont font in ListFonts.Where(font => font.FontName == fn))
+          {
+            return font;
+          }
         }
+        Log.Error("GUIFontManager: could load load font with name '{0}'", strFontName);
+
+        // prevent infinite recursion in case we are already trying to load the default font
+        if (strFontName != "debug")
+        {
+          // return default font
+          return GetFont("debug");
+        }
+        Log.Error("GUIFontManager: could load default font");
         return null;
       }
     }
