@@ -490,7 +490,15 @@ namespace MediaPortal.GUI.Library
       get
       {
         var clientCenter = new Point(form.ClientSize.Width / 2, form.ClientSize.Height / 2);
-        return form.PointToScreen(clientCenter);
+        try
+        {
+          return form.PointToScreen(clientCenter);
+        }
+        catch (Exception)
+        {
+          return new Point(0, 0);
+        }
+
       }
     }
 
