@@ -228,10 +228,10 @@ namespace MediaPortal.GUI.Library
 
 
     /// <summary>
-    /// 
+    /// Gets a GUIFont.
     /// </summary>
-    /// <param name="iFont"></param>
-    /// <returns></returns>
+    /// <param name="iFont">The font number</param>
+    /// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
     public static GUIFont GetFont(int iFont)
     {
       lock (Renderlock)
