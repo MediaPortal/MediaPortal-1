@@ -268,8 +268,8 @@ namespace MediaPortal.GUI.Library
           {
             return font;
           }
+          Log.Error("GUIFontManager: could load load font with name '{0}'", strFontName);
         }
-        Log.Error("GUIFontManager: could load load font with name '{0}'", strFontName);
 
         // prevent infinite recursion in case we are already trying to load the default font
         if (strFontName != "debug")
