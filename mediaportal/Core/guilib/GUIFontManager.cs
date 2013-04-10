@@ -268,7 +268,7 @@ namespace MediaPortal.GUI.Library
           {
             return font;
           }
-          Log.Error("GUIFontManager: could load load font with name '{0}'", strFontName);
+          Log.Warn("GUIFontManager: Font with the name '{0}' does not exist", strFontName);
         }
 
         // prevent infinite recursion in case we are already trying to load the default font
