@@ -72,7 +72,7 @@
 				<description>Reduce frame rate when not in focus</description>
 				<type>checkbutton</type>
 				<id>35</id>
-				<label>300229</label>
+				<label>300231</label>
 			</control>
 				
 	</control>

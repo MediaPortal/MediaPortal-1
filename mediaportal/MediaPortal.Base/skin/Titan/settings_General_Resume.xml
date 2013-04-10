@@ -66,7 +66,7 @@
         <description>Show last module</description>
         <type>checkbutton</type>
         <id>22</id>
-        <label>300229</label>
+        <label>300230</label>
       </control>
 			
 			<control Style="SettingsCheckButtonLarge">

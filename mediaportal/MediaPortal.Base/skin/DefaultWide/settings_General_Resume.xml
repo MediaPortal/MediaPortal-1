@@ -63,7 +63,7 @@
         <description>Stop playback in removal of audio renderer</description>
         <type>checkbutton</type>
         <id>22</id>
-        <label>300229</label>
+        <label>300230</label>
         <width>850</width>
       </control>      
       <control>
