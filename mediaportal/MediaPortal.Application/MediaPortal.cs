@@ -1101,6 +1101,7 @@ public class MediaPortalApp : D3D, IRender
           {
             case PBT_APMSUSPEND:
               Log.Info("Main: Suspending operation.");
+              PluginManager.WndProc(ref msg);
               OnSuspend();
               break;
 
