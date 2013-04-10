@@ -1410,6 +1410,7 @@ public class MediaPortalApp : D3D, IRender
 
         case WM_QUERYENDSESSION:
           Log.Info("Main: Windows is requesting shutdown mode");
+          PluginManager.WndProc(ref msg);
           base.WndProc(ref msg);
           Log.Info("Main: shutdown mode granted");
           ShuttingDown = true;
@@ -1417,6 +1418,7 @@ public class MediaPortalApp : D3D, IRender
           break;
 
         case WM_ENDSESSION:
+          PluginManager.WndProc(ref msg);
           base.WndProc(ref msg);
           Log.Info("Main: Shutdown mode executed");
           msg.Result = IntPtr.Zero; // tell Windows it's ok to shutdown        
