@@ -2049,7 +2049,6 @@ namespace MediaPortal
     }
 
 
-    // TODO
     /// <summary>
     ///  http://msdn.microsoft.com/en-us/library/system.windows.forms.form.onformclosing.aspx
     /// </summary>

@@ -89,8 +89,6 @@ public class MediaPortalApp : D3D, IRender
   private readonly bool         _useIdleblankScreen;
   private readonly bool         _showLastActiveModule;
   private readonly bool         _stopOnLostAudioRenderer; 
-  private readonly bool         _allowMinOOB;
-  private readonly bool         _allowMaxOOB;
   private bool                  _playingState;
   private bool                  _showStats;
   private bool                  _showStatsPrevious;
@@ -891,8 +889,6 @@ public class MediaPortalApp : D3D, IRender
   {
     // init attributes
     _xpos                  = 50;
-    _allowMinOOB           = true;
-    _allowMaxOOB           = true;
     _lastOnresume          = DateTime.Now;
     _updateTimer           = DateTime.MinValue;
     _lastContextMenuAction = DateTime.MaxValue;
@@ -1094,8 +1090,6 @@ public class MediaPortalApp : D3D, IRender
     try
     {
       RECT rc;
-      Rectangle bounds;
-
       Size border;
       int height;
       switch (msg.Msg)
@@ -1176,21 +1170,38 @@ public class MediaPortalApp : D3D, IRender
           }
           break;
 
-        // move window
+        // only allow window to be moved inside a valid working area
         case WM_MOVING:
           Log.Debug("Main: WM_MOVING");
-          if ((!_allowMinOOB && WindowState == FormWindowState.Minimized) || (!_allowMaxOOB && WindowState == FormWindowState.Maximized))
+          rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
+
+          bool isTopLeftInsideBounds = false;
+          foreach (Screen monitor in Screen.AllScreens)
           {
-            rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
-            bounds = GUIGraphicsContext.currentScreen.WorkingArea;
-            // out of bounds check
-            if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
+            isTopLeftInsideBounds = monitor.WorkingArea.Contains(new Point(rc.left, rc.top));
+            if (isTopLeftInsideBounds)
             {
-              rc = LastRect;
+              break;
             }
-            Marshal.StructureToPtr(rc, msg.LParam, false);
-            LastRect = rc;
           }
+
+          bool isBottomRightInsideBounds = false;
+          foreach (Screen monitor in Screen.AllScreens)
+          {
+            isBottomRightInsideBounds = monitor.WorkingArea.Contains(new Point(rc.right, rc.bottom));
+            if (isBottomRightInsideBounds)
+            {
+              break;
+            }
+          }
+
+          if (!isTopLeftInsideBounds || !isBottomRightInsideBounds)
+          {
+            rc = LastRect;
+          }
+
+          Marshal.StructureToPtr(rc, msg.LParam, false);
+          LastRect = rc;
           msg.Result = (IntPtr)1;
           break;
         
@@ -1202,6 +1213,13 @@ public class MediaPortalApp : D3D, IRender
           switch (msg.WParam.ToInt32())
           {
             case SIZE_RESTORED:
+              Size maxClientSize = CalcMaxClientArea();
+              if (x > maxClientSize.Width || y > maxClientSize.Height)
+              {
+                ClientSize = maxClientSize;
+                break;
+              }
+
               border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
               height = (int)((double)x * GUIGraphicsContext.SkinSize.Height / GUIGraphicsContext.SkinSize.Width);
               if (height != y && Windowed)
@@ -1223,13 +1241,13 @@ public class MediaPortalApp : D3D, IRender
         case WM_SIZING:
           Log.Debug("Main WM_SIZING");
           rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
-          border        = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
-          int width     = rc.right  - rc.left - border.Width;
-          height        = rc.bottom - rc.top  - border.Height;
-          long gcd      = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-          double ratioX = (double)GUIGraphicsContext.SkinSize.Width  / gcd;
-          double ratioY = (double)GUIGraphicsContext.SkinSize.Height / gcd;
-          bounds        = GUIGraphicsContext.currentScreen.WorkingArea;
+          border           = new Size(Width  - ClientSize.Width, Height - ClientSize.Height);
+          int width        = rc.right  - rc.left - border.Width;
+          height           = rc.bottom - rc.top  - border.Height;
+          long gcd         = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+          double ratioX    = (double)GUIGraphicsContext.SkinSize.Width  / gcd;
+          double ratioY    = (double)GUIGraphicsContext.SkinSize.Height / gcd;
+          Rectangle bounds = GUIGraphicsContext.currentScreen.WorkingArea;
 
           switch (msg.WParam.ToInt32())
           {
@@ -1255,13 +1273,14 @@ public class MediaPortalApp : D3D, IRender
               break;
           }
 
-          // TODO: compensate for negative positions without allowing the form to grow beyond size of current bounds e.g. when window is partly on one screen
+          // TODO: fix window snapback when resizing while only being partial on one screen
           // out of bounds check
           if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
           {
             rc = LastRect;
           }
 
+          // TODO: fix window going to minimum size when resizing whole one being partial on one screen
           // minimum size check, form cannot be smaller than a quarter of the initial skin size plus window borders
           if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width / 4 + border.Width)
           {
@@ -3567,7 +3586,7 @@ public class MediaPortalApp : D3D, IRender
             }
           }
           // ReSharper disable EmptyGeneralCatchClause
-          catch { }
+          catch {}
           // ReSharper restore EmptyGeneralCatchClause
           break;
 
@@ -3583,7 +3602,6 @@ public class MediaPortalApp : D3D, IRender
           }
           else
           {
-            // TODO
             if (Volume > 0 && (g_Player.IsVideo || g_Player.IsTV))
             {
               g_Player.Volume = Volume;
