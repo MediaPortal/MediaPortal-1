@@ -44,3 +44,6 @@ echo. >> %log%
 echo Using following environment variables: >> %log%
 echo DXSDK_DIR = %DXSDK_DIR% >> %log%
 echo. >> %log%
+
+REM copy BuildReport resources
+xcopy /I /Y .\BuildReport\_BuildReport_Files .\_BuildReport_Files

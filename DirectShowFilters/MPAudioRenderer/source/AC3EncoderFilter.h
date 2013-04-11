@@ -28,9 +28,10 @@
 #define AC3_MIN_SAMPLE_RATE (32000)
 
 #define AC3_MAX_COMP_FRAME_SIZE (AC3_MAX_BITRATE * AC3_FRAME_LENGTH / AC3_MIN_SAMPLE_RATE / 8)
-#define AC3_BITSTREAM_OVERHEAD  (8*sizeof(WORD))
+#define AC3_BITSTREAM_OVERHEAD  (8 * sizeof(WORD))
 // Each data burst should have the length of the equivalent 16 bit stereo burst of the same number of samples
-#define AC3_DATA_BURST_LENGTH   (4*AC3_FRAME_LENGTH)
+#define AC3_DATA_BURST_LENGTH   (4 * AC3_FRAME_LENGTH)
+#define AC3_OUT_BUFFER_COUNT    20
 
 class CAC3EncoderFilter :
   public CBaseAudioSink
@@ -42,17 +43,20 @@ public:
 // IAudioSink implementation
 public:
   // Initialization
-  virtual HRESULT Init();
-  virtual HRESULT Cleanup();
+  HRESULT Init();
+  HRESULT Cleanup();
 
   // Format negotiation
-  virtual HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
+  HRESULT NegotiateFormat(const WAVEFORMATEXTENSIBLE* pwfx, int nApplyChangesDepth, ChannelOrder* pChOrder);
+
+  // Buffer negotiation
+  HRESULT NegotiateBuffer(const WAVEFORMATEXTENSIBLE* pwfx, long* pBufferSize, long* pBufferCount, bool bCanModifyBufferSize);
 
   // Processing
-  virtual HRESULT PutSample(IMediaSample* pSample);
-  virtual HRESULT EndOfStream();
-  virtual HRESULT BeginFlush();
-  virtual HRESULT EndFlush();
+  HRESULT PutSample(IMediaSample* pSample);
+  HRESULT EndOfStream();
+  HRESULT BeginFlush();
+  HRESULT EndFlush();
 
 protected:
   // Initialization
