@@ -116,7 +116,12 @@ namespace WindowPlugins.GUISettings
         if (String.Compare(dlg.SelectedLabelText, _btnSkin.Label, StringComparison.OrdinalIgnoreCase) != 0)
         {
           _btnSkin.Label = dlg.SelectedLabelText;
-          OnSkinChanged();
+
+          // prevent MP from rendering when resource are disposed during live changing of a skin
+          lock (GUIGraphicsContext.RenderLock)
+          {
+            OnSkinChanged();
+          }
         }
         
         return;
