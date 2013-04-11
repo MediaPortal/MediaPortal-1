@@ -177,7 +177,7 @@ public:
   double          GetStartTime();
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
-  void            Seek(CRefTime&  seekTime, bool seekInFile);
+  bool            Seek(CRefTime&  seekTime);
 //  void            SeekDone(CRefTime& refTime);
 //  void            SeekStart();
   HRESULT         SeekPreStart(CRefTime& rtSeek);
