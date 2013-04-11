@@ -57,18 +57,9 @@ using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
-namespace MediaPortal
-{
-  [Flags]
-  // ReSharper disable InconsistentNaming
-  public enum EXECUTION_STATE : uint
-  {
-    ES_SYSTEM_REQUIRED  = 0x00000001,
-    ES_DISPLAY_REQUIRED = 0x00000002,
-    ES_CONTINUOUS       = 0x80000000
-  }
-  // ReSharper restore InconsistentNaming
-}
+// ReSharper disable EmptyNamespace
+namespace MediaPortal {}
+// ReSharper restore EmptyNamespace
 
 /// <summary>
 /// 
@@ -261,10 +252,6 @@ public class MediaPortalApp : D3D, IRender
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, int lpvParam, int fuWinIni);
-
-  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx
-  [DllImport("Kernel32.dll")]
-  private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
   //http://msdn.microsoft.com/en-us/library/windows/desktop/ms686234(v=vs.85).aspx
   [DllImport("kernel32")]
@@ -773,16 +760,6 @@ public class MediaPortalApp : D3D, IRender
         
         Settings.SaveCache();
 
-        // only re-show the task bar if MP is the one that has hidden it.
-        using (Settings xmlreader = new MPSettings())
-        {
-          bool autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
-          if (autoHideTaskbar)
-          {
-            HideTaskBar(false);
-          }
-        }
-        
         if (_useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", _restartOptions);
@@ -1719,28 +1696,6 @@ public class MediaPortalApp : D3D, IRender
 
       ReOpenDBs();
 
-      using (Settings xmlreader = new MPSettings())
-      {
-        // TODO: remove option as monitor should only turn on on user initiated wake ups, which are handled by windows
-        bool turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
-        if (turnMonitorOn)
-        {
-          Log.Info("Main: OnResume - Trying to wake up the display");
-          SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
-          if (OSInfo.OSInfo.Win8OrLater())
-          {
-            Log.Warn("Main: OnResume - Display can only be turned on by the OS staring with Win8");
-          }
-        }
-
-        // TODO: remove workaround option once resume behaves properly
-        if (xmlreader.GetValueAsBool("general", "restartonresume", false))
-        {
-          Log.Info("Main: OnResume - prepare for restart!");
-          Utils.RestartMePo();
-        }
-      }
-      
       Log.Info("Main: OnResume - Init Input Devices");
       InputDevices.Init();
       

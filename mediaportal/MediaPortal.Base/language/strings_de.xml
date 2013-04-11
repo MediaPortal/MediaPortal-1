@@ -2169,8 +2169,6 @@
     <String id="300093">MP nach Absturz neu starten</String>
     <String id="300094">Neustart-Verzögerung in Sekunden</String>
     <String id="300095">Bildschirm ausschalten (bei Dunkeltastung des Bildschirms)</String>
-    <String id="300096">Bildschirm einschalten (nach Standby)</String>
-    <String id="300099">Neustart MediaPortal nach Wiederaufnahme</String>
     <String id="300100">Letztes aktives Modul nach Wake-Up anzeigen</String>
     <String id="300101">MP-Startbildschirm mit Screen Selector auswählen</String>
     <String id="300102">Startverzögerung</String>
@@ -2179,7 +2177,6 @@
     <String id="300105">MediaPortal im Vollbild-Modus starten</String>
     <String id="300106">Start-Bildschirm anzeigen</String>
     <String id="300107">MediaPortal immer im Vordergrund</String>
-    <String id="300108">Taskbar im Vollbild-Modus ausblenden</String>
     <String id="300109">MediaPortal zusammen mit Windows starten</String>
     <String id="300110">Beim Start in Tray minimieren</String>
     <String id="300111">Beim Verlassen von MP in Tray minimieren</String>

@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>1017</id>
-  <defaultcontrol>18</defaultcontrol>
+  <defaultcontrol>20</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
@@ -33,24 +33,10 @@
       <control>
         <description>Turn off monitor blank screen</description>
         <type>checkbutton</type>
-        <id>18</id>
+        <id>20</id>
         <label>300095</label>
         <width>637</width>
         <onup>123</onup>
-      </control>
-      <control>
-        <description>Turn monitor on resume</description>
-        <type>checkbutton</type>
-        <id>19</id>
-        <label>300096</label>
-        <width>637</width>
-      </control>
-      <control>
-        <description>Restart on resume</description>
-        <type>checkbutton</type>
-        <id>20</id>
-        <label>300099</label>
-        <width>637</width>
       </control>
       <control>
         <description>Show last module</description>

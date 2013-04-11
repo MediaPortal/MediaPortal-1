@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.Configuration;
@@ -29,27 +30,26 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
-using MediaPortal.Profile;
-using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Settings
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// Change and tweak settings like Video codecs, skins, etc from inside MP
   /// </summary>
   [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
-  public class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
+  public sealed class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
   {
-    [SkinControl(11)] protected GUIButtonControl btnMiniDisplay = null;
-    [SkinControl(10)] protected GUIButtonControl btnTV = null;
-    [SkinControl(20)] protected GUIToggleButtonControl btnLocked = null;
+    [SkinControl(11)] private readonly GUIButtonControl _btnMiniDisplay = null;
+    [SkinControl(10)] private readonly GUIButtonControl _btnTV = null;
+    [SkinControl(20)] private readonly GUIToggleButtonControl _btnLocked = null;
 
     [DllImport("shlwapi.dll")]
-    private static extern bool PathIsNetworkPath(string Path);
+    private static extern bool PathIsNetworkPath(string path);
 
-    private static bool _settingsChanged = false;
-    private static bool _unlocked = true;
+    private static bool _settingsChanged;
     private static string _pin = string.Empty;
     
     public GUISettings()
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Settings
 
         if (_pin != string.Empty)
         {
-          btnLocked.Selected = true;
+          _btnLocked.Selected = true;
         }
       }
       
@@ -100,33 +100,26 @@ namespace MediaPortal.GUI.Settings
 
       if (!Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()) && _pin != string.Empty)
       {
-        _unlocked = false;
-        
         if (!RequestPin())
         {
           GUIWindowManager.CloseCurrentWindow();
         }
-        else
-        {
-          _unlocked = true;
-        }
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
 
-      if (_settingsChanged && !Util.Utils.IsGUISettingsWindow(new_windowId))
+      if (_settingsChanged && !Util.Utils.IsGUISettingsWindow(newWindowId))
       {
         OnRestartMP(GetID);
       }
 
-      if (!Util.Utils.IsGUISettingsWindow(new_windowId))
+      if (!Util.Utils.IsGUISettingsWindow(newWindowId))
       {
-        _unlocked = false;
       }
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)
@@ -146,15 +139,15 @@ namespace MediaPortal.GUI.Settings
     {
       base.OnClicked(controlId, control, actionType);
 
-      if (control == btnLocked)
+      if (control == _btnLocked)
       {
         // User want's to lock settings with PIN
-        if (btnLocked.Selected)
+        if (_btnLocked.Selected)
         {
           if (!SetPin())
           {
             // No PIN entered, reset control
-            btnLocked.Selected = false;
+            _btnLocked.Selected = false;
           }
         }
         else
@@ -162,13 +155,12 @@ namespace MediaPortal.GUI.Settings
           // User want's to remove or change PIN (need current PIN validation first)
           if (RequestPin())
           {
-            _unlocked = true;
             _pin = string.Empty;
           }
           else
           {
             // Wrong PIN, reset control
-            btnLocked.Selected = true;
+            _btnLocked.Selected = true;
           }
         }
       }
@@ -181,8 +173,8 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            btnMiniDisplay.Visible = MiniDisplayHelper.IsSetupAvailable();
-            btnTV.Visible = Util.Utils.UsingTvServer;
+            _btnMiniDisplay.Visible = MiniDisplayHelper.IsSetupAvailable();
+            _btnTV.Visible = Util.Utils.UsingTvServer;
             return true;
           }
 
@@ -250,18 +242,18 @@ namespace MediaPortal.GUI.Settings
 
     private bool SetPin()
     {
-      int iPincode = -1;
-      GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+      var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
       GUIWindowManager.SendMessage(msgGetPassword);
         
       try
       {
-        iPincode = Int32.Parse(msgGetPassword.Label);
-        _pin = iPincode.ToString();
-        _unlocked = false;
+        int iPincode = Int32.Parse(msgGetPassword.Label);
+        _pin = iPincode.ToString(CultureInfo.InvariantCulture);
         return true;
       }
+      // ReSharper disable EmptyGeneralCatchClause
       catch (Exception) {}
+      // ReSharper restore EmptyGeneralCatchClause
       return false;
     }
 
@@ -272,14 +264,16 @@ namespace MediaPortal.GUI.Settings
       
       while (retry)
       {
-        GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+        var msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
         GUIWindowManager.SendMessage(msgGetPassword);
         int iPincode = -1;
         try
         {
           iPincode = Int32.Parse(msgGetPassword.Label);
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch (Exception) { }
+        // ReSharper restore EmptyGeneralCatchClause
 
         if (iPincode == Convert.ToInt32(_pin))
         {
@@ -291,17 +285,13 @@ namespace MediaPortal.GUI.Settings
           return true;
         }
 
-        GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+        var msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
                                                      0);
         GUIWindowManager.SendMessage(msgWrongPassword);
 
         if (!(bool)msgWrongPassword.Object)
         {
           retry = false;
-        }
-        else
-        {
-          retry = true;
         }
       }
       return false;
@@ -325,7 +315,7 @@ namespace MediaPortal.GUI.Settings
 
     public static void OnRestartMP(int windowId)
     {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      var dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
         return;
@@ -340,47 +330,36 @@ namespace MediaPortal.GUI.Settings
       {
         return;
       }
-      else
+
+      Log.Info("Settings: OnRestart - prepare for restart!");
+      File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
+      Log.Info("Settings: OnRestart - saving settings...");
+      Profile.Settings.SaveCache();
+      DisposeDBs();
+      VolumeHandler.Dispose();
+      Log.Info("Main: OnSuspend - Done");
+      var restartScript = new Process
       {
-        // Will be changed to one liner after SE patch
-        bool hideTaskBar = false;
-
-        using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+        EnableRaisingEvents = false,
+        StartInfo =
         {
-          hideTaskBar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+          WorkingDirectory = Config.GetFolder(Config.Dir.Base),
+          FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs")
         }
-
-        if (hideTaskBar)
+      };
+      Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
+      restartScript.Start();
+      try
+      {
+        // Maybe the scripting host is not available therefore do not wait infinitely.
+        if (!restartScript.HasExited)
         {
-          // only re-show the startbar if MP is the one that has hidden it.
-          Win32API.EnableStartBar(true);
-          Win32API.ShowStartBar(true);
+          restartScript.WaitForExit();
         }
-        Log.Info("Settings: OnRestart - prepare for restart!");
-        File.Delete(Config.GetFile(Config.Dir.Config, "mediaportal.running"));
-        Log.Info("Settings: OnRestart - saving settings...");
-        Profile.Settings.SaveCache();
-        DisposeDBs();
-        VolumeHandler.Dispose();
-        Log.Info("Main: OnSuspend - Done");
-        Process restartScript = new Process();
-        restartScript.EnableRaisingEvents = false;
-        restartScript.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.Base);
-        restartScript.StartInfo.FileName = Config.GetFile(Config.Dir.Base, @"restart.vbs");
-        Log.Debug("Settings: OnRestart - executing script {0}", restartScript.StartInfo.FileName);
-        restartScript.Start();
-        try
-        {
-          // Maybe the scripting host is not available therefore do not wait infinitely.
-          if (!restartScript.HasExited)
-          {
-            restartScript.WaitForExit();
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
-        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Settings: OnRestart - WaitForExit: {0}", ex.Message);
       }
     }
 

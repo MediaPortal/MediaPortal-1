@@ -2197,8 +2197,6 @@
     <String id="300093">Redémarrez MP en cas de crash</String>
     <String id="300094">Délai d'attente avant redémarrage (en seconde(s))</String>
     <String id="300095">Extinction du moniteur (avec l'économiseur d'écran)</String>
-    <String id="300096">Allumer moniteur/TV (Lors d'une sortie de mise en veille)</String>
-    <String id="300099">Redémarrez MediaPortal lors d'une sortie de veille</String>
     <String id="300100">Afficher le dernier module actif sur de réveil</String>
     <String id="300101">Utilisez le sélecteur écran pour choisir l'écran de démarrage de MediaPortal</String>
     <String id="300102">Délai avant le démarrage</String>
@@ -2207,7 +2205,6 @@
     <String id="300105">Démarrer MediaPortal en plein écran</String>
     <String id="300106">Écran de démarrage alternatif</String>
     <String id="300107">Gardez MediaPortal toujours au dessus</String>
-    <String id="300108">Masquer la barre des tâches en plein écran</String>
     <String id="300109">Démarrage automatique de MediaPortal au démarrage de Windows</String>
     <String id="300110">Réduire dans la barre au démarrage</String>
     <String id="300111">Réduire dans la barre à la sortie du GUI</String>

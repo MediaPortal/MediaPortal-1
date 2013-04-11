@@ -640,7 +640,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       // Remove pending requests from the request queue
       InfoScrobbler.RemoveRequest(_lastAlbumRequest);
@@ -668,7 +668,7 @@ namespace MediaPortal.GUI.Music
 
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

@@ -86,27 +86,21 @@ namespace MediaPortal.Configuration.Sections
                                             new[] {"general", "usefullscreensplash", "true"},
                                             // 2 Keep MediaPortal always on top
                                             new[] {"general", "alwaysontop", "false"},
-                                            // 3 Hide taskbar in fullscreen mode      
-                                            new[] {"general", "hidetaskbar", "false"},
-                                            // 4 Autostart MediaPortal on Windows startup
+                                            // 3 Autostart MediaPortal on Windows startup
                                             new[] {"general", "autostart", "false"},
-                                            // 5 Minimize to tray on start up
+                                            // 4 Minimize to tray on start up
                                             new[] {"general", "minimizeonstartup", "false"},
-                                            // 6 Minimize to tray on GUI exit
+                                            // 5 Minimize to tray on GUI exit
                                             new[] {"general", "minimizeonexit", "false"},
-                                            // 7 Minimize to tray on focus loss (fullscreen only)
+                                            // 6 Minimize to tray on focus loss (fullscreen only)
                                             new[] {"general", "minimizeonfocusloss", "false"},
-                                            // 8 Turn off monitor when blanking screen	    
+                                            // 7 Turn off monitor when blanking screen	    
                                             new[] {"general", "turnoffmonitor", "false"},
-                                            // 9 Turn monitor/tv on when resuming from standby
-                                            new[] {"general", "turnmonitoronafterresume", "true"},
-                                            // 10 Restart MediaPortal on resume)
-                                            new[] {"general", "restartonresume", "false"},
-                                            // 11 Show last active module when starting / resuming from standby
+                                            // 8 Show last active module when starting / resuming from standby
                                             new[] {"general", "showlastactivemodule", "false"},
-                                            // 12 Use screen selector to choose where to start MP
+                                            // 9 Use screen selector to choose where to start MP
                                             new[] {"screenselector", "usescreenselector", "false"},
-                                            // 13 Stop playback on removal of an audio renderer
+                                            // 10 Stop playback on removal of an audio renderer
                                             new[] {"general", "stoponaudioremoval", "true"}
                                           };
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1017</id>
-  <defaultcontrol>18</defaultcontrol>
+  <defaultcontrol>20</defaultcontrol>
   <allowoverlay>no</allowoverlay>
 	<define>#header.label:897</define>
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
@@ -36,25 +36,11 @@
 			<control Style="SettingsCheckButtonLarge">
         <description>Turn off monitor blank screen</description>
         <type>checkbutton</type>
-        <id>18</id>
+        <id>20</id>
         <label>300095</label>
         <onup>32</onup>
       </control>
-			
-			<control Style="SettingsCheckButtonLarge">
-        <description>Turn monitor on resume</description>
-        <type>checkbutton</type>
-        <id>19</id>
-        <label>300096</label>
-      </control>
-			
-			<control Style="SettingsCheckButtonLarge">
-        <description>Restart on resume</description>
-        <type>checkbutton</type>
-        <id>20</id>
-        <label>300099</label>
-      </control>
-			
+		
 			<control Style="SettingsCheckButtonLarge">
         <description>Show last module</description>
         <type>checkbutton</type>
@@ -146,7 +132,7 @@
       <posY>905</posY>
       <label>300104</label>
       <onup>31</onup>
-			<ondown>18</ondown>
+			<ondown>20</ondown>
 			<animation effect="fade" time="150">WindowOpen</animation>
 			<animation effect="fade" time="150">WindowClose</animation>
     </control>

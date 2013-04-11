@@ -2196,8 +2196,6 @@
     <String id="300093">Riavvia MP in caso di crash</String>
     <String id="300094">Attesa per il riavvio in secondi</String>
     <String id="300095">Spegni monitor (su schermo nero)</String>
-    <String id="300096">Accendi TV (al risveglio da sospensione)</String>
-    <String id="300099">Riavvia MediaPortal al risveglio</String>
     <String id="300100">Al risveglio mostra l'ultim omodulo utilizzato</String>
     <String id="300101">Usa il selettore schermo per scegliere lo schermo di avvio di MP</String>
     <String id="300102">Ritardo avvio</String>
@@ -2206,7 +2204,6 @@
     <String id="300105">Avvio MediaPortal a schermo intero</String>
     <String id="300106">Schermata di avvio alternativa</String>
     <String id="300107">Lascia MediaPortal sempre in primo piano</String>
-    <String id="300108">Nascondi la barra delle applicazione a schermo intero</String>
     <String id="300109">Avvia automaticamente MP all'avvio del computer</String>
     <String id="300110">Minimizza all'avvio di MP</String>
     <String id="300111">Minimizza all'uscita dalla GUI</String>

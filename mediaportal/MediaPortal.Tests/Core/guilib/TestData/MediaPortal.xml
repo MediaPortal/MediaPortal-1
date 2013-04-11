@@ -22,7 +22,6 @@
     <entry name="autostart">no</entry>
     <entry name="baloontips">no</entry>
     <entry name="dblclickasrightclick">no</entry>
-    <entry name="hidetaskbar">yes</entry>
     <entry name="alwaysontop">no</entry>
     <entry name="exclusivemode">no</entry>
     <entry name="enableguisounds">yes</entry>

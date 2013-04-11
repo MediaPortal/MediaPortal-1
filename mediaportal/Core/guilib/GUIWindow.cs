@@ -1046,7 +1046,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void OnPageDestroy(int new_windowId)
+    protected virtual void OnPageDestroy(int newWindowId)
     {
       if (_rememberLastFocusedControl)
       {
@@ -1059,8 +1059,8 @@ namespace MediaPortal.GUI.Library
 
       if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
-        if (new_windowId != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-            new_windowId != (int)Window.WINDOW_TVFULLSCREEN)
+        if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
+            newWindowId != (int)Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
           if (HasAnimation(AnimationType.WindowClose) && !_skipAnimation) //&& !IsDialog)

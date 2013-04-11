@@ -2198,8 +2198,6 @@
     <String id="300093">Restart MP on crash</String>
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
-    <String id="300096">Turn monitor/tv on (resume from standby)</String>
-    <String id="300099">Restart MediaPortal on resume</String>
     <String id="300100">Show last active module on wake up</String>
     <String id="300101">Use screen selector to choose MediaPortal starting screen</String>
     <String id="300102">Delay startup</String>
@@ -2208,7 +2206,6 @@
     <String id="300105">Start MediaPortal in full screen</String>
     <String id="300106">Alternative splash screen</String>
     <String id="300107">Keep MediaPortal always on top</String>
-    <String id="300108">Hide taskbar in fullscreen</String>
     <String id="300109">Autostart MediaPortal on Windows startup</String>
     <String id="300110">Minimize to tray on startup</String>
     <String id="300111">Minimize to tray on GUI exit</String>
