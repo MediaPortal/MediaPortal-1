@@ -94,23 +94,24 @@ namespace MediaPortal.GUI.Settings
         {
           if (_cmAutostart.Selected) // autostart on boot
           {
+        Log.Debug("AUTOSTART");
             string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
-            using (
-              RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",
-                                                                   true)
-              )
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             {
-              if (subkey != null) subkey.SetValue("MediaPortal", fileName);
+              if (subkey != null)
+              {
+                subkey.SetValue("MediaPortal", fileName);
+              }
             }
           }
           else
           {
-            using (
-              RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",
-                                                                   true)
-              )
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             {
-              if (subkey != null) subkey.DeleteValue("MediaPortal", false);
+              if (subkey != null)
+              {
+                subkey.DeleteValue("MediaPortal", false);
+              }
             }
           }
         }

@@ -58,8 +58,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     [DllImport("user32.dll")]
-    public static extern bool EnumDisplayDevices(string lpDevice,
-                                                 int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
+    public static extern bool EnumDisplayDevices(string lpDevice, int iDevNum, [In, Out] DISPLAY_DEVICE lpDisplayDevice, int dwFlags);
 
     // ReSharper disable InconsistentNaming
     private const int WM_SETTINGCHANGE = 0x1A;
@@ -79,7 +78,7 @@ namespace MediaPortal.Configuration.Sections
     private int _screennumber; // 0 is the primary screen
 
     private readonly string[][] _sectionEntries = new[]
-      {
+    {
                                             // 0 Start MediaPortal in fullscreen mode
                                             new[] {"general", "startfullscreen", "true"},
                                             // 1 Use screenselector to choose on which screen MP should start
@@ -134,9 +133,7 @@ namespace MediaPortal.Configuration.Sections
         {
           if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}",
-                                             monitorname, screen.Bounds.Width, screen.Bounds.Height,
-                                             adapter.Information.Description));
+            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname, screen.Bounds.Width, screen.Bounds.Height, adapter.Information.Description));
           }
         }
       }
@@ -147,9 +144,7 @@ namespace MediaPortal.Configuration.Sections
         for (int index = 0; index < _sectionEntries.Length; index++)
         {
           string[] currentSection = _sectionEntries[index];
-          settingsCheckedListBox.SetItemChecked(index,
-                                                xmlreader.GetValueAsBool(currentSection[0], currentSection[1],
-                                                                         bool.Parse(currentSection[2])));
+          settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
@@ -190,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(4)) // autostart on boot
+        if (settingsCheckedListBox.GetItemChecked(3)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (
@@ -234,6 +229,11 @@ namespace MediaPortal.Configuration.Sections
       {
         cbScreen.Enabled = e.NewValue == CheckState.Checked;
       }
+    }
+
+    private void settingsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }
