@@ -96,9 +96,7 @@ namespace MediaPortal.LastFM
       }
       catch (LastFMException ex)
       {
-        Log.Error("Error Getting Last.FM Session");
-        Log.Error("Error: {0} - {1}", ex.LastFMError, ex.Message);
-        return false;
+        throw;
       }
       catch (Exception ex)
       {
@@ -330,10 +328,7 @@ namespace MediaPortal.LastFM
       }
       catch (LastFMException ex)
       {
-        //TODO: need to just throw and let client handle ??
-        // or check for situations such as not subscriber and then throw ???
-        Log.Error("Error in Tune Radio: {0} - {1}", ex.LastFMError, ex.Message);
-        return false;
+        throw;
       }
       catch (Exception ex)
       {
@@ -366,9 +361,7 @@ namespace MediaPortal.LastFM
       }
       catch (LastFMException ex)
       {
-        //Should not get here as only get playlist after successful tune???
-        Log.Error(ex);
-        return false;
+        throw;
       }
       catch (Exception ex)
       {
@@ -740,10 +733,32 @@ namespace MediaPortal.LastFM
     /// <returns>xml returned by last.fm on success</returns>
     private static XDocument GetXml(string querystring)
     {
-      XDocument xDoc;
+      XDocument xDoc = null;
       try
       {
-        xDoc = XDocument.Load(BaseURL + "?" + querystring);
+
+        try
+        {
+          xDoc = XDocument.Load(BaseURL + "?" + querystring);
+        }
+        catch (WebException we)
+        {
+          // If there is a webservice error (eg. invalid username / password)
+          // then a HTTP error code (eg. 503) will be returned along with an actual response
+          // We should try and read that response
+          if (we.Status != WebExceptionStatus.ProtocolError)
+          {
+            throw;
+          }
+
+          using (var stream = we.Response.GetResponseStream())
+          using (var reader = new StreamReader(stream))
+          {
+            var resp = reader.ReadToEnd();
+            xDoc = XDocument.Parse(resp);
+          }
+        }
+
       }
       catch (Exception e)
       {
@@ -751,7 +766,7 @@ namespace MediaPortal.LastFM
         throw ex;
       }
 
-      if ((string) xDoc.Root.Attribute("status") != "ok")
+      if ((string)xDoc.Root.Attribute("status") != "ok")
       {
         throw GetException(xDoc);
       }

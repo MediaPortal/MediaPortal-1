@@ -27,7 +27,7 @@ namespace MediaPortal.LastFM
   /// <summary>
   /// Custom exception class to combine errors returned from last.fm and lower level exceptions (eg. unable to reach website)
   /// </summary>
-  class LastFMException : Exception
+  public class LastFMException : Exception
   {
 
     /// <summary>

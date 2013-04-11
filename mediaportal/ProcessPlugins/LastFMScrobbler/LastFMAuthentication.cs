@@ -55,9 +55,21 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
-      if (!LastFMLibrary.AuthGetMobileSession(userName, password))
+      var success = false;
+      try
       {
-        MessageBox.Show("Error adding user.  Please check logs.", "Error adding user", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        success = LastFMLibrary.AuthGetMobileSession(userName, password);
+      }
+      catch (LastFMException ex)
+      {
+        MessageBox.Show("Error adding user.\n" + ex.Message, "Error adding user", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+        this.Close();
+        return;
+      }
+      if (!success)
+      {
+        MessageBox.Show("Error adding user.\nPlease check logs.", "Error adding user", MessageBoxButtons.OK, MessageBoxIcon.Error);
         this.Close();
         return;
       }

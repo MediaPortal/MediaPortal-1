@@ -239,8 +239,24 @@ namespace MediaPortal.GUI.LastFMRadio
       pl.Clear();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
       _playlistPlayer.Reset();
-
-      LastFMLibrary.TuneRadio(strStation);
+      
+      try
+      {
+        LastFMLibrary.TuneRadio(strStation);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error(ex);
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          dlgNotify.SetText(ex.Message);
+          dlgNotify.DoModal(GetID);
+        }
+        return;
+      }
+      
       AddMoreTracks();
       _playlistPlayer.Play(0);
     }
@@ -250,15 +266,28 @@ namespace MediaPortal.GUI.LastFMRadio
     /// </summary>
     private void AddMoreTracks()
     {
-      List<LastFMStreamingTrack> tracks;
-      if (!LastFMLibrary.GetRadioPlaylist(out tracks))
+      List<LastFMStreamingTrack> tracks = null;
+
+      var success = false;
+      //TODO: localize string
+      var errMessage = "Error getting tracks.\nPlease check logs";
+      try
+      {
+        success = LastFMLibrary.GetRadioPlaylist(out tracks);
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error(ex);
+        errMessage = ex.Message;
+      }
+
+      if (!success)
       {
         var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
-          //TODO: need localised string and possibly better check for lack of content vs other failure
-          dlgNotify.SetText("Error getting tracks.  Most likely too many skips.\nWait a while or try another station.");
+          dlgNotify.SetText(errMessage);
           dlgNotify.DoModal(GetID);
         }
         return;
