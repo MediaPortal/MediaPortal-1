@@ -253,6 +253,12 @@ namespace MediaPortal.GUI.Library
     /// <returns>A GUIFont instance representing the strFontName or a default GUIFont if the strFontName does not exists.</returns>
     public static GUIFont GetFont(string strFontName)
     {
+      // do nothing if no fonts are loaded
+      if (ListFonts.Count == 0)
+      {
+        return null;
+      }
+
       lock (Renderlock)
       {
         if (strFontName != null)
