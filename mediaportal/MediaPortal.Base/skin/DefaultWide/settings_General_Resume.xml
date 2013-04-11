@@ -65,7 +65,7 @@
       <type>button</type>
       <id>24</id>
       <posX>200</posX>
-      <posY>410</posY>
+      <posY>320</posY>
       <width>40</width>
       <textureFocus>osd_play_focus.png</textureFocus>
       <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
@@ -74,7 +74,7 @@
       <type>label</type>
       <id>1</id>
       <posX>235</posX>
-      <posY>413</posY>
+      <posY>323</posY>
       <label>#defScreen</label>
       <align>left</align>
 			<font>font11</font>
@@ -87,7 +87,7 @@
       <type>button</type>
       <id>30</id>
       <posX>200</posX>
-      <posY>465</posY>
+      <posY>375</posY>
       <width>420</width>
       <label>300102</label>
     </control>
@@ -95,7 +95,7 @@
       <type>label</type>
       <id>1</id>
       <posX>480</posX>
-      <posY>473</posY>
+      <posY>383</posY>
       <label>#delayStartup</label>
       <align>left</align>
       <font>font11</font>
@@ -105,7 +105,7 @@
       <type>checkbutton</type>
       <id>31</id>
       <posX>200</posX>
-      <posY>505</posY>
+      <posY>415</posY>
       <label>300103</label>
       <width>420</width>
       <onup>30</onup>
@@ -115,7 +115,7 @@
       <type>checkbutton</type>
       <id>32</id>
       <posX>200</posX>
-      <posY>550</posY>
+      <posY>460</posY>
       <label>300104</label>
       <width>420</width>
       <onup>31</onup>

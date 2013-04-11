@@ -69,7 +69,7 @@
       <type>button</type>
       <id>24</id>
 		  <posX>655</posX>
-      <posY>710</posY>
+      <posY>580</posY>
 			<ondown>30</ondown>
 			<animation effect="fade" time="150">WindowOpen</animation>
 			<animation effect="fade" time="150">WindowClose</animation>
@@ -78,7 +78,7 @@
       <type>fadelabel</type>
       <id>1</id>
 		  <posX>683</posX>
-			<posY>721</posY>
+			<posY>591</posY>
 			<width>940</width>
       <label>#defScreen</label>
       <align>left</align>
@@ -94,7 +94,7 @@
       <type>button</type>
       <id>30</id>
 		  <posX>655</posX>
-      <posY>775</posY>
+      <posY>645</posY>
 			<onup>24</onup>
 			<ondown>31</ondown>
       <label>300102</label>
@@ -105,7 +105,7 @@
       <type>label</type>
       <id>1</id>
 			<posX>1770</posX>
-      <posY>787</posY>
+      <posY>657</posY>
       <label>#delayStartup</label>
       <align>right</align>
 			<font>TitanLight12</font>
@@ -117,7 +117,7 @@
       <type>checkbutton</type>
       <id>31</id>
 		  <posX>655</posX>
-      <posY>840</posY>
+      <posY>710</posY>
       <label>300103</label>
       <onup>30</onup>
 			<ondown>32</ondown>
@@ -129,7 +129,7 @@
       <type>checkbutton</type>
       <id>32</id>
 		  <posX>655</posX>
-      <posY>905</posY>
+      <posY>775</posY>
       <label>300104</label>
       <onup>31</onup>
 			<ondown>20</ondown>
