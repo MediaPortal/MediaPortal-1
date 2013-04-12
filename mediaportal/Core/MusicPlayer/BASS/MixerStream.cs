@@ -72,19 +72,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
       bool result = false;
 
-      if (Config.MusicPlayer == AudioPlayer.WasApi)
-      {
-        try
-        {
-          BassWasapi.BASS_WASAPI_Free();
-          Log.Info("BASS: Freed WASAPI device");
-        }
-        catch (Exception ex)
-        {
-          Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-        }
-      }
-
       BASSFlag mixerFlags = BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_MIXER_NORAMPIN;
 
       if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.WasApi)
@@ -212,6 +199,19 @@ namespace MediaPortal.MusicPlayer.BASS
         case AudioPlayer.WasApi:
 
           Log.Info("BASS: Initialising WASAPI device");
+
+          if (BassWasapi.BASS_WASAPI_IsStarted())
+          {
+            try
+            {
+              BassWasapi.BASS_WASAPI_Free();
+              Log.Debug("BASS: Freed WASAPI device");
+            }
+            catch (Exception ex)
+            {
+              Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+            }
+          }
 
           BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
 
@@ -633,6 +633,7 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
         }
+        _mixer = 0;
       }
       catch (Exception ex)
       {
