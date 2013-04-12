@@ -1332,7 +1332,7 @@ namespace MediaPortal.Player
           _mediaInfo = new MediaInfoWrapper(strFile);
         }
 
-        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile)) //local video, tv, rtsp
+        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
         {
           if (type == MediaType.Unknown)
           {
