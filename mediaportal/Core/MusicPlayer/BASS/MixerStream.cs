@@ -67,8 +67,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public bool CreateMixer(MusicStream stream)
     {
-      Log.Info("BASS: ---------------------------------------------");
-      Log.Info("BASS: Creating BASS mixer stream");
+      Log.Debug("BASS: ---------------------------------------------");
+      Log.Debug("BASS: Creating BASS mixer stream");
 
       bool result = false;
 
@@ -85,7 +85,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // See, if we need Upmixing
       if (outputChannels > stream.ChannelInfo.chans)
       {
-        Log.Info("BASS: Found more output channels ({0}) than input channels ({1}). Check for upmixing.", outputChannels,
+        Log.Debug("BASS: Found more output channels ({0}) than input channels ({1}). Check for upmixing.", outputChannels,
                  stream.ChannelInfo.chans);
         _mixingMatrix = CreateMixingMatrix(stream.ChannelInfo.chans);
         if (_mixingMatrix != null)
@@ -100,7 +100,7 @@ namespace MediaPortal.MusicPlayer.BASS
       else if (outputChannels < stream.ChannelInfo.chans)
       {
         // Downmix to Stereo
-        Log.Info("BASS: Found more input channels ({0}) than output channels ({1}). Downmix.", stream.ChannelInfo.chans,
+        Log.Debug("BASS: Found more input channels ({0}) than output channels ({1}). Downmix.", stream.ChannelInfo.chans,
                  outputChannels);
         outputChannels = Math.Min(outputChannels, 2);
       }
@@ -263,14 +263,14 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
 
-            Log.Info("BASS: ---------------------------------------------");
-            Log.Info("BASS: Buffer Length: {0}", wasapiInfo.buflen);
-            Log.Info("BASS: Channels: {0}", wasapiInfo.chans);
-            Log.Info("BASS: Frequency: {0}", wasapiInfo.freq);
-            Log.Info("BASS: Format: {0}", wasapiInfo.format.ToString());
-            Log.Info("BASS: InitFlags: {0}", wasapiInfo.initflags.ToString());
-            Log.Info("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
-            Log.Info("BASS: ---------------------------------------------");
+            Log.Debug("BASS: ---------------------------------------------");
+            Log.Debug("BASS: Buffer Length: {0}", wasapiInfo.buflen);
+            Log.Debug("BASS: Channels: {0}", wasapiInfo.chans);
+            Log.Debug("BASS: Frequency: {0}", wasapiInfo.freq);
+            Log.Debug("BASS: Format: {0}", wasapiInfo.format.ToString());
+            Log.Debug("BASS: InitFlags: {0}", wasapiInfo.initflags.ToString());
+            Log.Debug("BASS: Exclusive: {0}", wasapiInfo.IsExclusive.ToString());
+            Log.Debug("BASS: ---------------------------------------------");
             Log.Info("BASS: WASAPI Device successfully initialised");
 
             // Now we need to check, if WASAPI decided to switch to a different mode
@@ -300,8 +300,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (result)
       {
-        Log.Info("BASS: Successfully created BASS Mixer stream");
-        Log.Info("BASS: ---------------------------------------------");
+        Log.Debug("BASS: Successfully created BASS Mixer stream");
       }
       return result;
     }

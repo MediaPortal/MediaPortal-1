@@ -312,10 +312,10 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Info("BASS: Stream Information");
       Log.Info("BASS: ---------------------------------------------");
       Log.Info("BASS: File: {0}", _filePath);
-      Log.Info("BASS: Type of Stream: {0}", _channelInfo.ctype);
+      Log.Debug("BASS: Type of Stream: {0}", _channelInfo.ctype);
       Log.Info("BASS: Number of Channels: {0}", _channelInfo.chans);
       Log.Info("BASS: Stream Samplerate: {0}", _channelInfo.freq);
-      Log.Info("BASS: Stream Flags: {0}", _channelInfo.flags);
+      Log.Debug("BASS: Stream Flags: {0}", _channelInfo.flags);
       Log.Info("BASS: ---------------------------------------------");
 
       Log.Debug("BASS: Registering stream playback events");
@@ -348,7 +348,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (_replayGainInfo.TrackGain.HasValue || _replayGainInfo.AlbumGain.HasValue)
       {
-        Log.Info("BASS: Replay Gain Data: Track Gain={0}dB, Track Peak={1}, Album Gain={2}dB, Album Peak={3}",
+        Log.Debug("BASS: Replay Gain Data: Track Gain={0}dB, Track Peak={1}, Album Gain={2}dB, Album Peak={3}",
             _replayGainInfo.TrackGain,
             _replayGainInfo.TrackPeak,
             _replayGainInfo.AlbumGain,
@@ -356,7 +356,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        Log.Info("BASS: No Replay Gain Information found in stream tags");
+        Log.Debug("BASS: No Replay Gain Information found in stream tags");
       }
 
       float? gain = null;
@@ -372,7 +372,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (gain.HasValue)
       {
-        Log.Info("BASS: Setting Replay Gain to {0}dB", gain.Value);
+        Log.Debug("BASS: Setting Replay Gain to {0}dB", gain.Value);
         _gain = new DSP_Gain();
         _gain.ChannelHandle = _stream;
         _gain.Gain_dBV = gain.Value;
@@ -641,7 +641,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void ResumePlayback()
     {
-      Log.Info("BASS: Resuming playback of paused stream for {0}", _filePath);
+      Log.Debug("BASS: Resuming playback of paused stream for {0}", _filePath);
       if (Config.SoftStop)
       {
         Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);

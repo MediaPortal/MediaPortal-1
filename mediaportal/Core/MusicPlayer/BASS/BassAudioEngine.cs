@@ -799,10 +799,10 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Name: {0}", info.ToString());
         Log.Info("BASS: Directsound version: {0}", info.dsver);
         Log.Info("BASS: # Output Channels: {0}", info.speakers);
-        Log.Info("BASS: Minimum Buffer Samples: {0}", info.minbuf);
-        Log.Info("BASS: Current Sample rate: {0}", info.freq);
-        Log.Info("BASS: Maximum Sample rate: {0}", info.maxrate);
-        Log.Info("BASS: Minimum Sample rate: {0}", info.minrate);
+        Log.Debug("BASS: Minimum Buffer Samples: {0}", info.minbuf);
+        Log.Debug("BASS: Current Sample rate: {0}", info.freq);
+        Log.Debug("BASS: Maximum Sample rate: {0}", info.maxrate);
+        Log.Debug("BASS: Minimum Sample rate: {0}", info.minrate);
         Log.Info("BASS: ---------------------------------------------");
       }
 
@@ -858,9 +858,9 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Name: {0} {1}", info.name, info.version);
             Log.Info("BASS: # Input Channels: {0}", info.inputs);
             Log.Info("BASS: # Output Channels: {0}", info.outputs);
-            Log.Info("BASS: Minimum Buffer Samples: {0}", info.bufmin);
-            Log.Info("BASS: Maximum Buffer Samples: {0}", info.bufmax);
-            Log.Info("BASS: Default Buffer Length: {0}", info.bufpref);
+            Log.Debug("BASS: Minimum Buffer Samples: {0}", info.bufmin);
+            Log.Debug("BASS: Maximum Buffer Samples: {0}", info.bufmax);
+            Log.Debug("BASS: Default Buffer Length: {0}", info.bufpref);
             Log.Info("BASS: ---------------------------------------------");
 
             Log.Info("BASS: Channel Information");
@@ -929,8 +929,8 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Info("BASS: Device Information");
           Log.Info("BASS: ---------------------------------------------");
           Log.Info("BASS: Name: {0}", _wasapiDeviceInfo.name);
-          Log.Info("BASS: Id: {0}", _wasapiDeviceInfo.id);
-          Log.Info("BASS: Type: {0}", _wasapiDeviceInfo.type.ToString());
+          Log.Debug("BASS: Id: {0}", _wasapiDeviceInfo.id);
+          Log.Debug("BASS: Type: {0}", _wasapiDeviceInfo.type.ToString());
           Log.Info("BASS: Shared Mode Channels: {0}", _wasapiDeviceInfo.mixchans);
           Log.Info("BASS: Shared Mode Samplerate: {0}", _wasapiDeviceInfo.mixfreq);
           GetWasApiFormats();
@@ -967,8 +967,8 @@ namespace MediaPortal.MusicPlayer.BASS
         initFlag = BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE;
       }
 
-      Log.Info("BASS: This device supports following formats in WASAPI {0} mode:", selectedMode);
-      Log.Info(string.Format("BASS: {0,-6} {1, -2} {2}", "Rate", "Ch", "Maximum Supported"));
+      Log.Debug("BASS: This device supports following formats in WASAPI {0} mode:", selectedMode);
+      Log.Debug(string.Format("BASS: {0,-6} {1, -2} {2}", "Rate", "Ch", "Maximum Supported"));
       for (int sr = 0; sr < sampleRates.GetLength(0); sr++)
       {
         for (int c = 0; c < channels.GetLength(0); c++)
@@ -977,7 +977,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
           if (format != BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
           {
-            Log.Info(string.Format("BASS: {0,6} {1,2} {2}", sampleRates[sr], channels[c], format));
+            Log.Debug(string.Format("BASS: {0,6} {1,2} {2}", sampleRates[sr], channels[c], format));
           }
         }
       }
@@ -1572,7 +1572,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
-              Log.Info("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
+              Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
               // The new stream has a different frequency or number of channels
               // We need a new mixer
               _mixer.Dispose();
