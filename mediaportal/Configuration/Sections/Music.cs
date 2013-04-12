@@ -109,6 +109,11 @@ namespace MediaPortal.Configuration.Sections
                                              LyricsOption2
                                            };
 
+    private string[] MonoUpmix = new string[] { "None", "Stereo", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
+    private string[] StereoUpmix = new string[] { "None", "QuadraphonicPhonic", "5.1 Surround", "7.1 Surround" };
+    private string[] QuadroPhonicUpmix = new string[] { "None", "5.1 Surround", "7.1 Surround" };
+    private string[] FiveDotOneUpmix = new string[] { "None", "7.1 Surround" };
+
     private const string VUMeterValue0 = "none";
     private const string VUMeterValue1 = "analog";
     private const string VUMeterValue2 = "led";
@@ -145,22 +150,22 @@ namespace MediaPortal.Configuration.Sections
       ShowLyricsCmbBox.Items.AddRange(ShowLyricsOptions);
 
       // Fill the Upmix Combos
-      foreach (string str in Enum.GetNames(typeof(MonoUpMix)))
+      foreach (string str in MonoUpmix)
       {
         cbUpmixMono.Items.Add(str);
       }
 
-      foreach (string str in Enum.GetNames(typeof(StereoUpMix)))
+      foreach (string str in StereoUpmix)
       {
         cbUpmixStereo.Items.Add(str);
       }
 
-      foreach (string str in Enum.GetNames(typeof(QuadraphonicUpMix)))
+      foreach (string str in QuadroPhonicUpmix)
       {
         cbUpmixQuadro.Items.Add(str);
       }
 
-      foreach (string str in Enum.GetNames(typeof(FiveDotOneUpMix)))
+      foreach (string str in FiveDotOneUpmix)
       {
         cbUpmixFiveDotOne.Items.Add(str);
       }
