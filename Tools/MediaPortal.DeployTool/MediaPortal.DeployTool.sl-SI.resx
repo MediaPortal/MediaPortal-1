@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Namestitev z enim klikom</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Vsi potrebni programi bodo nameščeni v privzete imenike s privzetimi nastavitvami. Geslo za bazo podatkov bo "MediaPortal".</value>
+    <value>Vsi potrebni programi bodo nameščeni v privzete imenike s privzetimi nastavitvami. Geslo za bazo podatkov bo &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Izvedi napredno namestitev</value>
@@ -281,7 +281,7 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
     <value>Neuspešna namestitev programa [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Pritisnite "Namesti" za izvajanje vseh potrebnih potrebnih postopkov za namestitev</value>
+    <value>Pritisnite &quot;Namesti&quot; za izvajanje vseh potrebnih potrebnih postopkov za namestitev</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Nalagam...</value>
@@ -303,6 +303,7 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>Namestitveno orodje MediaPortala</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Nazaj</value>
@@ -312,6 +313,7 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Ta program vas bo vodil skozi namestitev MediaPortala in vseh zahtevanih dodatnih programov.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Naprej</value>
@@ -323,7 +325,7 @@ Računalnik bo potem deloval kot namenski TV strežnik in bo posredoval TV signa
     <value>Datoteka {0} še vedno ne obstaja. Prosim, preglejte disk (ime datoteke bi moralo biti podobno predlaganemu).</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Pritisnite "Nadaljuj", ko boste končali z nalaganjem datoteke z interneta.</value>
+    <value>Pritisnite &quot;Nadaljuj&quot;, ko boste končali z nalaganjem datoteke z interneta.</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Navedeno datoteko morate naložiti z interneta ročno:</value>
@@ -431,7 +433,7 @@ Ali želite začeti z namestitvenim postopkom sedaj, ali pa želite le naložiti
     <value>Uspešno ste naložili programe MediaPortala</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Pritisnite "Naloži" za nalaganje vseh zahtevanih programov z interneta</value>
+    <value>Pritisnite &quot;Naloži&quot; za nalaganje vseh zahtevanih programov z interneta</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Žal vaš operacijski sistem trenutno ni podprt v MediaPortalu!</value>
@@ -453,8 +455,8 @@ Morebitna obstoječa pokvarjena nastavitvena datoteka bo sedaj izbrisana.</value
 Nadaljujte na lastno odgovornost!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Ta program se bo sedaj zaprl in odprl imenik "MediaPortal namestitev".
-Prenesite ta imenik in njegovo vsebino na vaš HTPC. Začnite namestitev s poganjanjem "MediaPortal.DeployTool.exe".</value>
+    <value>Ta program se bo sedaj zaprl in odprl imenik &quot;MediaPortal namestitev&quot;.
+Prenesite ta imenik in njegovo vsebino na vaš HTPC. Začnite namestitev s poganjanjem &quot;MediaPortal.DeployTool.exe&quot;.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Preskočeno</value>
@@ -497,5 +499,35 @@ Prenesite ta imenik in njegovo vsebino na vaš HTPC. Začnite namestitev s pogan
   </data>
   <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
     <value>Microsoft SQL Server 2005 Express je onemogočen</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Trenutno je windows Aero onemogočen.
+Aero je nujen, če želiš nastaviti preprečevanje trganja in zatikanja slike.
+Aktivacija Aera bo prav tako tudi zmanjšala uporabo procesorja, s čiumer bo tvoj HTPC deloval tiše in hladneje.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>Microsoftova programska oprema zahteva ponovni zagon računalnika.
+Preden nadaljuješ z namestitvijo MediaPortala, izvedi ponovni zagon.</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Namesti LAV filtre za predvajanje večine pogostih avdio in video formatov.</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Izberi videz</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Uporabi obstoječ videz (ki mora biti kompatibilen s tem programom)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Več informacij</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Brskaj med ostalimi razširitvami</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Namesti razširitev, ki doda podporo za priljubljene dodatke drugih programerjev</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Priporočene razširitve</value>
   </data>
 </root>

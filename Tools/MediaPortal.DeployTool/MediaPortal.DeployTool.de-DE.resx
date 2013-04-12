@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>1-Klick-Installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Alle benötigten Anwendungen werden in ihre Standardverzeichnisse mit den Standardeinstellungen installiert. Das Datenbankpasswort lautet "MediaPortal".</value>
+    <value>Alle benötigten Anwendungen werden in ihre Standardverzeichnisse mit den Standardeinstellungen installiert. Das Datenbankpasswort lautet &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Benutzerdefinierte Installation durchführen</value>
@@ -160,7 +160,7 @@
     <value>Es wird nur MediaPortal installiert. Zum Fernsehen verbindet sich MediaPortal mit einem TV-Server in Ihrem Netzwerk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>MediaPortal "Einzelplatz"-Installation (alles auf einem Rechner)</value>
+    <value>MediaPortal &quot;Einzelplatz&quot;-Installation (alles auf einem Rechner)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Diese Auswahl ist die richtige, wenn Sie MediaPortal und den TV-Server auf einem PC installieren wollen.</value>
@@ -281,7 +281,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Es ist ein Fehler bei der Installation der Anwendung [{0}] aufgetreten</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Klicken Sie "Installieren", um alle für die gewählte Konfiguration notwendigen Anwendungen zu installieren.</value>
+    <value>Klicken Sie &quot;Installieren&quot;, um alle für die gewählte Konfiguration notwendigen Anwendungen zu installieren.</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Download läuft...</value>
@@ -303,6 +303,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Installations-Tool</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Zurück</value>
@@ -312,6 +313,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Diese Anwendung wird Sie durch die Installation von MediaPortal und aller benötigten Komponenten leiten.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Weiter</value>
@@ -323,7 +325,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Die gewünschte Datei wurde nicht gefunden</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Drücken Sie "Weiter", sobald Sie die gewünschte Datei heruntergeladen haben</value>
+    <value>Drücken Sie &quot;Weiter&quot;, sobald Sie die gewünschte Datei heruntergeladen haben</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Sie müssen die folgende Datei manuell herunterladen</value>
@@ -429,7 +431,7 @@ Möchten Sie die Installations-Schritte jetzt durchführen oder lediglich die be
     <value>Die benötigten Komponenten wurden erfolgreich heruntergeladen.</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Klicken Sie "Herunterladen", um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
+    <value>Klicken Sie &quot;Herunterladen&quot;, um den Internet-Download der nötigen Dateien jetzt zu starten.</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
@@ -451,8 +453,8 @@ Einstellungsdatei ist beschädigt und wird gelöscht, falls vorhanden.</value>
 Fortsetzung erfolgt auf eigenes Risiko!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Diese Anwendung wird jetzt beendet und das Verzeichnis "MediaPortal Installation" wird geöffnet.
-Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie "MediaPortal.DeployTool.exe" um die Installation durchzuführen.</value>
+    <value>Diese Anwendung wird jetzt beendet und das Verzeichnis &quot;MediaPortal Installation&quot; wird geöffnet.
+Kopieren Sie dieses Verzeichnis auf Ihren HTPC. Starten Sie &quot;MediaPortal.DeployTool.exe&quot; um die Installation durchzuführen.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Übersprungen</value>
@@ -506,7 +508,25 @@ und Stuttering empfehlen wir Windows AERO zu aktivieren. </value>
     <value>Eine Microsoft Komponente benötigt einen Neustart.
 Bitte fahren Sie nach dem Neustart mit der Installation fort.</value>
   </data>
-  <data name="MPSettings_checkBoxLAV" xml:space="preserve">
-    <value>LAV Filter installieren um gängige Mediendateien abspielen zu können</value>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>LAV Filter installieren, um die Wiedergabe vieler gängiger Audio- und Videoformate zu ermöglichen</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Wählen Sie einen Skin</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Bestehenden Skin verwenden (Kompatibilität wird überprüft)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Mehr Informationen</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Erweiterungen durchsuchen</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Erweiterung installieren, die beliebte Plugins Dritter unterstützt</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Empfohlene Erweiterungen</value>
   </data>
 </root>

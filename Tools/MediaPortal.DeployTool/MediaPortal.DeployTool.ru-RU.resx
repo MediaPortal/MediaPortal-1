@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Быстрая установка</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Все требуемые приложения будут установлены с настройками по-умолчанию.  Пароль к базе данных  "MediaPortal".</value>
+    <value>Все требуемые приложения будут установлены с настройками по-умолчанию.  Пароль к базе данных  &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Выполнить расширенную установку</value>
@@ -172,8 +172,8 @@
     <value>Будет установлен только сервер MediaPortal.
 Компьютер будет выступать в роли выделенного сервера и использоваться другим компьютера в локальной сети для просмотра ТВ. (требуется установка базы данных)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Обзор</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Поиск</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Настройка брандмауера Windows для разрешения доступа к серверу базы данных</value>
@@ -303,6 +303,7 @@
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>Утилита установки MediaPortal</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Назад</value>
@@ -312,6 +313,7 @@
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Это программа проведет Вас через весь путь установки MediaPortal и его компонентов.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Далее</value>
@@ -337,9 +339,6 @@
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Ручная загрузка</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Обзор</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Вы указали правильный путь для установки MediaPortal.</value>
   </data>
@@ -351,9 +350,6 @@
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Укажите папку для установки MediaPortal </value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Обзор</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Настройка брандмауера Windows для доступа к ТВ серверу из вне</value>
@@ -452,5 +448,81 @@
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
     <value>Настройка Брандмауера Windows для доступа к MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Обнаружена неподдерживаемая бета-версия пакета обновлений.
+Продолжайте на свой страх и риск!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Вы действительно хотите прервать установку МедиаПортала?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Не удаётся соединиться с интернетом! Для продолжения установки необходимо действующее соединение с интернетом.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Недостаточно места на  выбранном диске. Для установки МедиаПортала необходимо не менее {0} МБ свободного места.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>Найден Медиапортал {0}.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Новая установка</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Обновление установленной версии до {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Обновление-&gt; установка</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL Server Express 2005 отключен</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Поиск других расширений</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Установить расширение для поддержки популярных сторонних плагинов</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Рекомендованные расширения</value>
   </data>
 </root>

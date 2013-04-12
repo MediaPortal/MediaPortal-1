@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Instalacja ekspresowa</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Wszystkie potrzebne podprogramy będą zainstalowane w standardowych folderach ze standardowymi nastawieniami. Hasło bazy danych jest "MediaPortal". </value>
+    <value>Wszystkie potrzebne podprogramy będą zainstalowane w standardowych folderach ze standardowymi nastawieniami. Hasło bazy danych jest &quot;MediaPortal&quot;. </value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Wykonanie instalacji zaawansowanej</value>
@@ -172,8 +172,8 @@
     <value>Ta opcja zainstaluje tylko MediaPortal TV-Server na Twoim komputerze.
 Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał programy telewizyjne innym komputerom w Twojej sieci komputerowej (baza danych musi być zainstalowana na tym komputerze)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Szukaj</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value></value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Konfigurowanie Windows Firewall w celu umożliwienia dostępu do serwera bazy danych.</value>
@@ -182,7 +182,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Wybierz miejsce instalacji SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>Wpisz hasło dla użytkownika "sa" bazy SQL-Server </value>
+    <value>Wpisz hasło dla użytkownika &quot;sa&quot; bazy SQL-Server </value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
     <value>Wybierz opcje instalacji SQL-Server</value>
@@ -191,10 +191,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Miejsce instalacji</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Hasło dla użytkownika "sa" bazy SQL Server</value>
-  </data>
-  <data name="DBMSSettings_labelPasswordDesc" xml:space="preserve">
-    <value>( Hasło dla użytkownika admin-user bazy SQL-Server. Standardowo jest "MediaPortal")</value>
+    <value>Hasło dla użytkownika &quot;sa&quot; bazy SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Proszę wybierz miejsce instalacji dla SQL-Server</value>
@@ -217,8 +214,8 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Zakończyłeś z sukcesem instalację MediaPortal</value>
   </data>
-  <data name="Finished_labelHeading3" xml:space="preserve">
-    <value>Poniżej znajduje się kilka linków, które mogą być pomocne przy uruchamianiu MediaPortal</value>
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
+    <value></value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>Forum MediaPortal</value>
@@ -284,7 +281,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Programu nie zainstalowano [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Naciśnij "instaluj" aby rozpocząć instalację</value>
+    <value>Naciśnij &quot;instaluj&quot; aby rozpocząć instalację</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Ściąganie...</value>
@@ -306,6 +303,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>Program instalujący MediaPortal</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Wróć</value>
@@ -315,6 +313,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Ten program będzie Cię prowadził przez instalację MediaPortal i wszystkich potrzebnych podprogramów.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Dalej</value>
@@ -326,7 +325,7 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
     <value>Potrzebne pliki nie istnieją</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Naciśnij "dalej" po ściągnięciu potrzebnych plików</value>
+    <value>Naciśnij &quot;dalej&quot; po ściągnięciu potrzebnych plików</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Ściągnij ręcznie następujący plik</value>
@@ -340,9 +339,6 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Ręczne ściąganie</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Szukaj</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Wybierz właściwy folder instalacji MediaPortal.</value>
   </data>
@@ -354,9 +350,6 @@ Ten komputerem będzie pełnił tylko rolę serwera oraz będzie dostarczał pro
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Wybierz folder instalacji MediaPortal</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Szukaj</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Skonfiguruj Windows Firewall tak, aby TV-Server miał dostęp do Internetu</value>
@@ -440,7 +433,7 @@ Czy chcesz rozpocząć instalację czy chcesz tylko ściągnąć potrzebne podpr
     <value>Ściągnąłeś wszystkie potrzebne podprogramy do MediaPortal </value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Naciśnij przycisk "download" aby rozpocząć ściąganie wszystkich potrzebnych plików</value>
+    <value>Naciśnij przycisk &quot;download&quot; aby rozpocząć ściąganie wszystkich potrzebnych plików</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Niestety Twój system operacyjny nie działa obecnie z MediaPortal!</value>
@@ -454,5 +447,83 @@ Możesz kontynuować na własne ryzyko.</value>
 Proszę przejrzyj ustawienia Internet Explorer.
 Błędny plik konfiguracyjny, jeśli został znaleziony, nie będzie usunięty.
 </value>
+  </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value></value>
   </data>
 </root>

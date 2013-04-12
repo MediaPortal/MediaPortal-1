@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Enkel installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Alla applikationer som behövs kommer att installeras till deras standardplatser och med deras standardinställningar. Lösenordet till databasen är "MediaPortal".</value>
+    <value>Alla applikationer som behövs kommer att installeras till deras standardplatser och med deras standardinställningar. Lösenordet till databasen är &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Utför en avancerad installation</value>
@@ -179,7 +179,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Konfigurerar Windows brandvägg för att tillåta extern åtkomst till databasserver</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>Du måste välja en giltig installationssökväg för SQL-Serven.</value>
+    <value>Du måste välja en giltig installationssökväg för SQL-Servern.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
     <value>Du måste välja ett lösenord för SQL-serverns administratör.</value>
@@ -272,7 +272,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Status</value>
   </data>
   <data name="Install_errAppsMissing" xml:space="preserve">
-    <value>Alla applikationer som behövs är ej installerade.</value>
+    <value>Alla applikationer som behövs är inte installerade.</value>
   </data>
   <data name="Install_errDownloadFailed" xml:space="preserve">
     <value>Misslyckades ladda ner applikation [{0}]</value>
@@ -281,7 +281,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Misslyckades installera applikation [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Tryck på "Installera"-knappen för att utföra alla nödvändiga åtgärder för att installera dina val.</value>
+    <value>Tryck på &quot;Installera&quot;-knappen för att utföra alla nödvändiga åtgärder för att installera dina val.</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Laddar ner...</value>
@@ -296,13 +296,14 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Installerad</value>
   </data>
   <data name="Install_stateNotInstalled" xml:space="preserve">
-    <value>Ej installerad</value>
+    <value>Inte installerad</value>
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
     <value>En annan version är redan installerad</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Installationsverktyg</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Tillbaka</value>
@@ -312,6 +313,7 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Denna applikation kommer att guida dig igenom installationen av MediaPortal och alla komponenter som behövs.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Nästa</value>
@@ -320,13 +322,13 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Fortsätt</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>Den begärda filen finns fortfarande inte</value>
+    <value>Den begärda filen {0} finns fortfarande inte</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Tryck på "Fortsätt" när du laddat ner filen</value>
+    <value>Tryck på &quot;Fortsätt&quot; när du laddat ner filen</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>Du måste manuellt ladda ner följande fil</value>
+    <value>Du måste manuellt ladda ner följande fil;</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
     <value>Öppna mapp</value>
@@ -389,19 +391,19 @@ Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till a
     <value>Avinstallationen misslyckades</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Konfigurerar</value>
+    <value>Konfigurerar...</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
     <value>Konfigurerad</value>
   </data>
   <data name="Install_stateNotConfigured" xml:space="preserve">
-    <value>Ej konfigurerad</value>
+    <value>Inte konfigurerad</value>
   </data>
   <data name="Install_stateRemoved" xml:space="preserve">
     <value>Borttagen</value>
   </data>
   <data name="Install_stateUninstall" xml:space="preserve">
-    <value>Avinstallerar</value>
+    <value>Avinstallera</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>En internetuppkoppling är ett krav för att installationsprocessen skall fungera.
@@ -424,13 +426,13 @@ Vill du starta installationsprocessen nu eller vill du ladda ner alla komponente
     <value>Laddar ner</value>
   </data>
   <data name="Install_stateNotDownloaded" xml:space="preserve">
-    <value>Ej nedladdad</value>
+    <value>Inte nedladdad</value>
   </data>
   <data name="Finished_labelHeading2_download" xml:space="preserve">
     <value>Du har nu laddat ner alla MediaPortals komponenter</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Tryck på knappen "Ladda ner" för att ladda ner alla komponenter som behövs.</value>
+    <value>Tryck på knappen &quot;Ladda ner&quot; för att ladda ner alla komponenter som behövs.</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Tyvärr stödjer MediaPortal inte ditt operativsystem !</value>
@@ -452,14 +454,14 @@ Eventuella felaktiga filer kommer nu raderas.</value>
 Fortsätt på egen risk! </value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Programmet kommer nu att avslutas och öppna mappen "MediaPortal Installation".
-Flytta mappen till din HTPC. Starta installationen genom att köra "MediaPortal.DeployTool.exe".</value>
+    <value>Programmet kommer nu att avslutas och öppna mappen &quot;MediaPortal Installation&quot;.
+Flytta mappen till din HTPC. Starta installationen genom att köra &quot;MediaPortal.DeployTool.exe&quot;.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Överhoppad</value>
   </data>
   <data name="Exit_Installation" xml:space="preserve">
-    <value>Vill du verkligen avsluta installationen av MediaPortal?</value>
+    <value>Vill du verkligen avbryta installationen av MediaPortal?</value>
   </data>
   <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
     <value>Aktuella nedladdningsinställningar: språk={0}, arch={1}</value>
@@ -506,5 +508,26 @@ Genom att använda AERO minskas även CPU belastningen vilket kan leda till att 
   <data name="Reboot_Required" xml:space="preserve">
     <value>En omstart av datorn krävs av en Microsoft-komponent.
 Innan du fortsätter med installationen av MediaPortal måste du starta om datorn.</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Installera LAV filter som kan spela upp många ljud-  och videoformat</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Välj ett skinn</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Använd nuvarande skinn (Detta kommer att kontrolleras så att det är kompatibelt) </value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Mer information</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Bläddra bland övriga tillägg</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Installera tillägg som lägger till stöd för tredjeparts plugin</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Rekommenderade tillägg</value>
   </data>
 </root>

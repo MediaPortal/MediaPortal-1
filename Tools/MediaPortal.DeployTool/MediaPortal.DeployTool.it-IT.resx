@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -130,25 +130,25 @@
     <value>Tutte le applicazioni richieste verrano installate nella cartella di default e con i settaggi di default.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>L'installazione avanzata permette di specificare la cartella d'installazione e altri settaggi.</value>
+    <value>L&apos;installazione avanzata permette di specificare la cartella d&apos;installazione e altri settaggi.</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
     <value>Installazione avanzata</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>L'installazione avanzata permette di installare Server/Client e di specificare la cartella di'installazione e altri settaggi.</value>
+    <value>L&apos;installazione avanzata permette di installare Server/Client e di specificare la cartella di&apos;installazione e altri settaggi.</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>Installazione "One-Click"</value>
+    <value>Installazione &quot;One-Click&quot;</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Tutte le applicazioni necessarie verrano installate nelle loro cartella di default e usando i parametri di default. La password del database è "MediaPortal".</value>
+    <value>Tutte le applicazioni necessarie verrano installate nelle loro cartella di default e usando i parametri di default. La password del database è &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Eseguire installazione avanzata</value>
   </data>
   <data name="BaseInstallation_rbOneClick" xml:space="preserve">
-    <value>Eseguire installazione "One-Click"</value>
+    <value>Eseguire installazione &quot;One-Click&quot;</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
     <value>Scegliere quale setup si vuole installare:</value>
@@ -160,7 +160,7 @@
     <value>Questa scelta installerà solamente MediaPortal. Per guardare la TV si connetterà a un Tv-Server dedicato nella rete LAN.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>MediaPortal "Singleseat"</value>
+    <value>MediaPortal &quot;Singleseat&quot;</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Questa è la scelta giusta se le vostre schede TV sono installate nelle stesso PC in cui userete MediaPortal per guardare la TV.</value>
@@ -179,19 +179,19 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Configura il firewall di Windows per permettere accessi esterni al database server</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
-    <value>E' necessario fornire una cartella valida di installazione per SQL-Server.</value>
+    <value>E&apos; necessario fornire una cartella valida di installazione per SQL-Server.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>E' necessario inserire la password per l'utente di amministrazione di  SQL-Server.</value>
+    <value>E&apos; necessario inserire la password per l&apos;utente di amministrazione di  SQL-Server.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>Inserire le opzioni necessarie all'installazione di SQL-Server</value>
+    <value>Inserire le opzioni necessarie all&apos;installazione di SQL-Server</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
-    <value>Cartella d'installazione</value>
+    <value>Cartella d&apos;installazione</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>Password per l'utente di amministrazione di SQL Server</value>
+    <value>Password per l&apos;utente di amministrazione di SQL Server</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
     <value>Selezionare la cartella di installazione per SQL-Server</value>
@@ -212,10 +212,10 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Congratulazioni !</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
-    <value>Avete completato con successo l'installazione di MediaPortal</value>
+    <value>Avete completato con successo l&apos;installazione di MediaPortal</value>
   </data>
   <data name="Finished_labelHeading3_install" xml:space="preserve">
-    <value>Qui sotto potete trovare alcuni link utili per ricevere l'aiuto iniziale su MediaPortal</value>
+    <value>Qui sotto potete trovare alcuni link utili per ricevere l&apos;aiuto iniziale su MediaPortal</value>
   </data>
   <data name="Finished_linkForum" xml:space="preserve">
     <value>Forum di MediaPortal</value>
@@ -230,7 +230,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Cancella</value>
   </data>
   <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
-    <value>C'è stato un errore durante il download del file richiesto</value>
+    <value>C&apos;è stato un errore durante il download del file richiesto</value>
   </data>
   <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
     <value>URL di download:</value>
@@ -239,7 +239,7 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Destinazione:</value>
   </data>
   <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
-    <value>Download cancellato dall'utente</value>
+    <value>Download cancellato dall&apos;utente</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
     <value>Download del file in corso...</value>
@@ -275,13 +275,13 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Non tutte le applicazioni necessarie sono state installate.</value>
   </data>
   <data name="Install_errDownloadFailed" xml:space="preserve">
-    <value>Errore durante il download dell'applicazione [{0}]</value>
+    <value>Errore durante il download dell&apos;applicazione [{0}]</value>
   </data>
   <data name="Install_errInstallFailed" xml:space="preserve">
-    <value>Errore durante l'installazione dell'applicazione [{0}]</value>
+    <value>Errore durante l&apos;installazione dell&apos;applicazione [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Premere il bottone "installa" per eseguire tutte le azioni richieste dalla vostra installazione</value>
+    <value>Premere il bottone &quot;installa&quot; per eseguire tutte le azioni richieste dalla vostra installazione</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Scarico in corso...</value>
@@ -299,10 +299,11 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Non installato</value>
   </data>
   <data name="Install_stateVersionMismatch" xml:space="preserve">
-    <value>Un'altra versione è già installata</value>
+    <value>Un&apos;altra versione è già installata</value>
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>Strumento di installazione di MediaPortal</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Indietro</value>
@@ -311,7 +312,8 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Esci</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Questo programma vi guiderà attraverso l'installazione di MediaPortal e di tutti i componenti richiesti.</value>
+    <value>Questo programma vi guiderà attraverso l&apos;installazione di MediaPortal e di tutti i componenti richiesti.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Avanti</value>
@@ -324,10 +326,10 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
 (il nome file deve essere simile a quello proposto)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Premere "continua" quando è finito il download del file richiesto</value>
+    <value>Premere &quot;continua&quot; quando è finito il download del file richiesto</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
-    <value>E' necessario scaricare manualmente il seguente file</value>
+    <value>E&apos; necessario scaricare manualmente il seguente file</value>
   </data>
   <data name="ManualDownload_linkDir" xml:space="preserve">
     <value>Apertura cartella</value>
@@ -339,10 +341,10 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Download manuale</value>
   </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
-    <value>E' necessario fornire un percorso valido per l'installazione di MediaPortal.</value>
+    <value>E&apos; necessario fornire un percorso valido per l&apos;installazione di MediaPortal.</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Impostare le opzioni per l'installazione di MediaPortal:</value>
+    <value>Impostare le opzioni per l&apos;installazione di MediaPortal:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
     <value>Cartella di installazione per MediaPortal:</value>
@@ -354,10 +356,10 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Configurare il Firewall di Windows per permettere accessi esterni al TV-Server</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
-    <value>E' necessario fornire un cartella valida di installazione per il TV-Server.</value>
+    <value>E&apos; necessario fornire un cartella valida di installazione per il TV-Server.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>Impostare le opzioni necessarie all'installazione del TV-Server:</value>
+    <value>Impostare le opzioni necessarie all&apos;installazione del TV-Server:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
     <value>Cartella di installazione per TV-Server:</value>
@@ -369,13 +371,13 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Grazie per aver scelto MediaPortal...il MediaCenter OpenSource GRATUITO!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Questo strumento vi guiderà attraverso il processo d'installazione</value>
+    <value>Questo strumento vi guiderà attraverso il processo d&apos;installazione</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
     <value>Selezionare la lingua prima di continuare</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal è GRATUITO - se l'avete comprato su eBay siete stati ingannati!</value>
+    <value>MediaPortal è GRATUITO - se l&apos;avete comprato su eBay siete stati ingannati!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Configura</value>
@@ -405,18 +407,18 @@ Il PC si comporterà quindi come un TV-Server dedicato e fornirà la TV ad altri
     <value>Disinstalla</value>
   </data>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
-    <value>E' richiesta una connessione internet per l'installazione.
+    <value>E&apos; richiesta una connessione internet per l&apos;installazione.
 
 Volete cominciare il processo di installazione adesso o
 volete solamente scaricare i componenti necessari per 
-poi eseguire l'installazione sucessivamente ?
+poi eseguire l&apos;installazione sucessivamente ?
 (magari su un pc che non ha connessione internet)</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Solo scarico componenti richiesti</value>
   </data>
   <data name="DownloadOnly_yes" xml:space="preserve">
-    <value>Comincia l'installazione adesso</value>
+    <value>Comincia l&apos;installazione adesso</value>
   </data>
   <data name="Install_buttonDownload" xml:space="preserve">
     <value>Scarica</value>
@@ -434,14 +436,14 @@ poi eseguire l'installazione sucessivamente ?
     <value>Avete scaricato con successo tutti i componenti</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Premere "scarica" per scaricare tutti i componenti necessari</value>
+    <value>Premere &quot;scarica&quot; per scaricare tutti i componenti necessari</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Spiacenti, questo Sistema Operativo non è supportato da MediaPortal !</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
     <value>Il vostro Sistema Operativo non è supportato a causa di molti hotfixes mancanti da parte di Microsoft.
-Proseguire l'installazione è un vostro rischio.</value>
+Proseguire l&apos;installazione è un vostro rischio.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
     <value>Download del file di configurazione fallito.
@@ -452,17 +454,17 @@ Se esiste un file corrotto, verrà cancellato ora.</value>
     <value>Configurare il Firewall di Windows per permettere accessi esterni a MediaPortal</value>
   </data>
   <data name="OS_Beta" xml:space="preserve">
-    <value>E' installata una versione beta del Service Pack, il vostro sistema non è supportato.
-Proseguire l'installazione è un vostro rischio.</value>
+    <value>E&apos; installata una versione beta del Service Pack, il vostro sistema non è supportato.
+Proseguire l&apos;installazione è un vostro rischio.</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Chiudendo questo programma, si aprirà la cartella "MediaPortal Installation". Copiatela sul vostro HTPC e installate lanciando "MediaPortal.Deploy.exe".</value>
+    <value>Chiudendo questo programma, si aprirà la cartella &quot;MediaPortal Installation&quot;. Copiatela sul vostro HTPC e installate lanciando &quot;MediaPortal.Deploy.exe&quot;.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Saltato</value>
   </data>
   <data name="Exit_Installation" xml:space="preserve">
-    <value>Abbandonare l'installazione di MediaPortal ?</value>
+    <value>Abbandonare l&apos;installazione di MediaPortal ?</value>
   </data>
   <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
     <value>Configurazione dello scarico: lingua={0}, arch={1}</value>
@@ -471,10 +473,10 @@ Proseguire l'installazione è un vostro rischio.</value>
     <value>Selezionare le preferenze per lo scarico:</value>
   </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
-    <value>Connessione internet non trovata ! Per continuare l'installazione è necessaria una connessione internet.</value>
+    <value>Connessione internet non trovata ! Per continuare l&apos;installazione è necessaria una connessione internet.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
-    <value>Non c'è spazio libero sufficiente sul disco specificato! L'installazione di MediaPortal necessita di almeno {0} MB di spazio libero.</value>
+    <value>Non c&apos;è spazio libero sufficiente sul disco specificato! L&apos;installazione di MediaPortal necessita di almeno {0} MB di spazio libero.</value>
   </data>
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>Trovato MediaPortal {0}.</value>
@@ -486,11 +488,11 @@ Proseguire l'installazione è un vostro rischio.</value>
     <value>Re-installazione completa</value>
   </data>
   <data name="Upgrade_yes" xml:space="preserve">
-    <value>Aggiorna l'attuale installazione alla versione {0}</value>
+    <value>Aggiorna l&apos;attuale installazione alla versione {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
     <value>NOTA: Non si può aggiornare da una build GIT esistente,
-            quest'ultima è intesa solo a scopo di test.</value>
+            quest&apos;ultima è intesa solo a scopo di test.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>Aggiornamento-&gt;Installazione</value>
@@ -504,10 +506,31 @@ Proseguire l'installazione è un vostro rischio.</value>
   <data name="AeroThemeMissing" xml:space="preserve">
     <value>Windows AERO è attualmente disabilitato.
 Tenere conto che AERO è necessario per evitare tremolio e scatti durante la riproduzione video.
-Abilitando AERO si ridurrà anche l'uso della CPU, e il vostro HTPC sarà silenzioso e produrrà meno calore.</value>
+Abilitando AERO si ridurrà anche l&apos;uso della CPU, e il vostro HTPC sarà silenzioso e produrrà meno calore.</value>
   </data>
   <data name="Reboot_Required" xml:space="preserve">
-    <value>E' richiesto un riavvio da un componente Microsoft.
-Procedere con tale operazione prima di continuare l'installazione di MediaPortal.</value>
+    <value>E&apos; richiesto un riavvio da un componente Microsoft.
+Procedere con tale operazione prima di continuare l&apos;installazione di MediaPortal.</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value></value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value></value>
   </data>
 </root>

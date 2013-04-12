@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Et-klik-installation</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Alle nødvendige applikationer installeres i standard foldere med standard indstillinger. Kodeordet til databasen er "MediaPortal".</value>
+    <value>Alle nødvendige applikationer installeres i standard foldere med standard indstillinger. Kodeordet til databasen er &quot;MediaPortal&quot;.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Udfør en avanceret installation</value>
@@ -170,7 +170,7 @@
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Kun TV-Server installeres på denne PC. Denne PC vil fungere som dedikeret TV-Server
- og giver mulighed for TV på andre PC'er (klienter) i netværket. (Installation af database er nødvendig)</value>
+ og giver mulighed for TV på andre PC&apos;er (klienter) i netværket. (Installation af database er nødvendig)</value>
   </data>
   <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Gennemse</value>
@@ -281,7 +281,7 @@
     <value>Installationen af applikationen fejlede [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Tryk på "Installér" for at udføre alle handlinger for installationen</value>
+    <value>Tryk på &quot;Installér&quot; for at udføre alle handlinger for installationen</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Downloader...</value>
@@ -303,6 +303,7 @@
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal Installations Værktøj (Deploy Tool)</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Tilbage</value>
@@ -312,6 +313,7 @@
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Dette program guider dig igennem installationen af MediaPortal og alle de krævede komponenter.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Næste</value>
@@ -323,7 +325,7 @@
     <value>Den nødvendige fil findes stadig ikke</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Tryk "Fortsæt", når du er færdig med at downloade den nødvendige fil</value>
+    <value>Tryk &quot;Fortsæt&quot;, når du er færdig med at downloade den nødvendige fil</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Du skal manuelt downloade denne fil</value>
@@ -431,7 +433,7 @@ måske på en PC uden internetforbindelse?</value>
     <value>Du har nu downloadet alle komponenterne til MediaPortal</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Tryk på "Download" for at begynde at hente alle komponenterne</value>
+    <value>Tryk på &quot;Download&quot; for at begynde at hente alle komponenterne</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Desværre understøttes dit operativ system for tiden ikke af MediaPortal!</value>
@@ -453,8 +455,8 @@ Nu slettes en eventuel korrupt konfigurations fil.</value>
 Fortsæt for egen risiko!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Denne applikation vil nu lukke, og åbne folderen "MediaPortal Installation".
-Overfør folderen til din HTPC. Start installationen ved at køre "MediaPortal.DeployTool.exe".</value>
+    <value>Denne applikation vil nu lukke, og åbne folderen &quot;MediaPortal Installation&quot;.
+Overfør folderen til din HTPC. Start installationen ved at køre &quot;MediaPortal.DeployTool.exe&quot;.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Springes over</value>
@@ -473,5 +475,60 @@ Overfør folderen til din HTPC. Start installationen ved at køre "MediaPortal.D
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Der er ikke nok ledig plads på den valgte harddisk! Installationen af MediaPortal kræver {0} MB ledig harddisk plads.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} fundet.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
+    <value>MediaPortal {0} (build {1}) fundet.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Ny installation</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Opdater nuværende installation af MediaPortal til {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>BEMÆRK: Du kan ikke opgradere en eksisterende  GIT build installation,
+          disse kan kun anvendes til test.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Opgrader-&gt;Installer</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(læs hvorfor her)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 er deaktiveret</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO er deaktiveret.
+AERO er nødvendig for at undgå at billedet hakker og fryser.
+Aktivering af AERO vil også reducere CPU-forbruget, og dermed gøre din HTPC mere støjsvage, køligere og bruge mindre strøm.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>En genstart er nødvendig for en Microsoft-komponent.
+Genstart computeren før du fortsætter med MediaPortal installationen.</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Installer LAV codecs for at kunne afspille de mest almindelige lyd og video formater</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Vælg et skind</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Anvend nuværende skind (Det bliver tjekket om det er kombatibelt)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Mere information</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Vis andre udvidelser</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Installer udvidelser som tilføjer understøttelse af tredje parts Plug-ins</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Anbefalede udvidelser</value>
   </data>
 </root>

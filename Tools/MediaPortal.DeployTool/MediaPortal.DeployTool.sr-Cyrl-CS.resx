@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -59,46 +59,46 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -142,7 +142,7 @@
     <value>Један-клик инсталација</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Сви потребни програми ће бити инсталирани у своје подразумеване локације и са стандардним подешавањима. Лозинка базе података је "MediaPortal"l</value>
+    <value>Сви потребни програми ће бити инсталирани у своје подразумеване локације и са стандардним подешавањима. Лозинка базе података је &quot;MediaPortal&quot;l</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Изврши напредну инсталацију</value>
@@ -303,6 +303,7 @@
   </data>
   <data name="MainWindow_AppName" xml:space="preserve">
     <value>MediaPortal алат за инсталацију</value>
+    <comment>Name for the title bar of the app</comment>
   </data>
   <data name="MainWindow_backButton" xml:space="preserve">
     <value>Претходни</value>
@@ -312,6 +313,7 @@
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
     <value>Ова инсталација ће вас водити кроз инсталацију MediaPortal-а и свих потребних компоненти.</value>
+    <comment>Heading directly under MP image</comment>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>Следећи</value>
@@ -324,7 +326,7 @@
 (Име фајла треба да буде као и предложено)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Кликни на дугме "Настави" када завршите са преузимањем потребног фајла.</value>
+    <value>Кликни на дугме &quot;Настави&quot; када завршите са преузимањем потребног фајла.</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Мораћете да преузмете са интернета следеће фајлове:</value>
@@ -432,7 +434,7 @@
     <value>Успешно сте преузели све компоненте MediaPortal-а</value>
   </data>
   <data name="Install_labelHeadingDownload" xml:space="preserve">
-    <value>Кликни на дугме "Преузми" како би се преузеле све потребне компоненте</value>
+    <value>Кликни на дугме &quot;Преузми&quot; како би се преузеле све потребне компоненте</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
     <value>Извињавамо се, али ваш оперативни систем не подржава MediaPortal!</value>
@@ -454,8 +456,8 @@
 Наставите на сопствени ризик!</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
-    <value>Овај програм ће се затворити и отворити директоријум "MediaPortal инсталација".
-Пренесите овај директоријум на ваш HTPC. Покрените инсталацију покретањем "MediaPortal.DeployTool.exe".</value>
+    <value>Овај програм ће се затворити и отворити директоријум &quot;MediaPortal инсталација&quot;.
+Пренесите овај директоријум на ваш HTPC. Покрените инсталацију покретањем &quot;MediaPortal.DeployTool.exe&quot;.</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Прескочи</value>
@@ -468,5 +470,62 @@
   </data>
   <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
     <value>Одаберите подешавања за преузимање са интернета:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Не постоји приступ интернету! Да би сте наставили инсталацију потребан је приступ интернету.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Не постоји довољно меморије на диску који сте одабрали! За инсталацију МедијаПортал-а потребно је минимум {0} MB слободног простора на диску.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>МедијаПортал {0} пронађен</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
+    <value>МедијаПортал {0} (грађа {1} ) пронађена.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Нова инсталација</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Ажурирај тренутну инсталацију на {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>НАПОМЕНА: Не можете да надоградите из постојеће ГИТ грађе, ⏎ оне су намењене само у сврхе тестирања.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Надоградња-&gt;Инсталирај</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(кликни овде да видиш зашто)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 је онемогућен</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO није тренутно активан.⏎  AERO је потребан како би се избегло цепање и подрхтавање слике.⏎ Уколико је AERO активан, оптерећене процесора ће бити смањено те ће и рад вашег НTPC-а бити тиши и хладнији.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>Рестартовање је потребно. ⏎ Рестартујте рачунар пре него наставите са МедијаПортал инсталацијом</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Инсталирај LAV филтере да бисте омогућили пуштање разних аудио и видео формата</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Одабери скин</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Користи постојећи скин (Ово ће бити проверено за компатибилност са програмом)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Више информација</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Прегледај друге екстензије</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Инсталирај екстензију која омогућава плуг-ин-е из других извора</value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Препоручене екстензије</value>
   </data>
 </root>
