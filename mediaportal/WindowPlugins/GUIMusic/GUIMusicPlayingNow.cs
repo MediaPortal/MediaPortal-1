@@ -26,9 +26,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
@@ -1226,7 +1228,7 @@ namespace MediaPortal.GUI.Music
       if (tag == null) return;
 
       var tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
-      var dbTracks = LastFMLibrary.GetSimilarTracksInDatabase(tracks);
+      var dbTracks = GetSimilarTracksInDatabase(tracks);
       
       for (var i = 0; i < 3; i++)
       {
@@ -1246,6 +1248,31 @@ namespace MediaPortal.GUI.Music
         lstSimilarTracks.Add(item);
 
       }
+    }
+
+    /// <summary>
+    /// Takes a list of tracks supplied by last.fm and matches them to tracks in the database
+    /// </summary>
+    /// <param name="tracks">List of last FM tracks to check</param>
+    /// <returns>List of matched songs from input that exist in the users database</returns>
+    private static List<Song> GetSimilarTracksInDatabase(List<LastFMSimilarTrack> tracks)
+    {
+      //TODO: this code now exists in both last.fm scrobbler and here.   Need to combine the code (without creating a circular 
+      // list contains songs which exist in users collection
+      var dbTrackListing = new List<Song>();
+
+      //identify which are available in users collection (ie. we can use they for auto DJ mode)
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+                                                                  DatabaseUtility.RemoveInvalidChars(track.ArtistName),
+                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
+      {
+        List<Song> trackListing;
+        MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
+
+        dbTrackListing.AddRange(trackListing);
+      }
+
+      return dbTrackListing;
     }
 
     #endregion

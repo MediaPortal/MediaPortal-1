@@ -48,38 +48,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       pbLastFMUser.ImageLocation = user.UserImgURL;
     }
 
-   private void chkAutoDJ_CheckedChanged(object sender, EventArgs e)
-    {
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", chkAutoDJ.Checked);
-      }
-    }
-
-    private void numRandomness_ValueChanged(object sender, EventArgs e)
-    {
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValue("lastfm:test", "randomness", numRandomness.Value);
-      }
-    }
-
-    private void chkAnnounce_CheckedChanged(object sender, EventArgs e)
-    {
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValueAsBool("lastfm:test", "announce", chkAnnounce.Checked);
-      }
-    }
-
-    private void chkScrobble_CheckedChanged(object sender, EventArgs e)
-    {
-      using (var xmlwriter = new MPSettings())
-      {
-        xmlwriter.SetValueAsBool("lastfm:test", "scrobble", chkScrobble.Checked);
-      }
-    }
-
     private void btnWebAuthenticate_Click(object sender, EventArgs e)
     {
       var frm = new LastFMAuthentication();
@@ -102,6 +70,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       using (var xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", chkAutoDJ.Checked);
+        xmlwriter.SetValueAsBool("lastfm:test", "allowDiffVersions", chkDiferentVersions.Checked);
         xmlwriter.SetValue("lastfm:test", "randomness", numRandomness.Value);
         xmlwriter.SetValueAsBool("lastfm:test", "announce", chkAnnounce.Checked);
         xmlwriter.SetValueAsBool("lastfm:test", "scrobble", chkScrobble.Checked);

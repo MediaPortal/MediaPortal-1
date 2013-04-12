@@ -54,14 +54,14 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.chkScrobble = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkAnnounce = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.txtUserName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.pbLastFMUser = new System.Windows.Forms.PictureBox();
       this.btnAddUser = new System.Windows.Forms.Button();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chkAutoDJ = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.numRandomness = new System.Windows.Forms.NumericUpDown();
-      this.chkAutoDJ = new System.Windows.Forms.CheckBox();
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.chkDiferentVersions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -84,9 +84,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.mpGroupBox3.Controls.Add(this.chkScrobble);
       this.mpGroupBox3.Controls.Add(this.chkAnnounce);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(187, 111);
+      this.mpGroupBox3.Location = new System.Drawing.Point(257, 111);
       this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(406, 104);
+      this.mpGroupBox3.Size = new System.Drawing.Size(205, 104);
       this.mpGroupBox3.TabIndex = 8;
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Scrobbling";
@@ -103,7 +103,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.chkScrobble.TabIndex = 1;
       this.chkScrobble.Text = "Scrobble Tracks to user profile";
       this.chkScrobble.UseVisualStyleBackColor = true;
-      this.chkScrobble.CheckedChanged += new System.EventHandler(this.chkScrobble_CheckedChanged);
       // 
       // chkAnnounce
       // 
@@ -117,28 +116,18 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.chkAnnounce.TabIndex = 0;
       this.chkAnnounce.Text = "Announce Tracks on website";
       this.chkAnnounce.UseVisualStyleBackColor = true;
-      this.chkAnnounce.CheckedChanged += new System.EventHandler(this.chkAnnounce_CheckedChanged);
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Controls.Add(this.txtUserName);
       this.mpGroupBox2.Controls.Add(this.pbLastFMUser);
       this.mpGroupBox2.Controls.Add(this.btnAddUser);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox2.Location = new System.Drawing.Point(187, 14);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(407, 88);
+      this.mpGroupBox2.Size = new System.Drawing.Size(275, 88);
       this.mpGroupBox2.TabIndex = 7;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Authentication";
-      // 
-      // txtUserName
-      // 
-      this.txtUserName.BorderColor = System.Drawing.Color.Empty;
-      this.txtUserName.Location = new System.Drawing.Point(136, 33);
-      this.txtUserName.Name = "txtUserName";
-      this.txtUserName.Size = new System.Drawing.Size(100, 20);
-      this.txtUserName.TabIndex = 7;
       // 
       // pbLastFMUser
       // 
@@ -150,7 +139,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       // btnAddUser
       // 
-      this.btnAddUser.Location = new System.Drawing.Point(277, 33);
+      this.btnAddUser.Location = new System.Drawing.Point(156, 46);
       this.btnAddUser.Name = "btnAddUser";
       this.btnAddUser.Size = new System.Drawing.Size(99, 23);
       this.btnAddUser.TabIndex = 5;
@@ -160,19 +149,33 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Controls.Add(this.numRandomness);
+      this.mpGroupBox1.Controls.Add(this.chkDiferentVersions);
       this.mpGroupBox1.Controls.Add(this.chkAutoDJ);
+      this.mpGroupBox1.Controls.Add(this.numRandomness);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(13, 92);
+      this.mpGroupBox1.Location = new System.Drawing.Point(13, 111);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(144, 113);
+      this.mpGroupBox1.Size = new System.Drawing.Size(238, 149);
       this.mpGroupBox1.TabIndex = 6;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Auto DJ";
       // 
+      // chkAutoDJ
+      // 
+      this.chkAutoDJ.AutoSize = true;
+      this.chkAutoDJ.Checked = true;
+      this.chkAutoDJ.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkAutoDJ.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkAutoDJ.Location = new System.Drawing.Point(12, 31);
+      this.chkAutoDJ.Name = "chkAutoDJ";
+      this.chkAutoDJ.Size = new System.Drawing.Size(92, 17);
+      this.chkAutoDJ.TabIndex = 4;
+      this.chkAutoDJ.Text = "Auto DJ Mode";
+      this.chkAutoDJ.UseVisualStyleBackColor = true;
+      // 
       // numRandomness
       // 
-      this.numRandomness.Location = new System.Drawing.Point(12, 77);
+      this.numRandomness.Location = new System.Drawing.Point(12, 114);
       this.numRandomness.Maximum = new decimal(new int[] {
             200,
             0,
@@ -186,24 +189,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
             0,
             0,
             0});
-      this.numRandomness.ValueChanged += new System.EventHandler(this.numRandomness_ValueChanged);
-      // 
-      // chkAutoDJ
-      // 
-      this.chkAutoDJ.AutoSize = true;
-      this.chkAutoDJ.Checked = true;
-      this.chkAutoDJ.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkAutoDJ.Location = new System.Drawing.Point(12, 30);
-      this.chkAutoDJ.Name = "chkAutoDJ";
-      this.chkAutoDJ.Size = new System.Drawing.Size(94, 17);
-      this.chkAutoDJ.TabIndex = 2;
-      this.chkAutoDJ.Text = "Auto DJ Mode";
-      this.chkAutoDJ.UseVisualStyleBackColor = true;
-      this.chkAutoDJ.CheckedChanged += new System.EventHandler(this.chkAutoDJ_CheckedChanged);
       // 
       // btnOK
       // 
-      this.btnOK.Location = new System.Drawing.Point(426, 240);
+      this.btnOK.Location = new System.Drawing.Point(295, 237);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(75, 23);
       this.btnOK.TabIndex = 9;
@@ -213,7 +202,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       // btnCancel
       // 
-      this.btnCancel.Location = new System.Drawing.Point(518, 240);
+      this.btnCancel.Location = new System.Drawing.Point(387, 237);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 10;
@@ -221,11 +210,24 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.btnCancel.UseVisualStyleBackColor = true;
       this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
+      // chkDiferentVersions
+      // 
+      this.chkDiferentVersions.AutoSize = true;
+      this.chkDiferentVersions.Checked = true;
+      this.chkDiferentVersions.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkDiferentVersions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkDiferentVersions.Location = new System.Drawing.Point(12, 58);
+      this.chkDiferentVersions.Name = "chkDiferentVersions";
+      this.chkDiferentVersions.Size = new System.Drawing.Size(217, 17);
+      this.chkDiferentVersions.TabIndex = 5;
+      this.chkDiferentVersions.Text = "Allow different versions of the same track";
+      this.chkDiferentVersions.UseVisualStyleBackColor = true;
+      // 
       // LastFMConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(617, 287);
+      this.ClientSize = new System.Drawing.Size(491, 287);
       this.Controls.Add(this.btnCancel);
       this.Controls.Add(this.btnOK);
       this.Controls.Add(this.mpGroupBox3);
@@ -238,7 +240,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pbLastFMUser)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
@@ -249,18 +250,18 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
     #endregion
 
-    private System.Windows.Forms.CheckBox chkAutoDJ;
     private System.Windows.Forms.NumericUpDown numRandomness;
     private System.Windows.Forms.PictureBox pictureBox1;
     private System.Windows.Forms.Button btnAddUser;
     private UserInterface.Controls.MPGroupBox mpGroupBox1;
     private UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private UserInterface.Controls.MPTextBox txtUserName;
     private System.Windows.Forms.PictureBox pbLastFMUser;
     private UserInterface.Controls.MPGroupBox mpGroupBox3;
     private UserInterface.Controls.MPCheckBox chkScrobble;
     private UserInterface.Controls.MPCheckBox chkAnnounce;
     private UserInterface.Controls.MPButton btnOK;
     private UserInterface.Controls.MPButton btnCancel;
+    private UserInterface.Controls.MPCheckBox chkAutoDJ;
+    private UserInterface.Controls.MPCheckBox chkDiferentVersions;
   }
 }

@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using MediaPortal.Configuration;
+using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
 using MediaPortal.Music.Database;
@@ -32,6 +33,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.LastFM;
+using MediaPortal.Util;
 
 namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 {
@@ -49,9 +51,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static BackgroundWorker _announceWorker;
     private static BackgroundWorker _scrobbleWorker;
     private static readonly Random Randomizer = new Random();
+    private static bool _allowMultipleVersions = true;
     private static int _randomness = 100;
-    private static bool _announceTracks = false;
-    private static bool _scrobbleTracks = false;
+    private static bool _announceTracks;
+    private static bool _scrobbleTracks;
 
     private static void LoadSettings()
     {
@@ -59,9 +62,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         //TODO: Is randomness still required?
         _randomness = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
+        _allowMultipleVersions = xmlreader.GetValueAsBool("lastfm:test", "allowDiffVersions", true);
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
-
       }
     }
 
@@ -277,8 +280,25 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       if (_announceTracks)
       {
-        LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
-                                       currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+        try
+        {
+          LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
+                                         currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+          Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
+        }
+        catch (LastFMException ex)
+        {
+          if (ex.Source == "")
+          {
+            Log.Error("Last.fm error when announcing now playing track: {0} - {1}",currentSong.Artist, currentSong.Title);
+            Log.Error(ex.Message);
+          }
+          else
+          {
+            Log.Error("Exception when updating now playing track on last.fm");
+            Log.Error(ex.InnerException);
+          }
+        }
       }
 
       if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
@@ -318,7 +338,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // get song details and if appropriate scrobble to last.fm
 
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-      var plI = pl.First(plItem => plItem.FileName == filename);
+      var plI = pl.FirstOrDefault(plItem => plItem.FileName == filename);
       if (plI == null || plI.MusicTag == null)
       {
         Log.Info("Unable to scrobble song: {0}  as it does not exist in the playlist");
@@ -337,7 +357,35 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
-      LastFMLibrary.Scrobble(currentSong.Artist, currentSong.Title, currentSong.Album);
+      if (!Win32API.IsConnectedToInternet())
+      {
+        LastFMLibrary.CacheScrobble(currentSong.Artist, currentSong.Title, currentSong.Album, true, DateTime.UtcNow);
+        Log.Info("No internet connection so unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+        Log.Info("Scrobble has been cached");
+        return;
+      }
+
+      try
+      {
+        LastFMLibrary.Scrobble(currentSong.Artist, currentSong.Title, currentSong.Album);
+        Log.Info("Last.fm scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+      }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.ServiceOffline ||
+            ex.LastFMError == LastFMException.LastFMErrorCode.ServiceUnavailable)
+        {
+          LastFMLibrary.CacheScrobble(currentSong.Artist,currentSong.Title,currentSong.Album,true,DateTime.UtcNow);
+          Log.Info("Unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+          Log.Info("Scrobble has been cached");
+        }
+        else
+        {
+          Log.Error("Unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+          Log.Error(ex);
+        }
+      }
+      
     }
 
     #endregion
@@ -363,7 +411,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     public static void AutoDJ(string strArtist, string strTrack)
     {
       var tracks = LastFMLibrary.GetSimilarTracks(strArtist, strTrack);
-      var dbTracks = LastFMLibrary.GetSimilarTracksInDatabase(tracks);
+      var dbTracks = GetSimilarTracksInDatabase(tracks);
       if (dbTracks.Count > 0)
       {
         AutoDJAddToPlaylist(dbTracks);
@@ -407,6 +455,30 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         Log.Info("Auto DJ: Added to playlist: {0} - {1}", dbTracks[trackNo].Artist, dbTracks[trackNo].Title);
         dbTracks.RemoveAt(trackNo);  // remove song after adding to playlist to prevent the same sone being added twice
       }
+    }
+
+    /// <summary>
+    /// Takes a list of tracks supplied by last.fm and matches them to tracks in the database
+    /// </summary>
+    /// <param name="tracks">List of last FM tracks to check</param>
+    /// <returns>List of matched songs from input that exist in the users database</returns>
+    private static List<Song> GetSimilarTracksInDatabase(IEnumerable<LastFMSimilarTrack> tracks)
+    {
+      // list contains songs which exist in users collection
+      var dbTrackListing = new List<Song>();
+
+      //identify which are available in users collection (ie. we can use they for auto DJ mode)
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+                                                                  DatabaseUtility.RemoveInvalidChars(track.ArtistName),
+                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
+      {
+        List<Song> trackListing;
+        MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
+
+        dbTrackListing.AddRange(trackListing);
+      }
+
+      return _allowMultipleVersions ? dbTrackListing : dbTrackListing.GroupBy(t => new {t.Artist, t.Title}).Select(y => y.First()).ToList();
     }
 
     #endregion

@@ -76,6 +76,7 @@ namespace MediaPortal.LastFM
 
     public LastFMException(string message, Exception inner) : base(message, inner)
     {
+      LastFMError = LastFMErrorCode.UnknownError;
     }
 
   }

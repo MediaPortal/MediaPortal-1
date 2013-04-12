@@ -20,7 +20,9 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.LastFM;
+using MediaPortal.Music.Database;
 
 namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 {
@@ -55,10 +57,10 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
-      var success = false;
+      string sessionKey;
       try
       {
-        success = LastFMLibrary.AuthGetMobileSession(userName, password);
+        sessionKey = LastFMLibrary.AuthGetMobileSession(userName, password);
       }
       catch (LastFMException ex)
       {
@@ -67,18 +69,15 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         this.Close();
         return;
       }
-      if (!success)
-      {
-        MessageBox.Show("Error adding user.\nPlease check logs.", "Error adding user", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        this.Close();
-        return;
-      }
+
+      MusicDatabase.Instance.AddLastFMUser(userName, sessionKey);
 
       //details should now be added.   Confirm
       if (LastFMLibrary.GetUserInfo() != null)
       {
         MessageBox.Show("User: " + userName + " Added", "User Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
+      Log.Info("Last.fm Session Key stored for user: {0}", userName);
 
       this.Close();
     }

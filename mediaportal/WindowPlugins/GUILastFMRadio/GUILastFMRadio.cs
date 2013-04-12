@@ -7,11 +7,12 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Music;
+using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.LastFM;
-
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
@@ -149,7 +150,10 @@ namespace MediaPortal.GUI.LastFMRadio
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       g_Player.PlayBackStopped += OnPlayBackStopped;
-      var a = new LastFMLibrary(); //TODO this is just making _SK get loaded.   No need to actual instansiate
+      var mdb = MusicDatabase.Instance;
+      var sessionKey = mdb.GetLastFMSK();
+      var currentUser = mdb.GetLastFMUser();
+      var a = new LastFMLibrary(sessionKey, currentUser); //TODO this is just making _SK get loaded.   No need to actual instansiate
       return Load(GUIGraphicsContext.Skin + @"\lastFmRadio.xml");
     }
 
@@ -228,9 +232,20 @@ namespace MediaPortal.GUI.LastFMRadio
     /// <summary>
     /// Tune to a new last.fm radio station and add tracks to playlist
     /// </summary>
-    /// <param name="strStation"></param>
+    /// <param name="strStation">name os station to tune to</param>
     private void TuneToStation(string strStation)
     {
+      if (!Win32API.IsConnectedToInternet())
+      {
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          dlgNotify.SetText("An internet connection is required for last.fm radio");
+          dlgNotify.DoModal(GetID);
+        }
+        return;
+      }
 
       Log.Debug("Attempting to Tune to last.fm station: {0}", strStation);
 
@@ -239,7 +254,7 @@ namespace MediaPortal.GUI.LastFMRadio
       pl.Clear();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
       _playlistPlayer.Reset();
-      
+
       try
       {
         LastFMLibrary.TuneRadio(strStation);
@@ -256,6 +271,8 @@ namespace MediaPortal.GUI.LastFMRadio
         }
         return;
       }
+
+      Log.Debug("Tuned to last.fm station: {0}", strStation);
       
       AddMoreTracks();
       _playlistPlayer.Play(0);
@@ -266,23 +283,26 @@ namespace MediaPortal.GUI.LastFMRadio
     /// </summary>
     private void AddMoreTracks()
     {
-      List<LastFMStreamingTrack> tracks = null;
+      List<LastFMStreamingTrack> tracks;
 
-      var success = false;
-      //TODO: localize string
-      var errMessage = "Error getting tracks.\nPlease check logs";
       try
       {
-        success = LastFMLibrary.GetRadioPlaylist(out tracks);
+        tracks = LastFMLibrary.GetRadioPlaylist();
       }
       catch (LastFMException ex)
       {
-        Log.Error(ex);
-        errMessage = ex.Message;
-      }
+        Log.Error("Unable to add last.fm tracks to playlist");
+        var errMessage = "Unable to add last.fm tracks to playlist\n";
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.UnknownError)
+        {
+          Log.Error(ex);
+          errMessage += "Please check logs";
+        }
+        else
+        {
+          errMessage += ex.Message;
+        }
 
-      if (!success)
-      {
         var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
@@ -310,7 +330,9 @@ namespace MediaPortal.GUI.LastFMRadio
           FileName = lastFMTrack.TrackStreamingURL,
           Description = lastFMTrack.ArtistName + " - " + lastFMTrack.TrackTitle,
           Duration = lastFMTrack.Duration,
-          MusicTag = tag
+          MusicTag = tag,
+          Source = PlayListItem.PlayListItemSource.Recommendation,
+          SourceDescription = "Last.fm Radio"
         };
 
         Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackStreamingURL);

@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Music
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        _playlistFolder = xmlreader.GetValueAsString("music", "playlists", string.Empty);
         _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
         _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
         playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
