@@ -102,7 +102,6 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
   if (m_pBd)
   {
     _bd_register_overlay_proc(m_pBd, NULL, NULL);
-    _bd_register_argb_overlay_proc(m_pBd, NULL, NULL, NULL);
     _bd_close(m_pBd);
   }
 
