@@ -1052,7 +1052,7 @@ namespace MediaPortal
       var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
                                           DeviceType.Hardware, 
                                           _renderTarget.Handle,
-                                          CreateFlags.PureDevice | CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                           ref param,
                                           IntPtr.Zero,
                                           out dev);
@@ -2035,30 +2035,6 @@ namespace MediaPortal
       }
       base.OnFormClosing(formClosingEventArgs);
     }
-
-
-    /// <summary>
-    /// Performs the work of setting the specified bounds of this control.
-    /// http://msdn.microsoft.com/en-us/library/system.windows.forms.control.setboundscore.aspx
-    /// </summary>
-    /// <param name="x">The new Left property value of the control.</param>
-    /// <param name="y">The new Top property value of the control.</param>
-    /// <param name="width">The new Width property value of the control.</param>
-    /// <param name="height">The new Height property value of the control.</param>
-    /// <param name="specified">A bitwise combination of the BoundsSpecified values.</param>
-    protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
-    {
-      var newBounds = new Rectangle(x, y, width, height);
-      if (GUIGraphicsContext._useScreenSelector && !Windowed && !newBounds.Equals(GUIGraphicsContext.currentScreen.Bounds))
-      {
-        Log.Info("D3D: Screenselector: skipped SetBoundsCore {0} does not match {1}", newBounds.ToString(), GUIGraphicsContext.currentScreen.Bounds.ToString());
-      }
-      else
-      {
-        base.SetBoundsCore(x, y, width, height, specified);
-      }
-    }
-
 
     /// <summary>
     /// Clean up any resources
