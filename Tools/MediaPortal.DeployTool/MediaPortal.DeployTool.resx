@@ -534,4 +534,7 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   <data name="ExtensionChoice_Title" xml:space="preserve">
     <value>Recommended Extensions</value>
   </data>
+  <data name="DeployXmlDelete_Failed" xml:space="preserve">
+    <value>Unable to delete deploy.xml\nDo you want to continue?\nSettings may not be upgraded correctly</value>
+  </data>
 </root>
