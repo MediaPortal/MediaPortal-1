@@ -37,7 +37,6 @@
 #include "audiopin.h"
 #include "videopin.h"
 #include "subtitlepin.h"
-#include "teletextpin.h"
 #include "tsfileSeek.h"
 #include "memoryreader.h"
 #include "version.h"
