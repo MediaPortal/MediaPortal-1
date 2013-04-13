@@ -474,13 +474,21 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               m_rtStreamTimeOffset = buffer->rtStart - buffer->rtClipStartTime;
               m_bZeroTimeStream=false;
             }
-            // Now we have the final timestamp, set timestamp in sample
-            //REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTimeStart;
-            //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
             rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;//- m_rtStart;
             rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;// - m_rtStart;
+
+            if (rtCorrectedStartTime < 0)
+            {
+              LogDebug("aud: dropping negative %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", 
+                buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,
+                buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
+
+              delete buffer;
+              return ERROR_NO_DATA;
+            }
+
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
           else
