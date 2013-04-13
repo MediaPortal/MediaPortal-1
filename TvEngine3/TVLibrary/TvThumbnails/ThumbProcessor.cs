@@ -51,7 +51,7 @@ namespace TvThumbnails
 
       if (Thumbs.Enabled)
       {
-        Log.Info("ThumbProcessor.Start: Create folder");
+        Log.Debug("ThumbProcessor.Start: Create thumbs folder");
         Thumbs.CreateFolders();
 
         List<string> recordings = Recording.ListAll().Select(recording => recording.FileName).ToList();
@@ -62,7 +62,7 @@ namespace TvThumbnails
       }
       else
       {
-        Log.Info("ThumbProcessor.Start: Thumbs creation disabled");
+        Log.Debug("ThumbProcessor.Start: Thumbs creation disabled");
         Stop();
       }
     }

@@ -848,8 +848,9 @@ namespace TvPlugin
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
 
-        if (!File.Exists(PreviewThumb))
+        if (!Utils.FileExistsInCache(PreviewThumb))
         {
+          Log.Debug("Thumbnail {0} does not exist in local thumbs folder - get it from TV server", PreviewThumb);
           string thumbnailFilename = string.Format("{0}{1}",
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
@@ -866,15 +867,16 @@ namespace TvPlugin
                 fs.Close();
                 fs.Dispose();
               }
+              Utils.DoInsertExistingFileIntoCache(PreviewThumb);
             }
             else
             {
-              Log.Warn("No thumbdata found for thumbnail: {0}", thumbnailFilename);
+              Log.Debug("Thumbnail {0} not found on TV server", thumbnailFilename);
             }
           }
           catch (Exception ex)
           {
-            Log.Error("Error fetching thumbnail from TVServer: {0}", ex.Message);
+            Log.Error("Error fetching thumbnail {0} from TV server - {1}", thumbnailFilename, ex.Message);
           }
         }
 
