@@ -205,7 +205,7 @@ Packet* CPlaylistManager::GetNextAudioPacket()
       //LogDebug("playlistManager: setting audio playback playlist to %d",(*m_itCurrentAudioPlayBackPlaylist)->nPlaylist);
     }
   }
-  if (firstAudio)
+  if (ret && firstAudio)
   {
     firstAudio = false;
     ret->nNewSegment = 0;
