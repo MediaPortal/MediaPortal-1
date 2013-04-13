@@ -35,12 +35,16 @@ unsigned int speakerConfigs[7]              = {4, 3, 51, 263, 63, 1551, 1599};
 LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 
 #define DEFAULT_AC3_BITRATE 448000
+#define DEFAULT_OUTPUT_BUFFER 500
+#define MAX_OUTPUT_BUFFER 5000
+#define MIN_OUTPUT_BUFFER 100
 
 // Registry setting names
 LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
 LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
 LPCTSTR WASAPIUseEventMode = TEXT("WASAPIUseEventMode");
 LPCTSTR devicePeriod = TEXT("DevicePeriod");
+LPCTSTR outputBufferSize = TEXT("OutputBufferSize");
 LPCTSTR AC3Encoding = TEXT("AC3Encoding");
 LPCTSTR AC3bitrate = TEXT("AC3bitrate");
 LPCTSTR maxBias = TEXT("MaxBias");
@@ -69,12 +73,13 @@ LPCTSTR expandMonoToStereo = TEXT("ExpandMonoToStereo");
 DWORD enableTimestretchingData = 1;
 DWORD WASAPIExclusiveData = 1;
 DWORD WASAPIUseEventModeData = 1;
-DWORD devicePeriodData = 500000;  // 50 ms
-DWORD AC3EncodingData = 0;        // 0 = disabled, 1 = auto, 2 = forced
-DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
-DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
-DWORD minBiasData = 9000;         // divide with 10000 to get real double value
-DWORD audioDelayData = 0;         // in ms
+DWORD devicePeriodData = 500000;      // 50 ms
+DWORD outputBufferSizeData = 500;     // 500 ms
+DWORD AC3EncodingData = 0;            // 0 = disabled, 1 = auto, 2 = forced
+DWORD AC3bitrateData = 448;           // maximum based on the DVD spec
+DWORD maxBiasData = 11000;            // divide with 10000 to get real double value
+DWORD minBiasData = 9000;             // divide with 10000 to get real double value
+DWORD audioDelayData = 0;             // in ms
 DWORD logSampleTimesData = 0;
 DWORD logDebugData = 0;
 DWORD HWBasedRefClockData = 1;
@@ -109,7 +114,8 @@ AudioRendererSettings::AudioRendererSettings() :
   m_lQuality_SEQUENCE_MS(82),
   m_lQuality_SEEKWINDOW_MS(28),
   m_lQuality_OVERLAP_MS(28),
-  m_hnsPeriod(0),
+  m_hnsPeriod(devicePeriodData),
+  m_msOutputBuffer(outputBufferSizeData),
   m_AC3bitrate(DEFAULT_AC3_BITRATE),
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
@@ -126,7 +132,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bExpandMonoToStereo(true)
 {
   LogRotate();
-  Log("MP Audio Renderer - v1.0.5");
+  Log("MP Audio Renderer - v1.1.5");
 
   LoadSettingsFromRegistry();
 }
@@ -138,8 +144,6 @@ AudioRendererSettings::~AudioRendererSettings()
 
 void AudioRendererSettings::LoadSettingsFromRegistry()
 {
-  USES_CONVERSION; // this is required for T2W macro
-  
   Log("Loading settings from registry");
 
   HKEY hKey;
@@ -170,6 +174,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+    ReadRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
     ReadRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -222,6 +227,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   quality_SEQUENCE_MS:      %d", quality_SEQUENCE_MSData);
     Log("   quality_SEEKWINDOW_MS:    %d", quality_SEEKWINDOW_MSData);
     Log("   quality_OVERLAP_MS:       %d", quality_OVERLAP_MSData);
+    Log("   Output buffer (ms):       %d", outputBufferSizeData);
     Log("   DevicePeriod:             %d (1 = minimal, 0 = driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:    %s", WASAPIPreferredDeviceData);
 
@@ -327,6 +333,32 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     }
 
     m_hnsPeriod = devicePeriodData;
+    
+    if (devicePeriodData == 0 || devicePeriodData == 1)
+    {
+      m_msOutputBuffer = DEFAULT_OUTPUT_BUFFER;
+      Log("   devicePeriodData: %d - using default (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+    }
+    else
+    {
+      if ((outputBufferSizeData * 10000) < (devicePeriodData * 2))
+      {
+        m_msOutputBuffer = max((devicePeriodData / 10000) * 2, MIN_OUTPUT_BUFFER);
+        Log("   too small output buffer - devicePeriodData: %d - using (%d ms) output buffer", devicePeriodData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData > MAX_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MAX_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else if (outputBufferSizeData < MIN_OUTPUT_BUFFER)
+      {
+        m_msOutputBuffer = MIN_OUTPUT_BUFFER;
+        Log("   outputBufferSize: %d - using (%d ms) output buffer", outputBufferSizeData, outputBufferSizeData);
+      }
+      else
+        m_msOutputBuffer = outputBufferSizeData;
+    }
 
     if (forceChannelMixingData > 0)
       m_bForceChannelMixing = true;
@@ -367,13 +399,15 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
     
-    wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
+    _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
 
     delete[] WASAPIPreferredDeviceData;
   }
   else // no settings in registry, create default values
   {
-    Log("Failed to open %s", folder);
+    USES_CONVERSION;
+
+    Log("Failed to open %s", T2A(folder));
     Log("Initializing registry with default settings");
 
     LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, folder, 0, NULL, REG_OPTION_NON_VOLATILE,
@@ -386,6 +420,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+      WriteRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
       WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -411,7 +446,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
       delete[] m_wWASAPIPreferredDeviceId;
       m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
-      wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
+      _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
 
       WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
@@ -442,6 +477,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   maxBiasData = m_dMaxBias * 10000;
   minBiasData = m_dMinBias * 10000;
   audioDelayData = m_lAudioDelay;
+  outputBufferSizeData = m_msOutputBuffer;
   logSampleTimesData = m_bLogSampleTimes ? 1 : 0;
   logDebugData = m_bLogDebug ? 1: 0;
   HWBasedRefClockData = m_bHWBasedRefClock ? 1 : 0;
@@ -466,6 +502,7 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
   WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
   //WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+  WriteRegistryKeyDword(hKey, outputBufferSize, outputBufferSizeData);
   WriteRegistryKeyDword(hKey, AC3Encoding, AC3EncodingData);
   WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
   WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
@@ -494,6 +531,8 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
 
 void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
+  USES_CONVERSION;
+
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
@@ -501,26 +540,30 @@ void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, D
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", lpSubKey);
+      Log("   create default value for %s", T2A(lpSubKey));
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
-      Log("   faíled to create default value for %s", lpSubKey);
+      Log("   faíled to create default value for %s", T2A(lpSubKey));
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
-{  
+{
+  USES_CONVERSION;
+
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", lpSubKey);
+    Log("Success writing to Registry: %s", T2A(lpSubKey));
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
+    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
 }
 
 void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {
+  USES_CONVERSION;
+
   DWORD dwSize = MAX_REG_LENGTH;
   DWORD dwType = REG_SZ;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
@@ -529,23 +572,25 @@ void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, 
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", lpSubKey);
+      Log("   create default value for %s", T2A(lpSubKey));
       WriteRegistryKeyString(hKey, lpSubKey, data);
     }
     else if (error == ERROR_MORE_DATA)
-      Log("   too much data, corrupted registry setting(?):  %s", lpSubKey);      
+      Log("   too much data, corrupted registry setting(?):  %s", T2A(lpSubKey));
     else
-      Log("   error: %d subkey: %s", error, lpSubKey);       
+      Log("   error: %d subkey: %s", error, T2A(lpSubKey));
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, strlen(data)+1);
+  USES_CONVERSION;
+
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", lpSubKey);
+    Log("Success writing to Registry: %s", T2A(lpSubKey));
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
+    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
 }
 
 bool AudioRendererSettings::AllowedValue(unsigned int allowedRates[], unsigned int size, unsigned int rate)
@@ -747,8 +792,8 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
   {
     if (hDialog)
     {
-      LPSTR defaultDevice = "<OS default audio device>";
-      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)defaultDevice);
+      TCHAR* pDefaultDevice = _T("<OS default audio device>");
+      SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)pDefaultDevice);
       SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, 0, 0);
     }
 
@@ -983,6 +1028,16 @@ int AudioRendererSettings::GetAudioDelay()
 void AudioRendererSettings::SetAudioDelay(int setting)
 {
   m_lAudioDelay = setting;
+}
+
+int AudioRendererSettings::GetOutputBuffer()
+{
+  return m_msOutputBuffer;
+}
+
+void AudioRendererSettings::SetOutputBuffer(int setting)
+{
+  m_msOutputBuffer = setting;
 }
 
 int AudioRendererSettings::GetSampleRate()
