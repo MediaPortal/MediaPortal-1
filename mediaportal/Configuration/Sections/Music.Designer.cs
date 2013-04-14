@@ -73,6 +73,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btAsioDeviceSettings = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPageWASAPIPLayerSettings = new System.Windows.Forms.TabPage();
+      this.mpLabel15 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.WasApiSpeakersCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.WasapiExclusiveModeCkBox = new System.Windows.Forms.CheckBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabPagePlayerUpmixSettings = new System.Windows.Forms.TabPage();
@@ -144,9 +147,6 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.mpLabel14 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.WasApiSpeakersCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -371,9 +371,9 @@ namespace MediaPortal.Configuration.Sections
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(17, 110);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
-      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(128, 17);
+      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(185, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
-      this.FadeOnStartStopChkbox.Text = "Fade-in on start / stop";
+      this.FadeOnStartStopChkbox.Text = "Fade-in on start / fade-out on stop";
       this.FadeOnStartStopChkbox.UseVisualStyleBackColor = true;
       // 
       // tabPageASIOPlayerSettings
@@ -462,6 +462,41 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageWASAPIPLayerSettings.TabIndex = 2;
       this.tabPageWASAPIPLayerSettings.Text = "WASAPI";
       this.tabPageWASAPIPLayerSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel15
+      // 
+      this.mpLabel15.AutoSize = true;
+      this.mpLabel15.Location = new System.Drawing.Point(24, 129);
+      this.mpLabel15.Name = "mpLabel15";
+      this.mpLabel15.Size = new System.Drawing.Size(356, 26);
+      this.mpLabel15.TabIndex = 6;
+      this.mpLabel15.Text = "Note: If automatic speaker detection doesn\'t work, we assume it is Stereo.\r\nYou m" +
+    "ay use the above combo to select your speaker settings.";
+      // 
+      // WasApiSpeakersCombo
+      // 
+      this.WasApiSpeakersCombo.BorderColor = System.Drawing.Color.Empty;
+      this.WasApiSpeakersCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.WasApiSpeakersCombo.FormattingEnabled = true;
+      this.WasApiSpeakersCombo.Items.AddRange(new object[] {
+            "Mono (1 Speaker)",
+            "Stereo (2 Speakers)",
+            "Quadrophonic (4 Speakers)",
+            "5.1 (6 Speakers)",
+            "7.1 (8 Speakers)"});
+      this.WasApiSpeakersCombo.Location = new System.Drawing.Point(108, 87);
+      this.WasApiSpeakersCombo.Name = "WasApiSpeakersCombo";
+      this.WasApiSpeakersCombo.Size = new System.Drawing.Size(171, 21);
+      this.WasApiSpeakersCombo.TabIndex = 5;
+      // 
+      // mpLabel14
+      // 
+      this.mpLabel14.AutoSize = true;
+      this.mpLabel14.Location = new System.Drawing.Point(21, 90);
+      this.mpLabel14.Name = "mpLabel14";
+      this.mpLabel14.Size = new System.Drawing.Size(81, 13);
+      this.mpLabel14.TabIndex = 4;
+      this.mpLabel14.Text = "Speaker Setup:";
       // 
       // WasapiExclusiveModeCkBox
       // 
@@ -1261,41 +1296,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.TabIndex = 6;
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
-      // 
-      // mpLabel14
-      // 
-      this.mpLabel14.AutoSize = true;
-      this.mpLabel14.Location = new System.Drawing.Point(21, 90);
-      this.mpLabel14.Name = "mpLabel14";
-      this.mpLabel14.Size = new System.Drawing.Size(81, 13);
-      this.mpLabel14.TabIndex = 4;
-      this.mpLabel14.Text = "Speaker Setup:";
-      // 
-      // WasApiSpeakersCombo
-      // 
-      this.WasApiSpeakersCombo.BorderColor = System.Drawing.Color.Empty;
-      this.WasApiSpeakersCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.WasApiSpeakersCombo.FormattingEnabled = true;
-      this.WasApiSpeakersCombo.Items.AddRange(new object[] {
-            "Mono (1 Speaker)",
-            "Stereo (2 Speakers)",
-            "Quadrophonic (4 Speakers)",
-            "5.1 (6 Speakers)",
-            "7.1 (8 Speakers)"});
-      this.WasApiSpeakersCombo.Location = new System.Drawing.Point(108, 87);
-      this.WasApiSpeakersCombo.Name = "WasApiSpeakersCombo";
-      this.WasApiSpeakersCombo.Size = new System.Drawing.Size(171, 21);
-      this.WasApiSpeakersCombo.TabIndex = 5;
-      // 
-      // mpLabel15
-      // 
-      this.mpLabel15.AutoSize = true;
-      this.mpLabel15.Location = new System.Drawing.Point(24, 129);
-      this.mpLabel15.Name = "mpLabel15";
-      this.mpLabel15.Size = new System.Drawing.Size(356, 26);
-      this.mpLabel15.TabIndex = 6;
-      this.mpLabel15.Text = "Note: If automatic speaker detection doesn\'t work, we assume it is Stereo.\r\nYou m" +
-    "ay use the above combo to select your speaker settings.";
       // 
       // Music
       // 
