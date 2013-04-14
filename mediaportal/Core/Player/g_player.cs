@@ -1015,7 +1015,7 @@ namespace MediaPortal.Player
         string strAudioPlayer = string.Empty;
         using (Settings xmlreader = new MPSettings())
         {
-          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0"); // Default to BASS
+          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0"); // Default to BASS
         }
         Starting = true;
         //stop radio
