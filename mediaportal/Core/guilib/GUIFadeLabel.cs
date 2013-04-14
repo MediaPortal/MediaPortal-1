@@ -22,7 +22,9 @@ using System.Collections;
 using System.Drawing;
 using MediaPortal.ExtensionMethods;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Library
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// A GUIControl for displaying fading labels.
@@ -478,7 +480,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            scrollText += WrapAround() ? originalText[wrapPosition++] : ' ';
+           scrollText += WrapAround() ? originalText[wrapPosition++] : ' ';
           }
         }
 
@@ -489,12 +491,17 @@ namespace MediaPortal.GUI.Library
         _labelControl.TextColor = color;
 
         double xpos;
+        double xoff;
+        double xclipoff = 0;
         switch (_textAlignment)
         {
           case Alignment.ALIGN_RIGHT:
             float fwt = 0;
             GetShortenedText(originalText, _width, ref fwt);
-            xpos = positionX - fwt - _scrollPosititionX + _scrollOffset;
+            //xoff = textWidth >= _width ? 0 : _width - fwt;
+            xoff = textWidth >= _width ? -fwt : _width - fwt;
+            xclipoff = xoff;
+            xpos = positionX + xoff - _scrollPosititionX + _scrollOffset;
             _labelControl.SetPosition((int)xpos, (int)positionY);
             break;
 
@@ -502,7 +509,7 @@ namespace MediaPortal.GUI.Library
             _labelControl.TextColor = color;
             _labelControl.TextVAlignment = VAlignment.ALIGN_TOP;
             xpos = positionX - _scrollPosititionX + _scrollOffset;
-            double xoff = (_width - textWidth) / 2;
+            xoff = (_width - textWidth) / 2;
             if (xoff < 0)
             {
               xoff = 0;
@@ -518,9 +525,9 @@ namespace MediaPortal.GUI.Library
         }
 
         var clipRect = new Rectangle();
-        clipRect.X      = (int)positionX;
+        clipRect.X      = (int)(positionX + xclipoff);
         clipRect.Y      = _labelControl.YPosition;
-        clipRect.Width  = maxWidth > 0 ? (int)maxWidth : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Width  = maxWidth > 0 ? (int)(maxWidth - xclipoff) : GUIGraphicsContext.Width - clipRect.X;
         clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
 
         GUIGraphicsContext.BeginClip(clipRect);
@@ -536,7 +543,14 @@ namespace MediaPortal.GUI.Library
         _labelControl.Width = _textAlignment == Alignment.ALIGN_RIGHT ? (int)fwt : (int)maxWidth;
         _labelControl.TextColor = color;
         _labelControl.TextVAlignment = _textVAlignment;
-        _labelControl.SetPosition((int)positionX, (int)positionY);
+
+        double xoff = 0;
+        if (_textAlignment == Alignment.ALIGN_RIGHT)
+        {
+          //xoff = textWidth >= maxWidth ? fwt : maxWidth;
+          xoff = textWidth >= maxWidth ? 0 : maxWidth;
+        }
+        _labelControl.SetPosition((int)positionX + (int)xoff, (int)positionY);          
         _labelControl.Render(timePassed);
       }
 
