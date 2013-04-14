@@ -204,7 +204,7 @@ namespace MediaPortal.Configuration.Sections
         _soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "None");
         _soundDeviceID = xmlreader.GetValueAsString("audioplayer", "sounddeviceid", "");
 
-        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
+        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0");
         int audioPlayer = (int)AudioPlayer.Bass; // Default to BASS Player
         try
         {
@@ -442,7 +442,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         #region Player Settings
-        xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.SelectedIndex);
+        xmlwriter.SetValue("audioplayer", "playerId", audioPlayerComboBox.SelectedIndex);
         xmlwriter.SetValue("audioplayer", "sounddevice", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).Name);
         xmlwriter.SetValue("audioplayer", "sounddeviceid", (soundDeviceComboBox.SelectedItem as SoundDeviceItem).ID);
 

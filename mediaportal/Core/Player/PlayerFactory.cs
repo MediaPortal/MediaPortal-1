@@ -240,7 +240,7 @@ namespace MediaPortal.Player
         // Get settings only once
         using (Settings xmlreader = new MPSettings())
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0"); // BASS Player
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0"); // BASS Player
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           bool InternalBDPlayer = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);

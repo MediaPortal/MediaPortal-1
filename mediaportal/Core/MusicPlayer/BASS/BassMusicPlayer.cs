@@ -83,7 +83,7 @@ namespace MediaPortal.Player
         {
           using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
-            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
+            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0");
             AudioPlayer audioPlayer = AudioPlayer.Bass;
             try
             {
