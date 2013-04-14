@@ -370,11 +370,9 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
-      Log.Info("D3D: Fullscreen / windowed mode toggled");
-
       if (Windowed)
       {
-        Log.Info("D3D: Switching from windowed mode to fullscreen");
+        Log.Info("D3D: Switching from windowed mode to full screen");
 
         // exist miniTVMode
         if (_menuItemMiniTv.Checked)
@@ -385,19 +383,18 @@ namespace MediaPortal
         _oldClientRectangle.Location = Location;
         _oldClientRectangle.Size     = ClientSize;
 
-        WindowState         = FormWindowState.Maximized;
+        WindowState         = FormWindowState.Normal;
         FormBorderStyle     = FormBorderStyle.None;
         MaximizeBox         = false;
         MinimizeBox         = false;
         Menu                = null;
-        //TopMost = true;
         Windowed            = false;
         Location            = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
         ClientSize          = GUIGraphicsContext.currentScreen.Bounds.Size;
       }
       else
       {
-        Log.Info("D3D: Switching from fullscreen to windowed mode");
+        Log.Info("D3D: Switching from full screen to windowed mode");
 
         WindowState     = FormWindowState.Normal;
         FormBorderStyle = FormBorderStyle.Sizable;
