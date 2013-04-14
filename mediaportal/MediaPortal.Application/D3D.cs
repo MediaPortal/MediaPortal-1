@@ -1445,7 +1445,7 @@ namespace MediaPortal
         showLastActiveModule = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
         lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
-        psClientNextWakeUp = xmlreader.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString(CultureInfo.InvariantCulture));
+        psClientNextWakeUp = xmlreader.GetValueAsString("psclientplugin", "nextwakeup", DateTime.MaxValue.ToString(Thread.CurrentThread.CurrentCulture));
       }
 
       if (!Util.Utils.IsGUISettingsWindow(lastActiveModule) && showLastActiveModule)
