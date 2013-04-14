@@ -2212,6 +2212,7 @@
     <String id="300105">Starta MediaPortal i helskärm</String>
     <String id="300106">Alternativ laddningsskärm</String>
     <String id="300107">Se till att MediaPortal alltid ligger överst</String>
+    <String id="300108">Göm system/snabbmenyn vid helskärmsläge</String>
     <String id="300109">Starta MediaPortal automatiskt ihop med Windows</String>
     <String id="300110">Kör minimaerat vid uppstart</String>
     <String id="300111">Kör minimerat Minimize till system-menyn istället för att avsluta</String>

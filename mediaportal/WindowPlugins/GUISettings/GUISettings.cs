@@ -30,6 +30,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Picture.Database;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin;
+using MediaPortal.Profile;
+using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
 // ReSharper disable CheckNamespace
@@ -66,7 +68,7 @@ namespace MediaPortal.GUI.Settings
 
     private void LoadSettings()
     {
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      using (Profile.Settings xmlreader = new MPSettings())
       {
         _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
 
@@ -80,7 +82,7 @@ namespace MediaPortal.GUI.Settings
 
     private void SaveSettings()
     {
-      using (Profile.Settings xmlwriter = new Profile.MPSettings())
+      using (Profile.Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mpsettings", "pin", Util.Utils.EncryptPin(_pin));
       }
@@ -299,7 +301,7 @@ namespace MediaPortal.GUI.Settings
 
     public static bool IsPinLocked()
     {
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
+      using (Profile.Settings xmlreader = new MPSettings())
       {
         _pin = Util.Utils.DecryptPin(xmlreader.GetValueAsString("mpsettings", "pin", string.Empty));
       }
@@ -329,6 +331,15 @@ namespace MediaPortal.GUI.Settings
       if (!dlgYesNo.IsConfirmed)
       {
         return;
+      }
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        if (xmlreader.GetValueAsBool("general", "hidetaskbar", false))
+        {
+          Win32API.EnableStartBar(true);
+          Win32API.ShowStartBar(true);
+        }
       }
 
       Log.Info("Settings: OnRestart - prepare for restart!");

@@ -85,22 +85,24 @@ namespace MediaPortal.Configuration.Sections
                                             new[] {"general", "usefullscreensplash", "true"},
                                             // 2 Keep MediaPortal always on top
                                             new[] {"general", "alwaysontop", "false"},
-                                            // 3 Autostart MediaPortal on Windows startup
+                                            // 3 Hide taskbar in fullscreen mode      
+                                            new[] {"general", "hidetaskbar", "false"},
+                                            // 4 Autostart MediaPortal on Windows startup
                                             new[] {"general", "autostart", "false"},
-                                            // 4 Minimize to tray on start up
+                                            // 5 Minimize to tray on start up
                                             new[] {"general", "minimizeonstartup", "false"},
-                                            // 5 Minimize to tray on GUI exit
+                                            // 6 Minimize to tray on GUI exit
                                             new[] {"general", "minimizeonexit", "false"},
-                                            // 6 Minimize to tray on focus loss (fullscreen only)
+                                            // 7 Minimize to tray on focus loss (fullscreen only)
                                             new[] {"general", "minimizeonfocusloss", "false"},
-                                            // 7 Turn off monitor when blanking screen	    
+                                            // 8 Turn off monitor when blanking screen	    
                                             new[] {"general", "turnoffmonitor", "false"},
-                                            // 8 Show last active module when starting / resuming from standby
+                                            // 9 Show last active module when starting / resuming from standby
                                             new[] {"general", "showlastactivemodule", "false"},
-                                            // 9 Use screen selector to choose where to start MP
-                                            new[] {"screenselector", "usescreenselector", "false"},
                                             // 10 Stop playback on removal of an audio renderer
-                                            new[] {"general", "stoponaudioremoval", "true"}
+                                            new[] {"general", "stoponaudioremoval", "true"},
+                                            // 11 Use screen selector to choose where to start MP
+                                            new[] {"screenselector", "usescreenselector", "false"}
                                           };
 
     /// <summary> 
@@ -185,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(3)) // autostart on boot
+        if (settingsCheckedListBox.GetItemChecked(4)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
           using (
@@ -214,8 +216,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         IntPtr result;
-        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero,
-                           Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
+        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
       }
       catch (Exception ex)
       {
@@ -232,6 +233,16 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private void settingsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void lbScreen_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void cbScreen_SelectedIndexChanged(object sender, EventArgs e)
     {
 
     }

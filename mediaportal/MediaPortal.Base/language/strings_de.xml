@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -2177,6 +2177,7 @@
     <String id="300105">MediaPortal im Vollbild-Modus starten</String>
     <String id="300106">Start-Bildschirm anzeigen</String>
     <String id="300107">MediaPortal immer im Vordergrund</String>
+    <String id="300108">Taskbar im Vollbild-Modus ausblenden</String>
     <String id="300109">MediaPortal zusammen mit Windows starten</String>
     <String id="300110">Beim Start in Tray minimieren</String>
     <String id="300111">Beim Verlassen von MP in Tray minimieren</String>

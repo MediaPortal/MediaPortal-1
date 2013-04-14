@@ -88,7 +88,6 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "general", "enables3trick");
       RemoveEntry(settings, "general", "turnmonitoronafterresume");
       RemoveEntry(settings, "general", "restartonresume");
-      RemoveEntry(settings, "general", "hidetaskbar");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");

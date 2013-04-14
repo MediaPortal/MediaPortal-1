@@ -2204,6 +2204,7 @@
     <String id="300105">Start MediaPortal schermvullend</String>
     <String id="300106">Alternatief opstartscherm</String>
     <String id="300107">MediaPortal altijd op de voorgrond houden</String>
+    <String id="300108">Taakbalk verbergen waneer schermvullend</String>
     <String id="300109">Autostart MediaPortal tijdens opstarten Windows</String>
     <String id="300110">Minimaliseren naar systeemvak bij het opstarten</String>
     <String id="300111">Minimaliseren naar systeemvak bij afsluiten</String>

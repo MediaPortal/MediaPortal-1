@@ -53,6 +53,7 @@ namespace WatchDog
     private bool _autoMode;
     private bool _watchdog;
     private bool _restartMP;
+    private readonly bool _restoreTaskbar;
     private int _cancelDelay = 10;
     private Process _processMP;
     private readonly List<string> _knownPids = new List<string>();
@@ -215,6 +216,10 @@ namespace WatchDog
         WindowState = FormWindowState.Minimized;
         ShowInTaskbar = false;
         tmrWatchdog.Enabled = true;
+        using (var xmlreader = new MPSettings())
+        {
+          _restoreTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+        }
       }
     }
 
@@ -501,6 +506,12 @@ namespace WatchDog
         EnableChoice(false);
         ExportLogsRadioButton.Checked = true;
         ProceedButton.Enabled = true;
+
+        if (_restoreTaskbar)
+        {
+          MediaPortal.Util.Win32API.EnableStartBar(true);
+          MediaPortal.Util.Win32API.ShowStartBar(true);
+        }
 
         if (!_restartMP)
         {

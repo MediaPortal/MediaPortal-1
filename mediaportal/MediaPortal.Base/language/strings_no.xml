@@ -2204,6 +2204,7 @@
     <String id="300105">Start opp MediaPortal på full skjerm</String>
     <String id="300106">Alternativ oppstartsskjerm</String>
     <String id="300107">Ha alltid MediaPortal på toppen</String>
+    <String id="300108">Gjem oppgavelinjen i fullskjermsvisning</String>
     <String id="300109">Start MediaPortal automatisk når Windows starter</String>
     <String id="300110">Minimer til systemstatusfelt ved oppstart</String>
     <String id="300111">Minimer til systemstatusfelt ved GUI avsluttes</String>

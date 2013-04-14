@@ -2205,6 +2205,7 @@
     <String id="300105">Démarrer MediaPortal en plein écran</String>
     <String id="300106">Écran de démarrage alternatif</String>
     <String id="300107">Gardez MediaPortal toujours au dessus</String>
+    <String id="300108">Masquer la barre des tâches en plein écran</String>
     <String id="300109">Démarrage automatique de MediaPortal au démarrage de Windows</String>
     <String id="300110">Réduire dans la barre au démarrage</String>
     <String id="300111">Réduire dans la barre à la sortie du GUI</String>

@@ -2206,6 +2206,7 @@
     <String id="300105">Start MediaPortal in full screen</String>
     <String id="300106">Alternative splash screen</String>
     <String id="300107">Keep MediaPortal always on top</String>
+    <String id="300108">Hide taskbar in fullscreen</String>
     <String id="300109">Autostart MediaPortal on Windows startup</String>
     <String id="300110">Minimize to tray on startup</String>
     <String id="300111">Minimize to tray on GUI exit</String>

@@ -2204,6 +2204,7 @@
     <String id="300105">Avvio MediaPortal a schermo intero</String>
     <String id="300106">Schermata di avvio alternativa</String>
     <String id="300107">Lascia MediaPortal sempre in primo piano</String>
+    <String id="300108">Nascondi la barra delle applicazione a schermo intero</String>
     <String id="300109">Avvia automaticamente MP all'avvio del computer</String>
     <String id="300110">Minimizza all'avvio di MP</String>
     <String id="300111">Minimizza all'uscita dalla GUI</String>

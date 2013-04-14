@@ -50,9 +50,7 @@ namespace MediaPortal.Player
 
         if (levelStyle == 0)
         {
-          // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-          Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
-          // ReSharper restore ReturnValueOfPureMethodIsNotUsed
+          _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "lastknown", 52428)));
         }
 
         if (levelStyle == 1)
@@ -61,9 +59,7 @@ namespace MediaPortal.Player
 
         if (levelStyle == 2)
         {
-          // ReSharper disable ReturnValueOfPureMethodIsNotUsed
-          Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
-         // ReSharper restore ReturnValueOfPureMethodIsNotUsed
+          _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
         }
 
         isDigital = reader.GetValueAsBool("volume", "digital", false);
@@ -327,6 +323,7 @@ namespace MediaPortal.Player
                                                    };
 
     private int[] _volumeTable;
+    private int _startupVolume;
     private readonly bool _showVolumeOSD;
 
     #endregion Fields

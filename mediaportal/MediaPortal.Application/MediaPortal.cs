@@ -781,6 +781,15 @@ public class MediaPortalApp : D3D, IRender
         
         Settings.SaveCache();
 
+        // only re-show the task bar if MP is the one that has hidden it.
+        using (Settings xmlreader = new MPSettings())
+        {
+          if (xmlreader.GetValueAsBool("general", "hidetaskbar", false))
+          {
+            HideTaskBar(false);
+          }
+        }
+
         if (_useRestartOptions)
         {
           Log.Info("Main: Exiting Windows - {0}", _restartOptions);

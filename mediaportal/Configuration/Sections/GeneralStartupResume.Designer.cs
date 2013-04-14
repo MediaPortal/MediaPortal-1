@@ -66,7 +66,7 @@
       this.groupBoxDelays.Controls.Add(this.label2);
       this.groupBoxDelays.Controls.Add(this.nudDelay);
       this.groupBoxDelays.Controls.Add(this.label1);
-      this.groupBoxDelays.Location = new System.Drawing.Point(11, 281);
+      this.groupBoxDelays.Location = new System.Drawing.Point(11, 297);
       this.groupBoxDelays.Name = "groupBoxDelays";
       this.groupBoxDelays.Size = new System.Drawing.Size(445, 61);
       this.groupBoxDelays.TabIndex = 11;
@@ -123,7 +123,7 @@
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.cbWaitForTvService);
-      this.groupBox1.Location = new System.Drawing.Point(11, 231);
+      this.groupBox1.Location = new System.Drawing.Point(11, 247);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(445, 44);
       this.groupBox1.TabIndex = 10;
@@ -145,11 +145,12 @@
       // lbScreen
       // 
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(8, 201);
+      this.lbScreen.Location = new System.Drawing.Point(8, 212);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(67, 13);
       this.lbScreen.TabIndex = 5;
       this.lbScreen.Text = "Start screen:";
+      this.lbScreen.Click += new System.EventHandler(this.lbScreen_Click);
       // 
       // cbScreen
       // 
@@ -159,11 +160,12 @@
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbScreen.Enabled = false;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(85, 198);
+      this.cbScreen.Location = new System.Drawing.Point(85, 209);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(371, 21);
       this.cbScreen.TabIndex = 6;
+      this.cbScreen.SelectedIndexChanged += new System.EventHandler(this.cbScreen_SelectedIndexChanged);
       // 
       // settingsCheckedListBox
       // 
@@ -174,17 +176,18 @@
             "Start MediaPortal in fullscreen mode",
             "Use alternative fullscreen Splashscreen (fullscreen only)",
             "Keep MediaPortal always on top",
+            "Hide taskbar in fullscreen mode",
             "Autostart MediaPortal on Windows startup",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
             "Minimize to tray on focus loss (fullscreen only)",
             "Turn off monitor when blanking screen",
             "Show last active module when starting / resuming from standby",
-            "Use screen selector to choose on which screen MP should start",
-            "Stop playback on removal of an audio renderer"});
-      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
+            "Stop playback on removal of an audio renderer",
+            "Use screen selector to choose on which screen MP should start"});
+      this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 19);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 169);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 184);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       this.settingsCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.settingsCheckedListBox_SelectedIndexChanged);

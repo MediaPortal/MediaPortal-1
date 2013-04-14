@@ -36,10 +36,11 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(10)] private readonly GUICheckButton _cmStartfullscreen = null;
     [SkinControl(11)] private readonly GUICheckButton _cmUsefullscreensplash = null;
     [SkinControl(12)] private readonly GUICheckButton _cmAlwaysontop = null;
-    [SkinControl(13)] private readonly GUICheckButton _cmAutostart = null;
-    [SkinControl(14)] private readonly GUICheckButton _cmMinimizeonstartup = null;
-    [SkinControl(15)] private readonly GUICheckButton _cmMinimizeonexit = null;
-    [SkinControl(16)] private readonly GUICheckButton _cmMinimizeonfocusloss = null;
+    [SkinControl(13)] private readonly GUICheckButton _cmHidetaskbar = null;
+    [SkinControl(14)] private readonly GUICheckButton _cmAutostart = null;
+    [SkinControl(15)] private readonly GUICheckButton _cmMinimizeonstartup = null;
+    [SkinControl(16)] private readonly GUICheckButton _cmMinimizeonexit = null;
+    [SkinControl(17)] private readonly GUICheckButton _cmMinimizeonfocusloss = null;
 
     public GUISettingsGeneralStartup()
     {
@@ -61,6 +62,7 @@ namespace MediaPortal.GUI.Settings
         _cmStartfullscreen.Selected = xmlreader.GetValueAsBool("general", "startfullscreen", true);
         _cmUsefullscreensplash.Selected = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
         _cmAlwaysontop.Selected = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        _cmHidetaskbar.Selected = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
         _cmAutostart.Selected = xmlreader.GetValueAsBool("general", "autostart", false);
         _cmMinimizeonstartup.Selected = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
         _cmMinimizeonexit.Selected = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
@@ -89,6 +91,7 @@ namespace MediaPortal.GUI.Settings
         catch (Exception) { }
         // ReSharper restore EmptyGeneralCatchClause
 
+        xmlwriter.SetValueAsBool("general", "hidetaskbar", _cmHidetaskbar.Selected);
         xmlwriter.SetValueAsBool("general", "autostart", _cmAutostart.Selected);
         try
         {
@@ -178,6 +181,10 @@ namespace MediaPortal.GUI.Settings
         SettingsChanged(true);
       }
       if (control == _cmAlwaysontop)
+      {
+        SettingsChanged(true);
+      }
+      if (control == _cmHidetaskbar)
       {
         SettingsChanged(true);
       }

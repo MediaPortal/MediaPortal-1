@@ -102,19 +102,20 @@ namespace MediaPortal
     #region protected attributes
 
     protected internal static int  ScreenNumberOverride;     // 0 or higher means it is set
-    protected internal static bool FullscreenOverride;       // fullscreen mode overridden by command line argument?
+    protected internal static bool FullscreenOverride;       // full screen mode overridden by command line argument?
     protected internal static bool WindowedOverride;         // window mode overridden by command line argument?
     protected static string        SkinOverride;             // skin overridden by command line argument
     protected string               FrameStatsLine1;          // 1st string to hold frame stats
     protected string               FrameStatsLine2;          // 2nd string to hold frame stats
     protected bool                 MinimizeOnStartup;        // minimize to tray on startup?
     protected bool                 MinimizeOnGuiExit;        // minimize to tray on GUI exit?
-    protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in fullscreen mode is lost?
+    protected bool                 MinimizeOnFocusLoss;      // minimize to tray when focus in full screen mode is lost?
     protected bool                 ShuttingDown;             // set to true if MP is shutting down
     protected bool                 AutoHideMouse;            // Should the mouse cursor be hidden automatically?
     protected bool                 AppActive;                // set to true while MP is active     
     protected bool                 MouseCursor;              // holds the current mouse cursor state
     protected bool                 Windowed;                 // are we in windowed mode?
+    protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
     protected bool                 IsVisible;                // set to true if form is not minimized to tray
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
     protected int                  Frames;                   // number of frames since our last update
@@ -216,6 +217,7 @@ namespace MediaPortal
         _useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         UseEnhancedVideoRenderer = xmlreader.GetValueAsBool("general", "useEVRenderer", false);
         _disableMouseEvents      = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
+        AutoHideTaskbar          = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         _alwaysOnTop             = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate         = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
         _doNotWaitForVSync       = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
@@ -339,7 +341,12 @@ namespace MediaPortal
 
       if (!Windowed)
       {
-        Log.Info("D3D: Starting in fullscreen");
+        Log.Info("D3D: Starting in full screen");
+
+        if (AutoHideTaskbar && !MinimizeOnStartup)
+        {
+          HideTaskBar(true);
+        }
         
         FormBorderStyle = FormBorderStyle.None;
         MaximizeBox     = false;
@@ -366,6 +373,18 @@ namespace MediaPortal
 
 
     /// <summary>
+    /// Hides the task bar
+    /// </summary>
+    /// <param name="hide">hides taskbar on true, shows it on false</param>
+    protected static void HideTaskBar(bool hide)
+    {
+      Log.Info(hide ? "D3D: Hiding Taskbar" : "D3D: Showing Taskbar");
+      Win32API.EnableStartBar(!hide);
+      Win32API.ShowStartBar(!hide);
+    }
+
+
+    /// <summary>
     /// 
     /// </summary>
     protected void ToggleFullscreen()
@@ -373,6 +392,11 @@ namespace MediaPortal
       if (Windowed)
       {
         Log.Info("D3D: Switching from windowed mode to full screen");
+        
+        if (AutoHideTaskbar)
+        {
+          HideTaskBar(true);
+        }
 
         // exist miniTVMode
         if (_menuItemMiniTv.Checked)
@@ -395,6 +419,11 @@ namespace MediaPortal
       else
       {
         Log.Info("D3D: Switching from full screen to windowed mode");
+
+        if (AutoHideTaskbar)
+        {
+          HideTaskBar(false);
+        }
 
         WindowState     = FormWindowState.Normal;
         FormBorderStyle = FormBorderStyle.Sizable;
@@ -681,6 +710,11 @@ namespace MediaPortal
           }
         }
 
+        if (!Windowed && AutoHideTaskbar)
+        {
+          HideTaskBar(true);
+        }
+
         MouseCursor = false;
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
@@ -720,6 +754,11 @@ namespace MediaPortal
           {
             g_Player.Pause();
           }
+        }
+
+        if (AutoHideTaskbar)
+        {
+          HideTaskBar(false);
         }
 
         MouseCursor = true;
@@ -2047,6 +2086,11 @@ namespace MediaPortal
       }
 
       base.Dispose(disposing);
+
+      if (AutoHideTaskbar)
+      {
+        HideTaskBar(false);
+      }
     }
  
     #endregion

@@ -445,6 +445,33 @@ namespace MediaPortal.Util
       }
     }
 
+    public static void ShowStartBar(bool bVisible)
+    {
+      try
+      {
+        Show("Shell_TrayWnd", "", bVisible);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Show("Button", "Start", bVisible);
+        }
+      }
+      catch (Exception) { }
+    }
+
+    public static void EnableStartBar(bool bEnable)
+    {
+      try
+      {
+        Enable("Shell_TrayWnd", "", bEnable);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Enable("Button", "Start", bEnable);
+        }
+      }
+      catch (Exception) { }
+    }
+
+
     /// <summary> 
     /// Finds the specified window by its Process ID. Then brings it to 
     /// the foreground. 
