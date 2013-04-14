@@ -1148,37 +1148,35 @@ public class MediaPortalApp : D3D, IRender
 
           if (Windowed)
           {
-            double ratio = Math.Min((double)GUIGraphicsContext.currentScreen.WorkingArea.Width / Width, 
-                                    (double)GUIGraphicsContext.currentScreen.WorkingArea.Height / Height);
+            double ratio = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
             var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
             mmi.ptMaxSize.x      = (int)(Width * ratio);
             mmi.ptMaxSize.y      = (int)(Height * ratio);
-            mmi.ptMaxPosition.x  = GUIGraphicsContext.currentScreen.WorkingArea.Left;
-            mmi.ptMaxPosition.y  = GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
+            mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
             mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 4;
             mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 4;
-            mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
-            mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
+            mmi.ptMaxTrackSize.x = Screen.PrimaryScreen.WorkingArea.Right - Screen.PrimaryScreen.WorkingArea.Left;
+            mmi.ptMaxTrackSize.y = Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.WorkingArea.Top;
             Marshal.StructureToPtr(mmi, msg.LParam, true);
             msg.Result = (IntPtr)0;
           }
           else
           {
             var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-            mmi.ptMaxSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-            mmi.ptMaxSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-            mmi.ptMaxPosition.x = GUIGraphicsContext.currentScreen.Bounds.X;
-            mmi.ptMaxPosition.y = GUIGraphicsContext.currentScreen.Bounds.Y;
-            mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-            mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-            mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
-            mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+            mmi.ptMaxSize.x      = Screen.PrimaryScreen.Bounds.Width;
+            mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
+            mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
+            mmi.ptMaxPosition.y  = Screen.PrimaryScreen.Bounds.Y;
+            mmi.ptMinTrackSize.x = Screen.PrimaryScreen.Bounds.Width;
+            mmi.ptMinTrackSize.y = Screen.PrimaryScreen.Bounds.Height;
+            mmi.ptMaxTrackSize.x = Screen.PrimaryScreen.Bounds.Width;
+            mmi.ptMaxTrackSize.y = Screen.PrimaryScreen.Bounds.Height;
             Marshal.StructureToPtr(mmi, msg.LParam, true);
             msg.Result = (IntPtr)0;
 
             // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, 
-                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+            SetBounds(Screen.PrimaryScreen.Bounds.X, Screen.PrimaryScreen.Bounds.Y, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
           }
           break;
 
