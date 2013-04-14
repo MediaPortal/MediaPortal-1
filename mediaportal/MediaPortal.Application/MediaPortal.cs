@@ -183,6 +183,23 @@ public class MediaPortalApp : D3D, IRender
 
   #endregion
 
+  #region enumns
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx
+  [FlagsAttribute]
+  // ReSharper disable InconsistentNaming
+  public enum EXECUTION_STATE : uint
+  {
+    ES_SYSTEM_REQUIRED   = 0x00000001,
+    ES_DISPLAY_REQUIRED  = 0x00000002,
+    ES_USER_PRESENT      = 0x00000004, // Legacy flag, should not be used.
+    ES_AWAYMODE_REQUIRED = 0x00000040,
+    ES_CONTINUOUS        = 0x80000000,
+    // ReSharper restore InconsistentNaming
+  }
+  
+  #endregion
+
   #region structs
 
   // ReSharper disable InconsistentNaming
@@ -194,6 +211,7 @@ public class MediaPortalApp : D3D, IRender
     public int y;
   }
 
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632605(v=vs.85).aspx
   private struct MINMAXINFO
   {
     public POINTAPI ptReserved;
@@ -272,6 +290,11 @@ public class MediaPortalApp : D3D, IRender
   // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363475(v=vs.85).aspx
   [DllImport("user32.dll", CharSet = CharSet.Auto)]
   private static extern uint UnregisterDeviceNotification(IntPtr hHandle);
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx
+  [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+  public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
+
 
   #region main()
 
@@ -504,9 +527,7 @@ public class MediaPortalApp : D3D, IRender
       }
       var rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
       int lastError;
-      int retval = Reg.RegOpenKeyEx(rKey, 
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install",
-                                    0, options, out res);
+      int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
       if (retval == 0)
       {
         uint tKey;
@@ -1072,6 +1093,7 @@ public class MediaPortalApp : D3D, IRender
       RECT rc;
       Size border;
       int height;
+      Screen screen;
       switch (msg.Msg)
       {
         // power management
@@ -1103,7 +1125,7 @@ public class MediaPortalApp : D3D, IRender
         case WM_GETMINMAXINFO:
           Log.Debug("Main: WM_GETMINMAXINFO");
 
-          Screen screen = Screen.FromControl(this);
+          screen = Screen.FromControl(this);
           if (!Equals(screen, GUIGraphicsContext.currentScreen))
           {
             Log.Info("Main: Screen MP is displayed on changed from {0} to {1}",GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
@@ -1137,8 +1159,8 @@ public class MediaPortalApp : D3D, IRender
             var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
             mmi.ptMaxSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
             mmi.ptMaxSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
-            mmi.ptMaxPosition.x = 0;
-            mmi.ptMaxPosition.y = 0;
+            mmi.ptMaxPosition.x = GUIGraphicsContext.currentScreen.Bounds.X;
+            mmi.ptMaxPosition.y = GUIGraphicsContext.currentScreen.Bounds.Y;
             mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
             mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
             mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
@@ -1147,7 +1169,8 @@ public class MediaPortalApp : D3D, IRender
             msg.Result = (IntPtr)0;
 
             // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-            SetBounds(0, 0, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, 
+                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
           }
           break;
 
@@ -1285,13 +1308,23 @@ public class MediaPortalApp : D3D, IRender
         // handle display changes
         case WM_DISPLAYCHANGE:
           Log.Debug("Main: WM_DISPLAYCHANGE");
-          int newDepth  = msg.WParam.ToInt32();
-          int newWidth  = unchecked((short)msg.LParam.ToInt32());
-          int newHeight = unchecked((short)((uint)msg.LParam.ToInt32() >> 16));
-          Log.Info("Main: Resolution changed to {0}x{1}x{2} or displays added/removed", newWidth, newHeight, newDepth);
+
+          screen = Screen.FromControl(this);
+          if (!Equals(screen, GUIGraphicsContext.currentScreen))
+          {
+            Log.Info("Main: Screen MP is displayed on changed from {0} to {1}",GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
+            if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
+            {
+              Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
+              Rectangle newBounds = screen.Bounds;
+              Log.Info("Main: Bounds of display changed from {0}x{1} to {2}x{3}", currentBounds.Width, currentBounds.Height, newBounds.Width, newBounds.Height);
+            }
+            GUIGraphicsContext.currentScreen = screen;
+          }
+
           if (!Windowed)
           {
-            SetBounds(0, 0, newWidth, newHeight);
+            SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
           }
           msg.Result = (IntPtr)1;
           break;
@@ -1436,7 +1469,7 @@ public class MediaPortalApp : D3D, IRender
 
         // handle system commands
         case WM_SYSCOMMAND:
-          switch (msg.WParam.ToInt32())
+          switch (msg.WParam.ToInt32() & 0xFFF0)
           {
             // user clicked on minimize button
             case SC_MINIMIZE:
@@ -1444,17 +1477,33 @@ public class MediaPortalApp : D3D, IRender
               MinimizeToTray();
               break;
 
-            // windows wants to start the screen saver
             case SC_MONITORPOWER:
-            case SC_SCREENSAVE:
-              // disable it when we're watching TV/movies/...  
+              Log.Debug("Main: SC_MONITORPOWER");
               if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
               {
-                msg.Result = (IntPtr)0;
+                PluginManager.WndProc(ref msg);
+                Log.Info("Main: Active player - resetting idle timer for display to be turned off");
+                SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+                msg.Result = (IntPtr)1;
                 return;
               }
+              msg.Result = (IntPtr)0;
               break;
-            }
+
+            case SC_SCREENSAVE:
+              Log.Debug("Main: SC_SCREENSAVE");
+              if ((GUIGraphicsContext.IsFullScreenVideo && !g_Player.Paused) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+              {
+                PluginManager.WndProc(ref msg);
+                Log.Info("Main: Active player - resetting idle timer for screen save to be turned on");
+                SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+                msg.Result = (IntPtr)1;
+                return;
+              }
+              msg.Result = (IntPtr)0;
+              break;
+
+          }
           break;
       }
 
@@ -1824,6 +1873,7 @@ public class MediaPortalApp : D3D, IRender
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
 
+      // TODO: remove internal screen saver, there is no need for it anymore as MP bugs have been fixed, MP way not interfere with system settings
       // disable screen saver when MP running and internal selected
       if (_useScreenSaver)
       {
@@ -2096,7 +2146,7 @@ public class MediaPortalApp : D3D, IRender
     GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
     // force WM_GETMINMAXINFO message before actual resizing
-    Bounds = new Rectangle(0, 0, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+    Bounds = GUIGraphicsContext.currentScreen.Bounds;
  
     // Resize Form
     if (Windowed)
@@ -2107,7 +2157,7 @@ public class MediaPortalApp : D3D, IRender
       LastRect.left   = Location.X;
       LastRect.bottom = Size.Height;
       LastRect.right  = Size.Width;
-      Location = new Point(0, 0);
+      Location = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
     }
     else
     {
@@ -3596,7 +3646,12 @@ public class MediaPortalApp : D3D, IRender
             dlgNotify.TimeOut = message.Param1;
             dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
           }
+          break;
 
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
+        case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
+          // reset idle timer for consistent timing after end pf playback
+          SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           break;
       }
     }

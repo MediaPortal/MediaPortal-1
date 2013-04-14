@@ -385,13 +385,14 @@ namespace MediaPortal
         _oldClientRectangle.Location = Location;
         _oldClientRectangle.Size     = ClientSize;
 
-        WindowState         = FormWindowState.Normal;
+        WindowState         = FormWindowState.Maximized;
         FormBorderStyle     = FormBorderStyle.None;
         MaximizeBox         = false;
         MinimizeBox         = false;
         Menu                = null;
+        //TopMost = true;
         Windowed            = false;
-        Location            = new Point(0, 0);
+        Location            = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
         ClientSize          = GUIGraphicsContext.currentScreen.Bounds.Size;
       }
       else
@@ -407,7 +408,7 @@ namespace MediaPortal
 
         if (_oldClientRectangle.IsEmpty)
         {
-          Location   = new Point(0, 0);
+          Location   = new Point(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
           ClientSize = CalcMaxClientArea();
         }
         else
