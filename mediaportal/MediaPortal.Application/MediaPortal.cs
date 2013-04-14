@@ -2506,8 +2506,7 @@ public class MediaPortalApp : D3D, IRender
         GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
         GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
         double percent = 100 * g_Player.CurrentPosition / g_Player.Duration;
-        var nfi = new NumberFormatInfo { NumberDecimalSeparator = "," };
-        GUIPropertyManager.SetProperty("#percentage", percent.ToString(nfi));
+        GUIPropertyManager.SetProperty("#percentage", percent.ToString(CultureInfo.CurrentCulture));
       }
       else
       {
