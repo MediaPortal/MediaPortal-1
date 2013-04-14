@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Library
         {
           return ListFonts[iFont];
         }
-        Log.Error("GUIFontManager: could load load font with index '{0}'", iFont);
+        Log.Warn("GUIFontManager: could load load font with index '{0}'", iFont);
         return GetFont("debug");
       }
     }
@@ -261,7 +261,7 @@ namespace MediaPortal.GUI.Library
 
       lock (Renderlock)
       {
-        if (strFontName != null)
+        if (!string.IsNullOrEmpty(strFontName))
         {
           // Try to interpret the font name as an alias before searching for the font.
           string fn;
