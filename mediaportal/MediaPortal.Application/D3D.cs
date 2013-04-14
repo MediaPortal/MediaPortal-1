@@ -359,10 +359,6 @@ namespace MediaPortal
         Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                  ClientSize.Width, ClientSize.Height,
                  GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
- 
-        // make sure cursor is initially hidden in fullscreen
-        MouseCursor = _lastMouseCursor = false;
-        UpdateMouseCursor();
       }
 
       // Initialize D3D Device
@@ -765,7 +761,11 @@ namespace MediaPortal
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
 
-        ShowMouseCursor(true);
+        // show mouse cursor it will be hidden in the context menu
+        if (AutoHideMouse)
+        {
+          ShowMouseCursor(true);
+        }
 
         _exitToTray = false;
       }
@@ -1266,7 +1266,7 @@ namespace MediaPortal
       }
 
       // fix unbalanced cursor state
-      Log.Debug("D3D: Imbalanced cursor state of {0}", state);
+      int oldState = state;
       int balance = visible ? 0 : -1;
       while (state < balance)
       {
@@ -1276,7 +1276,7 @@ namespace MediaPortal
       {
          state = ShowCursor(false);
       }
-      Log.Debug("D3D: Cursor state balanced to {0}", state);
+      Log.Debug("D3D: Cursor state balanced from {0} to {1}", oldState, state);
     }
 
     /// <summary>
@@ -1729,6 +1729,16 @@ namespace MediaPortal
             Thread.Sleep(10);
           }
           SplashScreen = null;
+          
+          // force Windows to recognize the imbalanced state we created
+          if (AutoHideMouse)
+          {
+            ShowMouseCursor(false);
+          }
+          else
+          {
+            ShowMouseCursor(false);
+          }
         }
 
         if (MinimizeOnStartup && _firstTimeWindowDisplayed)
@@ -2009,6 +2019,10 @@ namespace MediaPortal
     protected override void OnGotFocus(EventArgs e)
     {
       Log.Debug("D3D: OnGotFocus()");
+      if (AutoHideMouse)
+      {
+        ShowMouseCursor(false);
+      }
       _lostFocus = false;
       base.OnGotFocus(e);
     }
@@ -2022,6 +2036,10 @@ namespace MediaPortal
     protected override void OnLostFocus(EventArgs e)
     {
       Log.Debug("D3D: OnLostFocus()");
+      if (AutoHideMouse)
+      {
+        ShowMouseCursor(true);
+      }
       _lostFocus = true;
       base.OnLostFocus(e);
     }

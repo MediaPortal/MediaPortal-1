@@ -1222,7 +1222,7 @@ public class MediaPortalApp : D3D, IRender
         case WM_SIZE:
           int x = unchecked((short)msg.LParam);
           int y = unchecked((short)((uint)msg.LParam >> 16));
-          Log.Debug("Main WM_SIZE ({0}x{1})",x, y);
+          Log.Debug("Main: WM_SIZE ({0}x{1})",x, y);
           switch (msg.WParam.ToInt32())
           {
             case SIZE_RESTORED:
@@ -1924,7 +1924,7 @@ public class MediaPortalApp : D3D, IRender
     _deviceNotificationHandle = RegisterDeviceNotification(Handle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE | DEVICE_NOTIFY_ALL_INTERFACE_CLASSES);
     if (_deviceNotificationHandle == IntPtr.Zero)
     {
-      // TODO: error handling
+      Log.Warn("Main: Could not register for device notifications");
     }
   }
 
