@@ -40,7 +40,6 @@ using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using Microsoft.DirectX.Direct3D;
-using D3D = Microsoft.DirectX.Direct3D;
 using WPFMediaKit.DirectX;
 
 #endregion
@@ -943,9 +942,6 @@ namespace MediaPortal
     protected void BuildPresentParams(bool windowed)
     {
       Log.Debug("D3D: BuildPresentParams()");
-      //Size windowBackBufferSize = CalcMaxClientArea();
-      //_presentParams.BackBufferWidth           = windowed ? windowBackBufferSize.Width  : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
-      //_presentParams.BackBufferHeight          = windowed ? windowBackBufferSize.Height : GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
       _presentParams.BackBufferWidth           = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
       _presentParams.BackBufferHeight          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
       _presentParams.BackBufferFormat          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Format;
@@ -975,12 +971,13 @@ namespace MediaPortal
 
       _presentParams.MultiSample               = MultiSampleType.None;
       _presentParams.MultiSampleQuality        = 0;
-      _presentParams.SwapEffect                = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
+      _presentParams.SwapEffect              = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
+//       _presentParams.SwapEffect               = SwapEffect.Discard;
       _presentParams.DeviceWindow              = _renderTarget;
       _presentParams.Windowed                  = true;
       _presentParams.EnableAutoDepthStencil    = false;
-      //_presentParams.AutoDepthStencilFormat    = windowed ? DepthFormat.Unknown : DepthFormat.D24S8;
       _presentParams.AutoDepthStencilFormat    = DepthFormat.D24S8;
+//      _presentParams.AutoDepthStencilFormat    = DepthFormat.Unknown;
       _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = 0;
       _presentParams.PresentationInterval      = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.One;
@@ -1105,7 +1102,13 @@ namespace MediaPortal
         // ReSharper disable LocalizableElement
         MessageBox.Show("Direct3D device could not be created.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
         // ReSharper restore LocalizableElement
-        Close();
+        try
+        {
+          Close();
+        }
+        // ReSharper disable EmptyGeneralCatchClause
+        catch {}
+        // ReSharper restore EmptyGeneralCatchClause
       }
     }
 

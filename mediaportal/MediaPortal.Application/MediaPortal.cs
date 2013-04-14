@@ -367,7 +367,7 @@ public class MediaPortalApp : D3D, IRender
 
         #if !DEBUG
         _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
-         #endif
+        #endif
       }
     }
 
@@ -957,7 +957,6 @@ public class MediaPortalApp : D3D, IRender
       MinimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
       MinimizeOnGuiExit = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
       MinimizeOnFocusLoss = xmlreader.GetValueAsBool("general", "minimizeonfocusloss", false);
-
     }
 
     SetStyle(ControlStyles.Opaque, true);
