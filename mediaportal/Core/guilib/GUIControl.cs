@@ -295,6 +295,7 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.SetCameraPosition(_camera);
       }
       Render(timePassed);
+      _hasRendered = true;
       if (_hasCamera)
       {
         GUIGraphicsContext.RestoreCameraPosition();
@@ -309,7 +310,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void Render(float timePassed)
     {
-      _hasRendered = true;
+
     }
 
     /// <summary>
