@@ -1348,7 +1348,7 @@ public class MediaPortalApp : D3D, IRender
             GUIGraphicsContext.currentScreen = screen;
           }
 
-          if (!Windowed)
+          if (!Windowed && Bounds != GUIGraphicsContext.currentScreen.Bounds)
           {
             SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
           }
