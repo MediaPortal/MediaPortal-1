@@ -140,10 +140,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "system", "mpc-hc_subs\src\t
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbluray", "..\libbluray\libbluray.vcxproj", "{E1DA1B95-71F1-4C21-A271-121176925062}"
 	ProjectSection(ProjectDependencies) = postProject
+		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B} = {78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}
 		{E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA} = {E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unrar", "mpc-hc_subs\src\thirdparty\unrar\unrar.vcxproj", "{DA8461C4-7683-4360-9372-2A9E0F1795C2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "..\libbluray\3rd_party\freetype2\builds\win32\vc2010\freetype.vcxproj", "{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -275,6 +278,10 @@ Global
 		{DA8461C4-7683-4360-9372-2A9E0F1795C2}.Debug|Win32.Build.0 = Debug|Win32
 		{DA8461C4-7683-4360-9372-2A9E0F1795C2}.Release|Win32.ActiveCfg = Release|Win32
 		{DA8461C4-7683-4360-9372-2A9E0F1795C2}.Release|Win32.Build.0 = Release|Win32
+		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Debug|Win32.Build.0 = Debug|Win32
+		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Release|Win32.ActiveCfg = Release|Win32
+		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
