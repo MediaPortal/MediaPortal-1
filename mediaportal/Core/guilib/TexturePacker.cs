@@ -46,16 +46,6 @@ namespace MediaPortal.GUI.Library
 
     public event DisposeEventHandler Disposing;
 
-    #region imports
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    #endregion
-
     #region PackedTexture Class
 
     [Serializable]
@@ -531,7 +521,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: disposing texture:{0}", bigOne.textureNo);
-            FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);
@@ -680,7 +670,7 @@ namespace MediaPortal.GUI.Library
           unsafe
           {
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
-            bigOne.textureNo = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+            bigOne.textureNo = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
             Log.Info("TexturePacker: fontengine add texure:{0}", bigOne.textureNo);
           }
         }
@@ -713,7 +703,7 @@ namespace MediaPortal.GUI.Library
           if (bigOne.textureNo >= 0)
           {
             Log.Info("TexturePacker: remove texture:{0}", bigOne.textureNo);
-            FontEngineRemoveTexture(bigOne.textureNo);
+            DXNative.FontEngineRemoveTexture(bigOne.textureNo);
             if (Disposing != null)
             {
               Disposing(this, bigOne.textureNo);

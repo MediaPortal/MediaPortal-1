@@ -19,13 +19,10 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.IO;
-using System.Text;
+using System.ComponentModel;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
@@ -35,29 +32,18 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicArtistInfo : GUIDialogWindow
   {
-    [SkinControl(20)] protected GUILabelControl lblArtist = null;
-    [SkinControl(21)] protected GUILabelControl lblArtistName = null;
-    [SkinControl(22)] protected GUILabelControl lblBorn = null;
-    [SkinControl(23)] protected GUILabelControl lblYearsActive = null;
-    [SkinControl(24)] protected GUILabelControl lblGenre = null;
-    [SkinControl(25)] protected GUIFadeLabel lblTones = null;
-    [SkinControl(26)] protected GUIFadeLabel lblStyles = null;
-    [SkinControl(27)] protected GUILabelControl lblInstruments = null;
-    [SkinControl(3)] protected GUIImage imgCoverArt = null;
-    [SkinControl(4)] protected GUITextControl tbReview = null;
-    [SkinControl(5)] protected GUIButtonControl btnBio = null;
     [SkinControl(6)] protected GUIButtonControl btnRefresh = null;
 
     private bool m_bRefresh = false;
-    private Texture coverArtTexture = null;
-    private bool viewBio = false;
     private MusicArtistInfo artistInfo = null;
-    private int coverArtTextureWidth = 0;
-    private int coverArtTextureHeight = 0;
+    private BackgroundWorker bw;
 
     public GUIMusicArtistInfo()
     {
       GetID = (int)Window.WINDOW_ARTIST_INFO;
+      bw = new BackgroundWorker();
+      bw.DoWork += bw_DoWork;
+      bw.RunWorkerCompleted += bw_RunWorkerCompleted;
     }
 
     public override bool Init()
@@ -77,20 +63,28 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageDestroy(int newWindowId)
     {
       artistInfo = null;
-      if (coverArtTexture != null)
-      {
-        coverArtTexture.Dispose();
-        coverArtTexture = null;
-      }
       base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      coverArtTexture = null;
-      viewBio = true;
-      Refresh();
+
+      GUIPropertyManager.SetProperty("#ArtistInfo.Thumb", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Artist", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Bio", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Born", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Genres", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Instruments", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Styles", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Tones", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.YearsActive", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Albums", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Compilations", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Singles", string.Empty);
+      GUIPropertyManager.SetProperty("#ArtistInfo.MiscAlbums", string.Empty);
+
+      Update();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -98,21 +92,9 @@ namespace MediaPortal.GUI.Music
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
-        string coverArtUrl = artistInfo.ImageURL;
-        string coverArtFileName = GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
-        if (coverArtFileName != string.Empty)
-        {
-          Util.Utils.FileDelete(coverArtFileName);
-        }
         m_bRefresh = true;
         PageDestroy();
         return;
-      }
-
-      if (control == btnBio)
-      {
-        viewBio = !viewBio;
-        Update();
       }
     }
 
@@ -127,226 +109,61 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      string tmpLine;
-      string nameAKA = artistInfo.Artist;
-      if (artistInfo.Aka != null && artistInfo.Aka.Length > 0)
+
+      string coverArtFileName = GUIMusicBaseWindow.GetArtistCoverArtName(artistInfo.Artist);
+      if (Util.Utils.FileExistsInCache(coverArtFileName))
       {
-        nameAKA += "(" + artistInfo.Aka + ")";
-      }
-      lblArtist.Label = artistInfo.Artist;
-      lblArtistName.Label = nameAKA;
-      lblBorn.Label = artistInfo.Born;
-      lblYearsActive.Label = artistInfo.YearsActive;
-      lblGenre.Label = artistInfo.Genres;
-      lblInstruments.Label = artistInfo.Instruments;
-      lblTones.Label = artistInfo.Tones;
-      lblStyles.Label = artistInfo.Styles;
-
-      if (viewBio)
-      {
-        tbReview.Label = artistInfo.AMGBiography;
-        btnBio.Label = GUILocalizeStrings.Get(132);
-      }
-      else
-      {
-        // translate the diff. discographys
-        string textAlbums = GUILocalizeStrings.Get(690);
-        string textCompilations = GUILocalizeStrings.Get(691);
-        string textSingles = GUILocalizeStrings.Get(700);
-        string textMisc = GUILocalizeStrings.Get(701);
-
-
-        StringBuilder strLine = new StringBuilder(2048);
-        ArrayList list = null;
-        string discography = null;
-
-        // get the Discography Album
-        list = artistInfo.DiscographyAlbums;
-        strLine.Append('\t');
-        strLine.Append(textAlbums);
-        strLine.Append('\n');
-
-        discography = artistInfo.Albums;
-        if (discography != null && discography.Length > 0)
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(coverArtFileName);
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
-          strLine.Append(discography);
-          strLine.Append('\n');
+          coverArtFileName = strLarge;
         }
-        else
-        {
-          StringBuilder strLine2 = new StringBuilder(512);
-          for (int i = 0; i < list.Count; ++i)
-          {
-            string[] listInfo = (string[])list[i];
-            tmpLine = String.Format("{0} - {1} ({2})\n",
-                                    listInfo[0], // year 
-                                    listInfo[1], // title
-                                    listInfo[2]); // label
-            strLine.Append(tmpLine);
-            strLine2.Append(tmpLine);
-          }
-          ;
-          strLine.Append('\n');
-          artistInfo.Albums = strLine2.ToString();
-        }
-
-        // get the Discography Compilations
-        list = artistInfo.DiscographyCompilations;
-        strLine.Append('\t');
-        strLine.Append(textCompilations);
-        strLine.Append('\n');
-        discography = artistInfo.Compilations;
-        if (discography != null && discography.Length > 0)
-        {
-          strLine.Append(discography);
-          strLine.Append('\n');
-        }
-        else
-        {
-          StringBuilder strLine2 = new StringBuilder(512);
-          for (int i = 0; i < list.Count; ++i)
-          {
-            string[] listInfo = (string[])list[i];
-            tmpLine = String.Format("{0} - {1} ({2})\n",
-                                    listInfo[0], // year 
-                                    listInfo[1], // title
-                                    listInfo[2]); // label
-            strLine.Append(tmpLine);
-            strLine2.Append(tmpLine);
-          }
-          ;
-          strLine.Append('\n');
-          artistInfo.Compilations = strLine2.ToString();
-        }
-
-        // get the Discography Singles
-        list = artistInfo.DiscographySingles;
-        strLine.Append('\t');
-        strLine.Append(textSingles);
-        strLine.Append('\n');
-        discography = artistInfo.Singles;
-        if (discography != null && discography.Length > 0)
-        {
-          strLine.Append(discography);
-          strLine.Append('\n');
-        }
-        else
-        {
-          StringBuilder strLine2 = new StringBuilder(512);
-          for (int i = 0; i < list.Count; ++i)
-          {
-            string[] listInfo = (string[])list[i];
-            tmpLine = String.Format("{0} - {1} ({2})\n",
-                                    listInfo[0], // year 
-                                    listInfo[1], // title
-                                    listInfo[2]); // label
-            strLine.Append(tmpLine);
-            strLine2.Append(tmpLine);
-          }
-          ;
-          strLine.Append('\n');
-          artistInfo.Singles = strLine2.ToString();
-        }
-
-        // get the Discography Misc
-        list = artistInfo.DiscographyMisc;
-        strLine.Append('\t');
-        strLine.Append(textMisc);
-        strLine.Append('\n');
-        discography = artistInfo.Misc;
-        if (discography != null && discography.Length > 0)
-        {
-          strLine.Append(discography);
-          strLine.Append('\n');
-        }
-        else
-        {
-          StringBuilder strLine2 = new StringBuilder(512);
-          for (int i = 0; i < list.Count; ++i)
-          {
-            string[] listInfo = (string[])list[i];
-            tmpLine = String.Format("{0} - {1} ({2})\n",
-                                    listInfo[0], // year 
-                                    listInfo[1], // title
-                                    listInfo[2]); // label
-            strLine.Append(tmpLine);
-            strLine2.Append(tmpLine);
-          }
-          ;
-          strLine.Append('\n');
-          artistInfo.Misc = strLine2.ToString();
-        }
-
-        tbReview.Label = strLine.ToString();
-        btnBio.Label = GUILocalizeStrings.Get(689);
+        GUIPropertyManager.SetProperty("#ArtistInfo.Thumb", coverArtFileName);
       }
-    }
-
-    public override void Render(float timePassed)
-    {
-      base.Render(timePassed);
-
-      if (null == coverArtTexture)
+      else if (!string.IsNullOrEmpty(artistInfo.ImageURL))
       {
-        return;
+        bw.RunWorkerAsync();
       }
 
-      if (null != imgCoverArt)
-      {
-        float x = (float)imgCoverArt.XPosition;
-        float y = (float)imgCoverArt.YPosition;
-        int width;
-        int height;
-        GUIGraphicsContext.Correct(ref x, ref y);
-
-        int maxWidth = imgCoverArt.Width;
-        int maxHeight = imgCoverArt.Height;
-        GUIGraphicsContext.GetOutputRect(coverArtTextureWidth, coverArtTextureHeight, maxWidth, maxHeight, out width,
-                                         out height);
-
-        GUIFontManager.Present();
-        Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth,
-                                 coverArtTextureHeight, 0, 0, true);
-      }
-    }
-
-
-    private void Refresh()
-    {
-      if (coverArtTexture != null)
-      {
-        coverArtTexture.Dispose();
-        coverArtTexture = null;
-      }
-
-      string coverArtFileName;
-      string coverArtUrl = artistInfo.ImageURL;
-      coverArtFileName = GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
-      // do not overwrite existing artist thumb
-      if (coverArtFileName != string.Empty && !Util.Utils.FileExistsInCache(coverArtFileName))
-      {
-        //	Download image and save as 
-        //	permanent thumb
-        Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
-      }
-
-      try
-      {
-        coverArtTexture = Util.Picture.Load(coverArtFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
-                                            out coverArtTextureHeight);
-      }
-      catch (FileNotFoundException)
-      {
-        //ignore          
-      }
-
-      Update();
+      GUIPropertyManager.SetProperty("#ArtistInfo.Artist", artistInfo.Artist);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Bio", artistInfo.AMGBiography);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Born", artistInfo.Born);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Genres", artistInfo.Genres);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Instruments", artistInfo.Instruments);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Styles", artistInfo.Styles);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Tones", artistInfo.Tones);
+      GUIPropertyManager.SetProperty("#ArtistInfo.YearsActive", artistInfo.YearsActive);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Albums", artistInfo.Albums);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Compilations", artistInfo.Compilations);
+      GUIPropertyManager.SetProperty("#ArtistInfo.Singles", artistInfo.Singles);
+      GUIPropertyManager.SetProperty("#ArtistInfo.MiscAlbums", artistInfo.Misc);
     }
 
     public bool NeedsRefresh
     {
       get { return m_bRefresh; }
     }
+
+    #region bw methods
+
+    private void bw_DoWork(object sender, DoWorkEventArgs e)
+    {
+      string coverArtFileName = GUIMusicBaseWindow.GetArtistCoverArtName(artistInfo.Artist);
+      Log.Debug("downloading thumbnail for artist: {0}", artistInfo.Artist);
+      Util.Utils.DownLoadImage(artistInfo.ImageURL, coverArtFileName);
+    }
+
+    private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      if (e.Error != null) return;
+      string coverArtFileName = GUIMusicBaseWindow.GetArtistCoverArtName(artistInfo.Artist);
+      if (Util.Utils.FileExistsInCache(coverArtFileName))
+      {
+        GUIPropertyManager.SetProperty("#ArtistInfo.Thumb", coverArtFileName);
+      }
+    }
+
+    #endregion
 
   }
 }

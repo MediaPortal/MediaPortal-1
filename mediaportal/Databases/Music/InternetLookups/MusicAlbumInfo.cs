@@ -19,14 +19,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Globalization;
-using System.IO;
-using System.Net;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
-using MediaPortal.GUI.Library;
-using MediaPortal.Util;
 
 namespace MediaPortal.Music.Database
 {
@@ -37,19 +32,19 @@ namespace MediaPortal.Music.Database
   {
     #region Variables
 
-    private string _artist = "";
-    private string _strTitle = "";
-    private string _strTitle2 = "";
-    private string _strDateOfRelease = "";
-    private string _strGenre = "";
-    private string _strTones = "";
-    private string _strStyles = "";
-    private string _strReview = "";
-    private string _strImageURL = "";
-    private string _albumUrl = "";
-    private string _strAlbumPath = "";
+    private string _artist = string.Empty;
+    private string _strTitle = string.Empty;
+    private string _strTitle2 = string.Empty;
+    private string _strDateOfRelease = string.Empty;
+    private string _strGenre = string.Empty;
+    private string _strTones = string.Empty;
+    private string _strStyles = string.Empty;
+    private string _strReview = string.Empty;
+    private string _strImageURL = string.Empty;
+    private string _albumUrl = string.Empty;
+    private string _strAlbumPath = string.Empty;
     private int _iRating = 0;
-    private ArrayList _songs = new ArrayList();
+    private string _strTracks = string.Empty;
     private bool _bLoaded = false;
     private Match _match = null;
 
@@ -76,7 +71,7 @@ namespace MediaPortal.Music.Database
     private static readonly Regex AlbumMoodsRegEx = new Regex(AlbumMoodsRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private const string AlbumReviewRegExp = @"<div class=""editorial-text collapsible-content"" itemprop=""description"">(?<review>.*?)</div>";
     private static readonly Regex AlbumReviewRegEx = new Regex(AlbumReviewRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-    private const string AlbumTracksRegExp = @"<div id=""tracks"">.*<tbody>(?<tracks>.*?)</tbody>";
+    private const string AlbumTracksRegExp = @"<div id=""tracks"">.*?<tbody>(?<tracks>.*?)</tbody>";
     private static readonly Regex AlbumTracksRegEx = new Regex(AlbumTracksRegExp, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private const string TrackRegExp = @"<tr>.*?<td class=""tracknum"">(?<trackNo>.*?)</td>.*?<div class=""title"">\s*<a.*?>\s*(?<title>.*?)?\s*</a>.*?<td class=""time"">\s*(?<time>.*?)\s*</td>.*?</tr>";
     private static readonly Regex TrackRegEx = new Regex(TrackRegExp, RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -180,63 +175,28 @@ namespace MediaPortal.Music.Database
       set { _iRating = value; }
     }
 
-    public int NumberOfSongs
-    {
-      get { return _songs.Count; }
-    }
-
     public string Tracks
     {
       get
       {
-        string strTracks = "";
-        foreach (MusicSong song in _songs)
+        string strFormattedTracks = string.Empty;
+        string[] strTracks = _strTracks.Split(new char[] {'|'});
+        foreach (string track in strTracks)
         {
-          string strTmp = String.Format("{0}@{1}@{2}|", song.Track, song.SongName, song.Duration);
-          strTracks = strTracks + strTmp;
-        }
-        return strTracks;
-      }
-      set
-      {
-        _songs.Clear();
-        Tokens token = new Tokens(value, new char[] {'|'});
-        foreach (string strToken in token)
-        {
-          Tokens token2 = new Tokens(strToken, new char[] {'@'});
-          MusicSong song = new MusicSong();
-          int iTok = 0;
-          foreach (string strCol in token2)
-          {
-            switch (iTok)
-            {
-              case 0:
-                try
-                {
-                  song.Track = Int32.Parse(strCol);
-                }
-                catch (Exception) {}
-                break;
-              case 1:
-                song.SongName = strCol;
-                break;
+          string[] strTrackParts = track.Split(new char[] {'@'});
 
-              case 2:
-                try
-                {
-                  song.Duration = Int32.Parse(strCol);
-                }
-                catch (Exception) {}
-                break;
-            }
-            iTok++;
-          }
-          if (song.Track > 0)
+          if( strTrackParts.Count() < 3)
           {
-            _songs.Add(song);
+            continue;
           }
+          int iDuration;
+          int.TryParse(strTrackParts[2], out iDuration);
+          string strDuration = MediaPortal.Util.Utils.SecondsToHMSString(iDuration);
+          strFormattedTracks = strFormattedTracks + strTrackParts[0] + " - " + strTrackParts[1] + " " + strDuration + "\n";
         }
+        return strFormattedTracks;
       }
+      set { _strTracks = value; }
     }
 
     public bool Loaded
@@ -277,11 +237,6 @@ namespace MediaPortal.Music.Database
     #endregion
 
     #region Public Methods
-
-    public MusicSong GetSong(int iSong)
-    {
-      return (MusicSong)_songs[iSong];
-    }
 
     public bool Parse(string html)
     {
@@ -410,7 +365,7 @@ namespace MediaPortal.Music.Database
       {
         Album = strAlbum,
         Artist = strAlbumArtist,
-        Genre = string.Empty,
+        Genre = strGenres,
         Tones = strMoods,
         Styles = strStyles,
         Review = strReview,
@@ -454,29 +409,20 @@ namespace MediaPortal.Music.Database
       {
         int iYear;
 
-        album.Artist = Artist;
-        album.Album = Title;
-        Int32.TryParse(DateOfRelease, out iYear);
+        album.Artist = _artist;
+        album.Album = _strTitle;
+        Int32.TryParse(_strDateOfRelease, out iYear);
         album.Year = iYear;
-        album.Genre = Genre;
-        album.Tones = Tones;
-        album.Styles = Styles;
-        album.Review = Review;
-        album.Image = ImageURL;
-        album.Rating = Rating;
-        album.Tracks = Tracks;
+        album.Genre = _strGenre;
+        album.Tones = _strTones;
+        album.Styles = _strStyles;
+        album.Review = _strReview;
+        album.Image = _strImageURL;
+        album.Rating = _iRating;
+        album.Tracks = _strTracks;
 
       }
       return album;
-    }
-
-    public void SetSongs(ArrayList list)
-    {
-      _songs.Clear();
-      foreach (MusicSong song in list)
-      {
-        _songs.Add(song);
-      }
     }
 
     #endregion

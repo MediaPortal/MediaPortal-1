@@ -53,7 +53,7 @@
     <posY>201</posY>
     <width>409</width>
     <height>409</height>
-    <texture>#selectedthumb</texture>
+    <texture>#AlbumInfo.Thumb</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -74,7 +74,7 @@
    
 	<control>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>318</posY>
 		<textcolor>FF393939</textcolor>
@@ -88,13 +88,13 @@
 	<control>
 		<description>Artist value</description>
 		<type>label</type>
-		<id>21</id>
+		<id>0</id>
 		<posX>951</posX>
 		<posY>318</posY>
 		<width>800</width>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
-		<label>-</label>
+		<label>#AlbumInfo.Artist</label>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -102,7 +102,7 @@
 	
 	<control>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>280</posY>
 		<textcolor>FF393939</textcolor>
@@ -116,11 +116,11 @@
 	<control>
 		<description>Album value</description>
 		<type>label</type>
-		<id>20</id>
+		<id>0</id>
 		<posX>951</posX>
 		<posY>280</posY>
 		<width>800</width>
-		<label>-</label>
+		<label>#AlbumInfo.Title</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -131,10 +131,10 @@
 	<control>
 		<description>Genre</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>390</posY>
-		<label>174</label>
+		<label>#(string.rtrim(L(174),' :'))</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -145,10 +145,10 @@
 	<control>
 		<description>Year</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>354</posY>
-		<label>201</label>
+		<label>#(string.rtrim(L(201),' :'))</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -159,10 +159,10 @@
 	<control>
 		<description>Rating</description>
 		<type>label</type>
-		<id>1</id>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>426</posY>
-		<label>173</label>
+		<label>#(string.rtrim(L(173),' :'))</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -174,11 +174,11 @@
 	<control>
 		<description>Genre value</description>
 		<type>label</type>
-		<id>24</id>
+		<id>0</id>
 		<posX>951</posX>
 		<posY>390</posY>
 		<width>560</width>
-		<label>-</label>
+		<label>#AlbumInfo.Genre</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -189,40 +189,12 @@
 	<control>
 		<description>Year value</description>
 		<type>label</type>
-		<id>22</id>
+		<id>0</id>
 		<posX>951</posX>
 		<posY>354</posY>
-		<label>-</label>
+		<label>#AlbumInfo.Year</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-	</control>
-
-	<control>
-		<description>Tones value</description>
-		<type>fadelabel</type>
-		<id>25</id>
-		<posX>-2000</posX>
-		<posY>313</posY>
-		<width>560</width>
-		<label>-</label>
-		<textcolor>FF393939</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-	</control>
-
-	<control>
-		<description>Styles value</description>
-		<type>fadelabel</type>
-		<id>26</id>
-		<posX>-2000</posX>
-		<posY>337</posY>
-		<width>560</width>
-		<label>-</label>
-		<textcolor>FF393939</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -231,10 +203,10 @@
 	<control>
 		<description>Rating value</description>
 		<type>label</type>
-		<id>23</id>
+		<id>0</id>
 		<posX>951</posX>
 		<posY>426</posY>
-		<label>-</label>
+		<label>#AlbumInfo.Rating</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -243,43 +215,37 @@
 	</control>
 
 	<control>
-		<id>3</id>
-		<type>image</type>
-		<posX>-2000</posX>
-		<posY>347</posY>
-		<width>250</width>
-		<height>250</height>
-		<texture>-</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-	</control>
-
-	<control>
 		<description>textarea</description>
-		<type>textbox</type>
-		<id>4</id>
+		<type>textboxscrollup</type>
+		<id>0</id>
 		<posX>750</posX>
 		<posY>468</posY>
 		<width>860</width>
 		<height>300</height>
-		<onleft>5</onleft>
-		<onright>5</onright>
-		<onup>4</onup>
-		<ondown>4</ondown>
-		<spinWidth>18</spinWidth>
-		<spinHeight>16</spinHeight>
-		<spinPosX>750</spinPosX>
-		<spinPosY>760</spinPosY>
-		<spinAlign>left</spinAlign>
-		<spinColor>FF393939</spinColor>
-		<textXOff2>100</textXOff2>
 		<textcolor>FF393939</textcolor>
     <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<label>#AlbumInfo.Review</label>
+		<visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
 	</control>
+	<control>
+		<description>textarea</description>
+		<type>textboxscrollup</type>
+		<id>40</id>
+		<posX>1175</posX>
+		<posY>280</posY>
+		<width>488</width>
+		<height>470</height>
+		<textcolor>FF393939</textcolor>
+    <font>TitanLight12</font>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<label>#AlbumInfo.Tracks</label>
+		<visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+	</control>	
 
 	<control>
 		<description>Tracks/Review</description>
@@ -301,6 +267,8 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+		<onclick>#(skin.togglesetting('#AlbumInfo.ShowTracks'))</onclick>
+		<label>#(L(183)) /#(L(182))</label>
 	</control>
 	
 	<control>

@@ -1168,6 +1168,9 @@ namespace MediaPortal.GUI.Music
                 dlgProgress.SetPercentage(80);
                 dlgProgress.Progress();
               }
+              // set values to actual artist to ensure they match track data
+              // rather than values that might be returned from allmusic.com
+              artistInfo.Artist = artistName;
               m_database.AddArtistInfo(artistInfo.Get());
               errorEncountered = false;
             }
@@ -1467,6 +1470,10 @@ namespace MediaPortal.GUI.Music
                 dlgProgress.SetPercentage(80);
                 dlgProgress.Progress();
               }
+              // set values to actual artist and album name to ensure they match track data
+              // rather than values that might be returned from allmusic.com
+              albumInfo.Artist = artistName;
+              albumInfo.Title = albumName;
               m_database.AddAlbumInfo(albumInfo.Get());
               errorEncountered = false;
             }
@@ -1489,7 +1496,6 @@ namespace MediaPortal.GUI.Music
         if (null != pDlgAlbumInfo)
         {
           pDlgAlbumInfo.Album = albumInfo;
-          pDlgAlbumInfo.Tag = tag;
 
           pDlgAlbumInfo.DoModal(parentWindowID);
           if (pDlgAlbumInfo.NeedsRefresh)

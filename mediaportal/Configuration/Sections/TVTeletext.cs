@@ -28,16 +28,7 @@ namespace MediaPortal.Configuration.Sections
 {
   public class TVTeletext : SectionSettings
   {
-    private MPGroupBox groupBox1;
-    private MPRadioButton radioButton1;
     private IContainer components = null;
-    private bool _init = false;
-    private MPCheckBox cbHiddenMode;
-    private MPCheckBox cbTransparentMode;
-    private MPCheckBox cbRememberValue;
-    private MPLabel FontSizeLbl;
-    private MPLabel FontSizeValueLbl;
-    private MPNumericUpDown nudFontSize;
     public int pluginVersion;
 
     public TVTeletext()
@@ -53,29 +44,18 @@ namespace MediaPortal.Configuration.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      if (_init == false)
-      {
-        _init = true;
-        LoadSettings();
-      }
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     #region Designer generated code
+
+    private MPGroupBox groupBox1;
+    private MPRadioButton radioButton1;
+    private MPCheckBox cbHiddenMode;
+    private MPCheckBox cbTransparentMode;
+    private MPCheckBox cbRememberValue;
+    private MPLabel FontSizeLbl;
+    private MPLabel FontSizeValueLbl;
+    private MPNumericUpDown nudFontSize;
 
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -216,12 +196,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
-
       using (Settings xmlreader = new MPSettings())
       {
         cbHiddenMode.Checked = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
@@ -234,10 +208,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("mytv", "teletextHidden", cbHiddenMode.Checked);

@@ -81,6 +81,7 @@ namespace MediaPortal.Player
     public UInt64 start;
     public UInt64 duration;
     public UInt64 offset;
+    public UInt16 clip_ref;
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -95,7 +96,7 @@ namespace MediaPortal.Player
     public byte ig_stream_count;
     public byte sec_audio_stream_count;
     public byte sec_video_stream_count;
-    public byte raw_stream_count;    
+    public byte raw_stream_count;
     public BDStreamInfo* video_streams;
     public BDStreamInfo* audio_streams;
     public BDStreamInfo* pg_streams;
@@ -103,16 +104,19 @@ namespace MediaPortal.Player
     public BDStreamInfo* sec_audio_streams;
     public BDStreamInfo* sec_video_streams;
     public BDStreamInfo* raw_streams;
+    public UInt64 start_time;
+    public UInt64 in_time;
+    public UInt64 out_time;
   }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct BDStreamInfo
+  public unsafe struct BDStreamInfo
   {
     public byte coding_type;
     public byte format;
     public byte rate;
     public byte char_code;
-    public byte lang;
+    public fixed byte lang[4];
     public UInt16 pid;
     public byte aspect;
   }
@@ -294,6 +298,67 @@ namespace MediaPortal.Player
       //public string AudioDDPlus { get; set; }
       public string AudioRenderer { get; set; }
       public Geometry.Type AR { get; set; }
+    }
+
+    protected class TitleInfo : IDisposable
+    {
+      private BDTitleInfo _nativeTitle;
+      private IntPtr _nativePtr;
+      private IBDReader _reader;
+      private bool _disposed = false;
+
+      public TitleInfo(IBDReader reader, int index)
+      {
+        _reader = reader;
+        _nativeTitle = new BDTitleInfo();
+
+        try
+        {
+          _nativePtr = reader.GetTitleInfo(index);
+          _nativeTitle = (BDTitleInfo) Marshal.PtrToStructure(_nativePtr, typeof (BDTitleInfo));
+        }
+        catch
+        {
+          Log.Error("BDPlayer: TitleInfo({0}) construction failed.", index);
+        }
+      }
+
+      ~TitleInfo()
+      {
+        Dispose(false);
+      }
+
+      public BDTitleInfo native
+      {
+        get { return _nativeTitle; }
+      }
+
+      protected virtual void Dispose(bool dispose)
+      {
+        if (!_disposed)
+        {
+          if (dispose)
+          {
+            if (_nativePtr != null && _reader != null)
+            {
+              _reader.FreeTitleInfo(_nativePtr);
+              _nativePtr = IntPtr.Zero;
+            }
+          }
+          else
+          {
+            Log.Error("BDPlayer:BDTitleInfo - Dispose called by finalizer, some resources will be leaked");
+          }
+
+          _disposed = true;
+        }
+      }
+
+      public void Dispose()
+      {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+      }
     }
 
     #endregion
@@ -811,7 +876,7 @@ namespace MediaPortal.Player
       if (!File.Exists(strFile))
       {
         return false;
-      }      
+      }
 
       if (!GetInterfaces(strFile))
       {
@@ -913,7 +978,7 @@ namespace MediaPortal.Player
 
       if (_bMediaTypeChanged)
       {
-        _bMediaTypeChanged = false;        
+        _bMediaTypeChanged = false;
         DoGraphRebuild();
         _ireader.OnGraphRebuild((int)_mChangedMediaType);
       }
@@ -1584,9 +1649,9 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="reader">IBDReader object</param>
     /// <returns>a collection of titles</returns>
-    protected virtual List<BDTitleInfo> GetTitleInfoCollection(IBDReader reader)
+    protected virtual List<TitleInfo> GetTitleInfoCollection(IBDReader reader)
     {
-      List<BDTitleInfo> titles = new List<BDTitleInfo>();
+      List<TitleInfo> titles = new List<TitleInfo>();
 
       uint titleCount = 0;
       reader.GetTitleCount(ref titleCount);
@@ -1595,7 +1660,7 @@ namespace MediaPortal.Player
 
       for (int i = 0; i < titleCount; i++)
       {
-        BDTitleInfo titleInfo = GetTitleInfo(reader, i);
+        TitleInfo titleInfo = GetTitleInfo(reader, i);
         titles.Add(titleInfo);
       }
 
@@ -1608,27 +1673,9 @@ namespace MediaPortal.Player
     /// <param name="reader">IBDReader object</param>
     /// <param name="index">index of the title</param>
     /// <returns></returns>
-    protected virtual BDTitleInfo GetTitleInfo(IBDReader reader, int index)
+    protected virtual TitleInfo GetTitleInfo(IBDReader reader, int index)
     {
-      BDTitleInfo titleInfo = new BDTitleInfo();
-      IntPtr ptr = IntPtr.Zero;
-      try
-      {
-        ptr = reader.GetTitleInfo(index);
-        titleInfo = (BDTitleInfo)Marshal.PtrToStructure(ptr, typeof(BDTitleInfo));
-      }
-      catch
-      {
-        Log.Error("BDPlayer: GetTitleInfo({0}) failed.", index);
-      }
-      finally
-      {
-        if (ptr != IntPtr.Zero)
-        {
-          reader.FreeTitleInfo(ptr);
-        }
-      }
-
+      TitleInfo titleInfo = new TitleInfo(reader, index);
       return titleInfo;
     }
 
@@ -1637,20 +1684,21 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="titleInfo">BDTitleInfo object</param>
     /// <returns>chapters as an array consisting of the start time in seconds</returns>
-    protected virtual double[] GetChapters(BDTitleInfo titleInfo)
+    protected virtual double[] GetChapters(TitleInfo titleInfo)
     {
-      double[] chapters = new double[titleInfo.chapter_count];
-            
+      double[] chapters = new double[titleInfo.native.chapter_count];
+
       if (chapters.Length > 2) // only two chapters means beginning and end - no real chapters
       {
         for (int i = 0; i < chapters.Length; i++)
         {
           unsafe
           {
-            double s = titleInfo.chapters[i].start / 90000;
+            double s = titleInfo.native.chapters[i].start/90000;
             chapters[i] = s;
             TimeSpan ts = TimeSpan.FromSeconds(s);
-            Log.Debug("BDPlayer: Chapter info #{0}: start time: {1}", titleInfo.chapters[i].idx, String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds));
+            Log.Debug("BDPlayer: Chapter info #{0}: start time: {1}", titleInfo.native.chapters[i].idx,
+                      String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds));
           }
         }
         if (chapters[chapters.Length - 1] < 300) // 5 min sanity check
@@ -1667,37 +1715,40 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="titles">a collection of titles to choose from</param>
     /// <returns>index of the title to play, -2 for navigation/menu or -1 if user canceled the dialog</returns>
-    protected virtual int SelectTitle(List<BDTitleInfo> titles)
+    protected virtual int SelectTitle(List<TitleInfo> titles)
     {
-      IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      IDialogbox dialog = (IDialogbox) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
       bool listAllTitles = false;
+      int ret = 0;
 
-      titles = titles.OrderByDescending(t => t.duration).ToList();
+      titles = titles.OrderByDescending(t => t.native.duration).ToList();
 
       while (true)
       {
         List<uint> titleOptions = new List<uint>();
 
         dialog.Reset();
-        dialog.SetHeading(GUILocalizeStrings.Get(1701));   // Select play mode
-        dialog.Add(GUILocalizeStrings.Get(924));           // Menu
+        dialog.SetHeading(GUILocalizeStrings.Get(1701)); // Select play mode
+        dialog.Add(GUILocalizeStrings.Get(924)); // Menu
 
         int c = 0;
-        foreach (BDTitleInfo title in titles)
+        foreach (TitleInfo title in titles)
         {
-          TimeSpan ts = TimeSpan.FromSeconds(title.duration / 90000);
-          if (listAllTitles || titles.Count == 1 || ts.TotalMinutes >= 30 && title.chapter_count > 1 && title.chapter_count < 100) // do not list titles under 30mins
+          TimeSpan ts = TimeSpan.FromSeconds(title.native.duration/90000);
+          if (listAllTitles || titles.Count == 1 ||
+              ts.TotalMinutes >= 30 && title.native.chapter_count > 1 && title.native.chapter_count < 100)
+            // do not list titles under 30mins
           {
             string duration = String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds);
-            dialog.Add(String.Format(GUILocalizeStrings.Get(1702), c++, title.chapter_count, duration));
-            titleOptions.Add(title.idx);
+            dialog.Add(String.Format(GUILocalizeStrings.Get(1702), c++, title.native.chapter_count, duration));
+            titleOptions.Add(title.native.idx);
           }
         }
 
         // add option to list all titles
         if (titles.Count > 1 && titles.Count != titleOptions.Count)
         {
-          dialog.Add(GUILocalizeStrings.Get(1703));       // Show all titles
+          dialog.Add(GUILocalizeStrings.Get(1703)); // Show all titles
         }
 
         // show dialog
@@ -1715,20 +1766,27 @@ namespace MediaPortal.Player
           }
 
           // user selected a title we now return the index of
-          int titleIdx = (int)titleOptions[dialog.SelectedId - 2];
+          int titleIdx = (int) titleOptions[dialog.SelectedId - 2];
           Log.Debug("BDPlayer: title with idx {0} selected", titleIdx);
-          return titleIdx;
+
+          ret = titleIdx;
+          break;
         }
 
         // user selected to display menu;
         if (dialog.SelectedId == 1)
         {
-          return -2;
+          ret = -2;
+          break;
         }
 
         // user cancelled so break the loop
-        return -1;
+        ret = -1;
+        break;
       }
+
+      titles.Dispose();
+      return ret;
     }
 
     object lockobj = new object();
@@ -1800,7 +1858,7 @@ namespace MediaPortal.Player
             Log.Debug("BDPlayer: Popup available {0}", bdevent.Param);
             _bPopupMenuAvailable = bdevent.Param == 1 ? true : false;
             UpdateMenuItems();
-            break;          
+            break;
 
           case (int)BDEvents.BD_EVENT_MENU:
             Log.Debug("BDPlayer: Menu visible {0}", bdevent.Param);
@@ -1808,14 +1866,14 @@ namespace MediaPortal.Player
             {
               if (menuState != MenuState.PopUp)
                 menuState = MenuState.Root;
-             
+
               GUIGraphicsContext.DisableTopBar = true;
             }
             else
-            {              
+            {
               menuState = MenuState.None;
               GUIGraphicsContext.DisableTopBar = false;
-              GUIGraphicsContext.TopBarHidden = true;   
+              GUIGraphicsContext.TopBarHidden = true;
             }
             UpdateMenuItems();
             break;
@@ -1826,13 +1884,13 @@ namespace MediaPortal.Player
     protected void UpdateMenuItems()
     {
       if (_forceTitle)
-        {
-          menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
-          return;
-        }
-      
+      {
+        menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
+        return;
+      }
+
       if (menuState == MenuState.Root)
-      {        
+      {
         menuItems = MenuItems.None;
         return;
       }
@@ -1872,12 +1930,14 @@ namespace MediaPortal.Player
 
     protected void UpdateRefreshRate(int videoRate)
     {
-      BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
-
-      // Do not change refresh rate if the clip is less than 1 minute long
-      if (titleInfo.duration / 90000 > 60)
+      using (TitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int) BLURAY_TITLE_CURRENT)))
       {
-        RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+        // Do not change refresh rate if the clip is less than 1 minute long
+        if (titleInfo.native.duration/90000 > 60)
+        {
+          RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "",
+                                                      RefreshRateChanger.MediaType.Video);
+        }
       }
     }
 
@@ -1885,8 +1945,10 @@ namespace MediaPortal.Player
     {
       try
       {
-        BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
-        chapters = GetChapters(titleInfo);
+        using (TitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT)))
+        {
+          chapters = GetChapters(titleInfo);
+        }
       }
       catch
       {
@@ -2214,7 +2276,7 @@ namespace MediaPortal.Player
 
         Log.Debug("BDPlayer: BDReader loaded: {0}", filename);
 
-        List<BDTitleInfo> titles = GetTitleInfoCollection(_ireader);
+        List<TitleInfo> titles = GetTitleInfoCollection(_ireader);
 
         while (true)
         {
@@ -2229,6 +2291,7 @@ namespace MediaPortal.Player
             if (_titleToPlay == -1)
             {
               // user cancelled dialog
+              titles.Dispose();
               return false;
             }
 
@@ -2251,6 +2314,7 @@ namespace MediaPortal.Player
             }
 
             Log.Error("BDPlayer: Failed to start in title based mode file:{0} :0x{1:x}", filename, hr);
+            titles.Dispose();
             return false;
           }
           else
@@ -2260,6 +2324,8 @@ namespace MediaPortal.Player
 
           break;
         }
+
+        titles.Dispose();
 
         #region Filters
 

@@ -33,7 +33,6 @@ namespace MediaPortal.Configuration.Sections
     private MPGroupBox groupBoxSettings;
     private MPRadioButton radioButton1;
     private IContainer components = null;
-    private bool _init = false;
     private MPCheckBox mpUseRtspCheckBox;
     private MPLabel mpWarningLabel;
     private MPCheckBox mpEnableRecordingFromTimeshiftCheckBox;
@@ -65,27 +64,7 @@ namespace MediaPortal.Configuration.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      if (_init == false)
-      {
-        _init = true;
-        LoadSettings();
-      }
       SettingsForm.debug_options = true;
-    }
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
     }
 
     #region Designer generated code
@@ -307,11 +286,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
       singleSeat = Network.IsSingleSeat();
 
       bool rtsp;
@@ -331,11 +305,6 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      if (_init == false)
-      {
-        return;
-      }
-
       bool rtsp = singleSeat ? mpUseRtspCheckBox.Checked : !mpUseRtspCheckBox.Checked;
 
       using (Settings xmlwriter = new MPSettings())

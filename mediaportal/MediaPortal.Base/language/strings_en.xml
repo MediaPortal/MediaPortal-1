@@ -995,6 +995,7 @@
     <String id="1196">Enable Subtitles</String>
     <String id="1197">Turn off DXVA</String>
     <String id="1198">DVD Navigator</String>
+    <String id="1199">Enable Internal Blu-ray Player</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
     <String id="1202">Auto</String>
@@ -2329,5 +2330,6 @@
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
     <String id="300227">Clear Blacklisted thumbs</String>
+    <String id="300228">Ask for confirmation when stopping timeshift</String>
    </Section>
 </Language>
