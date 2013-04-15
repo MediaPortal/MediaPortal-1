@@ -556,7 +556,8 @@ namespace MediaPortal.GUI.Library
       {
         if (value != _useSmsStyleTextInsertion)
         {
-          if (Password) return; //sms is disabled during password input - we cannot see chars! 
+          //According to BUG 4321:When_typing_a_password_with_the_virtual_keyboard_the_SMS_style_is_disabled, this is not desirable
+          //if (Password) return; sms is disabled during password input - we cannot see chars! 
           
           smsLastKeyPressed = -1;
           _lastColumn = 0;
