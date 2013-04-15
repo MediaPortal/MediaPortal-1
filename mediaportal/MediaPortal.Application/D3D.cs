@@ -172,6 +172,8 @@ namespace MediaPortal
     private Win32API.MSG               _msgApi;                   //
     private GraphicsAdapterInfo        _adapterInfo;              //
     private Point                      _lastCursorPosition;       // track cursor position of last move move event
+    private DeviceType                 _deviceType;               //
+    private CreateFlags                _createFlags;              //
 
     private static readonly Stopwatch ClockWatch = new Stopwatch();
 
@@ -996,10 +998,53 @@ namespace MediaPortal
       Log.Debug("D3D: InitializeDevice()");
 
       Caps capabilities = Manager.GetDeviceCaps(GUIGraphicsContext.currentScreenNumber, DeviceType.Hardware);
-      Log.Info("D3D: Graphic adapter '{0}' is using driver version '{1}'", _adapterInfo.AdapterDetails.Description.Trim(), _adapterInfo.AdapterDetails.DriverVersion);
-      Log.Info("D3D: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
-                 capabilities.PixelShaderCaps.NumberInstructionSlots, capabilities.PixelShaderVersion,
-                 capabilities.VertexShaderCaps.NumberTemps, capabilities.VertexShaderVersion);
+      Log.Info("D3D: GPU '{0}' is using driver version '{1}'", _adapterInfo.AdapterDetails.Description.Trim(), _adapterInfo.AdapterDetails.DriverVersion);
+      Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
+      Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
+
+      // default to reference rasterizer and software vertex processing
+      _deviceType  = DeviceType.Reference;
+      _createFlags = CreateFlags.SoftwareVertexProcessing;
+
+      // check if GPU supports rasterization in hardware
+      if (capabilities.DeviceCaps.SupportsHardwareRasterization)
+      {
+         Log.Info("D3D: GPU supports rasterization in hardware");
+        _deviceType = DeviceType.Hardware;
+      }
+
+      //  check if GPU supports shader model 2.0
+      if (capabilities.VertexShaderVersion >= new Version(2, 0) && capabilities.PixelShaderVersion >= new Version(2, 0))
+      {
+        // check if GPU supports rasterization, transformation, lightning in hardware
+        if (capabilities.DeviceCaps.SupportsHardwareTransformAndLight)
+        {
+          Log.Info("D3D: GPU supports rasterization, transformation, lightning in hardware");
+          _createFlags = CreateFlags.HardwareVertexProcessing;
+        }
+        // check if GPU supports rasterization, transformations, lighting, and shading in hardware
+        if (capabilities.DeviceCaps.SupportsPureDevice)
+        {
+          Log.Info("D3D: GPU supports rasterization, transformations, lighting, and shading in hardware");
+          _createFlags |= CreateFlags.PureDevice;
+        }
+      }
+
+      // Log some interesting capabilities
+      if (!capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+      {
+        Log.Info("D3D: GPU unconditionally supports textures with dimensions that are not powers of two");
+      }
+      else if (capabilities.TextureCaps.SupportsPower2 && capabilities.TextureCaps.SupportsNonPower2Conditional)
+      {
+        Log.Info("D3D: GPU conditionally supports textures with dimensions that are not powers of two");
+      }
+      else if (capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+      {
+        Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
+      }
+
+      // TODO: check for any capabilities that would not allow MP to run
 
       // Set up the presentation parameters
       BuildPresentParams(Windowed);
@@ -1015,9 +1060,9 @@ namespace MediaPortal
       {
         Log.Info("D3D: Creating DirectX9 device");
         GUIGraphicsContext.DX9Device = new Device(GUIGraphicsContext.currentScreenNumber,
-                                                  DeviceType.Hardware, 
+                                                  _deviceType, 
                                                   _renderTarget,
-                                                  CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                                  _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                                   _presentParams);
       }
 
@@ -1080,9 +1125,9 @@ namespace MediaPortal
 
       IntPtr dev;
       var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
-                                          DeviceType.Hardware, 
+                                          _deviceType, 
                                           _renderTarget.Handle,
-                                          CreateFlags.PureDevice | CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                           ref param,
                                           IntPtr.Zero,
                                           out dev);
