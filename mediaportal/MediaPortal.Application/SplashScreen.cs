@@ -20,6 +20,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -46,6 +47,7 @@ namespace MediaPortal
     private SplashForm _frm;
     private FullScreenSplashScreen _frmFull;
     private string _info;
+    internal static Screen CurrentDisplay;
 
     /// <summary>
     /// Starts the splash screen.
@@ -62,13 +64,6 @@ namespace MediaPortal
     public void Stop()
     {
       _stopRequested = true;
-    }
-
-    /// <summary>
-    /// Allows other windows to overlay the splash screen
-    /// </summary>
-    public void AllowWindowOverlay(Form overlayedForm)
-    {
     }
 
     /// <summary>
@@ -100,7 +95,6 @@ namespace MediaPortal
         bool useFullScreenSplash;
         bool startFullScreen;
         int screenNumber;
-        bool shouldUseNormalSplashScreen = false;
 
         using (Settings xmlreader = new MPSettings())
         {
@@ -115,16 +109,15 @@ namespace MediaPortal
           screenNumber = D3D.ScreenNumberOverride;
         }
 
-        if (useFullScreenSplash && screenNumber > 0)
+        if (Screen.AllScreens.Count() < screenNumber + 1)
         {
-          int availableScreensNumber = Screen.AllScreens.Count();
-          if (availableScreensNumber < screenNumber + 1)
-          {
-            shouldUseNormalSplashScreen = true;
-          }
+          screenNumber = 0;
+          Log.Warn("SplashScreen: selected display does not exist");
         }
+        
+        CurrentDisplay = Screen.AllScreens[screenNumber];
 
-        if (useFullScreenSplash && startFullScreen && !shouldUseNormalSplashScreen)
+        if (useFullScreenSplash && startFullScreen)
         {
           ShowFullScreenSplashScreen();
         }
@@ -145,6 +138,7 @@ namespace MediaPortal
     private void ShowNormalSplash()
     {
       _frm = new SplashForm {TopMost = _alwaysOnTop};
+      _frm.Location = new Point(_frm.Location.X + CurrentDisplay.Bounds.X, _frm.Location.Y + CurrentDisplay.Bounds.Y);
       _frm.SetVersion(Version);
       _frm.Show();
       _frm.Update();
@@ -152,18 +146,18 @@ namespace MediaPortal
       string oldInfo = null;
 
       // run until stop of splash screen is requested
-      while (!_stopRequested && _frm.Focused) 
+      while (!_stopRequested) 
       {
         if (oldInfo != _info)
         {
           _frm.SetInformation(_info);
           oldInfo = _info;
         }
-        Thread.Sleep(25);
+        Thread.Sleep(10);
       }
 
       _frm.FadeOut();
-      _frm.Close(); //closes, and disposes the form
+      _frm.Close();
       _frm = null;
     }
 
@@ -176,8 +170,7 @@ namespace MediaPortal
       _frmFull = new FullScreenSplashScreen();
       _frmFull.RetrieveSplashScreenInfo();
       _frmFull.TopMost = _alwaysOnTop;
-      _frmFull.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - _frmFull.Width / 2) + 1;
-      _frmFull.Top = (Screen.PrimaryScreen.Bounds.Height / 2 - _frmFull.Height / 2) + 1;
+      _frmFull.Bounds = CurrentDisplay.Bounds;
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
       _frmFull.lblVersion.Parent = _frmFull.lblMain;
       _frmFull.lblCVS.Parent = _frmFull.lblMain;
@@ -189,14 +182,14 @@ namespace MediaPortal
       string oldInfo = null;
 
       // run until stop of splash screen is requested
-      while (!_stopRequested && _frmFull.Focused)
+      while (!_stopRequested)
       {
         if (oldInfo != _info)
         {
           _frmFull.SetInformation(_info);
           oldInfo = _info;
         }
-        Thread.Sleep(25);
+        Thread.Sleep(10);
       }
       _frmFull.Close();
       _frmFull = null;
@@ -247,10 +240,10 @@ namespace MediaPortal
         Log.Info("Version: Application {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
-          string day = strVersion[2].Substring(0, 2);
+          string day   = strVersion[2].Substring(0, 2);
           string month = strVersion[2].Substring(3, 2);
-          string year = strVersion[2].Substring(6, 4);
-          string time = strVersion[3].Substring(0, 5);
+          string year  = strVersion[2].Substring(6, 4);
+          string time  = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
           _cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
           Log.Info("Version: {0}", _cvsLabel.Text);

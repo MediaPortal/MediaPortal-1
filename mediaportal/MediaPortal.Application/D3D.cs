@@ -971,13 +971,11 @@ namespace MediaPortal
 
       _presentParams.MultiSample               = MultiSampleType.None;
       _presentParams.MultiSampleQuality        = 0;
-      _presentParams.SwapEffect              = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
-//       _presentParams.SwapEffect               = SwapEffect.Discard;
+      _presentParams.SwapEffect                = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
       _presentParams.DeviceWindow              = _renderTarget;
       _presentParams.Windowed                  = true;
       _presentParams.EnableAutoDepthStencil    = false;
-      _presentParams.AutoDepthStencilFormat    = DepthFormat.D24S8;
-//      _presentParams.AutoDepthStencilFormat    = DepthFormat.Unknown;
+      _presentParams.AutoDepthStencilFormat    = DepthFormat.Unknown;
       _presentParams.PresentFlag               = PresentFlag.Video;
       _presentParams.FullScreenRefreshRateInHz = 0;
       _presentParams.PresentationInterval      = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.One;
@@ -999,8 +997,7 @@ namespace MediaPortal
       Log.Debug("D3D: InitializeDevice()");
 
       Caps capabilities = Manager.GetDeviceCaps(GUIGraphicsContext.currentScreenNumber, DeviceType.Hardware);
-      Log.Info("D3D: Graphic adapter '{0}' is using driver version '{1}'",
-                _adapterInfo.AdapterDetails.Description.Trim(), _adapterInfo.AdapterDetails.DriverVersion);
+      Log.Info("D3D: Graphic adapter '{0}' is using driver version '{1}'", _adapterInfo.AdapterDetails.Description.Trim(), _adapterInfo.AdapterDetails.DriverVersion);
       Log.Info("D3D: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
                  capabilities.PixelShaderCaps.NumberInstructionSlots, capabilities.PixelShaderVersion,
                  capabilities.VertexShaderCaps.NumberTemps, capabilities.VertexShaderVersion);
@@ -1086,7 +1083,7 @@ namespace MediaPortal
       var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
                                           DeviceType.Hardware, 
                                           _renderTarget.Handle,
-                                          CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
+                                          CreateFlags.PureDevice | CreateFlags.HardwareVertexProcessing | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                           ref param,
                                           IntPtr.Zero,
                                           out dev);
@@ -1727,10 +1724,10 @@ namespace MediaPortal
         {
           Log.Info("D3D: Stopping splash screen thread");
           SplashScreen.Stop();
-          while (!SplashScreen.IsStopped())
+          do
           {
-            Thread.Sleep(10);
-          }
+            Thread.Sleep(20);
+          } while (!SplashScreen.IsStopped());
           SplashScreen = null;
           
           // force Windows to recognize the imbalanced state we created

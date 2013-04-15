@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,10 +22,8 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal
@@ -48,12 +46,12 @@ namespace MediaPortal
       Log.Info("Version: Application {0}", strVersion[0]);
       if (strVersion.Length > 1)
       {
-        string day = strVersion[2].Substring(0, 2);
+        string day   = strVersion[2].Substring(0, 2);
         string month = strVersion[2].Substring(3, 2);
-        string year = strVersion[2].Substring(6, 4);
-        string time = strVersion[3].Substring(0, 5);
+        string year  = strVersion[2].Substring(6, 4);
+        string time  = strVersion[3].Substring(0, 5);
         string build = strVersion[4].Substring(0, 13).Trim();
-        lblCVS.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
+        lblCVS.Text  = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
         Log.Info("Version: {0}", lblCVS.Text);
       }
       else
@@ -104,7 +102,7 @@ namespace MediaPortal
     private void ReadSplashScreenXML()
     {
       string skinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
-      // if not found... leave
+
       if (!File.Exists(skinFilePath))
       {
         Log.Debug("FullScreenSplash: Splashscreen.xml not found!: {0}", skinFilePath);
@@ -216,44 +214,9 @@ namespace MediaPortal
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void FullScreenSplashScreenActivated(object sender, EventArgs e)
-    {
-      //Cursor.Position = new Point(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void FullScreenSplashScreenLoad(object sender, EventArgs e)
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        // lets see if the command line option "/screen=" was set or the screen selector is enabled in the config
-        if ((D3D.ScreenNumberOverride != -1) || xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
-        {
-          int screenNumber = D3D.ScreenNumberOverride != -1 
-                               ? D3D.ScreenNumberOverride 
-                               : xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
-
-          screenNumber++; // increase the number by 1 to respect the DisplayDevice naming convention
-          foreach (Screen tmpscreen in Screen.AllScreens)
-          {
-            if (tmpscreen.DeviceName.Contains("DISPLAY" + screenNumber)) // if the selected Display is found
-            {
-              Location = new Point(tmpscreen.Bounds.X, tmpscreen.Bounds.Y);
-              // set the form position into this screen
-              Size = new Size(tmpscreen.Bounds.Width + 1, tmpscreen.Bounds.Height + 1);
-            }
-          }
-        }
-        else
-        {
-          Location = new Point(0, 0);
-          Size = new Size(Screen.FromHandle(Handle).Bounds.Width + 1, Screen.FromHandle(Handle).Bounds.Height + 1);
-        }
-      }
+      Bounds = SplashScreen.CurrentDisplay.Bounds;
     }
   }
 }
