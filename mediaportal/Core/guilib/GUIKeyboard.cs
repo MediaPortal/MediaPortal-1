@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
@@ -31,78 +32,144 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public abstract class GUIKeyboard : GUIControl
   {
-    [XMLSkinElement("keyboardPosX")] protected int _keyboardPosX = 64;
-    [XMLSkinElement("keyboardPosY")] protected int _keyboardPosY = 250;
-    [XMLSkinElement("keyWidth")] protected int _keyWidth = 34;
-    [XMLSkinElement("keyHeight")] protected int _keyHeight = 54;
-    [XMLSkinElement("keyHSpacing")] protected int _keyHorizontalSpacing = 0;
-    [XMLSkinElement("keyVSpacing")] protected int _keyVerticalSpacing = 2;
-    [XMLSkinElement("modeKeySpacing")] protected int _modeKeySpacing = 4;
-    [XMLSkinElement("modeKeyWidth")] protected int _modeKeyWidth = 110;
-    [XMLSkinElement("searchModeKeyWidth")] protected int _searchModeKeyWidth = 130;
-    [XMLSkinElement("label")] protected string _labelText = "";
-    [XMLSkinElement("labelBoxPosX")] protected int _labelBoxPosX = 64;
-    [XMLSkinElement("labelBoxPosY")] protected int _labelBoxPosY = 218;
-    [XMLSkinElement("labelBoxWidth")] protected int _labelBoxWidth = -1; //calculated
-    [XMLSkinElement("labelBoxHeight")] protected int _labelBoxHeight = 30;
-    [XMLSkinElement("labelBoxTexture")] protected string _labelBoxTexture = "white.bmp";
-    [XMLSkinElement("labelAlign")] protected Alignment _labelAlign = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("labelOffX")] protected int _labelOffX = 18;
-    [XMLSkinElement("labelOffY")] protected int _labelOffY = 2;
-    [XMLSkinElement("labelFont")] protected string _labelFont = "font10";
-    [XMLSkinElement("labelColor")] protected long _labelColor = 0xff000000;
-    [XMLSkinElement("labelShadowAngle")] protected int _labelShadowAngle = 0;
-    [XMLSkinElement("labelShadowDistance")] protected int _labelShadowDistance = 0;
-    [XMLSkinElement("labelShadowColor")] protected long _labelShadowColor = 0xFF000000;
-    [XMLSkinElement("inputTextBoxPosX")] protected int _inputTextBoxPosX = 64;
-    [XMLSkinElement("inputTextBoxPosY")] protected int _inputTextBoxPosY = 218;
-    [XMLSkinElement("inputTextBoxWidth")] protected int _inputTextBoxWidth = -1; //calculated
-    [XMLSkinElement("inputTextBoxHeight")] protected int _inputTextBoxHeight = 30;
-    [XMLSkinElement("inputTextBoxTexture")] protected string _inputTextBoxTexture = "white.bmp";
-    [XMLSkinElement("showLabelAsInitialText")] protected bool _showLabelAsInitialText = false;
-    [XMLSkinElement("inputTextAlign")] protected Alignment _inputTextAlign = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("inputTextOffX")] protected int _inputTextOffX = 18;
-    [XMLSkinElement("inputTextOffY")] protected int _inputTextOffY = 2;
-    [XMLSkinElement("inputTextFont")] protected string _inputTextFont = "font10";
-    [XMLSkinElement("inputTextColor")] protected long _inputTextColor = 0xff000000;
-    [XMLSkinElement("inputTextShadowAngle")] protected int _inputTextShadowAngle = 0;
-    [XMLSkinElement("inputTextShadowDistance")] protected int _inputTextShadowDistance = 0;
-    [XMLSkinElement("inputTextShadowColor")] protected long _inputTextShadowColor = 0xFF000000;
-    [XMLSkinElement("charKeyFont")] protected string _charKeyFont = "font14";
-    [XMLSkinElement("namedKeyFont")] protected string _namedKeyFont = "font10";
-    [XMLSkinElement("keyTextShadowAngle")] protected int _keyTextShadowAngle = 0;
-    [XMLSkinElement("keyTextShadowDistance")] protected int _keyTextShadowDistance = 0;
-    [XMLSkinElement("keyTextShadowColor")] protected long _keyTextShadowColor = 0xFF000000;
-    [XMLSkinElement("keyTextureFocus")] protected string _keyTextureFocus = "keyNF.bmp";
-    [XMLSkinElement("keyTextureNoFocus")] protected string _keyTextureNoFocus = "keyNF.bmp";
-    [XMLSkinElement("keyHighlightColor")] protected long _keyHighlightColor = 0xff00ff00;
-    [XMLSkinElement("keyPressedColor")] protected long _keyPressedColor = 0xff808080;
-    [XMLSkinElement("keyDisabledColor")] protected long _keyDisabledColor = 0xffffffff;
-    [XMLSkinElement("keyFontColor")] protected long _keyFontColor = 0xff000000;
-    [XMLSkinElement("keySelFontColor")] protected long _keySelFontColor = 0xff000000;
-    [XMLSkinElement("keyDisabledFontColor")] protected long _keyDisabledFontColor = 0xff808080;
-    [XMLSkin("keyTextureFocus", "border")] protected string _strBorderKTF = "";
+    [XMLSkinElement("keyboardPosX")]
+    protected int _keyboardPosX = 64;
+    [XMLSkinElement("keyboardPosY")]
+    protected int _keyboardPosY = 250;
+    [XMLSkinElement("keyWidth")]
+    protected int _keyWidth = 34;
+    [XMLSkinElement("keyHeight")]
+    protected int _keyHeight = 54;
+    [XMLSkinElement("keyHSpacing")]
+    protected int _keyHorizontalSpacing = 0;
+    [XMLSkinElement("keyVSpacing")]
+    protected int _keyVerticalSpacing = 2;
+    [XMLSkinElement("modeKeySpacing")]
+    protected int _modeKeySpacing = 4;
+    [XMLSkinElement("modeKeyWidth")]
+    protected int _modeKeyWidth = 110;
+    [XMLSkinElement("searchModeKeyWidth")]
+    protected int _searchModeKeyWidth = 130;
+    [XMLSkinElement("label")]
+    protected string _labelText = "";
+    [XMLSkinElement("labelBoxPosX")]
+    protected int _labelBoxPosX = 64;
+    [XMLSkinElement("labelBoxPosY")]
+    protected int _labelBoxPosY = 218;
+    [XMLSkinElement("labelBoxWidth")]
+    protected int _labelBoxWidth = -1; //calculated
+    [XMLSkinElement("labelBoxHeight")]
+    protected int _labelBoxHeight = 30;
+    [XMLSkinElement("labelBoxTexture")]
+    protected string _labelBoxTexture = "white.bmp";
+    [XMLSkinElement("labelAlign")]
+    protected Alignment _labelAlign = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("labelOffX")]
+    protected int _labelOffX = 18;
+    [XMLSkinElement("labelOffY")]
+    protected int _labelOffY = 2;
+    [XMLSkinElement("labelFont")]
+    protected string _labelFont = "font10";
+    [XMLSkinElement("labelColor")]
+    protected long _labelColor = 0xff000000;
+    [XMLSkinElement("labelShadowAngle")]
+    protected int _labelShadowAngle = 0;
+    [XMLSkinElement("labelShadowDistance")]
+    protected int _labelShadowDistance = 0;
+    [XMLSkinElement("labelShadowColor")]
+    protected long _labelShadowColor = 0xFF000000;
+    [XMLSkinElement("inputTextBoxPosX")]
+    protected int _inputTextBoxPosX = 64;
+    [XMLSkinElement("inputTextBoxPosY")]
+    protected int _inputTextBoxPosY = 218;
+    [XMLSkinElement("inputTextBoxWidth")]
+    protected int _inputTextBoxWidth = -1; //calculated
+    [XMLSkinElement("inputTextBoxHeight")]
+    protected int _inputTextBoxHeight = 30;
+    [XMLSkinElement("inputTextBoxTexture")]
+    protected string _inputTextBoxTexture = "white.bmp";
+    [XMLSkinElement("showLabelAsInitialText")]
+    protected bool _showLabelAsInitialText = false;
+    [XMLSkinElement("inputTextAlign")]
+    protected Alignment _inputTextAlign = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("inputTextOffX")]
+    protected int _inputTextOffX = 18;
+    [XMLSkinElement("inputTextOffY")]
+    protected int _inputTextOffY = 2;
+    [XMLSkinElement("inputTextFont")]
+    protected string _inputTextFont = "font10";
+    [XMLSkinElement("inputTextColor")]
+    protected long _inputTextColor = 0xff000000;
+    [XMLSkinElement("inputTextShadowAngle")]
+    protected int _inputTextShadowAngle = 0;
+    [XMLSkinElement("inputTextShadowDistance")]
+    protected int _inputTextShadowDistance = 0;
+    [XMLSkinElement("inputTextShadowColor")]
+    protected long _inputTextShadowColor = 0xFF000000;
+    [XMLSkinElement("charKeyFont")]
+    protected string _charKeyFont = "font14";
+    [XMLSkinElement("namedKeyFont")]
+    protected string _namedKeyFont = "font10";
+    [XMLSkinElement("keyTextShadowAngle")]
+    protected int _keyTextShadowAngle = 0;
+    [XMLSkinElement("keyTextShadowDistance")]
+    protected int _keyTextShadowDistance = 0;
+    [XMLSkinElement("keyTextShadowColor")]
+    protected long _keyTextShadowColor = 0xFF000000;
+    [XMLSkinElement("keyTextureFocus")]
+    protected string _keyTextureFocus = "keyNF.bmp";
+    [XMLSkinElement("keyTextureNoFocus")]
+    protected string _keyTextureNoFocus = "keyNF.bmp";
+    [XMLSkinElement("keyHighlightColor")]
+    protected long _keyHighlightColor = 0xff00ff00;
+    [XMLSkinElement("keyPressedColor")]
+    protected long _keyPressedColor = 0xff808080;
+    [XMLSkinElement("keyDisabledColor")]
+    protected long _keyDisabledColor = 0xffffffff;
+    [XMLSkinElement("keyFontColor")]
+    protected long _keyFontColor = 0xff000000;
+    [XMLSkinElement("keySelFontColor")]
+    protected long _keySelFontColor = 0xff000000;
+    [XMLSkinElement("keyDisabledFontColor")]
+    protected long _keyDisabledFontColor = 0xff808080;
+    [XMLSkin("keyTextureFocus", "border")]
+    protected string _strBorderKTF = "";
 
-    [XMLSkin("keyTextureFocus", "position")] protected GUIImage.BorderPosition _borderPositionKTF =
+    [XMLSkin("keyTextureFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionKTF =
       GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
-    [XMLSkin("keyTextureFocus", "textureRepeat")] protected bool _borderTextureRepeatKTF = false;
-    [XMLSkin("keyTextureFocus", "textureRotate")] protected bool _borderTextureRotateKTF = false;
-    [XMLSkin("keyTextureFocus", "texture")] protected string _borderTextureFileNameKTF = "image_border.png";
-    [XMLSkin("keyTextureFocus", "colorKey")] protected long _borderColorKeyKTF = 0xFFFFFFFF;
-    [XMLSkin("keyTextureFocus", "corners")] protected bool _borderHasCornersKTF = false;
-    [XMLSkin("keyTextureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateKTF = true;
-    [XMLSkin("keyTextureNoFocus", "border")] protected string _strBorderKTNF = "";
+    [XMLSkin("keyTextureFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatKTF = false;
+    [XMLSkin("keyTextureFocus", "textureRotate")]
+    protected bool _borderTextureRotateKTF = false;
+    [XMLSkin("keyTextureFocus", "texture")]
+    protected string _borderTextureFileNameKTF = "image_border.png";
+    [XMLSkin("keyTextureFocus", "colorKey")]
+    protected long _borderColorKeyKTF = 0xFFFFFFFF;
+    [XMLSkin("keyTextureFocus", "corners")]
+    protected bool _borderHasCornersKTF = false;
+    [XMLSkin("keyTextureFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateKTF = true;
+    [XMLSkin("keyTextureNoFocus", "border")]
+    protected string _strBorderKTNF = "";
 
-    [XMLSkin("keyTextureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionKTNF =
+    [XMLSkin("keyTextureNoFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionKTNF =
       GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
 
-    [XMLSkin("keyTextureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatKTNF = false;
-    [XMLSkin("ketTextureNoFocus", "textureRotate")] protected bool _borderTextureRotateKTNF = false;
-    [XMLSkin("keyTextureNoFocus", "texture")] protected string _borderTextureFileNameKTNF = "image_border.png";
-    [XMLSkin("keyTextureNoFocus", "colorKey")] protected long _borderColorKeyKTNF = 0xFFFFFFFF;
-    [XMLSkin("keyTextureNoFocus", "corners")] protected bool _borderHasCornersKTNF = false;
-    [XMLSkin("keyTextureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateKTNF = true;
+    [XMLSkin("keyTextureNoFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatKTNF = false;
+    [XMLSkin("ketTextureNoFocus", "textureRotate")]
+    protected bool _borderTextureRotateKTNF = false;
+    [XMLSkin("keyTextureNoFocus", "texture")]
+    protected string _borderTextureFileNameKTNF = "image_border.png";
+    [XMLSkin("keyTextureNoFocus", "colorKey")]
+    protected long _borderColorKeyKTNF = 0xFFFFFFFF;
+    [XMLSkin("keyTextureNoFocus", "corners")]
+    protected bool _borderHasCornersKTNF = false;
+    [XMLSkin("keyTextureNoFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateKTNF = true;
 
     #region constants
 
@@ -444,7 +511,7 @@ namespace MediaPortal.GUI.Library
     public int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
     //
 
-    public ArrayList _keyboardList = new ArrayList(); // list of rows = keyboard
+    public Dictionary<KeyboardTypes, KeyBoard> _keyboardList = new Dictionary<KeyboardTypes, KeyBoard>(); // list of rows = keyboard
 
     #endregion
 
@@ -489,8 +556,7 @@ namespace MediaPortal.GUI.Library
       {
         if (value != _useSmsStyleTextInsertion)
         {
-          //According to BUG 4321:When_typing_a_password_with_the_virtual_keyboard_the_SMS_style_is_disabled, this is not desirable
-          //if (Password) return; sms is disabled during password input - we cannot see chars! 
+          if (Password) return; //sms is disabled during password input - we cannot see chars! 
           
           smsLastKeyPressed = -1;
           _lastColumn = 0;
@@ -501,6 +567,26 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+
+    public class KeyBoard : List<Row>
+    {
+    }
+
+    public class Row : List<Key>
+    {
+      public void AddKeys(Xkey[] keys, int width, GUIKeyboard kb)
+      {
+        foreach (Xkey key in keys)
+        {
+          Add(new Key(key, width * kb._keyWidth + (kb._keyHorizontalSpacing * (width - 1)), kb));
+        }
+      }
+
+      public void AddKey(Xkey key, int width, GUIKeyboard kb)
+      {
+        Add(new Key(key, width * kb._keyWidth + (kb._keyHorizontalSpacing * (width - 1)), kb));
+      }
+    }
 
     public class Key
     {
@@ -516,10 +602,6 @@ namespace MediaPortal.GUI.Library
         dwWidth = iwidth;
 
         // Create a button control template.
-        if (button != null)
-        {
-          button.Dispose();
-        }
         button = new GUIButtonControl(kb.GetID, -1, 0, 0, 0, 0, kb._keyTextureFocus, kb._keyTextureNoFocus,
                                       kb._keyTextShadowAngle, kb._keyTextShadowDistance, kb._keyTextShadowColor);
 
@@ -595,7 +677,7 @@ namespace MediaPortal.GUI.Library
     }
 
     public GUIKeyboard(int dwParentID)
-      : base(dwParentID) {}
+      : base(dwParentID) { }
 
     /// <summary>
     /// The constructor of the GUIKeyboard class.
@@ -655,19 +737,7 @@ namespace MediaPortal.GUI.Library
         inputTextBox.Dispose();
         inputText.Dispose();
         inputTextCaret.Dispose();
-
-        ArrayList keyBoard = null;
-        for (int kb = 0; kb < _keyboardList.Count; kb++)
-          keyBoard = (ArrayList)_keyboardList[kb];
-        for (int row = 0; row < _maxRows; ++row)
-        {
-          ArrayList keyRow = (ArrayList)keyBoard[row];
-          for (int i = 0; i < keyRow.Count; i++)
-          {
-            Key key = (Key)keyRow[i];
-            key.button.Dispose();
-          }
-        }
+        DestroyBoards();
 
         base.Dispose();
         _isAllocated = false;
@@ -721,16 +791,16 @@ namespace MediaPortal.GUI.Library
       int y1 = keyboardY;
       int x1 = keyboardX;
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      KeyBoard keyBoard = _keyboardList[_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeightScaled)
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList)keyBoard[row];
+        Row keyRow = keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
-          Key key = (Key)keyRow[i];
+          Key key = keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
           if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
@@ -998,19 +1068,35 @@ namespace MediaPortal.GUI.Library
       _maxRows = 5;
     }
 
+    private void DestroyBoards()
+    {
+      foreach (KeyValuePair<KeyboardTypes, KeyBoard> kv in _keyboardList)
+      {
+        KeyBoard keyBoard = kv.Value;
+        foreach(Row keyRow in keyBoard)
+        {
+          foreach(Key key in keyRow)
+          {
+            key.button.Dispose();
+          }
+        }
+      }
+
+      _keyboardList.Clear();
+    }
+
     protected virtual void InitBoard()
     {
-      // Destroy old keyboard
-      _keyboardList.Clear();
+      DestroyBoards();
 
       //-------------------------------------------------------------------------
       // Alpha keyboard
       //-------------------------------------------------------------------------
 
-      ArrayList keyBoard = new ArrayList();
+      KeyBoard keyBoard = new KeyBoard();
 
       // First row is Done, 1-0
-      ArrayList keyRow = new ArrayList();
+      Row keyRow = new Row();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1021,28 +1107,18 @@ namespace MediaPortal.GUI.Library
       }
       if (!_useSmsStyleTextInsertion)
       {
-        keyRow.Add(new Key(Xkey.XK_1, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_2, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_3, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_4, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_5, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_6, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_7, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_8, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_9, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_0, _keyWidth, this));
+        keyRow.AddKeys(new[] { Xkey.XK_1, Xkey.XK_2, Xkey.XK_3, Xkey.XK_4, Xkey.XK_5, Xkey.XK_6, Xkey.XK_7, Xkey.XK_8, Xkey.XK_9, Xkey.XK_0 },
+          1, this);
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_SMS1, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS2, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS3, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.AddKeys(new[] { Xkey.XK_SMS1, Xkey.XK_SMS2, Xkey.XK_SMS3 }, 2, this);
       }
 
       keyBoard.Add(keyRow);
 
       // Second row is Shift, A-J
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1054,28 +1130,18 @@ namespace MediaPortal.GUI.Library
       }
       if (!_useSmsStyleTextInsertion)
       {
-        keyRow.Add(new Key(Xkey.XK_A, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_B, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_C, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_D, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_E, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_F, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_G, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_H, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_I, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_J, _keyWidth, this));
+        keyRow.AddKeys(new[] { Xkey.XK_A, Xkey.XK_B, Xkey.XK_C, Xkey.XK_D, Xkey.XK_E, Xkey.XK_F, Xkey.XK_G, Xkey.XK_H, Xkey.XK_I, Xkey.XK_J },
+          1, this);
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_SMS4, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS5, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS6, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.AddKeys(new[] { Xkey.XK_SMS4, Xkey.XK_SMS5, Xkey.XK_SMS6 }, 2, this);
       }
 
       keyBoard.Add(keyRow);
 
       // Third row is Caps Lock, K-T
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1087,28 +1153,18 @@ namespace MediaPortal.GUI.Library
       }
       if (!_useSmsStyleTextInsertion)
       {
-      keyRow.Add(new Key(Xkey.XK_K, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_L, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_M, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_N, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_O, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_P, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_Q, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_R, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_S, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_T, _keyWidth, this));
+        keyRow.AddKeys(new[] { Xkey.XK_K, Xkey.XK_L, Xkey.XK_M, Xkey.XK_N, Xkey.XK_O, Xkey.XK_P, Xkey.XK_Q, Xkey.XK_R, Xkey.XK_S, Xkey.XK_T },
+          1, this);
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_SMS7, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS8, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS9, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.AddKeys(new[] { Xkey.XK_SMS7, Xkey.XK_SMS8, Xkey.XK_SMS9 }, 2, this);
       }
 
       keyBoard.Add(keyRow);
 
       // Fourth row is Accents, U-Z, Backspace
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1120,25 +1176,18 @@ namespace MediaPortal.GUI.Library
       }
       if (!_useSmsStyleTextInsertion)
       {
-        keyRow.Add(new Key(Xkey.XK_U, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_V, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_W, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_X, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_Y, _keyWidth, this));
-        keyRow.Add(new Key(Xkey.XK_Z, _keyWidth, this));
+        keyRow.AddKeys(new[] { Xkey.XK_U, Xkey.XK_V, Xkey.XK_W, Xkey.XK_X, Xkey.XK_Y, Xkey.XK_Z }, 1, this);
       }
       else
       {
-        //keyRow.Add(new Key(Xkey.XK_NULL, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-        keyRow.Add(new Key(Xkey.XK_SMS0, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
-        //keyRow.Add(new Key(Xkey.XK_NULL, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.AddKey(Xkey.XK_SMS0, 6, this);
       }
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
+      keyRow.AddKey(Xkey.XK_BACKSPACE, 4, this);
 
       keyBoard.Add(keyRow);
 
       // Fifth row is SMS, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1150,22 +1199,21 @@ namespace MediaPortal.GUI.Library
         keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
       //keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      keyRow.AddKey(Xkey.XK_SPACE, 6, this);
+      keyRow.AddKeys(new[] { Xkey.XK_ARROWLEFT, Xkey.XK_ARROWRIGHT }, 2, this);
       keyBoard.Add(keyRow);
 
       // Add the alpha keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ALPHABET, keyBoard);
 
       //-------------------------------------------------------------------------
       // Symbol keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new KeyBoard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new Row();
       if (_useSearchLayout)
       {
         keyRow.Add(new Key(Xkey.XK_OK, _searchModeKeyWidth, this));
@@ -1174,21 +1222,14 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_OK, _modeKeyWidth, this));
       }
-      keyRow.Add(new Key(Xkey.XK_LPAREN, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_RPAREN, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_AMPER, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_UNDERS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CARET, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_PERCENT, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_BSLASH, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_FSLASH, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_AT, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_NSIGN, _keyWidth, this));
-
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_LPAREN, Xkey.XK_RPAREN, Xkey.XK_AMPER, Xkey.XK_UNDERS, Xkey.XK_CARET, Xkey.XK_PERCENT, Xkey.XK_BSLASH, 
+          Xkey.XK_FSLASH, Xkey.XK_AT, Xkey.XK_NSIGN },
+        1, this);
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1199,20 +1240,14 @@ namespace MediaPortal.GUI.Library
         keyRow.Add(new Key(Xkey.XK_SHIFT, _modeKeyWidth, this));
       }
 
-      keyRow.Add(new Key(Xkey.XK_LBRACK, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_RBRACK, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_DOLLAR, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_POUND_SIGN, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_YEN_SIGN, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_EURO_SIGN, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_SEMI, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_COLON, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_QUOTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_DQUOTE, _keyWidth, this));
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_LBRACK, Xkey.XK_RBRACK, Xkey.XK_DOLLAR, Xkey.XK_POUND_SIGN, Xkey.XK_YEN_SIGN, Xkey.XK_EURO_SIGN, Xkey.XK_SEMI, 
+          Xkey.XK_COLON, Xkey.XK_QUOTE, Xkey.XK_DQUOTE },
+        1, this);
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1223,20 +1258,14 @@ namespace MediaPortal.GUI.Library
         keyRow.Add(new Key(Xkey.XK_CAPSLOCK, _modeKeyWidth, this));
       }
 
-      keyRow.Add(new Key(Xkey.XK_LT, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_GT, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_QMARK, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_EXCL, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_INVERTED_QMARK, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_INVERTED_EXCL, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_DASH, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_STAR, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_PLUS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_EQUAL, _keyWidth, this));
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_LT, Xkey.XK_GT, Xkey.XK_QMARK, Xkey.XK_EXCL, Xkey.XK_INVERTED_QMARK, Xkey.XK_INVERTED_EXCL, Xkey.XK_DASH, 
+          Xkey.XK_STAR, Xkey.XK_PLUS, Xkey.XK_EQUAL },
+        1, this);
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1246,18 +1275,13 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_ALPHABET, _modeKeyWidth, this));
       }
-
-      keyRow.Add(new Key(Xkey.XK_LBRACE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_RBRACE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_LT_DBL_ANGLE_QUOTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_RT_DBL_ANGLE_QUOTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_COMMA, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_PERIOD, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
+      keyRow.AddKeys(new[] { Xkey.XK_LBRACE, Xkey.XK_RBRACE, Xkey.XK_LT_DBL_ANGLE_QUOTE, Xkey.XK_RT_DBL_ANGLE_QUOTE, Xkey.XK_COMMA, Xkey.XK_PERIOD },
+        1, this);
+      keyRow.AddKey(Xkey.XK_BACKSPACE, 4, this);
       keyBoard.Add(keyRow);
 
       // Fifth row is Accents, Space, Left, Right
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1268,23 +1292,21 @@ namespace MediaPortal.GUI.Library
         //keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
         keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
-
-      keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      keyRow.AddKey(Xkey.XK_SPACE, 6, this);
+      keyRow.AddKeys(new[] { Xkey.XK_ARROWLEFT, Xkey.XK_ARROWRIGHT }, 2, this);
       keyBoard.Add(keyRow);
 
       // Add the symbol keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_SYMBOLS, keyBoard);
 
       //-------------------------------------------------------------------------
       // Accents keyboard
       //-------------------------------------------------------------------------
 
-      keyBoard = new ArrayList();
+      keyBoard = new KeyBoard();
 
       // First row
-      keyRow = new ArrayList();
+      keyRow = new Row();
       // Swedish - Finnish
       if (_useSearchLayout)
       {
@@ -1294,20 +1316,14 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_OK, _modeKeyWidth, this));
       }
-      keyRow.Add(new Key(Xkey.XK_CAP_A_RING, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_GRAVE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_CIRCUMFLEX, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_GRAVE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_CIRCUMFLEX, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_I_DIAERESIS, _keyWidth, this));
+      keyRow.AddKeys(new[]
+        { Xkey.XK_CAP_A_RING, Xkey.XK_CAP_A_DIAERESIS, Xkey.XK_CAP_O_DIAERESIS, Xkey.XK_CAP_A_GRAVE, Xkey.XK_CAP_A_ACUTE, 
+          Xkey.XK_CAP_A_CIRCUMFLEX, Xkey.XK_CAP_I_GRAVE, Xkey.XK_CAP_I_ACUTE, Xkey.XK_CAP_I_CIRCUMFLEX, Xkey.XK_CAP_I_DIAERESIS },
+        1, this);
       keyBoard.Add(keyRow);
 
       // Second row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1319,19 +1335,15 @@ namespace MediaPortal.GUI.Library
       }
 
       //Danish - Norwegian
-      keyRow.Add(new Key(Xkey.XK_CAP_A_RING, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_AE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_STROKE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_C_CEDILLA, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_E_GRAVE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_E_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_E_CIRCUMFLEX, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_E_DIAERESIS, _keyWidth, this));
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_CAP_A_RING, Xkey.XK_CAP_AE, Xkey.XK_CAP_O_STROKE, Xkey.XK_CAP_C_CEDILLA, Xkey.XK_CAP_E_GRAVE, 
+          Xkey.XK_CAP_E_ACUTE, Xkey.XK_CAP_E_CIRCUMFLEX, Xkey.XK_CAP_E_DIAERESIS },
+        1, this);
 
       keyBoard.Add(keyRow);
 
       // Third row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1343,19 +1355,15 @@ namespace MediaPortal.GUI.Library
       }
 
       // German
-      keyRow.Add(new Key(Xkey.XK_CAP_U_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_A_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_SM_SHARP_S, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_GRAVE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_CIRCUMFLEX, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_O_TILDE, _keyWidth, this));
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_CAP_U_DIAERESIS, Xkey.XK_CAP_O_DIAERESIS, Xkey.XK_CAP_A_DIAERESIS, Xkey.XK_SM_SHARP_S, 
+          Xkey.XK_CAP_O_GRAVE, Xkey.XK_CAP_O_ACUTE, Xkey.XK_CAP_O_CIRCUMFLEX, Xkey.XK_CAP_O_TILDE },
+        1, this);
 
       keyBoard.Add(keyRow);
 
       // Fourth row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1366,18 +1374,15 @@ namespace MediaPortal.GUI.Library
         keyRow.Add(new Key(Xkey.XK_SYMBOLS, _modeKeyWidth, this));
       }
 
-      keyRow.Add(new Key(Xkey.XK_CAP_N_TILDE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_U_GRAVE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_U_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_U_CIRCUMFLEX, _keyWidth, this));
-
-      keyRow.Add(new Key(Xkey.XK_CAP_Y_ACUTE, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_CAP_Y_DIAERESIS, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
+      keyRow.AddKeys(new[] 
+        { Xkey.XK_CAP_N_TILDE, Xkey.XK_CAP_U_GRAVE, Xkey.XK_CAP_U_ACUTE, Xkey.XK_CAP_U_CIRCUMFLEX, 
+          Xkey.XK_CAP_Y_ACUTE, Xkey.XK_CAP_Y_DIAERESIS },
+        1, this);
+      keyRow.AddKey(Xkey.XK_BACKSPACE, 4, this);
       keyBoard.Add(keyRow);
 
       // Fifth row
-      keyRow = new ArrayList();
+      keyRow = new Row();
 
       if (_useSearchLayout)
       {
@@ -1388,14 +1393,13 @@ namespace MediaPortal.GUI.Library
         //keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
         keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
+      keyRow.AddKey(Xkey.XK_SPACE, 6, this);
+      keyRow.AddKeys(new[] { Xkey.XK_ARROWLEFT, Xkey.XK_ARROWRIGHT }, 2, this);
 
-      keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
       keyBoard.Add(keyRow);
 
       // Add the accents keyboard to the list
-      _keyboardList.Add(keyBoard);
+      _keyboardList.Add(KeyboardTypes.TYPE_ACCENTS, keyBoard);
     }
 
     protected void UpdateState(Event ev)
@@ -1432,7 +1436,7 @@ namespace MediaPortal.GUI.Library
               Press(Xkey.XK_ARROWRIGHT);
               break;
 
-              // Navigation
+            // Navigation
             case Event.EV_UP:
               MoveUp();
               break;
@@ -1453,11 +1457,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    [Obsolete("use changekey with keyboardtype")]
     protected void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
     {
-      ArrayList board = (ArrayList)_keyboardList[iBoard];
-      ArrayList row = (ArrayList)board[iRow];
-      row[iKey] = newkey;
+      ChangeKey((KeyboardTypes)iBoard, iRow, iKey, newkey);
+    }
+
+    protected void ChangeKey(KeyboardTypes kBoard, int iRow, int iKey, Key newkey)
+    {
+      _keyboardList[kBoard][iRow][iKey] = newkey;
     }
 
     protected void PressCurrent()
@@ -1467,9 +1475,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Key key = _keyboardList[_currentKeyboard][_currentRow][_currentKey];
 
       // Press it
       Press(key.xKey);
@@ -1494,7 +1500,7 @@ namespace MediaPortal.GUI.Library
           float fWidth = 0, fHeight = 0;
           _fontCharKey.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int) fTextBoxWidth)))
+          if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int)fTextBoxWidth)))
           {
             if (_position >= _textEntered.Length)
             {
@@ -1581,9 +1587,9 @@ namespace MediaPortal.GUI.Library
             Close();
             _pressedEnter = true;
             break;
-            // added to the original code VirtualKeyboard.cs
-            // by Agree
-            // starts here...
+          // added to the original code VirtualKeyboard.cs
+          // by Agree
+          // starts here...
 
           case Xkey.XK_SEARCH_IS:
             _searchKind = (int)SearchKinds.SEARCH_STARTS_WITH;
@@ -1604,8 +1610,8 @@ namespace MediaPortal.GUI.Library
             _searchKind = (int)SearchKinds.SEARCH_CONTAINS;
             SetSearchKind();
             break;
-            // code by Agree ends here
-            //
+          // code by Agree ends here
+          //
 
           case Xkey.XK_SMS0:
             ProcessSmsInsertion(0);
@@ -1845,15 +1851,13 @@ namespace MediaPortal.GUI.Library
       }
 
       // If the new key is a single character, remember it for later
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Key key = _keyboardList[_currentKeyboard][_currentRow][_currentKey];
       if (key.name == "" || _lastColumn == 0)
       {
         switch (key.xKey)
         {
-            // Adjust the last column for the arrow keys to confine it
-            // within the range of the key width
+          // Adjust the last column for the arrow keys to confine it
+          // within the range of the key width
           case Xkey.XK_ARROWLEFT:
             if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
             {
@@ -1867,7 +1871,7 @@ namespace MediaPortal.GUI.Library
             }
             break;
 
-            // Single char, non-arrow
+          // Single char, non-arrow
           default:
             _lastColumn = _currentKey;
             break;
@@ -1882,9 +1886,7 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
-      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
-      ArrayList row = (ArrayList)board[_currentRow];
-      Key key = (Key)row[_currentKey];
+      Key key = _keyboardList[_currentKeyboard][_currentRow][_currentKey];
 
       // On the symbols keyboard, Shift and Caps Lock are disabled
       if (_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS)
@@ -1948,7 +1950,7 @@ namespace MediaPortal.GUI.Library
           return smsResult.ToLowerInvariant();
         }
       }
-      
+
       // Handle case conversion
       char wc = (char)(((uint)xk) & 0xffff);
 
@@ -2150,7 +2152,7 @@ namespace MediaPortal.GUI.Library
     public bool Password
     {
       get { return _password; }
-      set 
+      set
       {
         if (_password != value)
         {
@@ -2255,5 +2257,6 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
   }
 }
