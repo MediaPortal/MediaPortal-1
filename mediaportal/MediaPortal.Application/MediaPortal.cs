@@ -1306,6 +1306,26 @@ public class MediaPortalApp : D3D, IRender
                       rc.right - rc.left - border.Width, rc.bottom - rc.top - border.Height);
             OnPaintEvent();
           }
+
+          // adjust mouse pointer position
+          if (Cursor.Position.X > rc.right)
+          {
+            Cursor.Position = new Point(rc.right, Cursor.Position.Y);
+          }
+          else if (Cursor.Position.X < rc.left)
+          {
+            Cursor.Position = new Point(rc.left, Cursor.Position.Y);
+          }
+
+          if (Cursor.Position.Y > rc.bottom)
+          {
+            Cursor.Position = new Point(Cursor.Position.X, rc.bottom);
+          }
+          else if (Cursor.Position.X < rc.top)
+          {
+            Cursor.Position = new Point(Cursor.Position.X, rc.top);
+          }
+
           Marshal.StructureToPtr(rc, msg.LParam, false);
           LastRect = rc;
           msg.Result = (IntPtr)1;

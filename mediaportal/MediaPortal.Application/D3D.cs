@@ -24,7 +24,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -2019,7 +2018,7 @@ namespace MediaPortal
     protected override void OnGotFocus(EventArgs e)
     {
       Log.Debug("D3D: OnGotFocus()");
-      if (AutoHideMouse)
+      if (AutoHideMouse && !Windowed)
       {
         ShowMouseCursor(false);
       }
@@ -2036,7 +2035,7 @@ namespace MediaPortal
     protected override void OnLostFocus(EventArgs e)
     {
       Log.Debug("D3D: OnLostFocus()");
-      if (AutoHideMouse)
+      if (AutoHideMouse && !Windowed)
       {
         ShowMouseCursor(true);
       }
