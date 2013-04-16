@@ -163,8 +163,42 @@ namespace MediaPortal.Util
     private Utils() {}
 
     public static string AudioExtensionsDefault =
-      ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-
+        ".asx,.dts," +
+        // Playlists
+        ".m3u,.pls,.b4s,.wpl,.cue," +
+        // Bass Standard
+        ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
+        ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
+        // BassCD
+        ".cda," +
+        // BassAac
+        ".aac,.mp4,.m4a,.m4b,.m4p," +
+        // BassAc3
+        ".ac3," +
+        // BassAlac
+        ".m4a,.aac,.mp4," +
+        // BassApe
+        ".ape,.apl," +
+        // BassFlac
+        ".flac," +
+        // BassMidi
+        ".midi,.mid,.rmi,.kar," +
+        // BassMpc
+        ".mpc,.mpp,.mp+," +
+        // BassOfr
+        ".ofr,.ofs," +
+        // BassOpus
+        ".opus," +
+        // BassSpx
+        ".spx," +
+        // BassTta
+        ".tta," +
+        // BassWma
+        // .wmv,
+        ".wma," +
+        // BassWv
+        ".wv";
+    
     public static string VideoExtensionsDefault =
       ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
 
@@ -4671,6 +4705,43 @@ namespace MediaPortal.Util
     {
       return source.Select(i => actionOnItem.DoAsync(i))
         .ToArray();
+    }
+  }
+  
+  public class StringLogicalComparer : IComparer, IComparer<string>
+  {
+    public static int Compare(string x, string y)
+    {
+      return CompareStrings(x, y);
+    }
+
+    [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+    private static extern int StrCmpLogicalW(string x, string y);
+
+    private static int CompareStrings(string x, string y)
+    {
+      return StrCmpLogicalW(x, y);
+    }
+
+    private static int CompareObjects(object x, object y)
+    {
+      return StrCmpLogicalW((string) x, (string) y);
+    }
+
+    int IComparer<string>.Compare(string x, string y)
+    {
+      if (null == x && null == y) return 0;
+      if (null == x) return -1;
+      if (null == y) return 1;
+      return Compare(x, y);
+    }
+
+    int IComparer.Compare(object x, object y)
+    {
+      if (null == x && null == y) return 0;
+      if (null == x) return -1;
+      if (null == y) return 1;
+      return CompareObjects(x, y);
     }
   }
 }

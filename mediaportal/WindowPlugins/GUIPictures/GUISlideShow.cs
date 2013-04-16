@@ -81,7 +81,10 @@ namespace MediaPortal.GUI.Pictures
           _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
         }
       }
-
+      if (_autoShuffle)
+      {
+        Shuffle();
+      }
 
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
@@ -1172,10 +1175,6 @@ namespace MediaPortal.GUI.Pictures
     {
       LoadSettings();
       _isBackgroundMusicPlaying = false;
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
       _slideDirection = 1;
       _isSlideShow = true;
     }
@@ -1185,10 +1184,6 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       _isBackgroundMusicPlaying = false;
       StartBackgroundMusic(path);
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
       _slideDirection = 1;
       _isSlideShow = true;
     }
@@ -2824,8 +2819,8 @@ namespace MediaPortal.GUI.Pictures
       Song song = new Song();
 
       // If we don't have a tag in the db, we use the filename without the extension as song.title
-      song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
-      mDB.GetSongByFileName(g_Player.CurrentFile, ref song);
+      if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
+        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
 
       // Show Dialog
       dlg.Reset();

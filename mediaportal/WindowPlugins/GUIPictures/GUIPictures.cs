@@ -1157,11 +1157,11 @@ namespace MediaPortal.GUI.Pictures
 
           if (sortAsc)
           {
-            return String.Compare(item1.Label, item2.Label, true);
+            return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
           }
           else
           {
-            return String.Compare(item2.Label, item1.Label, true);
+            return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
           }
 
 
@@ -1655,7 +1655,7 @@ namespace MediaPortal.GUI.Pictures
       if (SlideShow.Count > 0 || SlideShow._slideFolder.Count > 0)
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-        SlideShow.StartSlideShow();
+        SlideShow.StartSlideShow(currentFolder);
       }
     }
 
@@ -1680,7 +1680,7 @@ namespace MediaPortal.GUI.Pictures
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
         SlideShow.SelectShowRecursive(strFile);
-        SlideShow.StartSlideShow();
+        SlideShow.StartSlideShow(currentFolder);
       }
     }
 
@@ -1713,7 +1713,7 @@ namespace MediaPortal.GUI.Pictures
       {
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
         SlideShow.Select(strFile);
-        SlideShow.StartSlideShow();
+        SlideShow.StartSlideShow(currentFolder);
       }
     }
 

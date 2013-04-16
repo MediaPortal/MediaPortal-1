@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MediaPortal.Common.Utils.Logger;
 
 namespace TvLibrary.Log
 {
@@ -406,7 +407,6 @@ namespace TvLibrary.Log
       {
         try
         {
-          string logFileName = GetFileName(logType);
           string logLine = string.Format(format, arg);
 
           if (IsRepetition(logLine))
@@ -415,6 +415,18 @@ namespace TvLibrary.Log
           }
           CacheLogLine(logLine);
 
+          // implementation
+          switch (logType)
+          {
+            case LogType.Debug: CommonLogger.Instance.Debug(CommonLogType.Log, format, arg); break;
+            case LogType.Info: CommonLogger.Instance.Info(CommonLogType.Log, format, arg); break;
+            case LogType.Error:CommonLogger.Instance.Error(CommonLogType.Log, format, arg); break;
+            case LogType.Epg: CommonLogger.Instance.Info(CommonLogType.EPG, format, arg); break;
+          }
+          
+
+          /*
+          string logFileName = GetFileName(logType);
           if (CheckLogPrepared(logFileName))
           {
             using (StreamWriter writer = new StreamWriter(logFileName, true, Encoding.UTF8))
@@ -428,6 +440,7 @@ namespace TvLibrary.Log
               writer.Close();
             }
           }
+           */
         }
         catch (Exception) {}
       }
