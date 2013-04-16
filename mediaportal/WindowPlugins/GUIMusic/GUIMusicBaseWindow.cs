@@ -759,10 +759,12 @@ namespace MediaPortal.GUI.Music
           return;
 
         PlayListItem playListItem = playlist[i];
-        m_database.GetSongByFileName(playListItem.FileName, ref song);
-        MusicTag tag = new MusicTag();
-        tag = song.ToMusicTag();
-        playListItem.MusicTag = tag;
+        if (m_database.GetSongByFileName(playListItem.FileName, ref song))
+        {
+          MusicTag tag = new MusicTag();
+          tag = song.ToMusicTag();
+          playListItem.MusicTag = tag;
+        }
         if (Util.Utils.FileExistsInCache(playListItem.FileName) ||
             playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
         {
