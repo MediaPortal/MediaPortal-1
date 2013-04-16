@@ -63,6 +63,10 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
+      RemoveEntry(settings, "audioplayer", "player");
+      RemoveEntry(settings, "audioplayer", "asio");
+      RemoveEntry(settings, "audioplayer", "asiodevice");
+      RemoveEntry(settings, "audioplayer", "mixing");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");

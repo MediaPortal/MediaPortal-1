@@ -107,6 +107,7 @@ namespace MediaPortal.Configuration.Sections
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
         checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        cbConfirmTimeshiftStop.Checked = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
         int showEpisodeinfo = xmlreader.GetValueAsInt("mytv", "showEpisodeInfo", 0);
         if (showEpisodeinfo > this.ShowEpisodeOptions.Length)
         {
@@ -182,6 +183,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
         xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
+        xmlwriter.SetValueAsBool("mytv", "confirmTimeshiftStop", cbConfirmTimeshiftStop.Checked);
         xmlwriter.SetValue("mytv", "showEpisodeInfo", comboboxShowEpisodeInfo.SelectedIndex);
 
         string prefLangs = "";
@@ -281,6 +283,7 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox showChannelNumberCheckBox;
     private MPNumericUpDown channelNumberMaxLengthNumUpDn;
     private MPLabel lblChanNumMaxLen;
+    private MPCheckBox cbConfirmTimeshiftStop;
 
     private void InitializeComponent()
     {
@@ -347,6 +350,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox8 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.chkRecnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbConfirmTimeshiftStop = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtNotifyAfter = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelNotifyTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -1064,7 +1068,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
       this.tabPage1.Size = new System.Drawing.Size(464, 419);
       this.tabPage1.TabIndex = 4;
-      this.tabPage1.Text = "Notifier";
+      this.tabPage1.Text = "Notifications";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox8
@@ -1093,8 +1097,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox7
       // 
-      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox7.Controls.Add(this.cbConfirmTimeshiftStop);
       this.mpGroupBox7.Controls.Add(this.txtNotifyAfter);
       this.mpGroupBox7.Controls.Add(this.labelNotifyTimeout);
       this.mpGroupBox7.Controls.Add(this.checkBoxNotifyPlaySound);
@@ -1108,12 +1113,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox7.TabStop = false;
       this.mpGroupBox7.Text = "TV notifications";
       // 
+      // cbConfirmTimeshiftStop
+      // 
+      this.cbConfirmTimeshiftStop.AutoSize = true;
+      this.cbConfirmTimeshiftStop.Checked = true;
+      this.cbConfirmTimeshiftStop.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbConfirmTimeshiftStop.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbConfirmTimeshiftStop.Location = new System.Drawing.Point(22, 103);
+      this.cbConfirmTimeshiftStop.Name = "cbConfirmTimeshiftStop";
+      this.cbConfirmTimeshiftStop.Size = new System.Drawing.Size(230, 17);
+      this.cbConfirmTimeshiftStop.TabIndex = 12;
+      this.cbConfirmTimeshiftStop.Text = "Ask for confirmation when stopping timeshift";
+      this.cbConfirmTimeshiftStop.UseVisualStyleBackColor = true;
+      // 
       // txtNotifyAfter
       // 
       this.txtNotifyAfter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.txtNotifyAfter.BorderColor = System.Drawing.Color.Empty;
-      this.txtNotifyAfter.Location = new System.Drawing.Point(164, 73);
+      this.txtNotifyAfter.Location = new System.Drawing.Point(164, 47);
       this.txtNotifyAfter.Name = "txtNotifyAfter";
       this.txtNotifyAfter.Size = new System.Drawing.Size(229, 20);
       this.txtNotifyAfter.TabIndex = 11;
@@ -1122,7 +1140,7 @@ namespace MediaPortal.Configuration.Sections
       // labelNotifyTimeout
       // 
       this.labelNotifyTimeout.AutoSize = true;
-      this.labelNotifyTimeout.Location = new System.Drawing.Point(19, 76);
+      this.labelNotifyTimeout.Location = new System.Drawing.Point(19, 50);
       this.labelNotifyTimeout.Name = "labelNotifyTimeout";
       this.labelNotifyTimeout.Size = new System.Drawing.Size(139, 13);
       this.labelNotifyTimeout.TabIndex = 10;
@@ -1130,13 +1148,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxNotifyPlaySound
       // 
-      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxNotifyPlaySound.AutoSize = true;
       this.checkBoxNotifyPlaySound.Checked = true;
       this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxNotifyPlaySound.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(22, 99);
+      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(22, 73);
       this.checkBoxNotifyPlaySound.Name = "checkBoxNotifyPlaySound";
       this.checkBoxNotifyPlaySound.Size = new System.Drawing.Size(105, 17);
       this.checkBoxNotifyPlaySound.TabIndex = 9;
@@ -1146,7 +1164,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel2
       // 
       this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(19, 50);
+      this.mpLabel2.Location = new System.Drawing.Point(19, 24);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(96, 13);
       this.mpLabel2.TabIndex = 8;
@@ -1157,7 +1175,7 @@ namespace MediaPortal.Configuration.Sections
       this.txtNotifyBefore.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.txtNotifyBefore.BorderColor = System.Drawing.Color.Empty;
-      this.txtNotifyBefore.Location = new System.Drawing.Point(164, 47);
+      this.txtNotifyBefore.Location = new System.Drawing.Point(164, 21);
       this.txtNotifyBefore.Name = "txtNotifyBefore";
       this.txtNotifyBefore.Size = new System.Drawing.Size(229, 20);
       this.txtNotifyBefore.TabIndex = 7;

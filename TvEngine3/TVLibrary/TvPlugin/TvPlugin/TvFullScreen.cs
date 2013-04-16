@@ -128,6 +128,7 @@ namespace TvPlugin
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private int _channelNumberMaxLength = 3;
+    private bool _confirmTimeshiftStop = true;
 
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
@@ -241,6 +242,7 @@ namespace TvPlugin
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
+        _confirmTimeshiftStop = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
         {
           _allowedArModes.Add(Geometry.Type.Zoom);
@@ -899,29 +901,46 @@ namespace TvPlugin
           {
             g_Player.Stop();
           }
-          if (g_Player.IsTimeShifting)
+          if (g_Player.IsTimeShifting && CanStopTimeshifting())
           {
-            Log.Debug("TVFullscreen: user request to stop");
-            GUIDialogPlayStop dlgPlayStop =
-              (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-            if (dlgPlayStop != null)
-            {
-              dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-              dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-              dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-              dlgPlayStop.SetDefaultToStop(false);
-              dlgPlayStop.DoModal(GetID);
-              if (dlgPlayStop.IsStopConfirmed)
-              {
-                Log.Debug("TVFullscreen: stop confirmed");
-                g_Player.Stop();
-              }
-            }
+            g_Player.Stop();
           }
           break;
       }
 
       base.OnAction(action);
+    }
+    
+    private bool CanStopTimeshifting()
+    {
+      if (!_confirmTimeshiftStop)
+      {
+        // Can always stop timeshift when confirmation is not required
+        return true;
+      }
+      
+      // Get dialog to ask the user for confirmation
+      Log.Debug("TVFullscreen: user request to stop");
+      GUIDialogPlayStop dlgPlayStop =
+        (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+      if (dlgPlayStop == null)
+      {
+        // Return true to avoid dead end on missing dialog
+        return true;
+      }
+      
+      dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+      dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+      dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+      dlgPlayStop.SetDefaultToStop(false);
+      dlgPlayStop.DoModal(GetID);
+      if (dlgPlayStop.IsStopConfirmed)
+      {
+        Log.Debug("TVFullscreen: stop confirmed");
+        return true;
+      }
+      
+      return false;
     }
 
     private void ShowMiniEpg() 
