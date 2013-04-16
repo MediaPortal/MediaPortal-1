@@ -556,7 +556,6 @@ namespace MediaPortal.GUI.Library
       {
         if (value != _useSmsStyleTextInsertion)
         {
-          if (Password) return; //sms is disabled during password input - we cannot see chars!
           smsLastKeyPressed = -1;
           _lastColumn = 0;
           _useSmsStyleTextInsertion = value;
