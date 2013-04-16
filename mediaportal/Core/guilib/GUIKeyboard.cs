@@ -1072,9 +1072,9 @@ namespace MediaPortal.GUI.Library
       foreach (KeyValuePair<KeyboardTypes, KeyBoard> kv in _keyboardList)
       {
         KeyBoard keyBoard = kv.Value;
-        foreach(Row keyRow in keyBoard)
+        foreach (Row keyRow in keyBoard)
         {
-          foreach(Key key in keyRow)
+          foreach (Key key in keyRow)
           {
             key.button.Dispose();
           }
