@@ -203,7 +203,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+    <Reference Include="Bass.Net, Version=2.4.8.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
     </Reference>
@@ -351,9 +351,16 @@
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
+    <Compile Include="MusicPlayer\BASS\StreamCopycs.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
+    <Compile Include="MusicPlayer\BASS\BassMusicPlayer.cs" />
+    <Compile Include="MusicPlayer\BASS\Config.cs" />
+    <Compile Include="MusicPlayer\BASS\Enums.cs" />
+    <Compile Include="MusicPlayer\BASS\MusicStream.cs" />
+    <Compile Include="MusicPlayer\BASS\Utils.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -367,7 +374,6 @@
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
     <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />
@@ -392,7 +398,7 @@
     <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
-    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
     <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
