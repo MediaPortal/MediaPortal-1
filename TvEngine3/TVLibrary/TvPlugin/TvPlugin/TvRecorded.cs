@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -904,7 +904,7 @@ namespace TvPlugin
       {
         Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
       }
-      Log.Debug("LoadDirectory() - finished loading facade items after '[0}' ms.", watch.ElapsedMilliseconds);
+      Log.Debug("LoadDirectory() - finished loading facade items after '{0}' ms.", watch.ElapsedMilliseconds);
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(facadeLayout.Count - (facadeLayout.Count > 0 && facadeLayout[0].Label == ".." ? 1 : 0)));

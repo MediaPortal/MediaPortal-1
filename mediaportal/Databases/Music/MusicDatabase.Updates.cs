@@ -130,6 +130,30 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Resume
+
+    public void SetResume(Song aSong)
+    {
+      try
+      {
+        if (aSong.Id == -1)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("UPDATE tracks SET iResumeAt={0} WHERE idTrack={1}", aSong.ResumeAt, aSong.Id);
+        DirectExecute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    #endregion
+
     #region Favorite / Ratings
 
     public void SetFavorite(Song aSong)

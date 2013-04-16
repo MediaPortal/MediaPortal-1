@@ -492,8 +492,6 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(music, new MusicSort(), true));
       Log.Info("  add music dsp section");
       AddSection(new ConfigPage(music, new MusicDSP(), true));
-      Log.Info("  add music asio section");
-      AddSection(new ConfigPage(music, new MusicASIO(), true));
     }
 
 

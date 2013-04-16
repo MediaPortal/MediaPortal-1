@@ -143,6 +143,12 @@ namespace MediaPortal.Playlists
       get { return singletonPlayer; }
     }
 
+    // Returns current Playlist Position
+    public int CurrentPlaylistPos
+    {
+      get { return _currentItem; }
+    }
+
     public void InitTest()
     {
       GUIGraphicsContext.Receivers += new SendMessageHandler(this.OnMessage);
@@ -423,7 +429,7 @@ namespace MediaPortal.Playlists
           // Switch back to standard playback mode
           if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+            Player.BassMusicPlayer.Player.SwitchToDefaultPlaybackMode();
           }
 
           _currentPlayList = PlayListType.PLAYLIST_NONE;

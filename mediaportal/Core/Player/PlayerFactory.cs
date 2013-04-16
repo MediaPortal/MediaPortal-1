@@ -23,10 +23,11 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Profile;
 using MediaPortal.Common.Utils;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.Player
 {
@@ -239,7 +240,7 @@ namespace MediaPortal.Player
         // Get settings only once
         using (Settings xmlreader = new MPSettings())
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0"); // BASS Player
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           bool InternalBDPlayer = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
 
@@ -359,7 +360,7 @@ namespace MediaPortal.Player
           if (Util.Utils.IsCDDA(aFileName))
           {
             // Check if, we should use BASS for CD Playback
-            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow)
             {
               if (BassMusicPlayer.BassFreed)
               {
@@ -376,7 +377,7 @@ namespace MediaPortal.Player
 
           if (Util.Utils.IsAudio(aFileName) || localType == g_Player.MediaType.Music)
           {
-            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow)
             {
               if (BassMusicPlayer.BassFreed)
               {
