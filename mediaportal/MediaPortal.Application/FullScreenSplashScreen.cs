@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -207,16 +206,6 @@ namespace MediaPortal
             }
           }
       }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void FullScreenSplashScreenLoad(object sender, EventArgs e)
-    {
-      Bounds = SplashScreen.CurrentDisplay.Bounds;
     }
   }
 }

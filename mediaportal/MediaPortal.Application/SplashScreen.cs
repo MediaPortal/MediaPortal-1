@@ -109,10 +109,10 @@ namespace MediaPortal
           screenNumber = D3D.ScreenNumberOverride;
         }
 
-        if (Screen.AllScreens.Count() < screenNumber + 1)
+        if (screenNumber + 1 > Screen.AllScreens.Count())
         {
-          screenNumber = 0;
           Log.Warn("SplashScreen: selected display does not exist");
+          screenNumber = 0;
         }
         
         CurrentDisplay = Screen.AllScreens[screenNumber];

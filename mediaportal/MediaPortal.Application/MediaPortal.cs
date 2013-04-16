@@ -916,6 +916,7 @@ public class MediaPortalApp : D3D, IRender
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
 
     }
+
     if (GUIGraphicsContext._useScreenSelector)
     {
       if (ScreenNumberOverride >= 0)
@@ -926,12 +927,13 @@ public class MediaPortalApp : D3D, IRender
       {
         screenNumber = 0;
       }
-      GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
-      Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4}",
-               GUIGraphicsContext.currentScreen.DeviceName,
-               GUIGraphicsContext.currentScreen.Bounds.Location.X, GUIGraphicsContext.currentScreen.Bounds.Location.Y,
-               GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
     }
+
+    GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+    Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
+             GUIGraphicsContext.currentScreen.DeviceName,
+             GUIGraphicsContext.currentScreen.Bounds.Location.X, GUIGraphicsContext.currentScreen.Bounds.Location.Y,
+             GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
     // check if MediaPortal is already running...
     Log.Info("Main: Checking for running MediaPortal instance");
