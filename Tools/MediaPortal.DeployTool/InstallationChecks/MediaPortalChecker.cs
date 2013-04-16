@@ -50,6 +50,34 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
+      // If we have a deploy.xml left over from previous installation then attempt to delete it
+      var deployXml = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                      @"\Team MediaPortal\MediaPortal\deploy.xml";
+      if (File.Exists(deployXml))
+      {
+        try
+        {
+          File.Delete(deployXml);
+        }
+        catch (Exception ex)
+        {
+          var result = MessageBox.Show(Localizer.GetBestTranslation("MainWindow_AppName"),
+                                       Localizer.GetBestTranslation("DeployXmlDelete_Failed"),
+                                       MessageBoxButtons.AbortRetryIgnore,
+                                       MessageBoxIcon.Error);
+          switch (result)
+          {
+            case DialogResult.Abort:
+              Environment.Exit(-2);
+              break;
+            case DialogResult.Ignore:
+              break;
+            case DialogResult.Retry:
+              return Install();
+          }
+        }
+      }
+
       //if user has chosen a skin then update deploy.xml so this is picked up by MP
       //if no skin has been chosed (user has selected one click install) then set one
       var chosenSkin = InstallationProperties.Instance.Get("ChosenSkin");
