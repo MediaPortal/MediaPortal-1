@@ -15,7 +15,6 @@
 <define>#useRandomScoreCenterUserFanart:Yes</define> 
 <define>#useRandomTVUserFanart:Yes</define>
 <define>#useRandomTVSeriesFanart:Yes</define>
-
 <define>#header.label:Home</define>
 <rememberLastFocusedControl>yes</rememberLastFocusedControl>
 
@@ -96,20 +95,6 @@
  				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
 				<visible>![Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
 		  </control>
-		  
- 	  	<control>
-		    <description>BasicHome TV Focus</description>
-		    <type>image</type>
-		    <id>0</id>
- 	 			<posX>653</posX>
-	      <posY>347</posY>
-   	    <width>624</width>
-    	  <height>271</height>
-		    <texture>basichome_button_tv.png</texture>
-	      <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
- 				<animation effect="fade" time="250" reversible="false">visiblechange</animation>
-				<visible>![Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>       
-		  </control> 
 		  
   	  <control>
 		    <description>BasicHome Picture Focus</description>
@@ -199,34 +184,8 @@
 			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(3000)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
     </control>
       
-    <control>
-      <description>BasicHome TV</description>
-      <type>button</type>
-      <id>4</id>
-			<posX>663</posX>
-	    <posY>353</posY>
-      <width>594</width>
-      <height>241</height>
-      <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
-      <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>   
-      <label>605</label>
-      <font>TitanLight20</font>
-      <textcolor>FFFFFF</textcolor>
-      <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
-      <textYOff>88</textYOff>
-      <onup>4</onup>
-      <ondown>5</ondown>
-			<onright>6</onright>
-			<onleft>2</onleft>
-			<onclick>#(skin.setfocus(35,1000))</onclick>								
-			<textalign>center</textalign>          
- 			<animation effect="fade" time="250" reversible="false">visiblechange</animation>
-      <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
-      <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-			<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
-    </control> 
+		<include condition="#skin.enable.tv.submenu">include.BasicHome.submenu.tv.xml</include>
+    <include condition="#(not(#skin.enable.tv.submenu))">include.BasicHomeButton.tv.xml</include>
 
     <control>
       <description>BasicHome Pictures</description>

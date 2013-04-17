@@ -99,33 +99,6 @@
 	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>
 	</control>
-		
-	<control>
-		<type>label</type>
-		<id>1</id>
-		<posX>1244</posX>
-		<posY>658</posY>
-		<width>500</width>
-		<label>Choose Movie Plugin</label>
-		<textcolor>00b7ff</textcolor>
-		<font>fontB14</font>
-	  <animation effect="fade" time="150">WindowOpen</animation>
-	  <animation effect="fade" time="150">WindowClose</animation>
- 		<visible>plugin.isenabled(MyFilms) | plugin.isenabled(Moving Pictures)</visible>
-	</control>
-  
-	<control>
-		<type>label</type>
-		<id>1</id>
-		<posX>1244</posX>
-		<posY>774</posY>
-		<width>500</width>
-		<label>#(L(600)) #(L(300160))</label>
-		<textcolor>00b7ff</textcolor>
-		<font>fontB14</font>
-	  <animation effect="fade" time="150">WindowOpen</animation>
-	  <animation effect="fade" time="150">WindowClose</animation>
-	</control>
 					
 	<control Style="SettingsCheckButtonMedium">
 		<description>Enable selected Backdrop</description>
@@ -134,7 +107,7 @@
 		<posX>655</posX>
 		<posY>711</posY>		
 		<mode>dialoglist</mode>
-		<dialogTitle>Choose selected Background</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 		<valueTextInButton>yes</valueTextInButton>
 		<valuePrefixText>Selected Background: </valuePrefixText>
 		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel26))</onclick>
@@ -157,7 +130,7 @@
 		<posX>655</posX>
 		<posY>711</posY>		
 		<mode>dialoglist</mode>
-		<dialogTitle>Choose selected Background</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 		<valueTextInButton>yes</valueTextInButton>
 		<valuePrefixText>Selected Background: </valuePrefixText>
 		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel36))</onclick>
@@ -227,9 +200,9 @@
 		<posX>1214</posX>
 		<posY>711</posY>
 	 <mode>dialoglist</mode>
-	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 	 <valueTextInButton>yes</valueTextInButton>
-	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <valuePrefixText>#(L(1091)) plugin: </valuePrefixText>
 	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel32))</onclick>
 	 <binding>#skin.basichome.moviePlugin</binding>
 	 <subitems>
@@ -248,9 +221,9 @@
 		<posX>1214</posX>
 		<posY>711</posY>
 	 <mode>dialoglist</mode>
-	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 	 <valueTextInButton>yes</valueTextInButton>
-	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <valuePrefixText>#(L(1091)) plugin: </valuePrefixText>
 	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel33))</onclick>
 	 <binding>#skin.basichome.moviePlugin</binding>
 	 <subitems>
@@ -269,9 +242,9 @@
 		<posX>1214</posX>
 		<posY>711</posY>
 	 <mode>dialoglist</mode>
-	 <dialogTitle>Choose Movie Plugin</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 	 <valueTextInButton>yes</valueTextInButton>
-	 <valuePrefixText>Movie plugin: </valuePrefixText>
+	 <valuePrefixText>#(L(1091)) plugin: </valuePrefixText>
 	 <onclick>#(skin.setstring('#skin.basichome.moviePlugin',#selectedlabel34))</onclick>
 	 <binding>#skin.basichome.moviePlugin</binding>
 	 <subitems>
@@ -289,17 +262,42 @@
 	 <type>menubutton</type>
 	 <id>35</id>
 		<posX>1214</posX>
-		<posY>827</posY>
+		<posY>776</posY>
 	 <mode>dialoglist</mode>
-	 <dialogTitle>#(L(600)) #(L(300160))</dialogTitle>
+	 <dialogTitle>#(L(14011))</dialogTitle>
 	 <valueTextInButton>yes</valueTextInButton>
-	 <valuePrefixText>#(L(300160)): </valuePrefixText>
+	 <valuePrefixText>#(L(600)) #(L(300160)): </valuePrefixText>
 	 <onclick>#(skin.setstring('#skin.tvguide.rows',#selectedlabel35))</onclick>
 	 <binding>#skin.tvguide.rows</binding>
 	 <subitems>
 	   <subitem> 7</subitem>
 	   <subitem> 11</subitem>
 	 </subitems>
+	 <animation effect="fade" time="150">WindowOpen</animation>
+	 <animation effect="fade" time="150">WindowClose</animation>
+	 </control>
+
+	<control Style="SettingsButtonMedium">
+		<description>TV Submenu</description>
+		<type>checkbutton</type>
+		<id>37</id>
+		<posX>1214</posX>
+		<posY>841</posY>
+		<label>Enable TV Submenu</label>			
+		<selected>#(skin.hassetting('#skin.enable.tv.submenu'))</selected>
+		<onclick>#(skin.togglesetting('#skin.enable.tv.submenu'))</onclick>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	</control>
+				
+	<control Style="SettingsButtonMedium">
+		<description>Skin settings</description>
+		<type>button</type>
+		<id>51</id>
+		<posX>1214</posX>
+		<posY>905</posY>
+		<label>#(L(5908)) #(L(5))</label>
+		<hyperlink>165100</hyperlink>
 	 <animation effect="fade" time="150">WindowOpen</animation>
 	 <animation effect="fade" time="150">WindowClose</animation>
 	</control>

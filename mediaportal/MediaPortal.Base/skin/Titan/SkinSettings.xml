@@ -12,6 +12,7 @@
     <entry name="#skin.enable.latest.myVideo">False</entry>
     <entry name="#skin.enable.latest.MovingPictures">False</entry>
     <entry name="#skin.enable.latest.Series">False</entry>
+    <entry name="#skin.enable.tv.submenu">False</entry>
   </section>
   <section name="tvguidecolors">
     <entry name="guidecolorchannelbutton">FF122F3F</entry>
