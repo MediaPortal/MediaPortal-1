@@ -125,8 +125,11 @@ public:
   bool m_bAudioWaitForSeek;
   bool m_bAudioResetStreamPosition;
 
-  CCritSec m_sectionRead;
+  bool m_bTitleChanged;
+  REFERENCE_TIME m_rtStallTime;
+  REFERENCE_TIME m_rtTitleChangeStarted;
 
+  CCritSec m_sectionRead;
 
 private:
   void PacketDelivery(CAutoPtr<Packet> p);

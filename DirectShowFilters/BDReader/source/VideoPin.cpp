@@ -36,6 +36,8 @@
 extern void LogDebug(const char *fmt, ...);
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
+#define HALF_SECOND 5000000LL
+
 void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
 {
   char filename[1024]="c:\\BDReaderAnalysis\\BDReader\\Log.log";
@@ -397,11 +399,32 @@ HRESULT CVideoPin::DoBufferProcessingLoop()
   return S_FALSE;
 }
 
+void CVideoPin::CheckStall()
+{
+  if (m_demux.m_bTitleChanged)
+  {
+    m_demux.m_bTitleChanged = false;
+
+    REFERENCE_TIME rtTime;
+    REFERENCE_TIME rtStallDuration;
+    m_pFilter->GetTime(&rtTime);
+
+    rtStallDuration = rtTime - m_demux.m_rtTitleChangeStarted;
+
+    if (rtStallDuration > HALF_SECOND)
+      m_bDoFakeSeek = true;
+
+    LogDebug("vid: stall time: %6.3f total: %6.3f", rtStallDuration / 10000000.0, m_demux.m_rtStallTime / 10000000.0);
+  }
+}
+
 void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoClipSeen)
   {
     m_demux.m_eAudioClipSeen->Wait();
+
+    CheckStall();
 
     if (m_demux.m_bVideoRequiresRebuild || m_demux.m_bAudioRequiresRebuild)
     {
@@ -643,8 +666,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bDiscontinuity = false;
           }
 
-          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;
-          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;
+          rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset + m_demux.m_rtStallTime;
+          rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset + m_demux.m_rtStallTime;
 
           pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
