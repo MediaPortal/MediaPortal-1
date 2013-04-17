@@ -76,6 +76,7 @@ protected:
   HRESULT GetMediaTypeInternal(CMediaType* pmt);
   
   void CheckPlaybackState();
+  void CheckStall();
   bool CheckVideoFormat(GUID* pFormat, CLSID* pDecoder);
   CLSID GetDecoderCLSID(IPin* pPin);
 
