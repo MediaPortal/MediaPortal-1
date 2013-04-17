@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+<controls>	
+			
+ 	<!--            :: TV SUBMENU ::            -->
+ 	
+	<control>
+		<description>Background</description>
+    <id>0</id>
+		<type>image</type>
+		<posX>1203</posX>
+	  <posY>309</posY>
+		<width>709</width>
+		<height>329</height>
+		<texture>basichome_submenu_bg_r.png</texture>
+		<visible>control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="0">visible</animation>
+		<animation effect="slide" start="-300" end="0" time="350">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>	
+	</control>
+ 	
+  <control>
+    <description>group element</description>
+    <type>group</type>
+		<layout>StackLayout(Vertical,true)</layout>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="200">WindowClose</animation>
+		<animation effect="fade" time="350" delay="250">visible</animation>
+		<animation effect="fade" time="0">hidden</animation>	
+    <dimColor>0xffffffff</dimColor>
+		<posX>1296</posX>
+	  <posY>378</posY>
+		
+		<control>
+  		<description>TV Home</description>
+      <type>button</type>
+      <id>1000</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>1</hyperlink>
+      <label>100001</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1001</ondown>
+			<onup>1004</onup>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+		
+		<control>
+  		<description>Recordings</description>
+      <type>button</type>
+      <id>1001</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>603</hyperlink>
+      <label>914</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<ondown>1002</ondown>
+			<onup>1000</onup>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+    
+ 		<control>
+  		<description>TVGuide</description>
+      <type>button</type>
+      <id>1002</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>600</hyperlink>
+      <label>600</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1001</onup>
+			<ondown>1003</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+    
+ 		<control>
+  		<description>TV Timer</description>
+      <type>button</type>
+      <id>1003</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>49848</hyperlink>
+      <label>646</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1002</onup>
+			<ondown>1004</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+      
+ 		<control>
+  		<description>TV Search</description>
+      <type>button</type>
+      <id>1004</id>
+      <width>500</width>
+      <height>40</height>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <hyperlink>49850</hyperlink>
+      <label>724</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+			<textalign>left</textalign>   
+      <textcolorNoFocus>FF000000</textcolorNoFocus>
+      <textYOff>0</textYOff>
+			<onright>6</onright>
+			<onleft>4</onleft>
+			<onup>1003</onup>
+			<ondown>1000</ondown>
+			<visible allowhiddenfocus="true">control.HasFocus(1000) | control.HasFocus(1001) | control.HasFocus(1002) | control.HasFocus(1003) | control.HasFocus(1004)</visible>   
+    </control>
+      
+  </control>
+			
+ 	<control>
+		<description>BasicHome TV Focus</description>
+		<type>image</type>
+		<id>0</id>
+ 	 	<posX>653</posX>
+	  <posY>347</posY>
+   	<width>624</width>
+    <height>271</height>
+		<texture>basichome_button_tv.png</texture>
+	  <animation effect="zoom" start="100,100" end="102,102" time="200" condition="control.hasfocus(4)">conditional</animation>
+ 		<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+		<visible>![Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>       
+	</control> 
+  <control>
+    <description>BasicHome TV</description>
+    <type>button</type>
+    <id>4</id>
+		<posX>663</posX>
+	  <posY>353</posY>
+    <width>594</width>
+    <height>241</height>
+    <textureFocus>basichome_menu_item_label_overlay.png</textureFocus>
+    <textureNoFocus>basichome_menu_item_label_overlay.png</textureNoFocus>
+    <label>605</label>
+    <font>TitanLight20</font>
+    <textcolor>FFFFFF</textcolor>
+    <textcolorNoFocus>FFFFFFFF</textcolorNoFocus>
+    <textYOff>88</textYOff>
+    <onup>4</onup>
+    <ondown>5</ondown>
+		<onright>6</onright>
+		<onleft>2</onleft>
+		<onclick>#(skin.setfocus(35,1000))</onclick>
+		<textalign>center</textalign>
+ 		<animation effect="fade" time="250" reversible="false">visiblechange</animation>
+    <animation effect="zoom" start="100,100" end="102,102" time="200">focus</animation>
+    <animation effect="zoom" start="102,102" end="100,100" time="150">unfocus</animation>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+		<visible allowhiddenfocus="true">![control.hasfocus(12)|control.hasfocus(13)|control.hasfocus(14)|Control.IsVisible(100)|Control.IsVisible(2000)|control.hasfocus(1100)|control.hasfocus(1101)|control.hasfocus(1102)|control.hasfocus(1103)|control.hasfocus(1104)|control.HasFocus(200) | control.HasFocus(300) | control.HasFocus(400) | control.HasFocus(500) | control.HasFocus(600) | control.HasFocus(700)]</visible>  
+  </control>		
+</controls>
+</window>
