@@ -195,6 +195,9 @@ public:
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   
+  // Extended
+  STDMETHODIMP GetTime(REFERENCE_TIME* pTime);
+
   bool IsStopping();
 
   void IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);

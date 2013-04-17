@@ -722,6 +722,19 @@ STDMETHODIMP CBDReaderFilter::GetAudioChannelCount(long lIndex)
   return m_demultiplexer.GetAudioChannelCount((int)lIndex);
 }
 
+STDMETHODIMP CBDReaderFilter::GetTime(REFERENCE_TIME* pTime)
+{
+  if (!pTime)
+    return E_INVALIDARG;
+
+  if (m_pClock)
+    m_pClock->GetTime(pTime);
+  else
+    return S_FALSE;
+
+  return S_OK;
+}
+
 STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *pmt)
 {
   LogDebug("CBDReaderFilter::Load()");
@@ -823,6 +836,7 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 
+  m_demultiplexer.m_rtStallTime = 0;
   m_bUpdateStreamPositionOnly = false;
 
   if (m_pDVBSubtitle)
