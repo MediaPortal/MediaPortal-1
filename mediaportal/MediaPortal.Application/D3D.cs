@@ -115,6 +115,9 @@ namespace MediaPortal
     protected bool                 Windowed;                 // are we in windowed mode?
     protected bool                 AutoHideTaskbar;          // Should the Task Bar be hidden?
     protected bool                 IsVisible;                // set to true if form is not minimized to tray
+    protected bool                 IsInAwayMode;             // indicates if away mode is active, assume no on application launch
+    protected bool                 IsDisplayTurnedOn;        // indicates if the display is turned on, assume yes on application launch
+    protected bool                 IsUserPresent;            // indicates if a user is present, assume yes on application launch
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
     protected int                  Frames;                   // number of frames since our last update
     protected int                  Volume;                   // used to save old volume level in case we mute audio
@@ -205,6 +208,9 @@ namespace MediaPortal
       MouseTimeOutTimer         = DateTime.Now;
       _lastActiveWindow         = -1;
       IsVisible                 = true;
+      IsDisplayTurnedOn         = true;
+      IsInAwayMode              = false;
+      IsUserPresent             = true;
       _lastMouseCursor          = !MouseCursor;
       _showCursorWhenFullscreen = false;
       _currentPlayListType      = PlayListType.PLAYLIST_NONE;
@@ -330,15 +336,6 @@ namespace MediaPortal
       _adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
       GUIGraphicsContext.currentScreenNumber = _adapterInfo.AdapterOrdinal;
       
-      var formOnScreen = Screen.FromRectangle(Bounds);
-      if (!formOnScreen.Equals(GUIGraphicsContext.currentScreen))
-      {
-        var location = Location;
-        location.X = location.X - formOnScreen.Bounds.Left + GUIGraphicsContext.currentScreen.Bounds.Left;
-        location.Y = location.Y - formOnScreen.Bounds.Top + GUIGraphicsContext.currentScreen.Bounds.Top;
-        Location = location;
-      }
-
       if (!Windowed)
       {
         Log.Info("D3D: Starting in full screen");
@@ -457,6 +454,8 @@ namespace MediaPortal
     protected void FullRender()
     {
       // don't render if form is minimized and not visible to the user
+      // TODO: do not render when display is turned off or we are in away mode - needs testing
+      //if (!IsVislbe || IsInAwayMode || !IsDisplayTurnedOn)
       if (!IsVisible)
       {
         Thread.Sleep(100);
@@ -972,7 +971,7 @@ namespace MediaPortal
 
       _presentParams.MultiSample               = MultiSampleType.None;
       _presentParams.MultiSampleQuality        = 0;
-      _presentParams.SwapEffect                = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect) D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
+      _presentParams.SwapEffect                = OSInfo.OSInfo.Win7OrLater() ? (SwapEffect)D3DSWAPEFFECT_FLIPEX : SwapEffect.Discard;
       _presentParams.DeviceWindow              = _renderTarget;
       _presentParams.Windowed                  = true;
       _presentParams.EnableAutoDepthStencil    = false;

@@ -21,7 +21,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -103,19 +102,23 @@ namespace MediaPortal
           screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
           _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         }
-
-        if (D3D.ScreenNumberOverride >= 0)
-        {
-          screenNumber = D3D.ScreenNumberOverride;
-        }
-
-        if (screenNumber + 1 > Screen.AllScreens.Count())
-        {
-          Log.Warn("SplashScreen: selected display does not exist");
-          screenNumber = 0;
-        }
         
+        if (GUIGraphicsContext._useScreenSelector)
+        {
+          if (D3D.ScreenNumberOverride >= 0)
+          {
+            screenNumber = D3D.ScreenNumberOverride;
+          }
+
+          if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+          {
+            screenNumber = 0;
+          }
+        }
+
         CurrentDisplay = Screen.AllScreens[screenNumber];
+        Log.Info("SplashScreen: Splash screen is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
+          CurrentDisplay.DeviceName, CurrentDisplay.Bounds.Location.X, CurrentDisplay.Bounds.Location.Y, CurrentDisplay.Bounds.Width, CurrentDisplay.Bounds.Height);
 
         if (useFullScreenSplash && startFullScreen)
         {
@@ -139,6 +142,7 @@ namespace MediaPortal
     {
       _frm = new SplashForm {TopMost = _alwaysOnTop};
       _frm.Location = new Point(_frm.Location.X + CurrentDisplay.Bounds.X, _frm.Location.Y + CurrentDisplay.Bounds.Y);
+      Log.Debug("SplashScreen: Normal splash screen size: {0}x{1} @ {2},{3}", _frm.Bounds.Width, _frm.Bounds.Height, _frm.Bounds.X, _frm.Bounds.Y);
       _frm.SetVersion(Version);
       _frm.Show();
       _frm.Update();
@@ -171,6 +175,7 @@ namespace MediaPortal
       _frmFull.RetrieveSplashScreenInfo();
       _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Bounds = CurrentDisplay.Bounds;
+      Log.Debug("SplashScreen: Fullscreen splash screen size: {0}x{1} @ {2},{3}", _frmFull.Bounds.Width, _frmFull.Bounds.Height, _frmFull.Bounds.X, _frmFull.Bounds.Y);
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
       _frmFull.lblVersion.Parent = _frmFull.lblMain;
       _frmFull.lblCVS.Parent = _frmFull.lblMain;

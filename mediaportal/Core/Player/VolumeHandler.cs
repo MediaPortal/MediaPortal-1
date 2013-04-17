@@ -137,6 +137,11 @@ namespace MediaPortal.Player
       _instance = null;
     }
 
+    public virtual void UnMute()
+    {
+      _mixer.IsMuted = false;
+    }
+
     private static int[] LoadFromRegistry()
     {
       using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Multimedia\Audio\VolumeControl"))

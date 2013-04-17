@@ -2675,8 +2675,7 @@ namespace MediaPortal.Player
     public static void Init()
     {
       GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(OnVideoWindowChanged);
-      GUIGraphicsContext.OnGammaContrastBrightnessChanged +=
-        new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
     }
 
     private static void OnGammaContrastBrightnessChanged()
