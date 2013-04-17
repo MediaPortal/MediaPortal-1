@@ -58,8 +58,9 @@
         <height>350</height>
         <textXOff2>635</textXOff2>
         <textYOff2>16</textYOff2>
-        <spinPosX>600</spinPosX>
-        <spinPosY>840</spinPosY>
+				<spinPosX>558</spinPosX>
+				<spinPosY>814</spinPosY>
+				<spinAlign>left</spinAlign>
         <onleft>5</onleft>
         <onright>5</onright>
         <spinColor>FFFFFFFF</spinColor>
@@ -85,16 +86,16 @@
     		<description>ok</description>
     		<type>button</type>
     		<id>5</id>
-    		<posX>621</posX>
-		    <posY>791</posY>
-    		<textXOff>70</textXOff>
-    		<textYOff>0</textYOff>
-    		<width>678</width>
-    		<height>69</height>
-    		<font>TitanLight14</font>
-    		<textalign>center</textalign>
-    		<textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
-    		<textureNoFocus>-</textureNoFocus>
+    	<posX>830</posX>
+    	<posY>802</posY>
+    	<textYOff>0</textYOff>
+			<width>261</width>
+			<height>58</height>
+    	<textalign>center</textalign>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>FF393939</textcolorNoFocus>
+			<textureFocus>button_music_info_focus.png</textureFocus>
+			<textureNoFocus>button_music_info_nofocus.png</textureNoFocus>
     		<label>107</label>
     		<onleft>3</onleft>
     		<onright>3</onright>

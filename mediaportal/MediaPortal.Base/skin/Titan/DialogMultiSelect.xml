@@ -67,7 +67,7 @@
       <textYOff2>16</textYOff2>
       <spinPosX>558</spinPosX>
       <spinPosY>814</spinPosY>
-			spinAlign>left</spinAlign>
+			<spinAlign>left</spinAlign>
       <onleft>10</onleft>
       <onright>10</onright>
       <spinColor>FFFFFFFF</spinColor>
