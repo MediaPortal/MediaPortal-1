@@ -103,6 +103,9 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_rtOffset = _I64_MAX;
   m_rtTitleDuration = 0;
 
+  m_rtStallTime = 0;
+  m_bTitleChanged = false;
+
   m_bAudioResetStreamPosition = false;
 }
 
@@ -661,7 +664,9 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       break;
 
     case BD_EVENT_TITLE:
+      m_bTitleChanged = true;
       m_nTitle = pEv.param;
+      m_filter.GetTime(&m_rtTitleChangeStarted);
       break;
 
     case BD_EVENT_PLAYLIST:
@@ -1709,7 +1714,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
     {
       m_bUpdateSubtitleOffset = false;
 
-      CRefTime refTime = -CONVERT_90KHz_DS(m_rtOffset);
+      CRefTime refTime = -CONVERT_90KHz_DS(m_rtOffset) + m_rtStallTime;
         
       LogDebug("demux: Set subtitle compensation %6.3f", refTime.Millisecs() / 1000.0f);
       pDVBSubtitleFilter->SetTimeCompensation(refTime);
