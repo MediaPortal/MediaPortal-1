@@ -41,11 +41,11 @@
 		<description>Number of Files Label</description>
 		<type>label</type>
 		<id>1</id>
-    <posX>72</posX>
-    <posY>94</posY>
+	  <posX>96</posX>
+    <posY>998</posY>
     <align>left</align>
-    <font>fontB12</font>
-    <textcolor>ffffff</textcolor>
+    <font>TitanLight12</font>
+    <textcolor>000000</textcolor>
 		<label>#currentmodule: #itemcount</label>
 		<visible>!facadeview.smallicons + !facadeview.largeicons</visible>
 	  <animation effect="fade" time="250">WindowOpen</animation>
