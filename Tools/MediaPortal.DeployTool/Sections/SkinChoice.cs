@@ -39,6 +39,7 @@ namespace MediaPortal.DeployTool.Sections
         lblExisting.Visible = true;
         btnExisting.Image = Images.Choose_button_on;
         pbSkin.Image = null;
+        InstallationProperties.Instance.Set("ChosenSkin", "[Existing]");
       }
       else
       {
@@ -50,11 +51,13 @@ namespace MediaPortal.DeployTool.Sections
         { // default to Titan
           btnTitan.Image = Images.Choose_button_on;
           pbSkin.Image = Images.preview_titan;
+          InstallationProperties.Instance.Set("ChosenSkin", "Titan");
         }
         else
         { // choose 4:3 skin
           btnDefault.Image = Images.Choose_button_on;
           pbSkin.Image = Images.preview_default;
+          InstallationProperties.Instance.Set("ChosenSkin", "Default");
         }
       }
 

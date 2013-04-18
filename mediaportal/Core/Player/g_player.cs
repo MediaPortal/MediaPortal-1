@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.Subtitle;
@@ -1020,7 +1021,7 @@ namespace MediaPortal.Player
         string strAudioPlayer = string.Empty;
         using (Settings xmlreader = new MPSettings())
         {
-          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0"); // Default to BASS
         }
         Starting = true;
         //stop radio
@@ -1059,7 +1060,7 @@ namespace MediaPortal.Player
           _player = null;
         }
 
-        if (strAudioPlayer == "BASS engine" && !isMusicVideo)
+        if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow && !isMusicVideo)
         {
           if (BassMusicPlayer.BassFreed)
           {
