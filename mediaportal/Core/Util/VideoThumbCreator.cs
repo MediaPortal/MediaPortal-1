@@ -201,10 +201,12 @@ namespace MediaPortal.Util
 
         if (aCacheThumb && Success)
         {
-          if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
+          if (Picture.CreateThumbnailVideo(ShareThumb, aThumbPath, (int) Thumbs.ThumbResolution, (int) Thumbs.ThumbResolution,
                                       0, false))
-            Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
-                                    (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+          {
+            Picture.CreateThumbnailVideo(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
+                                    (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0, false);
+          }
         }
 
         if (!LeaveShareThumb)

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace System.Windows.Media.Imaging
+namespace MP.System.Windows.Media.Imaging
 {
   public enum BitmapCacheOption
   {

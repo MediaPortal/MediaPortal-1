@@ -18,7 +18,10 @@
 
 #endregion
 
-namespace System.Windows.Media.Imaging
+using System;
+using System.Windows.Media.Imaging;
+
+namespace MP.System.Windows.Media.Imaging
 {
   public abstract class BitmapSource : MediaPortal.Drawing.ImageSource
   {
