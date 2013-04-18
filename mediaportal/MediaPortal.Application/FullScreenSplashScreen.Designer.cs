@@ -1,4 +1,6 @@
-﻿namespace MediaPortal
+﻿using System.Windows.Forms;
+
+namespace MediaPortal
 {
   partial class FullScreenSplashScreen
   {
@@ -108,7 +110,7 @@
       this.ShowInTaskbar = false;
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.Text = "FullScreenSplashScreen";
-      this.TopMost = true;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
       ((System.ComponentModel.ISupportInitialize)(this.pbBackground)).EndInit();
       this.ResumeLayout(false);
 

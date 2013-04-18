@@ -141,8 +141,8 @@ namespace MediaPortal
     private void ShowNormalSplash()
     {
       _frm = new SplashForm {TopMost = _alwaysOnTop};
-      _frm.Location = new Point(_frm.Location.X + CurrentDisplay.Bounds.X, _frm.Location.Y + CurrentDisplay.Bounds.Y);
-      Log.Debug("SplashScreen: Normal splash screen size: {0}x{1} @ {2},{3}", _frm.Bounds.Width, _frm.Bounds.Height, _frm.Bounds.X, _frm.Bounds.Y);
+      _frm.Location = new Point(CurrentDisplay.Bounds.X + CurrentDisplay.Bounds.Width/2 - _frm.Size.Width/2,
+                                CurrentDisplay.Bounds.Y + CurrentDisplay.Bounds.Height/2 - _frm.Size.Height/2);
       _frm.SetVersion(Version);
       _frm.Show();
       _frm.Update();
@@ -175,7 +175,6 @@ namespace MediaPortal
       _frmFull.RetrieveSplashScreenInfo();
       _frmFull.TopMost = _alwaysOnTop;
       _frmFull.Bounds = CurrentDisplay.Bounds;
-      Log.Debug("SplashScreen: Fullscreen splash screen size: {0}x{1} @ {2},{3}", _frmFull.Bounds.Width, _frmFull.Bounds.Height, _frmFull.Bounds.X, _frmFull.Bounds.Y);
       _frmFull.lblMain.Parent = _frmFull.pbBackground;
       _frmFull.lblVersion.Parent = _frmFull.lblMain;
       _frmFull.lblCVS.Parent = _frmFull.lblMain;
@@ -386,7 +385,7 @@ namespace MediaPortal
         this.Name = "SplashForm";
         this.Opacity = 0;
         this.ShowInTaskbar = false;
-        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+        this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
         this.Text = "SplashScreen";
         this.TopMost = false;
         this.TransparencyKey = System.Drawing.Color.FromArgb(0, 0, 0, 0);
