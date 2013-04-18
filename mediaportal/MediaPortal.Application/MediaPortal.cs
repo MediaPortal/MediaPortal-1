@@ -276,6 +276,8 @@ public class MediaPortalApp : D3D, IRender
 
   #endregion
 
+  #region imports
+
   // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724947(v=vs.85).aspx
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, ref bool lpvParam, int fuWinIni);
@@ -316,9 +318,9 @@ public class MediaPortalApp : D3D, IRender
   [DllImport(@"User32", EntryPoint = "UnregisterPowerSettingNotification", CallingConvention = CallingConvention.StdCall)]
   private static extern bool UnregisterPowerSettingNotification(IntPtr handle);
 
+  #endregion
 
   #region main()
-
 
   [STAThread]
   public static void Main(string[] args)
@@ -886,7 +888,6 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
-
   #if !DEBUG
   private static UnhandledExceptionLogger _logger;
 
@@ -1011,6 +1012,122 @@ public class MediaPortalApp : D3D, IRender
   /// <summary>
   /// 
   /// </summary>
+  private void DoStartupJobs()
+  {
+    Log.Debug("Main: DoStartupJobs()");
+    FilterChecker.CheckInstalledVersions();
+
+    Version aParamVersion;
+    // 6.5.2600.3243 = KB941568,   6.5.2600.3024 = KB927544
+    if (!FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\quartz.dll", "6.5.2600.3024", out aParamVersion))
+    {
+      string errorMsg = string.Format("Your version {0} of quartz.dll has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion);
+      Log.Info("Util: quartz.dll error - {0}", errorMsg);
+      // ReSharper disable LocalizableElement
+      if (MessageBox.Show(errorMsg, "Core DirectShow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+      // ReSharper restore LocalizableElement
+      {
+        Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
+      }
+    }
+
+    GUIWindowManager.OnNewAction += OnAction;
+    GUIWindowManager.Receivers += OnMessage;
+    GUIWindowManager.Callbacks += MPProcess;
+
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
+
+    Utils.OnStartExternal += OnStartExternal;
+    Utils.OnStopExternal += OnStopExternal;
+
+    // register the playlistplayer for thread messages (like playback stopped,ended)
+    Log.Info("Main: Init playlist player");
+    g_Player.Factory = new PlayerFactory();
+    PlaylistPlayer.Init();
+
+    // Only load the USBUIRT device if it has been enabled in the configuration
+    using (Settings xmlreader = new MPSettings())
+    {
+      bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
+      bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
+      if (inputEnabled || outputEnabled)
+      {
+        Log.Info("Main: Creating the USBUIRT device");
+        _usbuirtdevice = USBUIRT.Create(OnRemoteCommand);
+        Log.Info("Main: Creating the USBUIRT device done");
+      }
+
+      // Load Winlirc if enabled.
+      bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
+      if (winlircInputEnabled)
+      {
+        Log.Info("Main: Creating the WINLIRC device");
+        _winlircdevice = new WinLirc();
+        Log.Info("Main: Creating the WINLIRC device done");
+      }
+
+      // Load RedEye if enabled.
+      bool redeyeInputEnabled = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
+      if (redeyeInputEnabled)
+      {
+        Log.Info("Main: Creating the REDEYE device");
+        _redeyedevice = RedEye.Create(OnRemoteCommand);
+        Log.Info("Main: Creating the RedEye device done");
+      }
+
+      // load SerialUIR if enabled
+      inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
+      if (inputEnabled)
+      {
+        Log.Info("Main: Creating the SerialUIR device");
+        _serialuirdevice = SerialUIR.Create(OnRemoteCommand);
+        Log.Info("Main: Creating the SerialUIR device done");
+      }
+    }
+
+    // registers the player for video window size notifications
+    Log.Info("Main: Init players");
+    g_Player.Init();
+
+    GUIGraphicsContext.ActiveForm = Handle;
+
+    var doc = new XmlDocument();
+    try
+    {
+      doc.Load("mediaportal.exe.config");
+      XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
+
+      if (node != null)
+      {
+        node.InnerText = Directory.GetCurrentDirectory();
+      }
+
+      node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
+      if (node != null)
+      {
+        node.InnerText = Directory.GetCurrentDirectory();
+      }
+
+      node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
+      if (node != null)
+      {
+        node.InnerText = Directory.GetCurrentDirectory();
+      }
+      doc.Save("MediaPortal.exe.config");
+    }
+    // ReSharper disable EmptyGeneralCatchClause
+    catch { }
+    // ReSharper restore EmptyGeneralCatchClause
+
+    Thumbs.CreateFolders();
+
+    GUIGraphicsContext.ResetLastActivity();
+  }
+
+  
+  /// <summary>
+  /// 
+  /// </summary>
   /// <param name="sender"></param>
   /// <param name="e"></param>
   private static void MediaPortalAppDeactivate(object sender, EventArgs e)
@@ -1070,13 +1187,13 @@ public class MediaPortalApp : D3D, IRender
           font.DrawText(80, 40, 0xffffffff, FrameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
           font.DrawText(80, 55, 0xffffffff, FrameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
 
-          _region[0].X     = _xpos;
-          _region[0].Y     = 0;
+          _region[0].X = _xpos;
+          _region[0].Y = 0;
           _region[0].Width = 4;
           _region[0].Height = GUIGraphicsContext.Height;
 
           GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, _region);
-          
+
           float fStep = (GUIGraphicsContext.Width - 100);
           fStep /= (2f * 16f);
           fStep /= GUIGraphicsContext.CurrentFPS;
@@ -1799,8 +1916,10 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
-  // we only dispose the DB connections if the DB path is remote.      
-  // since local DBs have no problems.
+
+  /// <summary>
+  /// 
+  /// </summary>
   private static void DisposeDBs()
   {
     string dbPath = FolderSettings.DatabaseName;
@@ -2620,7 +2739,6 @@ public class MediaPortalApp : D3D, IRender
 
   #endregion
 
-
   #region Render()
 
   /// <summary>
@@ -3308,8 +3426,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures/videos we don't want to change music track
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) &&
-               (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
             {
               PlaylistPlayer.PlayNext();
             }
@@ -3319,8 +3436,8 @@ public class MediaPortalApp : D3D, IRender
           case Action.ActionType.ACTION_STOP:
             // When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
-            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW &&  (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture))
+            activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW && (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture))
             {
               break;
             }
@@ -3373,22 +3490,48 @@ public class MediaPortalApp : D3D, IRender
 
           // fast forward...
           case Action.ActionType.ACTION_FORWARD:
+            {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              break;
+            }
+
+          // Decide if we want to have CD style of FF or Skip steps
           case Action.ActionType.ACTION_MUSIC_FORWARD:
             if (g_Player.Paused)
             {
               g_Player.Pause();
             }
-            g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+            if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+            {
+              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+            }
             break;
  
           // fast rewind...
           case Action.ActionType.ACTION_REWIND:
+            {
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              break;
+            }
+
+          // Decide if we want to have CD style of Rew or Skip steps
           case Action.ActionType.ACTION_MUSIC_REWIND:
             if (g_Player.Paused)
             {
               g_Player.Pause();
             }
-            g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+            if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+            {
+              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+            }
             break;
          }
       }
@@ -3998,8 +4141,7 @@ public class MediaPortalApp : D3D, IRender
   #endregion
 
   #region External process start / stop handling
-
-
+  
   /// <summary>
   /// 
   /// </summary>
@@ -4084,6 +4226,7 @@ public class MediaPortalApp : D3D, IRender
       DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHAFUNC, (int)D3DCMPFUNC.D3DCMP_GREATEREQUAL);
     }
   }
+
 
   /// <summary>
   /// Get the current date from the system and localize it based on the user preferences.
@@ -4173,6 +4316,7 @@ public class MediaPortalApp : D3D, IRender
     }
     return string.Empty;
   }
+
 
   /// <summary>
   /// Get the current time from the system. Set the format in the Home plugin's config
@@ -4405,9 +4549,17 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
+  #endregion
 
   #region registry helper function
 
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="hklm"></param>
+  /// <param name="key"></param>
+  /// <param name="value"></param>
+  /// <param name="iValue"></param>
   public static void SetDWORDRegKey(RegistryKey hklm, string key, string value, Int32 iValue)
   {
     try
@@ -4461,121 +4613,4 @@ public class MediaPortalApp : D3D, IRender
   }
 
   #endregion
-
-  #endregion
-
-  /// <summary>
-  /// 
-  /// </summary>
-  private void DoStartupJobs()
-  {
-    Log.Debug("Main: DoStartupJobs()");
-    FilterChecker.CheckInstalledVersions();
-    
-    Version aParamVersion;
-    // 6.5.2600.3243 = KB941568,   6.5.2600.3024 = KB927544
-    if (!FilterChecker.CheckFileVersion(Environment.SystemDirectory + "\\quartz.dll", "6.5.2600.3024", out aParamVersion))
-    {
-      string errorMsg = string.Format("Your version {0} of quartz.dll has too many bugs! \nPlease check our Wiki's requirements page.", aParamVersion);
-      Log.Info("Util: quartz.dll error - {0}", errorMsg);
-      // ReSharper disable LocalizableElement
-      if (MessageBox.Show(errorMsg, "Core DirectShow component (quartz.dll) is outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
-      // ReSharper restore LocalizableElement
-      {
-        Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
-      }
-    }
-
-    GUIWindowManager.OnNewAction += OnAction;
-    GUIWindowManager.Receivers   += OnMessage;
-    GUIWindowManager.Callbacks   += MPProcess;
-    
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
-    
-    Utils.OnStartExternal += OnStartExternal;
-    Utils.OnStopExternal  += OnStopExternal;
-
-    // register the playlistplayer for thread messages (like playback stopped,ended)
-    Log.Info("Main: Init playlist player");
-    g_Player.Factory = new PlayerFactory();
-    PlaylistPlayer.Init();
-
-    // Only load the USBUIRT device if it has been enabled in the configuration
-    using (Settings xmlreader = new MPSettings())
-    {
-      bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
-      bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
-      if (inputEnabled || outputEnabled)
-      {
-        Log.Info("Main: Creating the USBUIRT device");
-        _usbuirtdevice = USBUIRT.Create(OnRemoteCommand);
-        Log.Info("Main: Creating the USBUIRT device done");
-      }
-
-      // Load Winlirc if enabled.
-      bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
-      if (winlircInputEnabled)
-      {
-        Log.Info("Main: Creating the WINLIRC device");
-        _winlircdevice = new WinLirc();
-        Log.Info("Main: Creating the WINLIRC device done");
-      }
- 
-      // Load RedEye if enabled.
-      bool redeyeInputEnabled = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
-      if (redeyeInputEnabled)
-      {
-        Log.Info("Main: Creating the REDEYE device");
-        _redeyedevice = RedEye.Create(OnRemoteCommand);
-        Log.Info("Main: Creating the RedEye device done");
-      }
-
-      // load SerialUIR if enabled
-      inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
-      if (inputEnabled)
-      {
-        Log.Info("Main: Creating the SerialUIR device");
-        _serialuirdevice = SerialUIR.Create(OnRemoteCommand);
-        Log.Info("Main: Creating the SerialUIR device done");
-      }
-    }
-
-    // registers the player for video window size notifications
-    Log.Info("Main: Init players");
-    g_Player.Init();
-
-    GUIGraphicsContext.ActiveForm = Handle;
-
-    var doc = new XmlDocument();
-    try
-    {
-      doc.Load("mediaportal.exe.config");
-      XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
-
-      if (node != null)
-      {
-        node.InnerText = Directory.GetCurrentDirectory();
-      }
-      
-      node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
-      if (node != null)
-      {
-        node.InnerText = Directory.GetCurrentDirectory();
-      }
-      
-      node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
-      if (node != null)
-      {
-        node.InnerText = Directory.GetCurrentDirectory();
-      }
-      doc.Save("MediaPortal.exe.config");
-    }
-    // ReSharper disable EmptyGeneralCatchClause
-    catch {}
-    // ReSharper restore EmptyGeneralCatchClause
-    
-    Thumbs.CreateFolders();
-    
-    GUIGraphicsContext.ResetLastActivity();
-  }
 }

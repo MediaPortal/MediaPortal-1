@@ -45,8 +45,6 @@ using WPFMediaKit.DirectX;
 
 namespace MediaPortal
 {
-  #region D3Dapp
-
   /// <summary>
   /// The base class for all the graphics (D3D) samples, it derives from windows forms
   /// </summary>
@@ -2158,9 +2156,5 @@ namespace MediaPortal
     }
  
     #endregion
-    
   }
-
-  #endregion
-  
 }
