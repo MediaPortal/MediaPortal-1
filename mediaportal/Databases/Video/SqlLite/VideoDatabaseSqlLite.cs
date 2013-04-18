@@ -6254,8 +6254,8 @@ namespace MediaPortal.Video.Database
         //
         using (Settings xmlReaderWriter = new MPSettings())
         {
-          _currentCreateVideoThumbs = xmlReaderWriter.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-          xmlReaderWriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          _currentCreateVideoThumbs = xmlReaderWriter.GetValueAsBool("thumbnails", "videoondemand", true);
+          xmlReaderWriter.SetValueAsBool("thumbnails", "videoondemand", false);
         }
 
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
@@ -6320,7 +6320,7 @@ namespace MediaPortal.Video.Database
         // Restore thumbcreation setting
         using (Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", _currentCreateVideoThumbs);
         }
       }
     }
