@@ -282,6 +282,15 @@
     <Compile Include="Sections\FiltersPowerDVDDecoder10.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\BDPostProcessing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BDZoom.Designer.cs">
+      <DependentUpon>BDZoom.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
@@ -695,6 +704,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\FiltersPowerDVDDecoder10.resx">
       <DependentUpon>FiltersPowerDVDDecoder10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BDZoom.resx">
+      <DependentUpon>BDZoom.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
