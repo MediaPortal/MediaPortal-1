@@ -45,6 +45,7 @@ using MediaPortal.InputDevices;
 using MediaPortal.IR;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using MediaPortal.Properties;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
@@ -92,17 +93,12 @@ public class MediaPortalApp : D3D, IRender
   private bool                  _ignoreContextMenuAction;
   private bool                  _supportsFiltering;
   private bool                  _supportsAlphaBlend;
-  private bool                  _lastActiveModuleFullscreen;
   private bool                  _mouseClickFired;
   private bool                  _useLongDateFormat;
   private static int            _startupDelay;
   private readonly int          _timeScreenSaver;
   private readonly int          _suspendGracePeriodSec;
   private int                   _xpos;
-  // ReSharper disable NotAccessedField.Local
-  private int                   _dateLayout;
-  private int                   _lastActiveModule;
-  // ReSharper restore NotAccessedField.Local
   private int                   _frameCount;
   private int                   _errorCounter;
   private int                   _anisotropy;
@@ -328,6 +324,12 @@ public class MediaPortalApp : D3D, IRender
   public static void Main(string[] args)
   {
     Thread.CurrentThread.Name = "MPMain";
+
+    #if !DEBUG
+    // TODO: work on the handlers to take over more Watchdog capabilities, current use for Area51 builds as needed only
+    //AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+    //Application.ThreadException += OnThreadException;
+    #endif  
 
     SkinOverride         = string.Empty;
     WindowedOverride     = false;
@@ -935,9 +937,7 @@ public class MediaPortalApp : D3D, IRender
       _timeScreenSaver            = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
       _useIdleblankScreen         = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
-      _lastActiveModule           = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
-      _lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
-      screenNumber               = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
+      screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
     }
 
@@ -1473,9 +1473,12 @@ public class MediaPortalApp : D3D, IRender
               }
               catch (Exception exception)
               {
-                Log.Info("Main: Could not initialize volume handler: ", exception.Message);
+                Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
               }
-
+              catch
+              {
+                Log.Warn("Main: Could not initialize volume handler");
+              }
               if (_stopOnLostAudioRenderer)
               {
                 g_Player.Stop();
@@ -1493,7 +1496,11 @@ public class MediaPortalApp : D3D, IRender
               }
               catch (Exception exception)
               {
-                Log.Info("Main: Could not initialize volume handler: ", exception.Message);
+                Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
+              }
+              catch
+              {
+                Log.Warn("Main: Could not initialize volume handler");
               }
               break;
           }
@@ -1967,7 +1974,11 @@ public class MediaPortalApp : D3D, IRender
       }
       catch (Exception exception)
       {
-        Log.Info("Main: OnResume - Could not initialize volume handler: ", exception.Message);
+        Log.Warn("Main: OnResume - Could not initialize volume handler: ", exception.Message);
+      }
+      catch
+      {
+        Log.Warn("Main: OonResume - Could not initialize volume handler");
       }
       
       _lastOnresume = DateTime.Now;
@@ -2642,13 +2653,12 @@ public class MediaPortalApp : D3D, IRender
         GUIGraphicsContext.SetScalingResolution(0, 0, false);
         GUILayerManager.Render(timePassed);
         RenderStats();
-        GUIFontManager.Present();
         GUIGraphicsContext.DX9Device.EndScene();
 
         // show the frame on the primary surface.
         try
         {
-          GUIGraphicsContext.DX9Device.Present(); // SLOW
+          GUIGraphicsContext.DX9Device.Present();
         }
         catch (DeviceLostException ex)
         {
@@ -3935,6 +3945,56 @@ public class MediaPortalApp : D3D, IRender
     }
   }
 
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="sender"></param>
+  /// <param name="e"></param>
+  // ReSharper disable UnusedMember.Local
+  // ReSharper disable UnusedParameter.Local
+  private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+  // ReSharper restore UnusedParameter.Local
+  // ReSharper restore UnusedMember.Local
+  {
+    try
+    {
+      var ex = (Exception)e.ExceptionObject;
+      MessageBox.Show(string.Format("{0}\n\n{1}\n{2}", Resources.UnhandledException, ex.Message, ex.StackTrace), Resources.FatalError, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+    }
+    finally
+    {
+      Application.Exit();
+    }
+  }
+
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="sender"></param>
+  /// <param name="e"></param>
+  // ReSharper disable UnusedMember.Local
+  // ReSharper disable UnusedParameter.Local
+  private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+  // ReSharper restore UnusedParameter.Local
+  // ReSharper restore UnusedMember.Local
+  {
+    var result = DialogResult.Abort;
+    try
+    {
+      result = MessageBox.Show(string.Format("{0}\n\n{1}{2}", Resources.UnhandledException, e.Exception.Message, e.Exception.StackTrace), Resources.ApplicationError, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Stop);
+    }
+    finally
+    {
+      if (result == DialogResult.Abort)
+      {
+        Application.Exit();
+      }
+    }
+  }
+
+
   #endregion
 
   #region External process start / stop handling
@@ -4516,11 +4576,6 @@ public class MediaPortalApp : D3D, IRender
     
     Thumbs.CreateFolders();
     
-    using (Settings xmlreader = new MPSettings())
-    {
-      _dateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
-    }
-
     GUIGraphicsContext.ResetLastActivity();
   }
 }

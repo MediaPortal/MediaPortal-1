@@ -941,6 +941,7 @@ namespace MediaPortal
     /// <param name="windowed">true for window, false for fullscreen</param>
     protected void BuildPresentParams(bool windowed)
     {
+      // TODO: specify at least 1080p if supported by the GPU
       Log.Debug("D3D: BuildPresentParams()");
       _presentParams.BackBufferWidth           = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
       _presentParams.BackBufferHeight          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
@@ -983,7 +984,7 @@ namespace MediaPortal
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
 
-      Log.Info("D3D: Windowed Parameter Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
+      Log.Info("D3D: Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
 
       GUIGraphicsContext.MaxFPS = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.RefreshRate;
       Windowed = windowed;
@@ -1042,6 +1043,7 @@ namespace MediaPortal
       {
         Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
       }
+
 
       // TODO: check for any capabilities that would not allow MP to run
 

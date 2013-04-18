@@ -169,4 +169,15 @@
   <data name="D3DApp_MenuItem_Break">
     <value xml:space="preserve">-</value>
   </data>
+  <data name="FatalError" xml:space="preserve">
+    <value>Fatal Error</value>
+  </data>
+  <data name="UnhandledException" xml:space="preserve">
+    <value>Unhandled Exception!
+
+</value>
+  </data>
+  <data name="ApplicationError" xml:space="preserve">
+    <value>Application Error</value>
+  </data>
 </root>
