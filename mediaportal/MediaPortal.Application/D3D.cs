@@ -1975,8 +1975,9 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseMoveEvent(MouseEventArgs e)
     {
+      Log.Debug("D3D: MouseMoveEvent()");
       // only re-activate mouse cursor when the position really changed between move events
-      if (e.X != _lastCursorPosition.X || e.Y != _lastCursorPosition.Y)
+      if (Cursor.Position != _lastCursorPosition)
       {
         if (!_disableMouseEvents)
         {
