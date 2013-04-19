@@ -26,10 +26,10 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Last changed  : $Date: 2009-02-21 18:00:14 +0200 (Sat, 21 Feb 2009) $
+// Last changed  : $Date: 2012-08-30 22:53:44 +0300 (Thu, 30 Aug 2012) $
 // File revision : $Revision: 4 $
 //
-// $Id: BPMDetect.h 63 2009-02-21 16:00:14Z oparviai $
+// $Id: BPMDetect.h 150 2012-08-30 19:53:44Z oparviai $
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -67,7 +67,7 @@ namespace soundtouch
 #define MIN_BPM 29
 
 /// Maximum allowed BPM rate. Used to restrict accepted result below a reasonable limit.
-#define MAX_BPM 230
+#define MAX_BPM 200
 
 
 /// Class for calculating BPM rate for audio data.
@@ -78,10 +78,10 @@ protected:
     float *xcorr;
     
     /// Amplitude envelope sliding average approximation level accumulator
-    float envelopeAccu;
+    double envelopeAccu;
 
     /// RMS volume sliding average approximation level accumulator
-    float RMSVolumeAccu;
+    double RMSVolumeAccu;
 
     /// Sample average counter.
     int decimateCount;
@@ -127,6 +127,9 @@ protected:
     void calcEnvelope(soundtouch::SAMPLETYPE *samples,  ///< Pointer to input/output data buffer
                       int numsamples                    ///< Number of samples in buffer
                       );
+
+    /// remove constant bias from xcorr data
+    void removeBias();
 
 public:
     /// Constructor.

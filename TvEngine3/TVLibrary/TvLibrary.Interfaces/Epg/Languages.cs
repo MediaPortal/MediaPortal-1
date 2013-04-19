@@ -29,45 +29,59 @@ namespace TvLibrary.Epg
   /// </summary>
   public class Languages
   {
+    #region Singleton
+    private static Languages instance = null;
+    private List<KeyValuePair<String, String>> langs = new List<KeyValuePair<String, String>>();
+
+    public Languages()
+    {
+      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
+      foreach (CultureInfo ci in cinfos)
+      {
+        langs.Add(new KeyValuePair<String, String>(ci.ThreeLetterISOLanguageName, ci.EnglishName));
+      }
+      // Exceptions with a double ISO639-2 code (B and T). Adding code B
+      foreach (string[] languageException in LanguageExceptions)
+        langs.Add(new KeyValuePair<String, String>(languageException[1], languageException[0]));
+    }
+
+    public static Languages Instance
+    {
+      get
+      {
+        if (instance == null)
+          instance = new Languages();
+        return instance;
+      }
+    }
+    #endregion
     //
     // Created needed expections lists for all cultures with two ISO-639-2 ( B and T )
     // (data taken from http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)
     // 
     // There were 22 B codes; scc and scr are now deprecated but still used by some EPG providers :(
     //
-    private string[] LanguageNameExceptions = {
-                                                "Albanian", "Armenian",
-                                                "Basque", "Burmese",
-                                                "Chinese", "Czech",
-                                                "Dutch",
-                                                "French",
-                                                "Georgian", "German", "Greek (Modern)",
-                                                "Icelandic",
-                                                "Macedonian", "Malay", "Maori",
-                                                "Persian",
-                                                "Romanian",
-                                                "Tibetan",
-                                                "Welsh",
-                                                "Serbo-Croatian (Cyrillic)",
-                                                "Serbo-Croatian (Roman)"
-                                              };
+    private string[][] LanguageExceptions = { new[] {"Albanian","alb"},       new[] {"Armenian","arm"},
+                                              new[] {"Basque","baq"},         new[] {"Burmese","bur"},
+                                              new[] {"Chinese", "chi" },      new[] {"Czech","cze"},
+                                              new[] {"Dutch","dut"},          new[] {"French","fre"},
+                                              new[] {"Georgian","geo"},       new[] {"German","ger"},
+                                              new[] {"Greek (Modern)", "gre"},new[] {"Icelandic","ice"},
+                                              new[] {"Macedonian","mac"},     new[] {"Malay","may"},
+                                              new[] {"Maori","mao"},          new[] {"Persian","per"},
+                                              new[] {"Romanian","rum"},       new[] {"Tibetan","tib"},
+                                              new[] {"Welsh","wel"},          new[] {"Serbo-Croatian (Cyrillic)","scc"},
+                                              new[] {"Serbo-Croatian (Roman)","scr"}
+                                            };
 
-    private string[] LanguageCodeExceptions = {
-                                                "alb", "arm",
-                                                "baq", "bur",
-                                                "chi", "cze",
-                                                "dut",
-                                                "fre",
-                                                "geo", "ger", "gre",
-                                                "ice",
-                                                "mac", "may", "mao",
-                                                "per",
-                                                "rum",
-                                                "tib",
-                                                "wel",
-                                                "scc",
-                                                "scr"
-                                              };
+    /// <summary>
+    /// Gets the languages.
+    /// </summary>
+    /// <returns>list of all pairs of languagecode/languagename</returns>
+    public List<KeyValuePair<String, String>> GetLanguagePairs()
+    {
+      return langs;
+    }
 
     /// <summary>
     /// Gets the languages.
@@ -75,16 +89,12 @@ namespace TvLibrary.Epg
     /// <returns>list of all languages</returns>
     public List<String> GetLanguages()
     {
-      List<String> langs = new List<String>();
-
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
+      List<String> result = new List<string>();
+      foreach (KeyValuePair<String, String> kv in langs)
       {
-        langs.Add(ci.EnglishName);
+        result.Add(kv.Value);
       }
-      // Exceptions with a double ISO639-2 code (B and T). Adding code B
-      langs.AddRange(LanguageNameExceptions);
-      return langs;
+      return result;
     }
 
     /// <summary>
@@ -93,16 +103,12 @@ namespace TvLibrary.Epg
     /// <returns>list of all language codes</returns>
     public List<String> GetLanguageCodes()
     {
-      List<String> langs = new List<String>();
-
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
+      List<String> result = new List<string>();
+      foreach (KeyValuePair<String, String> kv in langs)
       {
-        langs.Add(ci.ThreeLetterISOLanguageName);
+        result.Add(kv.Key);
       }
-      // Exceptions with a double ISO639-2 code (B and T). Adding code B
-      langs.AddRange(LanguageCodeExceptions);
-      return langs;
+      return result;
     }
 
     /// <summary>
@@ -110,8 +116,9 @@ namespace TvLibrary.Epg
     /// </summary>
     /// <param name="code">The code.</param>
     /// <returns>language</returns>
-    public static string GetLanguageFromCode(string code)
+    public string GetLanguageFromCode(string code)
     {
+
       if (String.IsNullOrEmpty(code))
       {
         return "";
@@ -120,14 +127,15 @@ namespace TvLibrary.Epg
       {
         return code;
       }
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
+
+      foreach (KeyValuePair<String, String> kv in langs)
       {
-        if (ci.ThreeLetterISOLanguageName == code)
+        if (kv.Key == code)
         {
-          return ci.EnglishName;
+          return kv.Value;
         }
       }
+
       return code;
     }
   }

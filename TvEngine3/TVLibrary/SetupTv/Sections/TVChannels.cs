@@ -232,17 +232,18 @@ namespace SetupTv.Sections
         Channel channel = (Channel)item.Tag;
         layer.AddChannelToGroup(channel, group.GroupName);
 
-        string groupString = item.SubItems[1].Text;
-        if (groupString == string.Empty)
+        IList<string> groups = channel.GroupNames;
+        List<string> groupNames = new List<string>();
+        foreach (string groupName in groups)
         {
-          groupString = group.GroupName;
+          if (groupName != TvConstants.TvGroupNames.AllChannels &&
+              groupName != TvConstants.RadioGroupNames.AllChannels)
+          {
+            //Don't add "All Channels"
+            groupNames.Add(groupName);
+          }
         }
-        else
-        {
-          groupString += ", " + group.GroupName;
-        }
-
-        item.SubItems[1].Text = groupString;
+        item.SubItems[2].Text = String.Join(", ", groupNames.ToArray());
       }
 
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -425,18 +426,15 @@ namespace SetupTv.Sections
       dlg.Channel = channel;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        IList<Card> dbsCards = Card.ListAll();
-        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-        foreach (Card card in dbsCards)
-        {
-          cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
-        }
         mpListView1.BeginUpdate();
         try
         {
-          mpListView1.Items[indexes[0]] = _lvChannelHandler.CreateListViewItemForChannel(channel, cards);
+          mpListView1.Items[indexes[0]].Text = channel.DisplayName;
+          mpListView1.Items[indexes[0]].SubItems[1].Text = channel.ChannelNumber.ToString();
+          mpListView1.Items[indexes[0]].SubItems[5].Text = channel.ReferringTuningDetail().Count.ToString();
           mpListView1.Sort();
           ReOrder();
+          txtFilterString_TextChanged(null, null);
         }
         finally
         {

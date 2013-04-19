@@ -55,21 +55,21 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.removeButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.extensionsListBox = new System.Windows.Forms.ListBox();
+      this.extensionsListView = new System.Windows.Forms.ListView();
       this.extensionTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.resetButton);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.removeButton);
-      this.groupBox1.Controls.Add(this.extensionsListBox);
+      this.groupBox1.Controls.Add(this.extensionsListView);
       this.groupBox1.Controls.Add(this.extensionTextBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 0);
@@ -91,8 +91,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(430, 32);
@@ -124,30 +124,31 @@ namespace MediaPortal.Configuration.Sections
       // 
       // extensionsListBox
       // 
-      this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
-      this.extensionsListBox.Name = "extensionsListBox";
-      this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-      this.extensionsListBox.Size = new System.Drawing.Size(350, 303);
-      this.extensionsListBox.Sorted = true;
-      this.extensionsListBox.TabIndex = 3;
-      this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
-      this.extensionsListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.extensionsListBox_KeyDown);
+      this.extensionsListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionsListView.Location = new System.Drawing.Point(16, 88);
+      this.extensionsListView.Name = "extensionsListView";
+      this.extensionsListView.Size = new System.Drawing.Size(350, 303);
+      this.extensionsListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+      this.extensionsListView.TabIndex = 3;
+      this.extensionsListView.UseCompatibleStateImageBehavior = false;
+      this.extensionsListView.View = System.Windows.Forms.View.List;
+      this.extensionsListView.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
+      this.extensionsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.extensionsListBox_KeyDown);
       // 
       // extensionTextBox
       // 
-      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
       this.extensionTextBox.Size = new System.Drawing.Size(350, 20);
       this.extensionTextBox.TabIndex = 1;
+      this.extensionTextBox.Enter += new System.EventHandler(this.extensionTextBox_Enter);
       this.extensionTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.extensionTextBox_KeyDown);
       this.extensionTextBox.Leave += new System.EventHandler(this.extensionTextBox_Leave);
-      this.extensionTextBox.Enter += new System.EventHandler(this.extensionTextBox_Enter);
       // 
       // BaseFileExtensions
       // 
@@ -167,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton addButton;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox extensionTextBox;
-    private System.Windows.Forms.ListBox extensionsListBox;
+    private System.Windows.Forms.ListView extensionsListView;
     private MediaPortal.UserInterface.Controls.MPButton resetButton;
   }
 }

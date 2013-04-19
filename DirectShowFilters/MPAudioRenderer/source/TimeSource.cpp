@@ -164,12 +164,8 @@ LONGLONG GetCurrentTimestamp()
   }
   if (g_bQPCAvail)
   {
-    // http://msdn.microsoft.com/en-us/library/ms644904(VS.85).aspx
-    // Use always the same CPU core (should help with broken BIOS and/or HAL)
-    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 1);
     ULARGE_INTEGER tics;
     QueryPerformanceCounter((LARGE_INTEGER*)&tics);
-    SetThreadAffinityMask(GetCurrentThread(), oldmask);
     result = cMulDiv64(tics.QuadPart, 10000000, g_lPerfFrequency.QuadPart); // to keep accuracy
   }
   else

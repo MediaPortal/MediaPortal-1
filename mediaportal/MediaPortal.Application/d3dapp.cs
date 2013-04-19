@@ -260,6 +260,7 @@ namespace MediaPortal
     protected bool useExclusiveDirectXMode;
     protected bool useEnhancedVideoRenderer;
     private bool _disableMouseEvents = false;
+    private bool _doNotWaitForVSync = false;
 
     [DllImport("winmm.dll")]
     internal static extern uint timeBeginPeriod(uint period);
@@ -322,6 +323,7 @@ namespace MediaPortal
         alwaysOnTopConfig = alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
+        _doNotWaitForVSync =  xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -584,7 +586,7 @@ namespace MediaPortal
       graphicsSettings.WindowedMultisampleQuality = 0; //(int)bestDeviceCombo.MultiSampleQualityList[iQuality];
 
       graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.WindowedPresentInterval = (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
+      graphicsSettings.WindowedPresentInterval = _doNotWaitForVSync ? PresentInterval.Immediate : (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
 
       return true;
     }
@@ -733,7 +735,7 @@ namespace MediaPortal
       graphicsSettings.FullscreenMultisampleQuality = 0;
       graphicsSettings.FullscreenVertexProcessingType =
         (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.FullscreenPresentInterval = PresentInterval.Default;
+      graphicsSettings.FullscreenPresentInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
 
       return true;
     }
@@ -764,9 +766,31 @@ namespace MediaPortal
     /// </summary>
     public void BuildPresentParamsFromSettings(bool bwindowed)
     {
-      presentParams.BackBufferCount = 2;
+      bool isWindows7OrLater = OSInfo.OSInfo.Win7OrLater();
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
+
+      if (isWindows7OrLater)
+      {
+        if (_doNotWaitForVSync)
+        {
+          // Allow performance measorements when DWM is not blocking Present()
+          presentParams.BackBufferCount = 20;
+          int hr = DXNative.FontEngineSetMaximumFrameLatency(20);
+          if (hr != 0)
+          {
+            Log.Info("D3D: BuildPresentParamsFromSettings failed to set max frame latency - error: {0}", hr);
+          }
+        }
+        else
+        {  
+          presentParams.BackBufferCount = 4;    // FLIPEX will benefit from more backbuffers
+        }
+      }
+      else
+      {
+        presentParams.BackBufferCount = 2;
+      }
 
       if (bwindowed)
       {
@@ -777,9 +801,9 @@ namespace MediaPortal
         presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
         presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
         presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Default;
+        presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = 0;
-        presentParams.SwapEffect = SwapEffect.Discard;
+        presentParams.SwapEffect = isWindows7OrLater ? (SwapEffect)5 : SwapEffect.Discard; // 5 == FLIPEX
         presentParams.PresentFlag = PresentFlag.Video; //PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = ourRenderTarget;
         presentParams.Windowed = true;
@@ -795,9 +819,9 @@ namespace MediaPortal
         presentParams.BackBufferWidth = graphicsSettings.DisplayMode.Width;
         presentParams.BackBufferHeight = graphicsSettings.DisplayMode.Height;
         presentParams.BackBufferFormat = graphicsSettings.DeviceCombo.BackBufferFormat;
-        presentParams.PresentationInterval = PresentInterval.Default;
+        presentParams.PresentationInterval = _doNotWaitForVSync ? PresentInterval.Immediate : PresentInterval.Default;
         presentParams.FullScreenRefreshRateInHz = graphicsSettings.DisplayMode.RefreshRate;
-        presentParams.SwapEffect = SwapEffect.Discard;
+        presentParams.SwapEffect = isWindows7OrLater ? (SwapEffect)5 : SwapEffect.Discard; // 5 == FLIPEX
         presentParams.PresentFlag = PresentFlag.Video; //|PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = this;
         presentParams.Windowed = false;
@@ -977,9 +1001,6 @@ namespace MediaPortal
         }
 
         // Cache our local objects
-        //renderState = GUIGraphicsContext.DX9Device.RenderState;
-        //sampleState = GUIGraphicsContext.DX9Device.SamplerState;
-        //textureStates = GUIGraphicsContext.DX9Device.TextureState;
         // When moving from fullscreen to windowed mode, it is important to
         // adjust the window size after recreating the device rather than
         // beforehand to ensure that you get the window size you want.  For
@@ -1187,7 +1208,7 @@ namespace MediaPortal
 
       int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType,
                                       windowed ? ourRenderTarget.Handle : this.Handle,
-                                      createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
+                                      createFlags | CreateFlags.PureDevice | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
                                       windowed ? IntPtr.Zero : prt, out dev);
       GUIGraphicsContext.DX9Device = new Device(dev);
 
@@ -2722,12 +2743,18 @@ namespace MediaPortal
 
     private void StartFrameClock()
     {
+      if (_doNotWaitForVSync)
+        return; 
+
       clockWatch.Reset();
       clockWatch.Start();
     }
 
     private void WaitForFrameClock()
     {
+      if (_doNotWaitForVSync)
+        return; 
+
       long milliSecondsLeft;
       long timeElapsed = 0;
 
