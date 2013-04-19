@@ -362,6 +362,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
 
   SetOverwrite on
 
@@ -499,6 +501,8 @@ ${MementoSectionEnd}
   ${LOG_TEXT} "INFO" "Terminating processes ..."
   ${StopService} "TVservice"
   ${KillProcess} "SetupTv.exe"
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
 
   #---------------------------------------------------------------------------
   # CLEARING DATABASE if RemoveAll was selected
