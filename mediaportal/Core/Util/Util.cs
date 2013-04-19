@@ -217,21 +217,21 @@ namespace MediaPortal.Util
         Tokens tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
-          m_AudioExtensions.Add(extension.ToLower().Trim());
+          m_AudioExtensions.Add(extension.ToLowerInvariant().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", VideoExtensionsDefault);
         tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
-          m_VideoExtensions.Add(extension.ToLower().Trim());
+          m_VideoExtensions.Add(extension.ToLowerInvariant().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", PictureExtensionsDefault);
         tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
-          m_PictureExtensions.Add(extension.ToLower().Trim());
+          m_PictureExtensions.Add(extension.ToLowerInvariant().Trim());
         }
 
         if (xmlreader.GetValueAsBool("daemon", "enabled", false))
@@ -240,7 +240,7 @@ namespace MediaPortal.Util
           tok = new Tokens(strTmp, new[] {','});
           foreach (string extension in tok)
           {
-            m_ImageExtensions.Add(extension.ToLower().Trim());
+            m_ImageExtensions.Add(extension.ToLowerInvariant().Trim());
           }
         }
 
@@ -431,7 +431,7 @@ namespace MediaPortal.Util
     /// <summary>
     /// This returns whether a file is video or not
     /// There is an issue in the logic for multi-seat radio 
-    /// => if (strPath.ToLower().StartsWith("rtsp:")) return true;
+    /// => if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
     /// means this will incorrectly return true for multi-seat radio
     /// </summary>
     /// <param name="strPath">path to file</param>
@@ -440,14 +440,14 @@ namespace MediaPortal.Util
     {
       if (strPath == null) return false;
       if (IsLastFMStream(strPath)) return false;
-      if (strPath.ToLower().StartsWith("rtsp:")) return true;
-      if (strPath.ToLower().StartsWith("mms:")
-          && strPath.ToLower().EndsWith(".ymvp")) return true;
+      if (strPath.ToLowerInvariant().StartsWith("rtsp:")) return true;
+      if (strPath.ToLowerInvariant().StartsWith("mms:")
+          && strPath.ToLowerInvariant().EndsWith(".ymvp")) return true;
       try
       {
         if (!Path.HasExtension(strPath))
           return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (IsPlayListExtension(extensionFile))
           return false;
 
@@ -461,9 +461,9 @@ namespace MediaPortal.Util
           // Forced check to avoid users messed configuration ( .bdmv remove from Videos extensions list)
           return true;
         }
-        if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
+        if (VirtualDirectory.IsImageFile(extensionFile.ToLowerInvariant()))
           return true;
-        return m_VideoExtensions.Contains(extensionFile);
+        return m_VideoExtensions.Contains(extensionFile, StringComparer.InvariantCultureIgnoreCase);
       }
       catch (Exception) {}
       return false;
@@ -514,7 +514,7 @@ namespace MediaPortal.Util
       try
       {
         if (!Path.HasExtension(strPath)) return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (IsPlayListExtension(extensionFile)) return false;
         return m_AudioExtensions.Contains(extensionFile);
       }
@@ -529,7 +529,7 @@ namespace MediaPortal.Util
       {
         if (!Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return m_PictureExtensions.Contains(extensionFile);
       }
       catch (Exception) {}
@@ -551,7 +551,7 @@ namespace MediaPortal.Util
       try
       {
         if (!Path.HasExtension(strPath)) return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         return IsPlayListExtension(extensionFile);
       }
       catch (Exception) {}
@@ -564,7 +564,7 @@ namespace MediaPortal.Util
       try
       {
         if (!Path.HasExtension(strPath)) return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".exe") return true;
       }
       catch (Exception) {}
@@ -577,7 +577,7 @@ namespace MediaPortal.Util
       try
       {
         if (!Path.HasExtension(strPath)) return false;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if (extensionFile == ".lnk") return true;
       }
       catch (Exception) {}
@@ -682,7 +682,7 @@ namespace MediaPortal.Util
 
       string strThumb = string.Empty;
 
-      if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
+      if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant())))
       {
         if (!IsVideo(item.Path))
         {
@@ -744,7 +744,7 @@ namespace MediaPortal.Util
         if (createVideoThumbs && !foundVideoThumb && getItemThumb)
         {
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
-              !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
+              !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant()))
           {
             Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) +
                       ") not found. Creating a new video thumb...");
@@ -1357,7 +1357,7 @@ namespace MediaPortal.Util
     {
       if (String.IsNullOrEmpty(strFile)) return false;
       if (strFile.StartsWith("cdda:")) return true;
-      string extension = Path.GetExtension(strFile).ToLower();
+      string extension = Path.GetExtension(strFile).ToLowerInvariant();
       if (extension.Equals(".cda")) return true;
       return false;
     }
@@ -1383,7 +1383,7 @@ namespace MediaPortal.Util
     // Check if filename is from mounted ISO image
     public static bool IsISOImage(string fileName)
     {
-      string extension = Path.GetExtension(fileName).ToLower();
+      string extension = Path.GetExtension(fileName).ToLowerInvariant();
       if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName) || (extension == ".tsbuffer" || extension == ".ts"))
         return false;
 
@@ -1527,8 +1527,8 @@ namespace MediaPortal.Util
         var stackReg = StackExpression();
 
         // Strip the extensions and make everything lowercase
-        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLower();
-        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLower();
+        string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLowerInvariant();
+        string strFileName2 = Path.GetFileNameWithoutExtension(strFile2).ToLowerInvariant();
 
         // Check all the patterns
         for (int i = 0; i < stackReg.Length; i++)
@@ -1955,7 +1955,7 @@ namespace MediaPortal.Util
       IntPtr windowHandle = (IntPtr)hwnd;
       StringBuilder sb = new StringBuilder(1024);
       GetWindowText((int)windowHandle, sb, sb.Capacity);
-      string window = sb.ToString().ToLower();
+      string window = sb.ToString().ToLowerInvariant();
       if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
       {
         ShowWindow(windowHandle, SW_SHOWNORMAL);
@@ -2022,7 +2022,7 @@ namespace MediaPortal.Util
 
       try
       {
-        string extension = Path.GetExtension(strFile).ToLower();
+        string extension = Path.GetExtension(strFile).ToLowerInvariant();
         if (IsLiveTv(strFile)) return false;
         if (extension.Equals(".sbe")) return false;
         if (extension.Equals(".dvr-ms")) return false;
@@ -2039,7 +2039,7 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLower() == ".ifo" || extension.ToLower() == ".vob")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -2280,8 +2280,8 @@ namespace MediaPortal.Util
           string extensionFile = Path.GetExtension(strFile);
           if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
-            extensionURL = extensionURL.ToLower();
-            extensionFile = extensionFile.ToLower();
+            extensionURL = extensionURL.ToLowerInvariant();
+            extensionFile = extensionFile.ToLowerInvariant();
             string strLogo = Path.ChangeExtension(strFile, extensionURL);
             client.Proxy.Credentials = CredentialCache.DefaultCredentials;
             client.DownloadFile(strURL, strLogo);
@@ -2924,7 +2924,7 @@ namespace MediaPortal.Util
     private static void UpdateFileNameForCache(ref string filename)
     {
       if (string.IsNullOrEmpty(filename)) return;
-      filename = filename.ToLower();
+      filename = filename.ToLowerInvariant();
     }
 
     private static IEnumerable<string> DirSearch(string sDir)
@@ -3061,7 +3061,7 @@ namespace MediaPortal.Util
     private static void fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
-      if (!e.FullPath.ToLower().Contains("db3-journal"))
+      if (!e.FullPath.ToLowerInvariant().Contains("db3-journal"))
       {
         if (watcher != null)
         {
@@ -3075,7 +3075,7 @@ namespace MediaPortal.Util
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
 
-      if (!e.FullPath.ToLower().Contains("db3-journal"))
+      if (!e.FullPath.ToLowerInvariant().Contains("db3-journal"))
       {
         if (watcher != null)
         {
@@ -3113,7 +3113,7 @@ namespace MediaPortal.Util
           string path = GetDirectoryName(filename);
           if (path.Length > 0)
           {
-            path = path.ToLower();
+            path = path.ToLowerInvariant();
             if (!HasFolderBeenScanned(path))
             {
               lock (_fileExistsCacheLock)
@@ -3519,7 +3519,7 @@ namespace MediaPortal.Util
       string path = oPath as string;
       if (!String.IsNullOrEmpty(path))
       {
-        string dir2Lower = path.ToLower();
+        string dir2Lower = path.ToLowerInvariant();
         if (Path.IsPathRooted(dir2Lower))
         {
           if (!HasFolderBeenScanned(dir2Lower))
@@ -3909,7 +3909,7 @@ namespace MediaPortal.Util
     /// <returns></returns>
     public static bool StripArtistNamePrefix(ref string artistName, bool appendPrefix)
     {
-      string temp = artistName.ToLower();
+      string temp = artistName.ToLower(CultureInfo.CurrentCulture);
 
       foreach (string s in _artistNamePrefixes)
       {
@@ -3917,7 +3917,7 @@ namespace MediaPortal.Util
           continue;
 
         string prefix = s;
-        prefix = prefix.Trim().ToLower();
+        prefix = prefix.Trim().ToLower(CultureInfo.CurrentCulture);
         int pos = temp.IndexOf(prefix + " ");
         if (pos == 0)
         {
@@ -3944,7 +3944,7 @@ namespace MediaPortal.Util
         // Movie title prefix strip
         movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die").Split(',');
       }
-      string temp = movieName.ToLower();
+      string temp = movieName.ToLower(CultureInfo.CurrentCulture);
 
       foreach (string s in movieNamePrefixes)
       {
@@ -3952,7 +3952,7 @@ namespace MediaPortal.Util
           continue;
 
         string prefix = s;
-        prefix = prefix.Trim().ToLower();
+        prefix = prefix.Trim().ToLower(CultureInfo.CurrentCulture);
         int pos = temp.IndexOf(prefix + " ");
         if (pos == 0)
         {
@@ -4197,7 +4197,7 @@ namespace MediaPortal.Util
       string path = Path.GetDirectoryName(recordingFilename);
       string filename = Path.GetFileNameWithoutExtension(recordingFilename);
 
-      filename = filename.ToLower();
+      filename = filename.ToLowerInvariant();
       string[] files;
       try
       {
@@ -4206,25 +4206,25 @@ namespace MediaPortal.Util
         {
           try
           {
-            if (fileName.ToLower().IndexOf(filename) >= 0)
+            if (fileName.ToLowerInvariant().IndexOf(filename) >= 0)
             {
               //delete all Timeshift buffer files
-              if (fileName.ToLower().IndexOf(".sbe") >= 0)
+              if (fileName.ToLowerInvariant().IndexOf(".sbe") >= 0)
               {
                 File.Delete(fileName);
               }
               //delete Thumbnails
-              if (fileName.ToLower().IndexOf(".jpg") >= 0)
+              if (fileName.ToLowerInvariant().IndexOf(".jpg") >= 0)
               {
                 File.Delete(fileName);
               }
               //delete comskip txt file
-              if (fileName.ToLower().IndexOf(".txt") >= 0)
+              if (fileName.ToLowerInvariant().IndexOf(".txt") >= 0)
               {
                 File.Delete(fileName);
               }
               //delete Matroska tag file
-              if (fileName.ToLower().IndexOf(".xml") >= 0)
+              if (fileName.ToLowerInvariant().IndexOf(".xml") >= 0)
               {
                 File.Delete(fileName);
               }
@@ -4434,7 +4434,7 @@ namespace MediaPortal.Util
     public static string TranslateLanguageString(string language)
     {
       string languageTranslated = "";
-      switch (language.ToLower())
+      switch (language.ToLowerInvariant())
       {
         case "undetermined":
           languageTranslated = GUILocalizeStrings.Get(2599);
@@ -4504,7 +4504,7 @@ namespace MediaPortal.Util
 
       foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
       {
-        if (cultureInformation.EnglishName.ToLower().IndexOf(strShortLanguage.ToLower()) != -1)
+        if (cultureInformation.EnglishName.ToLower(CultureInfo.CurrentCulture).IndexOf(strShortLanguage.ToLower(CultureInfo.CurrentCulture)) != -1)
         {
           return cultureInformation.EnglishName;
         }
@@ -4543,7 +4543,7 @@ namespace MediaPortal.Util
         {
           //this check is needed because GetFiles truncates extension to 3 letters, 
           //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
-          if (!strFile.ToLower().EndsWith("." + sp))
+          if (!strFile.ToLowerInvariant().EndsWith("." + sp))
           {
             continue;
           }
