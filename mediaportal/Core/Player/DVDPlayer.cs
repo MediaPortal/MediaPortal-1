@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -159,6 +160,13 @@ namespace MediaPortal.Player
 
     public DVDPlayer() {}
 
+    protected Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
+    protected Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    protected Dictionary<string, object> PostProcessFilterMPAudio = new Dictionary<string, object>();
+    protected FilterConfig filterConfig;
+    protected FilterCodec filterCodec;
+    protected bool VideoChange = false;
+
     public override void WndProc(ref Message m)
     {
       try
@@ -246,6 +254,63 @@ namespace MediaPortal.Player
       SetVideoWindow();
 
       return true;
+    }
+
+    public class FilterCodec
+    {
+      public IBaseFilter _audioRendererFilter { get; set; }
+      public IBaseFilter VideoCodec { get; set; }
+      public IBaseFilter AudioCodec { get; set; }
+    }
+
+    public virtual FilterCodec GetFilterCodec()
+    {
+      FilterCodec filterCodec = new FilterCodec();
+
+      filterCodec.VideoCodec = null;
+      filterCodec.AudioCodec = null;
+      filterCodec._audioRendererFilter = null;
+
+      return filterCodec;
+    }
+
+    public class FilterConfig
+    {
+      public FilterConfig()
+      {
+        OtherFilters = new List<string>();
+      }
+
+      public string Video { get; set; }
+      public string Audio { get; set; }
+      public string AudioRenderer { get; set; }
+      public List<string> OtherFilters { get; set; }
+    }
+
+    protected virtual FilterConfig GetFilterConfiguration()
+    {
+      FilterConfig filterConfig = new FilterConfig();
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        // get pre-defined filter setup
+        filterConfig.Video = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
+        filterConfig.Audio = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer",
+                                                                "Default DirectSound Device");
+
+        // get post-processing filter setup
+        int i = 0;
+        while (xmlreader.GetValueAsString("dvdplayer", "filter" + i, "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + i, false))
+          {
+            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("dvdplayer", "filter" + i, "undefined"));
+          }
+          i++;
+        }
+      }
+      return filterConfig;
     }
 
     #region IDisposable Members
@@ -460,6 +525,52 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
+        #region Cleanup Sebastiii
+
+        if (filterCodec != null && filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);//, 5000);
+          filterCodec.VideoCodec = null;
+          Log.Info("DVDPlayer9: Cleanup VideoCodec");
+        }
+
+        if (filterCodec != null && filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);//, 5000);
+          filterCodec.AudioCodec = null;
+          Log.Info("DVDPlayer9: Cleanup AudioCodec");
+        }
+
+        if (filterCodec != null && filterCodec._audioRendererFilter != null)
+        {
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, filterCodec._audioRendererFilter);
+          _graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+          while (DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter) > 0) ;
+          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+          filterCodec._audioRendererFilter = null;
+          Log.Info("DVDPlayer9: Cleanup AudioRenderer");
+        }
+
+        //ReleaseComObject from PostProcessFilter list objects.
+        foreach (var ppFilter in PostProcessFilterVideo)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterVideo.Clear();
+        foreach (var ppFilter in PostProcessFilterAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterAudio.Clear();
+        Log.Info("DVDPlayer9: Cleanup PostProcess");
+        foreach (var ppFilter in PostProcessFilterMPAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterMPAudio.Clear();
+        Log.Info("DVDPlayer9: Cleanup PostProcess MediaPortal AudioSwitcher");
+
+        #endregion
 
         if (_graphBuilder != null)
         {
@@ -504,6 +615,10 @@ namespace MediaPortal.Player
       _freeNavigator = true;
       _dvdInfo = null;
       _dvdCtrl = null;
+
+      filterConfig = GetFilterConfiguration();
+      //Get filterCodecName
+      filterCodec = GetFilterCodec();
 
       string dvdNavigator = "";
       string aspectRatioMode = "";
@@ -581,11 +696,28 @@ namespace MediaPortal.Player
               _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true); // use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
 
-              AddPreferedCodecs(_graphBuilder);
-              DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
+              // Add preferred video filters
+              UpdateFilters("Video");
+
+              //Add Audio Renderer
+              if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+              {
+                filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,
+                                                                                          filterConfig.AudioRenderer, false);
+              }
+
+              // Add preferred audio filters
+              UpdateFilters("AC3");
+
+              if (_dvdbasefilter != null)
+              {
+                DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _dvdbasefilter);
+              }
 
               _videoWin = _graphBuilder as IVideoWindow;
               _freeNavigator = false;
+
+              DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
             }
 
             //DirectShowUtil.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
@@ -706,6 +838,159 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(comobj);
         }
         comobj = null;
+      }
+    }
+
+    protected void PostProcessAddVideo()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterVideo.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessAddAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()) && filter.ToString() != "MediaPortal AudioSwitcher")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessAddMPAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()) && filter.ToString() == "MediaPortal AudioSwitcher")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterMPAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void UpdateFilters(string selection)
+    {
+      if (selection == "Video")
+      {
+        VideoChange = false;
+        if (PostProcessFilterVideo.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterVideo.Clear();
+          Log.Info("DVDPlayer9: UpdateFilters Cleanup PostProcessVideo");
+        }
+      }
+      else
+      {
+        if (PostProcessFilterAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Info("DVDPlayer9: UpdateFilters Cleanup PostProcessAudio");
+        }
+        if (PostProcessFilterMPAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterMPAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterMPAudio.Clear();
+          Log.Info("DVDPlayer9: UpdateFilters Cleanup PostProcessMPAudio");
+        }
+      }
+
+      // we have to find first filter connected to splitter which will be removed
+      //IPin pinFrom = FileSync ? DirectShowUtil.FindPin(Splitter, PinDirection.Output, selection) : DirectShowUtil.FindPin(_interfaceSourceFilter, PinDirection.Output, selection);
+      IPin pinFrom = DirectShowUtil.FindPin(_dvdbasefilter, PinDirection.Output, selection);
+      IPin pinTo;
+      if (pinFrom != null)
+      {
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+          _graphBuilder.RemoveFilter(pInfo.filter);
+          Log.Debug("DVDPlayer9: UpdateFilters Remove filter - {0}", fInfo.achName);
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      }
+
+      if (selection == "Video")
+      {
+        //Add Post Process Video Codec
+        PostProcessAddVideo();
+
+        //Add Video Codec
+        if (filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);
+          filterCodec.VideoCodec = null;
+        }
+        filterCodec.VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, filterConfig.Video);
+
+        VideoChange = true;
+      }
+      else
+      {
+        //Add Post Process MediaPortal AudioSwitcher Audio Codec
+        if (filterConfig.OtherFilters.Contains("MediaPortal AudioSwitcher"))
+        {
+          PostProcessAddMPAudio();
+        }
+
+        //Add Post Process Audio Codec
+        PostProcessAddAudio();
+
+        //Add Audio Codec
+        if (filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);
+          filterCodec.AudioCodec = null;
+        }
+        filterCodec.AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, filterConfig.Audio);
       }
     }
 
@@ -2002,51 +2287,6 @@ namespace MediaPortal.Player
     public override string SubtitleName(int iStream)
     {
       return "";
-    }
-
-    public void AddPreferedCodecs(IGraphBuilder _graphBuilder)
-    {
-      // add preferred video & audio codecs
-      string strVideoCodec = "";
-      string strAudioCodec = "";
-      string strAudiorenderer = "";
-      int intFilters = 0; // FlipGer: count custom filters
-      string strFilters = ""; // FlipGer: collect custom filters
-      using (Settings xmlreader = new MPSettings())
-      {
-        // FlipGer: load infos for custom filters
-        int intCount = 0;
-        while (xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") != "undefined")
-        {
-          if (xmlreader.GetValueAsBool("dvdplayer", "usefilter" + intCount.ToString(), false))
-          {
-            strFilters += xmlreader.GetValueAsString("dvdplayer", "filter" + intCount.ToString(), "undefined") + ";";
-            intFilters++;
-          }
-          intCount++;
-        }
-        strVideoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
-        strAudioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
-        strAudiorenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
-      }
-      if (strVideoCodec.Length > 0)
-      {
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-      }
-      if (strAudioCodec.Length > 0)
-      {
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-      }
-      if (strAudiorenderer.Length > 0)
-      {
-        DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudiorenderer, false);
-      }
-      // FlipGer: add custom filters to graph
-      string[] arrFilters = strFilters.Split(';');
-      for (int i = 0; i < intFilters; i++)
-      {
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
-      }
     }
 
     /// <summary>

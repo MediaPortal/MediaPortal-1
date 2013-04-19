@@ -62,6 +62,10 @@ namespace MediaPortal.Player
       int codecValue = 0;
       string codecType = "";
 
+      filterConfig = GetFilterConfiguration();
+      //Get filterCodecName
+      filterCodec = GetFilterCodec();
+
       using (Settings xmlreader = new MPSettings())
       {
         showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
@@ -192,7 +196,20 @@ namespace MediaPortal.Player
           _dvdbasefilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, dvdDNavigator);
           if (_dvdbasefilter != null)
           {
-            AddPreferedCodecs(_graphBuilder);
+
+            // Add preferred video filters
+            UpdateFilters("Video");
+
+            //Add Audio Renderer
+            if (filterConfig.AudioRenderer.Length > 0 && filterCodec._audioRendererFilter == null)
+            {
+              filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,
+                                                                                        filterConfig.AudioRenderer, false);
+            }
+
+            // Add preferred audio filters
+            UpdateFilters("AC3");
+
             _dvdCtrl = (IDvdControl2)_dvdbasefilter;
             if (_dvdCtrl != null)
             {
@@ -430,6 +447,53 @@ namespace MediaPortal.Player
           while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
+
+        #region Cleanup Sebastiii
+
+        if (filterCodec != null && filterCodec.VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec);//, 5000);
+          filterCodec.VideoCodec = null;
+          Log.Info("DVDPlayer9: Cleanup VideoCodec");
+        }
+
+        if (filterCodec != null && filterCodec.AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec);//, 5000);
+          filterCodec.AudioCodec = null;
+          Log.Info("DVDPlayer9: Cleanup AudioCodec");
+        }
+
+        if (filterCodec != null && filterCodec._audioRendererFilter != null)
+        {
+          DirectShowUtil.DisconnectAllPins(_graphBuilder, filterCodec._audioRendererFilter);
+          _graphBuilder.RemoveFilter(filterCodec._audioRendererFilter);
+          while (DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter) > 0) ;
+          DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter);
+          filterCodec._audioRendererFilter = null;
+          Log.Info("DVDPlayer9: Cleanup AudioRenderer");
+        }
+
+        //ReleaseComObject from PostProcessFilter list objects.
+        foreach (var ppFilter in PostProcessFilterVideo)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterVideo.Clear();
+        foreach (var ppFilter in PostProcessFilterAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterAudio.Clear();
+        Log.Info("DVDPlayer9: Cleanup PostProcess");
+        foreach (var ppFilter in PostProcessFilterMPAudio)
+        {
+          if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+        }
+        PostProcessFilterMPAudio.Clear();
+        Log.Info("DVDPlayer9: Cleanup PostProcess MediaPortal AudioSwitcher");
+
+        #endregion
 
         if (_graphBuilder != null)
         {
