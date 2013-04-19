@@ -1306,7 +1306,11 @@ public class MediaPortalApp : D3D, IRender
 
         // handle system commands
         case WM_SYSCOMMAND:
-          OnSysCommand(ref msg);
+          // do not continue with rest of method in case we aborted screen saver or display powering off
+          if (!OnSysCommand(ref msg))
+          {
+            return;
+          }
           break;
       }
 
@@ -1315,6 +1319,7 @@ public class MediaPortalApp : D3D, IRender
 
       PluginManager.WndProc(ref msg);
 
+ 
       Action action;
       char key;
       Keys keyCode;
@@ -1363,9 +1368,10 @@ public class MediaPortalApp : D3D, IRender
   /// 
   /// </summary>
   /// <param name="msg"></param>
-  private void OnSysCommand(ref Message msg)
+  private bool OnSysCommand(ref Message msg)
   {
     Log.Debug("Main: WM_SYSCOMMAND");
+    bool result = true;
     switch (msg.WParam.ToInt32() & 0xFFF0)
     {
       // user clicked on minimize button
@@ -1384,6 +1390,7 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Active player - resetting idle timer for display to be turned off");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
+          result = false;
         }
         else
         {
@@ -1400,6 +1407,7 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Active player - resetting idle timer for screen save to be turned on");
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           msg.Result = (IntPtr)1;
+          result = false;
         }
         else
         {
@@ -1407,6 +1415,7 @@ public class MediaPortalApp : D3D, IRender
         }
         break;
     }
+    return result;
   }
 
 
