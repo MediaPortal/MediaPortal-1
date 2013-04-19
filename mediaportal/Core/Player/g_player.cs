@@ -1241,14 +1241,22 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
-      return Play(strFile, type, (TextReader)null, false, false);
+      return Play(strFile, type, (TextReader)null, false, true);
     }
 
     public static bool Play(string strFile, MediaType type, string chapters)
     {
       using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
       {
-        return Play(strFile, type, stream, false, false);
+        return Play(strFile, type, stream, false, true);
+      }
+    }
+
+    public static bool Play(string strFile, MediaType type, string chapters, bool fromTVPlugin)
+    {
+      using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
+      {
+        return Play(strFile, type, stream, false, fromTVPlugin);
       }
     }
 
@@ -1261,9 +1269,9 @@ namespace MediaPortal.Player
           Log.Error("g_Player.Play() called without file attribute");
           return false;
         }
+        IsExtTS = false;
 
         IsPicture = false;
-        IsExtTS = false;
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
         string extension = Util.Utils.GetFileExtension(strFile).ToLower();
         bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
