@@ -34,6 +34,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Dialogs.Dialogs;
 using MediaPortal;
+using MediaPortal.Common.Utils;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -718,6 +719,8 @@ namespace Mediaportal.TV.TvPlugin
       base.OnPageDestroy(newWindowId);
     }
 
+    private static bool _tunePending = false;
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       Stopwatch benchClock = null;
@@ -746,8 +749,15 @@ namespace Mediaportal.TV.TvPlugin
 
       if (control == btnTvOnOff)
       {
-        if (Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
+        if (_tunePending)
         {
+          IUser userResult;
+          GlobalServiceProvider.Get<IControllerService>().StopTimeShifting(new User().Name, out userResult);
+          return;
+        }
+
+        if (Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
+        {          
           // tv off
           g_Player.Stop();
           this.LogWarn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
@@ -3283,14 +3293,12 @@ namespace Mediaportal.TV.TvPlugin
       {
         return false;
       }
-      double? parkedDuration = null;
-      TvResult succeeded = TvResult.UnknownError;
-      Dictionary<int, List<IUser>> kickableCards = null;
       _status.Clear();
       _doingChannelChange = false;
 
       try
       {
+        _tunePending = true;
         bool doContinue;
         bool checkResult = PreTuneChecks(channel, out doContinue);
         if (doContinue == false)
@@ -3332,7 +3340,7 @@ namespace Mediaportal.TV.TvPlugin
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
           RenderBlackImage();
-          g_Player.PauseGraph();
+          //g_Player.PauseGraph();
         }
         else
         {
@@ -3539,6 +3547,7 @@ namespace Mediaportal.TV.TvPlugin
               _currentChannelIdForTune = 0;
               GUIWaitCursorHide();              
             }
+            _tunePending = false;
           }
         }
       }
@@ -3608,7 +3617,7 @@ namespace Mediaportal.TV.TvPlugin
           // CardChange refactor it, so it reacts to changes in timeshifting path / URL.
 
           // continue graph
-          g_Player.ContinueGraph();
+         // g_Player.ContinueGraph();
           if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange) ||
               (g_Player.Playing && !(g_Player.IsTV || g_Player.IsRadio)))
           {
