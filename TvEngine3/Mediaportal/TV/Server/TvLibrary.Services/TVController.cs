@@ -2698,21 +2698,43 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <returns></returns>
     public bool StopTimeShifting(string userName, out IUser user)
     {
+      bool timeshiftingStopped = false;
       user = null;
       try
-      {
-        int timeshiftingChannelId;
-        user = GetUserFromContext(userName, out timeshiftingChannelId, TvUsage.Timeshifting);
-        if (timeshiftingChannelId > 0)
+      {        
+        //first, lets figure out if we are trying to stop a pending tune session
+        foreach (ITvCardHandler cardHandler in _cards.Values)
         {
-          return StopTimeShifting(ref user, timeshiftingChannelId);
+          ICardTuneReservationTicket cardTuneReservationTicket = cardHandler.Tuner.ReservationsForTune.FirstOrDefault();
+          if (cardTuneReservationTicket != null)
+          {
+            IUser userwWithPendingTicket = cardTuneReservationTicket.User;
+
+            if (userwWithPendingTicket.Name.Equals(userName))
+            {
+              cardHandler.Tuner.CancelTune(cardHandler.Tuner.ActiveCardTuneReservationTicket.PendingSubchannel);
+              timeshiftingStopped = true;
+              break;
+            }            
+          }          
         }
+
+        //if no pending tune session was found, then just stop the channel the old fashioned way.
+        if (!timeshiftingStopped)
+        {
+          int timeshiftingChannelId;
+          user = GetUserFromContext(userName, out timeshiftingChannelId, TvUsage.Timeshifting);
+          if (timeshiftingChannelId > 0)
+          {
+            timeshiftingStopped = StopTimeShifting(ref user, timeshiftingChannelId);
+          }
+        }        
       }
       catch (Exception e)
       {
         HandleControllerException(e);
-      }      
-      return false;
+      }
+      return timeshiftingStopped;
     }
 
     private bool DoStopTimeShifting(ref IUser user, int cardId, int idChannel)
