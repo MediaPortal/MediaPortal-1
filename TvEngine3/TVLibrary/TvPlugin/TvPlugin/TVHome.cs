@@ -3660,7 +3660,8 @@ namespace TvPlugin
         }
       }
 
-      if (!g_Player.Play(timeshiftFileName, mediaType))
+      // Force use TsReader
+      if (!g_Player.Play(timeshiftFileName, mediaType, null, false, false))
       {
         StopPlayback();
       }
