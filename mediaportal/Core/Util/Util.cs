@@ -715,7 +715,7 @@ namespace MediaPortal.Util
           
         using (Settings xmlreader = new MPSettings())
         {
-          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
           //
           //Get movies shares and check for video thumb create
           //
@@ -972,7 +972,7 @@ namespace MediaPortal.Util
       {
         using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
-          if (!xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true))
+          if (!xmlreader.GetValueAsBool("thumbnails", "videoondemand", true))
             return;
 
           string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", "");
@@ -1834,7 +1834,7 @@ namespace MediaPortal.Util
             }
             catch (Exception ex2)
             {
-              Log.Error("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
+              Log.Warn("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
             }
           }
           // Read in asynchronous  mode to avoid deadlocks (if error stream is full)
@@ -1849,7 +1849,7 @@ namespace MediaPortal.Util
 
           if (!success)
           {
-            Log.Error("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
+            Log.Warn("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
           }
 
           ExternalProc.OutputDataReceived -= new DataReceivedEventHandler(OutputDataHandler);
@@ -1857,7 +1857,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Util: Error executing {0}: {1}", aAppName, ex.Message);
+          Log.Warn("Util: Error executing {0}: {1}", aAppName, ex.Message);
         }
       }
       else

@@ -40,6 +40,7 @@ using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvLibrary.Streaming;
+using TvThumbnails;
 
 namespace TvService
 {
@@ -72,6 +73,11 @@ namespace TvService
     /// Recording scheduler
     /// </summary>
     private Scheduler _scheduler;
+    
+    /// <summary>
+    /// Thumbnail processor for recordings
+    /// </summary>
+    private ThumbProcessor _thumbProcessor;
 
     /// <summary>
     /// RTSP Streaming Server
@@ -768,6 +774,9 @@ namespace TvService
           _scheduler.Start();
         }
 
+        _thumbProcessor = new ThumbProcessor();
+        _thumbProcessor.Start();
+
         SetupHeartbeatThread();
         ExecutePendingDeletions();
 
@@ -858,6 +867,14 @@ namespace TvService
           _streamer.Stop();
           _streamer = null;
           Log.Info("Controller: streamer stopped...");
+        }
+        //stop the thumbnail processor
+        if (_thumbProcessor != null)
+        {
+          Log.Info("Controller: stop thumb processor...");
+          _thumbProcessor.Stop();
+          _thumbProcessor = null;
+          Log.Info("Controller: thumb processor stopped...");
         }
         //stop the recording scheduler
         if (_scheduler != null)
@@ -2369,6 +2386,30 @@ namespace TvService
         Log.Error("Controller: Can't get streaming url");
       }
       return "";
+    }
+
+    /// <summary>
+    /// Gets the thumbnail image data of given file
+    /// </summary>
+    /// <param name="thumbnailFilename">Filename of the thumbnail, e.g. "Top Gear - MTV3 - 2012-11-10.jpg"</param>
+    /// <returns></returns>
+    public byte[] GetRecordingThumbnail(string thumbnailFilename)
+    {
+      try
+      {
+        string fileAndPath = _thumbProcessor.GetThumbnailFolder() + "/" + thumbnailFilename;
+
+        if (!File.Exists(fileAndPath))
+        {
+          return new byte[0];
+        }
+        return File.ReadAllBytes(fileAndPath); 
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Controller: Can't get recording thumbnail data: {0}", ex.Message);
+      }
+      return new byte[0];
     }
 
     public string GetRecordingUrl(int idRecording)
