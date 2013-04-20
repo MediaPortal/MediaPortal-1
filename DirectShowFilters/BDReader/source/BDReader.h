@@ -261,8 +261,6 @@ private:
   DWORD           m_dwThreadId;
   bool            m_bUpdateStreamPositionOnly;
 
-  bool m_bFirstPlay;
-
   REFERENCE_TIME m_rtPlaybackOffset;
   REFERENCE_TIME m_rtSeekPosition;
   REFERENCE_TIME m_rtTitleDuration;
@@ -292,6 +290,7 @@ private:
   CAMEvent m_eSeekDone;
   
   bool m_bChapterChangeRequested;
+  bool m_bForceTitleBasedPlayback;
 
   bool m_bRebuildOngoing;
   CAMEvent m_eRebuild;
