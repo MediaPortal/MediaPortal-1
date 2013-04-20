@@ -1727,6 +1727,8 @@ namespace MediaPortal.GUI.Video
 
     public static void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex, bool requestPin)
     {
+      bool BDInternalMenu = false;
+      bool NoBDResume = false;
       _BDDetect = false;
       g_Player.ForcePlay = false;
       g_Player.SetResumeBDTitleState = 1000;
@@ -1774,6 +1776,11 @@ namespace MediaPortal.GUI.Video
         _BDDetect = true;
       }
 
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+      }
+
       int timeMovieStopped = 0;
       byte[] resumeData = null;
 
@@ -1794,6 +1801,10 @@ namespace MediaPortal.GUI.Video
           if (_BDDetect)
             g_Player.SetResumeBDTitleState = VideoDatabase.GetTitleBDId(idFile, out resumeData);
 
+          if (BDInternalMenu && g_Player.SetResumeBDTitleState == 1000)
+          {
+            NoBDResume = true;
+          }
 
           if ((idMovie >= 0) && (idFile >= 0))
           {
@@ -1807,7 +1818,8 @@ namespace MediaPortal.GUI.Video
               {
                 title = movieDetails.Title;
               }
-             if (askForResumeMovie && g_Player.SetResumeBDTitleState >= 0)
+
+              if (askForResumeMovie && g_Player.SetResumeBDTitleState >= 0 && !NoBDResume)
               {
                 if (_BDDetect)
                   g_Player.ForcePlay = true;
@@ -1827,11 +1839,16 @@ namespace MediaPortal.GUI.Video
                     _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                     return;
                   }
+                  // Return to list if we cancel resume dialog (needed when BD is remuxed)
+                  else if (g_Player.SetResumeBDTitleState == 1000 || g_Player.SetResumeBDTitleState == 1200)
+                  {
+                    return;
+                  }
                 }
 
-              if (result == GUIResumeDialog.Result.PlayFromBeginning)
-                timeMovieStopped = 0;
-            }
+                if (result == GUIResumeDialog.Result.PlayFromBeginning)
+                  timeMovieStopped = 0;
+              }
             }
           }
         }
