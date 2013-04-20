@@ -502,6 +502,10 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnStopped()");
         if (PlayBackStopped != null)
         {
+          if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording))
+          {
+            RefreshRateChanger.AdaptRefreshRate();
+          }
           PlayBackStopped(_currentMedia, (int)CurrentPosition,
                           (!String.IsNullOrEmpty(currentFileName) ? currentFileName : CurrentFile));
           currentFileName = String.Empty;
@@ -518,10 +522,17 @@ namespace MediaPortal.Player
       {
         //yes, then raise event
         Log.Info("g_Player.OnEnded()");
-        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
         RefreshRateChanger.AdaptRefreshRate();
-        currentFileName = String.Empty;
-        _mediaInfo = null;
+        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
+        if (_player != null && _player.Playing)
+        {
+          // Don't reset currentFileName and _mediaInfo
+        }
+        else
+        {
+          currentFileName = String.Empty;
+          _mediaInfo = null;
+        }
       }
     }
 
@@ -1276,46 +1287,6 @@ namespace MediaPortal.Player
             }
         }
 
-        if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
-        {
-          ChangeDriveSpeed(strFile, DriveType.CD);
-        }
-
-        if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
-        {
-          _mediaInfo = new MediaInfoWrapper(strFile);
-        }
-
-        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile)) //local video, tv, rtsp
-        {
-          if (type == MediaType.Unknown)
-          {
-            Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
-            type = MediaType.Video;
-          }
-
-          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
-          if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1)
-          {
-            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
-          }
-
-          if (RefreshRateChanger.RefreshRateChangePending)
-          {
-            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
-            {
-              Log.Info(
-                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-              RefreshRateChanger.ResetRefreshRateState();
-            }
-            else
-            {
-              return true;
-            }
-          }
-        }
 
         Starting = true;
         _currentStep = 0;
@@ -1349,6 +1320,47 @@ namespace MediaPortal.Player
             }
             CachePlayer();
             _player = null;
+          }
+        }
+
+        if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
+        {
+          ChangeDriveSpeed(strFile, DriveType.CD);
+        }
+
+        if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
+        {
+          _mediaInfo = new MediaInfoWrapper(strFile);
+        }
+
+        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
+        {
+          if (type == MediaType.Unknown)
+          {
+            Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
+            type = MediaType.Video;
+          }
+
+          // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
+          if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+          {
+            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+          }
+
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            {
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
+            }
           }
         }
 
@@ -2230,12 +2242,12 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIGraphicsContext.IsPlaying = false;
           GUIGraphicsContext.IsPlayingVideo = false;
-          OnEnded();
           return;
         }
         Stop();
