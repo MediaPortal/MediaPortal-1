@@ -2581,6 +2581,7 @@ namespace MediaPortal.Player
               if (g_Player.SetResumeBDTitleState == -1)
               {
                 // user cancelled dialog
+                titles.Dispose();
                 g_Player.Stop();
                 return false;
               }
@@ -2598,6 +2599,7 @@ namespace MediaPortal.Player
                 if (g_Player.SetResumeBDTitleState == -1)
                 {
                   // user cancelled dialog
+                  titles.Dispose();
                   g_Player.Stop();
                   return false;
                 }
@@ -2607,8 +2609,8 @@ namespace MediaPortal.Player
                 if (_titleToPlay == -1)
                 {
                   // user cancelled dialog
-              g_Player.Stop();
-              titles.Dispose();
+                  g_Player.Stop();
+                  titles.Dispose();
                   return false;
                 }
 
