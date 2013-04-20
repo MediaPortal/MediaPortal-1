@@ -674,12 +674,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonClearPictureThumbs_Click(object sender, EventArgs e)
     {
-      Util.Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+      Util.Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Util.Utils.GetThumbExtension()), true);
     }
 
     private void buttonClearVideoThumbs_Click(object sender, EventArgs e)
     {
-      Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+      Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()), true);
     }
 
     private void bttnClearBlaclistedThumbs_Click(object sender, EventArgs e)
