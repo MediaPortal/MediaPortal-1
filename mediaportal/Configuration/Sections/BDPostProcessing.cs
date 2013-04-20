@@ -18,20 +18,27 @@
 
 #endregion
 
-using System;
 
-namespace MP.System.Windows.Media.Imaging
+#pragma warning disable 108
+
+namespace MediaPortal.Configuration.Sections
 {
-  [Flags]
-  public enum BitmapCreateOptions
+  public class BDPostProcessing : BasePostProcessing
   {
-    #region Values
+    public BDPostProcessing()
+      : this("Blu-ray Post Processing") { }
 
-    DelayCreation,
-    IgnoreColorProfile,
-    None = 0,
-    PreservePixelFormat,
+    public BDPostProcessing(string name)
+      : base(name) { }
 
-    #endregion Values
+    public override void LoadSettings()
+    {
+      base.LoadSettings("bdplayer");
+    }
+
+    public override void SaveSettings()
+    {
+      base.SaveSettings("bdplayer");
+    }
   }
 }
