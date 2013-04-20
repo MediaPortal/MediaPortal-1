@@ -121,6 +121,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bFlushing(false),
   m_bRebuildOngoing(false),
   m_bChapterChangeRequested(false),
+  m_bForceTitleBasedPlayback(false),
   m_bFirstSeek(true)
 {
   // use the following line if you are having trouble setting breakpoints
@@ -773,23 +774,27 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
     Start();
   }
 
-  return S_OK;
+  lib.Play();
+  return m_demultiplexer.Start();
 }
 
 STDMETHODIMP CBDReaderFilter::Start()
 {
-  //m_bFirstPlay = true;
-  m_bFirstPlay = false;
+  if (!m_bForceTitleBasedPlayback)
+  {
+    TriggerOnMediaChanged();
+    return S_OK;
+  }
+
+  // We need to restart the lib as initial start was done in menu mode
+  lib.CloseBluray();
+  lib.OpenBluray(m_pathToBD);
   lib.Play();
 
   HRESULT hr = m_demultiplexer.Start();
-  TriggerOnMediaChanged();
-  // Close BD so the HDVM etc. are reset completely after querying the initial data.
-  // This is required so we wont lose the initial events.
-//  lib.CloseBluray();
-  m_bFirstPlay = false;
-//  lib.OpenBluray(m_pathToBD);
-//  lib.Play();
+
+  if (SUCCEEDED(hr))
+    TriggerOnMediaChanged();
 
   return hr;
 }
@@ -888,7 +893,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
   }
 
   // Send event to the callback - filter out the none events
-  if (m_pCallback && pEv.event != BD_EVENT_NONE && !m_bFirstPlay)
+  if (m_pCallback && pEv.event != BD_EVENT_NONE)
     m_pCallback->OnBDEvent(pEv);
 }
 
@@ -1034,6 +1039,8 @@ void CBDReaderFilter::ForceTitleBasedPlayback(bool force, UINT32 pTitle)
 {
   lib.ForceTitleBasedPlayback(force);
   lib.SetTitle(pTitle);
+
+  m_bForceTitleBasedPlayback = force;
 }
 
 void CBDReaderFilter::SetD3DDevice(IDirect3DDevice9* device)
