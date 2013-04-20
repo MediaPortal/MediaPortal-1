@@ -867,6 +867,19 @@ namespace MediaPortal.Util
     /// <returns>A list of GUIListItems for the specified folder</returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
+      return this.GetDirectoryExt(strDir, false);
+    }
+
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// If the folder is protected by a pincode then the user is asked to enter the pincode
+    /// and the folder contents are only returned when the pincode is correct
+    /// </summary>
+    /// <param name="strDir">The path to load items from</param>
+    /// <param name="loadHidden">The path to load items from even hidden one</param>
+    /// <returns>A list of GUIListItems for the specified folder</returns>
+    public List<GUIListItem> GetDirectoryExt(string strDir, bool loadHidden)
+    {
       if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
@@ -1165,7 +1178,7 @@ namespace MediaPortal.Util
           catch (Exception) {}
         }
 
-        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
+        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData, loadHidden);
 
         // CUE Filter
         items =
@@ -1185,6 +1198,21 @@ namespace MediaPortal.Util
     /// returns an arraylist of GUIListItems for the specified folder
     /// </returns>
     public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
+    {
+      return this.GetDirectoryUnProtectedExt(strDir, useExtensions, false);
+    }
+
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// This method does not check if the folder is protected by an pincode. it will
+    /// always return all files/subfolders present
+    /// </summary>
+    /// <param name="strDir">folder</param>
+    /// <param name="loadHidden">The path to load items from even hidden one</param>
+    /// <returns>
+    /// returns an arraylist of GUIListItems for the specified folder
+    /// </returns>
+    public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions, bool loadHidden)
     {
       if (String.IsNullOrEmpty(strDir)) return GetRootExt();
 
@@ -1363,7 +1391,7 @@ namespace MediaPortal.Util
         items.Add(item);
       }
 
-      HandleLocalFilesInDir(strDir, ref items, false, true);
+      HandleLocalFilesInDir(strDir, ref items, false, true, loadHidden);
 
       return items;
     }
@@ -1483,13 +1511,13 @@ namespace MediaPortal.Util
       return items;
     }
 
-    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails)
+    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails, bool loadHidden)
     {
-      this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false);
+      this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false, loadHidden);
     }
 
     private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails,
-                                       bool useCache)
+                                       bool useCache, bool loadHidden)
     {
       //This function is only used inside GetDirectoryUnProtectedExt. GetDirectoryUnProtectedExt is 
       //mainly used for internal loading. That means it isn't called when the user explicitly enters a 
@@ -1544,8 +1572,11 @@ namespace MediaPortal.Util
             if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
               // Skip hidden folders
-              if ((fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                continue;
+              if (!loadHidden)
+              {
+                if ((fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                  continue;
+              }
 
               string strPath = FileName.Substring(aDirectory.Length + 1);
               fi.Name = fd.cFileName;
@@ -1590,9 +1621,12 @@ namespace MediaPortal.Util
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
-                if (!aHasRedbookDetails &&
-                    (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                  continue;
+                if (!loadHidden)
+                {
+                  if (!aHasRedbookDetails &&
+                      (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                    continue;
+                }
 
                 if (!aHasRedbookDetails)
                 {

@@ -30,7 +30,7 @@ namespace MediaPortal.MusicPlayer.BASS
   {
     public static MusicStream.FileType GetFileType(string filePath)
     {
-      filePath = filePath.Trim().ToLower();
+      filePath = filePath.Trim().ToLowerInvariant();
 
       MusicStream.FileType fileType;
 
@@ -83,7 +83,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static bool IsMODFile(string filePath)
     {
-      string ext = Path.GetExtension(filePath).ToLower();
+      string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
       switch (ext)
       {
@@ -108,7 +108,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private static bool IsMidiFile(string filePath)
     {
-      string ext = Path.GetExtension(filePath).ToLower();
+      string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
       switch (ext)
       {
@@ -125,7 +125,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static bool IsASXFile(string filePath)
     {
-      return (Path.GetExtension(filePath).ToLower() == ".asx");
+      return (Path.GetExtension(filePath).ToLowerInvariant() == ".asx");
     }
 
     private static bool IsWebStream(string filePath)

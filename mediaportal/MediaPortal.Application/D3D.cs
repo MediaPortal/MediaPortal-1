@@ -1262,6 +1262,10 @@ namespace MediaPortal
           var idMovie = VideoDatabase.GetMovieId(fileName);
           if (idMovie >= 0 && idFile >= 0)
           {
+            byte[] resumeData;
+            #pragma warning disable 168
+            int timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData, g_Player.SetResumeBDTitleState);
+            #pragma warning restore 168
             g_Player.PlayDVD(fileName);
             if (g_Player.Playing)
             {
