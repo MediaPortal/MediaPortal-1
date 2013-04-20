@@ -204,9 +204,7 @@ private:
 
   int m_loopLastSearch;
 
-  bool  m_bWaitForMediaChange;
-
-  bool m_bStarting;
+  bool m_bWaitForMediaChange;
   bool m_bReadFailed;
 
   int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts, int* bi);
