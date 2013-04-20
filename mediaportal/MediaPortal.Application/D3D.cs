@@ -123,6 +123,7 @@ namespace MediaPortal
     protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
     protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
     protected static SplashScreen  SplashScreen;             // splash screen object
+    protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
 
     #endregion
 
@@ -171,7 +172,6 @@ namespace MediaPortal
     private PlayListType               _currentPlayListType;      //
     private PlayList                   _currentPlayList;          //
     private Win32API.MSG               _msgApi;                   //
-    private GraphicsAdapterInfo        _adapterInfo;              //
     private Point                      _lastCursorPosition;       // track cursor position of last move move event
     private DeviceType                 _deviceType;               //
     private CreateFlags                _createFlags;              //
@@ -330,9 +330,7 @@ namespace MediaPortal
       // get display adapter info
       _enumerationSettings.ConfirmDeviceCallback = ConfirmDevice;
       _enumerationSettings.Enumerate();
-
-      _adapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
-      GUIGraphicsContext.currentScreenNumber = _adapterInfo.AdapterOrdinal;
+      AdapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
       
       if (!Windowed)
       {
@@ -941,10 +939,10 @@ namespace MediaPortal
     {
       // TODO: specify at least 1080p if supported by the GPU
       Log.Debug("D3D: BuildPresentParams()");
-      _presentParams.BackBufferWidth           = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
-      _presentParams.BackBufferHeight          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
-      _presentParams.BackBufferFormat          = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Format;
-
+      _presentParams.BackBufferWidth  = GUIGraphicsContext.currentScreen.Bounds.Width;
+      _presentParams.BackBufferHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
+      _presentParams.BackBufferFormat = Format.Unknown;
+ 
       if (OSInfo.OSInfo.Win7OrLater())
       {
         if (!_doNotWaitForVSync)
@@ -981,10 +979,7 @@ namespace MediaPortal
       _presentParams.ForceNoMultiThreadedFlag  = false;
 
       GUIGraphicsContext.DirectXPresentParameters = _presentParams;
-
       Log.Info("D3D: Back Buffer Size set to: {0}x{1}", _presentParams.BackBufferWidth, _presentParams.BackBufferHeight);
-
-      GUIGraphicsContext.MaxFPS = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.RefreshRate;
       Windowed = windowed;
     }
 
@@ -995,8 +990,8 @@ namespace MediaPortal
     {
       Log.Debug("D3D: InitializeDevice()");
 
-      Caps capabilities = Manager.GetDeviceCaps(GUIGraphicsContext.currentScreenNumber, DeviceType.Hardware);
-      Log.Info("D3D: GPU '{0}' is using driver version '{1}'", _adapterInfo.AdapterDetails.Description.Trim(), _adapterInfo.AdapterDetails.DriverVersion);
+      Caps capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
+      Log.Info("D3D: GPU '{0}' is using driver version '{1}'", AdapterInfo.AdapterDetails.Description.Trim(), AdapterInfo.AdapterDetails.DriverVersion);
       Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
       Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
 
@@ -1058,7 +1053,7 @@ namespace MediaPortal
       else
       {
         Log.Info("D3D: Creating DirectX9 device");
-        GUIGraphicsContext.DX9Device = new Device(GUIGraphicsContext.currentScreenNumber,
+        GUIGraphicsContext.DX9Device = new Device(AdapterInfo.AdapterOrdinal,
                                                   _deviceType, 
                                                   _renderTarget,
                                                   _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
@@ -1123,7 +1118,7 @@ namespace MediaPortal
       Direct3D.Direct3DCreate9Ex(32, out direct3D9Ex);
 
       IntPtr dev;
-      var hr = direct3D9Ex.CreateDeviceEx(GUIGraphicsContext.currentScreenNumber,
+      var hr = direct3D9Ex.CreateDeviceEx(AdapterInfo.AdapterOrdinal,
                                           _deviceType, 
                                           _renderTarget.Handle,
                                           _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,

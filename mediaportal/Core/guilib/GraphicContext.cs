@@ -130,8 +130,6 @@ namespace MediaPortal.GUI.Library
     private static bool _turnOffMonitor;
     private static bool _vmr9Allowed = true;
     private static DateTime _lastActivity = DateTime.Now;
-    private static AdapterInformation _currentFullscreenAdapterInfo;
-    private static int _currentScreenNumber = -1;
     private static Screen _currentScreen;
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
@@ -211,7 +209,7 @@ namespace MediaPortal.GUI.Library
           {
             using (Settings xmlReader = new MPSettings())
             {
-              MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
+              MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 60);
             }
           }
         }
@@ -270,34 +268,6 @@ namespace MediaPortal.GUI.Library
     /// property to enable/disable skin-editing mode
     /// </summary>
     public static bool EditMode { get; set; }
-
-    /// <summary>
-    /// Property to get and set current adapter for creating DirectX surface
-    /// </summary>
-    // ReSharper disable InconsistentNaming
-    public static AdapterInformation currentFullscreenAdapterInfo
-    // ReSharper restore InconsistentNaming
-    {
-      get
-      {
-        return _currentFullscreenAdapterInfo ?? Manager.Adapters.Default;
-      }
-      set { _currentFullscreenAdapterInfo = value; }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    // ReSharper disable InconsistentNaming
-    public static int currentScreenNumber
-    // ReSharper restore InconsistentNaming
-    {
-      get
-      {
-        return _currentScreen != null ? _currentScreenNumber : 0;
-      }
-      set { _currentScreenNumber = value; }
-    }
 
     /// <summary>
     /// Property to get and set current screen on witch MP is displayed
@@ -427,7 +397,7 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlReader = new MPSettings())
       {
-        _maxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
+        _maxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 60);
         SyncFrameTime();
         _scrollSpeedVertical = xmlReader.GetValueAsInt("gui", "ScrollSpeedDown", 4);
         _scrollSpeedHorizontal = xmlReader.GetValueAsInt("gui", "ScrollSpeedRight", 3);

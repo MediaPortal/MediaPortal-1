@@ -2813,11 +2813,10 @@ public class MediaPortalApp : D3D, IRender
         {
           case D3DERR_INVALIDCALL:
             _errorCounter++;
-            int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
-            if ((currentScreenNr > -1) && (Manager.Adapters.Count > currentScreenNr))
+            if (AdapterInfo.AdapterOrdinal> -1 && Manager.Adapters.Count > AdapterInfo.AdapterOrdinal)
             {
-              double refreshRate = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
-              if (refreshRate > 0 && _errorCounter > (5 * refreshRate))
+              double refreshRate = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+              if (refreshRate > 0 && _errorCounter > 5 * refreshRate) // why 5 * refreshRate???
               {
                 _errorCounter = 0; //reset counter
                 Log.Info("Main: D3DERR_INVALIDCALL - {0}", dex.ToString());
