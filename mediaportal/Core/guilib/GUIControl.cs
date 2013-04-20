@@ -31,6 +31,10 @@ using MediaPortal.Drawing.Layouts;
 using Point = System.Drawing.Point;
 using Size = MediaPortal.Drawing.Size;
 using MediaPortal.ExtensionMethods;
+using HorizontalAlignment = MediaPortal.Drawing.HorizontalAlignment;
+using Rect = MediaPortal.Drawing.Rect;
+using Thickness = MediaPortal.Drawing.Thickness;
+using VerticalAlignment = MediaPortal.Drawing.VerticalAlignment;
 
 namespace MediaPortal.GUI.Library
 {

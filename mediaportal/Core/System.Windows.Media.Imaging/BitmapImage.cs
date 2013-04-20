@@ -24,8 +24,9 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
-namespace System.Windows.Media.Imaging
+namespace MP.System.Windows.Media.Imaging
 {
   public sealed class BitmapImage : BitmapSource, ISupportInitialize
   {

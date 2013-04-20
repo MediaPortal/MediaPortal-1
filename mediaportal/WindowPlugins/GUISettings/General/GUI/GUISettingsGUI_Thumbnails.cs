@@ -205,7 +205,7 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeletePicturesThumbs)
       {
-        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
       }
       if (control == btnEnableVideosThumbs)
       {
@@ -217,7 +217,7 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeleteVideosThumbs)
       {
-        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
       }
       if (control == btnClearBlacklistedThumbs)
       {

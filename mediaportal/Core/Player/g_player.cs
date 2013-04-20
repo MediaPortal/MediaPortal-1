@@ -505,6 +505,10 @@ namespace MediaPortal.Player
         Log.Info("g_Player.OnStopped()");
         if (PlayBackStopped != null)
         {
+          if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording))
+          {
+            RefreshRateChanger.AdaptRefreshRate();
+          }
           // Check if we play image file to search db with the proper filename
           if (Util.Utils.IsISOImage(currentFileName))
           {
@@ -526,10 +530,17 @@ namespace MediaPortal.Player
       {
         //yes, then raise event
         Log.Info("g_Player.OnEnded()");
-        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
         RefreshRateChanger.AdaptRefreshRate();
-        currentFileName = String.Empty;
-        _mediaInfo = null;
+        PlayBackEnded(_currentMedia, (!String.IsNullOrEmpty(currentFileName) ? currentFileName : _currentFilePlaying));
+        if (_player != null && _player.Playing)
+        {
+          // Don't reset currentFileName and _mediaInfo
+        }
+        else
+        {
+          currentFileName = String.Empty;
+          _mediaInfo = null;
+        }
       }
     }
 
@@ -1304,6 +1315,41 @@ namespace MediaPortal.Player
             }
         }
 
+        Starting = true;
+        _currentStep = 0;
+        _currentStepIndex = -1;
+        _seekTimer = DateTime.MinValue;
+        _isInitialized = true;
+        _subs = null;
+
+        if (_player != null)
+        {
+          GUIGraphicsContext.ShowBackground = true;
+          OnChanged(strFile);
+          OnStopped();
+          bool doStop = true;
+          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
+          {
+            if (type == MediaType.Unknown)
+            {
+              type = MediaType.Music;
+            }
+            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
+            {
+              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+            }
+          }
+          if (doStop)
+          {
+            if (_player != null)
+            {
+              _player.Stop();
+            }
+            CachePlayer();
+            _player = null;
+          }
+        }
+
         if (!playingRemoteUrl && Util.Utils.IsDVD(strFile))
         {
           ChangeDriveSpeed(strFile, DriveType.CD);
@@ -1314,7 +1360,7 @@ namespace MediaPortal.Player
           _mediaInfo = new MediaInfoWrapper(strFile);
         }
 
-        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile)) //local video, tv, rtsp
+        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
         {
           if (type == MediaType.Unknown)
           {
@@ -1359,41 +1405,6 @@ namespace MediaPortal.Player
           else
           {
             ForcePlay = false;
-          }
-        }
-
-        Starting = true;
-        _currentStep = 0;
-        _currentStepIndex = -1;
-        _seekTimer = DateTime.MinValue;
-        _isInitialized = true;
-        _subs = null;
-
-        if (_player != null)
-        {
-          GUIGraphicsContext.ShowBackground = true;
-          OnChanged(strFile);
-          OnStopped();
-          bool doStop = true;
-          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
-          {
-            if (type == MediaType.Unknown)
-            {
-              type = MediaType.Music;
-            }
-            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
-            {
-              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
-            }
-          }
-          if (doStop)
-          {
-            if (_player != null)
-            {
-              _player.Stop();
-            }
-            CachePlayer();
-            _player = null;
           }
         }
 
@@ -2296,12 +2307,12 @@ namespace MediaPortal.Player
         Log.Info("g_Player.Process() player stopped...");
         if (_player.Ended)
         {
+          OnEnded();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendThreadMessage(msg);
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIGraphicsContext.IsPlaying = false;
           GUIGraphicsContext.IsPlayingVideo = false;
-          OnEnded();
           return;
         }
         Stop();
