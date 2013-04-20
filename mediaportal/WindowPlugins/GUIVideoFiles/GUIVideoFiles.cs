@@ -109,6 +109,8 @@ namespace MediaPortal.GUI.Video
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
     private static PlayListPlayer _playlistPlayer;
+    private static PlayListType _currentPlaylistType;
+    private static int _currentPlaylistIndex = -1;
 
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _history = new DirectoryHistory();
@@ -223,6 +225,10 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
+
+      // replace g_player's ShowFullScreenWindowVideoDefault()
+      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler;
+
       LoadSettings();
     }
 
@@ -827,6 +833,9 @@ namespace MediaPortal.GUI.Video
 
                   if (result == GUIResumeDialog.Result.Abort)
                   {
+                    _playlistPlayer.Reset();
+                    _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                    _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                     return;
                   }
 
@@ -898,6 +907,11 @@ namespace MediaPortal.GUI.Video
           {
             MovieDuration(movies, false);
           }
+
+          // Get current playlist
+          _currentPlaylistType = new PlayListType();
+          _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+          _currentPlaylistIndex = _playlistPlayer.CurrentSong;
           
           _playlistPlayer.Reset();
           _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -924,6 +938,12 @@ namespace MediaPortal.GUI.Video
 
         // play movie...(only 1 file)
         AddFileToDatabase(movieFileName);
+
+        // Get current playlist
+        _currentPlaylistType = new PlayListType();
+        _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+        _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+
         _playlistPlayer.Reset();
         _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
         PlayList newPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
@@ -1794,6 +1814,8 @@ namespace MediaPortal.GUI.Video
         filename = _playlistPlayer.Get(iMovieIndex);
       }
 
+      _playlistPlayer.Reset();
+
       // If the file is an image file, it should be mounted before playing
       bool isImage = false;
       if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(filename)))
@@ -1850,7 +1872,12 @@ namespace MediaPortal.GUI.Video
                                                  GUIResumeDialog.MediaType.Video);
 
               if (result == GUIResumeDialog.Result.Abort)
+              {
+                _playlistPlayer.Reset();
+                _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                 return;
+              }
 
               if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 timeMovieStopped = 0;
@@ -1859,7 +1886,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      // TODO Handle STP when it comes from MyMusic otherwise Video Playlist will not work
+      // TODO Handle STOP when it comes from MyMusic otherwise Video Playlist will not work
       //if (g_Player.Playing && !g_Player.IsDVD)
       //  g_Player.Stop();
 
@@ -2178,7 +2205,12 @@ namespace MediaPortal.GUI.Video
                                                    GUIResumeDialog.MediaType.Video);
 
                 if (result == GUIResumeDialog.Result.Abort)
+                {
+                  _playlistPlayer.Reset();
+                  _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                  _playlistPlayer.CurrentSong = _currentPlaylistIndex;
                   return;
+                }
 
                 if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 {
@@ -2213,6 +2245,11 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      // Get current playlist
+      _currentPlaylistType = new PlayListType();
+      _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+      _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+      
       _playlistPlayer.Reset();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
       PlayList playlist = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
@@ -3278,6 +3315,11 @@ namespace MediaPortal.GUI.Video
         selectedOption = _howToPlayAll;
       }
 
+      // Get current playlist
+      _currentPlaylistType = new PlayListType();
+      _currentPlaylistType = _playlistPlayer.CurrentPlaylistType;
+      _currentPlaylistIndex = _playlistPlayer.CurrentSong;
+
       // Reset playlist
       _playlistPlayer.Reset();
       _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
@@ -3791,11 +3833,11 @@ namespace MediaPortal.GUI.Video
         // Temporary disable thumbcreation
         using (Profile.Settings xmlreader = new MPSettings())
         {
-          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
         }
         using (Profile.Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", false);
         }
 
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
@@ -3838,7 +3880,7 @@ namespace MediaPortal.GUI.Video
         // Restore thumbcreation setting
         using (Profile.Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", currentCreateVideoThumbs);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", currentCreateVideoThumbs);
         }
       }
     }
@@ -3936,7 +3978,67 @@ namespace MediaPortal.GUI.Video
         facadeLayout.Clear();
       }
     }
-    
+
+    /// <summary>
+    /// This function replaces g_player.ShowFullScreenWindowVideoDefault()
+    /// </summary>
+    /// <returns></returns>
+    private static bool ShowFullScreenWindowVideoHandler()
+    {
+      if (g_Player.HasVideo && g_Player.HasChapters)
+      {
+        // Take chapter and jumppoint information to set the optical timeline markers
+        double[] jumppoints = g_Player.JumpPoints;
+        double[] chapters = g_Player.Chapters;
+        double duration = g_Player.Duration;
+
+        string strJumpPoints = string.Empty;
+        string strChapters = string.Empty;
+
+        if (jumppoints != null)
+        {
+          // Set the marker start to indicate the start of commercials
+          foreach (double jump in jumppoints)
+          {
+            double jumpPercent = jump / duration * 100.0d;
+            strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
+          }
+          // Set the marker end to indicate the end of commercials
+          foreach (double chapter in chapters)
+          {
+            double chapterPercent = chapter / duration * 100.0d;
+            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+          }
+        }
+        else
+        {
+          // Set a fixed size marker at the start of each chapter
+          double markerWidth = 0.7d;
+          foreach (double chapter in chapters)
+          {
+            double chapterPercent = chapter / duration * 100.0d;
+            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+            chapterPercent = (chapterPercent >= markerWidth) ? chapterPercent - markerWidth : 0.0d;
+            strJumpPoints += String.Format("{0:0.00}", chapterPercent) + " ";
+          }
+        }
+        
+        // Set chapters and jumppoints GUI properties
+        GUIPropertyManager.SetProperty("#chapters", strChapters);
+        GUIPropertyManager.SetProperty("#jumppoints", strJumpPoints);
+        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting chapters: " + strChapters);
+        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting jumppoints: " + strJumpPoints);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#chapters", string.Empty);
+        GUIPropertyManager.SetProperty("#jumppoints", string.Empty);
+      }
+
+      // Continue with the default handler
+      return g_Player.ShowFullScreenWindowVideoDefault();
+    }  
+
     #endregion
 
     #region Thread Set thumbs

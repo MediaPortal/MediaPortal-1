@@ -23,10 +23,11 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Profile;
 using MediaPortal.Common.Utils;
+using Config = MediaPortal.Configuration.Config;
 
 namespace MediaPortal.Player
 {
@@ -239,9 +240,10 @@ namespace MediaPortal.Player
         // Get settings only once
         using (Settings xmlreader = new MPSettings())
         {
-          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Internal dshow player");
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "playerId", "0"); // BASS Player
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
+          bool InternalBDPlayer = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
 
           // Free BASS to avoid problems with Digital Audio, when watching movies
           if (BassMusicPlayer.IsDefaultMusicPlayer)
@@ -279,7 +281,14 @@ namespace MediaPortal.Player
           string extension = Path.GetExtension(aFileName).ToLower();
           if (extension == ".bdmv")
           {
-            return new BDPlayer();
+            if (InternalBDPlayer)
+            {
+              return new BDPlayer();
+            }
+            else
+            {
+              return new VideoPlayerVMR9();
+            }
           }
 
           if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
@@ -352,7 +361,7 @@ namespace MediaPortal.Player
           if (Util.Utils.IsCDDA(aFileName))
           {
             // Check if, we should use BASS for CD Playback
-            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow)
             {
               if (BassMusicPlayer.BassFreed)
               {
@@ -369,7 +378,7 @@ namespace MediaPortal.Player
 
           if (Util.Utils.IsAudio(aFileName) || localType == g_Player.MediaType.Music)
           {
-            if (String.Compare(strAudioPlayer, "BASS engine", true) == 0)
+            if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow)
             {
               if (BassMusicPlayer.BassFreed)
               {

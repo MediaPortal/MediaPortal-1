@@ -1,7 +1,7 @@
 #ifndef _SIMD_COMMON_H_
 #define _SIMD_COMMON_H_
 
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !defined(__SSE2__)
   #define __SSE2__
 #endif
 
@@ -12,7 +12,7 @@
 #endif
 
 #ifdef __GNUC__
- #define __inline __forceinline  // GCC needs to force inlining of intrinsics functions
+  #define __inline __forceinline  // GCC needs to force inlining of intrinsics functions
 #endif
 
 #include <mmintrin.h>

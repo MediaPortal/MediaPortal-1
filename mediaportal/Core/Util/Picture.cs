@@ -25,11 +25,16 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using Microsoft.WindowsAPICodePack.Shell;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using ScaleTransform = System.Windows.Media.ScaleTransform;
 
 
 namespace MediaPortal.Util
@@ -40,6 +45,20 @@ namespace MediaPortal.Util
   public class Picture
   {
     private static ThumbnailExtractor Extractor = new ThumbnailExtractor();
+    private static ExifOrientations orientation = ExifOrientations.Normal;
+
+        public enum ExifOrientations
+    {
+        None = 0,
+        Normal = 1,
+        HorizontalFlip = 2,
+        Rotate180 = 3,
+        VerticalFlip = 4,
+        Transpose = 5,
+        Rotate270 = 6,
+        Transverse = 7,
+        Rotate90 = 8
+    }
 
     // singleton. Dont allow any instance of this class
     static Picture() {}
@@ -761,8 +780,70 @@ namespace MediaPortal.Util
       }
     }
 
+    public static bool ThumbnailCallback()
+    {
+      return false;
+    }
+
     /// <summary>
-    /// Creates a thumbnail of the specified image filename
+    /// Set URL to use
+    /// </summary>
+    public static String MediaUrl { get; private set; }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// </param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode)
+    {
+      return CreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
+                             aThumbHeight, iRotate, aFastMode, false);
+    }
+
+    private static bool BitmapFromSource(BitmapSource bitmapsource, string thumbnailImageDest)
+    {
+      if (bitmapsource == null)
+      {
+        return false;
+      }
+      try
+      {
+        using (MemoryStream outStream = new MemoryStream())
+        {
+          BitmapEncoder enc = new BmpBitmapEncoder();
+          enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+          enc.Save(outStream);
+          using (outStream)
+          {
+            var img = new Bitmap(Image.FromStream(outStream));
+            if (thumbnailImageDest != null && !File.Exists(thumbnailImageDest))
+            {
+              img.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+            }
+            return true;
+          }
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Creates a thumbnail of the specified image filename for Video
     /// </summary>
     /// <param name="aInputFilename">The source filename to load a System.Drawing.Image from</param>
     /// <param name="aThumbTargetPath">Filename of the thumbnail to create</param>
@@ -776,7 +857,7 @@ namespace MediaPortal.Util
     /// </param>
     /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
     /// <returns>Whether the thumb has been successfully created</returns>
-    public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
+    public static bool CreateThumbnailVideo(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
                                        int iRotate, bool aFastMode)
     {
       bool result = false;
@@ -787,16 +868,6 @@ namespace MediaPortal.Util
 
       try
       {
-        //if (aFastMode)
-        //{
-        //  try
-        //  {
-        //    Extractor.DesiredSize = new Size(iMaxWidth, iMaxHeight);
-        //    myImage = Extractor.GetThumbnail(aInputFilename);
-        //    return SaveThumbnail(aThumbTargetPath, myImage);
-        //  }
-        //  catch (Exception) { }
-        //}
         try
         {
           myImage = ImageFast.FromFile(aInputFilename);
@@ -805,7 +876,6 @@ namespace MediaPortal.Util
         {
           result = false;
         }
-
         result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
       catch (Exception)
@@ -841,9 +911,272 @@ namespace MediaPortal.Util
       return result;
     }
 
-    public static bool ThumbnailCallback()
+    /// <summary>
+    /// Creates a thumbnail of the specified image
+    /// </summary>
+    /// <param name="thumbnailImageSource">The source filename to load a System.Drawing.Image from</param>
+    /// <param name="thumbnailImageDest">Filename of the thumbnail to create</param>
+    /// <param name="aThumbWidth">Maximum width of the thumbnail</param>
+    /// <param name="aThumbHeight">Maximum height of the thumbnail</param>
+    /// <param name="autocreateLargeThumbs">Auto create large thumbnail</param>
+    /// <param name="iRotate">
+    /// 0 = no rotate
+    /// 1 = rotate 90 degrees
+    /// 2 = rotate 180 degrees
+    /// 3 = rotate 270 degrees
+    /// </param>
+    /// <returns>Whether the thumb has been successfully created</returns>
+    public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
+                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs)
     {
-      return false;
+      if (File.Exists(thumbnailImageDest))
+      {
+        return false;
+      }
+
+      if (string.IsNullOrEmpty(thumbnailImageSource) || string.IsNullOrEmpty(thumbnailImageDest) || aThumbHeight <= 0 ||
+          aThumbHeight <= 0)
+      {
+        return false;
+      }
+
+      BitmapSource ret = null;
+      BitmapMetadata meta = null;
+      Bitmap shellThumb = null;
+      Bitmap myTargetThumb = null;
+
+      TransformedBitmap thumbnail = null;
+      TransformGroup transformGroup = null;
+
+      double angle = 0;
+
+      bool result = false;
+      int iQuality = (int) Thumbs.Quality;
+      int decodeW = aThumbWidth;
+
+      MediaUrl = thumbnailImageSource;
+
+      try
+      {
+        //Try generate Bitmap frame : speedy and low memory !
+        BitmapFrame frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
+                                               BitmapCacheOption.None);
+
+        if (frame.Thumbnail == null) //If it failed try second method BitmapImage (slow and use more memory)
+        {
+          using (ShellObject shellFile = ShellObject.FromParsingName(thumbnailImageSource))
+          {
+            shellFile.Thumbnail.RetrievalOption = ShellThumbnailRetrievalOption.Default;
+            shellFile.Thumbnail.FormatOption = ShellThumbnailFormatOption.ThumbnailOnly;
+
+            switch (iQuality)
+            {
+              case 0:
+                shellThumb = shellFile.Thumbnail.MediumBitmap;
+                break;
+              case 1:
+                shellThumb = shellFile.Thumbnail.LargeBitmap;
+                break;
+              case 2:
+                shellThumb = shellFile.Thumbnail.LargeBitmap;
+                break;
+              case 3:
+                shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
+                break;
+              case 4:
+                shellThumb = shellFile.Thumbnail.ExtraLargeBitmap;
+                break;
+              default:
+                break;
+            }
+
+            switch (iRotate)
+            {
+              case 1:
+                shellThumb.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                break;
+              case 2:
+                shellThumb.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                break;
+              case 3:
+                shellThumb.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                break;
+              default:
+                break;
+            }
+
+            if (shellThumb != null && !autocreateLargeThumbs)
+            {
+              int iWidth = aThumbWidth;
+              int iHeight = aThumbHeight;
+              double fAR = (shellThumb.Width)/((float) shellThumb.Height);
+
+              if (shellThumb.Width > shellThumb.Height)
+                iHeight = (int) Math.Floor((((float) iWidth)/fAR));
+              else
+                iWidth = (int) Math.Floor((fAR*((float) iHeight)));
+
+              try
+              {
+                Util.Utils.FileDelete(thumbnailImageDest);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
+              }
+
+              // Write small thumbnail
+              myTargetThumb = new Bitmap(shellThumb, iWidth, iHeight);
+              myTargetThumb.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+              result = true;
+            }
+            else
+            {
+              int iWidth = aThumbWidth;
+              int iHeight = aThumbHeight;
+              double fAR = (shellThumb.Width)/((float) shellThumb.Height);
+
+              if (shellThumb.Width > shellThumb.Height)
+                iHeight = (int) Math.Floor((((float) iWidth)/fAR));
+              else
+                iWidth = (int) Math.Floor((fAR*((float) iHeight)));
+
+              try
+              {
+                Util.Utils.FileDelete(thumbnailImageDest);
+              }
+              catch (Exception ex)
+              {
+                Log.Error("Picture: Error deleting old thumbnail - {0}", ex.Message);
+              }
+
+              // Write Large thumbnail
+              myTargetThumb = new Bitmap(shellThumb, iWidth, iHeight);
+              myTargetThumb.Save(thumbnailImageDest, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+              File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
+              result = true;
+            }
+            Log.Debug("Generation fast failed {0} / {1}", MediaUrl, thumbnailImageDest);
+          }
+        }
+        else
+        {
+          //Detect metas image
+          meta = frame.Metadata as BitmapMetadata;
+          ret = frame.Thumbnail;
+
+          if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
+          {
+            if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
+            {
+              orientation =
+                (ExifOrientations)
+                Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
+            }
+
+            switch (orientation)
+            {
+              case ExifOrientations.Rotate90:
+                angle = -90;
+                break;
+              case ExifOrientations.Rotate180:
+                angle = 180;
+                break;
+              case ExifOrientations.Rotate270:
+                angle = 90;
+                break;
+            }
+
+            if (angle != 0) //on doit effectuer une rotation de l'image
+            {
+              ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
+              ret.Freeze();
+            }
+          }
+
+          if (autocreateLargeThumbs)
+          {
+            if (ret != null)
+            {
+              // we'll make a thumbnail image then ... (too bad as the pre-created one is FAST!)
+              thumbnail = new TransformedBitmap();
+              thumbnail.BeginInit();
+              thumbnail.Source = frame as BitmapSource;
+
+              // we'll make a reasonable sized thumnbail
+              int pixelH = frame.PixelHeight;
+              int pixelW = frame.PixelWidth;
+              int decodeH = (frame.PixelHeight*decodeW)/pixelW;
+              double scaleX = decodeW/(double) pixelW;
+              double scaleY = decodeH/(double) pixelH;
+
+              transformGroup = new TransformGroup();
+              transformGroup.Children.Add(new ScaleTransform(scaleX, scaleY));
+              thumbnail.Transform = transformGroup;
+              thumbnail.EndInit();
+              ret = thumbnail;
+
+              // Write Large thumbnail
+              result = BitmapFromSource(ret, thumbnailImageDest);
+            }
+          }
+          else
+          {
+            if (ret != null)
+            {
+              //// we'll make a thumbnail image then ... (too bad as the pre-created one is FAST!)
+              //thumbnail = new TransformedBitmap();
+              //thumbnail.BeginInit();
+              //thumbnail.Source = frame as BitmapSource;
+
+              //// we'll make a reasonable sized thumnbail
+              //int pixelH = frame.PixelHeight;
+              //int pixelW = frame.PixelWidth;
+              //int decodeH = (frame.PixelHeight * decodeW) / pixelW;
+              //double scaleX = decodeW / (double)pixelW;
+              //double scaleY = decodeH / (double)pixelH;
+
+              //transformGroup = new TransformGroup();
+              //transformGroup.Children.Add(new ScaleTransform(scaleX, scaleY));
+              //thumbnail.Transform = transformGroup;
+              //thumbnail.EndInit();
+              //ret = thumbnail;
+
+              // Write small thumbnail
+              result = BitmapFromSource(ret, thumbnailImageDest);
+            }
+          }
+        }
+
+      }
+      catch (Exception ex)
+      {
+        Log.Info("GUIPictures: No thumbnail created for -- {0}", thumbnailImageSource);
+        result = false;
+      }
+      finally
+      {
+        if (shellThumb != null)
+          shellThumb.SafeDispose();
+        if (ret != null)
+          ret.SafeDispose();
+        if (thumbnail != null)
+          thumbnail.SafeDispose();
+        if (transformGroup != null)
+          transformGroup.SafeDispose();
+        if (myTargetThumb != null)
+          myTargetThumb.SafeDispose();
+        if (MediaUrl != null)
+          MediaUrl.SafeDispose();
+      }
+
+      if (result && Util.Utils.IsFileExistsCacheEnabled())
+      {
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", thumbnailImageDest);
+        Util.Utils.DoInsertExistingFileIntoCache(thumbnailImageDest);
+      }
+      return result;
     }
 
     /// <summary>

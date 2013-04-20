@@ -328,6 +328,8 @@ namespace SetupTv.Sections
           dlg.Channel = channel;
           dlg.IsTv = false;
           dlg.ShowDialog();
+          listView1.Items[indexes[0]].Text = channel.DisplayName;
+          listView1.Items[indexes[0]].SubItems[1].Text = channel.ChannelNumber.ToString();
           return;
         }
       }

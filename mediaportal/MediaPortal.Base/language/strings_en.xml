@@ -995,6 +995,7 @@
     <String id="1196">Enable Subtitles</String>
     <String id="1197">Turn off DXVA</String>
     <String id="1198">DVD Navigator</String>
+    <String id="1199">Enable Internal Blu-ray Player</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
     <String id="1202">Auto</String>
@@ -2256,10 +2257,10 @@
     <String id="300152">Pictures</String>
     <String id="300153">Auto-create only small thumbs</String>
     <String id="300154">Clear pictures cache</String>
-    <String id="300155">TV/Videos</String>
+    <String id="300155">Videos</String>
     <String id="300156">Auto-create thumbs</String>
     <String id="300157">Leave a thumb in a rec folder</String>
-    <String id="300158">Clear TV/Videos thumbs</String>
+    <String id="300158">Clear Videos thumbs</String>
     <String id="300159">Preview appearance</String>
     <String id="300160">Rows</String>
     <String id="300161">Database</String>
@@ -2329,5 +2330,6 @@
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
     <String id="300227">Clear Blacklisted thumbs</String>
+    <String id="300228">Ask for confirmation when stopping timeshift</String>
    </Section>
 </Language>

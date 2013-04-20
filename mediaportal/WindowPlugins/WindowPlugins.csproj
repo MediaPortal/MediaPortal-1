@@ -246,7 +246,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIPictures\PictureSort.cs" />
-    <Compile Include="GUISettings\BluRay\GUISetingsBluRay.cs" />
+    <Compile Include="GUISettings\BluRay\GUISettingsBluRay.cs" />
     <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos_OtherSettings.cs" />
     <Compile Include="GUISettings\Weather\GUISettingsWeather.cs" />
     <Compile Include="GUIVideoFiles\SelectBDHandler.cs" />
