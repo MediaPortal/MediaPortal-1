@@ -942,6 +942,16 @@ public class MediaPortalApp : D3D, IRender
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
     }
 
+    // log information about available displays
+    Log.Debug("### Screen Debug Information ###");
+    foreach (var screen in Screen.AllScreens)
+    {
+      Log.Debug("DeviceName: {0} - IsPrimary: {1} - BitsPerPixel: {2} - Bounds: {3}x{4} @ {5},{6} - WorkingArea: {7}x{8} @ {9},{10}",
+        screen.DeviceName, screen.Primary, screen.BitsPerPixel,
+        screen.Bounds.Width, screen.Bounds.Height, screen.Bounds.X, screen.Bounds.Y,
+        screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
+    }
+
     if (GUIGraphicsContext._useScreenSelector)
     {
       if (ScreenNumberOverride >= 0)
