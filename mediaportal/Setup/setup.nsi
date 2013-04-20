@@ -260,6 +260,9 @@ ShowUninstDetails show
   ${KillProcess} "MPTray.exe"
   StrCpy $MPTray_Running $R0
   
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
+  
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
 !macroend

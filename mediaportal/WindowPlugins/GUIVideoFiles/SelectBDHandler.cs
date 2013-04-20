@@ -143,13 +143,13 @@ namespace MediaPortal.GUI.Video
           int idFileImg = VideoDatabase.GetFileId(fileName);
           int idMovieImg = VideoDatabase.GetMovieId(fileName);
 
-          /*
+          ///*
           int timeMovieStopped = 0;
           byte[] resumeData = null;
 
           if ((idMovieImg >= 0) && (idFileImg >= 0))
           {
-            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFileImg, out resumeData);
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFileImg, out resumeData, g_Player.SetResumeBDTitleState);
 
             if (timeMovieStopped > 0)
             {
@@ -172,7 +172,7 @@ namespace MediaPortal.GUI.Video
                 timeMovieStopped = 0;
             }
           }
-          */
+          //*/
 
           if (g_Player.Playing)
           {
@@ -182,12 +182,12 @@ namespace MediaPortal.GUI.Video
           g_Player.PlayBD(drive + @"\BDMV\index.bdmv");
           g_Player.ShowFullScreenWindow();
 
-          /*
+          ///*
           if (g_Player.Playing && timeMovieStopped > 0)
           {
             g_Player.SeekAbsolute(timeMovieStopped);
           }
-           */
+           //*/
 
           return true;
         }
