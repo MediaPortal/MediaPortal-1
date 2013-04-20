@@ -21,6 +21,7 @@
 #region Using
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -256,14 +257,33 @@ namespace MediaPortal.Configuration.Sections
       // Fill comboBox with radio channel names
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
-
       int selectedIdx = 0;
-      TvServerRemote.HostName = TVRadio.Hostname;
-      foreach (string groupName in TvServerRemote.GetRadioChannelGroupNames())
+
+      if (string.IsNullOrEmpty(TVRadio.Hostname))
       {
-        int idx = comboBoxGroups.Items.Add(groupName);
-        if (groupName == _rootGroup)
-          selectedIdx = idx;
+        MessageBox.Show("Unable to get radio channel groups from the TV Server." +
+          Environment.NewLine + "No valid hostname specified in the \"TV/Radio\" section.",
+          "Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
+      else
+      {
+        TvServerRemote.HostName = TVRadio.Hostname;
+        List<string> groupNames = TvServerRemote.GetRadioChannelGroupNames();
+        if (groupNames.Count == 0)
+        {
+          MessageBox.Show(string.Format("Unable to get radio channel groups from the TV Server on host \"{0}\".", TVRadio.Hostname) +
+            Environment.NewLine + "Version incompatibility of MP Client and TV Server?",
+            "Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+        else
+        {
+          foreach (string groupName in groupNames)
+          {
+            int idx = comboBoxGroups.Items.Add(groupName);
+            if (groupName == _rootGroup)
+              selectedIdx = idx;
+          }
+        }
       }
       comboBoxGroups.SelectedIndex = selectedIdx;
 

@@ -390,7 +390,7 @@ namespace MediaPortal.Configuration.Sections
         Log.Debug("VerifyHostname: unable to connect to TV server on host \"{0}\"", hostname);
         if (verbose)
           MessageBox.Show(string.Format("Unable to connect to TV server on host \"{0}\"", hostname),
-            "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -405,7 +405,7 @@ namespace MediaPortal.Configuration.Sections
         Log.Debug("VerifyHostname: unable to get data from TV server on host \"{0}\"", hostname);
         if (verbose)
           MessageBox.Show(string.Format("Unable to get data from TV server on host \"{0}\"", hostname),
-            "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -477,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Error("UpdateGentleConfig: unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message);
         MessageBox.Show(string.Format("Unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -502,7 +502,7 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Error("UpdateGentleConfig: unable to get database connection string from TV server \"{0}\"", hostname);
         MessageBox.Show(string.Format("Unable to get database connection string from TV server \"{0}\"", hostname),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -517,7 +517,7 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Error("UpdateGentleConfig: unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message);
         MessageBox.Show(string.Format("Unable to modify gentle.config" + Environment.NewLine + "{0}", ex.Message),
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
       }
 
@@ -705,7 +705,7 @@ namespace MediaPortal.Configuration.Sections
 
         // Show success message
         MessageBox.Show("Connection to the TV server successful",
-          "TV Client Settings", MessageBoxButtons.OK, MessageBoxIcon.None);
+          "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.None);
       }
     }
 
