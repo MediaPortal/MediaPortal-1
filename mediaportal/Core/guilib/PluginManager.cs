@@ -406,7 +406,14 @@ namespace MediaPortal.GUI.Library
       foreach (IPlugin plugin in _nonGuiPlugins)
       {
         Log.Debug("PluginManager: Stopping plugin '{0}'", plugin.ToString());
-        plugin.Stop();
+        try
+        {
+          plugin.Stop();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PluginManager: Unable to stop plugin: {0} exception: {1}", plugin.ToString(), ex.ToString());
+        }
       }
       _started = false;
     }
