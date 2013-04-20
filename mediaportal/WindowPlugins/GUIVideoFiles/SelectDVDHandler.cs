@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Video
           byte[] resumeData = null;
           if ((idMovie >= 0) && (idFile >= 0))
           {
-            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData, g_Player.SetResumeBDTitleState);
             //Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
             if (timeMovieStopped > 0)
             {
@@ -277,17 +277,17 @@ namespace MediaPortal.GUI.Video
               if (!isBluRay)
               {
                 pItem.Label3 = string.Empty;
-                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.DVD.ToString();
+                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
               }
               else
               {
                 pItem.Label3 = string.Empty;
-                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.BD.ToString();
+                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
               }
             }
             else if (VirtualDirectory.IsImageFile(Util.Utils.GetFileExtension(pItem.Path)))
             {
-              pItem.Label3 = GUIVideoBaseWindow.MediaTypes.ISO.ToString();
+              pItem.Label3 = GUIVideoBaseWindow.MediaTypes.ISO.ToString() + " " + percentWatched + "% #" + timesWatched;
             }
             else
             {

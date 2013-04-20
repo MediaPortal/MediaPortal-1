@@ -168,6 +168,10 @@ namespace MediaPortal.GUI.Video
     private int _resetCount;
     private string _selectedFilename = string.Empty;
 
+    //Internal BDInternalMenu
+    private static bool _BDInternalMenu = true;
+    private static bool _BDDetect = false;
+
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
     
@@ -321,7 +325,8 @@ namespace MediaPortal.GUI.Video
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
         _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
-        
+        _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+
         _virtualDirectory = VirtualDirectories.Instance.Movies;
 		    // External player
         _useInternalVideoPlayer = xmlreader.GetValueAsBool("movieplayer", "internal", true);
@@ -1804,6 +1809,11 @@ namespace MediaPortal.GUI.Video
 
     public static void PlayMovieFromPlayList(bool askForResumeMovie, int iMovieIndex, bool requestPin)
     {
+      bool BDInternalMenu = false;
+      bool NoBDResume = false;
+      _BDDetect = false;
+      g_Player.ForcePlay = false;
+      g_Player.SetResumeBDTitleState = 1000;
       string filename;
       if (iMovieIndex == -1)
       {
@@ -1842,45 +1852,85 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      //Resume BD only for Title mode
+      if (filename.EndsWith(@"\BDMV\index.bdmv"))
+      {
+        _BDDetect = true;
+      }
+
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+      }
+
       int timeMovieStopped = 0;
       byte[] resumeData = null;
-      
 
-      // Skip resume for external player and BluRays (not implemented yet in BDLIB)
-      if (!CheckExternalPlayer(filename, isImage) && !filename.ToUpperInvariant().Contains("INDEX.BDMV"))
       {
-        IMDBMovie movieDetails = new IMDBMovie();
-        VideoDatabase.GetMovieInfo(filename, ref movieDetails);
-        int idFile = VideoDatabase.GetFileId(filename);
-        int idMovie = VideoDatabase.GetMovieId(filename);
-
-        if ((idMovie >= 0) && (idFile >= 0))
+        // Skip resume for external player and BluRays (not implemented yet in BDLIB)
+        if (!CheckExternalPlayer(filename, isImage))
         {
-          timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-          if (timeMovieStopped > 0)
+          // Check if we play image file to search db with the proper filename
+          if (Util.Utils.IsISOImage(filename))
           {
-            string title = Path.GetFileName(filename);
-            VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-            if (movieDetails.Title != string.Empty)
-            {
-              title = movieDetails.Title;
-            }
-            if (askForResumeMovie)
-            {
-              GUIResumeDialog.Result result =
-                GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
-                                                 GUIResumeDialog.MediaType.Video);
+            filename = DaemonTools.MountedIsoFile;
+          }
+          IMDBMovie movieDetails = new IMDBMovie();
+          VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+          int idFile = VideoDatabase.GetFileId(filename);
+          int idMovie = VideoDatabase.GetMovieId(filename);
 
-              if (result == GUIResumeDialog.Result.Abort)
+          if (_BDDetect)
+            g_Player.SetResumeBDTitleState = VideoDatabase.GetTitleBDId(idFile, out resumeData);
+
+          if (BDInternalMenu && g_Player.SetResumeBDTitleState == 1000)
+          {
+            NoBDResume = true;
+          }
+
+          if ((idMovie >= 0) && (idFile >= 0))
+          {
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData,
+                                                                           g_Player.SetResumeBDTitleState);
+            if (timeMovieStopped > 0)
+            {
+              string title = Path.GetFileName(filename);
+              VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
+              if (movieDetails.Title != string.Empty)
               {
-                _playlistPlayer.Reset();
-                _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
-                _playlistPlayer.CurrentSong = _currentPlaylistIndex;
-                return;
+                title = movieDetails.Title;
               }
 
-              if (result == GUIResumeDialog.Result.PlayFromBeginning)
-                timeMovieStopped = 0;
+              if (askForResumeMovie && g_Player.SetResumeBDTitleState >= 0 && !NoBDResume)
+              {
+                if (_BDDetect)
+                  g_Player.ForcePlay = true;
+
+                GUIResumeDialog.Result result =
+                  GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
+                                                   GUIResumeDialog.MediaType.Video);
+
+                if (result == GUIResumeDialog.Result.Abort)
+                {
+                  g_Player.ForcePlay = false;
+                  timeMovieStopped = 0;
+                  if (!_BDDetect)
+                  {
+                    _playlistPlayer.Reset();
+                    _playlistPlayer.CurrentPlaylistType = _currentPlaylistType;
+                    _playlistPlayer.CurrentSong = _currentPlaylistIndex;
+                    return;
+                  }
+                    // Return to list if we cancel resume dialog (needed when BD is remuxed)
+                  else if (g_Player.SetResumeBDTitleState == 1000 || g_Player.SetResumeBDTitleState == 1200)
+                  {
+                    return;
+                  }
+                }
+
+                if (result == GUIResumeDialog.Result.PlayFromBeginning)
+                  timeMovieStopped = 0;
+              }
             }
           }
         }
@@ -1909,7 +1959,7 @@ namespace MediaPortal.GUI.Video
 
       if (g_Player.Playing && timeMovieStopped > 0)
       {
-        if (g_Player.IsDVD)
+        if (g_Player.IsDVD && !_BDDetect)
         {
           g_Player.Player.SetResumeState(resumeData);
         }
@@ -1919,6 +1969,88 @@ namespace MediaPortal.GUI.Video
           msg.Param1 = timeMovieStopped;
           GUIGraphicsContext.SendMessage(msg);
         }
+      }
+    }
+
+    public static void PlayMovieFromBDPlayList(bool askForResumeMovie, int iMovieIndex, bool requestPin)
+    {
+      //Resume BD only for Title mode
+      _BDDetect = false;
+      string filename = g_Player.currentFileName;
+      
+      // If the file is an image file, it should be mounted before playing
+      bool isImage = false;
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(filename)))
+      {
+        if (!MountImageFile(GUIWindowManager.ActiveWindow, filename, requestPin))
+          return;
+        isImage = true;
+      }
+
+      // Convert BD ISO filenames for to BD index file (...BDMV\index.bdmv)
+      if (isImage)
+      {
+        // Covert filename
+        if (Util.Utils.IsBDImage(filename, ref filename))
+        {
+          // Change also playlist filename
+          int index = iMovieIndex;
+
+          if (iMovieIndex == -1)
+            index = 0;
+
+          _playlistPlayer.GetPlaylist(_playlistPlayer.CurrentPlaylistType)[index].FileName = filename;
+          isImage = false;
+        }
+      }
+
+      int timeMovieStopped = 0;
+      byte[] resumeData = null;
+
+      // Skip resume for external player and BluRays (not implemented yet in BDLIB)
+      if (!CheckExternalPlayer(filename, isImage))
+      {
+        // Check if we play image file to search db with the proper filename
+        if (Util.Utils.IsISOImage(filename))
+        {
+          filename = DaemonTools.MountedIsoFile;
+        }
+        IMDBMovie movieDetails = new IMDBMovie();
+        VideoDatabase.GetMovieInfo(filename, ref movieDetails);
+        int idFile = VideoDatabase.GetFileId(filename);
+        int idMovie = VideoDatabase.GetMovieId(filename);
+
+        if ((idMovie >= 0) && (idFile >= 0))
+        {
+          timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData, g_Player.SetResumeBDTitleState);
+          if (timeMovieStopped > 0)
+          {
+            string title = Path.GetFileName(filename);
+            VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
+            if (movieDetails.Title != string.Empty)
+            {
+              title = movieDetails.Title;
+            }
+            if (askForResumeMovie)
+            {
+              GUIResumeDialog.Result result =
+                GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
+                                                 GUIResumeDialog.MediaType.Video);
+
+              if (result == GUIResumeDialog.Result.Abort)
+              {
+                g_Player.SetResumeBDTitleState = -1;
+                return;
+              }
+
+              if (result == GUIResumeDialog.Result.PlayFromBeginning)
+                timeMovieStopped = 0;
+            }
+          }
+        }
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
+        msg.Param1 = timeMovieStopped;
+        GUIWindowManager.SendThreadMessage(msg);
       }
     }
 
@@ -3065,18 +3197,18 @@ namespace MediaPortal.GUI.Video
 
         if (g_Player.IsDVDMenu)
         {
-          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, null);
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, null, g_Player.SetResumeBDTitleState);
           watchedMovies.Add(strFilePath);
           VideoDatabase.SetMovieWatchedStatus(idMovie, true, 100);
           VideoDatabase.MovieWatchedCountIncrease(idMovie);
         }
-        else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
+        else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0) && g_Player.SetResumeBDTitleState != -2)
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
-          Log.Info("GUIVideoFiles: {0} idFile={1} timeMovieStopped={2} resumeData={3}", caller, idFile, timeMovieStopped,
-                   resumeData);
-          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
+          Log.Info("GUIVideoFiles: {0} idFile={1} timeMovieStopped={2} resumeData={3} bdtitle={4}", caller, idFile, timeMovieStopped,
+                   resumeData, g_Player.SetResumeBDTitleState);
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData, g_Player.SetResumeBDTitleState);
           Log.Debug("GUIVideoFiles: {0} store resume time", caller);
 
           //Set file "watched" only if  user % value or higher played time (share view)
@@ -3197,8 +3329,8 @@ namespace MediaPortal.GUI.Video
             break;
           }
           // Set resumedata to zero
-          VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData);
+          VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData, g_Player.SetResumeBDTitleState);
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData, g_Player.SetResumeBDTitleState);
           watchedMovies.Add(strFilePath);
         }
 
@@ -3266,7 +3398,7 @@ namespace MediaPortal.GUI.Video
 
         if (idFile != -1)
         {
-          int videoDuration = (int)g_Player.Duration;
+          int videoDuration = (int) g_Player.Duration;
           VideoDatabase.SetVideoDuration(idFile, videoDuration);
         }
       }
