@@ -492,8 +492,6 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(music, new MusicSort(), true));
       Log.Info("  add music dsp section");
       AddSection(new ConfigPage(music, new MusicDSP(), true));
-      Log.Info("  add music asio section");
-      AddSection(new ConfigPage(music, new MusicASIO(), true));
     }
 
 
@@ -546,15 +544,11 @@ namespace MediaPortal.Configuration
       MovieDatabase movieDbConfig = new MovieDatabase();
       AddSection(new ConfigPage(movie, movieDbConfig, false));
       Log.Info("  add video player section");
-      AddSection(new ConfigPage(movie, new MoviePlayer(), false));
-      Log.Info("  add video zoom section");
-      AddSection(new ConfigPage(movie, new MovieZoom(), false));
-      Log.Info("  add video extensions section");
-      AddSection(new ConfigPage(movie, new MovieExtensions(), true));
-      Log.Info("  add video views section");
-      AddSection(new ConfigPage(movie, new MovieViews(), true));*/
-      /*Log.Info("  add blu-ray postprocessing section");
-      AddSection(new ConfigPage(bd, new BDPostProcessing(), true));*/
+      AddSection(new ConfigPage(movie, new MoviePlayer(), false));*/
+      Log.Info("  add blu-ray video zoom section");
+      AddSection(new ConfigPage(bd, new BDZoom(), false));
+      Log.Info("  add blu-ray postprocessing section");
+      AddSection(new ConfigPage(bd, new BDPostProcessing(), true));
     }
 
     private void AddTabDvd()

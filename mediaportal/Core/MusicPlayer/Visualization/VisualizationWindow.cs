@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
@@ -1928,28 +1929,31 @@ namespace MediaPortal.Visualization
               }
 
               DialogWindowIsActive = false;
-              using (Graphics g = Graphics.FromHwnd(Handle))
+              if (VisualizationRunning)
               {
-                int sleepMS = RenderVisualization(g);
+                using (Graphics g = Graphics.FromHwnd(Handle))
+                {
+                  int sleepMS = RenderVisualization(g);
 
-                if (sleepMS < 0)
-                {
-                  sleepMS = 0;
-                }
+                  if (sleepMS < 0)
+                  {
+                    sleepMS = 0;
+                  }
 
-                if (Viz.IsWinampVis())
-                {
-                  continue;
-                }
+                  if (Viz.IsWinampVis())
+                  {
+                    continue;
+                  }
 
-                // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
-                if (IsSoundSpectrumViz)
-                {
-                  Thread.Sleep(sleepMS);
-                }
-                else
-                {
-                  Thread.Sleep(VisualizationRenderInterval);
+                  // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
+                  if (IsSoundSpectrumViz)
+                  {
+                    Thread.Sleep(sleepMS);
+                  }
+                  else
+                  {
+                    Thread.Sleep(VisualizationRenderInterval);
+                  }
                 }
               }
             }

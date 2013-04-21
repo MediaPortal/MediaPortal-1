@@ -163,8 +163,42 @@ namespace MediaPortal.Util
     private Utils() {}
 
     public static string AudioExtensionsDefault =
-      ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-
+        ".asx,.dts," +
+        // Playlists
+        ".m3u,.pls,.b4s,.wpl,.cue," +
+        // Bass Standard
+        ".mod,.mo3,.s3m,.xm,.it,.mtm,.umx,.mdz,.s3z,.itz,.xmz," +
+        ".mp3,.ogg,.wav,.mp2,.mp1,.aiff,.m2a,.mpa,.m1a,.swa,.aif,.mp3pro," +
+        // BassCD
+        ".cda," +
+        // BassAac
+        ".aac,.mp4,.m4a,.m4b,.m4p," +
+        // BassAc3
+        ".ac3," +
+        // BassAlac
+        ".m4a,.aac,.mp4," +
+        // BassApe
+        ".ape,.apl," +
+        // BassFlac
+        ".flac," +
+        // BassMidi
+        ".midi,.mid,.rmi,.kar," +
+        // BassMpc
+        ".mpc,.mpp,.mp+," +
+        // BassOfr
+        ".ofr,.ofs," +
+        // BassOpus
+        ".opus," +
+        // BassSpx
+        ".spx," +
+        // BassTta
+        ".tta," +
+        // BassWma
+        // .wmv,
+        ".wma," +
+        // BassWv
+        ".wv";
+    
     public static string VideoExtensionsDefault =
       ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
 
@@ -657,11 +691,11 @@ namespace MediaPortal.Util
           return;
         }
 
-        string[] thumbs = {
+       string[] thumbs = {
                             Path.ChangeExtension(item.Path, ".jpg"),
                             Path.ChangeExtension(item.Path, ".tbn"),
                             Path.ChangeExtension(item.Path, ".png"),
-                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))
+                            Util.Utils.GetVideosThumbPathname(item.Path)
                           };
 
         bool foundVideoThumb = false;
@@ -681,7 +715,7 @@ namespace MediaPortal.Util
           
         using (Settings xmlreader = new MPSettings())
         {
-          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
           //
           //Get movies shares and check for video thumb create
           //
@@ -706,7 +740,7 @@ namespace MediaPortal.Util
             }
           }
         }
-        
+
         if (createVideoThumbs && !foundVideoThumb && getItemThumb)
         {
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
@@ -858,7 +892,7 @@ namespace MediaPortal.Util
     {
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
-      string strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(path));
+      string strThumb = Util.Utils.GetVideosThumbPathname(path);
       if (FileExistsInCache(strThumb))
       {
         return;
@@ -938,7 +972,7 @@ namespace MediaPortal.Util
       {
         using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
-          if (!xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true))
+          if (!xmlreader.GetValueAsBool("thumbnails", "videoondemand", true))
             return;
 
           string lastVersion = xmlreader.GetValueAsString("thumbnails", "extractorversion", "");
@@ -1800,7 +1834,7 @@ namespace MediaPortal.Util
             }
             catch (Exception ex2)
             {
-              Log.Error("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
+              Log.Warn("Util: Error setting process priority for {0}: {1}", aAppName, ex2.Message);
             }
           }
           // Read in asynchronous  mode to avoid deadlocks (if error stream is full)
@@ -1815,7 +1849,7 @@ namespace MediaPortal.Util
 
           if (!success)
           {
-            Log.Error("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
+            Log.Warn("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
           }
 
           ExternalProc.OutputDataReceived -= new DataReceivedEventHandler(OutputDataHandler);
@@ -1823,7 +1857,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Util: Error executing {0}: {1}", aAppName, ex.Message);
+          Log.Warn("Util: Error executing {0}: {1}", aAppName, ex.Message);
         }
       }
       else
@@ -2838,6 +2872,29 @@ namespace MediaPortal.Util
                                           GetThumbExtension());
 
       return strFolderJpg;
+    }
+
+    public static void GetLocalItemPictureFolderThumb(List<string> _thumbnailFolderItem)
+    {
+      string thumbPicturesPath = Path.GetFullPath(Config.GetFolder(Config.Dir.Thumbs)) + @"\Pictures";
+      try
+      {
+        VirtualDirectory dir = new VirtualDirectory();
+        dir.SetExtensions(Util.Utils.PictureExtensions);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(thumbPicturesPath, true, true);
+        foreach (GUIListItem item in items)
+        {
+          if (!item.IsFolder)
+          {
+            _thumbnailFolderItem.Add(item.Path);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Info("Exception counting files:{0}", e);
+        // Ignore
+      }
     }
 
     public struct FileLookUpItem
@@ -3938,6 +3995,11 @@ namespace MediaPortal.Util
 
     public static void DeleteFiles(string strDir, string strPattern)
     {
+      DeleteFiles(strDir, strPattern, false);
+    }
+
+    public static void DeleteFiles(string strDir, string strPattern, bool recursive)
+    {
       if (strDir == null) return;
       if (strDir.Length == 0) return;
 
@@ -3957,6 +4019,19 @@ namespace MediaPortal.Util
             File.Delete(strFile);
           }
           catch (Exception) {}
+        }
+        if (recursive)
+        {
+          var subDirs = Directory.GetDirectories(strDir);
+          foreach (string subDir in subDirs)
+          {
+            try
+            {
+              DeleteFiles(subDir, strPattern, true);
+              Directory.Delete(subDir);
+            }
+            catch (Exception) {}
+          }
         }
       }
       catch (Exception) {}
@@ -4609,6 +4684,75 @@ namespace MediaPortal.Util
       }
       return false;
     }
+
+    public static string GetTreePath(string filename, int depth, int step)
+    {
+      string basename = Path.GetFileNameWithoutExtension(filename) ?? "";
+      string tree = "";
+      int i = basename.Length;
+
+      while ((i-=step)>=0 && depth-->0)
+      {
+        tree += basename.Substring(i, step) + @"\";
+      }
+      return tree;
+    }
+
+    public static bool CreatePath(string path)
+    {
+      var paths = new Stack<string>();
+
+      path = Path.GetFullPath(path);
+      var rootPath = Path.GetPathRoot(path);
+      if (!Directory.Exists(rootPath))
+        return false;
+
+      while(!string.IsNullOrEmpty(path) && path != rootPath && !Directory.Exists(path))
+      {
+        paths.Push(path);
+        path = Path.GetDirectoryName(path);
+      }
+
+      while(paths.Count>0)
+      {
+        Directory.CreateDirectory(paths.Pop());
+      }
+
+      return true;
+    }
+
+    public static string GetThumbnailPathname(string basePath, string file, string formatString)
+    {
+      file = EncryptLine(file);
+      // TODO: define dept/step in constants or make it configurable
+      var path = Path.Combine(basePath, GetTreePath(file,  1, 2));
+      CreatePath(path);
+      return Path.Combine(path, string.Format(formatString, file));
+    }
+
+    #region Thumbnail path helpers
+
+    public static string GetPicturesThumbPathname(string file)
+    {
+      return GetThumbnailPathname(Thumbs.Pictures, file, "{0}.jpg");
+    }
+
+    public static string GetPicturesLargeThumbPathname(string file)
+    {
+      return GetThumbnailPathname(Thumbs.Pictures, file, "{0}L.jpg");
+    }
+
+    public static string GetVideosThumbPathname(string file)
+    {
+      return GetThumbnailPathname(Thumbs.Videos, file, "{0}.jpg");
+    }
+
+    public static string GetVideosLargeThumbPathname(string file)
+    {
+      return GetThumbnailPathname(Thumbs.Videos, file, "{0}L.jpg");
+    }
+
+    #endregion
   }
 
   public static class GenericExtensions

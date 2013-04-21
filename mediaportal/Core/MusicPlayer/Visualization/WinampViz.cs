@@ -22,9 +22,11 @@ using System;
 using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using MediaPortal.Playlists;
 using BassVis_Api;
 
 namespace MediaPortal.Visualization
@@ -34,14 +36,18 @@ namespace MediaPortal.Visualization
     #region Variables
 
     private BASSVIS_INFO _mediaInfo = null;
+    private BassVis.BASSVISSTATE _visCallback;
 
     private bool RenderStarted = false;
     private bool firstRun = true;
 
     private IntPtr hwndChild; // Handle to the Winamp Child Window.
+    private BASSVIS_PARAM _tmpVisParam = null;
 
     private MusicTag trackTag = null;
     private string _songTitle = "   "; // Title of the song played
+    private int _playlistTitlePos;
+    private PlayListPlayer _playlistPlayer = null;
 
     #endregion
 
@@ -128,6 +134,29 @@ namespace MediaPortal.Visualization
 
     #endregion
 
+    #region BASSVIS_StateCallback()
+
+    public void BASSVIS_StateCallback(BASSVIS_PLAYSTATE NewState)
+    {
+      //CallBack PlayState for Winamp only
+      switch (NewState)
+      {
+
+        case BASSVIS_PLAYSTATE.SetPlaylistTitle:
+
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.SetPlaylistTitle, -1, _songTitle);
+
+          break;
+        case BASSVIS_PLAYSTATE.GetPlaylistTitlePos:
+
+          _playlistTitlePos = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.GetPlaylistTitlePos);
+          break;
+
+      }
+    }
+
+    #endregion
+
     #region <Base class> Overloads
 
     public override bool InitializePreview()
@@ -155,10 +184,13 @@ namespace MediaPortal.Visualization
         // Set Song information, so that the plugin can display it
         if (trackTag != null && Bass != null)
         {
+          _playlistPlayer = PlayListPlayer.SingletonPlayer;
+          PlayListItem curPlaylistItem = _playlistPlayer.GetCurrentItem();
+
           _mediaInfo.Position = (int)Bass.CurrentPosition;
           _mediaInfo.Duration = (int)Bass.Duration;
           _mediaInfo.PlaylistLen = 1;
-          _mediaInfo.PlaylistPos = 1;
+          _mediaInfo.PlaylistPos = _playlistPlayer.CurrentPlaylistPos;
         }
         else
         {
@@ -209,7 +241,15 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
+        int counter = 0;
+
+        bool bFree = BassVis.BASSVIS_Free(_visParam);
+        while ((!bFree) && (counter <= 10))
+        {
+          bFree = BassVis.BASSVIS_IsFree(_visParam);
+          System.Windows.Forms.Application.DoEvents();
+          counter++;
+        }
         _visParam.VisHandle = 0;
       }
 
@@ -246,11 +286,11 @@ namespace MediaPortal.Visualization
       // Do a move of the Winamp Viz
       if (_visParam.VisHandle != 0)
       {
-        hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
-        if (hwndChild != IntPtr.Zero)
-        {
-          Win32API.MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
-        }
+        // Hide the Viswindow, so that we don't see it, while moving
+        Win32API.ShowWindow(hwndChild, Win32API.ShowWindowFlags.Hide);
+        _tmpVisParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
+        _tmpVisParam.VisGenWinHandle = VisualizationWindow.Handle;
+        BassVis.BASSVIS_Resize(_tmpVisParam, 0, 0, newSize.Width, newSize.Height);
       }
       return true;
     }
@@ -281,36 +321,36 @@ namespace MediaPortal.Visualization
 
       if (_visParam.VisHandle != 0)
       {
-        BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
-        _visParam.VisHandle = 0;
         RenderStarted = false;
+
+        int counter = 0;
+
+        bool bFree = BassVis.BASSVIS_Free(_visParam);
+        while ((!bFree) && (counter <= 10))
+        {
+          bFree = BassVis.BASSVIS_IsFree(_visParam);
+          System.Windows.Forms.Application.DoEvents();
+          counter++;
+        }
+        _visParam.VisHandle = 0;
       }
 
-      // Set Dummy Information for the plugin, before creating it
-      _mediaInfo.SongTitle = "";
-      _mediaInfo.SongFile = "";
-      _mediaInfo.Position = 0;
-      _mediaInfo.Duration = 0;
-      _mediaInfo.PlaylistPos = 0;
-      _mediaInfo.PlaylistLen = 0;
-      BassVis.BASSVIS_SetInfo(_visParam, _mediaInfo);
 
       try
       {
+        //Remove existing CallBacks
+        BassVis.BASSVIS_WINAMPRemoveCallback();
         // Create the Visualisation
         BASSVIS_EXEC visExec = new BASSVIS_EXEC(VizPluginInfo.FilePath);
         visExec.AMP_ModuleIndex = VizPluginInfo.PresetIndex;
         visExec.AMP_UseOwnW1 = 1;
         visExec.AMP_UseOwnW2 = 1;
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
-        if (_visParam.VisGenWinHandle != IntPtr.Zero)
+        if (_visParam.VisHandle != 0)
         {
-          hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
-          if (hwndChild != IntPtr.Zero)
-          {
-            Win32API.MoveWindow(hwndChild, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height, true);
-          }
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
 
+          // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
           BassVis.BASSVIS_SetVisPort(_visParam,
                                      _visParam.VisGenWinHandle,
                                      VisualizationWindow.Handle,
@@ -319,17 +359,10 @@ namespace MediaPortal.Visualization
                                      VisualizationWindow.Width,
                                      VisualizationWindow.Height);
 
-          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-        }
-        else
-        {
-          BassVis.BASSVIS_SetVisPort(_visParam,
-                                     _visParam.VisGenWinHandle,
-                                     IntPtr.Zero,
-                                     0,
-                                     0,
-                                     0,
-                                     0);
+          // Set CallBack for PlayState
+          _visCallback = BASSVIS_StateCallback;
+          BassVis.BASSVIS_WINAMPSetStateCallback(_visCallback);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 128);
         }
 
         // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
