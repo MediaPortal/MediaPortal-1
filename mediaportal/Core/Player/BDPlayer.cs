@@ -73,7 +73,20 @@ namespace MediaPortal.Player
     public UInt32 chapter_count;
     public BDClipInfo* clips;
     public BDChapter* chapters;
+    public UInt32 mark_count;
+    public BDMark* marks;
   }
+
+  [StructLayout(LayoutKind.Sequential)]
+  public struct BDMark
+  {
+    public UInt32 idx;
+    public Int32 type;
+    public UInt64 start;
+    public UInt64 duration;
+    public UInt64 offset;
+    public byte clip_ref;
+  } 
 
   [StructLayout(LayoutKind.Sequential)]
   public struct BDChapter
@@ -120,6 +133,7 @@ namespace MediaPortal.Player
     public fixed byte lang[4];
     public UInt16 pid;
     public byte aspect;
+    public byte subpath_id;
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -421,49 +435,80 @@ namespace MediaPortal.Player
 
     protected enum BDEvents
     {
-      BD_EVENT_NONE = 0,
-      BD_EVENT_ERROR,
-      BD_EVENT_READ_ERROR,
-      BD_EVENT_ENCRYPTED,
+      BD_EVENT_NONE = 0,  /* no pending events */
 
-      /* current playback position */
-      BD_EVENT_ANGLE,     /* current angle, 1...N */
-      BD_EVENT_TITLE,     /* current title, 1...N (0 = top menu) */
-      BD_EVENT_PLAYLIST,  /* current playlist (xxxxx.mpls) */
-      BD_EVENT_PLAYITEM,  /* current play item */
-      BD_EVENT_CHAPTER,   /* current chapter, 1...N */
-      BD_EVENT_END_OF_TITLE,
+      /*
+      * errors
+      */
 
-      /* stream selection */
-      BD_EVENT_AUDIO_STREAM,           /* 1..32,  0xff  = none */
-      BD_EVENT_IG_STREAM,              /* 1..32                */
-      BD_EVENT_PG_TEXTST_STREAM,       /* 1..255, 0xfff = none */
-      BD_EVENT_PIP_PG_TEXTST_STREAM,   /* 1..255, 0xfff = none */
-      BD_EVENT_SECONDARY_AUDIO_STREAM, /* 1..32,  0xff  = none */
-      BD_EVENT_SECONDARY_VIDEO_STREAM, /* 1..32,  0xff  = none */
+      BD_EVENT_ERROR = 1,  /* Fatal error. Playback can't be continued. */
+      BD_EVENT_READ_ERROR = 2,  /* Reading of .m2ts aligned unit failed. Next call to read will try next block. */
+      BD_EVENT_ENCRYPTED = 3,  /* .m2ts file is encrypted and can't be played */
 
-      BD_EVENT_PG_TEXTST,              /* 0 - disable, 1 - enable */
-      BD_EVENT_PIP_PG_TEXTST,          /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_AUDIO,        /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_VIDEO,        /* 0 - disable, 1 - enable */
-      BD_EVENT_SECONDARY_VIDEO_SIZE,   /* 0 - PIP, 0xf - fullscreen */
+      /*
+      * current playback position
+      */
 
-      /* HDMV VM or JVM seeked the stream. Next read() will return data from new position. */
-      BD_EVENT_SEEK,
+      BD_EVENT_ANGLE = 4,  /* current angle, 1...N */
+      BD_EVENT_TITLE = 5,  /* current title, 1...N (0 = top menu) */
+      BD_EVENT_PLAYLIST = 6,  /* current playlist (xxxxx.mpls) */
+      BD_EVENT_PLAYITEM = 7,  /* current play item, 0...N-1  */
+      BD_EVENT_CHAPTER = 8,  /* current chapter, 1...N */
+      BD_EVENT_PLAYMARK = 30, /* playmark reached */
+      BD_EVENT_END_OF_TITLE = 9,
+
+      /*
+      * stream selection
+      */
+
+      BD_EVENT_AUDIO_STREAM = 10,  /* 1..32,  0xff  = none */
+      BD_EVENT_IG_STREAM = 11,  /* 1..32                */
+      BD_EVENT_PG_TEXTST_STREAM = 12,  /* 1..255, 0xfff = none */
+      BD_EVENT_PIP_PG_TEXTST_STREAM = 13,  /* 1..255, 0xfff = none */
+      BD_EVENT_SECONDARY_AUDIO_STREAM = 14,  /* 1..32,  0xff  = none */
+      BD_EVENT_SECONDARY_VIDEO_STREAM = 15,  /* 1..32,  0xff  = none */
+
+      BD_EVENT_PG_TEXTST = 16,  /* 0 - disable, 1 - enable */
+      BD_EVENT_PIP_PG_TEXTST = 17,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_AUDIO = 18,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_VIDEO = 19,  /* 0 - disable, 1 - enable */
+      BD_EVENT_SECONDARY_VIDEO_SIZE = 20,  /* 0 - PIP, 0xf - fullscreen */
+
+      /*
+      * playback control
+      */
+
+      /* discontinuity in the stream (non-seamless connection). Reset demuxer PES buffers. */
+      BD_EVENT_DISCONTINUITY = 28,  /* new timestamp (45 kHz) */
+
+      /* HDMV VM or JVM seeked the stream. Next read() will return data from new position. Flush all buffers. */
+      BD_EVENT_SEEK = 21,
 
       /* still playback (pause) */
-      BD_EVENT_STILL,                  /* 0 - off, 1 - on */
+      BD_EVENT_STILL = 22,  /* 0 - off, 1 - on */
 
-      /* Still playback for n seconds (reached end of still mode play item) */
-      BD_EVENT_STILL_TIME,             /* 0 = infinite ; 1...300 = seconds */
+      /* Still playback for n seconds (reached end of still mode play item).
+	      * Playback continues by calling bd_read_skip_still(). */
+      BD_EVENT_STILL_TIME = 23,  /* 0 = infinite ; 1...300 = seconds */
 
-      BD_EVENT_SOUND_EFFECT,           /* effect ID */
+      /* Play sound effect */
+      BD_EVENT_SOUND_EFFECT = 24,  /* effect ID */
+
+      /*
+      * status
+      */
+
+      /* Nothing to do. Playlist is not playing, but title applet is running. */
+      BD_EVENT_IDLE = 29,
 
       /* Pop-Up menu available */
-      BD_EVENT_POPUP,                  /* 0 - no, 1 - yes */
+      BD_EVENT_POPUP = 25,  /* 0 - no, 1 - yes */
 
       /* Interactive menu visible */
-      BD_EVENT_MENU                   /* 0 - no, 1 - yes */
+      BD_EVENT_MENU = 26,  /* 0 - no, 1 - yes */
+
+      /* 3D */
+      BD_EVENT_STEREOSCOPIC_STATUS = 27,  /* 0 - 2D, 1 - 3D */
     }
 
     protected enum BluRayStreamFormats
@@ -484,7 +529,9 @@ namespace MediaPortal.Player
       BLURAY_STREAM_TYPE_VIDEO_H264 = 0x1b,
       BLURAY_STREAM_TYPE_SUB_PG = 0x90,
       BLURAY_STREAM_TYPE_SUB_IG = 0x91,
-      BLURAY_STREAM_TYPE_SUB_TEXT = 0x92
+      BLURAY_STREAM_TYPE_SUB_TEXT = 0x92,
+      BLURAY_STREAM_TYPE_AUDIO_AC3PLUS_SECONDARY = 0xa1,
+      BLURAY_STREAM_TYPE_AUDIO_DTSHD_SECONDARY = 0xa2
     }
 
     protected enum BDAudioFormat
