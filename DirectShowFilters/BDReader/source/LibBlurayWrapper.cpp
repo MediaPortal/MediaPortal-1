@@ -129,6 +129,14 @@ bool CLibBlurayWrapper::Initialize()
 {
   USES_CONVERSION;
 
+  if (!SetEnvironmentVariable(_T("JAVA_HOME"), NULL))
+  {
+    DWORD error = GetLastError();
+    LogDebug("Failed to load set the JAVA_HOME environment variable: %d", (int)error);
+
+    return false;
+  }
+
   TCHAR szDirectory[MAX_PATH] = _T("");
   TCHAR szPath[MAX_PATH] = _T("");
   GetModuleFileName(NULL, szPath, sizeof(szPath) - 1);
