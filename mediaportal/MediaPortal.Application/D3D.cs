@@ -378,6 +378,13 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
+
+      // reset device if necessary
+      Windowed = !Windowed;
+      ResetDevice();
+      Windowed = !Windowed;
+
+      // adjust form sizes and properties
       if (Windowed)
       {
         Log.Info("D3D: Switching from windowed mode to full screen");
@@ -441,6 +448,60 @@ namespace MediaPortal
       Update();
       Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+    }
+
+
+    /// <summary>
+    /// reset device if back buffer does not match skin dimensions (e.g. 16:10 display with 16:9 skin, 720p skin on 1080p display etc.)
+    /// </summary>
+    private void ResetDevice()
+    {
+      var skinSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+      var backBufferSize = new Size(GUIGraphicsContext.DirectXPresentParameters.BackBufferWidth, GUIGraphicsContext.DirectXPresentParameters.BackBufferHeight);
+
+      if (backBufferSize != skinSize)
+      {
+        Log.Info("Main: Back buffer dimensions do not match skin dimensions, re-creating D3D device");
+        // halt rendering
+        AppActive = false;
+        int activeWin = GUIWindowManager.ActiveWindow;
+
+        // disable event handlers
+        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+        GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
+
+        // build new D3D presentation parameters
+        BuildPresentParams(Windowed);
+        GUIGraphicsContext.DX9Device.Reset(_presentParams);
+
+        // stop window manager and dispose resources
+        GUIWindowManager.UnRoute();
+        GUIWindowManager.Dispose();
+        GUIFontManager.Dispose();
+        GUITextureManager.Dispose();
+        GUIGraphicsContext.DX9Device.EvictManagedResources();
+
+        // load resources
+        GUIGraphicsContext.Load();
+        GUITextureManager.Init();
+        GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+        GUIFontManager.InitializeDeviceObjects();
+
+        // restart window manager
+        GUIWindowManager.PreInit();
+        GUIWindowManager.ActivateWindow(activeWin);
+        GUIWindowManager.OnDeviceRestored();
+
+        // set new device for font manager
+        GUIFontManager.SetDevice();
+
+        // enable event handlers
+        GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
+        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+
+        // continue rendering
+        AppActive = true;
+      }
     }
 
 
@@ -560,7 +621,7 @@ namespace MediaPortal
 
         if (_needReset)
         {
-          if (!GUIGraphicsContext.IsDirectX9ExUsed())
+          if (GUIGraphicsContext.IsDirectX9ExUsed())
           {
             BuildPresentParams(Windowed);
           }
@@ -937,10 +998,10 @@ namespace MediaPortal
     /// <param name="windowed">true for window, false for fullscreen</param>
     protected void BuildPresentParams(bool windowed)
     {
-      // TODO: specify at least 1080p if supported by the GPU
       Log.Debug("D3D: BuildPresentParams()");
-      _presentParams.BackBufferWidth  = GUIGraphicsContext.currentScreen.Bounds.Width;
-      _presentParams.BackBufferHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
+      Size size = CalcMaxClientArea();
+      _presentParams.BackBufferWidth  = windowed ? size.Width  : GUIGraphicsContext.currentScreen.Bounds.Width;
+      _presentParams.BackBufferHeight = windowed ? size.Height : GUIGraphicsContext.currentScreen.Bounds.Height;
       _presentParams.BackBufferFormat = Format.Unknown;
  
       if (OSInfo.OSInfo.Win7OrLater())
@@ -1037,8 +1098,10 @@ namespace MediaPortal
         Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
       }
 
-
       // TODO: check for any capabilities that would not allow MP to run
+
+      // read skin information
+      GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
       // Set up the presentation parameters
       BuildPresentParams(Windowed);

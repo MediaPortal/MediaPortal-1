@@ -1611,10 +1611,6 @@ public class MediaPortalApp : D3D, IRender
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
               }
-              catch
-              {
-                Log.Warn("Main: Could not initialize volume handler");
-              }
               if (_stopOnLostAudioRenderer)
               {
                 g_Player.Stop();
@@ -1633,10 +1629,6 @@ public class MediaPortalApp : D3D, IRender
               catch (Exception exception)
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
-              }
-              catch
-              {
-                Log.Warn("Main: Could not initialize volume handler");
               }
               break;
           }
@@ -2114,10 +2106,6 @@ public class MediaPortalApp : D3D, IRender
       {
         Log.Warn("Main: OnResume - Could not initialize volume handler: ", exception.Message);
       }
-      catch
-      {
-        Log.Warn("Main: OonResume - Could not initialize volume handler");
-      }
       
       _lastOnresume = DateTime.Now;
 
@@ -2568,10 +2556,6 @@ public class MediaPortalApp : D3D, IRender
     Utils.FileExistsInCache(Config.GetSubFolder(Config.Dir.Thumbs, "") + "dummy.png");
     Utils.FileExistsInCache(Thumbs.Videos + "\\dummy.png");
     Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");
-
-    // Loading Theme
-    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIThemeManager.CurrentTheme));
-    GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
 
     // force WM_GETMINMAXINFO message before actual resizing
     Bounds = GUIGraphicsContext.currentScreen.Bounds;
