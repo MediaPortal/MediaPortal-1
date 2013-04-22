@@ -462,6 +462,7 @@ namespace MediaPortal
       if (backBufferSize != skinSize)
       {
         Log.Info("Main: Back buffer dimensions do not match skin dimensions, re-creating D3D device");
+
         // halt rendering
         AppActive = false;
         int activeWin = GUIWindowManager.ActiveWindow;
