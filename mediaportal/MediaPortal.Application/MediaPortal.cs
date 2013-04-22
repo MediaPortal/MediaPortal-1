@@ -4083,7 +4083,7 @@ public class MediaPortalApp : D3D, IRender
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
-          // reset idle timer for consistent timing after end pf playback
+          // reset idle timer for consistent timing after end 0f playback
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
           break;
       }
