@@ -1994,13 +1994,13 @@ namespace MediaPortal.Player
         return;
       }
 
-      if (chapters != null && _currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU)
+//      if (chapters != null && _currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU)
         if (_bPopupMenuAvailable)
           menuItems = MenuItems.All;
         else
           menuItems = MenuItems.Audio | MenuItems.Chapter | MenuItems.MainMenu | MenuItems.Subtitle;
-      else
-        menuItems = MenuItems.MainMenu;
+//      else
+//        menuItems = MenuItems.MainMenu;
     }
 
     protected void CurrentStreamInfo()
