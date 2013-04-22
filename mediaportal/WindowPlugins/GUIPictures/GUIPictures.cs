@@ -153,14 +153,14 @@ namespace MediaPortal.GUI.Pictures
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
                                                                 (int) Thumbs.ThumbLargeResolution, iRotate,
                                                                 Thumbs.SpeedThumbsLarge,
-                                                                true);
+                                                                true, false);
                       }
                       if (!File.Exists(thumbnailImage))
                       {
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
                                                                 (int) Thumbs.ThumbResolution, iRotate,
                                                                 Thumbs.SpeedThumbsSmall,
-                                                                false);
+                                                                false, false);
                       }
                     }
                     else
@@ -326,14 +326,14 @@ namespace MediaPortal.GUI.Pictures
                   thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
                                                           (int)Thumbs.ThumbLargeResolution, iRotate,
                                                           Thumbs.SpeedThumbsLarge,
-                                                          true);
+                                                          true, false);
                 }
                 if (!File.Exists(thumbnailImage))
                 {
                   thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImage, (int)Thumbs.ThumbResolution,
                                                           (int)Thumbs.ThumbResolution, iRotate,
                                                           Thumbs.SpeedThumbsSmall,
-                                                          false);
+                                                          false, false);
                 }
               }
               else

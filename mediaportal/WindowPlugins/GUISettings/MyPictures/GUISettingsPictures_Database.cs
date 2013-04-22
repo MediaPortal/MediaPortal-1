@@ -335,7 +335,7 @@ namespace MediaPortal.GUI.Settings
       {
         if (Util.Picture.CreateThumbnail(file, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
                                          (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge,
-                                         true))
+                                         true, false))
         {
           Log.Debug("GUIPictures Setting : Creation of missing large thumb successful for {0}", file);
           count++;
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.Settings
       {
         if (Util.Picture.CreateThumbnail(file, thumbnailImage, (int)Thumbs.ThumbResolution,
                                          (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall,
-                                         false))
+                                         false, false))
         {
           Log.Debug("GUIPictures Setting : Creation of missing thumb successful for {0}", file);
           count++;
@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.Settings
               {
                 if (Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int)Thumbs.ThumbResolution,
                                                  (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsLarge,
-                                                 true))
+                                                 true, false))
                 {
                   Log.Debug("GUIPictures Setting : Creation of missing large thumb successful for {0}", item.Path);
                   count++;
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.Settings
               {
                 if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
                                                  (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall,
-                                                 false))
+                                                 false, false))
                 {
                   Log.Debug("GUIPictures Setting : Creation of missing thumb successful for {0}", item.Path);
                   count++;
