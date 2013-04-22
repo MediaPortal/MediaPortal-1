@@ -381,7 +381,7 @@ namespace MediaPortal
 
       // reset device if necessary
       Windowed = !Windowed;
-      ResetDevice();
+      RecreateBackBuffer();
       Windowed = !Windowed;
 
       // adjust form sizes and properties
@@ -454,55 +454,49 @@ namespace MediaPortal
     /// <summary>
     /// reset device if back buffer does not match skin dimensions (e.g. 16:10 display with 16:9 skin, 720p skin on 1080p display etc.)
     /// </summary>
-    private void ResetDevice()
+    private void RecreateBackBuffer()
     {
-      var skinSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-      var backBufferSize = new Size(GUIGraphicsContext.DirectXPresentParameters.BackBufferWidth, GUIGraphicsContext.DirectXPresentParameters.BackBufferHeight);
+      Log.Debug("Main: RecreateBackBuffer()");
 
-      if (backBufferSize != skinSize)
-      {
-        Log.Info("Main: Back buffer dimensions do not match skin dimensions, re-creating D3D device");
+      // halt rendering
+      AppActive = false;
+      int activeWin = GUIWindowManager.ActiveWindow;
 
-        // halt rendering
-        AppActive = false;
-        int activeWin = GUIWindowManager.ActiveWindow;
+      // disable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+      GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
 
-        // disable event handlers
-        GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-        GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
+      // build new D3D presentation parameters
+      BuildPresentParams(Windowed);
+      GUIGraphicsContext.DX9Device.Reset(_presentParams);
 
-        // build new D3D presentation parameters
-        BuildPresentParams(Windowed);
-        GUIGraphicsContext.DX9Device.Reset(_presentParams);
+      // stop window manager and dispose resources
+      GUIWindowManager.UnRoute();
+      GUIWindowManager.Dispose();
+      GUIFontManager.Dispose();
+      GUITextureManager.Dispose();
+      GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-        // stop window manager and dispose resources
-        GUIWindowManager.UnRoute();
-        GUIWindowManager.Dispose();
-        GUIFontManager.Dispose();
-        GUITextureManager.Dispose();
-        GUIGraphicsContext.DX9Device.EvictManagedResources();
+      // load resources
+      GUIGraphicsContext.Load();
+      GUITextureManager.Init();
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+      GUIFontManager.InitializeDeviceObjects();
 
-        // load resources
-        GUIGraphicsContext.Load();
-        GUITextureManager.Init();
-        GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-        GUIFontManager.InitializeDeviceObjects();
+      // restart window manager
+      GUIWindowManager.PreInit();
+      GUIWindowManager.ActivateWindow(activeWin);
+      GUIWindowManager.OnDeviceRestored();
 
-        // restart window manager
-        GUIWindowManager.PreInit();
-        GUIWindowManager.ActivateWindow(activeWin);
-        GUIWindowManager.OnDeviceRestored();
+      // set new device for font manager
+      GUIFontManager.SetDevice();
 
-        // set new device for font manager
-        GUIFontManager.SetDevice();
+      // enable event handlers
+      GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
 
-        // enable event handlers
-        GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
-        GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
-
-        // continue rendering
-        AppActive = true;
-      }
+      // continue rendering
+      AppActive = true;
     }
 
 
