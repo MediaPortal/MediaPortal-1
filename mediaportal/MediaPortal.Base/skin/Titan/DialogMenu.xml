@@ -55,17 +55,19 @@
         <posY>475</posY>
         <width>890</width>
         <height>450</height>
-        <textXOff2>635</textXOff2>
+        <textXOff2>875</textXOff2>
         <textYOff2>16</textYOff2>
         <spinPosX>600</spinPosX>
         <spinPosY>840</spinPosY>
         <spinColor>FFFFFFFF</spinColor>
         <textXOff>35</textXOff>
         <textYOff>16</textYOff>
+				<font>TitanLight12</font>
+				<font2>TitanLight12</font2>
         <textcolor>FFFFFFFF</textcolor>
         <textcolor2>FFFFFFFF</textcolor2>
         <textcolorNoFocus>FF393939</textcolorNoFocus>
-        <textcolor2NoFocus>FF393939</textcolor2NoFocus>
+        <textcolorNoFocus2>FF393939</textcolorNoFocus2>
      		<selectedColor>FF000000</selectedColor>                
         <textureFocus>context_item_selected.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>
