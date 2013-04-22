@@ -614,6 +614,23 @@ public class MediaPortalApp : D3D, IRender
           Log.Error("Main: Cannot set current directory to {0}", applicationPath);
         }
 
+        // log  about available displays
+        foreach (var screen in Screen.AllScreens)
+        {
+          Log.Debug("Display: {0} - IsPrimary: {1} - BitsPerPixel: {2} - Bounds: {3}x{4} @ {5},{6} - WorkingArea: {7}x{8} @ {9},{10}",
+            screen.DeviceName, screen.Primary, screen.BitsPerPixel,
+            screen.Bounds.Width, screen.Bounds.Height, screen.Bounds.X, screen.Bounds.Y,
+            screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
+        }
+
+        // log information about available adapters
+        var enumeration = new D3DEnumeration();
+        enumeration.Enumerate();
+        foreach (GraphicsAdapterInfo ai in enumeration.AdapterInfoList)
+        {
+          Log.Debug("Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}", ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
+        }
+
         // Localization strings for new splash screen and for MediaPortal itself
         LoadLanguageString();
 
@@ -940,16 +957,6 @@ public class MediaPortalApp : D3D, IRender
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
-    }
-
-    // log information about available displays
-    Log.Debug("### Screen Debug Information ###");
-    foreach (var screen in Screen.AllScreens)
-    {
-      Log.Debug("DeviceName: {0} - IsPrimary: {1} - BitsPerPixel: {2} - Bounds: {3}x{4} @ {5},{6} - WorkingArea: {7}x{8} @ {9},{10}",
-        screen.DeviceName, screen.Primary, screen.BitsPerPixel,
-        screen.Bounds.Width, screen.Bounds.Height, screen.Bounds.X, screen.Bounds.Y,
-        screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
     }
 
     if (GUIGraphicsContext._useScreenSelector)
