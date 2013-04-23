@@ -427,15 +427,21 @@ void COverlayRenderer::DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY*
         hr = texture->LockRect(0, &lockedRect, NULL, 0);
         if (SUCCEEDED(hr))
         {
-          UINT32* dst = (UINT32*)lockedRect.pBits;
-          unsigned pixels = pOv->w * pOv->h;
-
-          // TODO
-          //if (pOv->stride != -1) 
-          //  ASSERT(false);
-
+          UINT32* pBits = (UINT32*)lockedRect.pBits;
           if (pOv->argb)
-            memcpy(dst, pOv->argb, pixels*4);
+          {
+			      for(int i = 0; i < pOv->h; i++)
+			      {
+				      UINT32 *pDst = pBits + ((pOv->y + i) * 1920) + pOv->x;
+				      UINT32 *pSrc = (UINT32*)pOv->argb + ((pOv->y + i) * pOv->stride) + pOv->x;
+				      UINT32 *pStart = pDst;
+
+				      for(;pDst < pStart + pOv->w;)
+				      {
+					      *pDst++ = *pSrc++;
+				      }
+			      }
+          }
           else 
             LogDebug("ovr: DrawBitmap - pOv->argb is NULL");
 
