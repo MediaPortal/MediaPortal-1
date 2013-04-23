@@ -181,6 +181,7 @@ namespace MediaPortal.Configuration.Sections
       ThreadStart ts = new ThreadStart(OnScanDatabaseThread);
       _scanThread = new Thread(ts);
       _scanThread.Name = "PicturesScan";
+      _scanThread.Priority = ThreadPriority.BelowNormal;
       _scanThread.Start();
     }
 
@@ -259,8 +260,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void CreateThumbsAndAddPictureToDB(string file)
     {
-      // Disable Rotate
-      int iRotate = 0; //= PictureDatabase.GetRotation(file);
+      int iRotate = PictureDatabase.GetRotation(file);
       if (iRotate == -1)
       {
         Log.Debug("PictureDatabase: Database is not available. File {0} has not been added", file);
@@ -377,8 +377,7 @@ namespace MediaPortal.Configuration.Sections
             }
             if (!item.IsFolder)
             {
-              // Disable Rotate
-              int iRotate = 0; //PictureDatabase.GetRotation(file);
+              int iRotate = PictureDatabase.GetRotation(item.Path);
               if (iRotate == -1)
               {
                 Log.Debug("PictureDatabase: Database is not available. File {0} has not been added", item.Path);

@@ -1075,34 +1075,34 @@ namespace MediaPortal.Util
           meta = frame.Metadata as BitmapMetadata;
           ret = frame.Thumbnail;
 
-          if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
-          {
-            if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
-            {
-              orientation =
-                (ExifOrientations)
-                Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
-            }
+          //if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
+          //{
+          //  if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
+          //  {
+          //    orientation =
+          //      (ExifOrientations)
+          //      Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
+          //  }
 
-            switch (orientation)
-            {
-              case ExifOrientations.Rotate90:
-                angle = -90;
-                break;
-              case ExifOrientations.Rotate180:
-                angle = 180;
-                break;
-              case ExifOrientations.Rotate270:
-                angle = 90;
-                break;
-            }
+          //  switch (orientation)
+          //  {
+          //    case ExifOrientations.Rotate90:
+          //      angle = -90;
+          //      break;
+          //    case ExifOrientations.Rotate180:
+          //      angle = 180;
+          //      break;
+          //    case ExifOrientations.Rotate270:
+          //      angle = 90;
+          //      break;
+          //  }
 
-            if (angle != 0) //on doit effectuer une rotation de l'image
-            {
-              ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
-              ret.Freeze();
-            }
-          }
+          //  if (angle != 0) //on doit effectuer une rotation de l'image
+          //  {
+          //    ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
+          //    ret.Freeze();
+          //  }
+          //}
 
           if (autocreateLargeThumbs)
           {
