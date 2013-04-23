@@ -159,32 +159,38 @@ void COverlayRenderer::ARGBOverlayProc(const BD_ARGB_OVERLAY* ov)
 
 void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
 {
+  ResetDirtyRect(pOv->w, pOv->h);
+
   if ((m_pPlanes[pOv->plane] && pOv) &&
       (m_pPlanes[pOv->plane]->height != pOv->h ||
       m_pPlanes[pOv->plane]->width != pOv->w ||
       m_pPlanes[pOv->plane]->x != pOv->x ||
       m_pPlanes[pOv->plane]->y != pOv->y))
   {
-    CloseOverlay(pOv->plane);    
+    CloseOverlay(pOv->plane);
+    CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
   }
 
-  ResetDirtyRect(pOv->w, pOv->h);
-  CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
+  if (!m_pPlanes[pOv->plane])
+    CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
 }
 
 void COverlayRenderer::OpenOverlay(const BD_ARGB_OVERLAY* pOv)
 {
+  ResetDirtyRect(pOv->w, pOv->h);
+
   if ((m_pPlanes[pOv->plane] && pOv) &&
       (m_pPlanes[pOv->plane]->height != pOv->h ||
       m_pPlanes[pOv->plane]->width != pOv->w ||
       m_pPlanes[pOv->plane]->x != pOv->x ||
       m_pPlanes[pOv->plane]->y != pOv->y))
   {
-    CloseOverlay(pOv->plane);    
+    CloseOverlay(pOv->plane);
+    CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
   }
 
-  ResetDirtyRect(pOv->w, pOv->h);
-  CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
+  if (!m_pPlanes[pOv->plane])
+    CreateFrontAndBackBuffers(pOv->plane, pOv->x, pOv->y, pOv->w, pOv->h);
 }
 
 void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
