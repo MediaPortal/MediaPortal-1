@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,6 +42,14 @@ public:
 		delete[] m_elements;
 	}
 
+	void Resize(int size)
+	{
+		m_count = 0;
+		m_pos = 0;
+		m_insertPos = 0;
+		m_size = size;
+	}
+
 	void Clear()
 	{
 		m_count = 0;
@@ -50,19 +58,23 @@ public:
 
 	bool IsFull() 
 	{
-		return m_count == m_size;
+		return m_count >= m_size;
 	}
 
 	bool IsEmpty()
 	{
-		return m_count == 0;
+		return m_count <= 0;
 	}
 
 	bool Put(T elem)
 	{
-		CAutoLock lock(this);
-		if ( m_count == m_size ) {
+		//CAutoLock lock(this);
+		if ( m_count >= m_size ) {
 			Log("MyQueue: No more space");
+			if (m_count > m_size) 
+			{
+			  Log("MyQueue: Error!!, m_count > m_size");
+		  }
 			return false;
 		}
 		m_count++;
@@ -73,8 +85,15 @@ public:
 
 	T Get()
 	{
-		CAutoLock lock(this);
-		if ( m_count == 0 ) return NULL;
+		//CAutoLock lock(this);
+		if ( m_count <= 0 ) {
+			Log("MyQueue: Queue empty");
+			if (m_count < 0) 
+			{
+			  Log("MyQueue: Error!!, m_count < 0");
+		  }
+			return NULL;
+		}
 		m_count--;
 		T ret;
 		ret = m_elements[m_pos];
@@ -84,10 +103,19 @@ public:
 
 	T Peek()
 	{
-		CAutoLock lock(this);
-		if ( m_count == 0 ) return NULL;
+		//CAutoLock lock(this);
+		if ( m_count <= 0 ) return NULL;
 		T ret;
 		ret = m_elements[m_pos];
+		return ret;
+	}
+
+	T PeekNext()
+	{
+		//CAutoLock lock(this);
+		if ( m_count <= 1 ) return NULL;
+		T ret;
+		ret = m_elements[NextIdx(m_pos)];
 		return ret;
 	}
 
