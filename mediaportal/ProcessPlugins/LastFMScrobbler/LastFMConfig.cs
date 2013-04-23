@@ -38,6 +38,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         numRandomness.Value = xmlreader.GetValueAsInt("lastfm:test", "randomness", 100);
         chkAnnounce.Checked = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         chkScrobble.Checked = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
+        chkDiferentVersions.Checked = xmlreader.GetValueAsBool("lastfm:test", "allowDiffVersions", true);
       }
 
       if (string.IsNullOrEmpty(MusicDatabase.Instance.GetLastFMSK())) return;
