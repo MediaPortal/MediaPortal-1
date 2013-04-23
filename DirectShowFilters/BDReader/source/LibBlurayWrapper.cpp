@@ -84,6 +84,7 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_play_title(NULL),
   _bd_menu_call(NULL),
   _bd_register_overlay_proc(NULL),
+  _bd_set_scr(NULL),
   _bd_user_input(NULL),
   _bd_mouse_select(NULL),
   _bd_get_meta(NULL),
@@ -195,6 +196,7 @@ bool CLibBlurayWrapper::Initialize()
   _bd_play_title = (API_bd_play_title)GetProcAddress(m_hDLL, "bd_play_title");
   _bd_menu_call = (API_bd_menu_call)GetProcAddress(m_hDLL, "bd_menu_call");
   _bd_register_overlay_proc = (API_bd_register_overlay_proc)GetProcAddress(m_hDLL, "bd_register_overlay_proc");
+  _bd_set_scr = (API_bd_set_scr)GetProcAddress(m_hDLL, "bd_set_scr");
   _bd_user_input = (API_bd_user_input)GetProcAddress(m_hDLL, "bd_user_input");
   _bd_mouse_select = (API_bd_mouse_select)GetProcAddress(m_hDLL, "bd_mouse_select");
   _bd_get_meta = (API_bd_get_meta)GetProcAddress(m_hDLL, "bd_get_meta");
@@ -237,6 +239,7 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_play_title ||
       !_bd_menu_call ||
       !_bd_register_overlay_proc ||
+      !_bd_set_scr ||
       !_bd_user_input ||
       !_bd_mouse_select ||
       !_bd_get_meta ||
@@ -743,6 +746,17 @@ bool CLibBlurayWrapper::GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* p
 {
   CAutoLock cLibLock(&m_csLibLock);
   return _bd_get_clip_infos(m_pBd, pClip, pClipStartTime, pStreamStartTime, pBytePos, pDuration) == 1 ? true : false;
+}
+
+
+bool CLibBlurayWrapper::SetScr(INT64 pPts)
+{
+  CAutoLock cLibLock(&m_csLibLock);
+  
+  if (m_pBd)
+    return _bd_set_scr(m_pBd, pPts) == 1 ? true : false;
+
+  return false;
 }
 
 bool CLibBlurayWrapper::ProvideUserInput(INT64 pPts, UINT32 pKey)

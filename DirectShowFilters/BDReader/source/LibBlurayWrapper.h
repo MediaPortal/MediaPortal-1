@@ -86,6 +86,7 @@ typedef int (*API_bd_read_ext)(BLURAY *, unsigned char *, int, BD_EVENT *);
 typedef int (*API_bd_play_title)(BLURAY *, unsigned);
 typedef int (*API_bd_menu_call)(BLURAY *, int64_t);
 typedef int (*API_bd_register_overlay_proc)(BLURAY *, void *, bd_overlay_proc_f);
+typedef int (*API_bd_set_scr)(BLURAY *, int64_t);
 typedef int (*API_bd_user_input)(BLURAY *, int64_t, uint32_t);
 typedef int (*API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
 typedef struct meta_dl* (*API_bd_get_meta)(BLURAY *);
@@ -120,6 +121,7 @@ public:
   bool CurrentPosition(UINT64& pPosition, UINT64& pTotal);
   BLURAY_CLIP_INFO* CurrentClipInfo();
   bool GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* pStreamStartTime, UINT64* pBytePos, UINT64* pDuration);
+  bool SetScr(INT64 pPts);
   bool ProvideUserInput(INT64 pPts, UINT32 pKey);
   bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
@@ -218,6 +220,7 @@ private:
   API_bd_play_title _bd_play_title;
   API_bd_menu_call _bd_menu_call;
   API_bd_register_overlay_proc _bd_register_overlay_proc;
+  API_bd_set_scr _bd_set_scr;
   API_bd_user_input _bd_user_input;
   API_bd_mouse_select _bd_mouse_select;
   API_bd_get_meta _bd_get_meta;
