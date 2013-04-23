@@ -2557,12 +2557,12 @@ namespace MediaPortal.Player
 
         while (true)
         {
-          if (g_Player.ForcePlay && g_Player.SetResumeBDTitleState < 1000)
+          if (g_Player.ForcePlay && g_Player.SetResumeBDTitleState < g_Player.BdDefaultTitle)
           {
             if (titles.Count == 1)
             {
               _titleToPlay = 0;
-              g_Player.SetResumeBDTitleState = 900; //fix for resume on Remux BD
+              g_Player.SetResumeBDTitleState = g_Player.BdRemuxTitle;
             }
             else
             {
@@ -2578,7 +2578,7 @@ namespace MediaPortal.Player
               // BD has only one title (remux one)
               _forceTitle = true;
               _titleToPlay = 0;
-              g_Player.SetResumeBDTitleState = 900; //fix for resume on Remux BD
+              g_Player.SetResumeBDTitleState = g_Player.BdRemuxTitle;
 
               if (g_Player.SetResumeBDTitleState == -1)
               {
