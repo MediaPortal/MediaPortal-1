@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
@@ -42,14 +42,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
                "ProcessPlugins.LastFMScrobbler.LastFMScrobblerDisabled.gif")]
   public class LastFMScrobbler : IPlugin, ISetupForm
   {
-    private class PlaybackStop
-    {
-      public string Filename;
-      public int Stoptime;
-    }
-
-    private static BackgroundWorker _announceWorker;
-    private static BackgroundWorker _scrobbleWorker;
     private static readonly Random Randomizer = new Random();
     private static bool _allowMultipleVersions = true;
     private static int _randomness = 100;
@@ -193,14 +185,13 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      // only carry on if there is actually something to do
-      if (!_announceTracks && !MusicState.AutoDJEnabled) return;
-
       if (type != g_Player.MediaType.Music) return;
 
-      _announceWorker = new BackgroundWorker();
-      _announceWorker.DoWork += AnnounceWorkerDoWork;
-      _announceWorker.RunWorkerAsync(filename);
+      // only carry on if there is actually something to do
+      if (_announceTracks)
+      {
+        new Thread(() => AnnounceTrack(filename)) { Name = "Announce/Auto DJ" }.Start();
+      }
     }
 
     /// <summary>
@@ -257,19 +248,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
     #endregion
 
-    #region Background Workers
+    #region Background Threads
 
     /// <summary>
-    /// Background worker to announce now playing details on last.fm website
-    /// Also triggers Auto DJ mode adding similar track to the playlist
+    /// Announce now playing details on last.fm website
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e">Argument should be the path of a file as a string</param>
-    private static void AnnounceWorkerDoWork(object sender, DoWorkEventArgs e)
+    /// <param name="filename">track to be announced</param>
+    private static void AnnounceTrack(string filename)
     {
       // Get song details and announce on last.fm
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-      var plI = pl.First(plItem => plItem.FileName == (string) e.Argument);
+      var plI = pl.First(plItem => plItem.FileName == filename);
       if (plI == null || plI.MusicTag == null)
       {
         Log.Info("Unable to announce song: {0}  as it does not exist in the playlist");
@@ -278,26 +267,23 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       var currentSong = (MusicTag) plI.MusicTag;
 
-      if (_announceTracks)
+      try
       {
-        try
+        LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
+                                       currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+        Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
+      }
+      catch (LastFMException ex)
+      {
+        if (ex.Source == "")
         {
-          LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
-                                         currentSong.Duration.ToString(CultureInfo.InvariantCulture));
-          Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
+          Log.Error("Last.fm error when announcing now playing track: {0} - {1}",currentSong.Artist, currentSong.Title);
+          Log.Error(ex.Message);
         }
-        catch (LastFMException ex)
+        else
         {
-          if (ex.Source == "")
-          {
-            Log.Error("Last.fm error when announcing now playing track: {0} - {1}",currentSong.Artist, currentSong.Title);
-            Log.Error(ex.Message);
-          }
-          else
-          {
-            Log.Error("Exception when updating now playing track on last.fm");
-            Log.Error(ex.InnerException);
-          }
+          Log.Error("Exception when updating now playing track on last.fm");
+          Log.Error(ex.InnerException);
         }
       }
 
@@ -305,6 +291,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         AutoDJ(currentSong.Title, currentSong.Artist);
       }
+
     }
 
     /// <summary>
@@ -318,23 +305,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // only scrobble if enabled
       if (!_scrobbleTracks) return;
 
-      var playbackStop = new PlaybackStop { Filename = filename, Stoptime = stoptime };
-      _scrobbleWorker = new BackgroundWorker();
-      _scrobbleWorker.DoWork += ScrobbleWorkerDoWork;
-      _scrobbleWorker.RunWorkerAsync(playbackStop);
+      new Thread(() => ScrobbleTrack(filename, stoptime)) {Name = "Scrobble Thread"}.Start();
     }
 
     /// <summary>
-    /// Background worker to scrobble track to last.fm
-    /// Validates the rules for submission such as track > 30 seconds and more than 50% played
+    /// Scrobble track to last.fm
+    /// private static void ScrobbleWorkerDoWork(object sender, DoWorkEventArgs e)
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e">Instance of internal class PlaybackStop which contains stoptime and filename</param>
-    private static void ScrobbleWorkerDoWork(object sender, DoWorkEventArgs e)
+    /// <param name="filename">filename to scrobble</param>
+    /// <param name="stoptime">how long song had played for</param>
+    private static void ScrobbleTrack(string filename, int stoptime)
     {
-      var filename = ((PlaybackStop)e.Argument).Filename;
-      var stoptime = ((PlaybackStop)e.Argument).Stoptime;
-
       // get song details and if appropriate scrobble to last.fm
 
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
