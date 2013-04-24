@@ -124,9 +124,18 @@ public class MediaPortalApp : D3D, IRender
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_CLOSE                 = 0xF060; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SCF_ISSECURE             = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MAXIMIZE              = 0xF030; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_MINIMIZE              = 0xF020; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_SCREENSAVE            = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_MONITORPOWER          = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_MOVE                  = 0xF010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_NEXTWINDOW            = 0xF040; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_PREVWINDOW            = 0xF050; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_RESTORE               = 0xF120; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_SCREENSAVE            = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_SIZE                  = 0xF000; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  private const int SC_TASKLIST              = 0xF130; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int WM_ENDSESSION            = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
   private const int WM_DEVICECHANGE          = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
   private const int DBT_DEVICEARRIVAL        = 0x8000; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
@@ -153,8 +162,10 @@ public class MediaPortalApp : D3D, IRender
   private const int SIZE_MAXHIDE             = 4;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632646(v=vs.85).aspx
   private const int WM_GETMINMAXINFO         = 0x0024; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632626(v=vs.85).aspx
   private const int WM_MOVING                = 0x0216; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632632(v=vs.85).aspx
-  private const int WM_POWERBROADCAST        = 0x0218; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  private const int WM_ENTERSIZEMOVE         = 0x0231; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632622(v=vs.85).aspx
+  private const int WM_EXITSIZEMOVE          = 0x0232; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms632623(v=vs.85).aspx
   private const int WM_DISPLAYCHANGE         = 0x007E; // http://msdn.microsoft.com/en-us/library/windows/desktop/dd145210(v=vs.85).aspx
+  private const int WM_POWERBROADCAST        = 0x0218; //http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
   private const int PBT_APMSUSPEND           = 0x0004; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372721(v=vs.85).aspx
   private const int PBT_APMRESUMECRITICAL    = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372719(v=vs.85).aspx
   private const int PBT_APMRESUMESUSPEND     = 0x0007; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa372720(v=vs.85).aspx
@@ -1274,6 +1285,16 @@ public class MediaPortalApp : D3D, IRender
           OnGetMinMaxInfo(ref msg);
           break;
 
+        case WM_ENTERSIZEMOVE:
+          Log.Debug("Main: WM_ENTERSIZEMOVE");
+          //LastRect = new RECT {top = Location.Y, right = Location.X, left = Location.X + Size.Width, bottom = Location.Y + Size.Height};
+          break;
+
+        case WM_EXITSIZEMOVE:
+          Log.Debug("Main: WM_EXITSIZEMOVE");
+          //LastRect = new RECT {top = Location.Y, right = Location.X, left = Location.X + Size.Width, bottom = Location.Y + Size.Height};
+          break;
+
         // only allow window to be moved inside a valid working area
         case WM_MOVING:
           OnMoving(ref msg);
@@ -1397,6 +1418,42 @@ public class MediaPortalApp : D3D, IRender
         MinimizeToTray();
         break;
 
+      case SC_MAXIMIZE:
+        Log.Debug("Main: SC_MAXIMIZE");
+        break;
+
+      case SC_RESTORE:
+        Log.Debug("Main: SC_RESTORE");
+        break;
+
+      case SC_SIZE:
+        Log.Debug("Main: SC_SIZE");
+        break;
+
+      case SC_MOVE:
+        Log.Debug("Main: SC_MOVE");
+        break;
+
+      case SC_NEXTWINDOW:
+        Log.Debug("Main: SC_NEXTWINDOW");
+        break;
+
+      case SC_PREVWINDOW:
+        Log.Debug("Main: SC_PREVWINDOWE");
+        break;
+
+      case SC_TASKLIST:
+        Log.Debug("Main: SC_TASKLIST");
+        break;
+
+      case SC_CLOSE:
+        Log.Debug("Main: SC_CLOSE");
+        break;
+
+      case SCF_ISSECURE:
+        Log.Debug("Main: SCF_ISSECURE");
+        break;
+
       // Windows is requesting to turn off the display
       case SC_MONITORPOWER:
         int displayState = msg.LParam.ToInt32();
@@ -1442,11 +1499,11 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnPowerBroadcast(ref Message msg)
   {
-    Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+    Log.Debug("Main: WM_POWERBROADCAST ({0})", msg.WParam.ToInt32());
     switch (msg.WParam.ToInt32())
     {
       case PBT_APMSUSPEND:
-        Log.Info("Main: Suspending operation");
+        Log.Info("Main: Suspending operation (PBT_APMSUSPEND");
         PluginManager.WndProc(ref msg);
         OnSuspend();
         break;
@@ -1456,13 +1513,19 @@ public class MediaPortalApp : D3D, IRender
         OnResume(); // no special handling of automatic resume yet
         break;
 
+      // only for Windows XP
       case PBT_APMRESUMECRITICAL:
+        Log.Info("Main: Resuming operation (PBT_APMRESUMECRITICAL");
+        OnResume();
+        break;
+
       case PBT_APMRESUMESUSPEND:
-        Log.Info("Main: Resuming operation");
+        Log.Info("Main: Resuming operation (PBT_APMRESUMESUSPEND)");
         OnResume();
         break;
 
       case PBT_POWERSETTINGCHANGE:
+        Log.Info("Main: Power settings changed (PBT_POWERSETTINGSCHANGE)");
         var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
         var data = (IntPtr)(msg.LParam.ToInt32() + Marshal.SizeOf(ps));
 
@@ -1534,7 +1597,7 @@ public class MediaPortalApp : D3D, IRender
     switch (loword)
     {
       case WA_INACTIVE:
-        Log.Info("Main: Deactivation Request Received");
+        Log.Info("Main: Deactivation request received (WA_INACTIVE)");
         if (RefreshRateChanger.RefreshRateChangeRunning)
         {
           Log.Info("Main: Refresh rate changer running. Ignoring deactivation request");
@@ -1545,9 +1608,14 @@ public class MediaPortalApp : D3D, IRender
           MinimizeToTray();
         }
         break;
+
       case WA_ACTIVE:
+        Log.Info("Main: Activation request received (WA_ACTIVATE)");
+        RestoreFromTray();
+        break;
+      
       case WA_CLICKACTIVE:
-        Log.Info("Main: Activation Request Received");
+        Log.Info("Main: Activation reuqest received (WA_CLICKACTIVATE)");
         RestoreFromTray();
         break;
     }
@@ -1681,6 +1749,7 @@ public class MediaPortalApp : D3D, IRender
   private void OnGetMinMaxInfo(ref Message msg)
   {
     Log.Debug("Main: WM_GETMINMAXINFO");
+
     Screen screen = Screen.FromControl(this);
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
     {
@@ -1697,14 +1766,14 @@ public class MediaPortalApp : D3D, IRender
 
     if (Windowed)
     {
-      double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width/Width,(double)Screen.PrimaryScreen.WorkingArea.Height/Height);
+      double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
       var mmi              = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
       mmi.ptMaxSize.x      = (int)(Width*ratio);
       mmi.ptMaxSize.y      = (int)(Height*ratio);
       mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
       mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
-      mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width/4;
-      mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height/4;
+      mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
+      mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
       mmi.ptMaxTrackSize.x = Screen.PrimaryScreen.WorkingArea.Right - Screen.PrimaryScreen.WorkingArea.Left;
       mmi.ptMaxTrackSize.y = Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.WorkingArea.Top;
       Marshal.StructureToPtr(mmi, msg.LParam, true);
@@ -1712,7 +1781,7 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
-      var mmi              = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof (MINMAXINFO));
+      var mmi              = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
       mmi.ptMaxSize.x      = Screen.PrimaryScreen.Bounds.Width;
       mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
       mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
@@ -1744,7 +1813,6 @@ public class MediaPortalApp : D3D, IRender
     long gcd         = GCD(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
     double ratioX    = (double) GUIGraphicsContext.SkinSize.Width/gcd;
     double ratioY    = (double) GUIGraphicsContext.SkinSize.Height/gcd;
-    Rectangle bounds = GUIGraphicsContext.currentScreen.WorkingArea;
 
     switch (msg.WParam.ToInt32())
     {
@@ -1752,66 +1820,61 @@ public class MediaPortalApp : D3D, IRender
       case WMSZ_LEFT:
       case WMSZ_RIGHT:
       case WMSZ_BOTTOMRIGHT:
-        rc.bottom = rc.top + border.Height + (int) (ratioY*width/ratioX);
+        rc.bottom = rc.top + border.Height + (int)(ratioY * width / ratioX);
         break;
       // adjust width by overriding right
       case WMSZ_TOP:
       case WMSZ_BOTTOM:
-        rc.right = rc.left + border.Width + (int) (ratioX*height/ratioY);
+        rc.right = rc.left + border.Width + (int)(ratioX * height / ratioY);
         break;
       // adjust width by overriding left
       case WMSZ_TOPLEFT:
       case WMSZ_BOTTOMLEFT:
-        rc.left = rc.right - border.Width - (int) (ratioX*height/ratioY);
+        rc.left = rc.right - border.Width - (int)(ratioX * height / ratioY);
         break;
       // adjust height by overriding top
       case WMSZ_TOPRIGHT:
-        rc.top = rc.bottom - border.Height - (int) (ratioY*width/ratioX);
+        rc.top = rc.bottom - border.Height - (int)(ratioY * width / ratioX);
         break;
     }
 
-    // TODO: fix window snapback when resizing while only being partial on one screen
-    // out of bounds check
-    if (rc.top < bounds.Top || rc.bottom > bounds.Bottom || rc.right > bounds.Right || rc.left < bounds.Left)
+    Size maxClientSize = CalcMaxClientArea();
+    if (rc.right - rc.left - border.Width > maxClientSize.Width)
     {
-      rc = LastRect;
-    }
-
-    // TODO: fix window going to minimum size when resizing while only being partial on one screen
-    // minimum size check, form cannot be smaller than a quarter of the initial skin size plus window borders
-    if (rc.right - rc.left < GUIGraphicsContext.SkinSize.Width/4 + border.Width)
-    {
+      Log.Debug("Main: Cannot resize beyond maximum aspect ratio safe size (Reqested Size:{0}x{1})", rc.right - rc.left, rc.bottom, rc.top);
       rc = LastRect;
     }
 
     // only redraw if rectangle size changed
     if (((rc.right - rc.left) != (LastRect.right - LastRect.left)) || ((rc.bottom - rc.top) != (LastRect.bottom - LastRect.top)))
     {
-      Log.Info("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})",
+      Log.Info("Main: Aspect ratio safe resizing from {0}x{1} to {2}x{3} (new Client Size {4}x{5})",
                LastRect.right - LastRect.left, LastRect.bottom - LastRect.top,
                rc.right - rc.left, rc.bottom - rc.top,
                rc.right - rc.left - border.Width, rc.bottom - rc.top - border.Height);
       OnPaintEvent();
     }
 
-    // adjust mouse pointer position
-    if (Cursor.Position.X > rc.right)
+    // snapback cursor to window border if needed
+    Point pos = Cursor.Position;
+    if (pos.X > rc.right)
     {
-      Cursor.Position = new Point(rc.right, Cursor.Position.Y);
+      pos.X = rc.right;
     }
-    else if (Cursor.Position.X < rc.left)
+    else if (pos.X < rc.left)
     {
-      Cursor.Position = new Point(rc.left, Cursor.Position.Y);
+      pos.X = rc.left;
     }
 
-    if (Cursor.Position.Y > rc.bottom)
+    if (pos.Y > rc.bottom)
     {
-      Cursor.Position = new Point(Cursor.Position.X, rc.bottom);
+      pos.Y = rc.bottom;
     }
-    else if (Cursor.Position.X < rc.top)
+    else if (pos.Y < rc.top)
     {
-      Cursor.Position = new Point(Cursor.Position.X, rc.top);
+      pos.Y = rc.top;
     }
+    Cursor.Position = pos;
 
     Marshal.StructureToPtr(rc, msg.LParam, false);
     LastRect = rc;
@@ -1827,29 +1890,46 @@ public class MediaPortalApp : D3D, IRender
   {
     int x = unchecked((short)msg.LParam);
     int y = unchecked((short)((uint)msg.LParam >> 16));
-    Log.Debug("Main: WM_SIZE ({0}x{1})", x, y);
     switch (msg.WParam.ToInt32())
     {
       case SIZE_RESTORED:
-        Size maxClientSize = CalcMaxClientArea();
-        if (x > maxClientSize.Width || y > maxClientSize.Height)
+        Log.Debug("Main: WM_SIZE (SIZE_RESTORED: {0}x{1})", x, y);
+        if (Windowed)
         {
-          ClientSize = maxClientSize;
-          break;
-        }
+          Size maxClientSize = CalcMaxClientArea();
+          if (x > maxClientSize.Width || y > maxClientSize.Height)
+          {
+            Log.Debug("Main: Requested client  size {0}x{1} is larger than the maximum aspect ratio safe client size of {2}x{3} - overriding", 
+              x, y, maxClientSize.Width, maxClientSize.Height);
+            ClientSize = maxClientSize;
+            break;
+          }
 
-        var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
-        var height = (int)((double)x * GUIGraphicsContext.SkinSize.Height / GUIGraphicsContext.SkinSize.Width);
-        if (height != y && Windowed)
-        {
-          Log.Info("Main: Overriding size from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
-          ClientSize = new Size(x, height);
+          var border = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
+          var height = (int)((double)x * GUIGraphicsContext.SkinSize.Height / GUIGraphicsContext.SkinSize.Width);
+          if (height != y && Windowed)
+          {
+            Log.Info("Main: Overriding size from {0}x{1} to {2}x{3} (Skin resized to {4}x{5})", 
+              x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
+            ClientSize = new Size(x, height);
+          }
         }
         break;
+
       case SIZE_MINIMIZED:
+        Log.Debug("Main: WM_SIZE (SIZE_MINIMIZED: {0}x{1})", x, y);
+        break;
+      
       case SIZE_MAXIMIZED:
+        Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
+        break;
+      
       case SIZE_MAXSHOW:
+        Log.Debug("Main: WM_SIZE (SIZE_MAXSHOW: {0}x{1})", x, y);
+        break;
+      
       case SIZE_MAXHIDE:
+        Log.Debug("Main: WM_SIZE (SIZE_MAXHIDE: {0}x{1})", x, y);
         break;
     }
     msg.Result = (IntPtr)0;
@@ -1862,36 +1942,8 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnMoving(ref Message msg)
   {
-    Log.Debug("Main: WM_MOVING");
     var rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
-
-    bool isTopLeftInsideBounds = false;
-    foreach (Screen monitor in Screen.AllScreens)
-    {
-      isTopLeftInsideBounds = monitor.WorkingArea.Contains(new Point(rc.left, rc.top));
-      if (isTopLeftInsideBounds)
-      {
-        break;
-      }
-    }
-
-    bool isBottomRightInsideBounds = false;
-    foreach (Screen monitor in Screen.AllScreens)
-    {
-      isBottomRightInsideBounds = monitor.WorkingArea.Contains(new Point(rc.right, rc.bottom));
-      if (isBottomRightInsideBounds)
-      {
-        break;
-      }
-    }
-
-    if (!isTopLeftInsideBounds || !isBottomRightInsideBounds)
-    {
-      rc = LastRect;
-    }
-
-    Marshal.StructureToPtr(rc, msg.LParam, false);
-    LastRect = rc;
+    Log.Debug("Main: WM_MOVING (TopLeft: {0},{1} - BottomRight: {2},{3})", rc.left, rc.top, rc.right, rc.bottom);
     msg.Result = (IntPtr)1;
   }
 

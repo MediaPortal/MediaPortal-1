@@ -122,6 +122,7 @@ namespace MediaPortal
     protected PlayListPlayer       PlaylistPlayer;           // 
     protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
     protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
+    protected Point                LastCursorPosition;       // tracks last cursor position during window moving
     protected static SplashScreen  SplashScreen;             // splash screen object
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
 
