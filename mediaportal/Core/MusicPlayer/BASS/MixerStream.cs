@@ -25,6 +25,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
 
+    private bool _disposed = false;
+
     #endregion
 
     #region Properties
@@ -620,6 +622,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
+      if (_disposed)
+      {
+        return;
+      }
+
+      _disposed = true;
+
       Log.Debug("BASS: Disposing Mixer Stream");
 
       try

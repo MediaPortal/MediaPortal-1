@@ -1133,11 +1133,11 @@ namespace MediaPortal.MusicPlayer.BASS
         _mixer.Dispose();
       }
 
-      foreach (MusicStream stream in _streams)
+      for (int i = 0; i < _streams.Count; i++)
       {
-        if (stream != null)
+        if (_streams[i] != null)
         {
-          stream.Dispose();
+          _streams[i].Dispose();
         }
       }
 
