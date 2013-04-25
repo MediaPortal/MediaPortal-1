@@ -37,6 +37,7 @@ namespace TvEngine
     private const bool DefaultRunAtStrart = true;
     private const string DefaultProgram = "ComSkip.exe";
     private const string DefaultParameters = "\"{0}\"";
+    private const ProcessPriorityClass DefaultPriority = ProcessPriorityClass.BelowNormal;
 
     #endregion Constants
 
@@ -45,6 +46,7 @@ namespace TvEngine
     private static bool _runAtStart = DefaultRunAtStrart;
     private static string _program = DefaultProgram;
     private static string _parameters = DefaultParameters;
+    private static ProcessPriorityClass _priority = DefaultPriority;
 
     #endregion Members
 
@@ -63,7 +65,7 @@ namespace TvEngine
     /// </summary>
     public string Version
     {
-      get { return "1.0.2.0"; }
+      get { return "1.0.3.0"; }
     }
 
     /// <summary>
@@ -101,6 +103,12 @@ namespace TvEngine
       set { _parameters = value; }
     }
 
+    internal static ProcessPriorityClass Priority
+    {
+      get { return _priority; }
+      set { _priority = value; }
+    }
+
     #endregion Properties
 
     #region IPlugin Members
@@ -135,33 +143,18 @@ namespace TvEngine
 
     #region Implementation
 
-    private static void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
+    private void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       try
       {
         TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
 
-        if (tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
+        if ((tvEvent.EventType == TvServerEventType.RecordingStarted && _runAtStart)
+          || (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart))
         {
           Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
 
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
-
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
-                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
-
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
-        }
-        else if (tvEvent.EventType == TvServerEventType.RecordingEnded && !_runAtStart)
-        {
-          Channel channel = Channel.Retrieve(tvEvent.Recording.IdChannel);
-
-          string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
-
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
-                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
-
-          LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+          LaunchProcess(tvEvent.Recording.FileName, channel.DisplayName);
         }
       }
       catch (Exception ex)
@@ -180,6 +173,9 @@ namespace TvEngine
           Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
         _program = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
         _parameters = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
+
+        var priorityString = layer.GetSetting("ComSkipLauncher_Priority", DefaultPriority.ToString()).Value;
+        _priority = (ProcessPriorityClass)Enum.Parse(typeof(ProcessPriorityClass), priorityString);
       }
       catch (Exception ex)
       {
@@ -207,6 +203,10 @@ namespace TvEngine
 
         setting = layer.GetSetting("ComSkipLauncher_Parameters");
         setting.Value = _parameters;
+        setting.Persist();
+
+        setting = layer.GetSetting("ComSkipLauncher_Priority");
+        setting.Value = _priority.ToString();
         setting.Persist();
       }
       catch (Exception ex)
@@ -240,8 +240,18 @@ namespace TvEngine
       return output;
     }
 
-    internal static void LaunchProcess(string program, string parameters, string workingFolder,
-                                       ProcessWindowStyle windowStyle)
+    internal void LaunchProcess(string fileName, string channel)
+    {
+      string parameters = ProcessParameters(_parameters, fileName, channel);
+
+      Log.Info("ComSkipLauncher: Recording " + ((_runAtStart) ? "started" : "ended") + " ({0} on {1}), launching program ({2} {3}) priority: {4} ...",
+               fileName, channel, _program, parameters, _priority.ToString());
+
+      LaunchProcess(_program, parameters, _priority, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
+    }
+
+    internal static void LaunchProcess(string program, string parameters, ProcessPriorityClass priority, string workingFolder,
+                                       ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal)
     {
       try
       {
@@ -257,6 +267,7 @@ namespace TvEngine
         }
 
         process.Start();
+        process.PriorityClass = priority;
       }
       catch (Exception ex)
       {

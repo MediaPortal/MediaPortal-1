@@ -30,6 +30,7 @@ using TvLibrary.Log;
 using TvEngine;
 using TvControl;
 using TvDatabase;
+using System.Collections.Generic;
 
 namespace SetupTv.Sections
 {
@@ -73,6 +74,12 @@ namespace SetupTv.Sections
       set { textBoxParameters.Text = value; }
     }
 
+    public ProcessPriorityClass Priority
+    {
+      get { return (ProcessPriorityClass)comboBoxPriority.SelectedValue; }
+      set { comboBoxPriority.SelectedValue = value; }
+    }
+
     #endregion Properties
 
     #region Constructor
@@ -93,6 +100,7 @@ namespace SetupTv.Sections
       ComSkipLauncher.RunAtStart = this.RunAtStart;
       ComSkipLauncher.Program = this.Program;
       ComSkipLauncher.Parameters = this.Parameters;
+      ComSkipLauncher.Priority = this.Priority;
 
       ComSkipLauncher.SaveSettings();
 
@@ -105,9 +113,12 @@ namespace SetupTv.Sections
 
       ComSkipLauncher.LoadSettings();
 
+      EnumCombo.PopulateCombo<ProcessPriorityClass>(comboBoxPriority);
+
       RunAtStart = ComSkipLauncher.RunAtStart;
       Program = ComSkipLauncher.Program;
       Parameters = ComSkipLauncher.Parameters;
+      Priority = ComSkipLauncher.Priority;
 
       base.OnSectionActivated();
     }
@@ -135,7 +146,7 @@ namespace SetupTv.Sections
       {
         string parameters = ComSkipLauncher.ProcessParameters(param, textBoxTest.Text, "test");
 
-        ComSkipLauncher.LaunchProcess(program, parameters, Path.GetDirectoryName(program), ProcessWindowStyle.Normal);
+        ComSkipLauncher.LaunchProcess(program, parameters, ProcessPriorityClass.Normal, Path.GetDirectoryName(program), ProcessWindowStyle.Normal);
       }
       catch (Exception ex)
       {
