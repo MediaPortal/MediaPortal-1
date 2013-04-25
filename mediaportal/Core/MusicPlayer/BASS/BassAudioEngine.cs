@@ -1133,11 +1133,11 @@ namespace MediaPortal.MusicPlayer.BASS
         _mixer.Dispose();
       }
 
-      foreach (MusicStream stream in _streams)
+      for (int i = 0; i < _streams.Count; i++)
       {
-        if (stream != null)
+        if (_streams[i] != null)
         {
-          stream.Dispose();
+          _streams[i].Dispose();
         }
       }
 
@@ -1775,7 +1775,6 @@ namespace MediaPortal.MusicPlayer.BASS
       // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS Stop";
                      MusicStream stream = GetCurrentStream();
                      try
                      {
@@ -1878,7 +1877,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
                      NotifyPlaying = false;
                    }
-        ).Start();
+        ) { Name = "BASS Stop" }.Start();
     }
 
     /// <summary>
