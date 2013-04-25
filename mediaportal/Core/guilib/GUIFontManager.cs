@@ -203,6 +203,7 @@ namespace MediaPortal.GUI.Library
           }
 
           // Select the list of aliases
+          DictFontAlias.Clear();
           XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
           if (listAlias != null)
           {
@@ -213,13 +214,11 @@ namespace MediaPortal.GUI.Library
               DictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
             }
           }
-
           return true;
         }
         catch (Exception ex)
         {
-          Log.Warn("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,
-                   ex.StackTrace);
+          Log.Warn("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message, ex.StackTrace);
         }
 
         return false;
