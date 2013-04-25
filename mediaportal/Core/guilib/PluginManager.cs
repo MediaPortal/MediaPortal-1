@@ -287,8 +287,6 @@ namespace MediaPortal.GUI.Library
           LoadWindowPluginsNonThreaded();
         }
       }
-
-      LoadWindowPluginsNonThreaded();
     }
 
     /// <summary>
