@@ -60,14 +60,13 @@ namespace MediaPortal.GUI.Settings
     [SkinControl(20)] private readonly GUICheckButton _cmTurnoffmonitor = null;
     [SkinControl(21)] private readonly GUICheckButton _cmShowlastactivemodule = null;
     [SkinControl(22)] private readonly GUICheckButton _cmStopOnAudioRemoval = null;
-    [SkinControl(23)] private readonly GUICheckButton _cmUsescreenselector = null;
-    [SkinControl(24)] private readonly GUIButtonControl _btnShowScreens = null;
+    [SkinControl(24)] private readonly GUIButtonControl _btnStartScreen = null;
     [SkinControl(30)] private readonly GUIButtonControl _btnDelayStartup = null;
     [SkinControl(31)] private readonly GUICheckButton _cmDelayStartup = null;
     [SkinControl(32)] private readonly GUICheckButton _cmDelayResume = null;
 
     private int _iStartUpDelay;
-    private int _screennumber; // 0 is the primary screen
+    private int _screennumber; // 0 is the default screen for MP
     private readonly ArrayList _screenCollection = new ArrayList();
 
     public GUISettingsGeneralResume()
@@ -90,8 +89,6 @@ namespace MediaPortal.GUI.Settings
         _cmTurnoffmonitor.Selected = xmlreader.GetValueAsBool("general", "turnoffmonitor", false);
         _cmShowlastactivemodule.Selected = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
         _cmStopOnAudioRemoval.Selected = xmlreader.GetValueAsBool("general", "stoponaudioremoval", false);
-        _cmUsescreenselector.Selected = xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
-        _btnShowScreens.IsEnabled = _cmUsescreenselector.Selected;
         _screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 
         // Delay startup
@@ -124,7 +121,6 @@ namespace MediaPortal.GUI.Settings
         xmlwriter.SetValueAsBool("general", "turnoffmonitor", _cmTurnoffmonitor.Selected);
         xmlwriter.SetValueAsBool("general", "showlastactivemodule", _cmShowlastactivemodule.Selected);
         xmlwriter.SetValueAsBool("general", "stoponaudioremoval", _cmStopOnAudioRemoval.Selected);
-        xmlwriter.SetValueAsBool("screenselector", "usescreenselector", _cmUsescreenselector.Selected);
         xmlwriter.SetValueAsBool("general", "delay startup", _cmDelayStartup.Selected);
         xmlwriter.SetValueAsBool("general", "delay resume", _cmDelayResume.Selected);
       }
@@ -186,11 +182,6 @@ namespace MediaPortal.GUI.Settings
       {
         SettingsChanged(true);
       }
-      if (control == _cmUsescreenselector)
-      {
-        SettingsChanged(true);
-        _btnShowScreens.IsEnabled = _cmUsescreenselector.Selected;
-      }
       // Delay at startup
       if (control == _btnDelayStartup)
       {
@@ -204,7 +195,7 @@ namespace MediaPortal.GUI.Settings
       {
         SettingsChanged(true);
       }
-      if (control == _btnShowScreens)
+      if (control == _btnStartScreen)
       {
         OnShowScreens();
       }

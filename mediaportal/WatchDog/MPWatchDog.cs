@@ -151,10 +151,7 @@ namespace WatchDog
       int screenNumber = 0;
       using (Settings xmlreader = new MPSettings())
       {
-        if (xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
-        {
-          screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
-        }
+        screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
       }
       if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
       {

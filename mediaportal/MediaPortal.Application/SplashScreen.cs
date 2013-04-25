@@ -103,17 +103,14 @@ namespace MediaPortal
           _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
         }
         
-        if (GUIGraphicsContext._useScreenSelector)
+        if (D3D.ScreenNumberOverride >= 0)
         {
-          if (D3D.ScreenNumberOverride >= 0)
-          {
-            screenNumber = D3D.ScreenNumberOverride;
-          }
+          screenNumber = D3D.ScreenNumberOverride;
+        }
 
-          if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
-          {
-            screenNumber = 0;
-          }
+        if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+        {
+          screenNumber = 0;
         }
 
         CurrentDisplay = Screen.AllScreens[screenNumber];

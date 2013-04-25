@@ -87,7 +87,6 @@ namespace MediaPortal.GUI.Library
     public static Graphics graphics = null; // GDI+ Graphics object
     public static Form form = null; // Current GDI form
     public static IAutoCrop autoCropper = null;
-    public static bool _useScreenSelector = false;
     // ReSharper restore InconsistentNaming
 
     private const float DegreeToRadian = 0.01745329f;

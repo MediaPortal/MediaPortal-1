@@ -100,9 +100,7 @@ namespace MediaPortal.Configuration.Sections
                                             // 9 Show last active module when starting / resuming from standby
                                             new[] {"general", "showlastactivemodule", "false"},
                                             // 10 Stop playback on removal of an audio renderer
-                                            new[] {"general", "stoponaudioremoval", "true"},
-                                            // 11 Use screen selector to choose where to start MP
-                                            new[] {"screenselector", "usescreenselector", "false"}
+                                            new[] {"general", "stoponaudioremoval", "true"}
                                           };
 
     /// <summary> 
@@ -170,7 +168,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        // Save Debug Level
         xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
 
         for (int index = 0; index < _sectionEntries.Length; index++)
@@ -226,10 +223,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void settingsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
-      if (_sectionEntries[e.Index][1].Equals("usescreenselector"))
-      {
-        cbScreen.Enabled = e.NewValue == CheckState.Checked;
-      }
+
     }
 
     private void settingsCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -2199,7 +2199,6 @@
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
     <String id="300100">Show last active module on wake up</String>
-    <String id="300101">Use screen selector to choose MediaPortal starting screen</String>
     <String id="300102">Delay startup</String>
     <String id="300103">On MediaPortal startup</String>
     <String id="300104">On MediaPortal resume</String>

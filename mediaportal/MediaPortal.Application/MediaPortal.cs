@@ -377,7 +377,6 @@ public class MediaPortalApp : D3D, IRender
 
         if (arg.StartsWith("/screen="))
         {
-          GUIGraphicsContext._useScreenSelector = true;
           string screenarg = arg.Remove(0, 8); // remove /?= from the argument          
           if (!int.TryParse(screenarg, out ScreenNumberOverride))
           {
@@ -490,8 +489,6 @@ public class MediaPortalApp : D3D, IRender
         }
         _startupDelay    = xmlreader.GetValueAsBool("general", "delay startup", false) ? xmlreader.GetValueAsInt("general", "delay", 0): 0;
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
-
-        GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
       }
 
       #if !DEBUG
@@ -970,16 +967,13 @@ public class MediaPortalApp : D3D, IRender
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
     }
 
-    if (GUIGraphicsContext._useScreenSelector)
+    if (ScreenNumberOverride >= 0)
     {
-      if (ScreenNumberOverride >= 0)
-      {
-        screenNumber = ScreenNumberOverride;
-      }
-      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
-      {
-        screenNumber = 0;
-      }
+      screenNumber = ScreenNumberOverride;
+    }
+    if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+    {
+      screenNumber = 0;
     }
 
     GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];

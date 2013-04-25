@@ -83,17 +83,16 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.RADIOLASTFM.GUIRadioLastFM");
       RemoveEntry(settings, "musicmisc", "playnowjumpto");
-
       RemoveEntry(settings, "gui", "autosize");
       RemoveEntry(settings, "debug", "useS3Hack");
       RemoveEntry(settings, "general", "enables3trick");
       RemoveEntry(settings, "general", "turnmonitoronafterresume");
       RemoveEntry(settings, "general", "restartonresume");
-
       RemoveEntry(settings, "audioplayer", "player");
       RemoveEntry(settings, "audioplayer", "asio");
       RemoveEntry(settings, "audioplayer", "asiodevice");
       RemoveEntry(settings, "audioplayer", "mixing");
+      RemoveEntry(settings, "screenselector", "usescreenselector");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");
