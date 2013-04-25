@@ -1463,11 +1463,12 @@ HRESULT CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       bool eof = Seek(rtSeek);
       if (eof)
       {
+        REFERENCE_TIME rollBackTime = m_bTimeShifting ? 5000000 : 30000000;  // 0.5s/3s      
         //reached end-of-file, try to seek to an earlier position
-        if ((rtSeek.m_time - (3*10000000)) > 0)
+        if ((rtSeek.m_time - rollBackTime) > 0)
         {
-          rtSeek.m_time -= (3*10000000); //3 seconds earlier
-          rtAbsSeek.m_time -= (3*10000000); //3 seconds earlier
+          rtSeek.m_time -= rollBackTime;
+          rtAbsSeek.m_time -= rollBackTime;
           m_seekTime=rtSeek ;
           m_absSeekTime=rtAbsSeek ;
         }
