@@ -111,6 +111,12 @@ namespace MediaPortal.Player
     private static string _externalPlayerExtensions = string.Empty;
     private static int _titleToDB = 0;
 
+    /// <param name="default Blu-ray remuxed">BdRemuxTitle</param>
+    public const int BdRemuxTitle = 900;
+
+    /// <param name="default Blu-ray Title">BdDefaultTitle</param>
+    public const int BdDefaultTitle = 1000;
+
     #endregion
 
     #region events
