@@ -1121,6 +1121,9 @@ namespace MediaPortal
                                                   _presentParams);
       }
 
+      // update some magic number use for animations
+      GUIGraphicsContext.MaxFPS = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
+
       // set always on top parameter
       TopMost = _alwaysOnTop;
 

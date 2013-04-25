@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Library
     private static int _scrollSpeedHorizontal = 3;
     private static int _charsInCharacterSet = 255;
     private static volatile bool _vmr9Active;
-    private static int _maxFPS = 50;
+    private static int _maxFPS = 60;
     private static long _desiredFrameTime = 100;
     private static float _currentFPS;
     private static long _lasttime;
