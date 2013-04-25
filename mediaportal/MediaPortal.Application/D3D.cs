@@ -1046,13 +1046,15 @@ namespace MediaPortal
     protected void InitializeDevice()
     {
       Log.Debug("D3D: InitializeDevice()");
+      
+      // get capabilities of hardware device for current adapter
+      Caps capabilities = GetCapabilities();
 
-      Caps capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
       Log.Info("D3D: GPU '{0}' is using driver version '{1}'", AdapterInfo.AdapterDetails.Description.Trim(), AdapterInfo.AdapterDetails.DriverVersion);
       Log.Info("D3D: Vertex shader version: {0}", capabilities.VertexShaderVersion);
       Log.Info("D3D: Pixel shader version: {0}", capabilities.PixelShaderVersion);
 
-      // default to reference rasterizer and software vertex processing
+      // default to reference rasterizer and software vertex processing for initialization purposes
       _deviceType  = DeviceType.Reference;
       _createFlags = CreateFlags.SoftwareVertexProcessing;
 
@@ -1146,6 +1148,57 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.Dispose();
         GUIGraphicsContext.DX9Device = null;
       }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private Caps GetCapabilities()
+    {
+      Log.Debug("D3D: GetCapabilities()");
+
+      const int numberOfRetries   = 20;
+      const int delayBetweenTries = 250;
+
+      Caps capabilities;
+  
+      // retry ever 100 ms to get the capabilities for the selected adapter for a maximum time of 100 tries
+      int retries = 0;
+      bool successful = false;
+      do
+      {
+        try
+        {
+          capabilities = Manager.GetDeviceCaps(AdapterInfo.AdapterOrdinal, DeviceType.Hardware);
+          successful = true;
+        }
+        catch (Exception)
+        {
+          Log.Warn("Main: Failed to get capabilities for adapter #{0}: {1} (retry in {2}ms)", AdapterInfo.AdapterOrdinal, AdapterInfo.ToString(), delayBetweenTries);
+          retries++;
+          Thread.Sleep(delayBetweenTries);
+        }
+      } while (!successful && retries < numberOfRetries);
+
+      // MP needs a hardware device, or it will be unusable
+      if (!successful)
+      {
+        Log.Error("D3D: Could not create device");
+        // ReSharper disable LocalizableElement
+        MessageBox.Show("Direct3D device could not be created.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        // ReSharper restore LocalizableElement
+        try
+        {
+          Close();
+        }
+          // ReSharper disable EmptyGeneralCatchClause
+        catch {}
+        // ReSharper restore EmptyGeneralCatchClause
+      }
+ 
+      return capabilities;
     }
 
 
