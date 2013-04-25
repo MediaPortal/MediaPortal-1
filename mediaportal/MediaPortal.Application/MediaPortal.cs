@@ -2053,45 +2053,47 @@ public class MediaPortalApp : D3D, IRender
     }
     _suspending = true;
 
-    if (!_suspended)
+    if (_suspended)
     {
-      _ignoreContextMenuAction = true;
-      _suspended = true;
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
-
-      Log.Info("Main: Stopping playback");
-      if (GUIGraphicsContext.IsPlaying)
-      {
-        Currentmodulefullscreen();
-        g_Player.Stop();
-        while (GUIGraphicsContext.IsPlaying)
-        {
-          Thread.Sleep(100);
-        }
-      }
-      SaveLastActiveModule();
-
-      // stop playback
-      _suspended = true;
-
-      Log.Info("Main: Stopping Input Devices");
-      InputDevices.Stop();
-      
-      Log.Info("Main: Stopping AutoPlay");
-      AutoPlay.StopListening();
-      
-      // we only dispose the DB connection if the DB path is remote.      
-      DisposeDBs();
-     
-      // un-mute volume in case we are suspending in away mode
-      if (IsInAwayMode && VolumeHandler.Instance.IsMuted)
-      {
-        VolumeHandler.Instance.UnMute();
-      }
-      VolumeHandler.Dispose();
-
-      Log.Info("Main: OnSuspend - Done");
+      Log.Error("Main: OnSuspend - OnSuspend called but MP is not in active state.");
     }
+
+    _ignoreContextMenuAction = true;
+    _suspended = true;
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
+
+    Log.Info("Main: Stopping playback");
+    if (GUIGraphicsContext.IsPlaying)
+    {
+      Currentmodulefullscreen();
+      g_Player.Stop();
+      while (GUIGraphicsContext.IsPlaying)
+      {
+        Thread.Sleep(100);
+      }
+    }
+    SaveLastActiveModule();
+
+    // stop playback
+    _suspended = true;
+
+    Log.Info("Main: Stopping Input Devices");
+    InputDevices.Stop();
+      
+    Log.Info("Main: Stopping AutoPlay");
+    AutoPlay.StopListening();
+      
+    // we only dispose the DB connection if the DB path is remote.      
+    DisposeDBs();
+     
+    // un-mute volume in case we are suspending in away mode
+    if (IsInAwayMode && VolumeHandler.Instance.IsMuted)
+    {
+      VolumeHandler.Instance.UnMute();
+    }
+    VolumeHandler.Dispose();
+
+    Log.Info("Main: OnSuspend - Done");
     _suspending = false;
   }
 
@@ -2107,7 +2109,12 @@ public class MediaPortalApp : D3D, IRender
       return;
     }
     _resuming = true;
-    
+
+    if (!_suspended)
+    {
+      Log.Error("Main: OnResume - OnResume called but MP is not in suspended state.");
+    }
+
     // delay resuming as configured
     using (Settings xmlreader = new MPSettings())
     {
@@ -2123,53 +2130,46 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.ResetLastActivity();
     _ignoreContextMenuAction = true;
 
-    if (!_suspended)
+    _suspended = false;
+    _ignoreContextMenuAction = false;
+
+    // Systems without DirectX9Ex have lost graphics device in suspend/hibernate cycle
+    if (!GUIGraphicsContext.IsDirectX9ExUsed())
     {
-      Log.Error("Main: OnResume - OnResume called but MP is not in suspended state.");
+      Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
     }
-    else
+    RecoverDevice();
+
+    if (GUIGraphicsContext.IsDirectX9ExUsed())
     {
-      _suspended = false;
-      _ignoreContextMenuAction = false;
-
-      // Systems without DirectX9Ex have lost graphics device in suspend/hibernate cycle
-      if (!GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        Log.Info("Main: OnResume - set GUIGraphicsContext.State.LOST");
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-      }
-      RecoverDevice();
-
-      if (GUIGraphicsContext.IsDirectX9ExUsed())
-      {
-        Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-      }
-
-      ReOpenDBs();
-
-      Log.Info("Main: OnResume - Init Input Devices");
-      InputDevices.Init();
-      
-      Log.Debug("Main: OnResume - Autoplay start listening");
-      AutoPlay.StartListening();
-
-      Log.Debug("Main: OnResume - Initializing volume handler");
-      try
-      {
-        #pragma warning disable 168
-        VolumeHandler vh = VolumeHandler.Instance;
-        #pragma warning restore 168
-      }
-      catch (Exception exception)
-      {
-        Log.Warn("Main: OnResume - Could not initialize volume handler: ", exception.Message);
-      }
-      
-      _lastOnresume = DateTime.Now;
-
-      Log.Info("Main: OnResume - Done");
+      Log.Info("Main: OnResume - set GUIGraphicsContext.State.RUNNING");
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     }
+
+    ReOpenDBs();
+
+    Log.Info("Main: OnResume - Init Input Devices");
+    InputDevices.Init();
+      
+    Log.Debug("Main: OnResume - Autoplay start listening");
+    AutoPlay.StartListening();
+
+    Log.Debug("Main: OnResume - Initializing volume handler");
+    try
+    {
+      #pragma warning disable 168
+      VolumeHandler vh = VolumeHandler.Instance;
+      #pragma warning restore 168
+    }
+    catch (Exception exception)
+    {
+      Log.Warn("Main: OnResume - Could not initialize volume handler: ", exception.Message);
+    }
+      
+    _lastOnresume = DateTime.Now;
+
+    Log.Info("Main: OnResume - Done");
     _resuming = false;
   }
   
@@ -2183,7 +2183,7 @@ public class MediaPortalApp : D3D, IRender
   /// </summary>
   public void MPProcess()
   {
-    if (!_suspended)
+    if (!_suspended && AppActive)
     {
       try
       {
@@ -2213,7 +2213,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="timePassed"></param>
   public void RenderFrame(float timePassed)
   {
-    if (!_suspended)
+    if (!_suspended && AppActive)
     {
       try
       {
@@ -2809,7 +2809,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="timePassed"></param>
   protected override void Render(float timePassed)
   {
-    if (!_suspended && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST && GUIGraphicsContext.DX9Device != null)
+    if (!_suspended && AppActive && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST && GUIGraphicsContext.DX9Device != null)
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
@@ -3751,7 +3751,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void KeyDownEvent(KeyEventArgs e)
   {
-    if (!_suspended)
+    if (!_suspended && AppActive)
     {
       GUIGraphicsContext.ResetLastActivity();
       var key = new Key(0, (int) e.KeyCode);
@@ -4033,7 +4033,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="message"></param>
   private void OnMessage(GUIMessage message)
   {
-    if (!_suspended)
+    if (!_suspended && AppActive)
     {
       switch (message.Message)
       {
