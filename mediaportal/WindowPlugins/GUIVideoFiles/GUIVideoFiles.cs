@@ -3187,7 +3187,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (!isImage)
         {
-          if (filename.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+          if (filename.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
             return true;
         }
       }
@@ -3270,7 +3270,7 @@ namespace MediaPortal.GUI.Video
         if (idFile < 0)
         {
           break;
-        }
+        }To
 
         if (g_Player.IsDVDMenu)
         {
@@ -3279,7 +3279,7 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieWatchedStatus(idMovie, true, 100);
           VideoDatabase.MovieWatchedCountIncrease(idMovie);
         }
-        else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0) && g_Player.SetResumeBDTitleState != -2)
+        else if ((filename.Trim().ToLowerInvariant().Equals(strFilePath.Trim().ToLowerInvariant())) && (timeMovieStopped > 0) && g_Player.SetResumeBDTitleState != -2)
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
@@ -3592,14 +3592,14 @@ namespace MediaPortal.GUI.Video
         // Set file description (for sorting by name -> DVD IFO file problem)
         string description = string.Empty;
 
-        if (file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        if (file.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
-          string dvdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          string dvdFolder = file.Substring(0, file.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
           description = Path.GetFileName(dvdFolder);
         }
-        if (file.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        if (file.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
-          string bdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          string bdFolder = file.Substring(0, file.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
           description = Path.GetFileName(bdFolder);
         }
         else
@@ -4104,7 +4104,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
         string path = item.Path;
-        bool isDVD = (path.ToUpper().IndexOf("VIDEO_TS") >= 0);
+        bool isDVD = (path.ToUpperInvariant().IndexOf("VIDEO_TS") >= 0);
         List<GUIListItem> listFiles = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, false);
         string[] subExts = {
                               ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
