@@ -3270,7 +3270,7 @@ namespace MediaPortal.GUI.Video
         if (idFile < 0)
         {
           break;
-        }To
+        }
 
         if (g_Player.IsDVDMenu)
         {
