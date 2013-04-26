@@ -71,39 +71,33 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 	if (pbData==NULL) return 0;
 	if (lDataLength<=0) return 0;
   if (!m_bRunning) return 0;
-  while (m_BytesInBuffer < lDataLength)
-  {	
-    if (!m_bRunning) return 0;
-    m_event.ResetEvent();
-    m_event.Wait();
-    if (!m_bRunning) return 0;
-  }
-		
+    		
 	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);
   long bytesWritten = 0;
-	CAutoLock BufferLock(&m_BufferLock);
 	while (bytesWritten < lDataLength)
 	{
-		if(!m_Array.size() || m_Array.size() <= 0)
-    {
-			LogDebug("memorybuffer: read:empty buffer\n");
-			return 0;
+	  { //Context for CAutoLock
+  	  CAutoLock BufferLock(&m_BufferLock);
+  		if(m_BytesInBuffer <= 0 || !m_Array.size() || m_Array.size() <= 0)
+      {
+	      return bytesWritten;
+      }
+  		BUFFERITEM *item = m_Array.at(0);
+      
+  		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
+  		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
+  
+  		bytesWritten += copyLength;
+  		item->nOffset += copyLength;
+      m_BytesInBuffer-=copyLength;
+  
+  		if (item->nOffset >= item->nDataLength)
+  		{
+  			m_Array.erase(m_Array.begin());
+        delete[] item->data;
+  			delete item;
+  		}
     }
-		BUFFERITEM *item = m_Array.at(0);
-    
-		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
-		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
-
-		bytesWritten += copyLength;
-		item->nOffset += copyLength;
-    m_BytesInBuffer-=copyLength;
-
-		if (item->nOffset >= item->nDataLength)
-		{
-			m_Array.erase(m_Array.begin());
-      delete[] item->data;
-			delete item;
-		}
 	}
 	return bytesWritten;
 }
@@ -136,10 +130,6 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
 		  m_Array.erase(m_Array.begin());
       delete[] item->data;
 		  delete item;
-    }
-    if (m_BytesInBuffer>0)
-    {
-      m_event.SetEvent();
     }
   }
   if (m_pcallback)
