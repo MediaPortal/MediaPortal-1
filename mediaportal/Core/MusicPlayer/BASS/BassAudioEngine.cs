@@ -1568,7 +1568,7 @@ namespace MediaPortal.MusicPlayer.BASS
         else
         {
           BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (!_mixer.WasApiShared && (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
+          if ((!_mixer.WasApiShared || !_mixer.UpMixing) && (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
           {
             if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
