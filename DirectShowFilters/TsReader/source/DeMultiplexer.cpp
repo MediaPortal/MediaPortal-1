@@ -1043,6 +1043,7 @@ int CDeMultiplexer::ReadAheadFromFile()
   return SizeRead;
 }
 
+
 /// This method reads the next READ_SIZE bytes from the file
 /// and processes the raw data
 /// When a TS packet has been discovered, OnTsPacket(byte* tsPacket) gets called
@@ -1055,32 +1056,21 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   CAutoLock lock (&m_sectionRead);
   byte buffer[READ_SIZE];
   int dwReadBytes=0;
-  bool result=false;
   //if we are playing a RTSP stream
   if (m_reader->IsBuffer())
-  {
-    // and, the current buffer holds data
-    int nBytesToRead = m_reader->HasData();
-    if (nBytesToRead > sizeof(buffer))
+  {    
+    //Read raw data from the buffer
+    m_reader->Read(buffer, sizeof(buffer), (DWORD*)&dwReadBytes);
+    if (dwReadBytes < sizeof(buffer))
     {
-        nBytesToRead=sizeof(buffer);
+      m_bAudioAtEof = true;
+      m_bVideoAtEof = true;
     }
-    else
+    if (dwReadBytes > 0)
     {
-        m_bAudioAtEof = true ;
-        m_bVideoAtEof = true ;
-    }
-    if (nBytesToRead)
-    {
-      //then read raw data from the buffer
-      m_reader->Read(buffer, nBytesToRead, (DWORD*)&dwReadBytes);
-      if (dwReadBytes > 0)
-      {
-        //yes, then process the raw data
-        result=true;
-        OnRawData2(buffer,(int)dwReadBytes);
-        m_LastDataFromRtsp = GET_TIME_NOW();
-      }
+      //yes, then process the raw data
+      OnRawData2(buffer,(int)dwReadBytes);
+      m_LastDataFromRtsp = GET_TIME_NOW();
     }
     else
     {
@@ -1138,6 +1128,9 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   //Failed to read any data
   return 0;
 }
+
+
+
 /// This method gets called via ReadFile() when a new TS packet has been received
 /// if will :
 ///  - decode any new pat/pmt/sdt
@@ -2655,6 +2648,16 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   //Normal play
   if (isNormal)
   {
+    if (m_reader)
+    {
+      if (m_reader->IsBuffer()) //RTSP mode
+      {
+        if (m_reader->HasData() > 0)
+        {
+          return true;
+        }
+      }
+    }
     if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() < m_initialAudioSamples))
     {
       return true;
