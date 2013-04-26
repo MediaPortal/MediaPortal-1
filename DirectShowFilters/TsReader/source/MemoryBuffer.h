@@ -30,8 +30,10 @@ public:
   void Run(bool onOff);
   bool IsRunning();
 protected:
+	typedef vector<BUFFERITEM *>::iterator ivecBuffers;
 	vector<BUFFERITEM *> m_Array;
 	CCritSec m_BufferLock;
+	CCritSec m_ClearLock;
   DWORD    m_BytesInBuffer;
   CWaitEvent m_event;
   IMemoryCallback* m_pcallback;

@@ -9,7 +9,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*32L)
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -35,8 +35,9 @@ bool CMemoryBuffer::IsRunning()
 void CMemoryBuffer::Clear()
 {
   LogDebug("memorybuffer: Clear() %d",m_Array.size());
+	CAutoLock ClearLock(&m_ClearLock);
 	CAutoLock BufferLock(&m_BufferLock);
-	std::vector<BUFFERITEM *>::iterator it = m_Array.begin();
+	ivecBuffers it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
 	{
     BUFFERITEM *item = *it;
@@ -74,30 +75,34 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
     		
 	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);
   long bytesWritten = 0;
+	CAutoLock ClearLock(&m_ClearLock);
 	while (bytesWritten < lDataLength)
 	{
+	  BUFFERITEM* item;
 	  { //Context for CAutoLock
   	  CAutoLock BufferLock(&m_BufferLock);
   		if(m_BytesInBuffer <= 0 || !m_Array.size() || m_Array.size() <= 0)
       {
 	      return bytesWritten;
       }
-  		BUFFERITEM *item = m_Array.at(0);
-      
-  		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
-  		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
-  
-  		bytesWritten += copyLength;
-  		item->nOffset += copyLength;
-      m_BytesInBuffer-=copyLength;
-  
-  		if (item->nOffset >= item->nDataLength)
-  		{
-  			m_Array.erase(m_Array.begin());
-        delete[] item->data;
-  			delete item;
-  		}
+	    ivecBuffers it = m_Array.begin();
+  		item = *it;  		
     }
+    
+		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
+		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
+
+		bytesWritten += copyLength;
+		item->nOffset += copyLength;
+    m_BytesInBuffer-=copyLength;
+
+		if (item->nOffset >= item->nDataLength)
+		{
+      delete[] item->data;
+			delete item;
+  	  CAutoLock BufferLock(&m_BufferLock);
+			m_Array.erase(m_Array.begin());
+		}
 	}
 	return bytesWritten;
 }
@@ -114,16 +119,14 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
   memcpy(item->data, pbData, lDataLength);
   bool sleep=false;
   {
-	  CAutoLock BufferLock(&m_BufferLock);
-    m_Array.push_back(item);
-    m_BytesInBuffer+=lDataLength;
-
 	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
     while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
       sleep=true;
 		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
-		  BUFFERITEM *item = m_Array.at(0);
+	    CAutoLock ClearLock(&m_ClearLock);
+	    ivecBuffers it = m_Array.begin();
+  		BUFFERITEM *item = *it;  		
       int copyLength=item->nDataLength - item->nOffset;
 
       m_BytesInBuffer-=copyLength;
@@ -131,6 +134,10 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
       delete[] item->data;
 		  delete item;
     }
+
+	  CAutoLock BufferLock(&m_BufferLock);
+    m_Array.push_back(item);
+    m_BytesInBuffer+=lDataLength;
   }
   if (m_pcallback)
   {
@@ -138,7 +145,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
   }
   if (sleep)
   {
-    Sleep(10);
+    Sleep(1);
   }
 	return S_OK;
 }
