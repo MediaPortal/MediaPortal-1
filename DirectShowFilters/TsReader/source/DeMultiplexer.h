@@ -215,8 +215,14 @@ private:
   CBuffer* m_pCurrentAudioBuffer;
   CPcr     m_streamPcr;
   CPcr     m_lastVideoPTS;
+  CPcr     m_lastVideoDTS;
   CPcr     m_lastAudioPTS;
   double   m_minVideoPTSdiff;
+  double   m_minVideoDTSdiff;
+  int      m_vidPTScount;
+  int      m_vidDTScount;
+  bool     m_bLogFPSfromDTSPTS;
+  bool     m_bUsingGOPtimestamp;
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
   unsigned int m_iAudioStream;
@@ -238,7 +244,6 @@ private:
   DWORD m_WaitNewPatTmo;
   DWORD m_WaitGoodPatTmo;
   bool m_bWaitGoodPat;
-  int m_receivedPackets;
 
   bool m_bFirstGopFound;
   bool m_bSecondGopFound;
@@ -271,7 +276,7 @@ private:
   CPcr m_VideoPts;
   CPcr m_CurrentVideoPts;
   bool m_bInBlock;
-  double m_curFrameRate;
+  double m_curFramePeriod;
   int m_LastValidFrameCount;
   CPcr m_LastValidFramePts;
 
@@ -292,4 +297,7 @@ private:
   
   bool m_isNewNALUTimestamp;
   bool m_bVideoPTSroff;
+  
+  int  m_initialAudioSamples;
+  int  m_initialVideoSamples;
 };

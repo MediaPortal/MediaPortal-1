@@ -90,7 +90,7 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
 HRESULT FileReader::OpenFile()
 {
 	WCHAR *pFileName = NULL;
-	int Tmo=5 ;
+	DWORD Tmo=14 ;
   HANDLE hFileUnbuff = INVALID_HANDLE_VALUE;
   
 	// Is the file already opened
@@ -140,26 +140,6 @@ HRESULT FileReader::OpenFile()
 			if (m_hFile != INVALID_HANDLE_VALUE) break ;
 		}
 
-    //		if (wcsstr(pFileName, L".ts.tsbuffer") != NULL) //timeshift file only
-    //		{
-    //  		//No luck yet, so try unbuffered open (and close) to flush SMB2 cache,
-    //  		//then go round loop again to open it properly (hopefully....)
-    //  		hFileUnbuff = ::CreateFileW(pFileName,		// The filename
-    //  							(DWORD) GENERIC_READ,				// File access
-    //  							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE), // Share access
-    //  							NULL,						            // Security
-    //  							(DWORD) OPEN_EXISTING,		  // Open flags
-    //  							(DWORD) (FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING),	// More flags
-    //  							NULL);						          // Template
-    //  
-    //  		if (hFileUnbuff != INVALID_HANDLE_VALUE)
-    //  		{
-    //      	::CloseHandle(hFileUnbuff);
-    //      	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-    //  		}
-    //  	  LogDebug("FileReader::OpenFile(), %d tries to unbuff open %ws", 6-Tmo, pFileName);
-    //    }
-
 		//Test incase file is being recorded to
 		m_hFile = ::CreateFileW(pFileName,		// The filename
 							(DWORD) GENERIC_READ,				// File access
@@ -177,7 +157,7 @@ HRESULT FileReader::OpenFile()
 		m_bReadOnly = TRUE;
 		if (m_hFile != INVALID_HANDLE_VALUE) break ;
 
-		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL) && (Tmo<4)) //timeshift file only
+		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL) && (Tmo<10)) //timeshift file only
 		{
   		//No luck yet, so try unbuffered open and close (to flush SMB2 cache?),
   		//then go round loop again to open it properly (hopefully....)
@@ -194,16 +174,16 @@ HRESULT FileReader::OpenFile()
       	::CloseHandle(hFileUnbuff);
       	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
   		}
-  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 6-Tmo, pFileName);
+  	  LogDebug("FileReader::OpenFile() unbuff, %d tries to open %ws", 15-Tmo, pFileName);
     }
 
-		Sleep(20) ;
+		Sleep(min((20*(15-Tmo)),250)) ; //wait longer between retries as loop iterations increase
 	}
 	while(--Tmo) ;
 	if (Tmo)
 	{
-    if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-  			LogDebug("FileReader::OpenFile(), %d tries to succeed opening %ws.", 6-Tmo, pFileName);
+    if (Tmo<13) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
+  			LogDebug("FileReader::OpenFile(), %d tries to succeed opening %ws.", 15-Tmo, pFileName);
 	}
 	else
 	{
