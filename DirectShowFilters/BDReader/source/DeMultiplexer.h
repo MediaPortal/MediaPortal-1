@@ -135,7 +135,7 @@ private:
   void PacketDelivery(CAutoPtr<Packet> p);
 
   bool AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip);
-  LPCTSTR StreamFormatAsString(int pStreamType);
+  char* StreamFormatAsString(int pStreamType);
   LPCTSTR StreamAudioFormatAsString(int pStreamAudioChannel);
 
   struct stAudioStream
