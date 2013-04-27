@@ -39,6 +39,9 @@ REM Plugins
 REM SubtitlePlugin
 xcopy %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\ /Y /D
 
+REM LastFMLibrary
+xcopy %1\LastFMLibrary\bin\%2\LastFMLibrary.* . /Y /D
+
 REM ExternalPlayers
 xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
 
