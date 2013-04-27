@@ -26,7 +26,7 @@ public:
 	DWORD ReadFromBuffer(BYTE *pbData, long lDataLength);
 	HRESULT PutBuffer(BYTE *pbData, long lDataLength);
 	void Clear();
-  DWORD Size();
+  long Size();
   void Run(bool onOff);
   bool IsRunning();
 protected:
@@ -34,7 +34,7 @@ protected:
 	vector<BUFFERITEM *> m_Array;
 	CCritSec m_BufferLock;
 	CCritSec m_ClearLock;
-  DWORD    m_BytesInBuffer;
+  long m_BytesInBuffer;
   CWaitEvent m_event;
   IMemoryCallback* m_pcallback;
   bool m_bRunning;

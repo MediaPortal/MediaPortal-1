@@ -49,7 +49,7 @@ void CMemoryBuffer::Clear()
 	LogDebug("memorybuffer: Clear() done");
 }
 
-DWORD CMemoryBuffer::Size()
+long CMemoryBuffer::Size()
 {
   return m_BytesInBuffer;
 }
@@ -83,7 +83,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
   	  CAutoLock BufferLock(&m_BufferLock);
   		if(m_BytesInBuffer <= 0 || !m_Array.size() || m_Array.size() <= 0)
       {
-	      return bytesWritten;
+	      return (DWORD)bytesWritten;
       }
 	    ivecBuffers it = m_Array.begin();
   		item = *it;  		
@@ -104,7 +104,7 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 			m_Array.erase(m_Array.begin());
 		}
 	}
-	return bytesWritten;
+	return (DWORD)bytesWritten;
 }
 
 HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
@@ -126,13 +126,13 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
 		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
 	    CAutoLock ClearLock(&m_ClearLock);
 	    ivecBuffers it = m_Array.begin();
-  		BUFFERITEM *item = *it;  		
-      int copyLength=item->nDataLength - item->nOffset;
+  		BUFFERITEM *itemc = *it;  		
+      int copyLength=itemc->nDataLength - itemc->nOffset;
 
       m_BytesInBuffer-=copyLength;
+      delete[] itemc->data;
+		  delete itemc;
 		  m_Array.erase(m_Array.begin());
-      delete[] item->data;
-		  delete item;
     }
 
 	  CAutoLock BufferLock(&m_BufferLock);
