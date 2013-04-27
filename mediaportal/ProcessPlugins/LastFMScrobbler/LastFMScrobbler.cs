@@ -275,9 +275,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
       catch (LastFMException ex)
       {
-        if (ex.Source == "")
+        if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
         {
-          Log.Error("Last.fm error when announcing now playing track: {0} - {1}",currentSong.Artist, currentSong.Title);
+          Log.Error("Last.fm error when announcing now playing track: {0} - {1}", currentSong.Artist, currentSong.Title);
           Log.Error(ex.Message);
         }
         else
