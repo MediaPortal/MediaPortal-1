@@ -229,11 +229,6 @@ namespace MediaPortal.Util
     {
       if (share == null) return;
       m_shares.Add(share);
-      //See if the share contains a folder.jpg (we'll be looking for it soon)
-      if (Path.IsPathRooted(share.Path))
-      {
-        Util.Utils.FileExistsInCache(Path.Combine(share.Path, "folder.jpg"));
-      }
     }
 
     public void AddRemovableDrive(String path, String name)

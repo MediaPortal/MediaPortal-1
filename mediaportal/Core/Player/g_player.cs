@@ -95,6 +95,7 @@ namespace MediaPortal.Player
     private static bool _pictureSlideShow = false;
     private static bool _picturePlaylist = false;
     private static bool _forceplay = false;
+    private static bool _isExtTS = false;
 
     private static string _currentDescription = "";
     //actual program metadata - usefull for tv - avoids extra DB Lookups. 
@@ -109,6 +110,12 @@ namespace MediaPortal.Player
 
     private static string _externalPlayerExtensions = string.Empty;
     private static int _titleToDB = 0;
+
+    /// <param name="default Blu-ray remuxed">BdRemuxTitle</param>
+    public const int BdRemuxTitle = 900;
+
+    /// <param name="default Blu-ray Title">BdDefaultTitle</param>
+    public const int BdDefaultTitle = 1000;
 
     #endregion
 
@@ -1271,23 +1278,31 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
-      return Play(strFile, type, (TextReader)null, false, 1000, false);
+      return Play(strFile, type, (TextReader)null, false, 1000, false, true);
     }
 
     public static bool Play(string strFile, MediaType type, int title, bool forcePlay)
     {
-      return Play(strFile, type, (TextReader)null, false, title, forcePlay);
+      return Play(strFile, type, (TextReader)null, false, title, forcePlay, true);
     }
 
     public static bool Play(string strFile, MediaType type, string chapters)
     {
       using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
       {
-        return Play(strFile, type, stream, false, 0, false);
+        return Play(strFile, type, stream, false, 0, false, true);
       }
     }
 
-    public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures, int title, bool forcePlay)
+    public static bool Play(string strFile, MediaType type, string chapters, bool fromTVPlugin)
+    {
+      using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
+      {
+        return Play(strFile, type, stream, false, 0, false, fromTVPlugin);
+      }
+    }
+
+    public static bool Play(string strFile, MediaType type, TextReader chapters, bool fromPictures, int title, bool forcePlay, bool fromExtTS)
     {
       try
       {
@@ -1300,6 +1315,7 @@ namespace MediaPortal.Player
         g_Player.SetResumeBDTitleState = title;
 
         IsPicture = false;
+        IsExtTS = false;
         bool AskForRefresh = true;
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
         string extension = Util.Utils.GetFileExtension(strFile).ToLower();
@@ -1360,7 +1376,8 @@ namespace MediaPortal.Player
           _mediaInfo = new MediaInfoWrapper(strFile);
         }
 
-        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) || Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
+        if ((!playingRemoteUrl && Util.Utils.IsVideo(strFile)) || Util.Utils.IsLiveTv(strFile) ||
+            Util.Utils.IsRTSP(strFile)) //local video, tv, rtsp
         {
           if (type == MediaType.Unknown)
           {
@@ -1396,6 +1413,11 @@ namespace MediaPortal.Player
             {
               return true;
             }
+          }
+          // Set bool to know if we want to use video codec for .ts files
+          if (fromExtTS)
+          {
+            IsExtTS = true;
           }
           // Set bool to know if video if we force play
           if (forcePlay)
@@ -1596,6 +1618,18 @@ namespace MediaPortal.Player
       set
       {
         _forceplay = value;
+      }
+    }
+
+    public static bool IsExtTS
+    {
+      get
+      {
+        return _isExtTS;
+      }
+      set
+      {
+        _isExtTS = value;
       }
     }
 

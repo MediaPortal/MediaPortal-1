@@ -1731,7 +1731,7 @@ namespace MediaPortal.GUI.Video
       bool NoBDResume = false;
       _BDDetect = false;
       g_Player.ForcePlay = false;
-      g_Player.SetResumeBDTitleState = 1000;
+      g_Player.SetResumeBDTitleState = g_Player.BdDefaultTitle;
       string filename;
       if (iMovieIndex == -1)
       {
@@ -1799,14 +1799,15 @@ namespace MediaPortal.GUI.Video
           int idMovie = VideoDatabase.GetMovieId(filename);
 
           if (_BDDetect)
-            g_Player.SetResumeBDTitleState = VideoDatabase.GetTitleBDId(idFile, out resumeData);
-
-          if (BDInternalMenu && g_Player.SetResumeBDTitleState == 1000)
           {
-            NoBDResume = true;
+            g_Player.SetResumeBDTitleState = VideoDatabase.GetTitleBDId(idFile, out resumeData);
+            if ((BDInternalMenu && g_Player.SetResumeBDTitleState >= g_Player.BdDefaultTitle) || (!BDInternalMenu && g_Player.SetResumeBDTitleState < g_Player.BdRemuxTitle))
+            {
+              NoBDResume = true;
+            }
           }
 
-          if ((idMovie >= 0) && (idFile >= 0))
+          if ((idMovie >= 0) && (idFile >= 0) && !NoBDResume)
           {
             timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData,
                                                                            g_Player.SetResumeBDTitleState);
@@ -1819,7 +1820,7 @@ namespace MediaPortal.GUI.Video
                 title = movieDetails.Title;
               }
 
-              if (askForResumeMovie && g_Player.SetResumeBDTitleState >= 0 && !NoBDResume)
+              if (askForResumeMovie && g_Player.SetResumeBDTitleState >= 0)
               {
                 if (_BDDetect)
                   g_Player.ForcePlay = true;
@@ -1840,7 +1841,7 @@ namespace MediaPortal.GUI.Video
                     return;
                   }
                   // Return to list if we cancel resume dialog (needed when BD is remuxed)
-                  else if (g_Player.SetResumeBDTitleState == 1000 || g_Player.SetResumeBDTitleState == 1200)
+                  else if (g_Player.SetResumeBDTitleState == g_Player.BdDefaultTitle || g_Player.SetResumeBDTitleState == g_Player.BdRemuxTitle)
                   {
                     return;
                   }

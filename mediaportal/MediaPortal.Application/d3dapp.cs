@@ -110,6 +110,8 @@ namespace MediaPortal
     // Main objects used for creating and rendering the 3D scene
     protected PresentParameters presentParams = new PresentParameters(); // Parameters for CreateDevice/Reset
     private Caps graphicsCaps; // Caps for the device
+		private DeviceType _deviceType;
+		private CreateFlags _createFlags;
     internal static bool _fullscreenOverride = false;
     internal static bool _windowedOverride = false;
     internal static int _screenNumberOverride = -1; // 0 or higher means it is set
@@ -1206,9 +1208,57 @@ namespace MediaPortal
       IntPtr prt = Marshal.AllocHGlobal(Marshal.SizeOf(displaymodeEx));
       Marshal.StructureToPtr(displaymodeEx, prt, true);
 
-      int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType,
+			Caps capabilities = Manager.GetDeviceCaps(GUIGraphicsContext.currentScreenNumber, DeviceType.Hardware);
+
+			// default to reference rasterizer and software vertex processing
+			_deviceType = DeviceType.Reference;
+			_createFlags = CreateFlags.SoftwareVertexProcessing;
+
+			// check if GPU supports rasterization in hardware
+			if (capabilities.DeviceCaps.SupportsHardwareRasterization)
+			{
+				Log.Info("D3D: GPU supports rasterization in hardware");
+				_deviceType = DeviceType.Hardware;
+			}
+
+			//  check if GPU supports shader model 2.0
+			if (capabilities.VertexShaderVersion >= new Version(2, 0) && capabilities.PixelShaderVersion >= new Version(2, 0))
+			{
+				// check if GPU supports rasterization, transformation, lightning in hardware
+				if (capabilities.DeviceCaps.SupportsHardwareTransformAndLight)
+				{
+					Log.Info("D3D: GPU supports rasterization, transformation, lightning in hardware");
+					_createFlags = CreateFlags.HardwareVertexProcessing;
+				}
+				// check if GPU supports rasterization, transformations, lighting, and shading in hardware
+				if (capabilities.DeviceCaps.SupportsPureDevice)
+				{
+					Log.Info("D3D: GPU supports rasterization, transformations, lighting, and shading in hardware");
+					_createFlags |= CreateFlags.PureDevice;
+				}
+			}
+
+			// Log some interesting capabilities
+			if (!capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+			{
+				Log.Info("D3D: GPU unconditionally supports textures with dimensions that are not powers of two");
+			}
+			else if (capabilities.TextureCaps.SupportsPower2 && capabilities.TextureCaps.SupportsNonPower2Conditional)
+			{
+				Log.Info("D3D: GPU conditionally supports textures with dimensions that are not powers of two");
+			}
+			else if (capabilities.TextureCaps.SupportsPower2 && !capabilities.TextureCaps.SupportsNonPower2Conditional)
+			{
+				Log.Info("D3D: GPU does not support textures with dimensions that are not powers of two");
+			}
+
+			// TODO: check for any capabilities that would not allow MP to run
+
+      int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, 
+																			_deviceType,
                                       windowed ? ourRenderTarget.Handle : this.Handle,
-                                      createFlags | CreateFlags.PureDevice | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
+                                      _createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, 
+																			ref param,
                                       windowed ? IntPtr.Zero : prt, out dev);
       GUIGraphicsContext.DX9Device = new Device(dev);
 

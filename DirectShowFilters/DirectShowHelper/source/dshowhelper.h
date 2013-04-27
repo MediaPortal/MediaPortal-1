@@ -57,6 +57,23 @@ extern TMFCreateMediaType* m_pMFCreateMediaType;
 typedef HRESULT __stdcall TDwmEnableMMCSS(BOOL fEnableMMCSS);
 extern TDwmEnableMMCSS* m_pDwmEnableMMCSS;
 
+
+typedef HRESULT __stdcall TDwmFlush(void);
+extern TDwmFlush* m_pDwmFlush;
+
+typedef HRESULT __stdcall TDwmSetPresentParameters(HWND hwnd, __inout DWM_PRESENT_PARAMETERS *pPresentParams);
+extern TDwmSetPresentParameters* m_pDwmSetPresentParameters;
+
+typedef HRESULT __stdcall TDwmIsCompositionEnabled(__out BOOL *pfEnabled);
+extern TDwmIsCompositionEnabled* m_pDwmIsCompositionEnabled;
+
+typedef HRESULT __stdcall TDwmSetDxFrameDuration(HWND hwnd, INT cRefreshes);
+extern TDwmSetDxFrameDuration* m_pDwmSetDxFrameDuration;
+
+typedef HRESULT __stdcall TDwmGetCompositionTimingInfo(HWND hwnd, __out DWM_TIMING_INFO *pTimingInfo);
+extern TDwmGetCompositionTimingInfo* m_pDwmGetCompositionTimingInfo;
+
+
 typedef double __stdcall TW7GetRefreshRate();
 extern TW7GetRefreshRate* m_pW7GetRefreshRate;
 
