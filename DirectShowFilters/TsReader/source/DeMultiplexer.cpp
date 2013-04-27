@@ -3103,6 +3103,8 @@ void CDeMultiplexer::ThreadProc()
   DWORD timeNow = GET_TIME_NOW();
   DWORD  lastFlushTime = timeNow;
   DWORD  lastFileReadTime = timeNow;
+  int sizeRead = 0;
+  DWORD timeoutDelay = 11;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
@@ -3133,16 +3135,22 @@ void CDeMultiplexer::ThreadProc()
     if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + (m_filter.IsUNCfile() ? 10 : 5))) )
     {
       lastFileReadTime = timeNow; 
-      int sizeRead = ReadAheadFromFile();      
+      sizeRead += ReadAheadFromFile();      
       if (!m_filter.IsRTSP() || (sizeRead >= READ_SIZE))
       {
+        sizeRead = 0;
         m_bReadAheadFromFile = false;
       }
     }
+    
+    if (m_filter.IsRTSP())
+      timeoutDelay = 5;
+    else
+      timeoutDelay = 10;
           
     Sleep(1);
   }
-  while (!ThreadIsStopping(11)) ;
+  while (!ThreadIsStopping(timeoutDelay)) ;
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
 }
 
