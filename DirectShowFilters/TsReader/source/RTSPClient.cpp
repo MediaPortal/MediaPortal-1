@@ -361,7 +361,7 @@ bool CRTSPClient::OpenStream(char* url)
           LogDebug("rtsp:increaseReceiveBufferTo to 2000000 for s:%d",socketNum);
           increaseReceiveBufferTo( *m_env, socketNum, 2000000 );
 
-          unsigned const thresh = 500000; // 0.5 second //1000000; // 1 second 
+          unsigned const thresh = 200000; // 0.2 second //1000000; // 1 second 
           subsession->rtpSource()->setPacketReorderingThresholdTime(thresh);
 
           if (socketInputBufferSize > 0) 

@@ -318,7 +318,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogDebug("------------- v0.5.%d -------------", TSREADER_VERSION);
+  LogDebug("----- Experimental RTSP dev version ----- instance 0x%x", this);
+  LogDebug("------------- v0.0.%d XXX -------------", TSREADER_VERSION);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;

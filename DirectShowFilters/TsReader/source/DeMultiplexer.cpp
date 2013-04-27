@@ -711,7 +711,7 @@ CBuffer* CDeMultiplexer::GetVideo(bool earlyStall)
     return NULL;
   }
 
-  if (CheckPrefetchState(!earlyStall, false))
+  if (CheckPrefetchState(true, false))
   {
     //Read some data
     m_bReadAheadFromFile = true;
@@ -764,7 +764,7 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
     return NULL;
   }
 
-  if (CheckPrefetchState(!earlyStall, false))
+  if (CheckPrefetchState(true, false))
   {
     //Read some data
     m_bReadAheadFromFile = true;
@@ -3133,11 +3133,13 @@ void CDeMultiplexer::ThreadProc()
     if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + (m_filter.IsUNCfile() ? 10 : 5))) )
     {
       lastFileReadTime = timeNow; 
-      ReadAheadFromFile();
-      m_bReadAheadFromFile = false;
+      int sizeRead = ReadAheadFromFile();      
+      if (!m_filter.IsRTSP() || (sizeRead >= READ_SIZE))
+      {
+        m_bReadAheadFromFile = false;
+      }
     }
-     
-     
+          
     Sleep(1);
   }
   while (!ThreadIsStopping(11)) ;
