@@ -256,40 +256,49 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">track to be announced</param>
     private static void AnnounceTrack(string filename)
     {
-      // Get song details and announce on last.fm
-      var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-      var plI = pl.First(plItem => plItem.FileName == filename);
-      if (plI == null || plI.MusicTag == null)
+      // Get song details and announce on last.fm but do not announce webstream url
+      bool playingRemoteUrl = Util.Utils.IsRemoteUrl(filename);
+      if (!playingRemoteUrl)
       {
-        Log.Info("Unable to announce song: {0}  as it does not exist in the playlist");
-        return;
-      }
-
-      var currentSong = (MusicTag) plI.MusicTag;
-
-      try
-      {
-        LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
-                                       currentSong.Duration.ToString(CultureInfo.InvariantCulture));
-        Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
-      }
-      catch (LastFMException ex)
-      {
-        if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
+        var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+        var plI = pl.First(plItem => plItem.FileName == filename);
+        if (plI == null || plI.MusicTag == null)
         {
+          Log.Info("Unable to announce song: {0}  as it does not exist in the playlist", filename);
+          return;
+        }
+
+        var currentSong = (MusicTag) plI.MusicTag;
+
+        try
+        {
+          LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
+                                         currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+          Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
+        }
+        catch (LastFMException ex)
+        {
+          if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
+          {
           Log.Error("Last.fm error when announcing now playing track: {0} - {1}", currentSong.Artist, currentSong.Title);
-          Log.Error(ex.Message);
+            Log.Error(ex.Message);
+          }
+          else
+          {
+            Log.Error("Exception when updating now playing track on last.fm");
+            Log.Error(ex.InnerException);
+          }
         }
-        else
-        {
-          Log.Error("Exception when updating now playing track on last.fm");
-          Log.Error(ex.InnerException);
-        }
-      }
 
       if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
+        {
+          AutoDJ(currentSong.Title, currentSong.Artist);
+        }
+      }
+      else
       {
-        AutoDJ(currentSong.Title, currentSong.Artist);
+        Log.Info("Do not announce webstream song");
+        return;
       }
 
     }
