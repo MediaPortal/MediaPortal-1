@@ -946,6 +946,7 @@ namespace MediaPortal.Util
       Bitmap shellThumb = null;
       Bitmap myTargetThumb = null;
       BitmapFrame frame = null;
+      Image myImage = null;
 
       TransformedBitmap thumbnail = null;
       TransformGroup transformGroup = null;
@@ -971,7 +972,7 @@ namespace MediaPortal.Util
                                      BitmapCacheOption.None);
         }
 
-        if (frame.Thumbnail == null) //If it failed try second method BitmapImage (slow and use more memory)
+        if (frame.Thumbnail == null) //If it failed try second method (slower and use more memory)
         {
           using (ShellObject shellFile = ShellObject.FromParsingName(thumbnailImageSource))
           {
@@ -1066,7 +1067,6 @@ namespace MediaPortal.Util
               File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
               result = true;
             }
-            Log.Debug("Generation fast failed {0} / {1}", MediaUrl, thumbnailImageDest);
           }
         }
         else
@@ -1143,8 +1143,42 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Info("GUIPictures: No thumbnail created for -- {0}", thumbnailImageSource);
-        result = false;
+        try
+        {
+          try
+          {
+            myImage = ImageFast.FromFile(thumbnailImageSource);
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+          result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+        }
+        catch (Exception)
+        {
+          Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", thumbnailImageDest);
+
+          try
+          {
+            myImage = Image.FromFile(thumbnailImageDest, true);
+            result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+          catch (OutOfMemoryException)
+          {
+            Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", thumbnailImageSource);
+            result = false;
+          }
+          catch (Exception)
+          {
+            Log.Info("Pictures: No thumbnail created for -- {0}", thumbnailImageSource);
+            result = false;
+          }
+        }
       }
       finally
       {
@@ -1162,6 +1196,8 @@ namespace MediaPortal.Util
           MediaUrl.SafeDispose();
         if (frame != null)
           frame.SafeDispose();
+        if (myImage != null)
+          myImage.SafeDispose();
       }
 
       if (result && Util.Utils.IsFileExistsCacheEnabled())
