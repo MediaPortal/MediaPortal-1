@@ -530,24 +530,19 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
   {
     while(1)
     {
-      //DWORD result = WaitForMultipleObjects(2, handles, false, 40);
-	    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+      DWORD result = WaitForMultipleObjects(2, handles, false, 40);
       if (result == WAIT_OBJECT_0) // exit event
       {
         LogDebug("CBDReaderFilter::Command thread: closing down");
         return 0;
       }
-      /*
       else if (result == WAIT_TIMEOUT)
       {
         LONGLONG pos = 0;
         HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
         if (SUCCEEDED(hr))
-        {
-          lib.ProvideUserInput(CONVERT_DS_90KHz(pos), BD_VK_NONE);
-        }
+          lib.SetScr(CONVERT_DS_90KHz(pos));
       }
-      */
       else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
         LONGLONG posEnd = 0;
