@@ -210,9 +210,76 @@ public class MediaPortalApp : D3D, IRender
     ES_USER_PRESENT      = 0x00000004, // Legacy flag, should not be used.
     ES_AWAYMODE_REQUIRED = 0x00000040,
     ES_CONTINUOUS        = 0x80000000,
-    // ReSharper restore InconsistentNaming
   }
-  
+  // ReSharper restore InconsistentNaming
+
+  //http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
+  // ReSharper disable InconsistentNaming
+  // ReSharper disable UnusedMember.Local
+  private enum DBT_EVENT
+  {
+    DBT_CONFIGCHANGECANCELED    = 0x0019,
+    DBT_CONFIGCHANGED           = 0x0018,
+    DBT_CUSTOMEVENT             = 0x8006,
+    DBT_DEVICEARRIVAL           = 0x8000,
+    DBT_DEVICEQUERYREMOVE       = 0x8001,
+    DBT_DEVICEQUERYREMOVEFAILED = 0x8002,
+    DBT_DEVICEREMOVECOMPLETE    = 0x8004,
+    DBT_DEVICEREMOVEPENDING     = 0x8003,
+    DBT_DEVICETYPESPECIFIC      = 0x8005,
+    DBT_DEVNODES_CHANGED        = 0x0007,
+    DBT_QUERYCHANGECONFIG       = 0x0017,
+    DBT_USERDEFINED             = 0xFFFF
+  }
+  // ReSharper restore UnusedMember.Local
+  // ReSharper restore InconsistentNaming
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/aa373247(v=vs.85).aspx
+  // ReSharper disable InconsistentNaming
+  // ReSharper disable UnusedMember.Local
+  private enum PBT_EVENT
+  {
+    PBT_APMPOWERSTATUSCHANGE  = 0x000A,
+    PBT_APMRESUMEAUTOMATIC    = 0x0012,
+    PBT_APMRESUMESUSPEND      = 0x0007,
+    PBT_APMSUSPEND            = 0x0004,
+    PBT_POWERSETTINGCHANGE    = 0x8013,
+    // XP only
+    PBT_APMBATTERYLOW         = 0x0009,
+    PBT_APMOEMEVENT           = 0x000B,
+    PBT_APMQUERYSUSPEND       = 0x0000,
+    PBT_APMQUERYSUSPENDFAILED = 0x0002,
+    PBT_APMRESUMECRITICAL     = 0x0006
+  }
+  // ReSharper restore UnusedMember.Local
+  // ReSharper restore InconsistentNaming
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+  // ReSharper disable InconsistentNaming
+  // ReSharper disable UnusedMember.Local
+  private enum WA_EVENT
+  {
+    WA_ACTIVE      = 1,
+    WA_CLICKACTIVE = 2,
+    WA_INACTIVE    = 0
+  }
+  // ReSharper restore InconsistentNaming
+  // ReSharper restore UnusedMember.Local
+
+  // ReSharper disable InconsistentNaming
+  // ReSharper disable UnusedMember.Local
+  //http://msdn.microsoft.com/en-us/library/windows/desktop/aa363246(v=vs.85).aspx
+  private enum DBT_DEV_TYPE
+  {
+    DBT_DEVTYP_DEVICEINTERFACE = 0x00000005,
+    DBT_DEVTYP_HANDLE          = 0x00000006,
+    DBT_DEVTYP_OEM             = 0x00000000,
+    DBT_DEVTYP_PORT            = 0x00000003,
+    DBT_DEVTYP_VOLUME          = 0x00000002
+  }
+  // ReSharper restore InconsistentNaming
+  // ReSharper restore UnusedMember.Local
+
   #endregion
 
   #region structs
@@ -1493,11 +1560,11 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnPowerBroadcast(ref Message msg)
   {
-    Log.Debug("Main: WM_POWERBROADCAST ({0})", msg.WParam.ToInt32());
+    Log.Debug("Main: WM_POWERBROADCAST ({0})", Enum.GetName(typeof(PBT_EVENT), msg.WParam.ToInt32()));
     switch (msg.WParam.ToInt32())
     {
       case PBT_APMSUSPEND:
-        Log.Info("Main: Suspending operation (PBT_APMSUSPEND");
+        Log.Info("Main: Suspending operation");
         PluginManager.WndProc(ref msg);
         OnSuspend();
         break;
@@ -1509,17 +1576,17 @@ public class MediaPortalApp : D3D, IRender
 
       // only for Windows XP
       case PBT_APMRESUMECRITICAL:
-        Log.Info("Main: Resuming operation (PBT_APMRESUMECRITICAL");
+        Log.Info("Main: Resuming operation");
         OnResume();
         break;
 
       case PBT_APMRESUMESUSPEND:
-        Log.Info("Main: Resuming operation (PBT_APMRESUMESUSPEND)");
+        Log.Info("Main: Resuming operation");
         OnResume();
         break;
 
       case PBT_POWERSETTINGCHANGE:
-        Log.Info("Main: Power settings changed (PBT_POWERSETTINGSCHANGE)");
+        Log.Info("Main: Power settings changed");
         var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
         var data = (IntPtr)(msg.LParam.ToInt32() + Marshal.SizeOf(ps));
 
@@ -1586,12 +1653,12 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnActivate(ref Message msg)
   {
-    Log.Debug("Main: WM_ACTIVATE");
     int loword = unchecked((short) msg.WParam);
+    Log.Debug("Main: WM_ACTIVATE ({0})", Enum.GetName(typeof(WA_EVENT), loword));
     switch (loword)
     {
       case WA_INACTIVE:
-        Log.Info("Main: Deactivation request received (WA_INACTIVE)");
+        Log.Info("Main: Deactivation request received");
         if (RefreshRateChanger.RefreshRateChangeRunning)
         {
           Log.Info("Main: Refresh rate changer running. Ignoring deactivation request");
@@ -1604,18 +1671,13 @@ public class MediaPortalApp : D3D, IRender
         break;
 
       case WA_ACTIVE:
-        Log.Info("Main: Activation request received (WA_ACTIVATE)");
-        RestoreFromTray();
-        break;
-      
       case WA_CLICKACTIVE:
-        Log.Info("Main: Activation reuqest received (WA_CLICKACTIVATE)");
+        Log.Info("Main: Activation reuqest received");
         RestoreFromTray();
         break;
     }
     msg.Result = (IntPtr)0;
   }
-
 
   /// <summary>
   /// 
@@ -1623,26 +1685,31 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnDeviceChange(ref Message msg)
   {
-    Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", msg.WParam.ToInt32());
+    Log.Debug("Main: WM_DEVICECHANGE (Event: {0})", Enum.GetName(typeof(DBT_EVENT), msg.WParam.ToInt32()));
     RemovableDriveHelper.HandleDeviceChangedMessage(msg);
+
     // process additional data if available
     if (msg.LParam.ToInt32() != 0)
     {
-      var hdr = (DEV_BROADCAST_HDR) Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
-      if (hdr.dbcc_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+      var hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
+      if (hdr.dbcc_devicetype != DBT_DEVTYP_DEVICEINTERFACE)
       {
-        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
+        Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));        
+      }
+      else
+      {
+        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
 
         // get friendly device name
         string deviceName = String.Empty;
         string[] values = deviceInterface.dbcc_name.Split('#');
         if (values.Length >= 3)
         {
-          string deviceType       = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
+          string deviceType = values[0].Substring(values[0].IndexOf(@"?\", StringComparison.Ordinal) + 2);
           string deviceInstanceID = values[1];
-          string deviceUniqueID   = values[2];
-          string regPath          = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
-          RegistryKey regKey      = Registry.LocalMachine.OpenSubKey(regPath);
+          string deviceUniqueID = values[2];
+          string regPath = @"SYSTEM\CurrentControlSet\Enum\" + deviceType + "\\" + deviceInstanceID + "\\" + deviceUniqueID;
+          RegistryKey regKey = Registry.LocalMachine.OpenSubKey(regPath);
           if (regKey != null)
           {
             // use the friendly name if it exists
@@ -1651,7 +1718,7 @@ public class MediaPortalApp : D3D, IRender
             {
               deviceName = result.ToString();
             }
-            // if not use the device description's last part
+              // if not use the device description's last part
             else
             {
               result = regKey.GetValue("DeviceDesc");
@@ -1662,7 +1729,9 @@ public class MediaPortalApp : D3D, IRender
             }
           }
         }
+        Log.Debug("Main: Device type is is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);  
 
+        // special chanding for audio renderer
         if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
         {
           switch (msg.WParam.ToInt32())
@@ -1672,9 +1741,9 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-                #pragma warning disable 168
+#pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
-                #pragma warning restore 168
+#pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -1691,9 +1760,9 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-                #pragma warning disable 168
+#pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
-                #pragma warning restore 168
+#pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -2049,13 +2118,15 @@ public class MediaPortalApp : D3D, IRender
 
     if (_suspended)
     {
-      Log.Error("Main: OnSuspend - OnSuspend called but MP is not in active state.");
+      Log.Warn("Main: OnSuspend - OnSuspend called but MP is not in active state.");
+      return;
     }
 
     _ignoreContextMenuAction = true;
     _suspended = true;
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
 
+    // stop playback
     Log.Info("Main: Stopping playback");
     if (GUIGraphicsContext.IsPlaying)
     {
@@ -2067,9 +2138,6 @@ public class MediaPortalApp : D3D, IRender
       }
     }
     SaveLastActiveModule();
-
-    // stop playback
-    _suspended = true;
 
     Log.Info("Main: Stopping Input Devices");
     InputDevices.Stop();
@@ -2106,7 +2174,8 @@ public class MediaPortalApp : D3D, IRender
 
     if (!_suspended)
     {
-      Log.Error("Main: OnResume - OnResume called but MP is not in suspended state.");
+      Log.Warn("Main: OnResume - OnResume called but MP is not in suspended state.");
+      return;
     }
 
     // delay resuming as configured
