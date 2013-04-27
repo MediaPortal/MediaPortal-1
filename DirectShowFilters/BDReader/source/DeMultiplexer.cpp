@@ -1896,49 +1896,49 @@ bool CDeMultiplexer::IsMediaChanging()
   return m_bWaitForMediaChange;
 }
 
-LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
+char* CDeMultiplexer::StreamFormatAsString(int pStreamType)
 {
-	switch (pStreamType)
-	{
-	case BLURAY_STREAM_TYPE_VIDEO_MPEG1:
-		return _T("MPEG1");
-	case BLURAY_STREAM_TYPE_VIDEO_MPEG2:
-		return _T("MPEG2");
-	case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
-		return _T("MPEG1");
-	case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
-		return _T("MPEG2");
-	case BLURAY_STREAM_TYPE_VIDEO_H264:
-		return _T("H264");
-	case BLURAY_STREAM_TYPE_VIDEO_VC1:
-		return _T("VC1");
-	case BLURAY_STREAM_TYPE_AUDIO_LPCM:
-		return _T("LPCM");
-	case BLURAY_STREAM_TYPE_AUDIO_AC3:
-		return _T("AC3");
-	case BLURAY_STREAM_TYPE_AUDIO_DTS:
-		return _T("DTS");
-	case BLURAY_STREAM_TYPE_AUDIO_TRUHD:
-		return _T("TrueHD");
-	case BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
-		return _T("AC3+");
-	case BLURAY_STREAM_TYPE_AUDIO_DTSHD:
-		return _T("DTS-HD");
-	case BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
-		return _T("DTS-HD Master");
+  switch (pStreamType)
+  {
+  case BLURAY_STREAM_TYPE_VIDEO_MPEG1:
+    return "MPEG1";
+  case BLURAY_STREAM_TYPE_VIDEO_MPEG2:
+    return "MPEG2";
+  case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+    return "MPEG1";
+  case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+    return "MPEG2";
+  case BLURAY_STREAM_TYPE_VIDEO_H264:
+    return "H264";
+  case BLURAY_STREAM_TYPE_VIDEO_VC1:
+    return "VC1";
+  case BLURAY_STREAM_TYPE_AUDIO_LPCM:
+    return "LPCM";
+  case BLURAY_STREAM_TYPE_AUDIO_AC3:
+    return "AC3";
+  case BLURAY_STREAM_TYPE_AUDIO_DTS:
+    return "DTS";
+  case BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+    return "TrueHD";
+  case BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+    return "AC3+";
+  case BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+    return "DTS-HD";
+  case BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+    return "DTS-HD Master";
   case 0x0f:
-		return _T("AAC");
-	case 0x11:
-		return _T("LATM AAC");
-	case BLURAY_STREAM_TYPE_SUB_PG:
-		return _T("PGS");
-	case BLURAY_STREAM_TYPE_SUB_IG:
-		return _T("IG");
-	case BLURAY_STREAM_TYPE_SUB_TEXT:
-		return _T("Text");
-	default:
-		return _T("Unknown");
-	}
+    return "AAC";
+  case 0x11:
+    return "LATM AAC";
+  case BLURAY_STREAM_TYPE_SUB_PG:
+    return "PGS";
+  case BLURAY_STREAM_TYPE_SUB_IG:
+    return "IG";
+  case BLURAY_STREAM_TYPE_SUB_TEXT:
+    return "Text";
+  default:
+    return "Unknown";
+  }
 }
 
 LPCTSTR CDeMultiplexer::StreamAudioFormatAsString(int pStreamAudioChannel)
