@@ -141,7 +141,7 @@
 				<ondown>20</ondown>
       </control>
 	
-			<control Style="SettingsToggleButton">
+			<control Style="SettingsCheckButton">
         <description>Settings locked</description>
         <type>checkbutton</type>
         <id>20</id>

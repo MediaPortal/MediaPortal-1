@@ -54,10 +54,6 @@
 			<type>checkbutton</type>
 			<id>60</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9141</label>
@@ -68,10 +64,6 @@
 			<type>checkbutton</type>
 			<id>61</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9142</label>
