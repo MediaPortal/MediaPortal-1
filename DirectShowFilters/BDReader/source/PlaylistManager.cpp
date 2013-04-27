@@ -390,6 +390,7 @@ void CPlaylistManager::CurrentClipFilled()
 {
   if (m_vecPlaylists.size())
   {
+    LogDebug("CPlaylistManager::CurrentClipFilled");
     (*m_itCurrentVideoSubmissionPlaylist)->CurrentClipFilled();
   }
 }
