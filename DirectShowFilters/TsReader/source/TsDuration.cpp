@@ -31,6 +31,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CTsDuration::CTsDuration()
 {
   m_videoPid=-1;
+  m_pid = -1;
 }
 
 CTsDuration::~CTsDuration(void)
@@ -72,7 +73,7 @@ int CTsDuration::GetPid()
 void CTsDuration::UpdateDuration(bool logging)
 {
 
-  byte buffer[188*330];
+  byte buffer[131072]; //~130ms of data @ 8Mbit/s
   DWORD dwBytesRead;
   int Loop=5 ;
   int searchLoopCnt;
@@ -113,11 +114,28 @@ void CTsDuration::UpdateDuration(bool logging)
         return;
       }
       OnRawData2(buffer,dwBytesRead);
+      
+      offset += (sizeof(buffer)*(searchLoopCnt/2)); //Move file pointer
+      
       if (searchLoopCnt<65)
       {
         searchLoopCnt++;
       }
-      offset += (sizeof(buffer)*(searchLoopCnt/2)); //Move file pointer
+      else if (m_videoPid<0)
+      {
+        //failed to find a first PCR - park filepointer at end of file
+        m_reader->SetFilePointer(-1,FILE_END);
+        m_reader->Read(buffer,1,&dwBytesRead);
+        return;
+      }     
+      else
+      {
+        //Search for any PCR from the beginning again
+        m_videoPid = -1;
+        searchLoopCnt = 2;
+        offset = 0;
+      }     
+      
 			Sleep(1) ;
     }
 

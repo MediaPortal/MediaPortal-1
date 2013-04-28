@@ -76,6 +76,7 @@ DEFINE_GUID(CLSID_LAVCUVID, 0x62D767FE, 0x4F1B, 0x478B, 0xB3, 0x50, 0x8A, 0xCE, 
 DEFINE_GUID(CLSID_LAVVIDEO, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
 // {212690FB-83E5-4526-8FD7-74478B7939CD}
 DEFINE_GUID(CLSID_MSDTVDVDVIDEO, 0x212690FB, 0x83E5, 0x4526, 0x8F, 0xD7, 0x74, 0x47, 0x8B, 0x79, 0x39, 0xCD);
+// {1CF3606B-6F89-4813-9D05-F9CA324CF2EA}
 
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
@@ -176,7 +177,7 @@ public:
   double          GetStartTime();
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
-  void            Seek(CRefTime&  seekTime, bool seekInFile);
+  bool            Seek(CRefTime&  seekTime);
 //  void            SeekDone(CRefTime& refTime);
 //  void            SeekStart();
   HRESULT         SeekPreStart(CRefTime& rtSeek);
@@ -212,6 +213,7 @@ public:
   bool            m_bStreamCompensated;
   CRefTime        m_ClockOnStart;
   bool            m_bForcePosnUpdate;
+  bool            m_bDurationThreadBusy;
 
   REFERENCE_TIME  m_RandomCompensation;
   REFERENCE_TIME  m_MediaPos;
@@ -240,21 +242,32 @@ public:
   bool            m_bDisableVidSizeRebuildMPEG2;
   bool            m_bDisableVidSizeRebuildH264;
   bool            m_bDisableAddPMT;
+  bool            m_bForceFFDShowSyncFix;
+  bool            m_bUseFPSfromDTSPTS;
+  LONG            m_regInitialBuffDelay;
+  bool            m_bEnableBufferLogging;
+  bool            m_bSubPinConnectAlways;
 
   CLSID           GetCLSIDFromPin(IPin* pPin);
+  HRESULT         GetSubInfoFromPin(IPin* pPin);
   
   void            SetErrorAbort();
   bool            CheckAudioCallback();
   bool            CheckCallback();
   void            CheckForMPAR();
   bool            m_bMPARinGraph;
+  
+  CLSID           m_subtitleCLSID;
+  void            ReleaseSubtitleFilter();
+  CCritSec        m_ReadAheadLock;
+  
+
 protected:
   void ThreadProc();
 
 private:
   void    SetDuration();
   HRESULT AddGraphToRot(IUnknown *pUnkGraph);
-  HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
   void    SetMediaPosnUpdate(REFERENCE_TIME MediaPos);
   void    BufferingPause(bool longPause);
@@ -269,6 +282,7 @@ private:
   CCritSec        m_CritSecDuration;
   CCritSec        m_GetTimeLock;
   CCritSec        m_GetCompLock;
+  CCritSec        m_DurationThreadLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
   CTsDuration     m_duration;
