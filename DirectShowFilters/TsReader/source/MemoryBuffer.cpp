@@ -9,7 +9,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*32L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*16L)
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -51,7 +51,7 @@ void CMemoryBuffer::Clear()
 
 long CMemoryBuffer::Size()
 {
-  return m_BytesInBuffer;
+  return (m_bRunning ? m_BytesInBuffer : -1);
 }
 void CMemoryBuffer::Run(bool onOff)
 {

@@ -1897,7 +1897,7 @@ void CTsReaderFilter::ThreadProc()
           int cntA = m_demultiplexer.GetAudioBufferPts(firstAudio, lastAudio);
           int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo);
                   
-          if ((cntA > 300) || (cntV > 300) || m_bEnableBufferLogging)
+          if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
           {
             LogDebug("Buffers : A/V = %d/%d, A last : %03.3f, V Last : %03.3f", cntA, cntV, (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f);
           }

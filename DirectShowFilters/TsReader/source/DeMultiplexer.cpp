@@ -42,14 +42,6 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_AUD_BUF_SIZE 1024
-#define MAX_VID_BUF_SIZE 640
-#define MAX_SUB_BUF_SIZE 640
-#define BUFFER_LENGTH 0x1000
-#define READ_SIZE (65536)
-#define MIN_READ_SIZE (READ_SIZE/8)
-#define MIN_READ_SIZE_UNC (READ_SIZE/4)
-#define INITIAL_READ_SIZE (READ_SIZE * 512)
 
 //Macro borrowed from MPC-HC/LAV splitter...
 #define MOVE_TO_H264_START_CODE(b, e) while(b <= e-4 && !((*(DWORD *)b == 0x01000000) || ((*(DWORD *)b & 0x00FFFFFF) == 0x00010000))) b++; if((b <= e-4) && *(DWORD *)b == 0x01000000) b++;
@@ -1059,6 +1051,11 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   //if we are playing a RTSP stream
   if (m_reader->IsBuffer())
   {    
+    if (m_reader->HasData() < 0)
+    {
+      //Buffer not running
+      return -1;
+    }      
     //Read raw data from the buffer
     m_reader->Read(buffer, sizeof(buffer), (DWORD*)&dwReadBytes);
     if (dwReadBytes < sizeof(buffer))
@@ -2630,11 +2627,11 @@ int CDeMultiplexer::GetVideoBuffCntFt(double* frameTime)
 bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
 {  
   //Check for near-overflow conditions first
-  if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() > (MAX_AUD_BUF_SIZE - 50)))
+  if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() > AUD_BUF_SIZE_PREFETCH_LIM))
   {
     return false;
   }
-  if (m_filter.GetVideoPin()->IsConnected() && (m_vecVideoBuffers.size() > (MAX_VID_BUF_SIZE - 20)))
+  if (m_filter.GetVideoPin()->IsConnected() && (m_vecVideoBuffers.size() > VID_BUF_SIZE_PREFETCH_LIM))
   {
     return false;
   }
@@ -2652,7 +2649,7 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
     {
       if (m_reader->IsBuffer()) //RTSP mode
       {
-        if (m_reader->HasData() > 0)
+        if (m_reader->HasData() >= READ_SIZE)
         {
           return true;
         }
@@ -3104,7 +3101,6 @@ void CDeMultiplexer::ThreadProc()
   DWORD  lastFlushTime = timeNow;
   DWORD  lastFileReadTime = timeNow;
   int sizeRead = 0;
-  DWORD timeoutDelay = 11;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
@@ -3135,22 +3131,21 @@ void CDeMultiplexer::ThreadProc()
     if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + (m_filter.IsUNCfile() ? 10 : 5))) )
     {
       lastFileReadTime = timeNow; 
-      sizeRead += ReadAheadFromFile();      
-      if (!m_filter.IsRTSP() || (sizeRead >= READ_SIZE))
+      int sizeReadTemp = ReadAheadFromFile();      
+      if ((sizeReadTemp < 0) || !m_filter.IsRTSP() || (sizeRead >= READ_SIZE))
       {
         sizeRead = 0;
         m_bReadAheadFromFile = false;
       }
+      else
+      {
+        sizeRead += sizeReadTemp;
+      }
     }
-    
-    if (m_filter.IsRTSP())
-      timeoutDelay = 5;
-    else
-      timeoutDelay = 10;
-          
+              
     Sleep(1);
   }
-  while (!ThreadIsStopping(timeoutDelay)) ;
+  while (!ThreadIsStopping(11)) ;
   LogDebug("CDeMultiplexer::ThreadProc stopped()");
 }
 
