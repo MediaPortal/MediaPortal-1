@@ -66,7 +66,7 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("MP.Config.DefaultSections", "1.1.6.27644")]
 
 [assembly: SubsystemVersion("MP.Plugins", "1.1.6.27644")]             // reserved for plugin defined subsystems
-[assembly: SubsystemVersion("MP.Plugins.Music", "1.1.6.27644")]
+[assembly: SubsystemVersion("MP.Plugins.Music", "1.3.100.0")] // MP 1.3.100.0 // Future 1.4.0
 [assembly: SubsystemVersion("MP.Plugins.Videos", "1.2.100.0")] // MP 1.3.0 Alpha 1
 [assembly: SubsystemVersion("MP.Plugins.Pictures", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Plugins.Weather", "1.1.6.27644")]
