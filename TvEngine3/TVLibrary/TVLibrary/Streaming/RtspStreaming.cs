@@ -80,6 +80,9 @@ namespace TvLibrary.Streaming
     #region variables
 
     private int _port;
+
+    private string _address;
+
     private bool _running;
     private readonly bool _initialized;
     private readonly Dictionary<string, RtspStream> _streams;
@@ -132,6 +135,7 @@ namespace TvLibrary.Streaming
           {
             throw new Exception("Error initializing streaming server");
           }
+          _address = selectedAddress.ToString();
           _port = port;
           _initialized = true;
           _streams = new Dictionary<string, RtspStream>();
@@ -212,6 +216,14 @@ namespace TvLibrary.Streaming
     public int Port
     {
       get { return _initialized ? _port : 0; }
+    }
+
+    /// <summary>
+    /// Returns the active streaming address
+    /// </summary>
+    public string Address
+    {
+      get { return _address; }
     }
 
     #endregion

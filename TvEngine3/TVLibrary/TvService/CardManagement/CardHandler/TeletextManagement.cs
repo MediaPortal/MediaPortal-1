@@ -49,23 +49,6 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return false;
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return false;
-          if (_cardHandler.IsLocal == false)
-          {
-            return RemoteControl.Instance.IsGrabbingTeletext(user);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
-        }
-
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return false;
@@ -93,23 +76,6 @@ namespace TvService
       if (_cardHandler.DataBaseCard.Enabled == false)
         return false;
 
-      try
-      {
-        RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-        if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-          return false;
-        if (_cardHandler.IsLocal == false)
-        {
-          return RemoteControl.Instance.HasTeletext(user);
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("card: unable to connect to slave controller at:{0}",
-                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
-        return false;
-      }
-
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return false;
@@ -132,23 +98,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return new TimeSpan(0, 0, 0, 15);
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return new TimeSpan(0, 0, 0, 15);
-          if (_cardHandler.IsLocal == false)
-          {
-            return RemoteControl.Instance.TeletextRotation(user, pageNumber);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return new TimeSpan(0, 0, 0, 15);
-        }
-
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return new TimeSpan(0, 0, 0, 15);
@@ -176,23 +126,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return;
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return;
-          if (_cardHandler.IsLocal == false)
-          {
-            RemoteControl.Instance.GrabTeletext(user, onOff);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return;
-        }
-
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return;
@@ -222,23 +156,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return new byte[] {1};
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return new byte[] {1};
-          if (_cardHandler.IsLocal == false)
-          {
-            return RemoteControl.Instance.GetTeletextPage(user, pageNumber, subPageNumber);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return new byte[] {1};
-        }
-
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return new byte[] {1};
@@ -269,20 +187,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return -1;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.SubPageCount(user, pageNumber);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return -1;
-          }
-        }
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
@@ -312,20 +217,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return -1;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetTeletextRedPageNumber(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return -1;
-          }
-        }
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
@@ -355,20 +247,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return -1;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetTeletextGreenPageNumber(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return -1;
-          }
-        }
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
@@ -398,20 +277,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return -1;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetTeletextYellowPageNumber(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return -1;
-          }
-        }
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
@@ -441,20 +307,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return -1;
-        if (_cardHandler.IsLocal == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetTeletextBluePageNumber(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
-            return -1;
-          }
-        }
+        
         ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;

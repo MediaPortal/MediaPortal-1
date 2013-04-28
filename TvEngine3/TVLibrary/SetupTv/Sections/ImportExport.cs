@@ -91,19 +91,10 @@ namespace SetupTv.Sections
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
       AddAttribute(rootElement, "version", "1.0");
 
-      XmlNode nodeServers = xmlDoc.CreateElement("servers");
-      IList<Server> servers = Server.ListAll();
-      foreach (Server server in servers)
+      XmlNode nodeCards = xmlDoc.CreateElement("cards");
+      IList<Card> cards = Card.ListAll();
+      foreach (Card card in cards)
       {
-        XmlNode nodeServer = xmlDoc.CreateElement("server");
-        AddAttribute(nodeServer, "HostName", server.HostName);
-        AddAttribute(nodeServer, "IdServer", server.IdServer);
-        AddAttribute(nodeServer, "IsMaster", server.IsMaster);
-
-        XmlNode nodeCards = xmlDoc.CreateElement("cards");
-        IList<Card> cards = Card.ListAll();
-        foreach (Card card in cards)
-        {
           XmlNode nodeCard = xmlDoc.CreateElement("card");
           AddAttribute(nodeCard, "IdCard", card.IdCard);
           AddAttribute(nodeCard, "DevicePath", card.DevicePath);
@@ -121,12 +112,8 @@ namespace SetupTv.Sections
           AddAttribute(nodeCard, "CAM", card.CAM);
           AddAttribute(nodeCard, "netProvider", card.netProvider);
           AddAttribute(nodeCard, "StopGraph", card.StopGraph);
-          nodeCards.AppendChild(nodeCard);
-        }
-        nodeServer.AppendChild(nodeCards);
-        nodeServers.AppendChild(nodeServer);
       }
-      rootElement.AppendChild(nodeServers);
+      rootElement.AppendChild(nodeCards);
 
       XmlNode nodechannels = xmlDoc.CreateElement("channels");
       IList<Channel> channels = Channel.ListAll();
@@ -462,7 +449,7 @@ namespace SetupTv.Sections
               {
                 int idCard = Int32.Parse(nodeMap.Attributes["IdCard"].Value);
                 XmlNode nodeCard =
-                  doc.SelectSingleNode(String.Format("/tvserver/servers/server/cards/card[@IdCard={0}]", idCard));
+                  doc.SelectSingleNode(String.Format("/tvserver/cards/card[@IdCard={0}]", idCard));
                 Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
                 if (dbCard != null)
                 {

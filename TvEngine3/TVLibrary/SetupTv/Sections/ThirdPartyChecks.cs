@@ -265,8 +265,6 @@ namespace SetupTv.Sections
       STREAMING_PORT = RtspPort;
       if (STREAMING_PORT == 0)
       {
-        TvDatabase.Server ourServer = TvDatabase.Server.Retrieve(TvControl.RemoteControl.Instance.IdServer);
-        STREAMING_PORT = ourServer.RtspPort;
         return false;
       }
 

@@ -194,7 +194,7 @@ namespace TvPlugin
       return succeeded;
     }
 
-    private bool CheckStreamingConnection(bool tvServerAvailable, bool databaseAvailable, List<string> portErrors)
+    private bool CheckStreamingConnection(bool tvServerAvailable, List<string> portErrors)
     {
       bool succeeded = true;
       int RtspPort = 0;
@@ -203,26 +203,7 @@ namespace TvPlugin
       {
         RtspPort = RemoteControl.Instance.StreamingPort;
       }
-      if (RtspPort == 0 && databaseAvailable)
-      {
-        try
-        {
-          IList<Server> servers = Server.ListAll();
-          foreach (Server server in servers)
-          {
-            if (server.IsMaster)
-            {
-              RtspPort = server.RtspPort;
-              break;
-            }
-          }
-        }
-        catch (Exception)
-        {
-          // do nothing
-        }
-      }
-
+      
       if (RtspPort > 0)
       {
         if (!CheckTcpPort(RtspPort)) // RTSP streaming
@@ -329,7 +310,7 @@ namespace TvPlugin
           List<string> portErrors = new List<string>();
           bool tvServerOk = CheckTvServerConnection(portErrors);
           bool databaseOk = CheckDatabaseConnection(portErrors);
-          bool streamingOk = CheckStreamingConnection(tvServerOk, databaseOk, portErrors);
+          bool streamingOk = CheckStreamingConnection(tvServerOk, portErrors);
 
           //Show the check results dialog to the user
           GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);

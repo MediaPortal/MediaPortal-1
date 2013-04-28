@@ -78,20 +78,6 @@ namespace TvService
     /// </returns>
     public bool IsOwner(IUser user)
     {
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.IsOwner(_cardHandler.DataBaseCard.IdCard, user);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
-        }
-      }
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       return context.IsOwner(user);
     }
@@ -102,21 +88,6 @@ namespace TvService
     /// <param name="user">The user.</param>
     public void RemoveUser(IUser user)
     {
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
-          return;
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return;
-        }
-      }
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return;
@@ -221,20 +192,6 @@ namespace TvService
     /// <returns></returns>
     public IUser[] GetUsers()
     {
-      if (_cardHandler.IsLocal == false)
-      {
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          return RemoteControl.Instance.GetUsersForCard(_cardHandler.DataBaseCard.IdCard);
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return null;
-        }
-      }
       var context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return null;

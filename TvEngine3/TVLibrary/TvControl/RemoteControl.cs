@@ -37,7 +37,7 @@ using ThreadState = System.Threading.ThreadState;
 namespace TvControl
 {
   /// <summary>
-  /// Class which holds the connection with the master tv-server
+  /// Class which holds the connection with the tv-server
   /// </summary>
   public class RemoteControl
   {
@@ -230,7 +230,7 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Gets or sets the name the hostname of the master tv-server.
+    /// Gets or sets the name the hostname of the tv-server.
     /// </summary>
     /// <value>The name of the host.</value>
     public static string HostName
