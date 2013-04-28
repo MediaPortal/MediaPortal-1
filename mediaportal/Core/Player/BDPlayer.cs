@@ -224,6 +224,9 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int SetVC1Override(ref Guid decoder);
+
+      [PreserveSig]
+      int GetAudioChannelCount(long lIndex);
     }
     #endregion
 
@@ -411,6 +414,14 @@ namespace MediaPortal.Player
       BLURAY_STREAM_TYPE_SUB_PG = 0x90,
       BLURAY_STREAM_TYPE_SUB_IG = 0x91,
       BLURAY_STREAM_TYPE_SUB_TEXT = 0x92
+    }
+
+    protected enum BDAudioFormat
+    {
+      BLURAY_AUDIO_FORMAT_MONO = 1,
+      BLURAY_AUDIO_FORMAT_STEREO = 3,
+      BLURAY_AUDIO_FORMAT_MULTI_CHAN = 6,
+      BLURAY_AUDIO_FORMAT_COMBO = 12 // Stereo ac3/dts,
     }
 
     protected enum VideoRate
@@ -765,8 +776,9 @@ namespace MediaPortal.Player
         int sPDWGroup, sPLCid;
         string sName;
         object pppunk, ppobject;
-        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);        
-        return StreamTypetoString(sPDWGroup);        
+        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        int AudioChannelCount = _ireader.GetAudioChannelCount(iStream);
+        return StreamTypetoString(sPDWGroup) + " " + StreamTypeAudiotoString(AudioChannelCount);
       }
       return Strings.Unknown;
     }
@@ -1877,10 +1889,11 @@ namespace MediaPortal.Player
     {
       BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
 
-      // Do not change refresh rate if the clip is less than 1 minute long
+        // Do not change refresh rate if the clip is less than 1 minute long
       if (titleInfo.duration / 90000 > 60)
-      {
+        {
         RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+        }
       }
     }
 
@@ -1889,7 +1902,8 @@ namespace MediaPortal.Player
       try
       {
         BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
-        chapters = GetChapters(titleInfo);
+          chapters = GetChapters(titleInfo);
+        }
       }
       catch
       {
@@ -2667,6 +2681,22 @@ namespace MediaPortal.Player
           return "H264";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
           return "VC1";
+      }
+      return Strings.Unknown;
+    }
+
+    protected string StreamTypeAudiotoString(int stream)
+    {
+      switch (stream)
+      {
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_MONO:
+          return "1.0";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_STEREO:
+          return "2.0";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+          return "5.1";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_COMBO:
+          return "7.1";
       }
       return Strings.Unknown;
     }
