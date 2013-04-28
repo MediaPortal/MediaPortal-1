@@ -1567,26 +1567,31 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (!_mixer.WasApiShared && (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
+          if (!_mixer.UpMixing)
           {
-            if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+            BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
+            if (!_mixer.WasApiShared &&
+                (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
             {
-              Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
-              // The new stream has a different frequency or number of channels
-              // We need a new mixer
-              _mixer.Dispose();
-              _mixer = null;
-              _mixer = new MixerStream(this);
-              if (!_mixer.CreateMixer(stream))
+              if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
+                  stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
               {
-                Log.Error("BASS: Could not create Mixer. Aborting playback.");
-                return false;
-              }
+                Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
+                // The new stream has a different frequency or number of channels
+                // We need a new mixer
+                _mixer.Dispose();
+                _mixer = null;
+                _mixer = new MixerStream(this);
+                if (!_mixer.CreateMixer(stream))
+                {
+                  Log.Error("BASS: Could not create Mixer. Aborting playback.");
+                  return false;
+                }
 
-              if (HasViz)
-              {
-                _streamcopy.ChannelHandle = _mixer.BassStream;
+                if (HasViz)
+                {
+                  _streamcopy.ChannelHandle = _mixer.BassStream;
+                }
               }
             }
           }
