@@ -190,8 +190,6 @@ namespace TvPlugin
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayRecordingBackStarted);
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayRecordingBackChanged);
 
-      GUIWindowManager.OnNewAction += new OnActionHandler(OnNewAction);
-
       bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvrecordedtv.xml"));
       //LoadSettings();
       GUIWindowManager.Replace((int)Window.WINDOW_RECORDEDTV, this);

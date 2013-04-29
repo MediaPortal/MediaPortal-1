@@ -14,8 +14,10 @@ namespace TvPlugin
       GUIWindowManager.OnNewAction += OnNewAction;
     }
 
-    // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when
-    // the player is not playing)...
+    /// <summary>
+    /// OnAction only receives ACTION_PLAY event when the player is not playing.  Ensure all actions are processed
+    /// </summary>
+    /// <param name="action">Action command</param>
     private void OnNewAction(Action action)
     {
       if ((action.wID != Action.ActionType.ACTION_PLAY) || GUIWindowManager.ActiveWindow != GetID)
