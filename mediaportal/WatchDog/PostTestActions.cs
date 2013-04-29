@@ -135,6 +135,11 @@ namespace WatchDog
       {
         // Get config file also to help debugging
         File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\MediaPortal.xml", _tmpDir + @"\\MediaPortal.xml", true);
+        //Add client gentle.config if it exists
+        if (File.Exists(Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config"))
+        {
+          File.Copy(Config.GetFolder(Config.Dir.Config) + @"\\Gentle.config", _tmpDir + @"\\Client_Gentle.config", true);
+        }
 
         if (File.Exists(_zipFile))
         {
