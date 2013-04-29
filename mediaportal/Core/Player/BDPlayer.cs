@@ -699,11 +699,11 @@ namespace MediaPortal.Player
         return false;
       try
       {
+        const int S_OK = 0;
+
         switch (action.wID)
         {
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
             int x = (int)((action.fAmount1 - PlaneScene.DestRect.X) / ((float)PlaneScene.DestRect.Width / 1920.0f));
             int y = (int)((action.fAmount2 - PlaneScene.DestRect.Y) / ((float)PlaneScene.DestRect.Height / 1080.0f));
             //Log.Debug("BDPlayer: Mouse move: {0},{1}", x, y);
@@ -711,71 +711,51 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
-            if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              return false;
             Log.Debug("BDPlayer: Mouse select");
             _ireader.Action((int)BDKeys.BD_VK_MOUSE_ACTIVATE);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_LEFT:
-            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              //return false;
             Log.Debug("BDPlayer: Move left");
-            _ireader.Action((int)BDKeys.BD_VK_LEFT);
-            return true;
+            return _ireader.Action((int)BDKeys.BD_VK_LEFT) == S_OK ? true : false;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_RIGHT:
-            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              //return false;
             Log.Debug("BDPlayer: Move right");
-            _ireader.Action((int)BDKeys.BD_VK_RIGHT);
-            return true;
+            return _ireader.Action((int)BDKeys.BD_VK_RIGHT) == S_OK ? true : false;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_UP:
-            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              //return false;
             Log.Debug("BDPlayer: Move up");
-            _ireader.Action((int)BDKeys.BD_VK_UP);
-            return true;
+            return _ireader.Action((int)BDKeys.BD_VK_UP) == S_OK ? true : false;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_DOWN:
-            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
-            //  return false;
-            Log.Debug("BDPlayer: Move down");
-            _ireader.Action((int)BDKeys.BD_VK_DOWN);
-            return true;
+             Log.Debug("BDPlayer: Move down");
+             return _ireader.Action((int)BDKeys.BD_VK_DOWN) == S_OK ? true : false;
 
           case GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-            //if (menuState == MenuState.None || menuState == MenuState.RootPending)
-              //return false;
             Log.Debug("BDPlayer: Select");
-            _ireader.Action((int)BDKeys.BD_VK_ENTER);
-            return true;
+            return _ireader.Action((int)BDKeys.BD_VK_ENTER) == S_OK ? true : false;
 
           case GUI.Library.Action.ActionType.ACTION_DVD_MENU:
-            if (!Playing || _forceTitle || menuState == MenuState.PopUp || menuState == MenuState.Root)
-              return true;
             Speed = 1;
-            //Log.Debug("BDPlayer: Main menu");
+            Log.Debug("BDPlayer: Main menu");
             if (_ireader.Action((int)BDKeys.BD_VK_ROOT_MENU) == 0)
               menuState = MenuState.RootPending;
             return true;
 
+          // TODO check POPUP menu handling
           case GUI.Library.Action.ActionType.ACTION_BD_POPUP_MENU:
-            //if (!Playing || _forceTitle || !_bPopupMenuAvailable)
-              //return true;
+            if (!Playing || _forceTitle)
+              return true;
             Speed = 1;
-            //Log.Debug("BDPlayer: Popup menu toggle");
-            //if (_ireader.Action((int)BDKeys.BD_VK_POPUP) == 0)
-              _ireader.Action((int)BDKeys.BD_VK_POPUP);
-              //menuState = MenuState.PopUp;
-            return true;
+            Log.Debug("BDPlayer: Popup menu toggle");
+            return _ireader.Action((int)BDKeys.BD_VK_POPUP) == S_OK ? true : false;
 
+          // TODO check POPUP menu handling
           case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
             if (menuState != MenuState.PopUp)
               return false;
             Speed = 1;
-            //Log.Debug("BDPlayer: Popup menu off");
+            Log.Debug("BDPlayer: Popup menu off");
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
             return true;
 
