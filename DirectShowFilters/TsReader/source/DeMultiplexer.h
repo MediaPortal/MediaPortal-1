@@ -91,6 +91,7 @@ public:
   int        GetVideoBufferCnt();
   int        GetVideoBuffCntFt(double* frameTime);
   void       GetBufferCounts(int* ACnt, int* VCnt);
+  int        GetRTSPBufferSize();
 
   bool       SetAudioStream(__int32 stream);
   bool       GetAudioStream(__int32 &stream);

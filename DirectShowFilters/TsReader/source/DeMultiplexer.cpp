@@ -2645,16 +2645,6 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   //Normal play
   if (isNormal)
   {
-    if (m_reader)
-    {
-      if (m_reader->IsBuffer()) //RTSP mode
-      {
-        if (m_reader->HasData() >= READ_SIZE)
-        {
-          return true;
-        }
-      }
-    }
     if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() < m_initialAudioSamples))
     {
       return true;
@@ -2666,6 +2656,18 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   }
 
   return false;
+}
+
+int CDeMultiplexer::GetRTSPBufferSize()
+{
+  if (m_reader)
+  {
+    if (m_reader->IsBuffer()) //RTSP mode
+    {
+      return (m_reader->HasData());
+    }
+  }
+  return -1;
 }
 
 void CDeMultiplexer::GetBufferCounts(int* ACnt, int* VCnt)
