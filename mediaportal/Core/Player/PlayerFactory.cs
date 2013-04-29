@@ -244,6 +244,7 @@ namespace MediaPortal.Player
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           bool InternalBDPlayer = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+          bool Usemoviecodects = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
 
           // Free BASS to avoid problems with Digital Audio, when watching movies
           if (BassMusicPlayer.IsDefaultMusicPlayer)
@@ -283,8 +284,8 @@ namespace MediaPortal.Player
           {
             if (InternalBDPlayer)
             {
-              return new BDPlayer();
-            }
+            return new BDPlayer();
+          }
             else
             {
               return new VideoPlayerVMR9();
@@ -338,7 +339,17 @@ namespace MediaPortal.Player
             }
             if (aMediaType != null)
             {
-              return new TSReaderPlayer(localType);
+              if (
+                (GUIWindow.Window)
+                (Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+                GUIWindow.Window.WINDOW_VIDEOS && Usemoviecodects || (g_Player.IsExtTS && Usemoviecodects))
+              {
+                return new VideoPlayerVMR9(localType);
+              }
+              else
+              {
+                return new TSReaderPlayer(localType);
+              }
             }
             else
             {
