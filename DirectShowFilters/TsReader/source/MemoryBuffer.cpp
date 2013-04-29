@@ -9,7 +9,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*16L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*32L)
+#define OVERFLOW_BUFFER_SIZE (MAX_MEMORY_BUFFER_SIZE - (1024L*1024L*4L))
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -119,22 +120,24 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
   memcpy(item->data, pbData, lDataLength);
   bool sleep=false;
   {
-	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
-    while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
+    if (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
     {
-      sleep=true;
-		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
-	    CAutoLock ClearLock(&m_ClearLock);
-	    ivecBuffers it = m_Array.begin();
-  		BUFFERITEM *itemc = *it;  		
-      int copyLength=itemc->nDataLength - itemc->nOffset;
-
-      m_BytesInBuffer-=copyLength;
-      delete[] itemc->data;
-		  delete itemc;
-		  m_Array.erase(m_Array.begin());
+  	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
+  	  //Overflow - discard a reasonable chunk of the current buffer
+      while (m_BytesInBuffer > OVERFLOW_BUFFER_SIZE)
+      {
+        sleep=true;
+  		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
+  	    CAutoLock ClearLock(&m_ClearLock);
+    	  BUFFERITEM *itemc = m_Array.back();		
+        int copyLength=itemc->nDataLength - itemc->nOffset;  
+        m_BytesInBuffer-=copyLength;
+        delete[] itemc->data;
+  		  delete itemc;
+  		  m_Array.pop_back();
+      }
     }
-
+  
 	  CAutoLock BufferLock(&m_BufferLock);
     m_Array.push_back(item);
     m_BytesInBuffer+=lDataLength;
