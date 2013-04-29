@@ -1451,19 +1451,29 @@ namespace MediaPortal
         return;
       }
 
-      // track if we are over the client area of the form
+      // check if we are over the client area of the form
       bool isOverForm;
       try
       {
         isOverForm = ClientRectangle.Contains(PointToClient(MousePosition));
       }
-      catch
+      catch (Exception)
       {
         isOverForm = false;
       }
 
+      // check if we are focused
+      bool focused;
+      try
+      { 
+        focused = GetForegroundWindow() == Handle; 
+      }
+      catch (Exception)
+      {
+        focused = false;
+      }
+
       // don't update cursor status when not over client area or not focused
-      bool focused = GetForegroundWindow() == Handle;
       if (!isOverForm && !focused)
       {
         MouseTimeOutTimer = DateTime.Now;

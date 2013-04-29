@@ -1796,13 +1796,13 @@ public class MediaPortalApp : D3D, IRender
     // do not continue if form is not created yet
     if (!Created)
     {
-      Log.Debug("Main: Form not created yet");
+      Log.Debug("Main: Form not created yet - ignoring message");
       return;
     }
 
     if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
     {
-      Log.Debug("Main: Desktop is not visible");
+      Log.Debug("Main: Desktop is not visible - ignoring message");
       return;
     }
 
@@ -1831,8 +1831,8 @@ public class MediaPortalApp : D3D, IRender
       mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
       mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
       mmi.ptMinTrackSize.y = GUIGraphicsContext.SkinSize.Height / 3;
-      mmi.ptMaxTrackSize.x = Screen.PrimaryScreen.WorkingArea.Right - Screen.PrimaryScreen.WorkingArea.Left;
-      mmi.ptMaxTrackSize.y = Screen.PrimaryScreen.WorkingArea.Bottom - Screen.PrimaryScreen.WorkingArea.Top;
+      mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.WorkingArea.Right - GUIGraphicsContext.currentScreen.WorkingArea.Left;
+      mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.WorkingArea.Bottom - GUIGraphicsContext.currentScreen.WorkingArea.Top;
       Marshal.StructureToPtr(mmi, msg.LParam, true);
       msg.Result = (IntPtr)0;
     }
@@ -1842,15 +1842,15 @@ public class MediaPortalApp : D3D, IRender
       mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
       mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
       mmi.ptMaxPosition.y  = Screen.PrimaryScreen.Bounds.Y;
-      mmi.ptMinTrackSize.x = Screen.PrimaryScreen.Bounds.Width;
-      mmi.ptMinTrackSize.y = Screen.PrimaryScreen.Bounds.Height;
-      mmi.ptMaxTrackSize.x = Screen.PrimaryScreen.Bounds.Width;
-      mmi.ptMaxTrackSize.y = Screen.PrimaryScreen.Bounds.Height;
+      mmi.ptMinTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+      mmi.ptMinTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
+      mmi.ptMaxTrackSize.x = GUIGraphicsContext.currentScreen.Bounds.Width;
+      mmi.ptMaxTrackSize.y = GUIGraphicsContext.currentScreen.Bounds.Height;
       Marshal.StructureToPtr(mmi, msg.LParam, true);
       msg.Result = (IntPtr)0;
 
       // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-      Bounds = GUIGraphicsContext.currentScreen.Bounds;
+      //Bounds = GUIGraphicsContext.currentScreen.Bounds;
     }
     Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
           mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
@@ -1956,13 +1956,13 @@ public class MediaPortalApp : D3D, IRender
         // do not continue if form is not created yet
         if (!Created)
         {
-          Log.Debug("Main: Form not created yet");
+          Log.Debug("Main: Form not created yet - ignoring message");
           return;
         }
 
         if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
         {
-          Log.Debug("Main: Desktop is not visible");
+          Log.Debug("Main: Desktop is not visible - ignoring message");
           return;
         }
 
@@ -1989,7 +1989,12 @@ public class MediaPortalApp : D3D, IRender
         else
         {
           // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-          Bounds = GUIGraphicsContext.currentScreen.Bounds;
+          if (Bounds != GUIGraphicsContext.currentScreen.Bounds)
+          {
+            Log.Debug("Main: Setting full screen bonds to: {0}x{1} @ {2},{3}",
+                      GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height, GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y);
+            Bounds = GUIGraphicsContext.currentScreen.Bounds;
+          }
         }
         break;
 
@@ -2689,10 +2694,6 @@ public class MediaPortalApp : D3D, IRender
     Utils.FileExistsInCache(Thumbs.Videos + "\\dummy.png");
     Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");
 
-    // force WM_GETMINMAXINFO message before actual resizing
-    Log.Debug("FORCING WM_GETMINMAXINFO");
-    Bounds = GUIGraphicsContext.currentScreen.Bounds;
- 
     // Resize Form
     if (Windowed)
     {
