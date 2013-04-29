@@ -124,18 +124,9 @@ public class MediaPortalApp : D3D, IRender
 
   // ReSharper disable InconsistentNaming
   private const int WM_SYSCOMMAND            = 0x0112; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_CLOSE                 = 0xF060; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SCF_ISSECURE             = 1;      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_MAXIMIZE              = 0xF030; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_MINIMIZE              = 0xF020; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_MONITORPOWER          = 0xF170; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_MOVE                  = 0xF010; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_NEXTWINDOW            = 0xF040; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_PREVWINDOW            = 0xF050; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_RESTORE               = 0xF120; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int SC_SCREENSAVE            = 0xF140; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_SIZE                  = 0xF000; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
-  private const int SC_TASKLIST              = 0xF130; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
   private const int WM_ENDSESSION            = 0x0016; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa376889(v=vs.85).aspx
   private const int WM_DEVICECHANGE          = 0x0219; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363480(v=vs.85).aspx
   private const int DBT_DEVICEARRIVAL        = 0x8000; // http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211(v=vs.85).aspx
@@ -186,9 +177,9 @@ public class MediaPortalApp : D3D, IRender
   
   // http://msdn.microsoft.com/en-us/library/windows/desktop/hh448380(v=vs.85).aspx
   private static Guid GUID_MONITOR_POWER_ON             = new Guid("02731015-4510-4526-99e6-e5a17ebd1aea"); 
-  private static Guid GUID_SESSION_DISPLAY_STATUS       = new Guid("2B84C20E-AD23-4ddf-93DB-05FFBD7EFCA5");
-  private static Guid GUID_SESSION_USER_PRESENCE        = new Guid("3C0F4548-C03F-4c4d-B9F2-237EDE686376");
-  private static Guid GUID_SYSTEM_AWAYMODE              = new Guid("98a7f580-01f7-48aa-9c0f-44352c29e5C0");
+  private static Guid GUID_SESSION_DISPLAY_STATUS       = new Guid("2b84c20e-ad23-4ddf-93db-05ffbd7efca5");
+  private static Guid GUID_SESSION_USER_PRESENCE        = new Guid("{3c0f4548-c03f-4c4d-b9f2-237ede686376}");
+  private static Guid GUID_SYSTEM_AWAYMODE              = new Guid("98a7f580-01f7-48aa-9c0f-44352c29e5c0");
   // ReSharper restore InconsistentNaming
 
   private const string MPMutex     = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
@@ -276,6 +267,34 @@ public class MediaPortalApp : D3D, IRender
     DBT_DEVTYP_OEM             = 0x00000000,
     DBT_DEVTYP_PORT            = 0x00000003,
     DBT_DEVTYP_VOLUME          = 0x00000002
+  }
+  // ReSharper restore InconsistentNaming
+  // ReSharper restore UnusedMember.Local
+
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646360(v=vs.85).aspx
+  // ReSharper disable InconsistentNaming
+  // ReSharper disable UnusedMember.Local
+  private enum SYSCOMMAND
+  {
+    SC_CLOSE        = 0xF060,
+    SC_CONTEXTHELP  = 0xF180,
+    SC_DEFAULT      = 0xF160,
+    SC_HOTKEY       = 0xF150,
+    SC_HSCROLL      = 0xF080,
+    SCF_ISSECURE    = 0x0001,
+    SC_KEYMENU      = 0xF100,
+    SC_MAXIMIZE     = 0xF030,
+    SC_MINIMIZE     = 0xF020,
+    SC_MONITORPOWER = 0xF170,
+    SC_MOUSEMENU    = 0xF090,
+    SC_MOVE         = 0xF010,
+    SC_NEXTWINDOW   = 0xF040,
+    SC_PREVWINDOW   = 0xF050,
+    SC_RESTORE      = 0xF120,
+    SC_SCREENSAVE   = 0xF140,
+    SC_SIZE         = 0xF000,
+    SC_TASKLIST     = 0xF130,
+    SC_VSCROLL      = 0xF070
   }
   // ReSharper restore InconsistentNaming
   // ReSharper restore UnusedMember.Local
@@ -1348,12 +1367,10 @@ public class MediaPortalApp : D3D, IRender
 
         case WM_ENTERSIZEMOVE:
           Log.Debug("Main: WM_ENTERSIZEMOVE");
-          //LastRect = new RECT {top = Location.Y, right = Location.X, left = Location.X + Size.Width, bottom = Location.Y + Size.Height};
           break;
 
         case WM_EXITSIZEMOVE:
           Log.Debug("Main: WM_EXITSIZEMOVE");
-          //LastRect = new RECT {top = Location.Y, right = Location.X, left = Location.X + Size.Width, bottom = Location.Y + Size.Height};
           break;
 
         // only allow window to be moved inside a valid working area
@@ -1413,12 +1430,13 @@ public class MediaPortalApp : D3D, IRender
           break;
       }
 
-      g_Player.WndProc(ref msg);
-      base.WndProc(ref msg);
-
+      // forward message to process plugins
       PluginManager.WndProc(ref msg);
 
- 
+      // forward message to player
+      g_Player.WndProc(ref msg);
+
+      // forward message to input devices
       Action action;
       char key;
       Keys keyCode;
@@ -1455,6 +1473,7 @@ public class MediaPortalApp : D3D, IRender
         }
       }
 
+      base.WndProc(ref msg);
     }
     catch (Exception ex)
     {
@@ -1469,7 +1488,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private bool OnSysCommand(ref Message msg)
   {
-    Log.Debug("Main: WM_SYSCOMMAND");
+    Log.Debug("Main: WM_SYSCOMMAND ({0})", Enum.GetName(typeof(SYSCOMMAND), msg.WParam.ToInt32()));
     bool result = true;
     switch (msg.WParam.ToInt32() & 0xFFF0)
     {
@@ -1477,42 +1496,6 @@ public class MediaPortalApp : D3D, IRender
       case SC_MINIMIZE:
         Log.Debug("Main: SC_MINIMIZE");
         MinimizeToTray();
-        break;
-
-      case SC_MAXIMIZE:
-        Log.Debug("Main: SC_MAXIMIZE");
-        break;
-
-      case SC_RESTORE:
-        Log.Debug("Main: SC_RESTORE");
-        break;
-
-      case SC_SIZE:
-        Log.Debug("Main: SC_SIZE");
-        break;
-
-      case SC_MOVE:
-        Log.Debug("Main: SC_MOVE");
-        break;
-
-      case SC_NEXTWINDOW:
-        Log.Debug("Main: SC_NEXTWINDOW");
-        break;
-
-      case SC_PREVWINDOW:
-        Log.Debug("Main: SC_PREVWINDOWE");
-        break;
-
-      case SC_TASKLIST:
-        Log.Debug("Main: SC_TASKLIST");
-        break;
-
-      case SC_CLOSE:
-        Log.Debug("Main: SC_CLOSE");
-        break;
-
-      case SCF_ISSECURE:
-        Log.Debug("Main: SCF_ISSECURE");
         break;
 
       // Windows is requesting to turn off the display
@@ -1586,14 +1569,11 @@ public class MediaPortalApp : D3D, IRender
         break;
 
       case PBT_POWERSETTINGCHANGE:
-        Log.Info("Main: Power settings changed");
         var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
-        var data = (IntPtr)(msg.LParam.ToInt32() + Marshal.SizeOf(ps));
 
         if (ps.PowerSetting == GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
         {
-          var mode = (Int32)Marshal.PtrToStructure(data, typeof (Int32));
-          switch (mode)
+          switch (ps.Data)
           {
             case 0:
               Log.Info("Main: The computer is exiting away mode");
@@ -1608,19 +1588,18 @@ public class MediaPortalApp : D3D, IRender
         // GUID_SESSION_DISPLAY_STATUS is only provided on Win8 and above
         else if ((ps.PowerSetting == GUID_MONITOR_POWER_ON || ps.PowerSetting == GUID_SESSION_DISPLAY_STATUS) && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
         {
-          var mode = (Int32)Marshal.PtrToStructure(data, typeof(Int32));
-          switch (mode)
+          switch (ps.Data)
           {
             case 0:
-              Log.Info("Main: The display has been turned off");
+              Log.Info("Main: The display is off");
               IsDisplayTurnedOn = false;
               break;
             case 1:
-              Log.Info("Main: The display has been turned on");
+              Log.Info("Main: The display is on");
               IsDisplayTurnedOn = true;
               break;
             case 2:
-              Log.Info("Main: The display has been dimmed");
+              Log.Info("Main: The display is dimmed");
               IsDisplayTurnedOn = true;
               break;
           }
@@ -1628,8 +1607,7 @@ public class MediaPortalApp : D3D, IRender
         // GUIT_SESSION_USER_PRESENCE is only provide on Win8 and above
         else if (ps.PowerSetting == GUID_SESSION_USER_PRESENCE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
         {
-          var mode = (Int32)Marshal.PtrToStructure(data, typeof(Int32));
-          switch (mode)
+          switch (ps.Data)
           {
             case 0:
               Log.Info("Main: User is providing input to the session");
@@ -1811,10 +1789,26 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnGetMinMaxInfo(ref Message msg)
   {
-    Log.Debug("Main: WM_GETMINMAXINFO");
+    var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+    Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+              mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
 
+    // do not continue if form is not created yet
+    if (!Created)
+    {
+      Log.Debug("Main: Form not created yet");
+      return;
+    }
+
+    if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
+    {
+      Log.Debug("Main: Desktop is not visible");
+      return;
+    }
+
+    // check if display changes in case no DISPLAYCHANGE message is send by Windows
     Screen screen = Screen.FromControl(this);
-    if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
+    if (!Equals(screen, GUIGraphicsContext.currentScreen))
     {
       Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
@@ -1827,12 +1821,12 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.currentScreen = screen;
     }
 
+    // calculate form dimension limits based on primary screen.
     if (Windowed)
     {
       double ratio         = Math.Min((double)Screen.PrimaryScreen.WorkingArea.Width / Width, (double)Screen.PrimaryScreen.WorkingArea.Height / Height);
-      var mmi              = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
-      mmi.ptMaxSize.x      = (int)(Width*ratio);
-      mmi.ptMaxSize.y      = (int)(Height*ratio);
+      mmi.ptMaxSize.x      = (int)(Width * ratio);
+      mmi.ptMaxSize.y      = (int)(Height * ratio);
       mmi.ptMaxPosition.x  = Screen.PrimaryScreen.WorkingArea.Left;
       mmi.ptMaxPosition.y  = Screen.PrimaryScreen.WorkingArea.Top;
       mmi.ptMinTrackSize.x = GUIGraphicsContext.SkinSize.Width / 3;
@@ -1844,7 +1838,6 @@ public class MediaPortalApp : D3D, IRender
     }
     else
     {
-      var mmi              = (MINMAXINFO) Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
       mmi.ptMaxSize.x      = Screen.PrimaryScreen.Bounds.Width;
       mmi.ptMaxSize.y      = Screen.PrimaryScreen.Bounds.Height;
       mmi.ptMaxPosition.x  = Screen.PrimaryScreen.Bounds.X;
@@ -1857,8 +1850,10 @@ public class MediaPortalApp : D3D, IRender
       msg.Result = (IntPtr)0;
 
       // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
-      SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+      Bounds = GUIGraphicsContext.currentScreen.Bounds;
     }
+    Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
+          mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
   }
 
 
@@ -1957,12 +1952,26 @@ public class MediaPortalApp : D3D, IRender
     {
       case SIZE_RESTORED:
         Log.Debug("Main: WM_SIZE (SIZE_RESTORED: {0}x{1})", x, y);
+  
+        // do not continue if form is not created yet
+        if (!Created)
+        {
+          Log.Debug("Main: Form not created yet");
+          return;
+        }
+
+        if (Windowed && Screen.PrimaryScreen.WorkingArea.Width == 0 && Screen.PrimaryScreen.WorkingArea.Height == 0)
+        {
+          Log.Debug("Main: Desktop is not visible");
+          return;
+        }
+
         if (Windowed)
         {
           Size maxClientSize = CalcMaxClientArea();
           if (x > maxClientSize.Width || y > maxClientSize.Height)
           {
-            Log.Debug("Main: Requested client  size {0}x{1} is larger than the maximum aspect ratio safe client size of {2}x{3} - overriding", 
+            Log.Debug("Main: Requested client size {0}x{1} is larger than the maximum aspect ratio safe client size of {2}x{3} - overriding", 
               x, y, maxClientSize.Width, maxClientSize.Height);
             ClientSize = maxClientSize;
             break;
@@ -1976,6 +1985,11 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
+        }
+        else
+        {
+          // force form dimensions to screen size to compensate for HDMI hot plug problems (e.g. WM_DiSPLAYCHANGE reported 1920x1080 but system is still in 1024x768 mode).
+          Bounds = GUIGraphicsContext.currentScreen.Bounds;
         }
         break;
 
@@ -2254,10 +2268,6 @@ public class MediaPortalApp : D3D, IRender
         HandleMessage();
         FrameMove();
         FullRender();
-        if (GUIGraphicsContext.Vmr9Active)
-        {
-          Thread.Sleep(50);
-        }
       }
       catch (Exception ex)
       {
@@ -2680,6 +2690,7 @@ public class MediaPortalApp : D3D, IRender
     Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");
 
     // force WM_GETMINMAXINFO message before actual resizing
+    Log.Debug("FORCING WM_GETMINMAXINFO");
     Bounds = GUIGraphicsContext.currentScreen.Bounds;
  
     // Resize Form
@@ -3690,6 +3701,7 @@ public class MediaPortalApp : D3D, IRender
     if (MinimizeOnGuiExit && !ShuttingDown)
     {
       Log.Info("Main: Minimizing to tray on GUI exit");
+      ExitToTray = true;
       MinimizeToTray();
       return;
     }

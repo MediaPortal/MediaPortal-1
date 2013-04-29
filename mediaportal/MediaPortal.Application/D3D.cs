@@ -70,6 +70,10 @@ namespace MediaPortal
     [DllImport("user32.dll")]
     static extern int ShowCursor(bool bShow);
 
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633505(v=vs.85).aspx
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
     #endregion
 
     #region constants
@@ -117,6 +121,7 @@ namespace MediaPortal
     protected bool                 IsDisplayTurnedOn;        // indicates if the display is turned on, assume yes on application launch
     protected bool                 IsUserPresent;            // indicates if a user is present, assume yes on application launch
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
+    protected bool                 ExitToTray;               //
     protected int                  Frames;                   // number of frames since our last update
     protected int                  Volume;                   // used to save old volume level in case we mute audio
     protected PlayListPlayer       PlaylistPlayer;           // 
@@ -129,6 +134,7 @@ namespace MediaPortal
     #endregion
 
     #region private attributes
+
     private readonly Control           _renderTarget;             // render target object
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
     private readonly D3DEnumeration    _enumerationSettings;      //
@@ -146,7 +152,6 @@ namespace MediaPortal
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
     private bool                       _firstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
-    private bool                       _exitToTray;               //
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
@@ -176,8 +181,6 @@ namespace MediaPortal
     private Point                      _lastCursorPosition;       // track cursor position of last move move event
     private DeviceType                 _deviceType;               //
     private CreateFlags                _createFlags;              //
-
-    private static readonly Stopwatch ClockWatch = new Stopwatch();
 
     #endregion
 
@@ -518,13 +521,15 @@ namespace MediaPortal
       UpdateMouseCursor();
 
       // In minitv mode allow to loose focus
-      if ((ActiveForm != this) && (_alwaysOnTop) && !_miniTvMode && (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING))
+      if (ActiveForm != this && _alwaysOnTop && !_miniTvMode && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         Activate();
       }
 
+      // sleep during playback as frames are rendered by other means to avoid hogging a CPU core
       if (GUIGraphicsContext.Vmr9Active)
       {
+        Thread.Sleep(1000 / GUIGraphicsContext.MaxFPS);
         return;
       }
 
@@ -781,8 +786,8 @@ namespace MediaPortal
         return;
       }
 
-      // only minimize if visible and lost focus in windowed mode or if in fullscreen mode
-      if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || _exitToTray)
+      // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
+      if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
       {
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
@@ -819,7 +824,7 @@ namespace MediaPortal
           ShowMouseCursor(true);
         }
 
-        _exitToTray = false;
+        ExitToTray = false;
       }
     }
 
@@ -1457,12 +1462,14 @@ namespace MediaPortal
         isOverForm = false;
       }
 
-      // don't update cursor status when not over client area
-      if (!isOverForm)
+      // don't update cursor status when not over client area or not focused
+      bool focused = GetForegroundWindow() == Handle;
+      if (!isOverForm && !focused)
       {
         MouseTimeOutTimer = DateTime.Now;
         return;
       }
+
 
       // Hide mouse cursor after three seconds of inactivity
       var timeSpam = DateTime.Now - MouseTimeOutTimer;
@@ -1542,8 +1549,18 @@ namespace MediaPortal
     /// </summary>
     private void Exit(object sender, EventArgs e)
     {
-      ShuttingDown = true;
-      Close();
+      Log.Debug("D3D: Exit()");
+      if (!MinimizeOnGuiExit && !IsVisible)
+      {
+        ShuttingDown = true;
+        Close();
+      }
+      else
+      {
+        Log.Info("D3D: Minimizing to tray on GUI exit");
+        ExitToTray = true;
+        MinimizeToTray();
+      }
     }
 
 
@@ -1901,7 +1918,7 @@ namespace MediaPortal
         if (MinimizeOnStartup && _firstTimeWindowDisplayed)
         {
           Log.Info("D3D: Minimizing to tray on startup");
-          _exitToTray = true;
+          ExitToTray = true;
           MinimizeToTray();
           _firstTimeWindowDisplayed = false;
         }
@@ -1919,61 +1936,12 @@ namespace MediaPortal
       {
         OnProcess();
         FrameMove();
-        StartFrameClock();
         FullRender();
-        WaitForFrameClock();
-
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           break;
         }
       } while (!Win32API.PeekMessage(ref _msgApi, IntPtr.Zero, 0, 0, 0));
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private void StartFrameClock()
-    {
-      if (!_doNotWaitForVSync)
-      {
-        ClockWatch.Reset();
-        ClockWatch.Start();
-      }
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private static void WaitForFrameClock()
-    {
-      // sleep as long as there are ticks left for this frame
-      ClockWatch.Stop();
-      long timeElapsed = ClockWatch.ElapsedTicks;
-
-      if (timeElapsed >= GUIGraphicsContext.DesiredFrameTime)
-      {
-        return;
-      }
-
-      long milliSecondsLeft = (GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000 / Stopwatch.Frequency;
-      DoSleep((int)milliSecondsLeft);
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="sleepTime"></param>
-    private static void DoSleep(int sleepTime)
-    {
-      if (sleepTime <= 0)
-      {
-        sleepTime = 1;
-      }
-      Thread.Sleep(sleepTime);
     }
 
 
@@ -2232,12 +2200,12 @@ namespace MediaPortal
     protected override void OnFormClosing(FormClosingEventArgs formClosingEventArgs)
     {
       Log.Debug("D3D: OnFormClosing()");
-      if (MinimizeOnGuiExit && !ShuttingDown)
+      if (MinimizeOnGuiExit && !ShuttingDown && IsVisible)
       {
         Log.Info("D3D: Minimizing to tray on GUI exit");
         _isClosing = false;
         formClosingEventArgs.Cancel = true;
-        _exitToTray = true;
+        ExitToTray = true;
         MinimizeToTray();
       }
       else
