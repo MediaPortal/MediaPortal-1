@@ -2,11 +2,41 @@
 using MediaPortal.GUI.Library;
 using TvDatabase;
 using WindowPlugins;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
-  public class RecordedBase : WindowPluginBase
+  public abstract class RecordedBase : WindowPluginBase
   {
+
+    protected RecordedBase()
+    {
+      GUIWindowManager.OnNewAction += OnNewAction;
+    }
+
+    /// <summary>
+    /// OnAction only receives ACTION_PLAY event when the player is not playing.  Ensure all actions are processed
+    /// </summary>
+    /// <param name="action">Action command</param>
+    private void OnNewAction(Action action)
+    {
+      if ((action.wID != Action.ActionType.ACTION_PLAY) || GUIWindowManager.ActiveWindow != GetID)
+      {
+        return;
+      }
+
+      var item = facadeLayout.SelectedListItem;
+      if (item == null || item.IsFolder)
+      {
+        return;
+      }
+
+      if (GetFocusControlId() == facadeLayout.GetID)
+      {
+        // only start something is facade is focused
+        OnSelectedRecording(facadeLayout.SelectedListItemIndex);
+      }
+    }
 
     /// <summary>
     /// Convert how long ago a recording took place into a meaningful description
@@ -49,5 +79,7 @@ namespace TvPlugin
       else
         return GUILocalizeStrings.Get(6090); // "Older"
     }
+
+    protected abstract bool OnSelectedRecording(int iItem);
   }
 }
