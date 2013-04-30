@@ -147,6 +147,14 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _disposed; }
     }
 
+    /// <summary>
+    /// Returns the FileType of the Stream
+    /// </summary>
+    public FileType Filetype
+    {
+      get { return _fileType; }
+    }
+
     #region Playback Related Properties
 
     /// <summary>
@@ -207,8 +215,7 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     #endregion
-
-
+    
     #endregion
 
     #region Constructor
