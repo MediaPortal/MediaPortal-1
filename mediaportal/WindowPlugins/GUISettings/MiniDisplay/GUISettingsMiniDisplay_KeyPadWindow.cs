@@ -31,8 +31,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
   public class KeyPadWindow : GUIInternalWindow
   {
     [SkinControl(50)] protected GUILabelControl label1 = null;
-    [SkinControl(60)] protected GUIToggleButtonControl btnEnableKeyPad = null;
-    [SkinControl(61)] protected GUIToggleButtonControl btnEnableCustom = null;
+    [SkinControl(60)] protected GUICheckButton btnEnableKeyPad = null;
+    [SkinControl(61)] protected GUICheckButton btnEnableCustom = null;
     [SkinControl(62)] protected GUIButtonControl btnKeyPadMapping = null;
     private MatrixMX.KeyPadControl KPSettings = new MatrixMX.KeyPadControl();
 

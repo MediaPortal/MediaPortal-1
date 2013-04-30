@@ -126,7 +126,7 @@
 		
 			<control>
 				<description>Biography</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>3</id>
 				<label>1011</label>
 				<onleft>3</onleft>
@@ -136,15 +136,11 @@
 				<textalign>left</textalign>
  		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 		
 			<control>
 				<description>Movies</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>4</id>
 				<label>342</label>
 				<onleft>24</onleft>
@@ -154,10 +150,6 @@
 				<textalign>left</textalign>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
 		</control>

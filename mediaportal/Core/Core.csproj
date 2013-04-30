@@ -923,9 +923,6 @@
     <Compile Include="guilib\GUIThumbnailPanel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\GUIToggleButtonControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="guilib\GUITVProgressControl.cs">
       <SubType>Code</SubType>
     </Compile>
