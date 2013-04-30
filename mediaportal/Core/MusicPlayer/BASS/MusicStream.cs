@@ -876,12 +876,12 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         foreach (string item in tags)
         {
-          if (item.ToLower().StartsWith("icy-name:"))
+          if (item.ToLowerInvariant().StartsWith("icy-name:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Album", item.Substring(9));
           }
 
-          if (item.ToLower().StartsWith("icy-genre:"))
+          if (item.ToLowerInvariant().StartsWith("icy-genre:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
           }

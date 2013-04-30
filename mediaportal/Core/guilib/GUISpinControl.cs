@@ -865,12 +865,20 @@ namespace MediaPortal.GUI.Library
 
     public void SetRange(int iStart, int iEnd)
     {
+      if (iEnd < iStart)
+      {
+        iEnd = iStart;
+      }
       _startInt = iStart;
       _endInt = iEnd;
     }
 
     public void SetFloatRange(float fStart, float fEnd)
     {
+      if (fEnd < fStart)
+      {
+        fEnd = fStart;
+      }
       _startFloat = fStart;
       _endFloat = fEnd;
     }

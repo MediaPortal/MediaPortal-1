@@ -95,7 +95,7 @@ namespace MediaPortal.GUI.Library
 
     public static CachedTexture GetCachedTexture(string filename)
     {
-      string cacheKey = filename.ToLower();
+      string cacheKey = filename.ToLowerInvariant();
       CachedTexture texture;
       if (_cacheTextures.TryGetValue(cacheKey, out texture))
       {
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Library
       {
         return "";
       }
-      string lowerFileName = fileName.ToLower().Trim();
+      string lowerFileName = fileName.ToLowerInvariant().Trim();
       if (lowerFileName.IndexOf(@"http:") >= 0)
       {
         DownloadedImage image;
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Library
     public static int Load(string fileNameOrg, long lColorKey, int iMaxWidth, int iMaxHeight, bool persistent)
     {
       string fileName = GetFileName(fileNameOrg);
-      string cacheKey = fileName.ToLower();
+      string cacheKey = fileName.ToLowerInvariant();
       if (String.IsNullOrEmpty(fileName))
       {
         return 0;
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
         return cached.Frames;
       }
 
-      string extension = Path.GetExtension(fileName).ToLower();
+      string extension = Path.GetExtension(fileName).ToLowerInvariant();
       if (extension == ".gif")
       {
         Image theImage = null;
@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.Library
     {
       Log.Debug("TextureManager: load from memory: {0}", name);
       string cacheName = name;
-      string cacheKey = name.ToLower();
+      string cacheKey = name.ToLowerInvariant();
 
       CachedTexture cached;
       if (_cacheTextures.TryGetValue(cacheKey, out cached))
@@ -417,7 +417,7 @@ namespace MediaPortal.GUI.Library
     {
       Log.Debug("TextureManagerEx: load from memory: {0}", name);
       string cacheName = name;
-      string cacheKey = cacheName.ToLower();
+      string cacheKey = cacheName.ToLowerInvariant();
 
       texture = null;
       CachedTexture cached;
@@ -485,7 +485,7 @@ namespace MediaPortal.GUI.Library
         CachedTexture cached = sender as CachedTexture;
         if (cached != null)
         {
-          string cacheKey = cached.Name.ToLower();
+          string cacheKey = cached.Name.ToLowerInvariant();
 
           // a texture in the cache has been disposed of! remove from the cache
           //if (_cacheTextures.ContainsKey(cacheKey))
@@ -697,7 +697,7 @@ namespace MediaPortal.GUI.Library
       }
 
       CachedTexture cached;
-      string cacheKey = fileName.ToLower();
+      string cacheKey = fileName.ToLowerInvariant();
       if (_cacheTextures.TryGetValue(cacheKey, out cached))
       {
         iTextureWidth = cached.Width;
@@ -718,17 +718,17 @@ namespace MediaPortal.GUI.Library
         }
 
         //dont dispose radio/tv logo's since they are used by the overlay windows
-        if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0)
+        if (fileName.ToLowerInvariant().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos")) >= 0)
         {
           return;
         }
-        if (fileName.ToLower().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0)
+        if (fileName.ToLowerInvariant().IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio")) >= 0)
         {
           return;
         }
 
         CachedTexture oldImage;
-        string cacheKey = fileName.ToLower();
+        string cacheKey = fileName.ToLowerInvariant();
         if (_cacheTextures.TryGetValue(cacheKey, out oldImage))
         {
           try
@@ -765,7 +765,7 @@ namespace MediaPortal.GUI.Library
 
           foreach (CachedTexture texture in textures)
           {
-            string cacheKey = texture.Name.ToLower();
+            string cacheKey = texture.Name.ToLowerInvariant();
             _cacheTextures.Remove(cacheKey);
             texture.SafeDispose();
           }
@@ -788,12 +788,12 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
-      string fullFileName = fileName.ToLower();
-      if (fullFileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos").ToLower()) >= 0)
+      string fullFileName = fileName.ToLowerInvariant();
+      if (fullFileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos").ToLowerInvariant()) >= 0)
       {
         return false;
       }
-      if (fullFileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio").ToLower()) >= 0)
+      if (fullFileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio").ToLowerInvariant()) >= 0)
       {
         return false;
       }
@@ -821,7 +821,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      fullFileName = fullFileName.ToLower();
+      fullFileName = fullFileName.ToLowerInvariant();
 
       // Check if skin file
       if (fullFileName.IndexOf(@"skin\") >= 0)

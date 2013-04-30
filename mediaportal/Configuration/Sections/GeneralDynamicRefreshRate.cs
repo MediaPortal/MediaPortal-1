@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
           if (sDefaultHz == hz && sDefaultHzName == name)
             defaultHz.SelectedItem = name;
 
-          if (name.ToLower().IndexOf("tv") > -1)
+          if (name.ToLowerInvariant().IndexOf("tv") > -1)
           {
             row.Cells[0].ReadOnly = true;
           }
@@ -603,7 +603,7 @@ namespace MediaPortal.Configuration.Sections
         }
         else if (row.Index == dataGridViewRR.CurrentCell.RowIndex)
         {
-          if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLower().IndexOf("tv") > -1)
+          if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLowerInvariant().IndexOf("tv") > -1)
           {
             continue;
           }
@@ -632,13 +632,13 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      string currentValue = dataGridViewRR.CurrentCell.Value.ToString().ToLower();
+      string currentValue = dataGridViewRR.CurrentCell.Value.ToString().ToLowerInvariant();
 
       int i = 0;
       defaultHz.Items.Clear();
       foreach (DataGridViewRow row in dataGridViewRR.Rows)
       {
-        if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLower().Equals(currentValue) &&
+        if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLowerInvariant().Equals(currentValue) &&
             i != dataGridViewRR.CurrentCell.RowIndex)
         {
           MessageBox.Show("Please do not add the same name twice. Those must be unique.", "Error", MessageBoxButtons.OK,

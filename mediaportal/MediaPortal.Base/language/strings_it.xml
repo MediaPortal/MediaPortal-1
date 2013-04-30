@@ -2196,12 +2196,7 @@
     <String id="300093">Riavvia MP in caso di crash</String>
     <String id="300094">Attesa per il riavvio in secondi</String>
     <String id="300095">Spegni monitor (su schermo nero)</String>
-    <String id="300096">Accendi TV (al risveglio da sospensione)</String>
-    <String id="300097">Consenti la sospensione S3 (anche se ci sono periferiche abilitate al risveglio)</String>
-    <String id="300098">Soluzione per il congelamento di MP al risveglio</String>
-    <String id="300099">Riavvia MediaPortal al risveglio</String>
     <String id="300100">Al risveglio mostra l'ultim omodulo utilizzato</String>
-    <String id="300101">Usa il selettore schermo per scegliere lo schermo di avvio di MP</String>
     <String id="300102">Ritardo avvio</String>
     <String id="300103">All'avvio di MediaPortal</String>
     <String id="300104">Al risveglio di MediaPortal</String>

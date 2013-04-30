@@ -1488,7 +1488,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        if (currentStream != null && filePath.ToLower().CompareTo(currentStream.FilePath.ToLower()) == 0)
+        if (currentStream != null && filePath.ToLowerInvariant().CompareTo(currentStream.FilePath.ToLowerInvariant()) == 0)
         {
           // Selected file is equal to current stream
           if (_state == PlayState.Paused)

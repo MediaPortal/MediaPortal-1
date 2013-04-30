@@ -1318,7 +1318,7 @@ namespace MediaPortal.Player
         IsExtTS = false;
         bool AskForRefresh = true;
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(strFile);
-        string extension = Util.Utils.GetFileExtension(strFile).ToLower();
+        string extension = Util.Utils.GetFileExtension(strFile).ToLowerInvariant();
         bool isImageFile = !playingRemoteUrl && Util.VirtualDirectory.IsImageFile(extension);
         if (isImageFile)
         {

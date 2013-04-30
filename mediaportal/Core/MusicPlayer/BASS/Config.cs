@@ -334,7 +334,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       foreach (FileInfo file in decoders)
       {
-        if (Path.GetExtension(file.Name).ToLower() != ".dll")
+        if (Path.GetExtension(file.Name).ToLowerInvariant() != ".dll")
         {
           continue;
         }
@@ -370,7 +370,7 @@ namespace MediaPortal.MusicPlayer.BASS
       List<BASS_MIDI_FONT> tmpFonts = new List<BASS_MIDI_FONT>();
       foreach (FileInfo file in decoders)
       {
-        if (Path.GetExtension(file.Name).ToLower() != ".sf2")
+        if (Path.GetExtension(file.Name).ToLowerInvariant() != ".sf2")
         {
           continue;
         }

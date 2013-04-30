@@ -269,7 +269,7 @@ namespace MpeCore.Classes
           //We might be running under the MONO run-time. 
         }
 
-        if (retval.Count == 0 && namespaceStr.ToLower().EndsWith(".dll"))
+        if (retval.Count == 0 && namespaceStr.ToLowerInvariant().EndsWith(".dll"))
           retval.Add(namespaceStr); //in case of if the namespaceStr is a dll name
 #if net1
 			return (string[])retval.ToArray(typeof(string));

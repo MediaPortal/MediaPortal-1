@@ -206,7 +206,7 @@ namespace MediaPortal.Util
 
       foreach (string ext in extensions)
       {
-        m_extensions.Add(ext.ToLower());
+        m_extensions.Add(ext.ToLowerInvariant());
       }
     }
 
@@ -218,7 +218,7 @@ namespace MediaPortal.Util
     {
       if (m_extensions == null)
         m_extensions = new HashSet<string>();
-      m_extensions.Add(extension.ToLower());
+      m_extensions.Add(extension.ToLowerInvariant());
     }
 
     /// <summary>
@@ -350,7 +350,7 @@ namespace MediaPortal.Util
     //    {
     //      bool driveFound = false;
     //      string driveName = Util.Utils.GetDriveName(drive);
-    //      string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
+    //      string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
     //      if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
     //      //
     //      // Check if the share already exists
@@ -500,11 +500,11 @@ namespace MediaPortal.Util
               //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
               //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
               string remoteFolder = GetShareRemoteURL(share);
-              if (strDir.ToLower() == remoteFolder.ToLower())
+              if (strDir.ToLowerInvariant() == remoteFolder.ToLowerInvariant())
               {
                 return share;
               }
-              if (strDir.ToLower().StartsWith(remoteFolder.ToLower()))
+              if (strDir.ToLowerInvariant().StartsWith(remoteFolder.ToLowerInvariant()))
               {
                 if (foundShare == null)
                 {
@@ -528,9 +528,9 @@ namespace MediaPortal.Util
           else
           {
             string strFullPath = share.Path;
-            if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
+            if (strRoot.ToLowerInvariant().StartsWith(strFullPath.ToLowerInvariant()))
             {
-              if (strRoot.ToLower() == strFullPath.ToLower())
+              if (strRoot.ToLowerInvariant() == strFullPath.ToLowerInvariant())
               {
                 return share;
               }
@@ -1469,7 +1469,7 @@ namespace MediaPortal.Util
         {
           bool driveFound = false;
           string driveName = Utils.GetDriveName(drive);
-          string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
+          string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
           if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
 
           //
@@ -1773,7 +1773,7 @@ namespace MediaPortal.Util
         //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
 
         return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
@@ -1800,7 +1800,7 @@ namespace MediaPortal.Util
         //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return filesWithoutExtension;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if ((extensions[0] as string) == "*") return true; // added for explorer modul by gucky
         for (int i = 0; i < extensions.Count; ++i)
         {
@@ -2068,7 +2068,7 @@ namespace MediaPortal.Util
           int driveType = Utils.getDriveType(drive);
           if (driveType == (int)DriveType.CDRom)
           {
-            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
             Share share = new Share(driveName, drive, -1);
             sharesMusic.Add(share);
             sharesPhotos.Add(share);

@@ -803,12 +803,12 @@ namespace MediaPortal.Video.Database
     {
       bool bHassubtitles = false;
       
-      if (strFile.ToLower().IndexOf(".ifo") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf(".ifo") >= 0)
       {
         bHassubtitles = true;
       }
       
-      if (strFile.ToLower().IndexOf(".vob") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf(".vob") >= 0)
       {
         bHassubtitles = true;
       }
@@ -4926,16 +4926,16 @@ namespace MediaPortal.Video.Database
         bool isbdDvd = false;
         string nfoExt = ".nfo";
 
-        if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        if (videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //DVD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
-        else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        else if (videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //BD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
 
