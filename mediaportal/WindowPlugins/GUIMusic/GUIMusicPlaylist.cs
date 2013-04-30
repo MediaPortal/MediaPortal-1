@@ -91,10 +91,10 @@ namespace MediaPortal.GUI.Music
     [SkinControl(21)] protected GUIButtonControl btnSave = null;
     [SkinControl(22)] protected GUIButtonControl btnClear = null;
     [SkinControl(26)] protected GUIButtonControl btnNowPlaying = null;
-    [SkinControl(27)] protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControl(27)] protected GUICheckButton btnScrobble = null;
     [SkinControl(28)] protected GUIButtonControl btnScrobbleMode = null;
     [SkinControl(29)] protected GUIButtonControl btnScrobbleUser = null;
-    [SkinControl(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+    [SkinControl(30)] protected GUICheckButton btnRepeatPlaylist = null;
 
 
     public GUIMusicPlayList()

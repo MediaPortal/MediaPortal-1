@@ -938,8 +938,6 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIUpDownListControl);
         case ("checklistcontrol"):
           return typeof (GUICheckListControl);
-        case ("togglebutton"):
-          return typeof (GUIToggleButtonControl);
         case ("group"):
           return typeof (GUIGroup);
         case ("videowindow"):

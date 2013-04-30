@@ -175,7 +175,7 @@
       <posY>180</posY>
       <control>
         <description>Biography Button</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>3</id>
         <width>150</width>
         <label>1011</label>
@@ -189,7 +189,7 @@
       </control>
       <control>
         <description>Movies Button</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>4</id>
         <width>150</width>
         <label>342</label>

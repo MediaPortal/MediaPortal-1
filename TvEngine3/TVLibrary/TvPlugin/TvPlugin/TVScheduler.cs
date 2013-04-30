@@ -55,7 +55,7 @@ namespace TvPlugin
     [SkinControl(8)] protected GUIButtonControl btnPriorities = null;
     [SkinControl(9)] protected GUIButtonControl btnConflicts = null;
     [SkinControl(10)] protected GUIListControl listSchedules = null;
-    [SkinControl(11)] protected GUIToggleButtonControl btnSeries = null;
+    [SkinControl(11)] protected GUICheckButton btnSeries = null;
 
     private SortMethod currentSortMethod = SortMethod.Date;
     private bool m_bSortAscending = true;

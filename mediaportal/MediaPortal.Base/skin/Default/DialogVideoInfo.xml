@@ -134,7 +134,7 @@
         </control>
         <control>
           <description>Plot Button</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>3</id>
           <label>207</label>
           <font>font13</font>
@@ -145,7 +145,7 @@
         </control>
         <control>
           <description>Cast Button</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>4</id>
           <label>206</label>
           <font>font13</font>
@@ -156,7 +156,7 @@
         </control>
         <control>
           <description>User Review Button</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>7</id>
           <label>183</label>
           <font>font13</font>
@@ -187,7 +187,7 @@
         </control>
         <control>
           <description>Watched Button</description>
-          <type>togglebutton</type>
+          <type>checkbutton</type>
           <id>6</id>
           <label>1010</label>
           <onleft>55</onleft>
