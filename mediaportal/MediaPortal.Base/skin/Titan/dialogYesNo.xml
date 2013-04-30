@@ -5,141 +5,132 @@
 <allowoverlay>no</allowoverlay>
 <controls>
 
-	<control>
-		<type>image</type>
-		<id>0</id>
-		<posX>561</posX>
-		<posY>396</posY>
-		<width>798</width>
-		<height>579</height>
-		<texture>dialog_background.png</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+		<control>
+			<type>image</type>
+			<id>0</id>
+			<width>1920</width>
+			<height>1080</height>
+			<texture>semi_trans_back_general_menu.png</texture>
+			<animation effect="fade" time="400">windowopen</animation>
+			<animation effect="fade" time="400">windowclose</animation>
+		</control>
+		
+    <control>
+    	<description>group element</description>
+      <type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="0">WindowClose</animation>
+			<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
 
-	<control>
-		<description>Heading text label</description>
-		<type>label</type>
-		<id>1</id>
-        <posX>680</posX>
-        <posY>502</posY>
-		<width>580</width>
-        <font>fontB16</font>
-        <textcolor>ff393939</textcolor>
-		<label>181</label>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+			<control>
+				<type>image</type>
+				<id>0</id>
+				<posX>561</posX>
+				<posY>396</posY>
+				<width>798</width>
+				<height>579</height>
+				<texture>dialog_background.png</texture>
+			</control>
 
-	<control>
-		<description>dialog line 1</description>
-		<type>fadelabel</type>
-		<id>2</id>
-		<posX>678</posX>
-		<posY>583</posY>
-		<label>-</label>
-		<width>560</width>
-		<font>fontB12</font>
-        <textcolor>ff393939</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+			<control>
+				<description>Heading text label</description>
+				<type>label</type>
+				<id>1</id>
+				<posX>680</posX>
+				<posY>502</posY>
+				<width>580</width>
+				<font>fontB16</font>
+				<textcolor>ff393939</textcolor>
+				<label>181</label>
+			</control>
 
-	<control>
-		<description>dialog line 2</description>
-		<type>fadelabel</type>
-		<id>3</id>
-		<posX>678</posX>
-		<posY>628</posY>
-		<label>-</label>
-		<width>560</width>
-		<font>fontB12</font>
-        <textcolor>ff393939</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+			<control>
+				<description>dialog line 1</description>
+				<type>fadelabel</type>
+				<id>2</id>
+				<posX>678</posX>
+				<posY>583</posY>
+				<label>-</label>
+				<width>560</width>
+				<font>fontB12</font>
+				<textcolor>ff393939</textcolor>
+			</control>
 
-	<control>
-		<description>dialog line 3</description>
-		<type>fadelabel</type>
-		<id>4</id>
-		<posX>678</posX>
-		<posY>673</posY>
-		<label>-</label>
-		<width>560</width>
-		<font>fontB12</font>
-        <textcolor>ff393939</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+			<control>
+				<description>dialog line 2</description>
+				<type>fadelabel</type>
+				<id>3</id>
+				<posX>678</posX>
+				<posY>628</posY>
+				<label>-</label>
+				<width>560</width>
+				<font>fontB12</font>
+				<textcolor>ff393939</textcolor>
+			</control>
 
-	<control>
-		<description>dialog line 4</description>
-		<type>fadelabel</type>
-		<id>4</id>
-		<posX>670</posX>
-		<posY>718</posY>
-		<label>-</label>
-		<width>560</width>
-		<font>fontB12</font>
-        <textcolor>ff393939</textcolor>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+			<control>
+				<description>dialog line 3</description>
+				<type>fadelabel</type>
+				<id>4</id>
+				<posX>678</posX>
+				<posY>673</posY>
+				<label>-</label>
+				<width>560</width>
+				<font>fontB12</font>
+				<textcolor>ff393939</textcolor>
+			</control>
 
-	<control>
-		<description>Yes</description>
-		<type>button</type>
-		<id>11</id>
-		<posX>621</posX>
-		<posY>722</posY>
-		<textXOff>70</textXOff>
-		<textYOff>0</textYOff>
-		<width>678</width>
-		<height>69</height>
-		<font>TitanLight14</font>
-		<textalign>center</textalign>
-		<textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
-		<textureNoFocus>-</textureNoFocus>
-		<label>107</label>
-		<onleft>-</onleft>
-		<onright>-</onright>
-		<onup>10</onup>
-		<ondown>10</ondown>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-	</control>
+			<control>
+				<description>dialog line 4</description>
+				<type>fadelabel</type>
+				<id>4</id>
+				<posX>670</posX>
+				<posY>718</posY>
+				<label>-</label>
+				<width>560</width>
+				<font>fontB12</font>
+				<textcolor>ff393939</textcolor>
+			</control>
 
-	<control>
-		<description>No</description>
-		<type>button</type>
-		<id>10</id>
-		<posX>621</posX>
-		<posY>791</posY>
-		<textXOff>70</textXOff>
-		<textYOff>0</textYOff>
-		<width>678</width>
-		<height>69</height>
-		<font>TitanLight14</font>
-		<textalign>center</textalign>
-		<textureFocus>dialog_yesno_red_button_focus.png</textureFocus>
-		<textureNoFocus>-</textureNoFocus>
-		<label>106</label>
-		<onleft>-</onleft>
-		<onright>-</onright>
-		<onup>11</onup>
-		<ondown>11</ondown>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-	</control>
+			<control>
+				<description>Yes</description>
+				<type>button</type>
+				<id>11</id>
+				<posX>621</posX>
+				<posY>722</posY>
+				<textYOff>0</textYOff>
+				<width>678</width>
+				<height>69</height>
+				<font>TitanLight14</font>
+				<textalign>center</textalign>
+				<textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
+				<textureNoFocus>-</textureNoFocus>
+				<label>107</label>
+				<onleft>-</onleft>
+				<onright>-</onright>
+				<onup>10</onup>
+				<ondown>10</ondown>
+			</control>
 
+			<control>
+				<description>No</description>
+				<type>button</type>
+				<id>10</id>
+				<posX>621</posX>
+				<posY>791</posY>
+				<textYOff>0</textYOff>
+				<width>678</width>
+				<height>69</height>
+				<font>TitanLight14</font>
+				<textalign>center</textalign>
+				<textureFocus>dialog_yesno_red_button_focus.png</textureFocus>
+				<textureNoFocus>-</textureNoFocus>
+				<label>106</label>
+				<onleft>-</onleft>
+				<onright>-</onright>
+				<onup>11</onup>
+				<ondown>11</ondown>
+			</control>
+	</control>
 </controls>
 </window>

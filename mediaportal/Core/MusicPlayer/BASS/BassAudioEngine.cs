@@ -119,7 +119,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private VisualizationManager VizManager = null;
     private int _playBackType;
     private int _savedPlayBackType = -1;
-    private bool _isRadio = false;
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -329,7 +328,17 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public override bool IsRadio
     {
-      get { return _isRadio; }
+      get
+      {
+        MusicStream stream = GetCurrentStream();
+
+        if (stream == null)
+        {
+          return false;
+        }
+
+        return stream.Filetype.FileMainType == FileMainType.WebStream;
+      }
     }
 
     public override bool IsCDA
@@ -1546,6 +1555,14 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         _streams.Add(stream);
+        if (stream.Filetype.FileMainType == FileMainType.CDTrack)
+        {
+          _isCDDAFile = true;
+        }
+        else
+        {
+          _isCDDAFile = false;
+        }
 
         bool playbackStarted = false;
 
