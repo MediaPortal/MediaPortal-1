@@ -1430,12 +1430,15 @@ public class MediaPortalApp : D3D, IRender
           break;
       }
 
+      // TODO: should not call return here, no process plugins should be allowed to abort windows message processing
       // forward message to process plugins
-      PluginManager.WndProc(ref msg);
+      if (PluginManager.WndProc(ref msg))
+      {
+        // msg.Result = new IntPtr(0); <-- do plugins really set it on their own?
+        return;
+      }
 
-      // forward message to player
-      g_Player.WndProc(ref msg);
-
+      // TODO: extract to method and change to correct code
       // forward message to input devices
       Action action;
       char key;
@@ -1463,6 +1466,7 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Incoming Keycode: {0}", keyCode.ToString());
           var ke = new KeyEventArgs(keyCode);
           OnKeyDown(ke);
+          return; // abort WndProc()
         }
 
         if (key != 0)
@@ -1470,11 +1474,19 @@ public class MediaPortalApp : D3D, IRender
           Log.Info("Main: Incoming Key: {0}", key);
           var e = new KeyPressEventArgs(key);
           OnKeyPress(e);
+          return; // abort WndProc()
         }
+
+        return; // abort WndProc()
       }
 
+      // forward message to player
+      g_Player.WndProc(ref msg);
+
+      // forward message to form class
       base.WndProc(ref msg);
     }
+
     catch (Exception ex)
     {
       Log.Error(ex);
