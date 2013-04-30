@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Settings
   {
     [SkinControl(11)] private readonly GUIButtonControl _btnMiniDisplay = null;
     [SkinControl(10)] private readonly GUIButtonControl _btnTV = null;
-    [SkinControl(20)] private readonly GUIToggleButtonControl _btnLocked = null;
+    [SkinControl(20)] private readonly GUICheckButton _btnLocked = null;
 
     [DllImport("shlwapi.dll")]
     private static extern bool PathIsNetworkPath(string path);
