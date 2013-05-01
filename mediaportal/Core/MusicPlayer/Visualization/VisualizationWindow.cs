@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
@@ -452,7 +453,7 @@ namespace MediaPortal.Visualization
     {
       set
       {
-        CurrentThumbPath = value.ToLower();
+        CurrentThumbPath = value.ToLowerInvariant();
         CoverArtNeedsRefresh = true;
       }
     }
@@ -662,7 +663,7 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (type == g_Player.MediaType.Music && (CurrentFilePath != filename || filename.ToLower().StartsWith("http") || filename.ToLower().StartsWith("mms")))
+        if (type == g_Player.MediaType.Music && (CurrentFilePath != filename || filename.ToLowerInvariant().StartsWith("http") || filename.ToLowerInvariant().StartsWith("mms")))
         {
           CurrentFilePath = filename;
           PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
@@ -674,7 +675,7 @@ namespace MediaPortal.Visualization
           bool IsInternetStream = false;
 
           // When playing an Internet Stream, we need to clear the Coverart image, that is maybe there when music was played before
-          if (CurrentFilePath.ToLower().StartsWith("http") || CurrentFilePath.ToLower().StartsWith("mms"))
+          if (CurrentFilePath.ToLowerInvariant().StartsWith("http") || CurrentFilePath.ToLowerInvariant().StartsWith("mms"))
           {
             IsInternetStream = true;
             if (CurrentThumbImage != null)
@@ -715,9 +716,9 @@ namespace MediaPortal.Visualization
           {
             string thumbPath = GetAlbumOrFolderThumb(filename, CurrentTrackTag.Artist, CurrentTrackTag.Album);
 
-            if (thumbPath.ToLower().CompareTo(CurrentThumbPath) != 0)
+            if (thumbPath.ToLowerInvariant().CompareTo(CurrentThumbPath) != 0)
             {
-              CurrentThumbPath = thumbPath.ToLower();
+              CurrentThumbPath = thumbPath.ToLowerInvariant();
               CoverArtNeedsRefresh = true;
             }
           }
@@ -729,7 +730,7 @@ namespace MediaPortal.Visualization
             string thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
             if (Util.Utils.FileExistsInCache(thumbnail))
             {
-              CurrentThumbPath = thumbnail.ToLower();
+              CurrentThumbPath = thumbnail.ToLowerInvariant();
               CoverArtNeedsRefresh = true;
             }
             else
@@ -739,7 +740,7 @@ namespace MediaPortal.Visualization
               thumbnail = Util.Utils.GetCoverArt(Thumbs.Radio, StationName);
               if (Util.Utils.FileExistsInCache(thumbnail))
               {
-                CurrentThumbPath = thumbnail.ToLower();
+                CurrentThumbPath = thumbnail.ToLowerInvariant();
                 CoverArtNeedsRefresh = true;
               }
             }
@@ -1279,7 +1280,7 @@ namespace MediaPortal.Visualization
           return defaultValue;
         }
 
-        string sHexVal = element.InnerText.ToLower();
+        string sHexVal = element.InnerText.ToLowerInvariant();
 
         if (sHexVal.Length > 2 && sHexVal[0] == '0' && sHexVal[1] == 'x')
         {
@@ -1336,12 +1337,12 @@ namespace MediaPortal.Visualization
           {
             if (boldElement != null && boldElement.InnerText.Length > 0)
             {
-              isBold = boldElement.InnerText.ToLower() == "yes";
+              isBold = boldElement.InnerText.ToLowerInvariant() == "yes";
             }
 
             if (italicElement != null && italicElement.InnerText.Length > 0)
             {
-              isItalic = italicElement.InnerText.ToLower() == "yes";
+              isItalic = italicElement.InnerText.ToLowerInvariant() == "yes";
             }
           }
 
@@ -1928,28 +1929,31 @@ namespace MediaPortal.Visualization
               }
 
               DialogWindowIsActive = false;
-              using (Graphics g = Graphics.FromHwnd(Handle))
+              if (VisualizationRunning)
               {
-                int sleepMS = RenderVisualization(g);
+                using (Graphics g = Graphics.FromHwnd(Handle))
+                {
+                  int sleepMS = RenderVisualization(g);
 
-                if (sleepMS < 0)
-                {
-                  sleepMS = 0;
-                }
+                  if (sleepMS < 0)
+                  {
+                    sleepMS = 0;
+                  }
 
-                if (Viz.IsWinampVis())
-                {
-                  continue;
-                }
+                  if (Viz.IsWinampVis())
+                  {
+                    continue;
+                  }
 
-                // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
-                if (IsSoundSpectrumViz)
-                {
-                  Thread.Sleep(sleepMS);
-                }
-                else
-                {
-                  Thread.Sleep(VisualizationRenderInterval);
+                  // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
+                  if (IsSoundSpectrumViz)
+                  {
+                    Thread.Sleep(sleepMS);
+                  }
+                  else
+                  {
+                    Thread.Sleep(VisualizationRenderInterval);
+                  }
                 }
               }
             }
@@ -2909,7 +2913,7 @@ namespace MediaPortal.Visualization
     public bool AddImage(string imagePath)
     {
       bool result = false;
-      imagePath = imagePath.ToLower();
+      imagePath = imagePath.ToLowerInvariant();
 
       if (_ImagesPathsList == null)
       {

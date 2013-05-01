@@ -2196,12 +2196,7 @@
     <String id="300093">Riavvia MP in caso di crash</String>
     <String id="300094">Attesa per il riavvio in secondi</String>
     <String id="300095">Spegni monitor (su schermo nero)</String>
-    <String id="300096">Accendi TV (al risveglio da sospensione)</String>
-    <String id="300097">Consenti la sospensione S3 (anche se ci sono periferiche abilitate al risveglio)</String>
-    <String id="300098">Soluzione per il congelamento di MP al risveglio</String>
-    <String id="300099">Riavvia MediaPortal al risveglio</String>
     <String id="300100">Al risveglio mostra l'ultim omodulo utilizzato</String>
-    <String id="300101">Usa il selettore schermo per scegliere lo schermo di avvio di MP</String>
     <String id="300102">Ritardo avvio</String>
     <String id="300103">All'avvio di MediaPortal</String>
     <String id="300104">Al risveglio di MediaPortal</String>
@@ -2255,10 +2250,10 @@
     <String id="300152">Immagini</String>
     <String id="300153">Crea automaticamente solo le miniature piccole</String>
     <String id="300154">Pulisci la cache delle immagini</String>
-    <String id="300155">TV/Video</String>
+    <String id="300155">Video</String>
     <String id="300156">Crea automaticamente le miniature</String>
     <String id="300157">Lascia una miniatura nella cartella delle registrazioni</String>
-    <String id="300158">Pulisci le miniature della TV/Video</String>
+    <String id="300158">Pulisci le miniature della Video</String>
     <String id="300159">Apparizione dell'anteprima</String>
     <String id="300160">Righe</String>
     <String id="300161">Database</String>

@@ -34,15 +34,15 @@ namespace MediaPortal.Configuration.Sections
 {
   public class GuiThumbs : SectionSettings
   {
-    private MPGroupBox groupBoxTVThumbs;
+    private MPGroupBox groupBoxVideoThumbs;
     private MPLabel mpLabel1;
     private MPLabel labelRows;
     private MPNumericUpDown numericUpDownThumbRows;
     private MPLabel labelCol;
     private MPNumericUpDown numericUpDownThumbColumns;
     private MPCheckBox checkBoxShareThumb;
-    private MPButton buttonClearTVThumbs;
-    private MPCheckBox checkBoxTVThumbs;
+    private MPButton buttonClearVideoThumbs;
+    private MPCheckBox checkBoxVideoThumbs;
     private MPGroupBox groupBoxPictureThumbs;
     private MPButton buttonClearPictureThumbs;
     private MPCheckBox checkBoxPicThumbOnDemand;
@@ -94,10 +94,10 @@ namespace MediaPortal.Configuration.Sections
         trackBarQuality.Value = xmlreader.GetValueAsInt("thumbnails", "quality", 3);
         checkBoxFolderThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         checkBoxPicThumbOnDemand.Checked = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
-        checkBoxTVThumbs.Checked = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-        checkBoxShareThumb.Checked = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
-        numericUpDownThumbColumns.Value = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 1);
-        numericUpDownThumbRows.Value = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 1);
+        checkBoxVideoThumbs.Checked = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
+        checkBoxShareThumb.Checked = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
+        numericUpDownThumbColumns.Value = xmlreader.GetValueAsInt("thumbnails", "videothumbcols", 1);
+        numericUpDownThumbRows.Value = xmlreader.GetValueAsInt("thumbnails", "videothumbrows", 1);
       }
     }
 
@@ -108,10 +108,10 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("thumbnails", "quality", trackBarQuality.Value);
         xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", checkBoxFolderThumbOnDemand.Checked);
         xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", checkBoxPicThumbOnDemand.Checked);
-        xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", checkBoxTVThumbs.Checked);
-        xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", checkBoxShareThumb.Checked);
-        xmlwriter.SetValue("thumbnails", "tvthumbcols", numericUpDownThumbColumns.Value);
-        xmlwriter.SetValue("thumbnails", "tvthumbrows", numericUpDownThumbRows.Value);
+        xmlwriter.SetValueAsBool("thumbnails", "videoondemand", checkBoxVideoThumbs.Checked);
+        xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", checkBoxShareThumb.Checked);
+        xmlwriter.SetValue("thumbnails", "videothumbcols", numericUpDownThumbColumns.Value);
+        xmlwriter.SetValue("thumbnails", "videothumbrows", numericUpDownThumbRows.Value);
       }
     }
 
@@ -188,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
     // designer generated code
     private void InitializeComponent()
     {
-      this.groupBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxVideoThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.bttnClearBlacklistedThumbs = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelRows = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -196,8 +196,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelCol = new MediaPortal.UserInterface.Controls.MPLabel();
       this.numericUpDownThumbColumns = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.checkBoxShareThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.buttonClearTVThumbs = new MediaPortal.UserInterface.Controls.MPButton();
-      this.checkBoxTVThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonClearVideoThumbs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxVideoThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxPictureThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonClearPictureThumbs = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxPicThumbOnDemand = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -219,7 +219,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelLow = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelQualityHint = new MediaPortal.UserInterface.Controls.MPLabel();
       this.trackBarQuality = new System.Windows.Forms.TrackBar();
-      this.groupBoxTVThumbs.SuspendLayout();
+      this.groupBoxVideoThumbs.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbRows)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbColumns)).BeginInit();
       this.groupBoxPictureThumbs.SuspendLayout();
@@ -228,27 +228,25 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarQuality)).BeginInit();
       this.SuspendLayout();
       // 
-      // groupBoxTVThumbs
+      // groupBoxVideoThumbs
       // 
-      this.groupBoxTVThumbs.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.groupBoxTVThumbs.Controls.Add(this.bttnClearBlacklistedThumbs);
-      this.groupBoxTVThumbs.Controls.Add(this.mpLabel1);
-      this.groupBoxTVThumbs.Controls.Add(this.labelRows);
-      this.groupBoxTVThumbs.Controls.Add(this.numericUpDownThumbRows);
-      this.groupBoxTVThumbs.Controls.Add(this.labelCol);
-      this.groupBoxTVThumbs.Controls.Add(this.numericUpDownThumbColumns);
-      this.groupBoxTVThumbs.Controls.Add(this.checkBoxShareThumb);
-      this.groupBoxTVThumbs.Controls.Add(this.buttonClearTVThumbs);
-      this.groupBoxTVThumbs.Controls.Add(this.checkBoxTVThumbs);
-      this.groupBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxTVThumbs.Location = new System.Drawing.Point(6, 264);
-      this.groupBoxTVThumbs.Name = "groupBoxTVThumbs";
-      this.groupBoxTVThumbs.Size = new System.Drawing.Size(462, 127);
-      this.groupBoxTVThumbs.TabIndex = 7;
-      this.groupBoxTVThumbs.TabStop = false;
-      this.groupBoxTVThumbs.Text = "TV/Videos thumbs";
+      this.groupBoxVideoThumbs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.groupBoxVideoThumbs.Controls.Add(this.bttnClearBlacklistedThumbs);
+      this.groupBoxVideoThumbs.Controls.Add(this.mpLabel1);
+      this.groupBoxVideoThumbs.Controls.Add(this.labelRows);
+      this.groupBoxVideoThumbs.Controls.Add(this.numericUpDownThumbRows);
+      this.groupBoxVideoThumbs.Controls.Add(this.labelCol);
+      this.groupBoxVideoThumbs.Controls.Add(this.numericUpDownThumbColumns);
+      this.groupBoxVideoThumbs.Controls.Add(this.checkBoxShareThumb);
+      this.groupBoxVideoThumbs.Controls.Add(this.buttonClearVideoThumbs);
+      this.groupBoxVideoThumbs.Controls.Add(this.checkBoxVideoThumbs);
+      this.groupBoxVideoThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxVideoThumbs.Location = new System.Drawing.Point(6, 264);
+      this.groupBoxVideoThumbs.Name = "groupBoxVideoThumbs";
+      this.groupBoxVideoThumbs.Size = new System.Drawing.Size(462, 127);
+      this.groupBoxVideoThumbs.TabIndex = 7;
+      this.groupBoxVideoThumbs.TabStop = false;
+      this.groupBoxVideoThumbs.Text = "Videos thumbs";
       // 
       // bttnClearBlacklistedThumbs
       // 
@@ -358,31 +356,31 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxShareThumb.Name = "checkBoxShareThumb";
       this.checkBoxShareThumb.Size = new System.Drawing.Size(182, 17);
       this.checkBoxShareThumb.TabIndex = 2;
-      this.checkBoxShareThumb.Text = "Leave a thumb in recording folder";
+      this.checkBoxShareThumb.Text = "Leave a thumb in video folder";
       this.checkBoxShareThumb.UseVisualStyleBackColor = true;
       // 
-      // buttonClearTVThumbs
+      // buttonClearVideoThumbs
       // 
-      this.buttonClearTVThumbs.Location = new System.Drawing.Point(13, 63);
-      this.buttonClearTVThumbs.Name = "buttonClearTVThumbs";
-      this.buttonClearTVThumbs.Size = new System.Drawing.Size(178, 23);
-      this.buttonClearTVThumbs.TabIndex = 1;
-      this.buttonClearTVThumbs.Text = "Clear TV/Videos thumbs";
-      this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
-      this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
+      this.buttonClearVideoThumbs.Location = new System.Drawing.Point(13, 63);
+      this.buttonClearVideoThumbs.Name = "buttonClearVideoThumbs";
+      this.buttonClearVideoThumbs.Size = new System.Drawing.Size(178, 23);
+      this.buttonClearVideoThumbs.TabIndex = 1;
+      this.buttonClearVideoThumbs.Text = "Clear Videos thumbs";
+      this.buttonClearVideoThumbs.UseVisualStyleBackColor = true;
+      this.buttonClearVideoThumbs.Click += new System.EventHandler(this.buttonClearVideoThumbs_Click);
       // 
-      // checkBoxTVThumbs
+      // checkBoxVideoThumbs
       // 
-      this.checkBoxTVThumbs.AutoSize = true;
-      this.checkBoxTVThumbs.Checked = true;
-      this.checkBoxTVThumbs.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxTVThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxTVThumbs.Location = new System.Drawing.Point(13, 19);
-      this.checkBoxTVThumbs.Name = "checkBoxTVThumbs";
-      this.checkBoxTVThumbs.Size = new System.Drawing.Size(113, 17);
-      this.checkBoxTVThumbs.TabIndex = 0;
-      this.checkBoxTVThumbs.Text = "Autocreate thumbs";
-      this.checkBoxTVThumbs.UseVisualStyleBackColor = true;
+      this.checkBoxVideoThumbs.AutoSize = true;
+      this.checkBoxVideoThumbs.Checked = true;
+      this.checkBoxVideoThumbs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxVideoThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxVideoThumbs.Location = new System.Drawing.Point(13, 19);
+      this.checkBoxVideoThumbs.Name = "checkBoxVideoThumbs";
+      this.checkBoxVideoThumbs.Size = new System.Drawing.Size(113, 17);
+      this.checkBoxVideoThumbs.TabIndex = 0;
+      this.checkBoxVideoThumbs.Text = "Autocreate thumbs";
+      this.checkBoxVideoThumbs.UseVisualStyleBackColor = true;
       // 
       // groupBoxPictureThumbs
       // 
@@ -646,14 +644,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // GuiThumbs
       // 
-      this.Controls.Add(this.groupBoxTVThumbs);
+      this.Controls.Add(this.groupBoxVideoThumbs);
       this.Controls.Add(this.groupBoxPictureThumbs);
       this.Controls.Add(this.groupBoxMusicThumbs);
       this.Controls.Add(this.groupBoxThumbQuality);
       this.Name = "GuiThumbs";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBoxTVThumbs.ResumeLayout(false);
-      this.groupBoxTVThumbs.PerformLayout();
+      this.groupBoxVideoThumbs.ResumeLayout(false);
+      this.groupBoxVideoThumbs.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbRows)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownThumbColumns)).EndInit();
       this.groupBoxPictureThumbs.ResumeLayout(false);
@@ -676,13 +674,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonClearPictureThumbs_Click(object sender, EventArgs e)
     {
-      Util.Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+      Util.Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Util.Utils.GetThumbExtension()), true);
     }
 
-    private void buttonClearTVThumbs_Click(object sender, EventArgs e)
+    private void buttonClearVideoThumbs_Click(object sender, EventArgs e)
     {
-      Util.Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
-      Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()));
+      Util.Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Util.Utils.GetThumbExtension()), true);
     }
 
     private void bttnClearBlaclistedThumbs_Click(object sender, EventArgs e)

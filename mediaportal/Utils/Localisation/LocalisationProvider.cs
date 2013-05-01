@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2012 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -144,7 +144,7 @@ namespace MediaPortal.Localisation
     public StringLocalised Get(string section, int id)
     {
       Dictionary<int, StringLocalised> localList = null;
-      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
+      if (_languageStrings.TryGetValue(section.ToLowerInvariant(), out localList))
       {
         StringLocalised stringLocalised = null;
         if (localList.TryGetValue(id, out stringLocalised))
@@ -159,7 +159,7 @@ namespace MediaPortal.Localisation
     public string GetString(string section, int id)
     {
       Dictionary<int, StringLocalised> localList = null;
-      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
+      if (_languageStrings.TryGetValue(section.ToLowerInvariant(), out localList))
       {
         StringLocalised stringLocalised = null;
         if (localList.TryGetValue(id, out stringLocalised))
@@ -354,7 +354,7 @@ namespace MediaPortal.Localisation
     private void LoadStrings(string directory, string language, bool log, bool loadRTL)
     {
       string filename = "strings_" + language + ".xml";
-      GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
+      GlobalServiceProvider.Get<ILog>().Info("Loading strings file: {0}", filename);
 
       string path = Path.Combine(directory, filename);
       if (File.Exists(path))
@@ -401,7 +401,7 @@ namespace MediaPortal.Localisation
               useChineseHackNum = 1536;
           }
         }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
+        GlobalServiceProvider.Get<ILog>().Debug("ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
                                                 useChineseHackNum, strings.characters);
 
         if (loadRTL)
@@ -410,7 +410,7 @@ namespace MediaPortal.Localisation
         foreach (StringSection section in strings.sections)
         {
           // convert section name tolower -> no case matching.
-          section.name = section.name.ToLower();
+          section.name = section.name.ToLowerInvariant();
 
           Dictionary<int, StringLocalised> newSection;
           if (_languageStrings.TryGetValue(section.name, out newSection))
@@ -430,8 +430,7 @@ namespace MediaPortal.Localisation
               newSection.Add(languageString.id, languageString);
               if (log)
               {
-                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}",
-                                                       languageString.ToString());
+                GlobalServiceProvider.Get<ILog>().Info("String not found, using English: {0}", languageString.ToString());
               }
             }
           }

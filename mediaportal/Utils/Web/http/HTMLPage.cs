@@ -205,9 +205,9 @@ namespace MediaPortal.Utils.Web
             encode = System.Text.Encoding.GetEncoding(_defaultEncode);
             _strPageSource = encode.GetString(pageData);
             int headEnd;
-            if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
+            if ((headEnd = _strPageSource.ToLowerInvariant().IndexOf("</head")) != -1)
             {
-              if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+              if ((i = _strPageSource.ToLowerInvariant().IndexOf("charset", 0, headEnd)) != -1)
               {
                 strEncode = "";
                 i += 8;
@@ -232,7 +232,7 @@ namespace MediaPortal.Utils.Web
 
           GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
           // Encoding: depends on selected page
-          if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
+          if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLowerInvariant() != _defaultEncode)
           {
             try
             {

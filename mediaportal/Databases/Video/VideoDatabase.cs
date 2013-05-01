@@ -382,14 +382,14 @@ namespace MediaPortal.Video.Database
       _database.SetMovieStopTime(iFileId, stoptime);
     }
 
-    public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
+    public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle)
     {
-      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData);
+      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, bdtitle);
     }
 
-    public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
+    public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle)
     {
-      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData);
+      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, bdtitle);
     }
 
     public static void SetMovieWatchedStatus(int iMovieId, bool watched, int percent)
@@ -458,6 +458,11 @@ namespace MediaPortal.Video.Database
     public static int GetMovieId(string strFilenameAndPath)
     {
       return _database.GetMovieId(strFilenameAndPath);
+    }
+
+    public static int GetTitleBDId(int iFileId, out byte[] resumeData)
+    {
+      return _database.GetTitleBDId(iFileId, out resumeData);
     }
 
     public static bool HasSubtitle(string strFilenameAndPath)

@@ -786,25 +786,25 @@ namespace MediaPortal.GUI.Library
         switch ((SearchKinds)searchKind)
         {
           case SearchKinds.SEARCH_STARTS_WITH:
-            if (item.Label.ToLower().StartsWith(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().StartsWith(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_CONTAINS:
-            if (item.Label.ToLower().IndexOf(searchString.ToLower()) >= 0)
+            if (item.Label.ToLowerInvariant().IndexOf(searchString.ToLowerInvariant()) >= 0)
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_ENDS_WITH:
-            if (item.Label.ToLower().EndsWith(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().EndsWith(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }
             break;
           case SearchKinds.SEARCH_IS:
-            if (item.Label.ToLower().Equals(searchString.ToLower()))
+            if (item.Label.ToLowerInvariant().Equals(searchString.ToLowerInvariant()))
             {
               validItem = true;
             }

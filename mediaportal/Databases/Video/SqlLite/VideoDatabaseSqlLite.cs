@@ -278,6 +278,14 @@ namespace MediaPortal.Video.Database
           watchedUpg = true;
         }
 
+        // bdtitle int
+        if (DatabaseUtility.TableColumnExists(m_db, "resume", "bdtitle") == false)
+        {
+          string strSQL = "ALTER TABLE \"main\".\"resume\" ADD COLUMN \"bdtitle\" integer DEFAULT 1000";
+          m_db.Execute(strSQL);
+          watchedUpg = true;
+        }
+
         #endregion
 
         #region MediaInfo table
@@ -533,7 +541,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "files",
                                "CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text)");
       DatabaseUtility.AddTable(m_db, "resume",
-                               "CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)");
+                               "CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob, bdtitle integer)");
       DatabaseUtility.AddTable(m_db, "duration",
                                "CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
       DatabaseUtility.AddTable(m_db, "actorinfo",
@@ -767,16 +775,40 @@ namespace MediaPortal.Video.Database
       return -1;
     }
 
+    public int GetTitleBDId(int iFileId, out byte[] resumeData)//, int bdtitle)
+    {
+      resumeData = null;
+
+      try
+      {
+        string sql = String.Format("SELECT * FROM resume WHERE idFile={0}", iFileId);// bdtitle);
+        SQLiteResultSet results = m_db.Execute(sql);
+        int BDTileID;
+
+        if (results.Rows.Count != 0)
+        {
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "bdtitle"), out BDTileID);
+          return BDTileID;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return 0;
+    }
+
     public int AddMovieFile(string strFile)
     {
       bool bHassubtitles = false;
       
-      if (strFile.ToLower().IndexOf(".ifo") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf(".ifo") >= 0)
       {
         bHassubtitles = true;
       }
       
-      if (strFile.ToLower().IndexOf(".vob") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf(".vob") >= 0)
       {
         bHassubtitles = true;
       }
@@ -2903,26 +2935,33 @@ namespace MediaPortal.Video.Database
       return new string(chars);
     }
 
-    public int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
+    public int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle)
     {
       resumeData = null;
 
       try
       {
-        string sql = string.Format("SELECT * FROM resume WHERE idFile={0}", iFileId);
+        string sql = String.Format("SELECT * FROM resume WHERE idFile={0} AND bdtitle={1}", iFileId, bdtitle);
         SQLiteResultSet results = m_db.Execute(sql);
-        
-        if (results.Rows.Count == 0)
-        {
-          return 0;
-        }
-        
         int stoptime;
-        Int32.TryParse(DatabaseUtility.Get(results, 0, "stoptime"), out stoptime);
-        string resumeString = DatabaseUtility.Get(results, 0, "resumeData");
-        resumeData = new byte[resumeString.Length / 2];
-        FromHexString(resumeString).CopyTo(resumeData, 0);
-        return stoptime;
+        int BDTileID;
+
+        if (results.Rows.Count != 0)
+        {
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "stoptime"), out stoptime);
+          string resumeString = DatabaseUtility.Get(results, 0, "resumeData");
+          resumeData = new byte[resumeString.Length/2];
+          FromHexString(resumeString).CopyTo(resumeData, 0);
+          return stoptime;
+        }
+        else
+        {
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "bdtitle"), out BDTileID);
+          if (bdtitle != BDTileID)
+          {
+            return 0;
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -2932,10 +2971,14 @@ namespace MediaPortal.Video.Database
       return 0;
     }
 
-    public void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
+    public void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle)
     {
       try
       {
+        // The next line is too enable record of stoptime for each Title BD
+        //string sql = String.Format("SELECT * FROM resume WHERE idFile={0} AND bdtitle={1}", iFileId, bdtitle);
+
+        // Only store stoptime with one current Title BD
         string sql = String.Format("SELECT * FROM resume WHERE idFile={0}", iFileId);
         SQLiteResultSet results = m_db.Execute(sql);
         string resumeString = "-";
@@ -2945,17 +2988,20 @@ namespace MediaPortal.Video.Database
           resumeString = ToHexString(resumeData);
         }
 
-        if (results.Rows.Count == 0)
-        {
-          sql = String.Format("INSERT INTO resume ( idResume,idFile,stoptime,resumeData) VALUES(NULL,{0},{1},'{2}')",
-                              iFileId, stoptime, resumeString);
-        }
-        else
-        {
-          sql = String.Format("UPDATE resume SET stoptime={0},resumeData='{1}' WHERE idFile={2}",
-                              stoptime, resumeString, iFileId);
-        }
 
+        // Only store stoptime with one current Title BD
+        if (results.Rows.Count != 0)
+        {
+          sql = String.Format("UPDATE resume SET stoptime={0},resumeData='{1}',bdtitle='{2}' WHERE idFile={3}",
+                              stoptime, resumeString, bdtitle, iFileId);
+        }
+        else if (bdtitle >= 0)
+        {
+          sql =
+            String.Format(
+              "INSERT INTO resume ( idResume,idFile,stoptime,resumeData,bdtitle) VALUES(NULL,{0},{1},'{2}',{3})",
+              iFileId, stoptime, resumeString, bdtitle);
+        }
         m_db.Execute(sql);
       }
       catch (Exception ex)
@@ -3330,7 +3376,7 @@ namespace MediaPortal.Video.Database
     {
       int lPathId;
       int lMovieId;
-      
+
       if (GetFile(strFilenameAndPath, out lPathId, out lMovieId, bExact) < 0)
       {
         return -1;
@@ -4880,16 +4926,16 @@ namespace MediaPortal.Video.Database
         bool isbdDvd = false;
         string nfoExt = ".nfo";
 
-        if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        if (videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //DVD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
-        else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        else if (videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //BD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
 
@@ -6254,8 +6300,8 @@ namespace MediaPortal.Video.Database
         //
         using (Settings xmlReaderWriter = new MPSettings())
         {
-          _currentCreateVideoThumbs = xmlReaderWriter.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-          xmlReaderWriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+          _currentCreateVideoThumbs = xmlReaderWriter.GetValueAsBool("thumbnails", "videoondemand", true);
+          xmlReaderWriter.SetValueAsBool("thumbnails", "videoondemand", false);
         }
 
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
@@ -6320,7 +6366,7 @@ namespace MediaPortal.Video.Database
         // Restore thumbcreation setting
         using (Settings xmlwriter = new MPSettings())
         {
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", _currentCreateVideoThumbs);
         }
       }
     }

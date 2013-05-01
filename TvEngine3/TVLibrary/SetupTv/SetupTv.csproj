@@ -571,6 +571,10 @@
       <Project>{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}</Project>
       <Name>TvService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvThumbnails\TvThumbnails.csproj">
+      <Project>{95F4BF8F-5664-40C9-8DA8-C5E9B79B8115}</Project>
+      <Name>TvThumbnails</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Sections\TvRecording.resx">

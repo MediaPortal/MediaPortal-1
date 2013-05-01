@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
 using MediaPortal.UserInterface.Controls;
@@ -616,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
       if (section != null)
       {
         string player = (string)section.GetSetting("audioPlayer");
-        if (player.IndexOf("BASS") == -1)
+        if (player.ToLowerInvariant().IndexOf("internal dshow player") > -1)
         {
           MusicDSPTabCtl.Enabled = false;
           MessageBox.Show(this, "DSP effects are only available with the BASS music player selected.",

@@ -33,6 +33,7 @@ namespace MediaPortal.Playlists
       void Release();
       bool Play(string strFile);
       bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type);
+      bool Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay);
       bool PlayVideoStream(string strURL, string streamName);
       bool PlayAudioStream(string strURL);
       void Stop();
@@ -64,6 +65,11 @@ namespace MediaPortal.Playlists
       bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type)
       {
         return Player.g_Player.Play(strFile, type);
+      }
+
+      bool IPlayer.Play(string strFile, MediaPortal.Player.g_Player.MediaType type, int title, bool forcePlay)
+      {
+        return Player.g_Player.Play(strFile, type, title, forcePlay);
       }
 
       bool IPlayer.PlayVideoStream(string strURL, string streamName)
@@ -140,6 +146,12 @@ namespace MediaPortal.Playlists
     public static PlayListPlayer SingletonPlayer
     {
       get { return singletonPlayer; }
+    }
+
+    // Returns current Playlist Position
+    public int CurrentPlaylistPos
+    {
+      get { return _currentItem; }
     }
 
     public void InitTest()
@@ -419,7 +431,7 @@ namespace MediaPortal.Playlists
           // Switch back to standard playback mode
           if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+            Player.BassMusicPlayer.Player.SwitchToDefaultPlaybackMode();
           }
 
           _currentPlayList = PlayListType.PLAYLIST_NONE;
@@ -564,10 +576,19 @@ namespace MediaPortal.Playlists
             case PlayListType.PLAYLIST_MUSIC:
             case PlayListType.PLAYLIST_MUSIC_TEMP:
               playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
-              break;            
+              break;
             case PlayListType.PLAYLIST_VIDEO:
             case PlayListType.PLAYLIST_VIDEO_TEMP:
-              playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+              {
+                if (!MediaPortal.Player.g_Player.ForcePlay)
+                {
+                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video);
+                }
+                else
+                {
+                  playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Video, MediaPortal.Player.g_Player.SetResumeBDTitleState, true);
+                }
+              }
               break;
             default:
               playResult = g_Player.Play(item.FileName);

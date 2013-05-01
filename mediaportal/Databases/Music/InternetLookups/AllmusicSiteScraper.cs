@@ -187,7 +187,7 @@ namespace MediaPortal.Music.Database
       {
         sb.Append(t);
       }
-      var strClean = Uri.EscapeDataString(sb.ToString().Normalize(NormalizationForm.FormC)).ToLower();
+      var strClean = Uri.EscapeDataString(sb.ToString().Normalize(NormalizationForm.FormC)).ToLower(CultureInfo.CurrentCulture);
 
       return strClean;
     }
@@ -210,7 +210,7 @@ namespace MediaPortal.Music.Database
         sb.Append(t);
       }
 
-      var strCleanString = sb.ToString().Normalize(NormalizationForm.FormC).ToLower();
+      var strCleanString = sb.ToString().Normalize(NormalizationForm.FormC).ToLower(CultureInfo.CurrentCulture);
       strCleanString = strCleanString.Replace("&", "and");
       strCleanString = strCleanString.Replace("+", "and");
       strCleanString = Regex.Replace(strCleanString, "^the ", "", RegexOptions.IgnoreCase);

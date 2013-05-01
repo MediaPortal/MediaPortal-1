@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Music
             continue;
           }
 
-          if (artist.ToLower().CompareTo(song.Artist.ToLower()) != 0)
+          if (artist.ToLowerInvariant().CompareTo(song.Artist.ToLowerInvariant()) != 0)
           {
             difArtistCount++;
           }
@@ -608,7 +608,7 @@ namespace MediaPortal.GUI.Music
               continue;
             }
 
-            if (artist.ToLower().CompareTo(tag.Artist.ToLower()) != 0)
+            if (artist.ToLowerInvariant().CompareTo(tag.Artist.ToLowerInvariant()) != 0)
             {
               difArtistCount++;
             }
@@ -765,7 +765,7 @@ namespace MediaPortal.GUI.Music
         temp = origAlbumName;
       } while (replaced);
 
-      string testSting = origAlbumName.ToLower();
+      string testSting = origAlbumName.ToLowerInvariant();
       bool modified = false;
       int nPos = -1;
 

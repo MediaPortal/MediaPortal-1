@@ -67,7 +67,8 @@
 			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
 			<textcolor>ff000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
-			<textalign>left</textalign>	
+			<textalign>left</textalign>
+			<scrollStartDelaySec>0</scrollStartDelaySec>
       <onright>2</onright>			
 			<onup>10</onup>
 			<ondown>12</ondown>
@@ -90,7 +91,9 @@
 			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
 			<textcolor>ff000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
-			<textalign>left</textalign>		
+			<textalign>left</textalign>
+			<textpadding>50</textpadding>
+			<scrollStartDelaySec>0</scrollStartDelaySec>
       <onright>2</onright>			
       <onup>11</onup>
       <ondown>13</ondown>
@@ -113,7 +116,9 @@
 			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
 			<textcolor>ff000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
-			<textalign>left</textalign>		
+			<textalign>left</textalign>
+			<textpadding>50</textpadding>
+			<scrollStartDelaySec>0</scrollStartDelaySec>
       <onright>2</onright>			
       <onup>12</onup>
       <ondown>3</ondown>
@@ -136,7 +141,9 @@
 			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
 			<textcolor>ff000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
-			<textalign>left</textalign>				
+			<textalign>left</textalign>
+			<textpadding>50</textpadding>
+			<scrollStartDelaySec>0</scrollStartDelaySec>			
       <onright>2</onright>
       <onup>13</onup>
       <ondown>4</ondown>
@@ -159,7 +166,9 @@
 			<textureNoFocus>settings_button_database_large_nofocus.png</textureNoFocus>
 			<textcolor>ff000000</textcolor>
 			<textcolorNoFocus>ffffffff</textcolorNoFocus>			
-			<textalign>left</textalign>				
+			<textalign>left</textalign>
+			<textpadding>50</textpadding>
+			<scrollStartDelaySec>0</scrollStartDelaySec>			
       <onright>2</onright>		
       <onup>3</onup>
       <ondown>14</ondown>

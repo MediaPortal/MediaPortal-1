@@ -1483,12 +1483,12 @@ namespace MediaPortal.Player
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
           streamName.EndsWith(".dts"))
       {
-        return Path.GetExtension(streamName).ToUpper().Replace(".", "EXTERNAL ");
+        return Path.GetExtension(streamName).ToUpperInvariant().Replace(".", "EXTERNAL ");
       }
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
@@ -2155,7 +2155,7 @@ namespace MediaPortal.Player
 
       // No stream info from splitter
       if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
-        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", "");
+        return Path.GetExtension(m_strCurrentFile).ToUpperInvariant().Replace(".", "");
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^V: ", "");

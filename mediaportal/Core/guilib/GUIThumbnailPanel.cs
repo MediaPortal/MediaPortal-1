@@ -363,7 +363,7 @@ namespace MediaPortal.GUI.Library
       // ToDo: add searchstring property
       if (_searchString.Length > 0)
       {
-        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
+        GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLowerInvariant() + "}");
       }
     }
 
@@ -1351,9 +1351,12 @@ namespace MediaPortal.GUI.Library
           }
           int iItemsPerPage = _rowCount * _columnCount;
           int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-          if ((_listItems.Count % iItemsPerPage) != 0)
+          if (iItemsPerPage != 0)
           {
-            iPages++;
+            if ((_listItems.Count % iItemsPerPage) != 0)
+            {
+              iPages++;
+            }
           }
           _controlUpDown.SetRange(1, iPages);
           _controlUpDown.Value = 1;
@@ -1547,7 +1550,7 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
+        if (pItem.Label.ToUpperInvariant().StartsWith(SearchKey.ToUpperInvariant()) == true)
         {
           bItemFound = true;
           break;
@@ -1896,9 +1899,12 @@ namespace MediaPortal.GUI.Library
 
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;
@@ -2871,9 +2877,12 @@ namespace MediaPortal.GUI.Library
       _listItems.Add(item);
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if (iItemsPerPage != 0 && (_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;
@@ -2890,9 +2899,12 @@ namespace MediaPortal.GUI.Library
       _listItems.Insert(index, item);
       int iItemsPerPage = _rowCount * _columnCount;
       int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
-      if ((_listItems.Count % iItemsPerPage) != 0)
+      if (iItemsPerPage != 0)
       {
-        iPages++;
+        if ((_listItems.Count % iItemsPerPage) != 0)
+        {
+          iPages++;
+        }
       }
       _controlUpDown.SetRange(1, iPages);
       _controlUpDown.Value = 1;

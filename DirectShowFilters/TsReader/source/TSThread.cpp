@@ -49,8 +49,8 @@ void TSThreadThreadProc(void *pParam)
 
 TSThread::TSThread()
 {
-	m_hStopEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-	m_hDoneEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	m_hStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_hDoneEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	m_hWakeEvent = CreateEvent(NULL, FALSE, FALSE, NULL); //Auto-reset
 	m_threadHandle = INVALID_HANDLE_VALUE;
   m_bThreadRunning=FALSE;
@@ -58,7 +58,10 @@ TSThread::TSThread()
 
 TSThread::~TSThread()
 {
-	StopThread();
+	if (m_threadHandle != INVALID_HANDLE_VALUE)
+	{
+	  StopThread(5000);
+	}
 	CloseHandle(m_hStopEvent);
 	CloseHandle(m_hDoneEvent);
 	CloseHandle(m_hWakeEvent);
@@ -83,14 +86,21 @@ HRESULT TSThread::StartThread()
 HRESULT TSThread::StopThread(DWORD dwTimeoutMilliseconds)
 {
 	HRESULT hr = S_OK;
-
+	
+	ResetEvent(m_hDoneEvent);
+  m_bThreadRunning=FALSE; //Block wake events
 	SetEvent(m_hStopEvent);
 	DWORD result = WaitForSingleObject(m_hDoneEvent, dwTimeoutMilliseconds);
 
 	if ((result == WAIT_TIMEOUT) && (m_threadHandle != INVALID_HANDLE_VALUE))
 	{
-		TerminateThread(m_threadHandle, -1);
-		CloseHandle(m_threadHandle);
+	  try
+	  {
+  		TerminateThread(m_threadHandle, -1);
+  		CloseHandle(m_threadHandle);
+	  }
+    catch(...) {}
+    
 		hr = S_FALSE;
 	}
 	else if (result != WAIT_OBJECT_0)
@@ -146,8 +156,8 @@ void TSThread::InternalThreadProc()
 	{
 		pStr = NULL;
 	}
-	SetEvent(m_hDoneEvent);
   m_bThreadRunning=FALSE;
+	SetEvent(m_hDoneEvent);
 }
 
 void TSThread::thread_function(void* p)

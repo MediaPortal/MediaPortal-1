@@ -202,13 +202,8 @@ namespace MediaPortal.GUI.NumberPlace
     [SkinControl((int)SkinControlIDs.BTN_HELP_ONCE)] protected GUIButtonControl btnHelpOnce = null;
     [SkinControl((int)SkinControlIDs.BTN_RESET_GAME)] protected GUIButtonControl btnResetGame = null;
     [SkinControl((int)SkinControlIDs.BTN_SOLVE)] protected GUIButtonControl btnSolve = null;
-
-    [SkinControl((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)] protected GUIToggleButtonControl btnBlockInvalidMoves =
-      null;
-
-    [SkinControl((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)] protected GUIToggleButtonControl btnShowInvalidMoves =
-      null;
-
+    [SkinControl((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)] protected GUICheckButton btnBlockInvalidMoves = null;
+    [SkinControl((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)] protected GUICheckButton btnShowInvalidMoves = null;
     [SkinControl((int)SkinControlIDs.BTN_LEVEL)] protected GUIButtonControl btnLevel = null;
     [SkinControl((int)SkinControlIDs.BTN_CLEAR)] protected GUIButtonControl btnClear = null;
 

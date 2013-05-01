@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Video
       {
         // for dvd's the file is in the form c:\media\movies\the matrix\video_ts\video_ts.ifo
         // first strip the \video_ts\video_ts.ifo
-        string lowPath = fileName.ToLower();
+        string lowPath = fileName.ToLowerInvariant();
         int index = lowPath.IndexOf("video_ts/");
         if (index < 0)
         {
@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Video
       }
 
       bool isLive = g_Player.IsTimeShifting;
-      string extension = Util.Utils.GetFileExtension(fileName).ToLower();
+      string extension = Util.Utils.GetFileExtension(fileName).ToLowerInvariant();
       if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") ||
           (extension.Equals(".ts") && !isLive || g_Player.IsTVRecording))
       {
@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Video
             string title = Util.Utils.GetFilename(fileName, true);
             GUIPropertyManager.SetProperty("#Play.Current.Title", title);
           }
-          else if (fileName.ToLower().Contains("index.bdmv")) // BD folder title check
+          else if (fileName.ToLowerInvariant().Contains("index.bdmv")) // BD folder title check
           {
             string title = selectBdHandler.GetDiscTitle(fileName);
             // get the name when play BD directly from Drive letter
@@ -464,10 +464,10 @@ namespace MediaPortal.GUI.Video
             }
             GUIPropertyManager.SetProperty("#Play.Current.Title", title);
           }
-          else if (fileName.ToLower().Contains(".mpls")) // BD folder title check (playlist)
+          else if (fileName.ToLowerInvariant().Contains(".mpls")) // BD folder title check (playlist)
           {
             // Check if index.bdmv is in the VDB
-            int index = fileName.ToLower().LastIndexOf(@"\playlist");
+            int index = fileName.ToLowerInvariant().LastIndexOf(@"\playlist");
             string name = fileName.Remove(index);
             name = name + @"\index.bdmv";
             if (VideoDatabase.HasMovieInfo(name))
