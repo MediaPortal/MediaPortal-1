@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.Video
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
           }
           else if (!pItem.IsFolder ||
-                   (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
+                   (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLowerInvariant())))
           {
             file = pItem.Path;
           }
@@ -520,7 +520,7 @@ namespace MediaPortal.GUI.Video
           return string.Empty;
 
         // IFind first movie file in folder
-        string strExtension = Path.GetExtension(path).ToLower();
+      string strExtension = Path.GetExtension(path).ToLowerInvariant();
         if (VirtualDirectory.IsImageFile(strExtension))
         {
           return path;

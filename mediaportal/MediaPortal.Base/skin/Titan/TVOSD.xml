@@ -311,7 +311,7 @@
     
 	  <control>
 			<description>Subtitles Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>218</id>
 			<posY>888</posY>
 			<posX>1555</posX>
@@ -331,7 +331,7 @@
 	
 		<control>
 			<description>Audio Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>221</id>
 			<posY>887</posY>
 			<posX>1618</posX>
@@ -351,7 +351,7 @@
 	   
 		<control>
 	  	<description>Video Menu</description>
-	    <type>togglebutton</type>
+	    <type>checkbutton</type>
 	    <id>220</id>
 			<posY>888</posY>
 			<posX>-2000</posX>
@@ -596,7 +596,7 @@
 
     <control>
       <description>Bookmarks Menu</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>219</id>
       <posX>256</posX>
       <posY>537</posY>

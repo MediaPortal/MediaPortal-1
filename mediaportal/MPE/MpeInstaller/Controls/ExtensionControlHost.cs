@@ -87,7 +87,7 @@ namespace MpeInstaller.Controls
       if (Package == null)
         return true;
       tag = tag.Trim();
-      if (tag.ToUpper() == "ALL")
+      if (tag.ToUpperInvariant() == "ALL")
         tag = string.Empty;
 
       bool strResult = string.IsNullOrEmpty(str);
@@ -97,16 +97,16 @@ namespace MpeInstaller.Controls
         strResult = true;
       else
       {
-        if (Package.GeneralInfo.Name.ToUpper().Contains(str.ToUpper()))
+        if (Package.GeneralInfo.Name.ToUpperInvariant().Contains(str.ToUpperInvariant()))
           strResult = true;
-        if (Package.GeneralInfo.ExtensionDescription.ToUpper().Contains(str.ToUpper()))
+        if (Package.GeneralInfo.ExtensionDescription.ToUpperInvariant().Contains(str.ToUpperInvariant()))
           strResult = true;
-        if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLower()))
+        if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLowerInvariant()))
           strResult = true;
       }
       if (!string.IsNullOrEmpty(tag))
       {
-        if (Package.GeneralInfo.TagList.Tags.Contains(tag.ToLower()))
+        if (Package.GeneralInfo.TagList.Tags.Contains(tag.ToLowerInvariant()))
           tagResult = true;
       }
       return strResult && tagResult;

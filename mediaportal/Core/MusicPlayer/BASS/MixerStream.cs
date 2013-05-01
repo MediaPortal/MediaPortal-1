@@ -17,6 +17,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private BassAudioEngine _bassPlayer;
     private int _mixer = 0;
     private float[,] _mixingMatrix = null;
+    private bool _upmixing = false;
 
     private ASIOPROC _asioProc = null;
     private WASAPIPROC _wasapiProc = null;
@@ -24,6 +25,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool _wasapiShared = false;
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
+
+    private bool _disposed = false;
 
     #endregion
 
@@ -50,6 +53,11 @@ namespace MediaPortal.MusicPlayer.BASS
     public int WasApiMixedFreq
     {
       get { return _wasapiMixedFreq; }
+    }
+
+    public bool UpMixing
+    {
+      get { return _upmixing; }
     }
 
     #endregion
@@ -91,6 +99,7 @@ namespace MediaPortal.MusicPlayer.BASS
         if (_mixingMatrix != null)
         {
           outputChannels = Math.Min(_mixingMatrix.GetLength(0), outputChannels);
+          _upmixing = true;
         }
         else
         {
@@ -620,6 +629,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
+      if (_disposed)
+      {
+        return;
+      }
+
+      _disposed = true;
+
       Log.Debug("BASS: Disposing Mixer Stream");
 
       try

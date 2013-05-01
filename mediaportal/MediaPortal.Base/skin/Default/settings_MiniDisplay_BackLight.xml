@@ -44,7 +44,7 @@
       </control>
       <control>
         <description>Invert Display</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>68</id>
         <width>225</width>
         <label>9115</label>

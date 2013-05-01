@@ -211,8 +211,8 @@ namespace MediaPortal.Util
     {
       if (extension == null) return false;
       if (extension == string.Empty) return false;
-      return _supportedExtensions.Contains(extension.ToLower());
-      //extension = extension.ToLower();
+      return _supportedExtensions.Contains(extension.ToLowerInvariant());
+      //extension = extension.ToLowerInvariant();
       //foreach (string ext in _supportedExtensions)
       //  if (ext.Equals(extension))
       //    return true;

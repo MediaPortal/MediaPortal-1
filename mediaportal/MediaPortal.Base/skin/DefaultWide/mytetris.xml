@@ -35,7 +35,7 @@
       </control>
       <control>
         <description>Sounds</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>4</id>
         <label>19004</label>
         <onright>10</onright>

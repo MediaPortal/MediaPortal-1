@@ -92,7 +92,7 @@
 			</control>
 			<control>
 				<description>Monitor Power States</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>11</id>
 				<width>300</width>
 				<label>9109</label>

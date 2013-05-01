@@ -8,24 +8,23 @@
 	<import>common.dialog.xml</import>
 	
 	<control>
-	    <description>OK button</description>
-	    <type>button</type>
-	    <id>10</id>
+	  <description>OK button</description>
+	  <type>button</type>
+	  <id>10</id>
 		<posX>621</posX>
 		<posY>800</posY>
-		<textXOff>0</textXOff>
-		<textYOff>5</textYOff>
+		<textYOff>0</textYOff>
 		<width>678</width>
 		<height>68</height>
 		<font>TitanLight14</font>
 		<textalign>center</textalign>
-	   <textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
-	    <textureNoFocus>-</textureNoFocus>
-	    <label>186</label>
-	    <onleft>10</onleft>
-	    <onright>10</onright>
-	    <onup>10</onup>
-	    <ondown>10</ondown>
+	  <textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
+	  <textureNoFocus>-</textureNoFocus>
+	  <label>186</label>
+	  <onleft>10</onleft>
+	  <onright>10</onright>
+	  <onup>10</onup>
+	  <ondown>10</ondown>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>

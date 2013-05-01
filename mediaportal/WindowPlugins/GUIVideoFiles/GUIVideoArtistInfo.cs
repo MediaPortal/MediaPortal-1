@@ -44,8 +44,8 @@ namespace MediaPortal.GUI.Video
     private ViewMode _viewmode;
     private Thread _scanThread;
 
-    [SkinControl(3)] protected GUIToggleButtonControl btnBiography;
-    [SkinControl(4)] protected GUIToggleButtonControl btnMovies;
+    [SkinControl(3)] protected GUICheckButton btnBiography;
+    [SkinControl(4)] protected GUICheckButton btnMovies;
     [SkinControl(20)] protected GUITextScrollUpControl tbBiographyArea;
     [SkinControl(21)] protected GUIImage imgCoverArt;
     [SkinControl(22)] protected GUITextControl tbMovieArea;
@@ -1058,7 +1058,7 @@ namespace MediaPortal.GUI.Video
         foreach (Match m in mc)
         {
           // Get cover - using mid quality cover
-          if (m.Groups["cover"].Value.ToLower().Contains("mid.jpg"))
+          if (m.Groups["cover"].Value.ToLowerInvariant().Contains("mid.jpg"))
           {
             thumb = m.Groups["cover"].Value;
             break;

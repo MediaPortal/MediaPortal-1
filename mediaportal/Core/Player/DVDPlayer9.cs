@@ -67,12 +67,12 @@ namespace MediaPortal.Player
         showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
-        if (dvdDNavigator.ToLower().Contains("cyberlink dvd navigator"))
+        if (dvdDNavigator.ToLowerInvariant().Contains("cyberlink dvd navigator"))
         {
           _cyberlinkDVDNavigator = true;
         }
 
-        aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
+        aspectRatio = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLowerInvariant();
         if (aspectRatio == "crop")
         {
           arMode = AspectRatioMode.Crop;
@@ -90,7 +90,7 @@ namespace MediaPortal.Player
           arMode = AspectRatioMode.StretchedAsPrimary;
         }
 
-        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLower();
+        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLowerInvariant();
         if (displayMode == "default")
         {
           _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;

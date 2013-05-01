@@ -83,6 +83,27 @@
         <id>25</id>
         <label>2135</label>
         <width>262</width>
+      </control>
+      <control>
+        <description>Auto Decoder Settings On/Off</description>
+        <type>checkbutton</type>
+        <id>44</id>
+        <label>1321</label>
+        <width>350</width>
+      </control>
+      <control>
+        <description>Force Source Splitter On/Off</description>
+        <type>checkbutton</type>
+        <id>45</id>
+        <label>1322</label>
+        <width>350</width>
+      </control>
+      <control>
+        <description>Use Movie Codec TS On/Off</description>
+        <type>checkbutton</type>
+        <id>46</id>
+        <label>1323</label>
+        <width>350</width>
         <ondown>42</ondown>
       </control>
     </control>

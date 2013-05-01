@@ -61,7 +61,7 @@
         <type>button</type>
         <id>42</id>
         <label>851</label>
-        <onup>25</onup>
+        <onup>46</onup>
       </control>
       <control Style="SettingsCheckButton">
         <description>Subtitles On/Off</description>
@@ -104,6 +104,24 @@
         <type>button</type>
         <id>25</id>
         <label>2135</label>
+      </control>
+      <control Style="SettingsCheckButton">
+        <description>Auto Decoder Settings On/Off</description>
+        <type>checkbutton</type>
+        <id>44</id>
+        <label>1321</label>
+      </control>
+      <control Style="SettingsCheckButton">
+        <description>Force Source Splitter On/Off</description>
+        <type>checkbutton</type>
+        <id>45</id>
+        <label>1322</label>
+      </control>
+      <control Style="SettingsCheckButton">
+        <description>Use Movie Codec TS On/Off</description>
+        <type>checkbutton</type>
+        <id>46</id>
+        <label>1323</label>
         <ondown>42</ondown>
       </control>
     </control>

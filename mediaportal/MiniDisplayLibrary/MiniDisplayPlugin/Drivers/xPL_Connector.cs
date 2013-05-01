@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -159,7 +160,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void Listener_XplMessageReceived(object sender, XplListener.XplEventArgs e)
     {
-      if (e.XplMsg.Schema.msgClass.ToLower().Equals("hbeat") && e.XplMsg.Schema.msgType.ToLower().Equals("app"))
+      if (e.XplMsg.Schema.msgClass.ToLowerInvariant().Equals("hbeat") && e.XplMsg.Schema.msgType.ToLowerInvariant().Equals("app"))
       {
         if (this.DoDebug)
         {
@@ -167,16 +168,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         this._IsConnected = true;
       }
-      else if (e.XplMsg.Schema.msgClass.ToLower().Equals("config"))
+      else if (e.XplMsg.Schema.msgClass.ToLowerInvariant().Equals("config"))
       {
         if (this.DoDebug)
         {
           Log.Info("xPLConnector_Listener_XplMessageReceived: Received CONFIG message");
         }
       }
-      else if ((e.XplMsg.Source.Vendor.ToLower().Equals(this.mVendorID.ToLower()) &&
-                e.XplMsg.Source.Device.ToLower().Equals(this.mDeviceID.ToLower())) &&
-               e.XplMsg.Source.Instance.ToLower().Equals(this.mInstanceID.ToLower()))
+      else if ((e.XplMsg.Source.Vendor.ToLowerInvariant().Equals(this.mVendorID.ToLowerInvariant()) &&
+                e.XplMsg.Source.Device.ToLowerInvariant().Equals(this.mDeviceID.ToLowerInvariant())) &&
+               e.XplMsg.Source.Instance.ToLowerInvariant().Equals(this.mInstanceID.ToLowerInvariant()))
       {
         if (this.DoDebug)
         {
@@ -190,7 +191,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("xPLConnector_Listener_XplMessageReceived: {0} - {1} - {2}",
                    new object[] {e.XplMsg.Source.Vendor, e.XplMsg.Source.Device, e.XplMsg.Content});
         }
-        string str = e.XplMsg.Schema.msgClass.ToLower() + "." + e.XplMsg.Schema.msgType.ToLower();
+        string str = e.XplMsg.Schema.msgClass.ToLowerInvariant() + "." + e.XplMsg.Schema.msgType.ToLowerInvariant();
         string str11 = str;
         if (str11 != null)
         {
@@ -207,7 +208,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     Log.Info("xPL_Connector.Listener_XplMessageReceived(): Received remote.basic \"{0}\"",
                              new object[] {str9});
                   }
-                  if (Enum.IsDefined(typeof (GUIWindow.Window), str9.ToUpper()))
+                  if (Enum.IsDefined(typeof (GUIWindow.Window), str9.ToUpperInvariant()))
                   {
                     if (this.DoDebug)
                     {
@@ -215,7 +216,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                new object[0]);
                     }
                     this.XPL_Send_Remote_Confirm_Message(e);
-                    int num8 = (int)Enum.Parse(typeof (GUIWindow.Window), str9.ToUpper());
+                    int num8 = (int)Enum.Parse(typeof (GUIWindow.Window), str9.ToUpperInvariant());
                     if (!GUIWindowManager.ActiveWindow.Equals(num8))
                     {
                       GUIWindowManager.SendThreadCallbackAndWait(
@@ -242,7 +243,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   }
                   foreach (string str10 in Enum.GetNames(typeof (RemoteButton)))
                   {
-                    if (str10.ToLower().Equals(str9.ToLower()) || str9.ToLower().Equals("remote_" + str10.ToLower()))
+                    if (str10.ToLowerInvariant().Equals(str9.ToLowerInvariant()) || str9.ToLowerInvariant().Equals("remote_" + str10.ToLowerInvariant()))
                     {
                       if (this.DoDebug)
                       {
@@ -291,14 +292,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   return;
 
                 case "devstate":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerDevstate("xpl-stat");
                   }
                   return;
 
                 case "mpinfo":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerMediaPlayerInfo("xpl-stat");
                     this.XPL_SendPlayerMediaPlayerInputInfo("xpl-stat");
@@ -306,21 +307,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   return;
 
                 case "mptrnspt":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerTransportState("xpl-stat");
                   }
                   return;
 
                 case "mpmedia":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendMediaInfo("xpl-stat");
                   }
                   return;
 
                 case "mpconfig":
-                  if (e.XplMsg.GetParam(1, "mp").ToLower().Equals("player"))
+                  if (e.XplMsg.GetParam(1, "mp").ToLowerInvariant().Equals("player"))
                   {
                     this.XPL_SendPlayerMediaPlayerConfig("xpl-stat");
                   }
@@ -334,7 +335,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             int num;
-            switch (e.XplMsg.GetParam(1, "command").ToLower())
+            switch (e.XplMsg.GetParam(1, "command").ToLowerInvariant())
             {
               case "record":
               case "position":
@@ -347,7 +348,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
               case "play":
                 {
-                  string path = e.XplMsg.GetParam(1, "url").ToLower();
+                  string path = e.XplMsg.GetParam(1, "url").ToLowerInvariant();
                   if (!(path.Equals(string.Empty) & g_Player.Paused))
                   {
                     if (path.Equals(g_Player.currentFileName) & g_Player.Paused)
@@ -412,7 +413,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
               case "forward":
                 {
-                  string str4 = e.XplMsg.GetParam(1, "speed").ToLower();
+                  string str4 = e.XplMsg.GetParam(1, "speed").ToLowerInvariant();
                   num = 0;
                   if (!str4.Equals(string.Empty))
                   {
@@ -424,7 +425,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               case "rewind":
                 {
-                  string str5 = e.XplMsg.GetParam(1, "speed").ToLower();
+                  string str5 = e.XplMsg.GetParam(1, "speed").ToLowerInvariant();
                   int num2 = 0;
                   if (!str5.Equals(string.Empty))
                   {
@@ -483,7 +484,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 return;
 
               case "mute":
-                if (!(e.XplMsg.GetParam(1, "state").ToLower() == "on"))
+                if (!(e.XplMsg.GetParam(1, "state").ToLowerInvariant() == "on"))
                 {
                   if (this.DoDebug)
                   {
@@ -504,7 +505,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               case "volume":
                 {
                   string str13;
-                  string s = e.XplMsg.GetParam(1, "level").ToLower();
+                  string s = e.XplMsg.GetParam(1, "level").ToLowerInvariant();
                   if (((str13 = s.Substring(0, 1)) == null) || (!(str13 == "+") && !(str13 == "-")))
                   {
                     int num7 = int.Parse(s);
@@ -804,7 +805,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object obj3 =
         string.Concat(new object[]
                         {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
-      string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
+      string strMessage = string.Concat(new object[] { obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(CultureInfo.CurrentCulture), '\n' });
       this.Listener.SendMessage(msgType, "*", "media.devstate", strMessage);
       strMessage = string.Empty;
     }
@@ -816,7 +817,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object obj3 =
         string.Concat(new object[]
                         {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
-      string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
+      string strMessage = string.Concat(new object[] { obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(CultureInfo.CurrentCulture), '\n' });
       this.Listener.SendMessage(msgType, "*", "media.mpconfig", strMessage);
       strMessage = string.Empty;
     }

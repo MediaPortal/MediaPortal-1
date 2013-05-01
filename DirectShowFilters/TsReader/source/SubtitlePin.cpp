@@ -94,7 +94,7 @@ HRESULT CSubtitlePin::CheckMediaType(const CMediaType* pmt)
 
   CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
   
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("subPin: Not running in MP - CheckMediaType() fail");
     return E_FAIL;
@@ -132,7 +132,7 @@ HRESULT CSubtitlePin::GetMediaType(CMediaType *pmt)
 
   //LogDebug("subPin:GetMediaType()");
 
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("sub pin: Not running in MP - GetMediaType() fail");
     //Return a null media type
@@ -198,11 +198,17 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
 {
   HRESULT hr;
   PIN_INFO pinInfo;
-  FILTER_INFO filterInfo;
   
-  if (!m_pTsReaderFilter->CheckCallback())
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
   {
     //LogDebug("sub pin: Not running in MP - CheckConnect() fail");
+    return E_FAIL;
+  }
+
+  CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+  if (ref != CLSID_DVBSub3)
+  {
+    //LogDebug("sub pin: CheckConnect() fail - Not DVBSub3 CLSID");
     return E_FAIL;
   }
 
@@ -218,22 +224,27 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
     //LogDebug("sub pin: Cant connect to pin name %s", pinInfo.achName);
     return E_FAIL;
   }
-
-  hr=pinInfo.pFilter->QueryFilterInfo(&filterInfo);
-  filterInfo.pGraph->Release();
-
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if ((wcscmp(filterInfo.achName,L"MediaPortal DVBSub2") !=0 ) && (wcscmp(filterInfo.achName,L"MediaPortal DVBSub3") !=0 ))
-  {
-    //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
-    return E_FAIL;
-  }
+  
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
 
 HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer=false;
+  
+  if (!m_pTsReaderFilter->CheckCallback() && !m_pTsReaderFilter->m_bSubPinConnectAlways)
+  {
+    LogDebug("sub pin: Not running in MP - CompleteConnect() fail");
+    return E_FAIL;
+  }
+
+  CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+  if (ref != CLSID_DVBSub3)
+  {
+    LogDebug("sub pin: CompleteConnect() fail - Not DVBSub3 CLSID");
+    return E_FAIL;
+  }
+
   //LogDebug("subPin:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
@@ -255,6 +266,8 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
     LogDebug("subPin:CompleteConnect() ok, filter: %s", szName);
     
     m_bConnected=true;
+
+    m_pTsReaderFilter->GetSubInfoFromPin(pReceivePin);
   }
   else
   {
@@ -284,6 +297,7 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 HRESULT CSubtitlePin::BreakConnect()
 {
   m_bConnected = false;
+  m_pTsReaderFilter->ReleaseSubtitleFilter();
   return CSourceStream::BreakConnect();
 }
 

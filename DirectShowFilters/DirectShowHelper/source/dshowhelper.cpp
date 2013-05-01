@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,6 +50,12 @@ TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
 
 // Vista / Windows 7 only
 TDwmEnableMMCSS*                    m_pDwmEnableMMCSS   = NULL;
+TDwmFlush*                          m_pDwmFlush                = NULL;
+TDwmSetPresentParameters*           m_pDwmSetPresentParameters = NULL;
+TDwmIsCompositionEnabled*           m_pDwmIsCompositionEnabled = NULL;
+TDwmSetDxFrameDuration*             m_pDwmSetDxFrameDuration   = NULL;
+TDwmGetCompositionTimingInfo*       m_pDwmGetCompositionTimingInfo   = NULL;
+ 
 TW7GetRefreshRate*                  m_pW7GetRefreshRate = NULL;
 
 TAvSetMmThreadCharacteristicsW*     m_pAvSetMmThreadCharacteristicsW = NULL;
@@ -126,6 +132,15 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
   return NOERROR;
 }
 
+//-------------------- Async logging methods -------------------------------------------------
+
+CCritSec m_qLock;
+CCritSec m_logFileLock;
+std::queue<std::string> m_logQueue;
+BOOL m_bLoggerRunning;
+HANDLE m_hLogger = NULL;
+CAMEvent m_EndLoggingEvent;
+
 
 void LogPath(TCHAR* dest, TCHAR* name)
 {
@@ -137,6 +152,7 @@ void LogPath(TCHAR* dest, TCHAR* name)
 
 void LogRotate()
 {
+  CAutoLock lock(&m_logFileLock);
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, _T("log"));
   TCHAR bakFileName[MAX_PATH];
@@ -145,11 +161,6 @@ void LogRotate()
   _trename(fileName, bakFileName);
 }
 
-
-CCritSec m_qLock;
-std::queue<std::string> m_logQueue;
-BOOL m_bLoggerRunning;
-HANDLE m_hLogger = NULL;
 
 string GetLogLine()
 {
@@ -168,8 +179,11 @@ UINT CALLBACK LogThread(void* param)
 {
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, _T("log"));
-  while ( m_bLoggerRunning ) {
-    if ( m_logQueue.size() > 0 ) {
+  while ( m_bLoggerRunning || (m_logQueue.size() > 0) ) 
+  {
+    if ( m_logQueue.size() > 0 ) 
+    {
+      CAutoLock lock(&m_logFileLock);
       FILE* fp = _tfopen(fileName, _T("a+"));
       if (fp!=NULL)
       {
@@ -184,7 +198,14 @@ UINT CALLBACK LogThread(void* param)
         fclose(fp);
       }
     }
-    Sleep(1000);
+    if (m_bLoggerRunning)
+    {
+      m_EndLoggingEvent.Wait(1000); //Sleep for 1000ms, unless thread is ending
+    }
+    else
+    {
+      Sleep(1);
+    }
   }
   return 0;
 }
@@ -203,7 +224,9 @@ void StopLogger()
   if (m_hLogger)
   {
     m_bLoggerRunning = FALSE;
+    m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
+    m_EndLoggingEvent.Reset();
     m_hLogger = NULL;
   }
 }
@@ -474,7 +497,12 @@ bool LoadEVR()
             if (m_hModuleDWMAPI)
             {
               Log("Successfully loaded DWM dll");
-              m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
+              m_pDwmEnableMMCSS              = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
+              m_pDwmFlush                    = (TDwmFlush*)GetProcAddress(m_hModuleDWMAPI,"DwmFlush");
+              m_pDwmSetPresentParameters     = (TDwmSetPresentParameters*)GetProcAddress(m_hModuleDWMAPI,"DwmSetPresentParameters");
+              m_pDwmIsCompositionEnabled     = (TDwmIsCompositionEnabled*)GetProcAddress(m_hModuleDWMAPI,"DwmIsCompositionEnabled");
+              m_pDwmSetDxFrameDuration       = (TDwmSetDxFrameDuration*)GetProcAddress(m_hModuleDWMAPI,"DwmSetDxFrameDuration");
+              m_pDwmGetCompositionTimingInfo = (TDwmGetCompositionTimingInfo*)GetProcAddress(m_hModuleDWMAPI,"DwmGetCompositionTimingInfo");
             }
 
 

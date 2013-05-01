@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.Utils.Web
@@ -169,8 +170,8 @@ namespace MediaPortal.Utils.Web
       {
         if (caseinsensitive)
         {
-          Regex searchRegex = new Regex(regex.ToLower());
-          result = searchRegex.Match(sectionSource.ToLower());
+          Regex searchRegex = new Regex(regex.ToLower(CultureInfo.CurrentCulture));
+          result = searchRegex.Match(sectionSource.ToLower(CultureInfo.CurrentCulture));
         }
         else
         {
@@ -209,7 +210,7 @@ namespace MediaPortal.Utils.Web
     /// <returns>bool - success/fail</returns>
     public bool GetHyperLink(int index, string match, ref HTTPRequest linkURL)
     {
-      string regex = "<(a |[^>]*onclick)[^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLower()
+      string regex = "<(a |[^>]*onclick)[^>]*" + match + "[^>]*>"; //"<a .*? href=[^>]*" .ToLowerInvariant()
 
       string result = SearchRegex(index, regex, true, false);
 
@@ -224,13 +225,13 @@ namespace MediaPortal.Utils.Web
       int start = -1;
       char delim = '>';
 
-      if (result.ToLower().IndexOf("href=") != -1)
+      if (result.ToLowerInvariant().IndexOf("href=") != -1)
       {
-        start += result.ToLower().IndexOf("href=") + 5;
+        start += result.ToLowerInvariant().IndexOf("href=") + 5;
       }
-      if (result.ToLower().IndexOf("onclick=") != -1)
+      if (result.ToLowerInvariant().IndexOf("onclick=") != -1)
       {
-        start += result.ToLower().IndexOf("onclick=") + 8;
+        start += result.ToLowerInvariant().IndexOf("onclick=") + 8;
       }
       if (result[start + 1] == '\"' || result[start + 1] == '\'')
       {

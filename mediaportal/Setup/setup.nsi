@@ -650,6 +650,9 @@ SectionEnd
   RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r "$MPdir.Base\Wizards"
+  ; Log
+  Delete "$MPdir.Base\log4net.dll"
+  
 !macroend
 
 Section "-Powerscheduler Client plugin" SecPowerScheduler

@@ -24,12 +24,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class EqualizerWindow : GUIInternalWindow
   {
-    [SkinControl(20)] protected GUIToggleButtonControl btnUseEqualizer = null;
+    [SkinControl(20)] protected GUICheckButton btnUseEqualizer = null;
     [SkinControl(21)] protected GUISelectButtonControl btnUseStyle = null;
-    [SkinControl(22)] protected GUIToggleButtonControl btnSmothEQ = null;
-    [SkinControl(23)] protected GUIToggleButtonControl btnDelayStart = null;
+    [SkinControl(22)] protected GUICheckButton btnSmothEQ = null;
+    [SkinControl(23)] protected GUICheckButton btnDelayStart = null;
     [SkinControl(24)] protected GUISelectButtonControl btnDelayStartTime = null;
-    [SkinControl(25)] protected GUIToggleButtonControl btnShowTitle = null;
+    [SkinControl(25)] protected GUICheckButton btnShowTitle = null;
     [SkinControl(26)] protected GUISelectButtonControl btnShowTitleTime = null;
     [SkinControl(27)] protected GUISelectButtonControl btnShowTitleFreq = null;
     private EQControl EQSettings = new EQControl();

@@ -114,8 +114,7 @@ namespace MediaPortal.GUI.Pictures
             {
               if (!item.IsFolder)
               {
-                //Disable Rotate
-                int iRotate = 0; // PictureDatabase.GetRotation(item.Path);
+                int iRotate = PictureDatabase.GetRotation(item.Path);
                 //Thread.Sleep(30);
 
                 bool isVideo = Util.Utils.IsVideo(item.Path);
@@ -144,23 +143,22 @@ namespace MediaPortal.GUI.Pictures
 
                     if (isPicture)
                     {
-                      //Disable Rotate
-                      //iRotate = Util.Picture.GetRotateByExif(item.Path);
-                      //Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
+                      iRotate = Util.Picture.GetRotateByExif(item.Path);
+                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
 
                       if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
                       {
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int) Thumbs.ThumbLargeResolution,
                                                                 (int) Thumbs.ThumbLargeResolution, iRotate,
                                                                 Thumbs.SpeedThumbsLarge,
-                                                                true);
+                                                                true, false);
                       }
                       if (!File.Exists(thumbnailImage))
                       {
                         thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int) Thumbs.ThumbResolution,
                                                                 (int) Thumbs.ThumbResolution, iRotate,
                                                                 Thumbs.SpeedThumbsSmall,
-                                                                false);
+                                                                false, false);
                       }
                     }
                     else
@@ -286,8 +284,7 @@ namespace MediaPortal.GUI.Pictures
           }
           //Thread.Sleep(100);
 
-          //Disable Rotate
-          int iRotate = 0; // PictureDatabase.GetRotation(item);
+          int iRotate = PictureDatabase.GetRotation(item);
           //Thread.Sleep(30);
 
           bool isVideo = Util.Utils.IsVideo(item);
@@ -316,9 +313,8 @@ namespace MediaPortal.GUI.Pictures
 
               if (isPicture)
               {
-                //Disable Rotate
-                //iRotate = Util.Picture.GetRotateByExif(item);
-                //Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
+                iRotate = Util.Picture.GetRotateByExif(item);
+                Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item);
 
 
                 if (autocreateLargeThumbs && !File.Exists(thumbnailImageL))
@@ -326,14 +322,14 @@ namespace MediaPortal.GUI.Pictures
                   thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
                                                           (int)Thumbs.ThumbLargeResolution, iRotate,
                                                           Thumbs.SpeedThumbsLarge,
-                                                          true);
+                                                          true, false);
                 }
                 if (!File.Exists(thumbnailImage))
                 {
                   thumbRet = Util.Picture.CreateThumbnail(item, thumbnailImage, (int)Thumbs.ThumbResolution,
                                                           (int)Thumbs.ThumbResolution, iRotate,
                                                           Thumbs.SpeedThumbsSmall,
-                                                          false);
+                                                          false, false);
                 }
               }
               else

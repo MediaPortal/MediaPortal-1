@@ -73,6 +73,7 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
       tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
       tw.WriteLine("      <staticLogFileName value=\"true\" />");
+      tw.WriteLine("      <PreserveLogFileNameExtension value=\"true\" />");
       tw.WriteLine("      <layout type=\"log4net.Layout.PatternLayout\">");
       tw.WriteLine("        <conversionPattern value=\"[%date] [%-7logger] [%-9thread] [%-5level] - %message%newline\" />");
       tw.WriteLine("      </layout>");
@@ -85,6 +86,7 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
       tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
       tw.WriteLine("      <staticLogFileName value=\"true\" />");
+      tw.WriteLine("      <PreserveLogFileNameExtension value=\"true\" />");
       tw.WriteLine("      <layout type=\"log4net.Layout.PatternLayout\">");
       tw.WriteLine("        <conversionPattern value=\"[%date] [%-7logger] [%-9thread] [%-5level] - %message%newline\" />");
       tw.WriteLine("      </layout>");

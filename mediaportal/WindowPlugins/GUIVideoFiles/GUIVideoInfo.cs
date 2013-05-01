@@ -44,11 +44,11 @@ namespace MediaPortal.GUI.Video
   {
     #region Skin controls
     [SkinControl(2)] protected GUIButtonControl btnPlay = null;
-    [SkinControl(3)] protected GUIToggleButtonControl btnPlot = null;
-    [SkinControl(4)] protected GUIToggleButtonControl btnCast = null;
+    [SkinControl(3)] protected GUICheckButton btnPlot = null;
+    [SkinControl(4)] protected GUICheckButton btnCast = null;
     [SkinControl(5)] protected GUIButtonControl btnRefresh = null;
-    [SkinControl(6)] protected GUIToggleButtonControl btnWatched = null;
-    [SkinControl(7)] protected GUIToggleButtonControl btnReview = null;
+    [SkinControl(6)] protected GUICheckButton btnWatched = null;
+    [SkinControl(7)] protected GUICheckButton btnReview = null;
     [SkinControl(10)] protected GUISpinControl spinImages = null;
     [SkinControl(11)] protected GUISpinControl spinDisc = null;
     [SkinControl(20)] protected GUITextScrollUpControl tbPlotArea = null;
@@ -1972,16 +1972,16 @@ namespace MediaPortal.GUI.Video
         string path = string.Empty;
         bool isbdDvd = false;
 
-        if (videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        if (videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //DVD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
-        else if (videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
+        else if (videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase) >= 0)
         {
           //BD folder
-          path = videoFile.Substring(0, videoFile.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
+          path = videoFile.Substring(0, videoFile.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV", StringComparison.InvariantCultureIgnoreCase));
           isbdDvd = true;
         }
 

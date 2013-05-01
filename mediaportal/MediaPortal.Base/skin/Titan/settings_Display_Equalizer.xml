@@ -41,13 +41,9 @@
 		<layout>GridLayout(2, 7, 42, 0, 1)</layout>
 		<control>
 			<description>Use Equalizer</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>20</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9132</label>
@@ -72,13 +68,9 @@
 
 		<control>
 			<description>Use Equalizer Smoothing</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>22</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9134</label>
@@ -86,13 +78,9 @@
 
 		<control>
 			<description>Delay Start</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>23</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9135</label>
@@ -116,13 +104,9 @@
 
 		<control>
 			<description>Show Title</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>25</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9137</label>
