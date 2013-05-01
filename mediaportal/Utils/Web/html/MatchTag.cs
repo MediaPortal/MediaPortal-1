@@ -54,7 +54,7 @@ namespace MediaPortal.Utils.Web
         start++;
         _isClose = true;
       }
-      _tagName = _fullTag.Substring(start, pos - start).ToLower();
+      _tagName = _fullTag.Substring(start, pos - start).ToLowerInvariant();
     }
 
     #endregion

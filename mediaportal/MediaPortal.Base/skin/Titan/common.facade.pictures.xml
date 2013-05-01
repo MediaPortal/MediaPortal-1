@@ -41,11 +41,11 @@
 		<description>Number of Files Label</description>
 		<type>label</type>
 		<id>1</id>
-    <posX>72</posX>
-    <posY>94</posY>
+	  <posX>96</posX>
+    <posY>998</posY>
     <align>left</align>
-    <font>fontB12</font>
-    <textcolor>ffffff</textcolor>
+    <font>TitanLight12</font>
+    <textcolor>000000</textcolor>
 		<label>#currentmodule: #itemcount</label>
 		<visible>!facadeview.smallicons + !facadeview.largeicons</visible>
 	  <animation effect="fade" time="250">WindowOpen</animation>
@@ -198,12 +198,12 @@
 						<onleft>50</onleft>
 						<onright>50</onright>	
 						<posX>0</posX>
-						<posY>665</posY>
+						<posY>535</posY>
 						<width>1920</width>
 						<height>768</height>
 						<selectedCard>0</selectedCard>
-						<cardWidth>338</cardWidth>
-						<cardHeight>190</cardHeight>
+						<cardWidth>523</cardWidth>
+						<cardHeight>350</cardHeight>
 						<angle>65</angle>
 						<sideShift>410</sideShift>
 						<sideGap>210</sideGap>
@@ -241,7 +241,7 @@
 			      <scrollbarRight>scrollbar_right_hor.png</scrollbarRight>
 			      <scrollbarWidth>717</scrollbarWidth>
 						<scrollbarHeight>8</scrollbarHeight>
-			      <scrollbarYOff>293</scrollbarYOff>
+			      <scrollbarYOff>423</scrollbarYOff>
 						<cards flipY="true" diffuse="Thumb_Mask.png" mask="pictures_filmstrip_mask.png"></cards>
 				</control>
 		</control>

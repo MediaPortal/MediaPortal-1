@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,8 +19,9 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
@@ -37,13 +38,11 @@ namespace MediaPortal.Player
 
     #region Constructors
 
-    public VolumeHandler()
-      : this(LoadFromRegistry()) {}
+    public VolumeHandler() : this(LoadFromRegistry()) {}
 
     public VolumeHandler(int[] volumeTable)
     {
-      bool isDigital = true;
-      //string mixerControlledComponent = "Wave";
+      bool isDigital;
 
       using (Settings reader = new MPSettings())
       {
@@ -56,7 +55,6 @@ namespace MediaPortal.Player
 
         if (levelStyle == 1)
         {
-          _startupVolume = _mixer.Volume;
         }
 
         if (levelStyle == 2)
@@ -64,7 +62,6 @@ namespace MediaPortal.Player
           _startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
         }
 
-        //mixerControlledComponent = reader.GetValueAsString("volume", "controlledMixer", "Wave");
         isDigital = reader.GetValueAsBool("volume", "digital", false);
 
         _showVolumeOSD = reader.GetValueAsBool("volume", "defaultVolumeOSD", true);
@@ -73,7 +70,7 @@ namespace MediaPortal.Player
       _mixer = new Mixer.Mixer();
       _mixer.Open(0, isDigital);
       _volumeTable = volumeTable;
-      _mixer.ControlChanged += new Mixer.MixerEventHandler(mixer_ControlChanged);
+      _mixer.ControlChanged += mixer_ControlChanged;
     }
 
     #endregion Constructors
@@ -88,29 +85,27 @@ namespace MediaPortal.Player
 
         switch (volumeStyle)
         {
-            // classic volume table
+          // classic volume table
           case 0:
-            return new VolumeHandler(new int[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
-            // windows default from registry
+            return new VolumeHandler(new[] {0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535});
+          // windows default from registry
           case 1:
             return new VolumeHandler();
-            // logarithmic
+          // logarithmic
           case 2:
-            return
-              new VolumeHandler(new int[]
+            return new VolumeHandler(new[]
                                   {
                                     0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
                                     9806
                                     , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
                                   });
-            // custom user setting
+          // custom user setting
           case 3:
             return new VolumeHandlerCustom();
-            // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
-            // Vista recommended values
+          // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
+          // Vista recommended values
           case 4:
-            return
-              new VolumeHandler(new int[]
+            return new VolumeHandler(new[]
                                   {
                                     0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151,
                                     53247, 57343, 61439, 65535
@@ -142,35 +137,40 @@ namespace MediaPortal.Player
       _instance = null;
     }
 
+    public virtual void UnMute()
+    {
+      _mixer.IsMuted = false;
+    }
+
     private static int[] LoadFromRegistry()
     {
       using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Multimedia\Audio\VolumeControl"))
       {
         if (key == null)
         {
-          return _systemTable;
+          return SystemTable;
         }
 
         if (Equals(key.GetValue("EnableVolumeTable", 0), 0))
         {
-          return _systemTable;
+          return SystemTable;
         }
 
-        byte[] buffer = (byte[])key.GetValue("VolumeTable", null);
+        var buffer = (byte[])key.GetValue("VolumeTable", null);
 
         if (buffer == null)
         {
-          return _systemTable;
+          return SystemTable;
         }
 
         // Windows documentation states that a volume table must consist of between 11 and 201 entries
         if ((buffer.Length / 4) < 11 || (buffer.Length / 4) > 201)
         {
-          return _systemTable;
+          return SystemTable;
         }
 
         // create an array large enough to hold the system's volume table
-        int[] volumeTable = new int[buffer.Length / 4];
+        var volumeTable = new int[buffer.Length / 4];
 
         for (int index = 0, offset = 0; index < volumeTable.Length; index++, offset += 4)
         {
@@ -199,16 +199,18 @@ namespace MediaPortal.Player
     {
       try
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0);
-        msg.Label = Instance.Step.ToString();
-        msg.Label2 = Instance.StepMax.ToString();
-        msg.Label3 = Instance.IsMuted.ToString();
+        var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUDIOVOLUME_CHANGED, 0, 0, 0, 0, 0, 0)
+        {
+          Label = Instance.Step.ToString(CultureInfo.InvariantCulture),
+          Label2 = Instance.StepMax.ToString(CultureInfo.InvariantCulture),
+          Label3 = Instance.IsMuted.ToString(CultureInfo.InvariantCulture)
+        };
         GUIGraphicsContext.SendMessage(msg);
 
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
-          Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
+          var showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
           GUIWindowManager.OnAction(showVolume);
         }
       }
@@ -220,7 +222,7 @@ namespace MediaPortal.Player
 
     private static void mixer_ControlChanged(object sender, Mixer.MixerEventArgs e)
     {
-      VolumeHandler.Instance.HandleGUIOnControlChange();
+      Instance.HandleGUIOnControlChange();
     }
 
     #endregion Methods
@@ -244,14 +246,11 @@ namespace MediaPortal.Player
       get
       {
         lock (_volumeTable)
-          for (int index = 0; index < _volumeTable.Length; ++index)
+          foreach (int vol in _volumeTable.Where(vol => Volume < vol))
           {
-            if (this.Volume < _volumeTable[index])
-            {
-              return _volumeTable[index];
-            }
+            return vol;
           }
-        return this.Maximum;
+        return Maximum;
       }
     }
 
@@ -272,7 +271,7 @@ namespace MediaPortal.Player
         lock (_volumeTable)
           for (int index = 0; index < _volumeTable.Length; ++index)
           {
-            if (this.Volume <= _volumeTable[index])
+            if (Volume <= _volumeTable[index])
             {
               return index;
             }
@@ -293,12 +292,12 @@ namespace MediaPortal.Player
         lock (_volumeTable)
           for (int index = _volumeTable.Length - 1; index >= 0; --index)
           {
-            if (this.Volume > _volumeTable[index])
+            if (Volume > _volumeTable[index])
             {
               return _volumeTable[index];
             }
           }
-        return this.Minimum;
+        return Minimum;
       }
     }
 
@@ -309,7 +308,7 @@ namespace MediaPortal.Player
 
     public static VolumeHandler Instance
     {
-      get { return _instance == null ? _instance = CreateInstance() : _instance; }
+      get { return _instance ?? (_instance = CreateInstance()); }
     }
 
     #endregion Properties
@@ -319,16 +318,7 @@ namespace MediaPortal.Player
     private Mixer.Mixer _mixer;
     private static VolumeHandler _instance;
 
-    private readonly int[] _linearTable = new int[]
-                                            {
-                                              0, 2621, 5243, 7864, 10486, 13107,
-                                              15728, 18350, 20971, 23593, 26214, 28835,
-                                              31457, 34078, 36700, 39321, 41942, 44564,
-                                              47185, 49807, 52428, 55049, 57671, 60292,
-                                              62914, 65535
-                                            };
-
-    private static readonly int[] _systemTable = new int[]
+    private static readonly int[] SystemTable = new[]
                                                    {
                                                      0, 1039, 1234, 1467, 1744, 2072,
                                                      2463, 2927, 3479, 4135, 4914, 5841,
@@ -339,7 +329,7 @@ namespace MediaPortal.Player
 
     private int[] _volumeTable;
     private int _startupVolume;
-    private bool _showVolumeOSD;
+    private readonly bool _showVolumeOSD;
 
     #endregion Fields
   }

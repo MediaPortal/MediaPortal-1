@@ -808,7 +808,7 @@ namespace MediaPortal.Util
                                        int aThumbHeight, int iRotate, bool aFastMode)
     {
       return CreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
-                             aThumbHeight, iRotate, aFastMode, false);
+                             aThumbHeight, iRotate, aFastMode, false, true);
     }
 
     private static bool BitmapFromSource(BitmapSource bitmapsource, string thumbnailImageDest)
@@ -924,10 +924,11 @@ namespace MediaPortal.Util
     /// 1 = rotate 90 degrees
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
+    /// <param name="fallBack">Needed if generated file need to be delete (for ex in temp folder)</param>
     /// </param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
-                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs)
+                                       int aThumbHeight, int iRotate, bool aFastMode, bool autocreateLargeThumbs, bool fallBack)
     {
       if (File.Exists(thumbnailImageDest))
       {
@@ -944,6 +945,8 @@ namespace MediaPortal.Util
       BitmapMetadata meta = null;
       Bitmap shellThumb = null;
       Bitmap myTargetThumb = null;
+      BitmapFrame frame = null;
+      Image myImage = null;
 
       TransformedBitmap thumbnail = null;
       TransformGroup transformGroup = null;
@@ -958,11 +961,18 @@ namespace MediaPortal.Util
 
       try
       {
-        //Try generate Bitmap frame : speedy and low memory !
-        BitmapFrame frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
-                                               BitmapCacheOption.None);
+        if (fallBack)
+        {
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+        }
+        else
+        {
+          //Try generate Bitmap frame : speedy and low memory !
+          frame = BitmapFrame.Create(new Uri(MediaUrl), BitmapCreateOptions.DelayCreation,
+                                     BitmapCacheOption.None);
+        }
 
-        if (frame.Thumbnail == null) //If it failed try second method BitmapImage (slow and use more memory)
+        if (frame.Thumbnail == null) //If it failed try second method (slower and use more memory)
         {
           using (ShellObject shellFile = ShellObject.FromParsingName(thumbnailImageSource))
           {
@@ -1057,7 +1067,6 @@ namespace MediaPortal.Util
               File.SetAttributes(thumbnailImageDest, File.GetAttributes(thumbnailImageDest) | FileAttributes.Hidden);
               result = true;
             }
-            Log.Debug("Generation fast failed {0} / {1}", MediaUrl, thumbnailImageDest);
           }
         }
         else
@@ -1066,34 +1075,34 @@ namespace MediaPortal.Util
           meta = frame.Metadata as BitmapMetadata;
           ret = frame.Thumbnail;
 
-          if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
-          {
-            if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
-            {
-              orientation =
-                (ExifOrientations)
-                Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
-            }
+          //if ((meta != null) && (ret != null)) //si on a des meta, tentative de récupération de l'orientation
+          //{
+          //  if (meta.GetQuery("/app1/ifd/{ushort=274}") != null)
+          //  {
+          //    orientation =
+          //      (ExifOrientations)
+          //      Enum.Parse(typeof (ExifOrientations), meta.GetQuery("/app1/ifd/{ushort=274}").ToString());
+          //  }
 
-            switch (orientation)
-            {
-              case ExifOrientations.Rotate90:
-                angle = -90;
-                break;
-              case ExifOrientations.Rotate180:
-                angle = 180;
-                break;
-              case ExifOrientations.Rotate270:
-                angle = 90;
-                break;
-            }
+          //  switch (orientation)
+          //  {
+          //    case ExifOrientations.Rotate90:
+          //      angle = -90;
+          //      break;
+          //    case ExifOrientations.Rotate180:
+          //      angle = 180;
+          //      break;
+          //    case ExifOrientations.Rotate270:
+          //      angle = 90;
+          //      break;
+          //  }
 
-            if (angle != 0) //on doit effectuer une rotation de l'image
-            {
-              ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
-              ret.Freeze();
-            }
-          }
+          //  if (angle != 0) //on doit effectuer une rotation de l'image
+          //  {
+          //    ret = new TransformedBitmap(ret.Clone(), new RotateTransform(angle));
+          //    ret.Freeze();
+          //  }
+          //}
 
           if (autocreateLargeThumbs)
           {
@@ -1125,24 +1134,6 @@ namespace MediaPortal.Util
           {
             if (ret != null)
             {
-              //// we'll make a thumbnail image then ... (too bad as the pre-created one is FAST!)
-              //thumbnail = new TransformedBitmap();
-              //thumbnail.BeginInit();
-              //thumbnail.Source = frame as BitmapSource;
-
-              //// we'll make a reasonable sized thumnbail
-              //int pixelH = frame.PixelHeight;
-              //int pixelW = frame.PixelWidth;
-              //int decodeH = (frame.PixelHeight * decodeW) / pixelW;
-              //double scaleX = decodeW / (double)pixelW;
-              //double scaleY = decodeH / (double)pixelH;
-
-              //transformGroup = new TransformGroup();
-              //transformGroup.Children.Add(new ScaleTransform(scaleX, scaleY));
-              //thumbnail.Transform = transformGroup;
-              //thumbnail.EndInit();
-              //ret = thumbnail;
-
               // Write small thumbnail
               result = BitmapFromSource(ret, thumbnailImageDest);
             }
@@ -1152,8 +1143,42 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Info("GUIPictures: No thumbnail created for -- {0}", thumbnailImageSource);
-        result = false;
+        try
+        {
+          try
+          {
+            myImage = ImageFast.FromFile(thumbnailImageSource);
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+          result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+        }
+        catch (Exception)
+        {
+          Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", thumbnailImageDest);
+
+          try
+          {
+            myImage = Image.FromFile(thumbnailImageDest, true);
+            result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+          }
+          catch (FileNotFoundException)
+          {
+            result = false;
+          }
+          catch (OutOfMemoryException)
+          {
+            Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", thumbnailImageSource);
+            result = false;
+          }
+          catch (Exception)
+          {
+            Log.Info("Pictures: No thumbnail created for -- {0}", thumbnailImageSource);
+            result = false;
+          }
+        }
       }
       finally
       {
@@ -1169,6 +1194,10 @@ namespace MediaPortal.Util
           myTargetThumb.SafeDispose();
         if (MediaUrl != null)
           MediaUrl.SafeDispose();
+        if (frame != null)
+          frame.SafeDispose();
+        if (myImage != null)
+          myImage.SafeDispose();
       }
 
       if (result && Util.Utils.IsFileExistsCacheEnabled())

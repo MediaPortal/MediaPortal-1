@@ -26,15 +26,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {
   public class DisplayOptionsWindow : GUIInternalWindow
   {
-    [SkinControl(30)] protected GUIToggleButtonControl btnVolume = null;
-    [SkinControl(31)] protected GUIToggleButtonControl btnProgress = null;
-    [SkinControl(32)] protected GUIToggleButtonControl btnDiskIcon = null;
-    [SkinControl(33)] protected GUIToggleButtonControl btnMediaStatus = null;
-    [SkinControl(34)] protected GUIToggleButtonControl btnDiskStatus = null;
-    [SkinControl(35)] protected GUIToggleButtonControl btnCustomFont = null;
-    [SkinControl(36)] protected GUIToggleButtonControl btnLargeIcons = null;
-    [SkinControl(37)] protected GUIToggleButtonControl btnCustomIcons = null;
-    [SkinControl(38)] protected GUIToggleButtonControl btnInvertIcons = null;
+    [SkinControl(30)] protected GUICheckButton btnVolume = null;
+    [SkinControl(31)] protected GUICheckButton btnProgress = null;
+    [SkinControl(32)] protected GUICheckButton btnDiskIcon = null;
+    [SkinControl(33)] protected GUICheckButton btnMediaStatus = null;
+    [SkinControl(34)] protected GUICheckButton btnDiskStatus = null;
+    [SkinControl(35)] protected GUICheckButton btnCustomFont = null;
+    [SkinControl(36)] protected GUICheckButton btnLargeIcons = null;
+    [SkinControl(37)] protected GUICheckButton btnCustomIcons = null;
+    [SkinControl(38)] protected GUICheckButton btnInvertIcons = null;
     [SkinControl(39)] protected GUIButtonControl btnFontEditor = null;
     [SkinControl(40)] protected GUIButtonControl btnIconEditor = null;
     private DisplayOptions DisplayOptions = new DisplayOptions();

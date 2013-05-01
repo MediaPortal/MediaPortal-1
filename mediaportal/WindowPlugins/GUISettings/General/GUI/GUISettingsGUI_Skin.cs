@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,11 +19,10 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -31,34 +30,22 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
 
+// ReSharper disable CheckNamespace
 namespace WindowPlugins.GUISettings
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// Summary description for GUISettingsGeneral.
   /// </summary>
-  public class GUISettingsGUISkin : GUIInternalWindow
+  public sealed class GUISettingsGUISkin : GUIInternalWindow
   {
-    [SkinControl(10)] protected GUIButtonControl btnSkin = null;
-    [SkinControl(11)] protected GUIButtonControl btnLanguage = null;
-    [SkinControl(14)] protected GUICheckButton btnLanguagePrefix = null;
-    [SkinControl(20)] protected GUIImage imgSkinPreview = null;
+    [SkinControl(10)] private readonly GUIButtonControl _btnSkin = null;
+    [SkinControl(11)] private readonly GUIButtonControl _btnLanguage = null;
+    [SkinControl(14)] private readonly GUICheckButton _btnLanguagePrefix = null;
+    [SkinControl(20)] private readonly GUIImage _imgSkinPreview = null;
     
     private string _selectedLangName;
     private string _selectedSkinName;
-    
-    private class CultureComparer : IComparer
-    {
-      #region IComparer Members
-
-      public int Compare(object x, object y)
-      {
-        CultureInfo info1 = (CultureInfo)x;
-        CultureInfo info2 = (CultureInfo)y;
-        return String.Compare(info1.EnglishName, info2.EnglishName, true);
-      }
-
-      #endregion
-    }
 
     public GUISettingsGUISkin()
     {
@@ -76,10 +63,9 @@ namespace WindowPlugins.GUISettings
     {
       using (Settings xmlreader = new MPSettings())
       {
-        string currentLanguage = string.Empty;
-        currentLanguage = xmlreader.GetValueAsString("gui", "language", "English");
-        btnLanguage.Label = currentLanguage;
-        btnLanguagePrefix.Selected = xmlreader.GetValueAsBool("gui", "myprefix", false);
+        string currentLanguage = xmlreader.GetValueAsString("gui", "language", "English");
+        _btnLanguage.Label = currentLanguage;
+        _btnLanguagePrefix.Selected = xmlreader.GetValueAsBool("gui", "myprefix", false);
 
         SetSkins();
       }
@@ -89,11 +75,11 @@ namespace WindowPlugins.GUISettings
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("gui", "language", btnLanguage.Label);
-        xmlwriter.SetValue("skin", "name", btnSkin.Label);
-        xmlwriter.SetValueAsBool("gui", "myprefix", btnLanguagePrefix.Selected);
+        xmlwriter.SetValue("gui", "language", _btnLanguage.Label);
+        xmlwriter.SetValue("skin", "name", _btnSkin.Label);
+        xmlwriter.SetValueAsBool("gui", "myprefix", _btnLanguagePrefix.Selected);
       }
-      Config.SkinName = btnSkin.Label;
+      Config.SkinName = _btnSkin.Label;
     }
 
     #endregion
@@ -102,9 +88,9 @@ namespace WindowPlugins.GUISettings
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if (control == btnSkin)
+      if (control == _btnSkin)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           return;
@@ -112,15 +98,14 @@ namespace WindowPlugins.GUISettings
         dlg.Reset();
         dlg.SetHeading(166); // menu
 
-        List<string> installedSkins = new List<string>();
-        installedSkins = GetInstalledSkins();
+        IEnumerable<string> installedSkins = GetInstalledSkins();
 
         foreach (string skin in installedSkins)
         {
           dlg.Add(skin);
         }
         
-        dlg.SelectedLabel = btnSkin.SelectedItem;
+        dlg.SelectedLabel = _btnSkin.SelectedItem;
         dlg.DoModal(GetID);
         
         if (dlg.SelectedId == -1)
@@ -128,17 +113,22 @@ namespace WindowPlugins.GUISettings
           return;
         }
         
-        if (String.Compare(dlg.SelectedLabelText, btnSkin.Label, true) != 0)
+        if (String.Compare(dlg.SelectedLabelText, _btnSkin.Label, StringComparison.OrdinalIgnoreCase) != 0)
         {
-          btnSkin.Label = dlg.SelectedLabelText;
-          OnSkinChanged();
+          _btnSkin.Label = dlg.SelectedLabelText;
+
+          // prevent MP from rendering when resource are disposed during live changing of a skin
+          lock (GUIGraphicsContext.RenderLock)
+          {
+            OnSkinChanged();
+          }
         }
         
         return;
       }
-      if (control == btnLanguage)
+      if (control == _btnLanguage)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         
         if (dlg == null)
         {
@@ -154,12 +144,12 @@ namespace WindowPlugins.GUISettings
           dlg.Add(lang);
         }
         
-        string currentLanguage = btnLanguage.Label;
+        string currentLanguage = _btnLanguage.Label;
         dlg.SelectedLabel = 0;
         
         for (int i = 0; i < languages.Length; i++)
         {
-          if (languages[i].ToLower() == currentLanguage.ToLower())
+          if (languages[i].ToLowerInvariant() == currentLanguage.ToLowerInvariant())
           {
             dlg.SelectedLabel = i;
             break;
@@ -173,15 +163,15 @@ namespace WindowPlugins.GUISettings
           return;
         }
         
-        if (String.Compare(dlg.SelectedLabelText, btnLanguage.Label, true) != 0)
+        if (String.Compare(dlg.SelectedLabelText, _btnLanguage.Label, StringComparison.OrdinalIgnoreCase) != 0)
         {
-          btnLanguage.Label = dlg.SelectedLabelText;
+          _btnLanguage.Label = dlg.SelectedLabelText;
           OnLanguageChanged();
         }
         
         return;
       }
-      if (control == btnLanguagePrefix)
+      if (control == _btnLanguagePrefix)
       {
         SettingsChanged(true);
       }
@@ -230,42 +220,34 @@ namespace WindowPlugins.GUISettings
     
     private void SetSkins()
     {
-      List<string> installedSkins = new List<string>();
-      string currentSkin = "";
+      string currentSkin;
       using (Settings xmlreader = new MPSettings())
       {
         currentSkin = xmlreader.GetValueAsString("skin", "name", "DefaultWide");
       }
-      installedSkins = GetInstalledSkins();
+      IEnumerable<string> installedSkins = GetInstalledSkins();
 
       foreach (string skin in installedSkins)
       {
-        if (String.Compare(skin, currentSkin, true) == 0)
+        if (String.Compare(skin, currentSkin, StringComparison.OrdinalIgnoreCase) == 0)
         {
-          btnSkin.Label = skin;
-          imgSkinPreview.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\preview.png"));
+          _btnSkin.Label = skin;
+          _imgSkinPreview.SetFileName(GUIGraphicsContext.GetThemedSkinFile(@"\media\preview.png"));
         }
       }
     }
 
-    private List<string> GetInstalledSkins()
+    private IEnumerable<string> GetInstalledSkins()
     {
-      List<string> installedSkins = new List<string>();
+      var installedSkins = new List<string>();
 
       try
       {
-        DirectoryInfo skinFolder = new DirectoryInfo(Config.GetFolder(Config.Dir.Skin));
+        var skinFolder = new DirectoryInfo(Config.GetFolder(Config.Dir.Skin));
         if (skinFolder.Exists)
         {
           DirectoryInfo[] skinDirList = skinFolder.GetDirectories();
-          foreach (DirectoryInfo skinDir in skinDirList)
-          {
-            FileInfo refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml"));
-            if (refFile.Exists)
-            {
-              installedSkins.Add(skinDir.Name);
-            }
-          }
+          installedSkins.AddRange(from skinDir in skinDirList let refFile = new FileInfo(Config.GetFile(Config.Dir.Skin, skinDir.Name, "references.xml")) where refFile.Exists select skinDir.Name);
         }
       }
       catch (Exception ex)
@@ -277,14 +259,14 @@ namespace WindowPlugins.GUISettings
 
     private void BackupButtons()
     {
-      _selectedSkinName = btnSkin.Label;
-      _selectedLangName = btnLanguage.Label;
+      _selectedSkinName = _btnSkin.Label;
+      _selectedLangName = _btnLanguage.Label;
     }
 
     private void RestoreButtons()
     {
-      btnSkin.Label = _selectedSkinName;
-      btnLanguage.Label = _selectedLangName;
+      _btnSkin.Label = _selectedSkinName;
+      _btnLanguage.Label = _selectedLangName;
     }
 
     private void OnSkinChanged()
@@ -293,7 +275,7 @@ namespace WindowPlugins.GUISettings
       BackupButtons();
 
       // Set the skin to the selected skin and reload GUI
-      GUIGraphicsContext.Skin = btnSkin.Label;
+      GUIGraphicsContext.Skin = _btnSkin.Label;
       SaveSettings();
       GUITextureManager.Clear();
       GUITextureManager.Init();
@@ -305,20 +287,30 @@ namespace WindowPlugins.GUISettings
       GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
-      GUIControl.FocusControl(GetID, btnSkin.GetID);
+      GUIControl.FocusControl(GetID, _btnSkin.GetID);
 
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
       using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
-        bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
-        if (autosize && !GUIGraphicsContext.Fullscreen)
+        if (!GUIGraphicsContext.Fullscreen)
         {
           try
           {
-            GUIGraphicsContext.form.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-            //Form.ActiveForm.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            var border = new Size(GUIGraphicsContext.form.Width - GUIGraphicsContext.form.ClientSize.Width, 
+                                  GUIGraphicsContext.form.Height - GUIGraphicsContext.form.ClientSize.Height);
+            if (GUIGraphicsContext.SkinSize.Width + border.Width <= GUIGraphicsContext.currentScreen.WorkingArea.Width &&
+                GUIGraphicsContext.SkinSize.Height + border.Height <= GUIGraphicsContext.currentScreen.WorkingArea.Height)
+            {
+              GUIGraphicsContext.form.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            }
+            else
+            {
+              double ratio = Math.Min((double)(GUIGraphicsContext.currentScreen.WorkingArea.Width - border.Width) / GUIGraphicsContext.SkinSize.Width,
+                                      (double)(GUIGraphicsContext.currentScreen.WorkingArea.Height - border.Height) / GUIGraphicsContext.SkinSize.Height);
+              GUIGraphicsContext.form.ClientSize = new Size((int)(GUIGraphicsContext.SkinSize.Width * ratio), (int)(GUIGraphicsContext.SkinSize.Height * ratio));
+            }
           }
           catch (Exception ex)
           {
@@ -333,7 +325,7 @@ namespace WindowPlugins.GUISettings
       }
 
       // Send a message that the skin has changed.
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
+      var msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SKIN_CHANGED, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msg);
     }
 
@@ -342,12 +334,12 @@ namespace WindowPlugins.GUISettings
       // Backup the buttons, needed later
       BackupButtons();
       SaveSettings();
-      GUILocalizeStrings.ChangeLanguage(btnLanguage.Label);
+      GUILocalizeStrings.ChangeLanguage(_btnLanguage.Label);
       GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
-      GUIControl.FocusControl(GetID, btnLanguage.GetID);
+      GUIControl.FocusControl(GetID, _btnLanguage.GetID);
       // Apply the selected buttons again, since they are cleared when we reload
       RestoreButtons();
     }

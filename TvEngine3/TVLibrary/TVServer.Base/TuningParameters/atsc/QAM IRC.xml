@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfATSCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- "low band", channel 1..6 -->
   <ATSCTuning>
     <frequency>73262</frequency>
   </ATSCTuning>
@@ -18,6 +19,7 @@
   <ATSCTuning>
     <frequency>85262</frequency>
   </ATSCTuning>
+  <!-- "high band", channel 7..13 -->
   <ATSCTuning>
     <frequency>175262</frequency>
   </ATSCTuning>
@@ -39,6 +41,7 @@
   <ATSCTuning>
     <frequency>211262</frequency>
   </ATSCTuning>
+  <!-- "mid band" part 2, channel 14..22 -->
   <ATSCTuning>
     <frequency>121262</frequency>
   </ATSCTuning>
@@ -66,9 +69,7 @@
   <ATSCTuning>
     <frequency>169262</frequency>
   </ATSCTuning>
-  <ATSCTuning>
-    <frequency>211262</frequency>
-  </ATSCTuning>
+  <!-- "super band", channel 23..36 -->
   <ATSCTuning>
     <frequency>217262</frequency>
   </ATSCTuning>
@@ -111,6 +112,7 @@
   <ATSCTuning>
     <frequency>295262</frequency>
   </ATSCTuning>
+  <!-- "hyper band", channel 37..64 -->
   <ATSCTuning>
     <frequency>301262</frequency>
   </ATSCTuning>
@@ -127,7 +129,7 @@
     <frequency>325262</frequency>
   </ATSCTuning>
   <ATSCTuning>
-    <frequency>331262</frequency>
+    <frequency>331275</frequency>
   </ATSCTuning>
   <ATSCTuning>
     <frequency>337262</frequency>
@@ -195,6 +197,7 @@
   <ATSCTuning>
     <frequency>463262</frequency>
   </ATSCTuning>
+  <!-- "ultra band", channel 65..94 -->
   <ATSCTuning>
     <frequency>469262</frequency>
   </ATSCTuning>
@@ -283,6 +286,10 @@
     <frequency>637262</frequency>
   </ATSCTuning>
   <ATSCTuning>
+    <frequency>643262</frequency>
+  </ATSCTuning>
+  <!-- "mid band" part 1, channel 95..99 -->
+  <ATSCTuning>
     <frequency>91262</frequency>
   </ATSCTuning>
   <ATSCTuning>
@@ -297,6 +304,7 @@
   <ATSCTuning>
     <frequency>115275</frequency>
   </ATSCTuning>
+  <!-- "jumbo band", channel 100..158 -->
   <ATSCTuning>
     <frequency>649262</frequency>
   </ATSCTuning>
@@ -404,5 +412,74 @@
   </ATSCTuning>
   <ATSCTuning>
     <frequency>859262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>865262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>871262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>877262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>883262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>889262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>895262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>901262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>907262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>913262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>919262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>925262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>931262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>937262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>943262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>949262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>955262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>961262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>967262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>973262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>979262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>985262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>991262</frequency>
+  </ATSCTuning>
+  <ATSCTuning>
+    <frequency>997262</frequency>
   </ATSCTuning>
 </ArrayOfATSCTuning>

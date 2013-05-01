@@ -69,7 +69,7 @@ namespace WindowPlugins
 
     protected virtual Layout GetLayoutNumber(string s)
     {
-      switch (s.Trim().ToLower())
+      switch (s.Trim().ToLowerInvariant())
       {
         case "list":
           return Layout.List;

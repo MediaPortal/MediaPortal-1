@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Home
             }
             else
             {
-              if (showInPlugIns.ToLower().Equals("no"))
+              if (showInPlugIns.ToLowerInvariant().Equals("no"))
               {
                 continue;
               }

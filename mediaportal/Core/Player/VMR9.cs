@@ -368,9 +368,7 @@ namespace MediaPortal.Player
       }
 
       HResult hr;
-      IntPtr hMonitor;
-      AdapterInformation ai = GUIGraphicsContext.currentFullscreenAdapterInfo;
-      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
+      IntPtr hMonitor = Manager.GetAdapterMonitor(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       _scene = new PlaneScene(this);

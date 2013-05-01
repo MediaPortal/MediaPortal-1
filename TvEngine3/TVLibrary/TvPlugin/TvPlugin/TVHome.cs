@@ -143,7 +143,7 @@ namespace TvPlugin
     [SkinControl(7)]
     protected GUIButtonControl btnChannel = null;
     [SkinControl(8)]
-    protected GUIToggleButtonControl btnTvOnOff = null;
+    protected GUICheckButton btnTvOnOff = null;
     [SkinControl(13)]
     protected GUIButtonControl btnTeletext = null;
     [SkinControl(24)]
@@ -3660,7 +3660,8 @@ namespace TvPlugin
         }
       }
 
-      if (!g_Player.Play(timeshiftFileName, mediaType))
+      // Force use TsReader
+      if (!g_Player.Play(timeshiftFileName, mediaType, null, false))
       {
         StopPlayback();
       }

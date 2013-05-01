@@ -86,19 +86,25 @@
     </control>
 		<control>
       <description>Sounds</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>4</id>
 			<posX>101</posX>
 			<posY>278</posY>
 			<width>415</width>
 			<height>85</height>
       <label>19004</label>
+    	<textYOff>26</textYOff>
 			<textcolor>FF000000</textcolor>
 			<textcolorNoFocus>FF000000</textcolorNoFocus>
 			<textureFocus>tetris\button_focus_toggleon.png</textureFocus>
 			<textureNoFocus>tetris\button_nofocus_toggleon.png</textureNoFocus>
-			<AltTextureFocus>tetris\button_focus_toggleoff.png</AltTextureFocus>
-			<AltTextureNoFocus>tetris\button_nofocus_toggleoff.png</AltTextureNoFocus>
+    	<textureCheckmark>tetris\checkmark_checked.png</textureCheckmark>
+    	<textureCheckmarkNoFocus>tetris\checkmark_unchecked.png</textureCheckmarkNoFocus>
+	    <markWidth>24</markWidth>
+	    <markHeight>24</markHeight>
+     	<markXOff>35</markXOff>
+    	<markYOff>24</markYOff>
+	    <markvalign>top</markvalign>
 			<textXOff hasMargin="true">50</textXOff>
       <onup>2</onup>
       <ondown>2</ondown>

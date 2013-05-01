@@ -163,13 +163,11 @@ namespace MediaPortal.Dialogs
       using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("general", "skinobsoletecount", 0);
-        bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
-        if (autosize && !GUIGraphicsContext.Fullscreen)
+        if (!GUIGraphicsContext.Fullscreen)
         {
           try
           {
             GUIGraphicsContext.form.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
-            //Form.ActiveForm.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
           }
           catch (Exception ex)
           {

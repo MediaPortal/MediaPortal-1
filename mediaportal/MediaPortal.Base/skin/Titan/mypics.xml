@@ -57,7 +57,7 @@
     <type>label</type>
     <posX>1845</posX>
     <posY>96</posY>
-    <font>fontB12</font>
+    <font>TitanLight12</font>
     <textcolor>ffffff</textcolor>
     <label>#date / #WorldWeather.TodayTemperature</label>
 		<align>right</align>
@@ -72,7 +72,7 @@
     <type>label</type>
     <posX>1845</posX>
     <posY>96</posY>
-    <font>fontB12</font>
+    <font>TitanLight12</font>
     <textcolor>ffffff</textcolor>
     <label>#date</label>
 		<align>right</align>

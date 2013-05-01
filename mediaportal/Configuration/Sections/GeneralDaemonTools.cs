@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration.Sections
       {
         textBoxDaemonTools.Text = GetInstalledSoftware("daemon tools", false);
       }
-      if ((comboDriveType.SelectedItem == null || comboDriveType.SelectedItem == string.Empty) && textBoxDaemonTools.Text.ToLower().Contains("virtualclonedrive"))
+      if ((comboDriveType.SelectedItem == null || comboDriveType.SelectedItem == string.Empty) && textBoxDaemonTools.Text.ToLowerInvariant().Contains("virtualclonedrive"))
       {
         comboDriveType.SelectedItem = "vcd";
       }
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
         {
           foreach (string skName in rk.GetValueNames())
           {
-            if (skName.ToLower().Contains(Search.ToLower()))
+            if (skName.ToLowerInvariant().Contains(Search.ToLowerInvariant()))
             {
               SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");              
 

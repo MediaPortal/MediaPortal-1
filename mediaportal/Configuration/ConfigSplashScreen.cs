@@ -290,6 +290,7 @@ namespace MediaPortal.Configuration
         // SplashForm
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
         this.BackgroundImage = global::MediaPortal.Configuration.Properties.Resources.mplogo;
         this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
         this.ClientSize = new System.Drawing.Size(400, 172);

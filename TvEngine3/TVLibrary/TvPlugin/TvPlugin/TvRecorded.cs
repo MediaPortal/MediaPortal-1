@@ -199,6 +199,29 @@ namespace TvPlugin
       return bResult;
     }
 
+    // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when
+    // the player is not playing)...
+    private void OnNewAction(Action action)
+    {
+      if ((action.wID == Action.ActionType.ACTION_PLAY
+           || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+          && GUIWindowManager.ActiveWindow == GetID)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+
+        if (item == null || item.Label == ".." || item.IsFolder)
+        {
+          return;
+        }
+
+        if (GetFocusControlId() == facadeLayout.GetID)
+        {
+          // only start something is facade is focused
+          OnSelectedRecording(facadeLayout.SelectedListItemIndex);
+        }
+      }
+    }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)
@@ -981,7 +1004,7 @@ namespace TvPlugin
       }
     }
 
-    private bool OnSelectedRecording(int iItem)
+    protected override bool OnSelectedRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)

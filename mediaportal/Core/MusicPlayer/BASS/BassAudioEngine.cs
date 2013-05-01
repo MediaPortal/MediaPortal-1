@@ -119,7 +119,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private VisualizationManager VizManager = null;
     private int _playBackType;
     private int _savedPlayBackType = -1;
-    private bool _isRadio = false;
 
     private bool _IsFullScreen = false;
     private int _VideoPositionX = 10;
@@ -329,7 +328,17 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public override bool IsRadio
     {
-      get { return _isRadio; }
+      get
+      {
+        MusicStream stream = GetCurrentStream();
+
+        if (stream == null)
+        {
+          return false;
+        }
+
+        return stream.Filetype.FileMainType == FileMainType.WebStream;
+      }
     }
 
     public override bool IsCDA
@@ -1133,11 +1142,11 @@ namespace MediaPortal.MusicPlayer.BASS
         _mixer.Dispose();
       }
 
-      foreach (MusicStream stream in _streams)
+      for (int i = 0; i < _streams.Count; i++)
       {
-        if (stream != null)
+        if (_streams[i] != null)
         {
-          stream.Dispose();
+          _streams[i].Dispose();
         }
       }
 
@@ -1479,7 +1488,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        if (currentStream != null && filePath.ToLower().CompareTo(currentStream.FilePath.ToLower()) == 0)
+        if (currentStream != null && filePath.ToLowerInvariant().CompareTo(currentStream.FilePath.ToLowerInvariant()) == 0)
         {
           // Selected file is equal to current stream
           if (_state == PlayState.Paused)
@@ -1546,6 +1555,14 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         _streams.Add(stream);
+        if (stream.Filetype.FileMainType == FileMainType.CDTrack)
+        {
+          _isCDDAFile = true;
+        }
+        else
+        {
+          _isCDDAFile = false;
+        }
 
         bool playbackStarted = false;
 
@@ -1567,26 +1584,31 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (!_mixer.WasApiShared && (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
+          if (!_mixer.UpMixing)
           {
-            if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq || stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+            BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
+            if (!_mixer.WasApiShared &&
+                (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
             {
-              Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
-              // The new stream has a different frequency or number of channels
-              // We need a new mixer
-              _mixer.Dispose();
-              _mixer = null;
-              _mixer = new MixerStream(this);
-              if (!_mixer.CreateMixer(stream))
+              if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
+                  stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
               {
-                Log.Error("BASS: Could not create Mixer. Aborting playback.");
-                return false;
-              }
+                Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
+                // The new stream has a different frequency or number of channels
+                // We need a new mixer
+                _mixer.Dispose();
+                _mixer = null;
+                _mixer = new MixerStream(this);
+                if (!_mixer.CreateMixer(stream))
+                {
+                  Log.Error("BASS: Could not create Mixer. Aborting playback.");
+                  return false;
+                }
 
-              if (HasViz)
-              {
-                _streamcopy.ChannelHandle = _mixer.BassStream;
+                if (HasViz)
+                {
+                  _streamcopy.ChannelHandle = _mixer.BassStream;
+                }
               }
             }
           }
@@ -1775,7 +1797,6 @@ namespace MediaPortal.MusicPlayer.BASS
       // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS Stop";
                      MusicStream stream = GetCurrentStream();
                      try
                      {
@@ -1878,7 +1899,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
                      NotifyPlaying = false;
                    }
-        ).Start();
+        ) { Name = "BASS Stop" }.Start();
     }
 
     /// <summary>

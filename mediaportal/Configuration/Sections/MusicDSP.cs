@@ -617,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
       if (section != null)
       {
         string player = (string)section.GetSetting("audioPlayer");
-        if (player.ToLower().IndexOf("internal dshow player") > -1)
+        if (player.ToLowerInvariant().IndexOf("internal dshow player") > -1)
         {
           MusicDSPTabCtl.Enabled = false;
           MessageBox.Show(this, "DSP effects are only available with the BASS music player selected.",

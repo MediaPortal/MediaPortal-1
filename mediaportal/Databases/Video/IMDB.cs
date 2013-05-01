@@ -614,7 +614,7 @@ namespace MediaPortal.Video.Database
         
         if ((parser.skipToEndOf(vdbParserStr[0])) &&          // <title>
             (parser.extractTo(vdbParserStr[1], ref value)) && // </title>
-            !value.ToLower().Equals(vdbParserStr[2]))         // imdb name search
+            !value.ToLowerInvariant().Equals(vdbParserStr[2]))         // imdb name search
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           value = Util.Utils.RemoveParenthesis(value).Trim();

@@ -352,7 +352,7 @@ namespace MediaPortal.Ripper
             else if (Util.Utils.IsAudio(files[i]))
             {
               audioFiles.Add(files[i]);
-              if (Path.GetExtension(files[i]).ToLower() == ".cda")
+              if (Path.GetExtension(files[i]).ToLowerInvariant() == ".cda")
                 mediaSubType = MediaSubType.AUDIO_CD;
             }
             else if (Util.Utils.IsPicture(files[i]))

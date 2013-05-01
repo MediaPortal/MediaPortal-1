@@ -2204,12 +2204,7 @@
     <String id="300093">Starta om Media Portal vid eventuell krash</String>
     <String id="300094">Fördröjning före omstart</String>
     <String id="300095">Stäng av skärm (vid viloläge)</String>
-    <String id="300096">Starta monitor/TV efter viloläge</String>
-    <String id="300097">Tillåt S3-standby (även wakeup-enheter räknas)</String>
-    <String id="300098">Snabbfix om MediaPortal fryses efter viloläge</String>
-    <String id="300099">Starta om MediaPortal efter vila</String>
     <String id="300100">Aktivera senast valda modul efter vila</String>
-    <String id="300101">Använd skärmväljare för att välja startskärm om flera finns</String>
     <String id="300102">Fördröj uppstart</String>
     <String id="300103">När MediaPortal startar</String>
     <String id="300104">När MediaPortal återgår</String>
@@ -2231,7 +2226,6 @@
     <String id="300120">Skin</String>
     <String id="300121">On-screen Display</String>
     <String id="300122">Tillåt minne för senast markerade objekt</String>
-    <String id="300123">Använd Autosize vid window-läge för att matcha skin-storleken</String>
     <String id="300124">Göm filändelser (.mp3, .avi...)</String>
     <String id="300125">Använd tillgänglig fil-cache</String>
     <String id="300126">Använd ljud som tillhör olika skin</String>

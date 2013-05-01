@@ -147,6 +147,14 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _disposed; }
     }
 
+    /// <summary>
+    /// Returns the FileType of the Stream
+    /// </summary>
+    public FileType Filetype
+    {
+      get { return _fileType; }
+    }
+
     #region Playback Related Properties
 
     /// <summary>
@@ -207,8 +215,7 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     #endregion
-
-
+    
     #endregion
 
     #region Constructor
@@ -614,7 +621,7 @@ namespace MediaPortal.MusicPlayer.BASS
                      }
                      Dispose();
                    }
-        ).Start();
+        ) { Name = "BASS FadeOut" }.Start();
     }
 
     /// <summary>
@@ -756,7 +763,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS X-Fade";
                      Log.Debug("BASS: X-Fading out stream {0}", _filePath);
 
                      if (Config.CrossFadeIntervalMs > 0)
@@ -776,7 +782,7 @@ namespace MediaPortal.MusicPlayer.BASS
                      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0,
                                                      Config.CrossFadeIntervalMs);
                    }
-      ).Start();
+      ) { Name = "BASS X-Fade" }.Start();
     }
 
     /// <summary>
@@ -790,11 +796,10 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS X-FadeEnded";
                      _crossFading = false;
                      Log.Debug("BASS: Fading of stream finished.");
                    }
-      ).Start();
+      ) { Name = "BASS X-FadeEnded" }.Start();
     }
 
 
@@ -809,7 +814,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS SongEnd";
                      Log.Debug("BASS: End of stream {0}", _filePath);
                      _crossFading = false;
 
@@ -828,7 +832,7 @@ namespace MediaPortal.MusicPlayer.BASS
                        MusicStreamMessage(this, StreamAction.Ended);
                      }
                    }
-      ).Start();
+      ) { Name = "BASS SongEnd" }.Start();
     }
 
     /// <summary>
@@ -842,7 +846,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS CueEnd";
                      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
 
                      if (Config.CrossFadeIntervalMs > 0)
@@ -859,7 +862,7 @@ namespace MediaPortal.MusicPlayer.BASS
                        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in CueTrackEndProc");
                      }
                    }
-       ).Start();
+       ) { Name = "BASS CueEnd" }.Start();
     }
 
     /// <summary>
@@ -873,12 +876,12 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         foreach (string item in tags)
         {
-          if (item.ToLower().StartsWith("icy-name:"))
+          if (item.ToLowerInvariant().StartsWith("icy-name:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Album", item.Substring(9));
           }
 
-          if (item.ToLower().StartsWith("icy-genre:"))
+          if (item.ToLowerInvariant().StartsWith("icy-genre:"))
           {
             GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
           }
@@ -910,7 +913,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Thread.CurrentThread.Name = "BASS MetaSync";
                      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
                      if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false,
                                                  false))
@@ -918,7 +920,7 @@ namespace MediaPortal.MusicPlayer.BASS
                        GetMetaTags();
                      }
                    }
-      ).Start();
+      ) { Name = "BASS MetaSync" }.Start();
     }
 
     /// <summary>

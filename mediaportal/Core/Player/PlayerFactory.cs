@@ -244,6 +244,7 @@ namespace MediaPortal.Player
           int streamPlayer = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
           bool Vmr9Enabled = xmlreader.GetValueAsBool("musicvideo", "useVMR9", true);
           bool InternalBDPlayer = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+          bool Usemoviecodects = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
 
           // Free BASS to avoid problems with Digital Audio, when watching movies
           if (BassMusicPlayer.IsDefaultMusicPlayer)
@@ -254,7 +255,7 @@ namespace MediaPortal.Player
             }
           }
 
-          if (aFileName.ToLower().IndexOf("rtsp:") >= 0)
+          if (aFileName.ToLowerInvariant().IndexOf("rtsp:") >= 0)
           {
             if (aMediaType != null)
             {
@@ -278,13 +279,13 @@ namespace MediaPortal.Player
             }
           }
 
-          string extension = Path.GetExtension(aFileName).ToLower();
+          string extension = Path.GetExtension(aFileName).ToLowerInvariant();
           if (extension == ".bdmv")
           {
             if (InternalBDPlayer)
             {
-              return new BDPlayer();
-            }
+            return new BDPlayer();
+          }
             else
             {
               return new VideoPlayerVMR9();
@@ -292,7 +293,7 @@ namespace MediaPortal.Player
           }
 
           if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
-              aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
+              aFileName.ToLowerInvariant().IndexOf(".tsbuffer") < 0 && aFileName.ToLowerInvariant().IndexOf("radio.tsbuffer") < 0)
           {
             IPlayer newPlayer = GetExternalPlayer(aFileName);
             if (newPlayer != null)
@@ -325,7 +326,7 @@ namespace MediaPortal.Player
           if (extension == ".tsbuffer" || extension == ".ts" || extension == ".rec")
             //new support for Topfield recordings
           {
-            if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
+            if (aFileName.ToLowerInvariant().IndexOf("radio.tsbuffer") >= 0)
             {
               if (aMediaType != null)
               {
@@ -338,7 +339,17 @@ namespace MediaPortal.Player
             }
             if (aMediaType != null)
             {
-              return new TSReaderPlayer(localType);
+              if (
+                (GUIWindow.Window)
+                (Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+                GUIWindow.Window.WINDOW_VIDEOS && Usemoviecodects || (g_Player.IsExtTS && Usemoviecodects))
+              {
+                return new VideoPlayerVMR9(localType);
+              }
+              else
+              {
+                return new TSReaderPlayer(localType);
+              }
             }
             else
             {
