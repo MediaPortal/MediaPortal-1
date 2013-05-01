@@ -305,11 +305,11 @@ namespace MediaPortal.GUI.Music
       // 1. A standard Now Playing to which we fall back
       // 2. a Now Playing with Analog VUMeter
       // 3. a Now Playing with Led VUMeter
-      if (_vuMeter.ToLower() == "analog")
+      if (_vuMeter.ToLowerInvariant() == "analog")
       {
         success = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicPlayingNowAnVu.xml"));
       }
-      else if (_vuMeter.ToLower() == "led")
+      else if (_vuMeter.ToLowerInvariant() == "led")
       {
         success = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicPlayingNowLedVu.xml"));
       }
@@ -453,7 +453,7 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#VUMeterL", @"VU1.png");
       GUIPropertyManager.SetProperty("#VUMeterR", @"VU1.png");
       if (VUMeterTimer == null && _usingBassEngine &&
-          _vuMeter.ToLower() != "none")
+          _vuMeter.ToLowerInvariant() != "none")
       {
         VUMeterTimer = new Timer();
         VUMeterTimer.Interval = 200;
@@ -479,7 +479,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       ImageChangeTimer.Stop();
 
@@ -502,7 +502,7 @@ namespace MediaPortal.GUI.Music
 
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)

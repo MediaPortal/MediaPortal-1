@@ -29,6 +29,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -235,6 +236,11 @@
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\MediaPortal.Base\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -273,6 +279,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -914,9 +921,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUIThumbnailPanel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="guilib\GUIToggleButtonControl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUITVProgressControl.cs">

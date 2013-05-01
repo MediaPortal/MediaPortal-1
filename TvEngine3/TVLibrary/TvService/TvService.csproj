@@ -190,6 +190,10 @@
       <Project>{59C2EBC8-0FEA-4B2E-B5D1-476347332331}</Project>
       <Name>TVLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvThumbnails\TvThumbnails.csproj">
+      <Project>{95F4BF8F-5664-40C9-8DA8-C5E9B79B8115}</Project>
+      <Name>TvThumbnails</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Common-MP-TVE3\Gentle.config">

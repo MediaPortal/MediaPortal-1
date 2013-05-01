@@ -94,7 +94,7 @@ namespace MediaPortal.InputDevices
       myProcesses = Process.GetProcesses();
       foreach (Process myProcess in myProcesses)
       {
-        if (myProcess.ProcessName.ToLower().Equals("ehtray"))
+        if (myProcess.ProcessName.ToLowerInvariant().Equals("ehtray"))
         {
           try
           {

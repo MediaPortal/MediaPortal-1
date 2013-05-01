@@ -189,6 +189,7 @@ namespace MediaPortal.Configuration.Sections
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         ForceSourceSplitter.Checked = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
+        mpCheckBoxTS.Checked = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
         UpdateDecoderSettings();
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
                                                                         "Default DirectSound Device");
@@ -344,6 +345,7 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
         xmlwriter.SetValueAsBool("movieplayer", "forcesourcesplitter", ForceSourceSplitter.Checked);
+        xmlwriter.SetValueAsBool("movieplayer", "usemoviecodects", mpCheckBoxTS.Checked);
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
         // Set codecs
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);

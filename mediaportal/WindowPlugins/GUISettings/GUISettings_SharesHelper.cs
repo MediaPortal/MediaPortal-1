@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.Settings
 
           if (driveName.Length == 0)
           {
-            string driveLetter = drive.Substring(0, 1).ToUpper();
+            string driveLetter = drive.Substring(0, 1).ToUpperInvariant();
             driveName = String.Format("{0} {1}:", defaultName, driveLetter);
           }
 
@@ -154,19 +154,19 @@ namespace MediaPortal.GUI.Settings
             switch (driveType)
             {
               case DriveType.Removable:
-                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.Fixed:
-                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RemoteDisk:
-                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.DVD: // or cd
-                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
                 break;
               case DriveType.RamDisk:
-                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpper());
+                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpperInvariant());
                 break;
             }
             if (driveType == DriveType.Fixed || driveType == DriveType.RemoteDisk)

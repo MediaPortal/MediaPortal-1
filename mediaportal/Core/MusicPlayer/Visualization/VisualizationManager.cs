@@ -201,22 +201,22 @@ namespace MediaPortal.Visualization
         vizType = VisualizationInfo.PluginType.None;
       }
 
-      else if (Path.GetExtension(path).ToLower().CompareTo(".svp") == 0)
+      else if (Path.GetExtension(path).ToLowerInvariant().CompareTo(".svp") == 0)
       {
         vizType = VisualizationInfo.PluginType.Sonique;
       }
 
-      else if (path.ToLower().CompareTo("g-force") == 0)
+      else if (path.ToLowerInvariant().CompareTo("g-force") == 0)
       {
         vizType = VisualizationInfo.PluginType.GForce;
       }
 
-      else if (path.ToLower().CompareTo("whitecap") == 0)
+      else if (path.ToLowerInvariant().CompareTo("whitecap") == 0)
       {
         vizType = VisualizationInfo.PluginType.WhiteCap;
       }
 
-      else if (path.ToLower().CompareTo("softskies") == 0)
+      else if (path.ToLowerInvariant().CompareTo("softskies") == 0)
       {
         vizType = VisualizationInfo.PluginType.SoftSkies;
       }

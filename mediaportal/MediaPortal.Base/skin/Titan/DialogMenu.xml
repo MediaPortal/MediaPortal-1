@@ -26,9 +26,9 @@
       <control>
       	<id>0</id>
         <type>image</type>
-        <posX>561</posX>
-        <posY>295</posY>
-        <width>798</width>
+        <posX>441</posX>
+        <posY>296</posY>
+        <width>1040</width>
         <height>679</height>
         <texture>context_background.png</texture>
       </control>
@@ -37,10 +37,10 @@
       	<id>4</id>
         <description>Heading text label</description>
         <type>label</type>
-        <posX>680</posX>
+        <posX>560</posX>
         <posY>386</posY>
-				<width>580</width>
-        <font>fontB16</font>
+				<width>820</width>
+        <font>font22</font>
         <textcolor>ff393939</textcolor>
         <label>181</label>
       </control>
@@ -51,21 +51,23 @@
         <type>listcontrol</type>
         <onleft>3</onleft>
         <onright>3</onright>
-        <posX>635</posX>
+        <posX>515</posX>
         <posY>475</posY>
-        <width>648</width>
+        <width>890</width>
         <height>450</height>
-        <textXOff2>635</textXOff2>
+        <textXOff2>875</textXOff2>
         <textYOff2>16</textYOff2>
-        <spinPosX>720</spinPosX>
-        <spinPosY>844</spinPosY>
-        <spinColor>FF393939</spinColor>
+        <spinPosX>600</spinPosX>
+        <spinPosY>840</spinPosY>
+        <spinColor>FFFFFFFF</spinColor>
         <textXOff>35</textXOff>
         <textYOff>16</textYOff>
+				<font>TitanLight12</font>
+				<font2>TitanLight12</font2>
         <textcolor>FFFFFFFF</textcolor>
         <textcolor2>FFFFFFFF</textcolor2>
         <textcolorNoFocus>FF393939</textcolorNoFocus>
-        <textcolor2NoFocus>FF393939</textcolor2NoFocus>
+        <textcolorNoFocus2>FF393939</textcolorNoFocus2>
      		<selectedColor>FF000000</selectedColor>                
         <textureFocus>context_item_selected.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>

@@ -27,9 +27,9 @@
       <control>
       	<id>0</id>
         <type>image</type>
-        <posX>561</posX>
-        <posY>295</posY>
-        <width>798</width>
+        <posX>441</posX>
+        <posY>296</posY>
+        <width>1040</width>
         <height>679</height>
         <texture>context_background.png</texture>
       </control>
@@ -38,10 +38,10 @@
       	<id>4</id>
         <description>Heading text label</description>
         <type>label</type>
-        <posX>680</posX>
+        <posX>560</posX>
         <posY>386</posY>
-				<width>580</width>
-        <font>fontB16</font>
+				<width>820</width>
+        <font>font22</font>
         <textcolor>ff393939</textcolor>
         <label>181</label>
       </control>
@@ -52,23 +52,24 @@
         <type>listcontrol</type>
         <onleft>3</onleft>
         <onright>3</onright>
-        <posX>635</posX>
+        <posX>515</posX>
         <posY>475</posY>
-        <width>648</width>
+        <width>890</width>
         <height>350</height>
         <textXOff2>635</textXOff2>
         <textYOff2>16</textYOff2>
-        <spinPosX>725</spinPosX>
-        <spinPosY>754</spinPosY>
+				<spinPosX>558</spinPosX>
+				<spinPosY>814</spinPosY>
+				<spinAlign>left</spinAlign>
         <onleft>5</onleft>
         <onright>5</onright>
-        <spinColor>FF393939</spinColor>
+        <spinColor>FFFFFFFF</spinColor>
         <textXOff>35</textXOff>
         <textYOff>16</textYOff>
         <textcolor>FFFFFFFF</textcolor>
         <textcolor2>FFFFFFFF</textcolor2>
         <textcolorNoFocus>FF393939</textcolorNoFocus>
-        <textcolorNoFocus2>FF393939</textcolorNoFocus2>
+        <textcolor2NoFocus>FF393939</textcolor2NoFocus>
      		<selectedColor>FF000000</selectedColor>                
         <textureFocus>context_item_selected.png</textureFocus>
         <textureNoFocus>-</textureNoFocus>
@@ -78,7 +79,6 @@
 				<PinIconHeight>15</PinIconHeight>
         <PinIconXOff>2000</PinIconXOff>
         <PinIconYOff>15</PinIconYOff>
-        <dimColor>ffffffff</dimColor>
 				<unfocusedAlpha>255</unfocusedAlpha>
       </control>
  
@@ -86,16 +86,16 @@
     		<description>ok</description>
     		<type>button</type>
     		<id>5</id>
-    		<posX>621</posX>
-		    <posY>791</posY>
-    		<textXOff>70</textXOff>
-    		<textYOff>0</textYOff>
-    		<width>678</width>
-    		<height>69</height>
-    		<font>TitanLight14</font>
-    		<textalign>center</textalign>
-    		<textureFocus>dialog_yesno_black_button_focus.png</textureFocus>
-    		<textureNoFocus>-</textureNoFocus>
+    	<posX>830</posX>
+    	<posY>802</posY>
+    	<textYOff>0</textYOff>
+			<width>261</width>
+			<height>58</height>
+    	<textalign>center</textalign>
+			<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>FF393939</textcolorNoFocus>
+			<textureFocus>button_music_info_focus.png</textureFocus>
+			<textureNoFocus>button_music_info_nofocus.png</textureNoFocus>
     		<label>107</label>
     		<onleft>3</onleft>
     		<onright>3</onright>

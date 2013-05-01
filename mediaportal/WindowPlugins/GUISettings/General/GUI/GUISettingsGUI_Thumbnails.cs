@@ -91,10 +91,10 @@ namespace WindowPlugins.GUISettings
         _iQuality++;
         btnEnableMusicThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         btnEnablePicturesThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
-        btnEnableVideosThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-        btnEnableLeaveThumbInFolder.Selected = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
-        _iColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 1);
-        _iRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 1);
+        btnEnableVideosThumbs.Selected = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
+        btnEnableLeaveThumbInFolder.Selected = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
+        _iColumns = xmlreader.GetValueAsInt("thumbnails", "videothumbcols", 1);
+        _iRows = xmlreader.GetValueAsInt("thumbnails", "videothumbrows", 1);
       }
     }
 
@@ -109,10 +109,10 @@ namespace WindowPlugins.GUISettings
           xmlwriter.SetValue("thumbnails", "quality", _iQuality);
           xmlwriter.SetValueAsBool("thumbnails", "musicfolderondemand", btnEnableMusicThumbs.Selected);
           xmlwriter.SetValueAsBool("thumbnails", "picturenolargethumbondemand", btnEnablePicturesThumbs.Selected);
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", btnEnableVideosThumbs.Selected);
-          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedsharepreview", btnEnableLeaveThumbInFolder.Selected);
-          xmlwriter.SetValue("thumbnails", "tvthumbcols", _iColumns);
-          xmlwriter.SetValue("thumbnails", "tvthumbrows", _iRows);
+          xmlwriter.SetValueAsBool("thumbnails", "videoondemand", btnEnableVideosThumbs.Selected);
+          xmlwriter.SetValueAsBool("thumbnails", "videosharepreview", btnEnableLeaveThumbInFolder.Selected);
+          xmlwriter.SetValue("thumbnails", "videothumbcols", _iColumns);
+          xmlwriter.SetValue("thumbnails", "videothumbrows", _iRows);
         }
       }
     }
@@ -205,7 +205,7 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeletePicturesThumbs)
       {
-        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Pictures, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
       }
       if (control == btnEnableVideosThumbs)
       {
@@ -217,8 +217,7 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnDeleteVideosThumbs)
       {
-        Utils.DeleteFiles(Thumbs.TVRecorded, String.Format(@"*{0}", Utils.GetThumbExtension()));
-        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()));
+        Utils.DeleteFiles(Thumbs.Videos, String.Format(@"*{0}", Utils.GetThumbExtension()), true);
       }
       if (control == btnClearBlacklistedThumbs)
       {

@@ -25,6 +25,7 @@ using System.Windows.Serialization;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.ExtensionMethods;
+using Point = MediaPortal.Drawing.Point;
 
 namespace MediaPortal.GUI.Library
 {

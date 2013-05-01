@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Library
       _isOverlayAllowed = false;
       if ((_allowOverlayString != null) && (_allowOverlayString.Length > 0))
       {
-        _allowOverlayString = _allowOverlayString.ToLower();
+        _allowOverlayString = _allowOverlayString.ToLowerInvariant();
         if (_allowOverlayString.Equals("yes") || _allowOverlayString.Equals("true"))
         {
           _isOverlayAllowed = true;

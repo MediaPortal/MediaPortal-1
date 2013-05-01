@@ -59,7 +59,7 @@
         <width>450</width>
       </control>
       <control>
-        <description>Aautostart on WinUp</description>
+        <description>Autostart on WinUp</description>
         <type>checkbutton</type>
         <id>14</id>
         <label>300109</label>
@@ -77,6 +77,13 @@
         <type>checkbutton</type>
         <id>16</id>
         <label>300111</label>
+        <width>450</width>
+      </control>
+      <control>
+        <description>Minimize to tray on focus loss</description>
+        <type>checkbutton</type>
+        <id>17</id>
+        <label>300229</label>
         <width>450</width>
         <ondown>10</ondown>
       </control>

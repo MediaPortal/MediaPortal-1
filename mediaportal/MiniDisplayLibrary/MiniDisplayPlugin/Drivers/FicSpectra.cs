@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -367,7 +368,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // oddìlení znakù od modifikátorù (háèkù, èárek, atd.)
       s = s.Normalize(NormalizationForm.FormD);
       // only upper case characters for FIC Spectra display
-      s = s.ToUpper();
+      s = s.ToUpper(CultureInfo.CurrentCulture);
       StringBuilder sb = new StringBuilder();
 
       for (int i = 0; i < s.Length; i++)

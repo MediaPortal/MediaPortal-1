@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Settings
 
         foreach (GUIListItem item in settingsSharesHelper.ShareListControl)
         {
-          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpper();
+          string driveLetter = FolderInfo(item).Folder.Substring(0, 3).ToUpperInvariant();
 
           if (driveLetter.StartsWith("\\\\") || Util.Utils.getDriveType(driveLetter) == 3 ||
               Util.Utils.getDriveType(driveLetter) == 4)

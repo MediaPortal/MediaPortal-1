@@ -483,7 +483,7 @@ namespace MediaPortal.Video.Database
               string path = _movieDetails.Path;
               string filename = _movieDetails.File;
 
-              if (filename.ToUpper() == "VIDEO_TS.IFO" || filename.ToUpper() == "INDEX.BDMV")
+              if (filename.ToUpperInvariant() == "VIDEO_TS.IFO" || filename.ToUpperInvariant() == "INDEX.BDMV")
               {
                 // Remove \VIDEO_TS from directory structure
                 string directoryDVD = path.Substring(0, path.LastIndexOf(@"\"));
@@ -1021,7 +1021,7 @@ namespace MediaPortal.Video.Database
 
       for (int index = 0; index < _imdb.Count; ++index)
       {
-        int distance = Levenshtein.Match(name, _imdb[index].Title.ToLower());
+        int distance = Levenshtein.Match(name, _imdb[index].Title.ToLowerInvariant());
 
         if (distance == matchingDistance && matchingDistance != int.MaxValue)
         {
@@ -1292,17 +1292,17 @@ namespace MediaPortal.Video.Database
             currentMovie.DVDLabel = Util.Utils.GetDriveName(strDrive);
             strMovieName = currentMovie.DVDLabel;
           }
-          else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
+          else if (strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
           {
             // DVD folder
-            string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+            string dvdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
             currentMovie.DVDLabel = Path.GetFileName(dvdFolder);
             strMovieName = currentMovie.DVDLabel;
           }
-          else if (strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
+          else if (strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
           {
             // BD folder
-            string bdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV"));
+            string bdFolder = strFileName.Substring(0, strFileName.ToUpperInvariant().IndexOf(@"\BDMV\INDEX.BDMV"));
             currentMovie.DVDLabel = Path.GetFileName(bdFolder);
             strMovieName = currentMovie.DVDLabel;
           }
@@ -1805,11 +1805,11 @@ namespace MediaPortal.Video.Database
           //
           using (Settings xmlreader = new MPSettings())
           {
-            _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+            _currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
           }
           using (Settings xmlwriter = new MPSettings())
           {
-            xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+            xmlwriter.SetValueAsBool("thumbnails", "videoondemand", false);
           }
           List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
           
@@ -1833,7 +1833,7 @@ namespace MediaPortal.Video.Database
           // Restore thumbcreation setting
           using (Settings xmlwriter = new MPSettings())
           {
-            xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", _currentCreateVideoThumbs);
+            xmlwriter.SetValueAsBool("thumbnails", "videoondemand", _currentCreateVideoThumbs);
           }
 
           movieDetails.ID = id;

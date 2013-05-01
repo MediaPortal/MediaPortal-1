@@ -167,7 +167,7 @@
 
 		<control Style="SettingsButton">
 			<description>hidden mode</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>505</id>
 			<label>593</label>
 			<onup>504</onup>

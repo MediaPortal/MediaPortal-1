@@ -531,7 +531,7 @@ namespace MediaPortal.Player
     {
       _endOfFileDetected = false;
       Log.Info("TSReaderPlayer play:{0} radio:{1}", strFile, _isRadio);
-      if (strFile.ToLower().StartsWith("rtsp:") == false)
+      if (strFile.ToLowerInvariant().StartsWith("rtsp:") == false)
       {
         if (!File.Exists(strFile))
         {
@@ -543,12 +543,12 @@ namespace MediaPortal.Player
       _speedRate = 10000;
       _isLive = false;
       _duration = -1d;
-      if (strFile.ToLower().IndexOf(".tsbuffer") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf(".tsbuffer") >= 0)
       {
         Log.Info("TSReaderPlayer: live tv");
         _isLive = true;
       }
-      if (strFile.ToLower().IndexOf("rtsp") >= 0)
+      if (strFile.ToLowerInvariant().IndexOf("rtsp") >= 0)
       {
         Log.Info("TSReaderPlayer: live tv");
         _isLive = true;

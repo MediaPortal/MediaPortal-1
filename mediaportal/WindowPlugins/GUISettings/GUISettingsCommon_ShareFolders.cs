@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Settings
 
       using (Profile.Settings xmlreader = new MPSettings())
       {
-        _globalVideoThumbsEnaled = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        _globalVideoThumbsEnaled = xmlreader.GetValueAsBool("thumbnails", "videoondemand", true);
       }
     }
 

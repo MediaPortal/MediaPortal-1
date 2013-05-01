@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -2199,7 +2199,6 @@
     <String id="300094">Neustart-Verzögerung in Sekunden</String>
     <String id="300095">Bildschirm ausschalten (bei Dunkeltastung des Bildschirms)</String>
     <String id="300100">Letztes aktives Modul nach Wake-Up anzeigen</String>
-    <String id="300101">MP-Startbildschirm mit Screen Selector auswählen</String>
     <String id="300102">Startverzögerung</String>
     <String id="300103">Bei Start von MediaPortal</String>
     <String id="300104">Bei Wiederaufnahme von MediaPortal</String>

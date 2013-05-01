@@ -225,6 +225,7 @@
     <ClInclude Include="source\TsFileSeek.h" />
     <ClInclude Include="source\TsReader.h" />
     <ClInclude Include="source\TSThread.h" />
+    <ClInclude Include="source\version.h" />
     <ClInclude Include="source\VideoPin.h" />
     <ClInclude Include="source\WaitEvent.h" />
     <ClInclude Include="..\shared\DebugSettings.h" />
@@ -238,6 +239,9 @@
       <Project>{3c398bd4-5714-4802-ab86-d43add15b3c0}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\TsReader.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

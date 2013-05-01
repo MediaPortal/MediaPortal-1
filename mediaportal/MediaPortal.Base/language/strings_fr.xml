@@ -2197,12 +2197,7 @@
     <String id="300093">Redémarrez MP en cas de crash</String>
     <String id="300094">Délai d'attente avant redémarrage (en seconde(s))</String>
     <String id="300095">Extinction du moniteur (avec l'économiseur d'écran)</String>
-    <String id="300096">Allumer moniteur/TV (Lors d'une sortie de mise en veille)</String>
-    <String id="300097">Permettre la mise en veille S3 (même si le réveil des dispositifs sont présents)</String>
-    <String id="300098">Solution pour fixer le blocage de MediaPortal lors d'une sortie de veille</String>
-    <String id="300099">Redémarrez MediaPortal lors d'une sortie de veille</String>
     <String id="300100">Afficher le dernier module actif sur de réveil</String>
-    <String id="300101">Utilisez le sélecteur écran pour choisir l'écran de démarrage de MediaPortal</String>
     <String id="300102">Délai avant le démarrage</String>
     <String id="300103">Sur le démarrage MediaPortal</String>
     <String id="300104">Sur le réveil MediaPortal</String>
@@ -2224,7 +2219,6 @@
     <String id="300120">Thème</String>
     <String id="300121">Affichage à l'écran</String>
     <String id="300122">Se souvenir du dernier élément sélectionné</String>
-    <String id="300123">Cadrage Auto de la fenêtre aux dimensions Thème</String>
     <String id="300124">Masquer les extensions de fichier (.mp3, .avi ...)</String>
     <String id="300125">Activer le cache l'existence de fichiers</String>
     <String id="300126">Activer les effets sonores du thème</String>
@@ -2256,10 +2250,10 @@
     <String id="300152">Photos</String>
     <String id="300153">Auto-créer uniquement des petits miniatures</String>
     <String id="300154">Effacer le cache des images</String>
-    <String id="300155">TV/Videos</String>
+    <String id="300155">Videos</String>
     <String id="300156">Auto-creation des miniatures</String>
     <String id="300157">Laisser les images miniatures dans le dossier d'enregistrement</String>
-    <String id="300158">Effacer les images miniatures TV/Videos</String>
+    <String id="300158">Effacer les images miniatures Videos</String>
     <String id="300159">Aperçu de l'apparence</String>
     <String id="300160">Rangées</String>
     <String id="300161">Base de donnée</String>

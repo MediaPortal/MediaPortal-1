@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.Video
 
     protected VideoSort.SortMethod GetSortMethod(string s)
     {
-      switch (s.Trim().ToLower())
+      switch (s.Trim().ToLowerInvariant())
       {
         case "name":
           return VideoSort.SortMethod.Name;

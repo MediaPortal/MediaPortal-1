@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
 
 #include "statsrenderer.h"
 #include "evrcustompresenter.h"
+#include "version.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -202,31 +203,33 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format(_T("Video: %d x %d %d:%d | Act FPS: %.4f (red)| Drawn: %d | Drop: %d"), 
+    strText.Format(_T("Video: %d x %d %d:%d | Act FPS: %.4f (red)| Drawn: %d | Drop: %d | Rep: %d"), 
       m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight, 
       m_pPresenter->m_iARX, m_pPresenter->m_iARY, 
-      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
+      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped, m_pPresenter->m_iEarlyFrCnt);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
     OffsetRect(&rc, 0, BlankHeight); // Extra "line feed"
 
-    strText.Format(_T("Render time (grn): %+5.1f ms | NST: %+3.1f ms | AveRNST: %+3.1f ms | FrRat: %d | Stall: %+3.1f ms"), 
+    strText.Format(_T("Render time (grn): %+5.1f ms | NST: %+3.1f ms | NSToffs: %+3.1f ms | FrRat: %d | Stall: %+3.1f ms"), 
       m_pPresenter->m_fSyncOffsetAvr/10000.0, m_pPresenter->m_llLastCFPts/10000.0, 
       m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio, m_pPresenter->m_stallTime/10000.0);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format(_T("Raster offset (ylw): %5.2f ms | SOP: %4d | EOP: %4d | Locked: %d | Derr: %5.2f ms | Q: %d"),
+    strText.Format(_T("Raster offset (ylw): %5.2f ms | SOP: %4d | EOP: %4d | Lkd: %d | DWM: %d | Q: %d | Derr: %5.2f ms"),
       m_pPresenter->m_rasterSyncOffset, m_pPresenter->m_LastStartOfPaintScanline, m_pPresenter->m_LastEndOfPaintScanline, 
-      (int)m_pPresenter->m_DetectedLock, m_pPresenter->m_lastDelayErr/10000.0, (m_pPresenter->m_qScheduledSamples.Count()));
+      m_pPresenter->m_DetectedLock, (m_pPresenter->m_bEnableDWMQueued ? m_pPresenter->m_regNumDWMBuffers : 0), 
+      m_pPresenter->m_qScheduledSamples.Count(), 
+      m_pPresenter->m_lastDelayErr/10000.0 );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format(_T("Rptd FPS: %.3f | Detd FPS: %.3f | DetFrT_SD: %+5.3f ms | DetSDur: %+5.3f ms"),  
+    strText.Format(_T("Rptd FPS: %.3f | Detd FPS: %.3f | DetFrT_SD: %+5.3f ms | DetSDur: %+5.3f ms | ver: %d"),  
       ((m_pPresenter->m_rtTimePerFrame > 0) ? (10000000.0/m_pPresenter->m_rtTimePerFrame) : 0), 
       ((m_pPresenter->m_DetFrameTimeAve > 0) ? (1.0/(m_pPresenter->m_DetFrameTimeAve)) : 0),
-      (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0), (m_pPresenter->m_SampDuration/10000.0) );
+      (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0), (m_pPresenter->m_SampDuration/10000.0), DSHOWHELPER_VERSION);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
@@ -287,7 +290,7 @@ void StatsRenderer::DrawStats()
       OffsetRect(&rc, 0, TextHeight);
     }
     
-//    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | BadSTimCnt: %d", 
+//    strText.Format(_T("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | BadSTimCnt: %d"), 
 //       m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
 //       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_qBadSampTimCnt );
 //    DrawText(rc, strText);

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace MediaPortal.Music.Database
 {
@@ -31,8 +32,8 @@ namespace MediaPortal.Music.Database
 
     public AlbumSort(string album, string artistName, int year)
     {
-      _album = album.ToLower();
-      _artistName = artistName.ToLower();
+      _album = album.ToLower(CultureInfo.CurrentCulture);
+      _artistName = artistName.ToLower(CultureInfo.CurrentCulture);
       _year = year;
     }
 
@@ -66,7 +67,7 @@ namespace MediaPortal.Music.Database
         for (int i = 0; i < parts.Length; ++i)
         {
           offsets[i] = -1;
-          int pos = artistName.ToLower().IndexOf(parts[i].ToLower());
+          int pos = artistName.ToLowerInvariant().IndexOf(parts[i].ToLowerInvariant());
           if (pos >= 0)
           {
             if (i > 0)
@@ -96,7 +97,7 @@ namespace MediaPortal.Music.Database
         for (int i = 0; i < parts.Length; ++i)
         {
           offsets[i] = -1;
-          int pos = albumName.ToLower().IndexOf(parts[i].ToLower());
+          int pos = albumName.ToLowerInvariant().IndexOf(parts[i].ToLowerInvariant());
           if (pos >= 0)
           {
             if (i > 0)

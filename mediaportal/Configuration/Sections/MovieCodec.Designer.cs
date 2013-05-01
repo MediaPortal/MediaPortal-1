@@ -24,8 +24,6 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieCodec));
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabelNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.configSplitterSync = new MediaPortal.UserInterface.Controls.MPButton();
       this.configSplitterSource = new MediaPortal.UserInterface.Controls.MPButton();
@@ -59,36 +57,15 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpGroupBox2.SuspendLayout();
+      this.mpCheckBoxTS = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.mpLabelNote);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(6, 359);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(462, 45);
-      this.mpGroupBox2.TabIndex = 3;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Note";
-      // 
-      // mpLabelNote
-      // 
-      this.mpLabelNote.AutoSize = true;
-      this.mpLabelNote.Location = new System.Drawing.Point(106, 19);
-      this.mpLabelNote.Name = "mpLabelNote";
-      this.mpLabelNote.Size = new System.Drawing.Size(247, 13);
-      this.mpLabelNote.TabIndex = 2;
-      this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings !";
       // 
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.mpCheckBoxTS);
       this.mpGroupBox1.Controls.Add(this.configSplitterSync);
       this.mpGroupBox1.Controls.Add(this.configSplitterSource);
       this.mpGroupBox1.Controls.Add(this.configAudioRenderer);
@@ -124,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(462, 353);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 383);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Settings Decoder";
@@ -472,17 +449,26 @@ namespace MediaPortal.Configuration.Sections
       this.label5.TabIndex = 10;
       this.label5.Text = "MPEG / AC3 audio :";
       // 
+      // mpCheckBoxTS
+      // 
+      this.mpCheckBoxTS.AutoSize = true;
+      this.mpCheckBoxTS.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
+      this.mpCheckBoxTS.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpCheckBoxTS.Location = new System.Drawing.Point(19, 353);
+      this.mpCheckBoxTS.Name = "mpCheckBoxTS";
+      this.mpCheckBoxTS.Size = new System.Drawing.Size(397, 17);
+      this.mpCheckBoxTS.TabIndex = 22;
+      this.mpCheckBoxTS.Text = "Use Video Codecs when playing .ts files (TV Codecs will be used if unchecked)";
+      this.mpCheckBoxTS.UseVisualStyleBackColor = true;
+      // 
       // MovieCodec
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.BackColor = System.Drawing.SystemColors.Window;
-      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "MovieCodec";
       this.Size = new System.Drawing.Size(472, 412);
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
@@ -507,8 +493,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabelNote;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPComboBox SplitterComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
@@ -526,5 +510,6 @@ namespace MediaPortal.Configuration.Sections
     private UserInterface.Controls.MPButton configVC1;
     private UserInterface.Controls.MPButton configH264;
     private UserInterface.Controls.MPButton configMPEG;
+    private UserInterface.Controls.MPCheckBox mpCheckBoxTS;
   }
 }

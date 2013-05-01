@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2012 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,5 +41,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE GetMaxBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetMinBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetClockData(CLOCKDATA *clockData) = 0;
+  virtual HRESULT STDMETHODCALLTYPE SetEVRPresentationDelay(DOUBLE EVRDelay) = 0;
+
 };
 #endif // IAVSYNCCLOCK

@@ -80,16 +80,16 @@
 			<label>19103</label>
 		</control>
 
-		<control Style="SettingsToggleButton">
+		<control Style="SettingsCheckButton">
 			<description>Block Invalid Moves</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>6</id>
 			<label>19105</label>			
 		</control>
 
-		<control Style="SettingsToggleButton">
+		<control Style="SettingsCheckButton">
 			<description>Show Invalid Moves</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>7</id>
 			<label>19106</label>
 		</control>
@@ -313,7 +313,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus> 
@@ -330,7 +330,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -347,7 +347,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -364,7 +364,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -381,7 +381,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -398,7 +398,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -415,7 +415,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -432,7 +432,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -449,7 +449,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -466,7 +466,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -483,7 +483,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -500,7 +500,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -517,7 +517,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -534,7 +534,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -551,7 +551,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -568,7 +568,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -585,7 +585,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -602,7 +602,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -619,7 +619,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -636,7 +636,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -653,7 +653,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -670,7 +670,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -687,7 +687,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -704,7 +704,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -721,7 +721,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -738,7 +738,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -755,7 +755,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -772,7 +772,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -789,7 +789,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -806,7 +806,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -823,7 +823,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -840,7 +840,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -857,7 +857,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -874,7 +874,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -891,7 +891,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -908,7 +908,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -925,7 +925,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -942,7 +942,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -959,7 +959,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -976,7 +976,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -993,7 +993,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1010,7 +1010,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1027,7 +1027,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1044,7 +1044,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1061,7 +1061,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1078,7 +1078,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1095,7 +1095,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1112,7 +1112,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1129,7 +1129,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1146,7 +1146,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1163,7 +1163,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1180,7 +1180,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1197,7 +1197,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1214,7 +1214,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1231,7 +1231,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1248,7 +1248,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1265,7 +1265,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1282,7 +1282,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1299,7 +1299,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1316,7 +1316,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1333,7 +1333,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1350,7 +1350,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1367,7 +1367,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1384,7 +1384,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1401,7 +1401,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1418,7 +1418,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1435,7 +1435,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1452,7 +1452,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1469,7 +1469,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1486,7 +1486,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1503,7 +1503,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1520,7 +1520,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1537,7 +1537,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1554,7 +1554,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1571,7 +1571,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1588,7 +1588,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1605,7 +1605,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1622,7 +1622,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1639,7 +1639,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1656,7 +1656,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>
@@ -1673,7 +1673,7 @@
         <label>-</label>
         <width>75</width>
         <height>62</height>
-        <font>font18</font>
+        <font>font22</font>
         <textcolor>White</textcolor>
         <textureFocus>icon_empty_focus.png</textureFocus>
         <textureNoFocus>icon_empty_nofocus.png</textureNoFocus>

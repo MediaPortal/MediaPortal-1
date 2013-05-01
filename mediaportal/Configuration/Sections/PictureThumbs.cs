@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -34,6 +35,8 @@ using CSScriptLibrary;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Picture.Database;
 
@@ -44,7 +47,10 @@ namespace MediaPortal.Configuration.Sections
   public partial class PictureThumbs : SectionSettings
   {
     private bool settingsLoaded = false;
-    private bool noLargeThumbnails = true;
+    private static bool noLargeThumbnails = true;
+    private Thread _scanThread = null;
+    private static int countfiles = 1;
+    private static int totalFiles = 0;
 
     private string[] Extensions
     {
@@ -57,7 +63,9 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public PictureThumbs()
-      : this("Picture Database") {}
+      : this("Picture Database")
+    {
+    }
 
     public PictureThumbs(string name)
       : base("Picture Database")
@@ -88,7 +96,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList)section.GetSetting("shares");
+        ArrayList shares = (ArrayList) section.GetSetting("shares");
 
         foreach (string share in shares)
         {
@@ -165,6 +173,126 @@ namespace MediaPortal.Configuration.Sections
 
     #region Functions
 
+    private void OnScanDatabase()
+    {
+      //reset Value
+      countfiles = 0;
+
+      ThreadStart ts = new ThreadStart(OnScanDatabaseThread);
+      _scanThread = new Thread(ts);
+      _scanThread.Name = "PicturesScan";
+      _scanThread.Priority = ThreadPriority.BelowNormal;
+      _scanThread.Start();
+    }
+
+    private void OnScanDatabaseThread()
+    {
+      try
+      {
+        ArrayList paths = new ArrayList();
+
+        SetStatus("Starting picture thumbnail generation and database additions");
+
+        ArrayList scanShares = new ArrayList();
+
+        for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+        {
+          string fullPath = sharesListBox.Items[(int) sharesListBox.CheckedIndices[index]].ToString();
+
+          if (Directory.Exists(fullPath))
+          {
+            paths.Add(fullPath);
+          }
+        }
+
+        Stopwatch benchclockfile = new Stopwatch();
+        benchclockfile.Start();
+
+        // get all pictures from the path
+        ArrayList availableFiles = new ArrayList();
+        foreach (string path in paths)
+        {
+          CountFiles(path, ref availableFiles);
+        }
+
+        if (!noLargeThumbnails)
+        {
+          // Display double count (for generate small and large thumbnail)
+          totalFiles = availableFiles.Count*2;
+        }
+        else
+        {
+          totalFiles = availableFiles.Count;
+        }
+
+        Log.Info("PictureDatabase: Beginning picture database reorganization and thumbnail generation...");
+
+        // treat each picture file one by one
+        foreach (string file in availableFiles)
+        {
+          Log.Info("Scanning file: {0}", file);
+          // create thumb if not created and add file to db if not already there
+          CreateThumbsAndAddPictureToDB(file);
+        }
+        benchclockfile.Stop();
+        if (noLargeThumbnails)
+        {
+          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
+                    availableFiles.Count,
+                    benchclockfile.Elapsed.TotalSeconds);
+        }
+        else
+        {
+          Log.Debug("Pictures Configuration : Creation of selected thumb for '{0}' files, took {1} seconds",
+                    availableFiles.Count * 2,
+                    benchclockfile.Elapsed.TotalSeconds);
+        }
+
+        Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished");
+
+        SetStatus(String.Format("Finished. {0} files processsed", totalFiles));
+
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    private void CreateThumbsAndAddPictureToDB(string file)
+    {
+      int iRotate = PictureDatabase.GetRotation(file);
+      if (iRotate == -1)
+      {
+        Log.Debug("PictureDatabase: Database is not available. File {0} has not been added", file);
+      }
+
+      string thumbnailImage = Util.Utils.GetPicturesThumbPathname(file);
+      string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(file);
+
+      if (!noLargeThumbnails && !File.Exists(thumbnailImageL))
+      {
+        if (Util.Picture.CreateThumbnail(file, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge,
+                                         true, false))
+        {
+          Log.Debug("PictureDatabase: Creation of missing large thumb successful for {0}", file);
+          countfiles++;
+          SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
+        }
+      }
+      if (!File.Exists(thumbnailImage))
+      {
+        if (Util.Picture.CreateThumbnail(file, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                         (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall,
+                                         false, false))
+        {
+          Log.Debug("PictureDatabase: Creation of missing thumb successful for {0}", file);
+          countfiles++;
+          SetStatus(String.Format("{0}/{1} thumbnails generated", countfiles, totalFiles));
+        }
+      }
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -200,94 +328,97 @@ namespace MediaPortal.Configuration.Sections
       Application.DoEvents();
     }
 
+    public class CreateThumbsAndAddPictureToDBFolderThread
+    {
+      private VirtualDirectory vDir = new VirtualDirectory();
+
+      private string _filepath = string.Empty;
+      private Work work;
+
+      public CreateThumbsAndAddPictureToDBFolderThread(string Filepath)
+      {
+        _filepath = Filepath;
+
+        work = new Work(new DoWorkHandler(this.PerformRequest));
+        work.ThreadPriority = ThreadPriority.BelowNormal;
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      }
+
+      /// <summary>
+      /// creates cached thumbs in MP's thumbs dir
+      /// </summary>
+      private void PerformRequest()
+      {
+        Stopwatch benchclock = new Stopwatch();
+        benchclock.Start();
+        string path = _filepath;
+        List<GUIListItem> itemlist = null;
+
+        vDir.SetExtensions(Util.Utils.PictureExtensions);
+
+        if (!vDir.IsRemote(path))
+        {
+          itemlist = vDir.GetDirectoryUnProtectedExt(path, true);
+
+          foreach (GUIListItem item in itemlist)
+          {
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+            {
+              return;
+            }
+            if (String.IsNullOrEmpty(item.Path))
+            {
+              continue;
+            }
+            if (path.Length >= item.Path.Length)
+            {
+              Log.Warn("GUIPictures: Omitting outside path {0} from check share {1}", item.Path, path);
+              continue;
+            }
+            if (!item.IsFolder)
+            {
+              int iRotate = PictureDatabase.GetRotation(item.Path);
+              if (iRotate == -1)
+              {
+                Log.Debug("PictureDatabase: Database is not available. File {0} has not been added", item.Path);
+              }
+
+              string thumbnailImage = Util.Utils.GetPicturesThumbPathname(item.Path);
+              string thumbnailImageL = Util.Utils.GetPicturesLargeThumbPathname(item.Path);
+
+              if (!noLargeThumbnails && !File.Exists(thumbnailImageL))
+              {
+                if (Util.Picture.CreateThumbnail(item.Path, thumbnailImageL, (int)Thumbs.ThumbLargeResolution,
+                                                 (int)Thumbs.ThumbLargeResolution, iRotate, Thumbs.SpeedThumbsLarge,
+                                                 true, false))
+                {
+                  Log.Debug("PictureDatabase: Creation of missing large thumb successful for {0}", item.Path);
+                  countfiles++;
+                }
+              }
+              if (!File.Exists(thumbnailImage))
+              {
+                if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                                 (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall,
+                                                 false, false))
+                {
+                  Log.Debug("PictureDatabase: Creation of missing thumb successful for {0}", item.Path);
+                  countfiles++;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     /// <summary>
     /// 
     /// </summary>
     private void RebuildDatabase()
     {
-      ArrayList paths = new ArrayList();
-
-      SetStatus("Starting picture thumbnail generation and database additions");
-
-      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
-      {
-        string fullPath = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
-
-        if (Directory.Exists(fullPath))
-        {
-          paths.Add(fullPath);
-        }
-      }
-
-      // get all pictures from the path
-      ArrayList availableFiles = new ArrayList();
-      foreach (string path in paths)
-      {
-        CountFiles(path, ref availableFiles);
-      }
-
-      int count = 1;
-      int totalFiles = availableFiles.Count;
-
-
-      Log.Info("PictureDatabase: Beginning picture database reorganization and thumbnail generation...");
-
-      // treat each picture file one by one
-      foreach (string file in availableFiles)
-      {
-        Log.Info("Scanning file: {0}", file);
-        // create thumb if not created and add file to db if not already there         
-        CreateThumbsAndAddPictureToDB(file);
-        SetStatus(String.Format("{0}/{1} thumbnails generated", count, totalFiles));
-        count++;
-      }
-
-      Log.Info("PictureDatabase: Database reorganization and thumbnail generation finished");
-
-      SetStatus(String.Format("Finished. {0} files processsed", totalFiles));
+      OnScanDatabase();
     }
-
-    private void CreateThumbsAndAddPictureToDB(string file)
-    {
-      int iRotate = PictureDatabase.GetRotation(file);
-      if (iRotate == -1)
-      {
-        Log.Debug("PictureDatabase: Database is not available. File {0} has not been added", file);
-      }
-
-      //Thread.Sleep(30);
-      //add remote check
-      //if ()
-      //{
-      string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures,
-                                            Util.Utils.EncryptLine(file));
-      //if (recreateThumbs || !File.Exists(thumbnailImage))
-      if (!File.Exists(thumbnailImage))
-      {
-        if (Util.Picture.CreateThumbnail(file, thumbnailImage, (int)Thumbs.ThumbResolution,
-                                         (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
-        {
-          Log.Debug("PictureDatabase: Creation of missing thumb successful for {0}", file);
-        }
-      }
-
-      if (!noLargeThumbnails)
-      {
-        thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(file));
-        //if (recreateThumbs || !File.Exists(thumbnailImage))
-        if (!File.Exists(thumbnailImage))
-        {
-          if (Util.Picture.CreateThumbnail(file, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
-                                           (int)Thumbs.ThumbLargeResolution, iRotate,
-                                           Thumbs.SpeedThumbsLarge))
-          {
-            Log.Debug("PictureDatabase: Creation of missing large thumb successful for {0}", file);
-          }
-        }
-      }
-      //}
-    }
-
 
     /// <summary>
     /// 
@@ -311,6 +442,8 @@ namespace MediaPortal.Configuration.Sections
             if (item.Label != "..")
             {
               CountFiles(item.Path, ref availableFiles);
+              CreateThumbsAndAddPictureToDBFolderThread ManualThumbBuilderFolder =
+                new CreateThumbsAndAddPictureToDBFolderThread(item.Path);
             }
           }
           else

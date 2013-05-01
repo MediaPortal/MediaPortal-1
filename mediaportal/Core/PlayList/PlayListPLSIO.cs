@@ -40,7 +40,7 @@ namespace MediaPortal.Playlists
       string basePath = String.Empty;
       Stream stream;
 
-      if (fileName.ToLower().StartsWith("http"))
+      if (fileName.ToLowerInvariant().StartsWith("http"))
       {
         // We've got a URL pointing to a pls
         WebClient client = new WebClient();
@@ -112,7 +112,7 @@ namespace MediaPortal.Playlists
             string leftPart = strLine.Substring(0, equalPos);
             equalPos++;
             string valuePart = strLine.Substring(equalPos);
-            leftPart = leftPart.ToLower();
+            leftPart = leftPart.ToLowerInvariant();
             if (leftPart.StartsWith("file"))
             {
               if (valuePart.Length > 0 && valuePart[0] == '#')
@@ -140,7 +140,7 @@ namespace MediaPortal.Playlists
               if (infoLine == "")
               {
                 // For a URL we need to set the label in for the Playlist name, in order to be played.
-                if (label != null && fileName.ToLower().StartsWith("http"))
+                if (label != null && fileName.ToLowerInvariant().StartsWith("http"))
                 {
                   infoLine = label;
                 }
@@ -170,8 +170,8 @@ namespace MediaPortal.Playlists
               }
 
               PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
-              if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-                  fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+              if (fileName.ToLowerInvariant().StartsWith("http:") || fileName.ToLowerInvariant().StartsWith("https:") ||
+                  fileName.ToLowerInvariant().StartsWith("mms:") || fileName.ToLowerInvariant().StartsWith("rtp:"))
               {
                 newItem.Type = PlayListItem.PlayListItemType.AudioStream;
               }
