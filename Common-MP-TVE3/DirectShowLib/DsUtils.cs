@@ -1648,7 +1648,7 @@ namespace DirectShowLib
 
       // There is a special set of Guids that contain the FourCC code
       // as part of the Guid.  Check to see if it is one of those.
-      if (s.Length == 36 && s.Substring(8).ToUpperInvariant() == "-0000-0010-8000-00AA00389B71")
+      if (s.Length == 36 && s.Substring(8).ToUpper() == "-0000-0010-8000-00AA00389B71")
       {
         // Parse out the FourCC code
         byte[] asc = {
