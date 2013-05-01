@@ -56,7 +56,6 @@ public:
   int  nClip;
   int  nPlaylist;
   bool noAudio;
-  bool sparseVideo;
   bool bSeekTarget;
   bool clipReset;
   bool clipInterrupted;
@@ -66,7 +65,6 @@ public:
   REFERENCE_TIME clipPlaylistOffset;
   void Reset(REFERENCE_TIME totalStreamOffset);
   bool FakeAudioAvailable();
-  bool SparseVideoAvailable();
   bool HasAudio();
   bool HasVideo();
   REFERENCE_TIME Incomplete();
@@ -105,10 +103,7 @@ protected:
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
   AM_MEDIA_TYPE *m_videoPmt;
-  Packet* m_pSparseVideoPacket;
   int superceeded;
-
-  int nVideoPackets;
 
   CCritSec m_sectionRead;
   CCritSec m_sectionVectorAudio;
@@ -125,7 +120,6 @@ protected:
   bool firstPacketReturned;
 
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
-  Packet* GenerateSparseVideo(REFERENCE_TIME rtStart);
 };
 
 // Silent AC3 frame
