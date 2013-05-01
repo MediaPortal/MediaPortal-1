@@ -378,7 +378,8 @@ namespace MediaPortal.Common.Utils
     static readonly Dictionary<Version, string> MpReleaseApi = new Dictionary<Version, string>()
     {
       { new Version("1.1.6.27644"), "1.2.0 Beta" },
-      { new Version("1.2.100.0"), "1.3.0 Alpha" }
+      { new Version("1.2.100.0"), "1.3.0 Alpha" },
+      { new Version("1.3.100.0"), "1.4.0 Pre-Release" }
     };
 
     public static string MediaPortalReleaseForApiVersion(Version apiVersion)
