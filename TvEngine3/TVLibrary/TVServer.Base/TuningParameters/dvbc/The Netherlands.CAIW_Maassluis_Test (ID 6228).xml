@@ -8,7 +8,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 102 with channels BravaNL,Één,Canvas,TV Rijnmond,Nickelodeon,Omroep Brabant-->
+    <!--Transponder ID 102 with channels BravaNL,Één,Canvas,TV Rijnmond,Nickelodeon,Omroep Brabant,TV Rijnmond-->
     <Frequency>554000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -38,7 +38,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 107 with channels TLC,Discovery Channel,TV Utrecht,TV Polonia,TV Noord-Holland,TV5 Monde,192TV,TV Utrecht-->
+    <!--Transponder ID 107 with channels TLC,Discovery Channel,TV Utrecht,TV Polonia,TV Noord-Holland,TV5 Monde,192TV-->
     <Frequency>682000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -86,7 +86,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 115 with channels Regio TV InfoThuis-->
+    <!--Transponder ID 115 with channels WOS,Regio TV InfoThuis-->
     <Frequency>546000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -266,9 +266,9 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 199 with channels XLnt iRadio Hits,CAIW Testbeeld,XLnt iRadio NL,XLnt iRadio Easy Listening,XLnt iRadio Rock,XLnt iRadio Oldies,Xlnt iRadio Klassiek-->
+    <!--Transponder ID 161 with channels ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,-->
     <Frequency>165000</Frequency>
-    <ModulationType>Mod64Qam</ModulationType>
+    <ModulationType>Mod256Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
 </ArrayOfDVBCTuning>
