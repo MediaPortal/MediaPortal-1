@@ -19,6 +19,11 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
+    <Frequency>230000</Frequency>
+    <ModulationType>Mod64Qam</ModulationType>
+    <SymbolRate>6875</SymbolRate>
+  </DVBCTuning>
+  <DVBCTuning>
     <!--HD DR1,ARD HD,SVT2HD,Guiden -->
     <Frequency>248000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
