@@ -319,7 +319,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
     /// <summary>
     /// Scrobble track to last.fm
-    /// private static void ScrobbleWorkerDoWork(object sender, DoWorkEventArgs e)
     /// </summary>
     /// <param name="filename">filename to scrobble</param>
     /// <param name="stoptime">how long song had played for</param>
