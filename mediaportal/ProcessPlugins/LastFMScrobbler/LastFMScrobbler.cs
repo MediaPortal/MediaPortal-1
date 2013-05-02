@@ -270,17 +270,42 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
         var currentSong = (MusicTag) plI.MusicTag;
 
+        if (currentSong == null)
+        {
+          Log.Warn("Unable to announce: {0}", filename);
+          Log.Warn("No tags found");
+          return;
+        }
+
+        if (string.IsNullOrEmpty(currentSong.Title))
+        {
+          Log.Warn("Unable to announce: {0}", filename);
+          Log.Warn("No title for track");
+          return;
+        }
+
+        var artist = currentSong.Artist;
+        if (string.IsNullOrEmpty(artist))
+        {
+          if (string.IsNullOrEmpty(currentSong.AlbumArtist))
+          {
+            Log.Warn("Unable to announce: {0}", filename);
+            Log.Warn("No artist or album artist found");
+            return;
+          }
+          artist = currentSong.AlbumArtist;
+        }
+
         try
         {
-          LastFMLibrary.UpdateNowPlaying(currentSong.Artist, currentSong.Title, currentSong.Album,
-                                         currentSong.Duration.ToString(CultureInfo.InvariantCulture));
+          LastFMLibrary.UpdateNowPlaying(artist, currentSong.Title, currentSong.Album, currentSong.Duration.ToString(CultureInfo.InvariantCulture));
           Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
         }
         catch (LastFMException ex)
         {
           if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
           {
-          Log.Error("Last.fm error when announcing now playing track: {0} - {1}", currentSong.Artist, currentSong.Title);
+            Log.Error("Last.fm error when announcing now playing track: {0} - {1}", currentSong.Artist, currentSong.Title);
             Log.Error(ex.Message);
           }
           else
@@ -290,17 +315,11 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
           }
         }
 
-      if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
+        if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
         {
-          AutoDJ(currentSong.Title, currentSong.Artist);
+          AutoDJ(currentSong.Title, artist);
         }
       }
-      else
-      {
-        Log.Info("Do not announce webstream song");
-        return;
-      }
-
     }
 
     /// <summary>
@@ -336,6 +355,32 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       var currentSong = (MusicTag)plI.MusicTag;
 
+      if (currentSong == null)
+      {
+        Log.Info("Unable to scrobble: {0}", filename);
+        Log.Info("No tags found");
+        return;
+      }
+
+      if (string.IsNullOrEmpty(currentSong.Title))
+      {
+        Log.Info("Unable to scrobble: {0}", filename);
+        Log.Info("No title for track");
+        return;
+      }
+
+      var artist = currentSong.Artist;
+      if (string.IsNullOrEmpty(artist))
+      {
+        if (string.IsNullOrEmpty(currentSong.AlbumArtist))
+        {
+          Log.Info("Unable to scrobble: {0}", filename);
+          Log.Info("No artist or album artist found");
+          return;
+        }
+        artist = currentSong.AlbumArtist;
+      }
+
       if (currentSong.Duration < 30)
       { // last.fm say not to scrobble songs that last less than 30 seconds
         return;
@@ -348,29 +393,29 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       if (!Win32API.IsConnectedToInternet())
       {
-        LastFMLibrary.CacheScrobble(currentSong.Artist, currentSong.Title, currentSong.Album, true, DateTime.UtcNow);
-        Log.Info("No internet connection so unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+        LastFMLibrary.CacheScrobble(artist, currentSong.Title, currentSong.Album, true, DateTime.UtcNow);
+        Log.Info("No internet connection so unable to scrobble: {0} - {1}", currentSong.Title, artist);
         Log.Info("Scrobble has been cached");
         return;
       }
 
       try
       {
-        LastFMLibrary.Scrobble(currentSong.Artist, currentSong.Title, currentSong.Album);
-        Log.Info("Last.fm scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+        LastFMLibrary.Scrobble(artist, currentSong.Title, currentSong.Album);
+        Log.Info("Last.fm scrobble: {0} - {1}", currentSong.Title, artist);
       }
       catch (LastFMException ex)
       {
         if (ex.LastFMError == LastFMException.LastFMErrorCode.ServiceOffline ||
             ex.LastFMError == LastFMException.LastFMErrorCode.ServiceUnavailable)
         {
-          LastFMLibrary.CacheScrobble(currentSong.Artist,currentSong.Title,currentSong.Album,true,DateTime.UtcNow);
-          Log.Info("Unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+          LastFMLibrary.CacheScrobble(artist, currentSong.Title,currentSong.Album,true,DateTime.UtcNow);
+          Log.Info("Unable to scrobble: {0} - {1}", currentSong.Title, artist);
           Log.Info("Scrobble has been cached");
         }
         else
         {
-          Log.Error("Unable to scrobble: {0} - {1}", currentSong.Title, currentSong.Artist);
+          Log.Error("Unable to scrobble: {0} - {1}", currentSong.Title, artist);
           Log.Error(ex);
         }
       }
@@ -399,7 +444,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="strTrack">Name of track</param>
     public static void AutoDJ(string strArtist, string strTrack)
     {
-      var tracks = LastFMLibrary.GetSimilarTracks(strArtist, strTrack);
+      IEnumerable<LastFMSimilarTrack> tracks;
+      try
+      {
+        tracks = LastFMLibrary.GetSimilarTracks(strArtist, strTrack);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error in Last.fm AutoDJ");
+        Log.Error(ex);
+        return;
+      }
       var dbTracks = GetSimilarTracksInDatabase(tracks);
       if (dbTracks.Count > 0)
       {
