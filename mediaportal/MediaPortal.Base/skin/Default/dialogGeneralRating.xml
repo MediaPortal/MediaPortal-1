@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>28380</id>
@@ -10,7 +10,7 @@
     <import>common.dialog.xml</import>
     <control>
       <description>1 Star</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>100</id>
       <posX>366</posX>
       <posY>362</posY>
@@ -24,7 +24,7 @@
     </control>
     <control>
       <description>2 Star</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>101</id>
       <posX>420</posX>
       <posY>362</posY>
@@ -38,7 +38,7 @@
     </control>
     <control>
       <description>3 Star</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>102</id>
       <posX>473</posX>
       <posY>362</posY>
@@ -52,7 +52,7 @@
     </control>
     <control>
       <description>4 Star</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>103</id>
       <posX>526</posX>
       <posY>362</posY>
@@ -66,7 +66,7 @@
     </control>
     <control>
       <description>5 Star</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>104</id>
       <posX>579</posX>
       <posY>362</posY>
