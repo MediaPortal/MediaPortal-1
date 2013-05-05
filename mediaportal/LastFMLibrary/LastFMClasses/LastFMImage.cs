@@ -77,27 +77,27 @@ namespace MediaPortal.LastFM
     public static LastFMImage GetBestImage(List<LastFMImage> images)
     {
       //Mega
-      foreach (var image in images.Where(image => image.ImageSize == LastFMImage.LastFMImageSize.Mega))
+      foreach (var image in images.Where(image => image.ImageSize == LastFMImageSize.Mega))
       {
         return image;
       }
       //Extra-Large
-      foreach (var image in images.Where(image => image.ImageSize == LastFMImage.LastFMImageSize.ExtraLarge))
+      foreach (var image in images.Where(image => image.ImageSize == LastFMImageSize.ExtraLarge))
       {
         return image;
       }
       //Large
-      foreach (var image in images.Where(image => image.ImageSize == LastFMImage.LastFMImageSize.Large))
+      foreach (var image in images.Where(image => image.ImageSize == LastFMImageSize.Large))
       {
         return image;
       }
       //Medium
-      foreach (var image in images.Where(image => image.ImageSize == LastFMImage.LastFMImageSize.Medium))
+      foreach (var image in images.Where(image => image.ImageSize == LastFMImageSize.Medium))
       {
         return image;
       }
       //Small
-      return images.FirstOrDefault(image => image.ImageSize == LastFMImage.LastFMImageSize.Small);      
+      return images.FirstOrDefault(image => image.ImageSize == LastFMImageSize.Small);      
     }
 
 

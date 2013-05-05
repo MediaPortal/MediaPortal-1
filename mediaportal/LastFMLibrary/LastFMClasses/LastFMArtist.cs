@@ -38,7 +38,7 @@ namespace MediaPortal.LastFM
 
   public class LastFMFullArtist : LastFMArtist
   {
-    public string MusicBrainzID { get; set; }
+    public string MusicBrainzId { get; set; }
     public List<LastFMBandMember> BandMembers { get; set; }
     public int Listeners { get; set; }
     public int Playcount { get; set; }
@@ -56,7 +56,7 @@ namespace MediaPortal.LastFM
       var artistElement = xDoc.Root.Element("artist");
       if (artistElement == null) return;
 
-      MusicBrainzID = (string) artistElement.Element("mbid");
+      MusicBrainzId = (string) artistElement.Element("mbid");
       ArtistName = (string) artistElement.Element("name");
       ArtistURL = (string) artistElement.Element("url");
 

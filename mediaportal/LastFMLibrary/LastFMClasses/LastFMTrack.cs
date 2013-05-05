@@ -35,7 +35,7 @@ namespace MediaPortal.LastFM
 
   public class LastFMTrackInfo : LastFMTrackBase
   {
-    public string MusicBrainzID { get; set; }
+    public string MusicBrainzId { get; set; }
     public List<LastFMTag> TopTags { get; set; }
     public List<LastFMImage> Images { get; set; }
     public int Identifier { get; set; }
@@ -52,7 +52,7 @@ namespace MediaPortal.LastFM
 
       Identifier = (int) track.Element("id");
       TrackTitle = (string) track.Element("name");
-      MusicBrainzID = (string) track.Element("mbid");
+      MusicBrainzId = (string) track.Element("mbid");
       TrackURL = (string) track.Element("url");
       Duration = (int) track.Element("duration");
       Listeners = (int) track.Element("listeners");

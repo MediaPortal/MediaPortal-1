@@ -30,7 +30,7 @@ namespace MediaPortal.LastFM
     public string AlbumName { get; set; }
     public string ArtistName { get; set; }
     public string AlbumURL { get; set; }
-    public string MusicBrainzID { get; set; }
+    public string MusicBrainzId { get; set; }
     public int Playcount { get; set; }
     public int Listeners { get; set; }
     public List<LastFMImage> Images { get; set; }
@@ -43,7 +43,7 @@ namespace MediaPortal.LastFM
       var albumElement = xDoc.Root.Element("album");
       if (albumElement == null) return;
 
-      MusicBrainzID = (string) albumElement.Element("mbid");
+      MusicBrainzId = (string) albumElement.Element("mbid");
       AlbumName = (string) albumElement.Element("name");
       ArtistName = (string) albumElement.Element("artist");
       AlbumURL = (string) albumElement.Element("url");
