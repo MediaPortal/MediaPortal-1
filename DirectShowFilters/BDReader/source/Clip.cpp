@@ -212,7 +212,8 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   
   Packet* packet = new Packet();
   packet->nClipNumber = nClip;
-    
+  packet->nPlaylist = nPlaylist;
+
   packet->SetCount(AC3_FRAME_LENGTH);
   packet->SetData(ac3_sample, AC3_FRAME_LENGTH);
   packet->rtStart = rtStart;
