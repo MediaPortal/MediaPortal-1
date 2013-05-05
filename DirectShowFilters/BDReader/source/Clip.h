@@ -95,7 +95,8 @@ public:
 
   // Accurate clip starting time (when known).
   // Not set when selecting chapter from the menu
-  REFERENCE_TIME m_rtClipStartingOffset;
+  REFERENCE_TIME m_rtClipAudioStartingOffset;
+  REFERENCE_TIME m_rtClipVideoStartingOffset;
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
@@ -113,6 +114,9 @@ protected:
   bool firstAudio;
   // true would indicate that this is the first video packet
   bool firstVideo;
+
+  bool m_bCalculateAudioOffset;
+  bool m_bCalculateVideoOffset;
 
   // indicates if this is the first packet to be buffered in clip
   bool firstPacketAccepted;
