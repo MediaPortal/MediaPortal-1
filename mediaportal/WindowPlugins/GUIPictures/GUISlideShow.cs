@@ -369,6 +369,7 @@ namespace MediaPortal.GUI.Pictures
     private MusicDatabase mDB = null;
     private bool _autoShuffleMusic = false;
     public bool _showRecursive = false;
+    public bool _enableResumeMusic = true;
 
     #endregion
 
@@ -412,7 +413,9 @@ namespace MediaPortal.GUI.Pictures
               ShowPrevious();
             }
             if (SlideDirection == 0)
+            {
               GUIWindowManager.ShowPreviousWindow();
+            }
           }
           else
           {
@@ -1217,6 +1220,7 @@ namespace MediaPortal.GUI.Pictures
       _userZoomLevel = 1.0f;
       _lastSegmentIndex = -1;
       _showRecursive = false;
+      _enableResumeMusic = true;
 
       if (null != _backgroundSlide)
       {
