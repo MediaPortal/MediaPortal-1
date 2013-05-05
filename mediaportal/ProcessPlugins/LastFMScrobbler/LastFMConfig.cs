@@ -43,7 +43,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       if (string.IsNullOrEmpty(MusicDatabase.Instance.GetLastFMSK())) return;
 
-      var user = LastFMLibrary.GetUserInfo(MusicDatabase.Instance.GetLastFMUser());
+      LastFMUser user;
+      try
+      {
+        user = LastFMLibrary.GetUserInfo(MusicDatabase.Instance.GetLastFMUser());
+      }
+      catch (Exception ex)
+      {
+        //TODO: provide some feedback / logging on error
+        return;
+      }
+
       if (user == null || string.IsNullOrEmpty(user.UserImgURL)) return;
 
       pbLastFMUser.ImageLocation = user.UserImgURL;

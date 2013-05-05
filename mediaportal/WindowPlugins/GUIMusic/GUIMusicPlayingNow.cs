@@ -1199,7 +1199,17 @@ namespace MediaPortal.GUI.Music
       dlgNotifyLastFM.SetText(dlgText);
       dlgNotifyLastFM.TimeOut = 2;
       dlgNotifyLastFM.DoModal(GetID);
-      LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+      try
+      {
+        LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+      }
+      catch (Exception ex)
+      {
+        //TODO: Should feedback if error
+        Log.Error("Error in DoLastFMLove");
+        Log.Error(ex);
+      }
+      
     }
 
     private void DoLastFMBan()
@@ -1210,7 +1220,16 @@ namespace MediaPortal.GUI.Music
       dlgNotifyLastFM.SetText(dlgText);
       dlgNotifyLastFM.TimeOut = 2;
       dlgNotifyLastFM.DoModal(GetID);
-      LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+      try
+      {
+        LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
+      }
+      catch (Exception ex)
+      {
+        //TODO: Should feedback if error
+        Log.Error("Error in DoLastFMBan");
+        Log.Error(ex);
+      }
     }
 
     private void UpdateSimilarTracks(string filename)
@@ -1227,7 +1246,18 @@ namespace MediaPortal.GUI.Music
     {
       if (tag == null) return;
 
-      var tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
+      List<LastFMSimilarTrack> tracks;
+      try
+      {
+        tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Error getting similar tracks in now playing");
+        Log.Error(ex);
+        return;
+      }
+      
       var dbTracks = GetSimilarTracksInDatabase(tracks);
       
       for (var i = 0; i < 3; i++)

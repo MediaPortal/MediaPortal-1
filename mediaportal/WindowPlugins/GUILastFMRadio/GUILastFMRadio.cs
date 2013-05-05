@@ -178,17 +178,24 @@ namespace MediaPortal.GUI.LastFMRadio
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
+      var user = LastFMLibrary.CurrentUser;
+      if (string.IsNullOrEmpty(user))
+      {
+        Log.Error("No last.fm User Setup.  Unable to play last.fm radio");
+        //TODO: Need to show pop up to user
+      }
+
       if (controlId == (int)SkinControls.USER_RECOMMENDED_BUTTON)
       {
-        TuneToStation("lastfm://user/" + LastFMLibrary.CurrentUser + "/recommended");
+        TuneToStation("lastfm://user/" + user + "/recommended");
       }
       if (controlId == (int)SkinControls.USER_MIX_BUTTON)
       {
-        TuneToStation("lastfm://user/" + LastFMLibrary.CurrentUser + "/mix");
+        TuneToStation("lastfm://user/" + user + "/mix");
       }
       if (controlId == (int)SkinControls.USER_LIBRARY_BUTTON)
       {
-        TuneToStation("lastfm://user/" + LastFMLibrary.CurrentUser + "/library");
+        TuneToStation("lastfm://user/" + user + "/library");
       }
       if (controlId == (int)SkinControls.ARTIST_BUTTON)
       {

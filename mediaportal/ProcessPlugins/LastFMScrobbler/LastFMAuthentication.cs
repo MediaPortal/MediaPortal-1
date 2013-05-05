@@ -64,20 +64,25 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
       catch (LastFMException ex)
       {
-        MessageBox.Show("Error adding user.\n" + ex.Message, "Error adding user", MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+        MessageBox.Show("Error adding user.\n" + ex.Message, "Error adding user", MessageBoxButtons.OK, MessageBoxIcon.Error);
         this.Close();
         return;
       }
 
       MusicDatabase.Instance.AddLastFMUser(userName, sessionKey);
 
-      //details should now be added.   Confirm
-      if (LastFMLibrary.GetUserInfo() != null)
+      try
       {
-        MessageBox.Show("User: " + userName + " Added", "User Added", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        var user = LastFMLibrary.GetUserInfo();
+        if (user != null)
+        {
+          MessageBox.Show("User: " + userName + " Added", "User Added", MessageBoxButtons.OK, MessageBoxIcon.Information);  
+        }
       }
-      Log.Info("Last.fm Session Key stored for user: {0}", userName);
+      catch (Exception)
+      {
+        MessageBox.Show("Error adding user.\nUser: " + userName, "Error Adding User", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
 
       this.Close();
     }
