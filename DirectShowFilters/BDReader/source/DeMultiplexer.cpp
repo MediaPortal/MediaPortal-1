@@ -555,10 +555,6 @@ HRESULT CDeMultiplexer::Start()
       continue;
     }
 
-    // Seek to start - reset the libbluray reading position
-    m_filter.lib.Seek(0);
-    Flush(true, false, 0LL);
-
     CMediaType pmt;
     GetAudioStreamPMT(pmt);
     m_filter.GetAudioPin()->SetInitialMediaType(&pmt);
@@ -568,10 +564,6 @@ HRESULT CDeMultiplexer::Start()
 
     return S_OK;
   }
-  
-  Flush(true, false, 0LL);
-  // Seek to start - reset the libbluray reading position
-  m_filter.lib.Seek(0);
 
   return m_bReadFailed ? S_FALSE : S_OK;
 }
