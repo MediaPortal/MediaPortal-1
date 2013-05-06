@@ -2145,7 +2145,6 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Suspending is already in progress");
       return;
     }
-    _suspending = true;
 
     if (_suspended)
     {
@@ -2153,6 +2152,8 @@ public class MediaPortalApp : D3D, IRender
       return;
     }
 
+    _suspending = true;
+    
     _ignoreContextMenuAction = true;
     _suspended = true;
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING; // this will close all open dialogs      
@@ -2201,13 +2202,14 @@ public class MediaPortalApp : D3D, IRender
       Log.Info("Main: Resuming is already in progress");
       return;
     }
-    _resuming = true;
 
     if (!_suspended)
     {
       Log.Warn("Main: OnResume - OnResume called but MP is not in suspended state.");
       return;
     }
+    
+    _resuming = true;
 
     // delay resuming as configured
     using (Settings xmlreader = new MPSettings())
