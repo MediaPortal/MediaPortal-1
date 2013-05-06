@@ -87,7 +87,16 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       RegistryKey key = null;
       string strMySqlDump = null;
-      key = Utils.registryKey32.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
+            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
       if (key == null)
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       if (key != null)
@@ -122,8 +131,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
         catch (Exception)
         {
-          MessageBox.Show("MySQL - start service exception");
-          return false;
+          MessageBox.Show("MySQL - stop service exception");
+          //return false;
         }
         
         string cmdExe = Environment.SystemDirectory + "\\sc.exe";
@@ -169,6 +178,27 @@ namespace MediaPortal.DeployTool.InstallationChecks
       return true;
     }
 
+    public bool ForceUpdateDB()
+    {
+      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql_upgrade.exe";
+      string cmdLine = "--host=localhost --user=root -p";
+      cmdLine += InstallationProperties.Instance["DBMSPassword"];
+      cmdLine += " --force";
+      Process setup = Process.Start(strMySql, cmdLine);
+      try
+      {
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
+
     public bool Install()
     {
       BackupDB();
@@ -194,9 +224,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       while (!sr.EndOfStream)
       {
         string line = sr.ReadLine();
-        if (line.Contains("Installation completed successfully"))
+        if (line.Contains("Configuration completed successfully") || line.Contains("Installation completed successfully") || line.Contains("completed successfully"))
         {
           installOk = true;
+          //File.Delete(Path.GetTempPath() + "\\mysqlinst.log");
           break;
         }
       }
@@ -249,7 +280,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         // Try restore DB here first
         if (MySQL51)
+        {
           RestoreDB();
+          ForceUpdateDB();
+        }
 
         Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
         if (mysqladmin != null)
@@ -293,7 +327,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
       if (MySQL51)
+      {
         RestoreDB();
+        ForceUpdateDB();
+      }
       return true;
     }
 
@@ -318,11 +355,24 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      key = Utils.registryKey32.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.6", false,
+            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
       if (key == null)
+      {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      }
       if (key == null)
+      {
         result.state = CheckState.NOT_INSTALLED;
+      }
       else
       {
         key.Close();

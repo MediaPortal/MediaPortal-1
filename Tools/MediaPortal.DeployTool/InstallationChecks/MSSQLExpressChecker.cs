@@ -60,7 +60,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
       RegistryKey keySql = null;
       keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
-        keySql = Utils.registryKey32.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      {
+        try
+        {
+          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL", false,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
       if (keySql == null)
       {
         return;
@@ -73,9 +84,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
           "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
           true);
       if (keySql == null)
-        Utils.registryKey32.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
-          true);
+      {
+        try
+        {
+          keySql = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
       if (keySql == null)
       {
         return;
@@ -197,9 +217,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
         Registry.LocalMachine.OpenSubKey(
           "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
       if (key == null)
-        key =
-          Utils.registryKey32.OpenSubKey(
-            "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion");
+      {
+        try
+        {
+          key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion", false,
+              Utils.eRegWow64Options.KEY_WOW64_32KEY);
+        }
+        catch
+        {
+          // Parent key not open, exception found at opening (probably related to
+          // security permissions requested)
+        }
+      }
 
       using (key)
       {
