@@ -94,7 +94,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bFlushing(false),
   m_bSeekDone(true),
   m_bDiscontinuity(false),
-  m_bFirstSample(true),
   m_bZeroTimeStream(false),
   m_bInitDuration(true),
   m_bProvidePMT(false),
@@ -102,6 +101,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bStopWait(false),
   m_rtStreamTimeOffset(0),
   m_rtTitleDuration(0),
+  m_nSampleCounter(0),
   m_bDoFakeSeek(false),
   m_H264decoder(GUID_NULL),
   m_VC1decoder(GUID_NULL),
@@ -510,7 +510,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
       if (!buffer)
       {
-        if (m_bFirstSample)
+        if (m_nSampleCounter == 0)
           Sleep(10);
         else 
         {
@@ -524,7 +524,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           }
           else
             Sleep(10);
-		  
+
           return ERROR_NO_DATA;
         }
       }
@@ -546,7 +546,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
  
               m_bInitDuration = true;
               checkPlaybackState = true;
-              m_bClipEndingNotified = false;
+
+              if (m_nSampleCounter > EOS_THRESHOLD)
+                m_bClipEndingNotified = false;
+              else
+              {
+                DeliverEndOfStream();
+                m_bClipEndingNotified = true;
+              }
 
               if (buffer->bResuming || buffer->nNewSegment & NS_INTERRUPTED)
               {
@@ -561,10 +568,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               // LAV video decoder requires an end of stream notification to be able to provide complete video frames
               // to downstream filters in a case where we are waiting for the audio pin to see the clip boundary as
               // we cannot provide yet the next clip's PMT downstream since audio stream could require a rebuild
-              if (m_currentDecoder == CLSID_LAVVideo && (buffer->nNewSegment & NS_NEW_PLAYLIST))
+              if (m_currentDecoder == CLSID_LAVVideo && !m_bClipEndingNotified && (buffer->nNewSegment & NS_NEW_PLAYLIST))
               {
                 LogDebug("DeliverEndOFStream LAV Only for audio pin wait (%d,%d)", buffer->nPlaylist, buffer->nClipNumber);
                 DeliverEndOfStream();
+                m_bClipEndingNotified = true;
               }
             }
             if ((buffer->nNewSegment & NS_STREAM_RESET) == NS_STREAM_RESET)
@@ -695,7 +703,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             pSample->GetPointer(&pSampleBuffer);
             memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
-            m_bFirstSample = false;
+            m_nSampleCounter++;
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
             LogDebug("vid: %6.3f corr %6.3f playlist time %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 
@@ -731,7 +739,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
   {
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
-    m_bFirstSample = true;
+    m_nSampleCounter = 0;
     m_bClipEndingNotified = false;
   }
 

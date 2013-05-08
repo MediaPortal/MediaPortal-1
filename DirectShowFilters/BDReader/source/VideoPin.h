@@ -28,6 +28,9 @@
 // EE30215D-164F-4A92-A4EB-9D4C13390F9F
 DEFINE_GUID(CLSID_LAVVideo, 0xEE30215D, 0x164F, 0x4A92, 0xA4, 0xEB, 0x9D, 0x4C, 0x13, 0x39, 0x0F, 0x9F);
 
+// Deliver EOS at the end of clip instantly if less or egual amount of frames has been renderred
+#define EOS_THRESHOLD 5
+
 class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
@@ -107,11 +110,12 @@ protected:
   bool m_bFlushing;
   bool m_bSeekDone;
   bool m_bDiscontinuity;
-  bool m_bFirstSample;
   bool m_bInitDuration;
   bool m_bClipEndingNotified;
   bool m_bStopWait;
   bool m_bZeroTimeStream;
+
+  long m_nSampleCounter;
 
   REFERENCE_TIME m_rtStreamTimeOffset;
   REFERENCE_TIME m_rtTitleDuration;
