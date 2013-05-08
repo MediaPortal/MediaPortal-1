@@ -522,6 +522,11 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         dbTrackListing.AddRange(trackListing);
       }
 
+      foreach (var track in dbTrackListing.Where(track => InPlaylist(track.FileName)))
+      {
+        dbTrackListing.Remove(track);
+      }
+
       return _allowMultipleVersions ? dbTrackListing : dbTrackListing.GroupBy(t => new {t.Artist, t.Title}).Select(y => y.First()).ToList();
     }
 
