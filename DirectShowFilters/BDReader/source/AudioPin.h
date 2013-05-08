@@ -113,7 +113,6 @@ protected:
   bool m_bFlushing;
   bool m_bSeekDone;
   bool m_bDiscontinuity;
-  bool m_bFirstSample;
   bool m_bZeroTimeStream;
 
   bool m_bUsePCM;
@@ -121,6 +120,5 @@ protected:
   REFERENCE_TIME m_rtStreamTimeOffset;
 
   bool m_bZeroStreamOffset;
-  bool m_bClipEndingNotified;
 };
 
