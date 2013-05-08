@@ -27,7 +27,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-//#define LOG_OVERLAY_COMMANDS
+#define LOG_OVERLAY_COMMANDS
 
 extern void LogDebug(const char *fmt, ...);
 
@@ -421,26 +421,20 @@ void COverlayRenderer::DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY*
     
       HRESULT hr = m_pD3DDevice->CreateTexture(pOv->w, pOv->h, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
                                                 D3DPOOL_DEFAULT, &texture, NULL);
-    
+
       if (SUCCEEDED(hr))
       {
         hr = texture->LockRect(0, &lockedRect, NULL, 0);
         if (SUCCEEDED(hr))
         {
-          UINT32* pBits = (UINT32*)lockedRect.pBits;
           if (pOv->argb)
           {
-			      for(int i = 0; i < pOv->h; i++)
-			      {
-				      UINT32 *pDst = pBits + ((pOv->y + i) * 1920) + pOv->x;
-				      UINT32 *pSrc = (UINT32*)pOv->argb + ((pOv->y + i) * pOv->stride) + pOv->x;
-				      UINT32 *pStart = pDst;
-
-				      for(;pDst < pStart + pOv->w;)
-				      {
-					      *pDst++ = *pSrc++;
-				      }
-			      }
+            for(INT i = 0; i < pOv->h; i++)
+            {
+              DWORD *pDst = (DWORD*)lockedRect.pBits + (lockedRect.Pitch / 4) * i;
+              DWORD *pSrc = (DWORD*)pOv->argb + i * pOv->stride;
+              memcpy(pDst, pSrc, pOv->w * 4);
+            }
           }
           else 
             LogDebug("ovr: DrawBitmap - pOv->argb is NULL");
@@ -592,8 +586,8 @@ void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 void COverlayRenderer::LogARGBCommand(const BD_ARGB_OVERLAY* ov)
 {
 #ifdef LOG_OVERLAY_COMMANDS
-  LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d stride: %d", ARGBCommandAsString(ov->cmd),
-    ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts, ov->stride);
+  LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d stride: %4d plane: %i pts: %i", ARGBCommandAsString(ov->cmd),
+    ov->x, ov->y, ov->w, ov->h, ov->stride, ov->plane, ov->pts);
 #endif 
 }
 
