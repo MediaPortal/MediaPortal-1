@@ -1865,8 +1865,11 @@ namespace MediaPortal.MusicPlayer.BASS
                          }
                        }
 
-                       _mixer.Dispose();
-                       _mixer = null;
+                       if (_mixer != null)
+                       {
+                         _mixer.Dispose();
+                         _mixer = null;
+                       }
 
                        // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
                        if (_isCDDAFile)
