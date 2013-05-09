@@ -17,9 +17,9 @@
 			<height>32</height>
 			<onup>101</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
@@ -32,9 +32,9 @@
 			<height>32</height>
 			<onup>102</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
@@ -47,9 +47,9 @@
 			<height>32</height>
 			<onup>103</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
@@ -62,9 +62,9 @@
 			<height>32</height>
 			<onup>104</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 	
     <control>
@@ -76,9 +76,9 @@
 			<width>32</width>
 			<height>32</height>		
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 	
 	<control>
