@@ -311,16 +311,16 @@
     
 	  <control>
 			<description>Subtitles Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>218</id>
 			<posY>888</posY>
 			<posX>1555</posX>
 			<width>47</width>
 			<height>47</height>
-			<AltTextureFocus>osd_sub_button_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>osd_sub_button_nofocus.png</AltTextureNoFocus>
-			<textureFocus>osd_sub_button_focus.png</textureFocus>
-			<textureNoFocus>osd_sub_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_sub_button_focus.png</textureFocus>
+      <textureNoFocus>osd_sub_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_sub_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_sub_button_nofocus.png</textureCheckmarkNoFocus> 
 			<label>-</label>
 			<font>-</font>
 			<onleft>995</onleft>
@@ -331,7 +331,7 @@
 	
 		<control>
 			<description>Audio Menu</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>221</id>
 			<posY>887</posY>
 			<posX>1618</posX>
@@ -341,26 +341,26 @@
 			<onright>995</onright>
 			<ondown>221</ondown>
 			<onup>221</onup>
-			<AltTextureFocus>osd_audio_button_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>osd_audio_button_nofocus.png</AltTextureNoFocus>
-			<textureFocus>osd_audio_button_focus.png</textureFocus>
-			<textureNoFocus>osd_audio_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_audio_button_focus.png</textureFocus>
+      <textureNoFocus>osd_audio_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_audio_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_audio_button_nofocus.png</textureCheckmarkNoFocus> 
 			<label>-</label>
 			<font>-</font>
 	  </control>
 	   
 		<control>
 	  	<description>Video Menu</description>
-	    <type>togglebutton</type>
+	    <type>checkbutton</type>
 	    <id>220</id>
 			<posY>888</posY>
 			<posX>-2000</posX>
 			<width>47</width>
 			<height>47</height>
-	    <AltTextureFocus>osd_video_button_focus.png</AltTextureFocus>
-	    <AltTextureNoFocus>osd_video_button_nofocus.png</AltTextureNoFocus>
-	    <textureFocus>osd_video_button_focus.png</textureFocus>
-	    <textureNoFocus>osd_video_button_nofocus.png</textureNoFocus>
+      <textureFocus>osd_video_button_focus.png</textureFocus>
+      <textureNoFocus>osd_video_button_nofocus.png</textureNoFocus>
+      <textureCheckmark>osd_video_button_focus.png</textureCheckmark>
+      <textureCheckmarkNoFocus>osd_video_button_nofocus.png</textureCheckmarkNoFocus> 
 	    <label>-</label>
 	    <font>-</font>
 	    <onleft>995</onleft>
@@ -596,16 +596,16 @@
 
     <control>
       <description>Bookmarks Menu</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>219</id>
-      <posX>256</posX>
+      <posX>-2000</posX>
       <posY>537</posY>
       <width>62</width>
       <height>43</height>
-      <AltTextureFocus>osd_settings_bookmark_focus.png</AltTextureFocus>
-      <AltTextureNoFocus>osd_settings_bookmark_nofocus.png</AltTextureNoFocus>
       <textureFocus>-</textureFocus>
-      <textureNoFocus>osd_settings_bookmark_focus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <textureCheckmark>-</textureCheckmark>
+      <textureCheckmarkNoFocus>-</textureCheckmarkNoFocus> 
       <label>-</label>
       <font>-</font>
       <onleft>213</onleft>

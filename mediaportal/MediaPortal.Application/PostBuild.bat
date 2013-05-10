@@ -76,21 +76,35 @@ REM Skins
 xcopy %1\MediaPortal.Base\Skin\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
 
 REM Copy all dll files from cpp solution 
-xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll . /Y /D
-xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll . /Y /D
-xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll . /Y /D
-xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll . /Y /D
-xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
+xcopy %1\..\DirectShowFilters\DirectShowHelper\bin\%2\dshowhelper.dll . /Y /D
+xcopy %1\..\DirectShowFilters\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll . /Y /D
+xcopy %1\..\DirectShowFilters\DXUtil\bin\%2\dxutil.dll . /Y /D
+xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.dll . /Y /D
+xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
 
 if /I "%2" EQU "DEBUG" (
-xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D
-xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.pdb . /Y /D
-xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.pdb . /Y /D
-xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.pdb . /Y /D
+xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
 )
+
+REM bluray.dll - odd source folder is 
+if /I "%2" EQU "RELEASE" (
+xcopy %1\..\DirectShowFilters\bin_Win32\libbluray.dll . /Y /D
+)
+
+if /I "%2" EQU "DEBUG" (
+xcopy %1\..\DirectShowFilters\bin_Win32d\libbluray.dll . /Y /D
+)
+
+ren libbluray.dll bluray.dll
 
 REM Copy one dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
+
+REM Copy bluray dll from DirectShowFilters folder
+xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
 
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D

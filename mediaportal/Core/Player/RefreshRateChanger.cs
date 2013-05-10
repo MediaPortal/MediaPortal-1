@@ -241,28 +241,29 @@ namespace MediaPortal.Player
     {
       public SuicideForm()
       {
+        RefreshRateChanger.RefreshRateChangeRunning = true;
         Thread.Sleep(500);
-        this.Activated += new EventHandler(SuicideForm_Activated);
-        this.Opacity = 0;
+        Activated += SuicideFormActivated;
+        Opacity = 0;
       }
 
       protected override void Dispose(bool disposing)
       {
-        this.Activated -= new EventHandler(SuicideForm_Activated);
+        Activated -= SuicideFormActivated;
         base.Dispose(disposing);
       }
 
-      private void SuicideForm_Activated(Object sender, EventArgs e)
+      private void SuicideFormActivated(Object sender, EventArgs e)
       {
         Thread.Sleep(1000);
-        this.Close();
+        Close();
       }
     }
 
 
     public static void KillFormThread()
     {
-      SuicideForm suicideForm = new SuicideForm();
+      var suicideForm = new SuicideForm();
       suicideForm.Show();
       suicideForm.Focus();
     }
@@ -278,10 +279,8 @@ namespace MediaPortal.Player
         if (dwmEnabled > 0)
         {
           Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
-
-          ThreadStart starter = delegate { KillFormThread(); };
-          Thread killFormThread = new Thread(starter);
-          killFormThread.IsBackground = true;
+          ThreadStart starter = KillFormThread;
+          var killFormThread = new Thread(starter) {IsBackground = true};
           killFormThread.Start();
         }
       }
@@ -443,11 +442,11 @@ namespace MediaPortal.Player
     {
       GetRefreshRateConfiguration();
 
-      name = name.ToLower();
+      name = name.ToLowerInvariant();
 
       foreach (RefreshRateSetting setting in _refreshRateSettings)
       {
-        if (setting.Name.ToLower().Equals(name))
+        if (setting.Name.ToLowerInvariant().Equals(name))
         {
           return setting;
         }
@@ -546,7 +545,7 @@ namespace MediaPortal.Player
       string args = "";
       string cmd = "";
 
-      newExtCmd = newExtCmd.Trim().ToLower();
+      newExtCmd = newExtCmd.Trim().ToLowerInvariant();
 
       int lenCmd = newExtCmd.Length;
       int idxCmd = newExtCmd.IndexOf(".cmd");
@@ -640,54 +639,43 @@ namespace MediaPortal.Player
 
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
-      int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
       double currentRR = 0;
-      if ((currentScreenNr == -1) || (Manager.Adapters.Count <= currentScreenNr))
+      if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) || (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal))
       {
-        Log.Info(
-          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not aquire current screen number, or current screen number bigger than number of adapters available.");
+        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: adapter number out of bounds");
       }
       else
       {
-        currentRR = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
+        currentRR = Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
       }
-
       _refreshrateChangeCurrentRR = currentRR;
 
-      bool enabled = false;
-      bool deviceReset = false;
-      bool force_refresh_rate = false;
-
+      bool deviceReset;
+      bool forceRefreshRate;
       using (Settings xmlreader = new MPSettings())
       {
-        enabled = xmlreader.GetValueAsBool("general", "autochangerefreshrate", false);
-
-        if (!enabled)
+        if (!xmlreader.GetValueAsBool("general", "autochangerefreshrate", false))
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: 'auto refreshrate changer' disabled");
           return;
         }
-        force_refresh_rate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
+        forceRefreshRate = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         deviceReset = xmlreader.GetValueAsBool("general", "devicereset", false);
       }
 
-      double newRR = 0;
-      string newExtCmd = "";
-      string newRRDescription = "";
+      double newRR;
+      string newExtCmd;
+      string newRRDescription;
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
-      if (newRR > 0 && (currentRR != newRR || force_refresh_rate))
-        //run external command in order to change refresh rate.
+      if (newRR > 0 && (currentRR != newRR || forceRefreshRate))
       {
-        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
-                 currentRR, newRR);
+        Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz", currentRR, newRR);
 
         if (newExtCmd.Length == 0)
         {
-          Log.Info(
-            "RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",
-            currentRR, newRR);
-          Win32.CycleRefreshRate((uint)currentScreenNr, newRR);
+          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
+          Win32.CycleRefreshRate((uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
@@ -706,15 +694,11 @@ namespace MediaPortal.Player
       {
         if (newRR == 0)
         {
-          Log.Info(
-            "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",
-            fps);
+          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)", fps);
         }
         else
         {
-          Log.Info(
-            "RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}",
-            currentRR, newRR);
+          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: no refreshrate change required. current is {0}hz, desired is {1}", currentRR, newRR);
         }
       }
     }
@@ -870,6 +854,8 @@ namespace MediaPortal.Player
     #endregion
 
     #region public properties
+
+    public static bool RefreshRateChangeRunning { get; set; }
 
     public static bool RefreshRateChangePending
     {

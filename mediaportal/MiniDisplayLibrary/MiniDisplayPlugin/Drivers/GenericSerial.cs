@@ -1006,31 +1006,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         byte[] buffer = new byte[strArray.Length];
         for (int i = 0; i < strArray.Length; i++)
         {
-          if (strArray[i].Substring(0, 1).ToLower() == "TL")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "TL")
           {
             buffer[i] = 0xfb;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "TC")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "TC")
           {
             buffer[i] = 0xfc;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PL")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PL")
           {
             buffer[i] = 0xfd;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PC")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PC")
           {
             buffer[i] = 0xfe;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "PZ")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "PZ")
           {
             buffer[i] = 0xff;
           }
-          if (strArray[i].Substring(0, 1).ToLower() == "x")
+          if (strArray[i].Substring(0, 1).ToLowerInvariant() == "x")
           {
             buffer[i] = byte.Parse(strArray[i].Substring(1), NumberStyles.HexNumber);
           }
-          else if (strArray[i].Substring(0, 2).ToLower() == "0x")
+          else if (strArray[i].Substring(0, 2).ToLowerInvariant() == "0x")
           {
             buffer[i] = byte.Parse(strArray[i].Substring(2), NumberStyles.HexNumber);
           }

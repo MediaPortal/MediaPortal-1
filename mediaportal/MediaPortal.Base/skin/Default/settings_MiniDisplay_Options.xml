@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9003</id>
@@ -22,7 +22,7 @@
       <layout>StackLayout</layout>
       <control>
         <description>Volume Display</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>30</id>
         <width>225</width>
         <label>9121</label>
@@ -30,56 +30,56 @@
       </control>
       <control>
         <description>Progress display</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>31</id>
         <width>225</width>
         <label>9122</label>
       </control>
       <control>
         <description>Disk Icon</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>32</id>
         <width>225</width>
         <label>9123</label>
       </control>
       <control>
         <description>Media Status</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>33</id>
         <width>225</width>
         <label>9124</label>
       </control>
       <control>
         <description>CD/DVD Status</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>34</id>
         <width>225</width>
         <label>9125</label>
       </control>
       <control>
         <description>Use Custom Font</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>35</id>
         <width>225</width>
         <label>9126</label>
       </control>
       <control>
         <description>Use Large Icons</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>36</id>
         <width>225</width>
         <label>9127</label>
       </control>
       <control>
         <description>Use Custom Large Icons</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>37</id>
         <width>225</width>
         <label>9128</label>
       </control>
       <control>
         <description>Invert Large Icons</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>38</id>
         <width>225</width>
         <label>9129</label>

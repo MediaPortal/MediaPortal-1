@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Threading;
 using System.Xml;
@@ -213,6 +214,133 @@ namespace SetupTv.Sections
     #endregion
 
     #region helper methods
+
+    /// <summary>
+    /// Save reading data in file 
+    /// </summary>
+    /// <param name="context"></param>
+    public static byte[] ReadFully(Stream input)
+    {
+      byte[] buffer = new byte[16 * 1024];
+      using (MemoryStream ms = new MemoryStream())
+      {
+        int read;
+        while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+        {
+          ms.Write(buffer, 0, read);
+        }
+        return ms.ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Replace string in file 
+    /// </summary>
+    /// <param name="context"></param>
+    public static void ReplaceInFile(
+                      string filePath, string searchText, string replaceText)
+    {
+
+      var content = string.Empty;
+      using (StreamReader reader = new StreamReader(filePath))
+      {
+        content = reader.ReadToEnd();
+        reader.Close();
+      }
+
+      content = Regex.Replace(content, searchText, replaceText);
+
+      using (StreamWriter writer = new StreamWriter(filePath))
+      {
+        writer.Write(content);
+        writer.Close();
+      }
+    }
+
+    /// <summary>
+    /// Downloads new Satellite XML 
+    /// </summary>
+    /// <param name="context"></param>
+    public void DownloadSatelliteXML()
+    {
+      SatelliteContext context = new SatelliteContext();
+      context.Url = "http://install.team-mediaportal.com/tvsetup/DVBS/satellites.xml";
+      context.FileName = String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath);
+      if (context.Url == null)
+        return;
+      if (context.Url.Length == 0)
+        return;
+      if (!context.Url.ToLowerInvariant().StartsWith("http://"))
+        return;
+      string itemLine = String.Format("Downloading satellite xml");
+      ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
+      item.EnsureVisible();
+      Application.DoEvents();
+
+      try
+      {
+        string[,] contextDownload = new string[2, 2];
+        contextDownload[0, 0] = context.FileName;
+        contextDownload[0, 1] = context.Url;
+        contextDownload[1, 1] = context.Url.Replace(".ini", "-S2.ini");
+        {
+          string satUrl = contextDownload[1, 1];
+          item.Text = itemLine + " connecting...";
+          Application.DoEvents();
+          HttpWebRequest request = (HttpWebRequest)WebRequest.Create(satUrl);
+          request.ReadWriteTimeout = 30 * 1000; //thirty secs timeout
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+          item.Text = itemLine + " downloading...";
+          Application.DoEvents();
+          using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+          {
+            item.Text = itemLine + " saving...";
+            Application.DoEvents();
+
+            String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath,
+                         Path.GetFileNameWithoutExtension(context.FileName));
+
+            if (File.Exists(newPath))
+            {
+              File.Delete(newPath);
+            }
+
+            using (FileStream stream = new FileStream(newPath, FileMode.Create, FileAccess.Write))
+            {
+              byte[] bytes = ReadFully(response.GetResponseStream());
+
+              stream.Write(bytes, 0, bytes.Length);
+            }
+
+            #region Replace correct url in satellite.xml
+
+            // Read the XML file and replace URL into content
+            ReplaceInFile(newPath, "http://fastsatfinder.com/bin/mp", "http://install.team-mediaportal.com/tvsetup/DVBS");
+
+            #endregion
+          }
+        } // for
+      }
+      catch (WebException WebEx)
+      {
+        //HTTP Protocol error, like 404 file not found. Do Nothing
+        if (WebEx.Status != WebExceptionStatus.ProtocolError)
+        {
+          throw new WebException(WebEx.Message);
+        }
+        item.Text = itemLine + " done";
+      }
+      catch (Exception)
+      {
+        item.Text = itemLine + " failed";
+      }
+      finally
+      {
+        item.Text = itemLine + " done";
+      }
+      Application.DoEvents();
+    }
 
     /// <summary>
     /// Downloads new transponderlist and merges both S and S2 into one XML 
@@ -424,7 +552,7 @@ namespace SetupTv.Sections
         if (transponders.Count > 0)
         {
           System.IO.TextWriter parFileXML = System.IO.File.CreateText(newPath);
-          XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));
+          XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Transponder>));
           xmlSerializer.Serialize(parFileXML, transponders);
           parFileXML.Close();
         }
@@ -466,11 +594,20 @@ namespace SetupTv.Sections
     /// Loads all known satellites from xml file
     /// </summary>
     /// <returns></returns>
-    private static List<SatelliteContext> LoadSatellites()
+    private List<SatelliteContext> LoadSatellites()
     {
       List<SatelliteContext> satellites = new List<SatelliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath));
+      try
+      {
+        doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath));
+      }
+      catch (Exception)
+      {
+        Log.Info("satellites.xml not present, try to download it");
+        DownloadSatelliteXML();
+      }
+      
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
       {
@@ -1660,12 +1797,14 @@ namespace SetupTv.Sections
 
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
+      SaveSettings();
       scanState = ScanState.Updating;
       SetControlStates();
       listViewStatus.Items.Clear();
       string itemLine = String.Format("Updating satellites...");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
       Application.DoEvents();
+      DownloadSatelliteXML();
       List<SatelliteContext> sats = LoadSatellites();
       foreach (SatelliteContext sat in sats)
       {
@@ -1675,6 +1814,7 @@ namespace SetupTv.Sections
       listViewStatus.Items.Add(new ListViewItem(itemLine));
       scanState = ScanState.Initialized;
       SetControlStates();
+      Init();
     }
 
     #region LNB selection tab

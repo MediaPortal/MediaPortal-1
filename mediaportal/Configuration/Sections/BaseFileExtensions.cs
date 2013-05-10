@@ -34,14 +34,14 @@ namespace MediaPortal.Configuration.Sections
       {
         string extensions = string.Empty;
 
-        foreach (string extension in extensionsListBox.Items)
+        foreach (ListViewItem extension in extensionsListView.Items)
         {
           if (extensions.Length > 0)
           {
             extensions += ",";
           }
 
-          extensions += extension;
+          extensions += extension.Text;
         }
 
         return extensions;
@@ -49,7 +49,10 @@ namespace MediaPortal.Configuration.Sections
       set
       {
         string[] extensions = ((string)value).Split(',');
-        extensionsListBox.Items.AddRange(extensions);
+        foreach (var extension in extensions)
+        {
+          extensionsListView.Items.Add(extension);
+        }
       }
     }
 
@@ -100,9 +103,9 @@ namespace MediaPortal.Configuration.Sections
         extension = extension.Replace("*", "");
 
         // Check if we already have new extension in the list
-        foreach (var ext in extensionsListBox.Items)
+        foreach (ListViewItem ext in extensionsListView.Items)
         {
-          if ((string)ext == extension)
+          if (ext.Text == extension)
           {
             MessageBox.Show("Extension already exist.", "Information", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
@@ -113,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Add extension to the list
-        extensionsListBox.Items.Add(extension);
+        extensionsListView.Items.Add(extension);
 
         // Clear text
         extensionTextBox.Text = string.Empty;
@@ -122,12 +125,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void removeButton_Click(object sender, EventArgs e)
     {
-      int itemsSelected = extensionsListBox.SelectedIndices.Count;
+      int itemsSelected = extensionsListView.SelectedIndices.Count;
 
       // Make sure we have a valid item selected
       for (int index = 0; index < itemsSelected; index++)
       {
-        extensionsListBox.Items.RemoveAt(extensionsListBox.SelectedIndices[0]);
+        extensionsListView.Items.RemoveAt(extensionsListView.SelectedIndices[0]);
       }
     }
 
@@ -138,13 +141,13 @@ namespace MediaPortal.Configuration.Sections
         "MediaPortal Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
           == DialogResult.No) return;
 
-      extensionsListBox.Items.Clear();
+      extensionsListView.Items.Clear();
       Extensions = DefaultExtensions;
     }
 
     private void extensionsListBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-      removeButton.Enabled = (extensionsListBox.SelectedItems.Count > 0);
+      removeButton.Enabled = (extensionsListView.SelectedItems.Count > 0);
     }
 
     private void extensionTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -160,7 +163,7 @@ namespace MediaPortal.Configuration.Sections
     private void extensionsListBox_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.KeyCode != System.Windows.Forms.Keys.Delete) return;
-      if (extensionsListBox.SelectedItems.Count <= 0) return;
+      if (extensionsListView.SelectedItems.Count <= 0) return;
 
       e.Handled = true;
       removeButton_Click(null, null);
@@ -172,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override object GetSetting(string name)
     {
-      switch (name.ToLower())
+      switch (name.ToLowerInvariant())
       {
         case "extensions":
           return Extensions;

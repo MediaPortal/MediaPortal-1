@@ -29,6 +29,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -203,7 +204,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.3.1.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+    <Reference Include="Bass.Net, Version=2.4.8.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Bass.Net.dll</HintPath>
     </Reference>
@@ -235,6 +236,11 @@
     <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell">
+      <HintPath>..\MediaPortal.Base\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -273,6 +279,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -334,6 +341,7 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\DXNative.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
@@ -350,9 +358,16 @@
     <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
+    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
+    <Compile Include="MusicPlayer\BASS\BassMusicPlayer.cs" />
+    <Compile Include="MusicPlayer\BASS\Config.cs" />
+    <Compile Include="MusicPlayer\BASS\Enums.cs" />
+    <Compile Include="MusicPlayer\BASS\MusicStream.cs" />
+    <Compile Include="MusicPlayer\BASS\Utils.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -366,7 +381,6 @@
     <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
-    <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
     <Compile Include="MusicPlayer\DSP\DSPPluginInfo.cs" />
     <Compile Include="MusicPlayer\Visualization\WinampViz.cs" />
     <Compile Include="Player\AudioSelector.cs" />
@@ -391,7 +405,7 @@
     <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
-    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
     <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
@@ -486,6 +500,7 @@
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="guilib\DXEnums.cs" />
     <Compile Include="Util\EncryptDecrypt.cs" />
     <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
@@ -906,9 +921,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUIThumbnailPanel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="guilib\GUIToggleButtonControl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUITVProgressControl.cs">

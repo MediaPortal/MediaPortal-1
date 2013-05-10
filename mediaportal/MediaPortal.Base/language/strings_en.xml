@@ -995,6 +995,7 @@
     <String id="1196">Enable Subtitles</String>
     <String id="1197">Turn off DXVA</String>
     <String id="1198">DVD Navigator</String>
+    <String id="1199">Enable Internal Blu-ray Player</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
     <String id="1202">Auto</String>
@@ -1090,6 +1091,9 @@
     <String id="1318">Save subtitle</String>
     <String id="1319">Save modified subtitle file?</String>
     <String id="1320">{0} as {1} &#10;</String>
+    <String id="1321">Auto Decoder Settings</String>
+    <String id="1322">Force Source Splitter</String>
+    <String id="1323">Video Codecs for .TS files</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>
@@ -2197,12 +2201,7 @@
     <String id="300093">Restart MP on crash</String>
     <String id="300094">Restart delay in seconds</String>
     <String id="300095">Turn off monitor (when blanking screen)</String>
-    <String id="300096">Turn monitor/tv on (resume from standby)</String>
-    <String id="300097">Allow S3 standby (even if wake up devices are present)</String>
-    <String id="300098">Workaround to fix MediaPortal freeze on resume</String>
-    <String id="300099">Restart MediaPortal on resume</String>
     <String id="300100">Show last active module on wake up</String>
-    <String id="300101">Use screen selector to choose MediaPortal starting screen</String>
     <String id="300102">Delay startup</String>
     <String id="300103">On MediaPortal startup</String>
     <String id="300104">On MediaPortal resume</String>
@@ -2224,7 +2223,6 @@
     <String id="300120">Skin</String>
     <String id="300121">On-screen Display</String>
     <String id="300122">Allow remember last focused items</String>
-    <String id="300123">Autosize window mode to skin dimensions</String>
     <String id="300124">Hide file extensions (.mp3, .avi...)</String>
     <String id="300125">Enable file existence cache</String>
     <String id="300126">Enable skin sound effects</String>
@@ -2256,10 +2254,10 @@
     <String id="300152">Pictures</String>
     <String id="300153">Auto-create only small thumbs</String>
     <String id="300154">Clear pictures cache</String>
-    <String id="300155">TV/Videos</String>
+    <String id="300155">Videos</String>
     <String id="300156">Auto-create thumbs</String>
     <String id="300157">Leave a thumb in a rec folder</String>
-    <String id="300158">Clear TV/Videos thumbs</String>
+    <String id="300158">Clear Videos thumbs</String>
     <String id="300159">Preview appearance</String>
     <String id="300160">Rows</String>
     <String id="300161">Database</String>
@@ -2329,5 +2327,9 @@
     <String id="300225">Use "Sort title"</String>
     <String id="300226">Use only internal nfo scraper</String>
     <String id="300227">Clear Blacklisted thumbs</String>
+    <String id="300228">Ask for confirmation when stopping timeshift</String>
+    <String id="300229">Minimize to tray on focus loss</String>
+    <String id="300230">Stop playback on removal of an audio renderer</String>
+    <String id="300231">Reduce frame rate when not being in focus</String>
    </Section>
 </Language>

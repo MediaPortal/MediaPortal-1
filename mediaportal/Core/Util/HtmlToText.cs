@@ -317,7 +317,7 @@ namespace MediaPortal.Util
         }
       }
 
-      attr_name = attr_name.ToUpper();
+      attr_name = attr_name.ToUpperInvariant();
       if (CMP("ALT", attr_name))
         parse_entities(ref temp);
 
@@ -2370,7 +2370,7 @@ namespace MediaPortal.Util
 
         if (CMP("ALIGN", attr_name))
         {
-          attr_ctnt = attr_ctnt.ToUpper();
+          attr_ctnt = attr_ctnt.ToUpperInvariant();
           if (CMP("LEFT", attr_ctnt))
           {
             hr_align = LEFT;
@@ -2875,7 +2875,7 @@ namespace MediaPortal.Util
         if (CMP("ALIGN", attr_name))
         {
           found = 1;
-          attr_ctnt = attr_ctnt.ToUpper();
+          attr_ctnt = attr_ctnt.ToUpperInvariant();
           if (CMP("LEFT", attr_ctnt))
           {
             push_align(LEFT);

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning>
-  <!--Created on 2011-12-29 12:01-->
+  <!--Created on 2013-04-07 12:51-->
   <DVBCTuning>
     <!--Transponder ID 101 with channels Nederland 1,Nederland 2,Nederland 3,TV West-->
     <Frequency>452000</Frequency>
@@ -8,7 +8,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 102 with channels BravaNL,Één,Ketnet/Canvas,TV Rijnmond,Nickelodeon,Omroep Brabant,Omroep Brabant-->
+    <!--Transponder ID 102 with channels BravaNL,Één,Canvas,TV Rijnmond,Nickelodeon,Omroep Brabant,Omroep Brabant-->
     <Frequency>444000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -26,25 +26,25 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 105 with channels Hilversum Best 24,Pebble TV,BBC World,euronews,CNN International,TRT Turk,Xite,Consumenten 24-->
+    <!--Transponder ID 105 with channels Best 24,Pebble TV,BBC World,euronews,CNN International,TRT Turk,Xite-->
     <Frequency>298000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 106 with channels BBC One,BBC Two,GoedTV,RTM1,Mezzo,Journaal 24,VH1 Classic,Tweede Kamer TV-->
+    <!--Transponder ID 106 with channels BBC One,BBC Two,GoedTV,RTM1,Mezzo,Journaal 24,VH1 Classic-->
     <Frequency>306000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 107 with channels Animal Planet/TLC,Discovery Channel,Weer en Verkeer,TV Utrecht,TV Polonia,TV Noord-Holland,TV5 Monde,192TV-->
+    <!--Transponder ID 107 with channels TLC,Discovery Channel,TV Utrecht,TV Polonia,TV Noord-Holland,TV5 Monde,192TV-->
     <Frequency>314000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 108 with channels Family7,Showroom,MTV NL,ZDF,Das Erste,Sterren.nl,Spirit24-->
+    <!--Transponder ID 108 with channels Family7,Showroom,MTV NL,ZDF,Das Erste-->
     <Frequency>322000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -56,7 +56,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 110 with channels ATV,NostalgieNet,Bloomberg Television,3SAT,Canal 24 Horas,RTBF La Deux,ARTE-->
+    <!--Transponder ID 110 with channels ATV,NostalgieNet,Bloomberg Television,3SAT,RTBF La Deux,ARTE-->
     <Frequency>338000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -68,31 +68,31 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 112 with channels Sport1 Extra 2,Sport1 Live,Sport1 Golf,Sport1 Tennis,Sport1 Extra 1,Sport1 Extra 3-->
+    <!--Transponder ID 112 with channels Sport1 Extra 2,Sport1 Select,Sport1 Golf,Sport1 Tennis,Sport1 Extra 1,Sport1 Voetbal-->
     <Frequency>354000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 113 with channels CNN Turk,Motors TV,Euro D,Nautical Channel,Fashion TV,Fine Living Network,Zone Reality,Extreme Sports-->
+    <!--Transponder ID 113 with channels CNN Turk,Motors TV,Euro D,Nautical Channel,Fashion TV,Fine Living Network,CBS Reality,Extreme Sports-->
     <Frequency>362000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 114 with channels Nederland 1 HD,Private Spice,Holland Doc 24,Set Asia,Geschiedenis 24,X-MO,Hustler TV-->
+    <!--Transponder ID 114 with channels Nederland 1 HD,Private Spice,Holland Doc 24,Set Asia,X-MO,Hustler TV-->
     <Frequency>370000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 116 with channels Comedy Central Family,TMF Pure,BBC Three/CBBC,BBC Four/Cbeebies,Eredivisie Live Hoofdkanaal,Eredivisie Live Extra1-->
+    <!--Transponder ID 116 with channels Comedy Central Family,BBC Three/CBBC,BBC Four/Cbeebies,Eredivisie Live Hoofdkanaal,Eredivisie Live Extra1-->
     <Frequency>378000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 117 with channels Film1 Premiere +1,Film1 Premiere,Film1 Family,Film1 Festival,Film1 Action-->
+    <!--Transponder ID 117 with channels Film1 Series,Film1 Premiere,Film1 Family,Film1 Sundance,Film1 Action-->
     <Frequency>386000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -104,13 +104,13 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 119 with channels JCTV,TBN Europe,The Church Channel,Sundance Channel,Boomerang,Disc. World,Disc. Science,Investigation Discovery,13th Street-->
-    <Frequency>402000</Frequency>
+    <!--Transponder ID 119 with channels JCTV,TBN Europe,The Church Channel,Boomerang,Disc. World,Disc. Science,Investigation Discovery,13th Street-->
+    <Frequency>726000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 120 with channels BravaHDTV,MTV Brand New,TMF NL,TMF Dance,Nick Jr-->
+    <!--Transponder ID 120 with channels RTL Telekids,BravaHDTV,MTV Brand New,Nick Jr-->
     <Frequency>460000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -134,19 +134,19 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 124 with channels myZen.tv,NTV,Dusk!,DreamTurk,BBC HD-->
+    <!--Transponder ID 124 with channels myZen.tv,Caiway Evenementenkanaal,NTV,Dusk!,BBC HD-->
     <Frequency>250000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 125 with channels Film1 Premiere HD,Sport1 Live HD-->
+    <!--Transponder ID 125 with channels Film1 Premiere HD,Sport1 Select HD-->
     <Frequency>258000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 126 with channels Nat Geo Wild,Z@ppelin/Z@pp 24,Kral TV,Kaze TV,Politiek 24,Lite TV,France 2,TV Oranje-->
+    <!--Transponder ID 126 with channels Nat Geo Wild,Zappelin/Zapp,Kral TV,Kaze TV,Politiek 24,Lite TV,France 2,TV Oranje-->
     <Frequency>266000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -158,13 +158,13 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 128 with channels E! Entertainment,JimJam,Nat Geo Wild HD,Cartoon Network,France 24-->
+    <!--Transponder ID 128 with channels E! Pop of Culture,JimJam,Nat Geo Wild HD,Cartoon Network,France 24-->
     <Frequency>282000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 129 with channels TVE Internaçional,TV Noord,TV Oost,Omrop Fryslan,L1,TV Drenthe,Omroep Zeeland,Eredivisie Live Hoofdkanaal HD-->
+    <!--Transponder ID 129 with channels TVE Internaçional,Omrop Fryslan,L1,TV Drenthe,Omroep Zeeland,Eredivisie Live Hoofdkanaal HD-->
     <Frequency>290000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -182,7 +182,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 132 with channels Sundance Channel HD,Mezzo Live HD,FTV HD,Eurosport HD-->
+    <!--Transponder ID 132 with channels Horse & Country,Mezzo Live HD,FTV HD,Eurosport HD-->
     <Frequency>734000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -200,7 +200,7 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 135 with channels Een HD,Ketnet/Canvas HD,Eredivisie Live Extra1 HD,Caiway informatie SD-->
+    <!--Transponder ID 135 with channels Een HD,Canvas HD,Eredivisie Live Extra1 HD,Caiway informatie SD-->
     <Frequency>802000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
@@ -212,25 +212,25 @@
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 137 with channels Food Network Channel HD,Penthouse HD-->
+    <!--Transponder ID 137 with channels Food Network Channel HD,Penthouse HD,TV Noord,TV Oost-->
     <Frequency>170000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 138 with channels Veronica/DisneyXD HD,SBS6 HD-->
+    <!--Transponder ID 138 with channels Ketnet,Veronica/DisneyXD HD,SBS6 HD-->
     <Frequency>162000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 139 with channels Eredivisie Live Extra3 HD,Animal Planet HD-->
+    <!--Transponder ID 139 with channels Eredivisie Live Extra3 HD,Animal Planet HD,Mediaset Italia-->
     <Frequency>154000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <!--Transponder ID 140 with channels Arte HD,ZDF HD-->
+    <!--Transponder ID 140 with channels Beek TV,Arte HD,ZDF HD-->
     <Frequency>146000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6900</SymbolRate>

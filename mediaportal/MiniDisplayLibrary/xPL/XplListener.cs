@@ -140,7 +140,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       try
       {
-        t = t.ToLower();
+        t = t.ToLowerInvariant();
         if (!t.StartsWith("xpl-group"))
         {
           return false;
@@ -204,15 +204,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     private void HandleConfigMessage(XplMsg x)
     {
       string strMessage = "";
-      if (x.XPL_Msg[0].Section.ToLower() == "xpl-cmnd")
+      if (x.XPL_Msg[0].Section.ToLowerInvariant() == "xpl-cmnd")
       {
-        this.LogInfo("Processing config message: " + x.XPL_Msg[1].Section.ToLower());
+        this.LogInfo("Processing config message: " + x.XPL_Msg[1].Section.ToLowerInvariant());
         if (this.DoDebug)
         {
-          Log.Info("xPL.XplListener.HandleConfigMessage(): received config message: " + x.XPL_Msg[1].Section.ToLower(),
+          Log.Info("xPL.XplListener.HandleConfigMessage(): received config message: " + x.XPL_Msg[1].Section.ToLowerInvariant(),
                    new object[0]);
         }
-        string str4 = x.XPL_Msg[1].Section.ToLower();
+        string str4 = x.XPL_Msg[1].Section.ToLowerInvariant();
         if (str4 != null)
         {
           XplConfigItem item;
@@ -221,7 +221,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             if (!(str4 == "config.list"))
             {
               if ((str4 == "config.response") &&
-                  (x.GetParam(0, "target").ToLower() == (this.Source.ToLower() + "." + this.InstanceName.ToLower())))
+                  (x.GetParam(0, "target").ToLowerInvariant() == (this.Source.ToLowerInvariant() + "." + this.InstanceName.ToLowerInvariant())))
               {
                 if (this.DoDebug)
                 {
@@ -232,7 +232,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                 {
                   try
                   {
-                    string key = x.XPL_Msg[1].Details[i].keyName.ToLower();
+                    string key = x.XPL_Msg[1].Details[i].keyName.ToLowerInvariant();
                     string s = x.XPL_Msg[1].Details[i].Value;
                     this.LogInfo("Processing configuration item: " + key);
                     item = this.ConfigItems.ConfigItem(key);
@@ -336,7 +336,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           else
           {
             string str5;
-            if (((str5 = x.GetParam(1, "command").ToLower()) != null) && (str5 == "request"))
+            if (((str5 = x.GetParam(1, "command").ToLowerInvariant()) != null) && (str5 == "request"))
             {
               if (this.DoDebug)
               {
@@ -471,7 +471,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       }
       if (!flag)
       {
-        string str2 = Environment.MachineName.ToLower().Replace("-", "").Replace("_", "");
+        string str2 = Environment.MachineName.ToLowerInvariant().Replace("-", "").Replace("_", "");
         if (str2.Length > 14)
         {
           str2 = str2.Substring(0, 14);
@@ -599,11 +599,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         bool flag = false;
         for (int i = 0; !flag & (i < this.ListenToIPs.Length); i++)
         {
-          if (this.ListenToIPs[i].ToUpper() == "ANY")
+          if (this.ListenToIPs[i].ToUpperInvariant() == "ANY")
           {
             flag = true;
           }
-          else if (this.ListenToIPs[i].ToUpper() == "ANY_LOCAL")
+          else if (this.ListenToIPs[i].ToUpperInvariant() == "ANY_LOCAL")
           {
             flag = this.LocalIP.Contains(this.epIncoming.Address.ToString());
           }
@@ -641,12 +641,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               {
                 Log.Info("xPL.XplListener.ReceiveData(): received data is a valid xPL message");
               }
-              string t = x.GetParam(0, "target").ToLower();
-              bool flag2 = x.GetParam(0, "target").ToLower() == (this.Source + "." + this.InstanceName).ToLower();
+              string t = x.GetParam(0, "target").ToLowerInvariant();
+              bool flag2 = x.GetParam(0, "target").ToLowerInvariant() == (this.Source + "." + this.InstanceName).ToLowerInvariant();
               bool flag3 = x.GetParam(0, "target") == "*";
               bool flag4 = this.Filters.Count == 0;
-              string c = x.Schema.msgClass.ToLower();
-              string str3 = x.Schema.msgType.ToLower();
+              string c = x.Schema.msgClass.ToLowerInvariant();
+              string str3 = x.Schema.msgType.ToLowerInvariant();
               if (this.DoDebug)
               {
                 Log.Info(
@@ -682,7 +682,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               {
                 if ((flag3 | flag2) | (!this.Filters.MatchTarget | this.CheckGroups(t)))
                 {
-                  string m = x.XPL_Msg[0].Section.ToLower();
+                  string m = x.XPL_Msg[0].Section.ToLowerInvariant();
                   for (int j = 0; j < this.Filters.Count; j++)
                   {
                     XplFilter filter = this.Filters.Item(j);
@@ -877,7 +877,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     private static XplMessageTypes StrCmnd2MsgType(string StrCmnd)
     {
-      switch (StrCmnd.ToLower())
+      switch (StrCmnd.ToLowerInvariant())
       {
         case "xpl-cmnd":
           return XplMessageTypes.Command;
@@ -1277,10 +1277,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
       public void Add(string itemName, string itemValue, xplConfigTypes itemtype)
       {
-        if (!this.mKeys.Contains(itemName.ToLower()))
+        if (!this.mKeys.Contains(itemName.ToLowerInvariant()))
         {
           XplConfigItem item = new XplConfigItem(itemName, itemValue, itemtype);
-          this.mKeys.Add(itemName.ToLower());
+          this.mKeys.Add(itemName.ToLowerInvariant());
           this.mValues.Add(item);
         }
         else
@@ -1296,12 +1296,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
       public XplConfigItem ConfigItem(string key)
       {
-        return this.mValues[this.mKeys.IndexOf(key.ToLower())];
+        return this.mValues[this.mKeys.IndexOf(key.ToLowerInvariant())];
       }
 
       public string Item(string key)
       {
-        return this.mValues[this.mKeys.IndexOf(key.ToLower())].Value;
+        return this.mValues[this.mKeys.IndexOf(key.ToLowerInvariant())].Value;
       }
 
       public int Count
@@ -1340,11 +1340,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                        string Schema_class, string Schema_Type)
       {
         this.MessageType = t;
-        this.Source.Vendor = Source_Vendor.ToLower();
-        this.Source.Device = Source_Device.ToLower();
-        this.Source.Instance = Source_Instance.ToLower();
-        this.Schema.msgClass = Schema_class.ToLower();
-        this.Schema.msgType = Schema_Type.ToLower();
+        this.Source.Vendor = Source_Vendor.ToLowerInvariant();
+        this.Source.Device = Source_Device.ToLowerInvariant();
+        this.Source.Instance = Source_Instance.ToLowerInvariant();
+        this.Schema.msgClass = Schema_class.ToLowerInvariant();
+        this.Schema.msgType = Schema_Type.ToLowerInvariant();
       }
     }
 

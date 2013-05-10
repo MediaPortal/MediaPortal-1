@@ -271,8 +271,8 @@ namespace MediaPortal.GUI.RSS
 
       try
       {
-        if (m_strSiteURL.ToLower().StartsWith("http://") == false &&
-            m_strSiteURL.ToLower().StartsWith("file://") == false)
+        if (m_strSiteURL.ToLowerInvariant().StartsWith("http://") == false &&
+            m_strSiteURL.ToLowerInvariant().StartsWith("file://") == false)
         {
           m_strSiteURL = "http://" + m_strSiteURL;
         }

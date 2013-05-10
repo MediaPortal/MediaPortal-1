@@ -140,7 +140,6 @@ namespace MediaPortal.Player
 
       using (Settings xmlreader = new MPSettings())
       {
-
         // get pre-defined filter setup
         filterConfig.bAutoDecoderSettings = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
         filterConfig.bForceSourceSplitter = xmlreader.GetValueAsBool("movieplayer", "forcesourcesplitter", false);
@@ -167,6 +166,36 @@ namespace MediaPortal.Player
           if (xmlreader.GetValueAsBool("movieplayer", "usefilter" + i, false))
           {
             filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("movieplayer", "filter" + i, "undefined"));
+          }
+          i++;
+        }
+      }
+      return filterConfig;
+    }
+
+    protected virtual FilterConfig GetFilterConfigurationBD()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        // get BD Audio/Video Codec configuration settings
+        filterConfig.Video = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
+        filterConfig.Audio = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");
+        filterConfig.VideoH264 = xmlreader.GetValueAsString("bdplayer", "h264videocodec", "");
+        filterConfig.VideoVC1 = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
+        filterConfig.VideoVC1I = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("bdplayer", "audiorenderer",
+                                                                "Default DirectSound Device");
+
+        // Clear Post Process filter.
+        filterConfig.OtherFilters.Clear();
+
+        // get BD post-processing filter setup
+        int i = 0;
+        while (xmlreader.GetValueAsString("bdplayer", "filter" + i, "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("bdplayer", "usefilter" + i, false))
+          {
+            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("bdplayer", "filter" + i, "undefined"));
           }
           i++;
         }
@@ -504,10 +533,17 @@ namespace MediaPortal.Player
         //Get video/audio Info
         _mediaInfo = new MediaInfoWrapper(m_strCurrentFile);
 
+        GUIMessage msg;
+        if (extension == ".mpls" || extension == ".bdmv")
+        {
+          filterConfig.bForceSourceSplitter = false;
+          filterConfig = GetFilterConfigurationBD();
+        }
+
         //Manually add codecs based on file extension if not in auto-settings
         // switch back to directx fullscreen mode
         Log.Info("VideoPlayer9: Enabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
 
         // add the VMR9 in the graph
@@ -522,9 +558,6 @@ namespace MediaPortal.Player
         {
           AudioOnly = true;
         }
-
-        if (extension == ".mpls" || extension == ".bdmv")
-          filterConfig.bForceSourceSplitter = false;
 
         if (filterConfig.strsplitterfilter == LAV_SPLITTER_FILTER_SOURCE && filterConfig.bForceSourceSplitter)
         {
@@ -1427,7 +1460,7 @@ namespace MediaPortal.Player
           if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
         }
         PostProcessFilterMPAudio.Clear();
-        Log.Info("VideoPlayer9: Cleanup MP Audio Swither");
+        Log.Info("VideoPlayer9: Cleanup PostProcess MediaPortal AudioSwitcher");
 
         if (_FFDShowAudio != null)
         {
@@ -1439,7 +1472,7 @@ namespace MediaPortal.Player
         {
           DirectShowUtil.ReleaseComObject(_audioSwitcher);
           _audioSwitcher = null;
-          Log.Info("VideoPlayer9: Cleanup _AudioSwitcher");
+          Log.Info("VideoPlayer9: Cleanup MediaPortal AudioSwitcher (for external audio files)");
         }
 
         #endregion

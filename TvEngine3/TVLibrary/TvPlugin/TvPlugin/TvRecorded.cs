@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,17 +22,15 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Linq;
 using System.Diagnostics;
 using Gentle.Common;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Services;
-using MediaPortal.Threading;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
@@ -43,106 +41,6 @@ namespace TvPlugin
 {
   public class TvRecorded : RecordedBase, IComparer<GUIListItem>
   {
-    #region ThumbCacher
-
-    public class RecordingThumbCacher
-    {
-      private Work work;
-
-      public RecordingThumbCacher()
-      {
-        work = new Work(new DoWorkHandler(this.PerformRequest));
-        work.ThreadPriority = ThreadPriority.BelowNormal;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-      }
-
-      private void PerformRequest()
-      {
-        if (_thumbCreationActive)
-        {
-          return;
-        }
-        try
-        {
-          _thumbCreationActive = true;
-
-          IList<Recording> recordings = Recording.ListAll();
-          for (int i = recordings.Count - 1; i >= 0; i--)
-          {
-            string recFileName = TVUtil.GetFileNameForRecording(recordings[i]);
-            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
-                                             Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
-                                             Utils.GetThumbExtension());
-
-            if ((!TVHome.UseRTSP()) && !Utils.FileExistsInCache(thumbNail))
-            {
-              //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
-
-              //if (!DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail))
-              //  Log.Info("GUIRecordedTV: No thumbnail created for {0}", Utils.SplitFilename(rec.FileName));
-              try
-              {
-                Thread.Sleep(250);
-                //MediaInfoWrapper recinfo = new MediaInfoWrapper(recFileName);
-                //if (recinfo.IsH264)
-                //{
-                //  Log.Info("RecordedTV: Thumbnail creation not supported for h.264 file - {0}", Utils.SplitFilename(recFileName));
-                //}
-                //else
-                //{
-                if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
-                {
-                  Log.Info("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
-                }
-                else
-                {
-                  Log.Info("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
-                }
-                Thread.Sleep(250);
-                //}
-
-                // The .NET3 way....
-                //
-                //MediaPlayer player = new MediaPlayer();
-                //player.Open(new Uri(rec.FileName, UriKind.Absolute));
-                //player.ScrubbingEnabled = true;
-                //player.Play();
-                //player.Pause();
-                //// Grab the frame 10 minutes after start to respect pre-recording times.
-                //player.Position = new TimeSpan(0, 10, 0);
-                //System.Threading.Thread.Sleep(5000);
-                //RenderTargetBitmap rtb = new RenderTargetBitmap(720, 576, 1 / 200, 1 / 200, PixelFormats.Pbgra32);
-                //DrawingVisual dv = new DrawingVisual();
-                //DrawingContext dc = dv.RenderOpen();
-                //dc.DrawVideo(player, new Rect(0, 0, 720, 576));
-                //dc.Close();
-                //rtb.Render(dv);
-                //PngBitmapEncoder encoder = new PngBitmapEncoder();
-                //encoder.Frames.Add(BitmapFrame.Create(rtb));
-                //using (FileStream stream = new FileStream(thumbNail, FileMode.OpenOrCreate))
-                //{
-                //  encoder.Save(stream);
-                //}
-                //player.Stop();
-                //player.Close();
-              }
-              catch (Exception ex)
-              {
-                Log.Error("RecordedTV: No thumbnail created for {0} - {1}", Utils.SplitFilename(recFileName),
-                          ex.Message);
-              }
-            }
-          }
-        }
-        finally
-        {
-          _thumbCreationActive = false;
-        }
-      }
-    }
-
-    #endregion
-
     #region Variables
 
     private enum Controls
@@ -175,8 +73,6 @@ namespace TvPlugin
     private DBView _currentDbView = DBView.Recordings;
     private static Recording _oActiveRecording = null;
     private static bool _bIsLiveRecording = false;
-    private static bool _thumbCreationActive = false;
-    private static bool _createRecordedThumbs = true;
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
@@ -185,8 +81,6 @@ namespace TvPlugin
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
 
-    private RecordingThumbCacher thumbworker = null;
-    
     [SkinControl(6)]
     protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)]
@@ -242,10 +136,7 @@ namespace TvPlugin
         }
 
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
-        _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
       }
-
-      thumbworker = null;
     }
 
     protected override void SaveSettings()
@@ -306,6 +197,29 @@ namespace TvPlugin
       PreInit();
       ResetAllControls();
       return bResult;
+    }
+
+    // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when
+    // the player is not playing)...
+    private void OnNewAction(Action action)
+    {
+      if ((action.wID == Action.ActionType.ACTION_PLAY
+           || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+          && GUIWindowManager.ActiveWindow == GetID)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+
+        if (item == null || item.Label == ".." || item.IsFolder)
+        {
+          return;
+        }
+
+        if (GetFocusControlId() == facadeLayout.GetID)
+        {
+          // only start something is facade is focused
+          OnSelectedRecording(facadeLayout.SelectedListItemIndex);
+        }
+      }
     }
 
     public override void OnAction(Action action)
@@ -382,26 +296,6 @@ namespace TvPlugin
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      if (thumbworker == null)
-      {
-        if (_createRecordedThumbs)
-        {
-          _createRecordedThumbs = (!TVHome.UseRTSP());
-
-          if (!_createRecordedThumbs)
-          {
-            Log.Info("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
-          }
-          else
-          {
-            thumbworker = new RecordingThumbCacher();
-          }
-        }
-      }
-      else
-      {
-        Log.Info("GUIRecordedTV: thumbworker already running - didn't start another one");
-      }
     }
 
     protected override bool AllowLayout(Layout layout)
@@ -904,7 +798,7 @@ namespace TvPlugin
       {
         Log.Error("TvRecorded: Error fetching recordings from database {0}", ex.Message);
       }
-      Log.Debug("LoadDirectory() - finished loading facade items after '[0}' ms.", watch.ElapsedMilliseconds);
+      Log.Debug("LoadDirectory() - finished loading facade items after '{0}' ms.", watch.ElapsedMilliseconds);
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(facadeLayout.Count - (facadeLayout.Count > 0 && facadeLayout[0].Label == ".." ? 1 : 0)));
@@ -973,9 +867,41 @@ namespace TvPlugin
 
         // Set a default logo indicating the watched status
         string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-        string previewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
+        string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
+
+        if (!Utils.FileExistsInCache(PreviewThumb))
+        {
+          Log.Debug("Thumbnail {0} does not exist in local thumbs folder - get it from TV server", PreviewThumb);
+          string thumbnailFilename = string.Format("{0}{1}",
+                                            Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
+                                            Utils.GetThumbExtension());
+
+          try
+          {
+            byte[] thumbData = RemoteControl.Instance.GetRecordingThumbnail(thumbnailFilename);
+
+            if (thumbData.Length > 0)
+            {
+              using (FileStream fs = new FileStream(PreviewThumb, FileMode.Create))
+              {
+                fs.Write(thumbData, 0, thumbData.Length);
+                fs.Close();
+                fs.Dispose();
+              }
+              Utils.DoInsertExistingFileIntoCache(PreviewThumb);
+            }
+            else
+            {
+              Log.Debug("Thumbnail {0} not found on TV server", thumbnailFilename);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Error fetching thumbnail {0} from TV server - {1}", thumbnailFilename, ex.Message);
+          }
+        }
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
@@ -985,15 +911,15 @@ namespace TvPlugin
         }
 
         // Display previews only if the option to create them is active                
-        if (Utils.FileExistsInCache(previewThumb))
+        if (Utils.FileExistsInCache(PreviewThumb))
         {
           // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(previewThumb);          
+          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);          
           if (Utils.FileExistsInCache(PreviewThumbLarge))
           {
-            previewThumb = PreviewThumbLarge;
+            PreviewThumb = PreviewThumbLarge;
           }
-          item.ThumbnailImage = item.IconImageBig = previewThumb;
+          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
         }
         else
         {
@@ -1078,7 +1004,7 @@ namespace TvPlugin
       }
     }
 
-    private bool OnSelectedRecording(int iItem)
+    protected override bool OnSelectedRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)

@@ -38,9 +38,9 @@ namespace TvPlugin
   public class TvSearch : GUIInternalWindow
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;
-    [SkinControl(5)] protected GUIToggleButtonControl btnSearchByTitle = null;
-    [SkinControl(6)] protected GUIToggleButtonControl btnSearchByDescription = null;
+    [SkinControl(4)] protected GUICheckButton btnSearchByGenre = null;
+    [SkinControl(5)] protected GUICheckButton btnSearchByTitle = null;
+    [SkinControl(6)] protected GUICheckButton btnSearchByDescription = null;
     [SkinControl(7)] protected GUISelectButtonControl btnLetter = null;
     [SkinControl(19)] protected GUIButtonControl btnSMSInput = null;
     [SkinControl(8)] protected GUISelectButtonControl btnShow = null;

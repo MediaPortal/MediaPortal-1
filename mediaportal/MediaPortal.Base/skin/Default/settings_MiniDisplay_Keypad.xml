@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9005</id>
@@ -30,14 +30,14 @@
       </control>
       <control>
         <description>Enable Keypad</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>60</id>
         <width>225</width>
         <label>9141</label>
       </control>
       <control>
         <description>Custom Mapping</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>61</id>
         <width>225</width>
         <label>9142</label>

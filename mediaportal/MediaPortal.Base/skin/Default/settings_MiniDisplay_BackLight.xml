@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9001</id>
@@ -44,7 +44,7 @@
       </control>
       <control>
         <description>Invert Display</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>68</id>
         <width>225</width>
         <label>9115</label>

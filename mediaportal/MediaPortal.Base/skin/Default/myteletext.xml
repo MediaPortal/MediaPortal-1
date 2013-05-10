@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>7700</id>
@@ -107,7 +107,7 @@
       </control>
       <control>
         <description>hidden mode</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>505</id>
         <posX>79</posX>
         <posY>248</posY>

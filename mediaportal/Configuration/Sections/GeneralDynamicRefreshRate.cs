@@ -52,6 +52,7 @@ namespace MediaPortal.Configuration.Sections
     private DataGridViewTextBoxColumn gridColRR;
     private DataGridViewTextBoxColumn gridColAction;
     private string sDefaultHz;
+    private string sDefaultHzName;
 
     public GeneralDynamicRefreshRate()
       : this("Dynamic Refresh Rate") {}
@@ -95,6 +96,7 @@ namespace MediaPortal.Configuration.Sections
         chkUseDeviceReset.Checked = xmlreader.GetValueAsBool("general", "devicereset", false);
         chkForceRR.Checked = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         sDefaultHz = xmlreader.GetValueAsString("general", "default_hz", "");
+        sDefaultHzName = xmlreader.GetValueAsString("general", "default_hz_name", "");
         String[] p = null;
         DataGridViewRow row = new DataGridViewRow();
         /*
@@ -128,10 +130,10 @@ namespace MediaPortal.Configuration.Sections
           dataGridViewRR.Rows.Add((object[])p);
           row = dataGridViewRR.Rows[dataGridViewRR.Rows.Count - 1];
           defaultHz.Items.Add(p[0]);
-          if (sDefaultHz == hz)
+          if (sDefaultHz == hz && sDefaultHzName == name)
             defaultHz.SelectedItem = name;
 
-          if (name.ToLower().IndexOf("tv") > -1)
+          if (name.ToLowerInvariant().IndexOf("tv") > -1)
           {
             row.Cells[0].ReadOnly = true;
           }
@@ -155,6 +157,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "devicereset", chkUseDeviceReset.Checked);
         xmlwriter.SetValueAsBool("general", "force_refresh_rate", chkForceRR.Checked);
         xmlwriter.SetValue("general", "default_hz", sDefaultHz);
+        xmlwriter.SetValue("general", "default_hz_name", sDefaultHzName);
 
         /*
         // example
@@ -600,7 +603,7 @@ namespace MediaPortal.Configuration.Sections
         }
         else if (row.Index == dataGridViewRR.CurrentCell.RowIndex)
         {
-          if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLower().IndexOf("tv") > -1)
+          if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLowerInvariant().IndexOf("tv") > -1)
           {
             continue;
           }
@@ -629,13 +632,13 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      string currentValue = dataGridViewRR.CurrentCell.Value.ToString().ToLower();
+      string currentValue = dataGridViewRR.CurrentCell.Value.ToString().ToLowerInvariant();
 
       int i = 0;
       defaultHz.Items.Clear();
       foreach (DataGridViewRow row in dataGridViewRR.Rows)
       {
-        if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLower().Equals(currentValue) &&
+        if (row.Cells[0].Value != null && row.Cells[0].Value.ToString().ToLowerInvariant().Equals(currentValue) &&
             i != dataGridViewRR.CurrentCell.RowIndex)
         {
           MessageBox.Show("Please do not add the same name twice. Those must be unique.", "Error", MessageBoxButtons.OK,
@@ -666,6 +669,7 @@ namespace MediaPortal.Configuration.Sections
         if (name == defaultHz.SelectedItem.ToString())
         {
           sDefaultHz = hz;
+          sDefaultHzName = name;
           break;
         }
       }

@@ -722,7 +722,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               if (obj13.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control12 = obj13 as GUILabelControl;
-                if (!control12.Label.Trim().ToLower().Equals("menu"))
+                if (!control12.Label.Trim().ToLowerInvariant().Equals("menu"))
                 {
                   DialogTitle = control12.Label;
                 }
@@ -820,7 +820,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               if (obj2.GetType() == typeof (GUILabelControl))
               {
                 GUILabelControl control2 = obj2 as GUILabelControl;
-                if (!control2.Label.Trim().ToLower().Equals("menu") && (control2.Label != string.Empty))
+                if (!control2.Label.Trim().ToLowerInvariant().Equals("menu") && (control2.Label != string.Empty))
                 {
                   if (DialogTitle == string.Empty)
                   {

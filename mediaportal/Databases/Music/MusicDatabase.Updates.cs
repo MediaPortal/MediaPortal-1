@@ -130,6 +130,30 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Resume
+
+    public void SetResume(Song aSong)
+    {
+      try
+      {
+        if (aSong.Id == -1)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("UPDATE tracks SET iResumeAt={0} WHERE idTrack={1}", aSong.ResumeAt, aSong.Id);
+        DirectExecute(strSQL);
+        return;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    #endregion
+
     #region Favorite / Ratings
 
     public void SetFavorite(Song aSong)
@@ -735,11 +759,11 @@ namespace MediaPortal.Music.Database
 
           if (SharePath.Length > 0)
           {
-            if (ShareType.ToLower() == "yes")
+            if (ShareType.ToLowerInvariant() == "yes")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of Remote Share: {0}", SharePath);
             }
-            else if (ShareScan.ToLower() == "no")
+            else if (ShareScan.ToLowerInvariant() == "no")
             {
               Log.Info("Musicdatabasereorg: Skipping scan of non-selected Share: {0}", SharePath);
             }
@@ -1128,7 +1152,7 @@ namespace MediaPortal.Music.Database
       bool fileinCluded = false;
       try
       {
-        string ext = Path.GetExtension(file).ToLower();
+        string ext = Path.GetExtension(file).ToLowerInvariant();
         if (ext == ".m3u")
         {
           return false;

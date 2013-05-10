@@ -74,9 +74,9 @@ namespace MediaPortal.Dialogs
 
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
       
       if (m_bNewBehaviour)
       {

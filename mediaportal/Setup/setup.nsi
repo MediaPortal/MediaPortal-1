@@ -260,6 +260,9 @@ ShowUninstDetails show
   ${KillProcess} "MPTray.exe"
   StrCpy $MPTray_Running $R0
   
+  ; ffmpeg
+  ${KillProcess} "ffmpeg.exe"
+  
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
 !macroend
@@ -433,11 +436,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Configuration\bin\${BUILD_TYPE}\WinCustomControls.dll"  ; Core
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "${git_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
-  File "${git_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
-  File "${git_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
-  File "${git_MP}\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
-  File "${git_MP}\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  File "${git_DirectShowFilters}\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
+  File "${git_DirectShowFilters}\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
+  File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
@@ -478,11 +481,11 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\Docs\MediaPortal License.rtf"
   ; libbluray
   SetOutPath "$MPdir.Base"
-  File "${git_DirectShowFilters}\BDReader\libbluray\bluray.dll"
+  File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
   ; MediaPortal.exe
-
+  
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -647,6 +650,9 @@ SectionEnd
   RMDir "$MPdir.Base\Docs"
   ; Wizards
   RMDir /r "$MPdir.Base\Wizards"
+  ; Log
+  Delete "$MPdir.Base\log4net.dll"
+  
 !macroend
 
 Section "-Powerscheduler Client plugin" SecPowerScheduler

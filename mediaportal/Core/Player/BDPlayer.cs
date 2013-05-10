@@ -34,6 +34,7 @@ using MediaPortal.Player.PostProcessing;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace MediaPortal.Player
 {
@@ -81,6 +82,7 @@ namespace MediaPortal.Player
     public UInt64 start;
     public UInt64 duration;
     public UInt64 offset;
+    public UInt16 clip_ref;
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -95,7 +97,7 @@ namespace MediaPortal.Player
     public byte ig_stream_count;
     public byte sec_audio_stream_count;
     public byte sec_video_stream_count;
-    public byte raw_stream_count;    
+    public byte raw_stream_count;
     public BDStreamInfo* video_streams;
     public BDStreamInfo* audio_streams;
     public BDStreamInfo* pg_streams;
@@ -103,16 +105,19 @@ namespace MediaPortal.Player
     public BDStreamInfo* sec_audio_streams;
     public BDStreamInfo* sec_video_streams;
     public BDStreamInfo* raw_streams;
+    public UInt64 start_time;
+    public UInt64 in_time;
+    public UInt64 out_time;
   }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct BDStreamInfo
+  public unsafe struct BDStreamInfo
   {
     public byte coding_type;
     public byte format;
     public byte rate;
     public byte char_code;
-    public byte lang;
+    public fixed byte lang[4];
     public UInt16 pid;
     public byte aspect;
   }
@@ -224,6 +229,9 @@ namespace MediaPortal.Player
 
       [PreserveSig]
       int SetVC1Override(ref Guid decoder);
+
+      [PreserveSig]
+      int GetAudioChannelCount(long lIndex);
     }
     #endregion
 
@@ -286,6 +294,10 @@ namespace MediaPortal.Player
 
     protected class BDFilterConfig
     {
+      public BDFilterConfig()
+      {
+        OtherFilters = new List<string>();
+      }
       public string VideoMPEG { get; set; }
       public string VideoH264 { get; set; }
       public string VideoVC1 { get; set; }
@@ -294,6 +306,68 @@ namespace MediaPortal.Player
       //public string AudioDDPlus { get; set; }
       public string AudioRenderer { get; set; }
       public Geometry.Type AR { get; set; }
+      public List<string> OtherFilters { get; set; }
+    }
+
+    protected class TitleInfo : IDisposable
+    {
+      private BDTitleInfo _nativeTitle;
+      private IntPtr _nativePtr;
+      private IBDReader _reader;
+      private bool _disposed = false;
+
+      public TitleInfo(IBDReader reader, int index)
+      {
+        _reader = reader;
+        _nativeTitle = new BDTitleInfo();
+
+        try
+        {
+          _nativePtr = reader.GetTitleInfo(index);
+          _nativeTitle = (BDTitleInfo) Marshal.PtrToStructure(_nativePtr, typeof (BDTitleInfo));
+        }
+        catch
+        {
+          Log.Error("BDPlayer: TitleInfo({0}) construction failed.", index);
+        }
+      }
+
+      ~TitleInfo()
+      {
+        Dispose(false);
+      }
+
+      public BDTitleInfo native
+      {
+        get { return _nativeTitle; }
+      }
+
+      protected virtual void Dispose(bool dispose)
+      {
+        if (!_disposed)
+        {
+          if (dispose)
+          {
+            if (_nativePtr != null && _reader != null)
+            {
+              _reader.FreeTitleInfo(_nativePtr);
+              _nativePtr = IntPtr.Zero;
+            }
+          }
+          else
+          {
+            Log.Error("BDPlayer:BDTitleInfo - Dispose called by finalizer, some resources will be leaked");
+          }
+
+          _disposed = true;
+        }
+      }
+
+      public void Dispose()
+      {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+      }
     }
 
     #endregion
@@ -413,6 +487,14 @@ namespace MediaPortal.Player
       BLURAY_STREAM_TYPE_SUB_TEXT = 0x92
     }
 
+    protected enum BDAudioFormat
+    {
+      BLURAY_AUDIO_FORMAT_MONO = 1,
+      BLURAY_AUDIO_FORMAT_STEREO = 3,
+      BLURAY_AUDIO_FORMAT_MULTI_CHAN = 6,
+      BLURAY_AUDIO_FORMAT_COMBO = 12 // Stereo ac3/dts,
+    }
+
     protected enum VideoRate
     {
       BLURAY_VIDEO_RATE_24000_1001 = 1,  // 23.976
@@ -491,6 +573,8 @@ namespace MediaPortal.Player
     protected bool _usingFastSeeking = false;
     protected IBaseFilter _interfaceBDReader = null;
     protected IBaseFilter _audioRendererFilter = null;
+    protected IBaseFilter VideoCodec = null;
+    protected IBaseFilter AudioCodec = null;
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
 
@@ -528,6 +612,13 @@ namespace MediaPortal.Player
     protected MenuState menuState;
     protected bool _subtitlesEnabled = true;
     protected bool _bPopupMenuAvailable = true;
+    protected bool firstinit = false;
+    protected bool VideoChange = false;
+    protected bool CheckAudioRendererFilter = false;
+    Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
+    Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
+    protected string audioRendererFilter = "";
+
     protected Guid GuidFilter;
     #endregion
 
@@ -765,8 +856,9 @@ namespace MediaPortal.Player
         int sPDWGroup, sPLCid;
         string sName;
         object pppunk, ppobject;
-        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);        
-        return StreamTypetoString(sPDWGroup);        
+        pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
+        int AudioChannelCount = _ireader.GetAudioChannelCount(iStream);
+        return StreamTypetoString(sPDWGroup) + " " + StreamTypeAudiotoString(AudioChannelCount);
       }
       return Strings.Unknown;
     }
@@ -811,16 +903,16 @@ namespace MediaPortal.Player
       if (!File.Exists(strFile))
       {
         return false;
-      }      
+      }
 
-      if (!GetInterfaces(strFile))
+      if (!GetInterfaces(strFile, g_Player.SetResumeBDTitleState))
       {
         MovieEnded();
 
-        if (_titleToPlay == -1)
+        if (_titleToPlay == -1 || g_Player.SetResumeBDTitleState == -1)
           return true;
 
-        Log.Error("BDPlayer:GetInterfaces() failed");        
+        Log.Error("BDPlayer:GetInterfaces() failed");
         return false;
       }
 
@@ -913,7 +1005,7 @@ namespace MediaPortal.Player
 
       if (_bMediaTypeChanged)
       {
-        _bMediaTypeChanged = false;        
+        _bMediaTypeChanged = false;
         DoGraphRebuild();
         _ireader.OnGraphRebuild((int)_mChangedMediaType);
       }
@@ -1526,8 +1618,19 @@ namespace MediaPortal.Player
         filterConfig.AudioRenderer = xmlreader.GetValueAsString("bdplayer", "audiorenderer", "Default DirectSound Device");
 
         // get AR setting
-        filterConfig.AR = Util.Utils.GetAspectRatio(xmlreader.GetValueAsString("mytv", "defaultar", "Normal"));
-        //GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);  
+        filterConfig.AR = Util.Utils.GetAspectRatio(xmlreader.GetValueAsString("bdplayerAR", "defaultar", "Normal"));
+        //GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
+
+        // get post-processing filter setup
+        int i = 0;
+        while (xmlreader.GetValueAsString("bdplayer", "filter" + i, "undefined") != "undefined")
+        {
+          if (xmlreader.GetValueAsBool("bdplayer", "usefilter" + i, false))
+          {
+            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("bdplayer", "filter" + i, "undefined"));
+          }
+          i++;
+        }
       }
 
       return filterConfig;
@@ -1584,9 +1687,9 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="reader">IBDReader object</param>
     /// <returns>a collection of titles</returns>
-    protected virtual List<BDTitleInfo> GetTitleInfoCollection(IBDReader reader)
+    protected virtual List<TitleInfo> GetTitleInfoCollection(IBDReader reader)
     {
-      List<BDTitleInfo> titles = new List<BDTitleInfo>();
+      List<TitleInfo> titles = new List<TitleInfo>();
 
       uint titleCount = 0;
       reader.GetTitleCount(ref titleCount);
@@ -1595,7 +1698,7 @@ namespace MediaPortal.Player
 
       for (int i = 0; i < titleCount; i++)
       {
-        BDTitleInfo titleInfo = GetTitleInfo(reader, i);
+        TitleInfo titleInfo = GetTitleInfo(reader, i);
         titles.Add(titleInfo);
       }
 
@@ -1608,27 +1711,9 @@ namespace MediaPortal.Player
     /// <param name="reader">IBDReader object</param>
     /// <param name="index">index of the title</param>
     /// <returns></returns>
-    protected virtual BDTitleInfo GetTitleInfo(IBDReader reader, int index)
+    protected virtual TitleInfo GetTitleInfo(IBDReader reader, int index)
     {
-      BDTitleInfo titleInfo = new BDTitleInfo();
-      IntPtr ptr = IntPtr.Zero;
-      try
-      {
-        ptr = reader.GetTitleInfo(index);
-        titleInfo = (BDTitleInfo)Marshal.PtrToStructure(ptr, typeof(BDTitleInfo));
-      }
-      catch
-      {
-        Log.Error("BDPlayer: GetTitleInfo({0}) failed.", index);
-      }
-      finally
-      {
-        if (ptr != IntPtr.Zero)
-        {
-          reader.FreeTitleInfo(ptr);
-        }
-      }
-
+      TitleInfo titleInfo = new TitleInfo(reader, index);
       return titleInfo;
     }
 
@@ -1637,20 +1722,21 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="titleInfo">BDTitleInfo object</param>
     /// <returns>chapters as an array consisting of the start time in seconds</returns>
-    protected virtual double[] GetChapters(BDTitleInfo titleInfo)
+    protected virtual double[] GetChapters(TitleInfo titleInfo)
     {
-      double[] chapters = new double[titleInfo.chapter_count];
-            
+      double[] chapters = new double[titleInfo.native.chapter_count];
+
       if (chapters.Length > 2) // only two chapters means beginning and end - no real chapters
       {
         for (int i = 0; i < chapters.Length; i++)
         {
           unsafe
           {
-            double s = titleInfo.chapters[i].start / 90000;
+            double s = titleInfo.native.chapters[i].start/90000;
             chapters[i] = s;
             TimeSpan ts = TimeSpan.FromSeconds(s);
-            Log.Debug("BDPlayer: Chapter info #{0}: start time: {1}", titleInfo.chapters[i].idx, String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds));
+            Log.Debug("BDPlayer: Chapter info #{0}: start time: {1}", titleInfo.native.chapters[i].idx,
+                      String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds));
           }
         }
         if (chapters[chapters.Length - 1] < 300) // 5 min sanity check
@@ -1667,12 +1753,13 @@ namespace MediaPortal.Player
     /// </summary>
     /// <param name="titles">a collection of titles to choose from</param>
     /// <returns>index of the title to play, -2 for navigation/menu or -1 if user canceled the dialog</returns>
-    protected virtual int SelectTitle(List<BDTitleInfo> titles)
+    protected virtual int SelectTitle(List<TitleInfo> titles)
     {
-      IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      IDialogbox dialog = (IDialogbox) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
       bool listAllTitles = false;
+      int ret = 0;
 
-      titles = titles.OrderByDescending(t => t.duration).ToList();
+      titles = titles.OrderByDescending(t => t.native.duration).ToList();
 
       while (true)
       {
@@ -1683,14 +1770,16 @@ namespace MediaPortal.Player
         dialog.Add(GUILocalizeStrings.Get(924));           // Menu
 
         int c = 0;
-        foreach (BDTitleInfo title in titles)
+        foreach (TitleInfo title in titles)
         {
-          TimeSpan ts = TimeSpan.FromSeconds(title.duration / 90000);
-          if (listAllTitles || titles.Count == 1 || ts.TotalMinutes >= 30 && title.chapter_count > 1 && title.chapter_count < 100) // do not list titles under 30mins
+          TimeSpan ts = TimeSpan.FromSeconds(title.native.duration/90000);
+          if (listAllTitles || titles.Count == 1 ||
+              ts.TotalMinutes >= 30 && title.native.chapter_count > 1 && title.native.chapter_count < 100)
+            // do not list titles under 30mins
           {
             string duration = String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds);
-            dialog.Add(String.Format(GUILocalizeStrings.Get(1702), c++, title.chapter_count, duration));
-            titleOptions.Add(title.idx);
+            dialog.Add(String.Format(GUILocalizeStrings.Get(1702), c++, title.native.chapter_count, duration));
+            titleOptions.Add(title.native.idx);
           }
         }
 
@@ -1715,20 +1804,27 @@ namespace MediaPortal.Player
           }
 
           // user selected a title we now return the index of
-          int titleIdx = (int)titleOptions[dialog.SelectedId - 2];
+          int titleIdx = (int) titleOptions[dialog.SelectedId - 2];
           Log.Debug("BDPlayer: title with idx {0} selected", titleIdx);
-          return titleIdx;
+
+          ret = titleIdx;
+          break;
         }
 
         // user selected to display menu;
         if (dialog.SelectedId == 1)
         {
-          return -2;
+          ret = -2;
+          break;
         }
 
         // user cancelled so break the loop
-        return -1;
+        ret = -1;
+        break;
       }
+
+      titles.Dispose();
+      return ret;
     }
 
     object lockobj = new object();
@@ -1780,14 +1876,19 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
             Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
-            CurrentStreamInfo();
             UpdateMenuItems();
+            CurrentStreamInfo();
             break;
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
             _currentTitle = bdevent.Param;
             _currentChapter = 0xffff;
+            if (bdevent.Param == 1)
+            {
+              if (menuState != MenuState.PopUp)
+                menuState = MenuState.None;
+            }
             break;
 
           case (int)BDEvents.BD_EVENT_CHAPTER:
@@ -1800,7 +1901,7 @@ namespace MediaPortal.Player
             Log.Debug("BDPlayer: Popup available {0}", bdevent.Param);
             _bPopupMenuAvailable = bdevent.Param == 1 ? true : false;
             UpdateMenuItems();
-            break;          
+            break;
 
           case (int)BDEvents.BD_EVENT_MENU:
             Log.Debug("BDPlayer: Menu visible {0}", bdevent.Param);
@@ -1808,14 +1909,14 @@ namespace MediaPortal.Player
             {
               if (menuState != MenuState.PopUp)
                 menuState = MenuState.Root;
-             
+
               GUIGraphicsContext.DisableTopBar = true;
             }
             else
-            {              
+            {
               menuState = MenuState.None;
               GUIGraphicsContext.DisableTopBar = false;
-              GUIGraphicsContext.TopBarHidden = true;   
+              GUIGraphicsContext.TopBarHidden = true;
             }
             UpdateMenuItems();
             break;
@@ -1826,13 +1927,13 @@ namespace MediaPortal.Player
     protected void UpdateMenuItems()
     {
       if (_forceTitle)
-        {
-          menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
-          return;
-        }
-      
+      {
+        menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
+        return;
+      }
+
       if (menuState == MenuState.Root)
-      {        
+      {
         menuItems = MenuItems.None;
         return;
       }
@@ -1872,12 +1973,14 @@ namespace MediaPortal.Player
 
     protected void UpdateRefreshRate(int videoRate)
     {
-      BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
-
-      // Do not change refresh rate if the clip is less than 1 minute long
-      if (titleInfo.duration / 90000 > 60)
+      using (TitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int) BLURAY_TITLE_CURRENT)))
       {
-        RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+        // Do not change refresh rate if the clip is less than 1 minute long
+        if (titleInfo.native.duration/90000 > 60)
+        {
+          RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "",
+                                                      RefreshRateChanger.MediaType.Video);
+        }
       }
     }
 
@@ -1885,8 +1988,10 @@ namespace MediaPortal.Player
     {
       try
       {
-        BDTitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT));
-        chapters = GetChapters(titleInfo);
+        using (TitleInfo titleInfo = GetTitleInfo(_ireader, unchecked((int)BLURAY_TITLE_CURRENT)))
+        {
+          chapters = GetChapters(titleInfo);
+        }
       }
       catch
       {
@@ -1962,7 +2067,8 @@ namespace MediaPortal.Player
         if (MSVideoCodec != null)
         {
           _mChangedMediaType = MediaType.Audio | MediaType.Video;
-          DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
+          DirectShowUtil.ReleaseComObject(MSVideoCodec);
+          MSVideoCodec = null;
         }
         // hack end
         switch (_mChangedMediaType)
@@ -1981,8 +2087,32 @@ namespace MediaPortal.Player
             UpdateFilters("Video");
             break;
         }
-        DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
+        if (_mChangedMediaType != MediaType.Audio && VideoChange)
+        {
+          //Release and init Post Process Filter
+          if (PostProcessingEngine.engine != null)
+            PostProcessingEngine.GetInstance().FreePostProcess();
+
+          IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+          if (!postengine.LoadPostProcessing(_graphBuilder))
+          {
+            PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          }
+        }
+        if (_interfaceBDReader != null)
+        {
+          DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _interfaceBDReader);
+        }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+
+        //remove InternalScriptRenderer as it takes subtitle pin
+        disableISR();
+
+        // disable Closed Captions!
+        disableCC();
+
+        /*if (_mChangedMediaType == MediaType.Audio)
+        RemoveAudioR();*/
 
         try
         {
@@ -2143,34 +2273,255 @@ namespace MediaPortal.Player
       }
     }
 
+    protected void disableCC()
+    {
+      while (true)
+      {
+        IBaseFilter basefilter;
+        DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_1, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_2, out basefilter);
+        if (basefilter != null)
+        {
+          _graphBuilder.RemoveFilter(basefilter);
+          DirectShowUtil.ReleaseComObject(basefilter);
+          basefilter = null;
+          Log.Info("BDPlayer: Cleanup Captions");
+        }
+        else
+          break;
+      }
+    }
+
+    protected void disableISR()
+    {
+      #region Remove isr
+      //remove InternalScriptRenderer as it takes subtitle pin
+      IBaseFilter isr = null;
+      DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.InternalScriptRenderer, out isr);
+      if (isr != null)
+      {
+        _graphBuilder.RemoveFilter(isr);
+        DirectShowUtil.ReleaseComObject(isr);
+      }
+      #endregion
+    }
+
+    protected void SyncAudioRenderer()
+    {
+      if (_audioRendererFilter != null)
+      {
+        //Log.Info("BDPlayer:set reference clock");
+        IMediaFilter mp = (IMediaFilter)_graphBuilder;
+        IReferenceClock clock = (IReferenceClock)_audioRendererFilter;
+        int hr = mp.SetSyncSource(null);
+        hr = mp.SetSyncSource(clock);
+        //Log.Info("BDPlayer:set reference clock:{0:X}", hr);
+        _basicAudio = (IBasicAudio)_graphBuilder;
+      }
+    }
+
+    /*protected void RemoveAudioR()
+    {
+      //Get Audio Renderer
+      if (filterConfig.AudioRenderer.Length > 0 && _audioRendererFilter == null)
+      {
+        _audioRendererFilter = DirectShowUtil.GetFilterByName(_graphBuilder, filterConfig.AudioRenderer);
+      }
+      //Detection if it's the good audio renderer connected
+      bool ResultPinAudioRenderer = false;
+      IPin PinAudioRenderer = DsFindPin.ByDirection(_audioRendererFilter, PinDirection.Input, 0); //audio
+      if (PinAudioRenderer != null)
+        DirectShowUtil.IsPinConnected(PinAudioRenderer, out ResultPinAudioRenderer);
+      if (!ResultPinAudioRenderer && _audioRendererFilter != null)
+      {
+        this._graphBuilder.RemoveFilter(_audioRendererFilter);
+        DirectShowUtil.ReleaseComObject(_audioRendererFilter);
+        _audioRendererFilter = null;
+      }
+      if (PinAudioRenderer != null)
+      {
+        DirectShowUtil.ReleaseComObject(PinAudioRenderer);
+        PinAudioRenderer = null;
+      }
+    }*/
+
+    protected void PostProcessAddVideo()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetVideoCodec().Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterVideo.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected void PostProcessAddAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (FilterHelper.GetAudioCodec().Contains(filter.ToString()) && filter.ToString() != "MediaPortal AudioSwitcher")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
     /// <summary>
     /// Update graph with proper filters
     /// </summary>
     /// <param name="selection">The selection.</param>
     protected void UpdateFilters(string selection)
     {
-      IPin pinFrom = DirectShowUtil.FindPin(_interfaceBDReader, PinDirection.Output, selection);
-      IPin pinTo;
-      int hr = pinFrom.ConnectedTo(out pinTo);
-      if (hr >= 0 && pinTo != null)
+      if (selection == "Video")
       {
-        PinInfo pInfo;
-        pinTo.QueryPinInfo(out pInfo);
-        FilterInfo fInfo;
-        pInfo.filter.QueryFilterInfo(out fInfo);
-        Log.Debug("BDPlayer: Remove filter - {0}", fInfo.achName);
-        _graphBuilder.RemoveFilter(pInfo.filter);
-        DsUtils.FreePinInfo(pInfo);
-        DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-        DirectShowUtil.ReleaseComObject(pinTo);
-        pinTo = null;
+        VideoChange = false;
+        if (PostProcessFilterVideo.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterVideo.Clear();
+          Log.Info("BDPlayer: UpdateFilters Cleanup PostProcessVideo");
+        }
       }
-      DirectShowUtil.ReleaseComObject(pinFrom);
-      pinFrom = null;
-      DirectShowUtil.AddFilterToGraph(_graphBuilder, MatchFilters(selection));
+      else
+      {
+        if (PostProcessFilterAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value);//, 5000);
+            }
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Info("BDPlayer: UpdateFilters Cleanup PostProcessAudio");
+        }
+      }
+
+      if (selection == "Video")
+      {
+        // we have to find first filter connected to interfaceSourceFilter which will be removed
+        IPin pinFrom = DsFindPin.ByDirection((IBaseFilter)_interfaceBDReader, PinDirection.Output, 1);
+        IPin pinTo;
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+
+          if (!fInfo.achName.Contains("Enhanced Video Renderer") && !fInfo.achName.Contains("Video Mixing Renderer 9"))
+          {
+            Log.Debug("BDPlayer: Remove filter - {0}", fInfo.achName);
+            DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+            _graphBuilder.RemoveFilter(pInfo.filter);
+          }
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pInfo.filter); pInfo.filter = null;
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      }
+      else
+      {
+        CheckAudioRendererFilter = false;
+        // we have to find first filter connected to interfaceSourceFilter which will be removed
+        IPin pinFrom = DsFindPin.ByDirection((IBaseFilter)_interfaceBDReader, PinDirection.Output, 0);
+        IPin pinTo;
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
+
+          /*FilterInfo foundfilterinfos = new FilterInfo();
+          _audioRendererFilter.QueryFilterInfo(out foundfilterinfos);
+          audioRendererFilter = foundfilterinfos.achName;
+
+          if (fInfo.achName.Equals(audioRendererFilter))
+          {
+            Log.Debug("BDPlayer: Remove Audio Renderer filter - {0}", fInfo.achName);
+            _graphBuilder.RemoveFilter(pInfo.filter);
+            DirectShowUtil.ReleaseComObject(foundfilterinfos.pGraph);
+            DirectShowUtil.ReleaseComObject(_audioRendererFilter); _audioRendererFilter = null;
+            CheckAudioRendererFilter = true;
+          }
+          else*/
+          {
+            Log.Debug("BDPlayer: Remove filter - {0}", fInfo.achName);
+            _graphBuilder.RemoveFilter(pInfo.filter);
+          }
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pInfo.filter); pInfo.filter = null;
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        }
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      }
+
+      if (selection == "Video")
+      {
+        //Add Post Process Video Codec
+        PostProcessAddVideo();
+
+        //Add Video Codec
+        if (VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(VideoCodec);
+          VideoCodec = null;
+        }
+        VideoCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+
+        VideoChange = true;
+      }
+      else
+      {
+        //Add Post Process Audio Codec
+        PostProcessAddAudio();
+
+        //Add Audio Codec
+        if (AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(AudioCodec);
+          AudioCodec = null;
+        }
+        //AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+        /*if (CheckAudioRendererFilter)
+        {
+          AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer, true);
+          SyncAudioRenderer();
+        }
+        else*/
+        {
+          AudioCodec = DirectShowUtil.AddFilterToGraph(this._graphBuilder, MatchFilters(selection));
+        }
+      }
     }
 
-    protected bool GetInterfaces(string filename)
+    protected bool GetInterfaces(string filename, int titleBD)
     {
       try
       {
@@ -2214,26 +2565,73 @@ namespace MediaPortal.Player
 
         Log.Debug("BDPlayer: BDReader loaded: {0}", filename);
 
-        List<BDTitleInfo> titles = GetTitleInfoCollection(_ireader);
+        List<TitleInfo> titles = GetTitleInfoCollection(_ireader);
 
         while (true)
         {
-          _titleToPlay = SelectTitle(titles);
-          if (_titleToPlay > -1)
+          if (g_Player.ForcePlay && g_Player.SetResumeBDTitleState < g_Player.BdDefaultTitle)
           {
-            // a specific title was selected
+            if (titles.Count == 1)
+            {
+              _titleToPlay = 0;
+              g_Player.SetResumeBDTitleState = g_Player.BdRemuxTitle;
+            }
+            else
+            {
+              _titleToPlay = g_Player.SetResumeBDTitleState;
+            }
             _forceTitle = true;
+            g_Player.ForcePlay = false;
           }
           else
           {
-            if (_titleToPlay == -1)
+            if (titles.Count == 1)
             {
-              // user cancelled dialog
-              return false;
-            }
+              // BD has only one title (remux one)
+              _forceTitle = true;
+              _titleToPlay = 0;
+              g_Player.SetResumeBDTitleState = g_Player.BdRemuxTitle;
 
-            // user choose to display menu
-            _forceTitle = false;
+              if (g_Player.SetResumeBDTitleState == -1)
+              {
+                // user cancelled dialog
+                titles.Dispose();
+                g_Player.Stop();
+                return false;
+              }
+            }
+            else
+            {
+              _titleToPlay = SelectTitle(titles);
+              g_Player.SetResumeBDTitleState = _titleToPlay;
+              Log.Info("BDPlayer: BDReader _titleToPlay : {0}", _titleToPlay);
+              if (_titleToPlay > -1)
+              {
+                // a specific title was selected
+                _forceTitle = true;
+
+                if (g_Player.SetResumeBDTitleState == -1)
+                {
+                  // user cancelled dialog
+                  titles.Dispose();
+                  g_Player.Stop();
+                  return false;
+                }
+              }
+              else
+              {
+                if (_titleToPlay == -1)
+                {
+                  // user cancelled dialog
+                  g_Player.Stop();
+                  titles.Dispose();
+                  return false;
+                }
+
+                // user choose to display menu
+                _forceTitle = false;
+              }
+            }
           }
 
           _ireader.ForceTitleBasedPlayback(_forceTitle, (uint)_titleToPlay);
@@ -2251,6 +2649,7 @@ namespace MediaPortal.Player
             }
 
             Log.Error("BDPlayer: Failed to start in title based mode file:{0} :0x{1:x}", filename, hr);
+            titles.Dispose();
             return false;
           }
           else
@@ -2260,6 +2659,8 @@ namespace MediaPortal.Player
 
           break;
         }
+
+        titles.Dispose();
 
         #region Filters
 
@@ -2305,7 +2706,19 @@ namespace MediaPortal.Player
 
         Log.Info("BDPlayer: Render BDReader outputs");
 
-        DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _interfaceBDReader);
+        if (_interfaceBDReader != null)
+        {
+          DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _interfaceBDReader);
+        }
+        
+        //remove InternalScriptRenderer as it takes subtitle pin
+        disableISR();
+
+        //disable Closed Captions!
+        disableCC();
+
+        //RemoveAudioR();
+
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
         #endregion
@@ -2333,17 +2746,9 @@ namespace MediaPortal.Player
         // if only dvb subs are enabled, pass null for ttxtDecoder
         _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
         EnableSubtitle = _subtitlesEnabled;
-        
-        if (_audioRendererFilter != null)
-        {
-          //Log.Info("BDPlayer:set reference clock");
-          IMediaFilter mp = (IMediaFilter)_graphBuilder;
-          IReferenceClock clock = (IReferenceClock)_audioRendererFilter;
-          hr = mp.SetSyncSource(null);
-          hr = mp.SetSyncSource(clock);
-          //Log.Info("BDPlayer:set reference clock:{0:X}", hr);
-          _basicAudio = (IBasicAudio)_graphBuilder;
-        }
+
+        //Sync Audio Renderer
+        SyncAudioRenderer();
 
         if (!_vmr9.IsVMR9Connected)
         {
@@ -2474,11 +2879,52 @@ namespace MediaPortal.Player
         _basicVideo = null;
         _ireader = null;
 
+        #region Cleanup Sebastiii
+
+        if (VideoCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(VideoCodec, 5000);
+          VideoCodec = null;
+          Log.Info("BDPlayer: Cleanup VideoCodec");
+        }
+
+        if (AudioCodec != null)
+        {
+          DirectShowUtil.ReleaseComObject(AudioCodec, 5000);
+          AudioCodec = null;
+          Log.Info("BDPlayer: Cleanup AudioCodec");
+        }
+
         if (_audioRendererFilter != null)
         {
           while (DirectShowUtil.ReleaseComObject(_audioRendererFilter) > 0) ;
           _audioRendererFilter = null;
+          Log.Info("BDPlayer: Cleanup AudioRenderer");
         }
+
+        //Test to ReleaseComObject from PostProcessFilter list objects.
+        if (PostProcessFilterVideo.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+          }
+          PostProcessFilterVideo.Clear();
+          Log.Info("BDPlayer: Cleanup PostProcessVideo");
+        }
+
+        //Test to ReleaseComObject from PostProcessFilter list objects.
+        if (PostProcessFilterAudio.Count > 0)
+        {
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Info("BDPlayer: Cleanup PostProcessAudio");
+        }
+
+        #endregion
 
         if (_interfaceBDReader != null)
         {
@@ -2617,6 +3063,22 @@ namespace MediaPortal.Player
           return "H264";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
           return "VC1";
+      }
+      return Strings.Unknown;
+    }
+
+    protected string StreamTypeAudiotoString(int stream)
+    {
+      switch (stream)
+      {
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_MONO:
+          return "1.0";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_STEREO:
+          return "2.0";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+          return "5.1";
+        case (int)BDAudioFormat.BLURAY_AUDIO_FORMAT_COMBO:
+          return "7.1";
       }
       return Strings.Unknown;
     }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>28380</id>
   <defaultcontrol>10</defaultcontrol>
@@ -9,7 +9,7 @@
     <import>common.dialog.xml</import>
     <control>
 			<description>1 Star</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>100</id>
 			<posX>488</posX>
 			<posY>362</posY>
@@ -17,14 +17,14 @@
 			<height>32</height>
 			<onup>101</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
 			<description>2 Star</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>101</id>
 			<posX>560</posX>
 			<posY>362</posY>
@@ -32,14 +32,14 @@
 			<height>32</height>
 			<onup>102</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
 			<description>3 Star</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>102</id>
 			<posX>631</posX>
 			<posY>362</posY>
@@ -47,14 +47,14 @@
 			<height>32</height>
 			<onup>103</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 
     <control>
 			<description>4 Star</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>103</id>
 			<posX>702</posX>
 			<posY>362</posY>
@@ -62,23 +62,23 @@
 			<height>32</height>
 			<onup>104</onup>
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 	
     <control>
 			<description>5 Star</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>104</id>
 			<posX>773</posX>
 			<posY>362</posY>
 			<width>32</width>
 			<height>32</height>		
 			<textureFocus>UserRatingStarOn.png</textureFocus>
-			<textureNoFocus>UserRatingStarOn.png</textureNoFocus>
-			<AltTextureFocus>UserRatingStarOff.png</AltTextureFocus>
-			<AltTextureNoFocus>UserRatingStarOff.png</AltTextureNoFocus>
+			<textureNoFocus>UserRatingStarOff.png</textureNoFocus>
+			<textureCheckmark>UserRatingStarOn.png</textureCheckmark>
+			<textureCheckmarkNoFocus>UserRatingStarOff.png</textureCheckmarkNoFocus>
     </control>
 	
 	<control>

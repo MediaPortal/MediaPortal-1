@@ -305,7 +305,7 @@ namespace MediaPortal.Util
         foreach (string ext in possibleExtensions)
         {
           // .jpg in *.JPG ?
-          if (ext.ToUpper().Contains(Utils.GetThumbExtension().ToUpper()))
+          if (ext.ToUpperInvariant().Contains(Utils.GetThumbExtension().ToUpperInvariant()))
           {
             _currentImageCodecInfo = ImgEncoders[i];
             break;

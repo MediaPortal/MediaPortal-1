@@ -450,7 +450,7 @@ namespace MediaPortal.GUI.Library
         return 0;
       }
       string strTest = strCondition;
-      strTest = strTest.ToLower();
+      strTest = strTest.ToLowerInvariant();
       strTest = strTest.TrimStart(new char[] {' '});
       strTest = strTest.TrimEnd(new char[] {' '});
       if (strTest.Length == 0)

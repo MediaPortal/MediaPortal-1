@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,6 +41,9 @@ namespace MediaPortal.Util
 
     private const int WPF_RESTORETOMAXIMIZED = 2;
     public const int WM_SHOWWINDOW = 0x0018;
+    private const int WM_ACTIVATE = 0x0006; // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+    private const int WA_CLICKACTIVE = 2;   // http://msdn.microsoft.com/en-us/library/windows/desktop/ms646274(v=vs.85).aspx
+
     private const int SHGFP_TYPE_CURRENT = 0;
 
     public const int CSIDL_MYMUSIC = 0x000d; // "My Music" folder
@@ -452,7 +455,7 @@ namespace MediaPortal.Util
           Show("Button", "Start", bVisible);
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     public static void EnableStartBar(bool bEnable)
@@ -465,8 +468,9 @@ namespace MediaPortal.Util
           Enable("Button", "Start", bEnable);
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
+
 
     /// <summary> 
     /// Finds the specified window by its Process ID. Then brings it to 
@@ -500,10 +504,14 @@ namespace MediaPortal.Util
       }
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
     public static void ActivatePreviousInstance()
     {
-      //Find the previous instance's process
-      List<Process> processes = new List<Process>();
+      // Find the previous instance's process
+      var processes = new List<Process>();
       string processName = Process.GetCurrentProcess().ProcessName;
       if (processName.EndsWith(".vshost"))
       {
@@ -519,10 +527,11 @@ namespace MediaPortal.Util
         {
           continue;
         }
-        //Instructs the process to go to the foreground 
+        // Instructs the process to go to the foreground 
         SetForeGround(process);
         Environment.Exit(0);
       }
+
       Log.Info("Main: Could not activate running instance");
       MessageBox.Show("Could not activate running instance.", string.Format("{0} is already running", processName),
                       MessageBoxButtons.OK,
@@ -531,19 +540,15 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// Brings the previous MP instance to the front.
+    /// Brings the previous MediaPortal instance to the front.
     /// </summary>
-    /// <param name="_process">The <see cref="Process"/> that represents the previous MP instance</param>
-    /// <remarks>
-    /// We bring the application to the front by sending a WM_SHOWWINDOW message to all of it's threads.
-    /// The main thread will detect this message using the <see cref="ThreadMessageFilter"/> and
-    /// will instruct it's main window to show and activate itself.
-    /// </remarks>
-    private static void SetForeGround(Process _process)
+    /// <param name="process">The process that represents the previous MediaPortal instance</param>
+    private static void SetForeGround(Process process)
     {
-      foreach (ProcessThread thread in _process.Threads)
+      foreach (ProcessThread thread in process.Threads)
       {
-        Win32API.PostThreadMessage(thread.Id, Win32API.WM_SHOWWINDOW, 0, 0);
+        PostThreadMessage(thread.Id, WM_SHOWWINDOW, 0, 0);
+        PostThreadMessage(thread.Id, WM_ACTIVATE, WA_CLICKACTIVE, 0);
       }
     }
 
@@ -597,9 +602,15 @@ namespace MediaPortal.Util
       return (GetForegroundWindow() == window);
     }
 
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="csidl"></param>
+    /// <returns></returns>
     public static string GetFolderPath(int csidl)
     {
-      StringBuilder folder = new System.Text.StringBuilder(256);
+      var folder = new StringBuilder(256);
       SHGetFolderPath(IntPtr.Zero, csidl, IntPtr.Zero, SHGFP_TYPE_CURRENT, folder);
       return folder.ToString();
     }

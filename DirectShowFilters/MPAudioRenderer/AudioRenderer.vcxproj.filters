@@ -22,8 +22,6 @@
     <ClCompile Include="source\VolumeHandler.cpp" />
     <ClCompile Include="source\WaitableState.cpp" />
     <ClCompile Include="source\WASAPIRenderer.cpp" />
-    <ClCompile Include="source\AudioClockTracker.cpp" />
-    <ClCompile Include="source\ClockAdjuster.cpp" />
     <ClCompile Include="source\SynchCorrection.cpp" />
     <ClCompile Include="source\WASAPIRenderFilter.cpp" />
     <ClCompile Include="libresample\src\src_linear.c">
@@ -46,16 +44,10 @@
     <ClCompile Include="AE_mixer\AERemap.cpp">
       <Filter>AE Mixer</Filter>
     </ClCompile>
-    <ClCompile Include="SoundTouch\source\3dnow_win.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
     <ClCompile Include="SoundTouch\source\AAFilter.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
     <ClCompile Include="SoundTouch\source\BPMDetect.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\cpu_detect_x86_win.cpp">
       <Filter>SoundTouch</Filter>
     </ClCompile>
     <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp">
@@ -88,8 +80,10 @@
     <ClCompile Include="AC3_encoder\bits.cpp">
       <Filter>AC3_encoder</Filter>
     </ClCompile>
-    <ClCompile Include="source\StreamSanitizerFilter.cpp" />
     <ClCompile Include="source\SettingsProp.cpp" />
+    <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp">
+      <Filter>SoundTouch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\AC3EncoderFilter.h" />
@@ -119,8 +113,6 @@
     <ClInclude Include="source\VolumeHandler.h" />
     <ClInclude Include="source\WaitableState.h" />
     <ClInclude Include="source\WASAPIRenderer.h" />
-    <ClInclude Include="source\AudioClockTracker.h" />
-    <ClInclude Include="source\ClockAdjuster.h" />
     <ClInclude Include="source\SynchCorrection.h" />
     <ClInclude Include="source\WASAPIRenderFilter.h" />
     <ClInclude Include="libresample\src\samplerate.h">
@@ -179,7 +171,6 @@
     <ClInclude Include="AC3_encoder\bits.h">
       <Filter>AC3_encoder</Filter>
     </ClInclude>
-    <ClInclude Include="source\StreamSanitizerFilter.h" />
     <ClInclude Include="source\SettingsProp.h" />
   </ItemGroup>
   <ItemGroup>

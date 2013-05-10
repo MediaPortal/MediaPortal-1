@@ -29,7 +29,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
     [SkinControl(65)] protected GUISelectButtonControl btnRed = null;
     [SkinControl(66)] protected GUISelectButtonControl btnGreen = null;
     [SkinControl(67)] protected GUISelectButtonControl btnBlue = null;
-    [SkinControl(68)] protected GUIToggleButtonControl btnInvert = null;
+    [SkinControl(68)] protected GUICheckButton btnInvert = null;
 
     public BacklightWindow()
     {

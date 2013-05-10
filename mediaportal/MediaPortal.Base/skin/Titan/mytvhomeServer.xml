@@ -53,13 +53,13 @@
 	
 		<control>
 			<description>TV On/Off button</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>8</id>
 			<label>707</label>
-      <textureFocus>button_tv_on_focus.png</textureFocus>
-      <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-      <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-      <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
+			<textalign>left</textalign>
+			<font>TitanLight12</font>
+    	<textcolor>FF000000</textcolor>
+			<textcolorNoFocus>ffffffff</textcolorNoFocus>
 		</control>
 		
 		<control>
@@ -329,7 +329,7 @@
 		<posX>96</posX>
 		<posY>694</posY>
 		<width>790</width>
-		<height>295</height>
+		<height>285</height>
 		<font>TitanLight12</font>
 		<seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.View.description</label>

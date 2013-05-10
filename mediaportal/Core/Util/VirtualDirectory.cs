@@ -206,7 +206,7 @@ namespace MediaPortal.Util
 
       foreach (string ext in extensions)
       {
-        m_extensions.Add(ext.ToLower());
+        m_extensions.Add(ext.ToLowerInvariant());
       }
     }
 
@@ -218,7 +218,7 @@ namespace MediaPortal.Util
     {
       if (m_extensions == null)
         m_extensions = new HashSet<string>();
-      m_extensions.Add(extension.ToLower());
+      m_extensions.Add(extension.ToLowerInvariant());
     }
 
     /// <summary>
@@ -229,11 +229,6 @@ namespace MediaPortal.Util
     {
       if (share == null) return;
       m_shares.Add(share);
-      //See if the share contains a folder.jpg (we'll be looking for it soon)
-      if (Path.IsPathRooted(share.Path))
-      {
-        Util.Utils.FileExistsInCache(Path.Combine(share.Path, "folder.jpg"));
-      }
     }
 
     public void AddRemovableDrive(String path, String name)
@@ -355,7 +350,7 @@ namespace MediaPortal.Util
     //    {
     //      bool driveFound = false;
     //      string driveName = Util.Utils.GetDriveName(drive);
-    //      string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
+    //      string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
     //      if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
     //      //
     //      // Check if the share already exists
@@ -505,11 +500,11 @@ namespace MediaPortal.Util
               //string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
               //  share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
               string remoteFolder = GetShareRemoteURL(share);
-              if (strDir.ToLower() == remoteFolder.ToLower())
+              if (strDir.ToLowerInvariant() == remoteFolder.ToLowerInvariant())
               {
                 return share;
               }
-              if (strDir.ToLower().StartsWith(remoteFolder.ToLower()))
+              if (strDir.ToLowerInvariant().StartsWith(remoteFolder.ToLowerInvariant()))
               {
                 if (foundShare == null)
                 {
@@ -533,9 +528,9 @@ namespace MediaPortal.Util
           else
           {
             string strFullPath = share.Path;
-            if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
+            if (strRoot.ToLowerInvariant().StartsWith(strFullPath.ToLowerInvariant()))
             {
-              if (strRoot.ToLower() == strFullPath.ToLower())
+              if (strRoot.ToLowerInvariant() == strFullPath.ToLowerInvariant())
               {
                 return share;
               }
@@ -867,6 +862,19 @@ namespace MediaPortal.Util
     /// <returns>A list of GUIListItems for the specified folder</returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
+      return this.GetDirectoryExt(strDir, false);
+    }
+
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// If the folder is protected by a pincode then the user is asked to enter the pincode
+    /// and the folder contents are only returned when the pincode is correct
+    /// </summary>
+    /// <param name="strDir">The path to load items from</param>
+    /// <param name="loadHidden">The path to load items from even hidden one</param>
+    /// <returns>A list of GUIListItems for the specified folder</returns>
+    public List<GUIListItem> GetDirectoryExt(string strDir, bool loadHidden)
+    {
       if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
@@ -1165,7 +1173,7 @@ namespace MediaPortal.Util
           catch (Exception) {}
         }
 
-        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
+        HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData, loadHidden);
 
         // CUE Filter
         items =
@@ -1185,6 +1193,21 @@ namespace MediaPortal.Util
     /// returns an arraylist of GUIListItems for the specified folder
     /// </returns>
     public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions)
+    {
+      return this.GetDirectoryUnProtectedExt(strDir, useExtensions, false);
+    }
+
+    /// <summary>
+    /// This method returns an arraylist of GUIListItems for the specified folder
+    /// This method does not check if the folder is protected by an pincode. it will
+    /// always return all files/subfolders present
+    /// </summary>
+    /// <param name="strDir">folder</param>
+    /// <param name="loadHidden">The path to load items from even hidden one</param>
+    /// <returns>
+    /// returns an arraylist of GUIListItems for the specified folder
+    /// </returns>
+    public List<GUIListItem> GetDirectoryUnProtectedExt(string strDir, bool useExtensions, bool loadHidden)
     {
       if (String.IsNullOrEmpty(strDir)) return GetRootExt();
 
@@ -1363,7 +1386,7 @@ namespace MediaPortal.Util
         items.Add(item);
       }
 
-      HandleLocalFilesInDir(strDir, ref items, false, true);
+      HandleLocalFilesInDir(strDir, ref items, false, true, loadHidden);
 
       return items;
     }
@@ -1446,7 +1469,7 @@ namespace MediaPortal.Util
         {
           bool driveFound = false;
           string driveName = Utils.GetDriveName(drive);
-          string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
+          string driveLetter = drive.Substring(0, 1).ToUpperInvariant() + ":";
           if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
 
           //
@@ -1483,13 +1506,13 @@ namespace MediaPortal.Util
       return items;
     }
 
-    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails)
+    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails, bool loadHidden)
     {
-      this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false);
+      this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false, loadHidden);
     }
 
     private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails,
-                                       bool useCache)
+                                       bool useCache, bool loadHidden)
     {
       //This function is only used inside GetDirectoryUnProtectedExt. GetDirectoryUnProtectedExt is 
       //mainly used for internal loading. That means it isn't called when the user explicitly enters a 
@@ -1544,8 +1567,11 @@ namespace MediaPortal.Util
             if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
               // Skip hidden folders
-              if ((fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                continue;
+              if (!loadHidden)
+              {
+                if ((fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                  continue;
+              }
 
               string strPath = FileName.Substring(aDirectory.Length + 1);
               fi.Name = fd.cFileName;
@@ -1590,9 +1616,12 @@ namespace MediaPortal.Util
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
-                if (!aHasRedbookDetails &&
-                    (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                  continue;
+                if (!loadHidden)
+                {
+                  if (!aHasRedbookDetails &&
+                      (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                    continue;
+                }
 
                 if (!aHasRedbookDetails)
                 {
@@ -1744,7 +1773,7 @@ namespace MediaPortal.Util
         //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
 
         return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
@@ -1771,7 +1800,7 @@ namespace MediaPortal.Util
         //				if (!Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return filesWithoutExtension;
-        string extensionFile = Path.GetExtension(strPath).ToLower();
+        string extensionFile = Path.GetExtension(strPath).ToLowerInvariant();
         if ((extensions[0] as string) == "*") return true; // added for explorer modul by gucky
         for (int i = 0; i < extensions.Count; ++i)
         {
@@ -2039,7 +2068,7 @@ namespace MediaPortal.Util
           int driveType = Utils.getDriveType(drive);
           if (driveType == (int)DriveType.CDRom)
           {
-            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+            string driveName = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpperInvariant());
             Share share = new Share(driveName, drive, -1);
             sharesMusic.Add(share);
             sharesPhotos.Add(share);

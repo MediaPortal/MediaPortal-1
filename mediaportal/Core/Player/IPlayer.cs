@@ -441,6 +441,16 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="resumeData">resumeBDTitle</param>
+    public virtual int SetResumeBDTitleState
+    {
+      get { return 0; }
+      set { }
+    }
+
+    /// <summary>
     /// Property which should return true if the player is capable of rendering video
     /// </summary>
     public virtual bool HasVideo

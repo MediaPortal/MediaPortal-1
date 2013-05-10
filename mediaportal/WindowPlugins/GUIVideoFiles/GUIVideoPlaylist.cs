@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Video
     [SkinControl(23)] protected GUIButtonControl btnPlay = null;
     [SkinControl(24)] protected GUIButtonControl btnNext = null;
     [SkinControl(25)] protected GUIButtonControl btnPrevious = null;
-    [SkinControl(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+    [SkinControl(30)] protected GUICheckButton btnRepeatPlaylist = null;
 
 
     public GUIVideoPlayList()

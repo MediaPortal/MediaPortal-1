@@ -137,20 +137,6 @@
     <textcolor>ff000000</textcolor>
     <textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
-  <style Name="SettingsToggleButton">
-    <width>385</width>
-    <height>58</height>
-    <textXOff>33</textXOff>
-    <textYOff>11</textYOff>
-    <textpadding>43</textpadding>
-    <textureFocus>settings_button_focus_toggleon.png</textureFocus>
-    <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
-    <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
-    <AltTextureNoFocus>settings_button_nofocus_toggleoff.png</AltTextureNoFocus>
-    <scrollStartDelaySec>0</scrollStartDelaySec>
-    <textcolor>ff000000</textcolor>
-    <textcolorNoFocus>ffffffff</textcolorNoFocus>
-  </style>
   <style Name="SettingsCheckButton">
     <width>385</width>
     <height>58</height>
@@ -301,27 +287,6 @@
     <animation effect="zoom" start="105,105" end="100,100" time="300">unfocus</animation>
   </control>
   <control>
-    <description>default togglebutton</description>
-    <type>togglebutton</type>
-    <id>4</id>
-    <posX>533</posX>
-    <posY>250</posY>
-    <width>385</width>
-    <height>58</height>
-    <textXOff>32</textXOff>
-    <textYOff>12</textYOff>
-    <textureFocus>settings_button_focus_toggleon.png</textureFocus>
-    <textureNoFocus>settings_button_nofocus_toggleon.png</textureNoFocus>
-    <AltTextureFocus>settings_button_focus_toggleoff.png</AltTextureFocus>
-    <AltTextureNoFocus>settings_button_nofocus_toggleoff.png</AltTextureNoFocus>
-    <label>-</label>
-    <font>font12</font>
-    <textcolor>FF000000</textcolor>
-    <textcolorNoFocus>ffffffff</textcolorNoFocus>
-    <colordiffuse>white</colordiffuse>
-    <disabledcolor>60ffffff</disabledcolor>
-  </control>
-  <control>
     <description>sort button</description>
     <type>sortbutton</type>
     <id>3</id>
@@ -366,7 +331,7 @@
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
-    <playedColor>FF85CFFF</playedColor>
+    <playedColor>FF00B7FF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
 		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
@@ -792,8 +757,8 @@
     <id>0</id>
     <width>385</width>
     <height>58</height>
-    <textXOff>25</textXOff>
-    <textYOff>14</textYOff>
+    <textXOff>32</textXOff>
+    <textYOff>12</textYOff>
     <textureFocus>button-focus.png</textureFocus>
     <textureNoFocus>button-nofocus.png</textureNoFocus>
     <font>font12</font>

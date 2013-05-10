@@ -235,6 +235,14 @@ int CDeMultiplexer::GetAudioStreamType(int stream)
     return m_audioStreams[stream].audioType;
 }
 
+int CDeMultiplexer::GetAudioChannelCount(int stream)
+{
+  if (stream < 0 || stream >= (int)m_audioStreams.size())
+    return 0;
+  else
+    return m_audioStreams[stream].audioChannelCount;
+}
+
 int CDeMultiplexer::GetCurrentAudioStreamType()
 {
   if (m_iAudioStream >= m_audioStreams.size())
@@ -774,9 +782,10 @@ bool CDeMultiplexer::AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip)
 {
   bool hasAudio = false;
 
-  for (int i = 0; i < pClip->raw_stream_count; i++) 
+  // TODO check if we can always rely on the audio_stream_count > 0
+  for (int i = 0; i < pClip->audio_stream_count; i++) 
   {
-    switch (pClip->raw_streams[i].coding_type)
+    switch (pClip->audio_streams[i].coding_type)
     {
       case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
       case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
@@ -1786,7 +1795,8 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
 
       audio.audioType = clip->audio_streams[i].coding_type;
       audio.pid = clip->audio_streams[i].pid;
-			
+      audio.audioChannelCount = clip->audio_streams[i].format;
+
       if(m_filter.lib.ForceTitleBasedPlayback())
       {
         if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
@@ -1796,7 +1806,8 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
             m_iAudioIdx = i;
         }
       }
-      LogDebug("   Audio #%d:[%4d] %s %s", i, audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+
+      LogDebug("   Audio #%d:[%4d] %s %s %s", i, audio.pid, audio.language, StreamFormatAsString(audio.audioType), StreamAudioFormatAsString(audio.audioChannelCount));
 
       m_audioStreams.push_back(audio);
     }
@@ -1936,6 +1947,23 @@ LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
 		return _T("IG");
 	case BLURAY_STREAM_TYPE_SUB_TEXT:
 		return _T("Text");
+	default:
+		return _T("Unknown");
+	}
+}
+
+LPCTSTR CDeMultiplexer::StreamAudioFormatAsString(int pStreamAudioChannel)
+{
+	switch (pStreamAudioChannel)
+	{
+	case BLURAY_AUDIO_FORMAT_MONO:
+		return _T("1.0");
+	case BLURAY_AUDIO_FORMAT_STEREO:
+		return _T("2.0");
+	case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+		return _T("5.1");
+	case BLURAY_AUDIO_FORMAT_COMBO:
+		return _T("7.1");
 	default:
 		return _T("Unknown");
 	}

@@ -316,7 +316,7 @@ namespace MPTray
 
       foreach (string arg in args)
       {
-        switch (arg.ToLower())
+        switch (arg.ToLowerInvariant())
         {
           case "/shell":
           case "-shell":

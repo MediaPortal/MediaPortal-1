@@ -41,13 +41,9 @@
 		<layout>GridLayout(2, 7, 42, 0, 1)</layout>
 		<control>
 			<description>Volume Display</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>30</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9121</label>
@@ -56,13 +52,9 @@
 
 		<control>
 			<description>Progress display</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>31</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9122</label>
@@ -70,13 +62,9 @@
 
 		<control>
 			<description>Disk Icon</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>32</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9123</label>
@@ -84,13 +72,9 @@
 
 		<control>
 			<description>Media Status</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>33</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9124</label>
@@ -98,13 +82,9 @@
 
 		<control>
 			<description>CD/DVD Status</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>34</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9125</label>
@@ -112,13 +92,9 @@
 
 		<control>
 			<description>Use Custom Font</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>35</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9126</label>
@@ -126,13 +102,9 @@
 
 		<control>
 			<description>Use Large Icons</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>36</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9127</label>
@@ -140,13 +112,9 @@
 
 		<control>
 			<description>Use Custom Large Icons</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>37</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9128</label>
@@ -154,13 +122,9 @@
 
 		<control>
 			<description>Invert Large Icons</description>
-			<type>togglebutton</type>
+			<type>checkbutton</type>
 			<id>38</id>
 			<width>334</width>
-			<textureFocus>togglebutton_medium_on_focus.png</textureFocus>
-			<textureNoFocus>togglebutton_medium_on_nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton_medium_off_focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton_medium_off_nofocus.png</AltTextureNoFocus>
 			<textcolor>ff85cffe</textcolor>
 	<textcolorNoFocus>ff85cffe</textcolorNoFocus>
 			<label>9129</label>

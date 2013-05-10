@@ -741,7 +741,7 @@ namespace MediaPortal.GUI.Video
 
       GUIImage pImgNib = GetControl((int)Controls.OSD_SUBMENU_NIB) as GUIImage; // pointer to the nib graphic
       GUIImage pImgBG = GetControl(iBackID) as GUIImage; // pointer to the background graphic
-      GUIToggleButtonControl pButton = GetControl(iButtonID) as GUIToggleButtonControl;
+      GUIControl pButton = GetControl(iButtonID);
       // pointer to the OSD menu button
 
       // check to see if we are currently showing a sub-menu and it's position is different

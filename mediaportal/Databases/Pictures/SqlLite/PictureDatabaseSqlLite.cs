@@ -253,7 +253,7 @@ namespace MediaPortal.Picture.Database
             bool searching = true;
             while ((s = sr.ReadLine()) != null && searching)
             {
-              if (s.ToLower() == "[" + Path.GetFileName(strPic).ToLower() + "]")
+              if (s.ToLowerInvariant() == "[" + Path.GetFileName(strPic).ToLowerInvariant() + "]")
               {
                 do
                 {

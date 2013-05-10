@@ -140,56 +140,44 @@
 
 			<control>
 				<description>Plot</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>3</id>
 				<label>207</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
 				<onup>2</onup>
 				<ondown>4</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
 			<control>
 				<description>Cast</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>4</id>
 				<label>206</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
 				<onup>3</onup>
 				<ondown>7</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
       <control>
         <description>User Review Button</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>7</id>
         <label>183</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
         <onup>4</onup>
         <ondown>5</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
       </control>
 	
 			<control>
@@ -216,20 +204,16 @@
 	
 			<control>
 				<description>Watched</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>6</id>
 				<label>1010</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
 				<onup>26</onup>
 				<ondown>97270</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 			
 			<control>

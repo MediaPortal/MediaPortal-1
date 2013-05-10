@@ -861,11 +861,11 @@ namespace MpeCore
     /// <returns></returns>
     public static int Compare(PackageClass pak1, PackageClass pak2)
     {
-      if (pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper()) == 0)
+      if (pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant()) == 0)
       {
         return pak2.GeneralInfo.Version.CompareTo(pak1.GeneralInfo.Version);
       }
-      return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
+      return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
     }
 
     /// <summary>
@@ -876,11 +876,11 @@ namespace MpeCore
     /// <returns></returns>
     public static int CompareVersionAscending(PackageClass pak1, PackageClass pak2)
     {
-      if (pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper()) == 0)
+      if (pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant()) == 0)
       {
         return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
       }
-      return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
+      return pak1.GeneralInfo.Name.ToUpperInvariant().CompareTo(pak2.GeneralInfo.Name.ToUpperInvariant());
     }
 
     public PackageClass Clone()

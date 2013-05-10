@@ -31,8 +31,9 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-const double SEEKING_ACCURACY = (double)0.16; // 1/25 *4 (4 frames in PAL)
-const int MAX_SEEKING_ITERATIONS = 50;
+const double SEEKING_ACCURACY = (double)0.24; // 1/25 *6 (6 frames in PAL)
+const int MAX_SEEKING_ITERATIONS = 30;
+const int MAX_BUFFER_ITERATIONS = 100;
 
 extern void LogDebug(const char *fmt, ...) ;
 CTsFileSeek::CTsFileSeek( CTsDuration& duration)
@@ -56,7 +57,7 @@ void CTsFileSeek::SetFileReader(FileReader* reader)
 // The method will make a guess where the timestamp is located in the file
 // and do a PCR seek from there until it finds the correct timestamp
 //
-void CTsFileSeek::Seek(CRefTime refTime)
+bool CTsFileSeek::Seek(CRefTime refTime)
 {
   double fileDuration=(double)m_duration.Duration().Millisecs();
   double seekTimeStamp=(double)refTime.Millisecs();
@@ -75,13 +76,16 @@ void CTsFileSeek::Seek(CRefTime refTime)
   seekTimeStamp /= 1000.0f; // convert to seconds.
 
   m_seekPid=m_duration.GetPid();
-  LogDebug("seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
+  LogDebug("FileSeek: seek to %f filepos:%x pid:%x", seekTimeStamp,(DWORD)filePos, m_seekPid);
   
   byte buffer[188*10];
   __int64 binaryMax=m_reader->GetFileSize();
   __int64 binaryMin=0;
   __int64 lastFilePos=0;
   int seekingIteration=0;
+  __int64 firstFilePos=filePos;
+  int noPCRIteration=0;
+  bool noPCRloop = false;
 
   Reset() ;   // Reset "PacketSync"
   while (true)
@@ -92,14 +96,14 @@ void CTsFileSeek::Seek(CRefTime refTime)
       //no need to seek for timestamp 0,
       //simply set the pointer at the beginning of the file
       m_reader->SetFilePointer(0,FILE_BEGIN);
-      return;
+      return false;
     }
     if (filePos+sizeof(buffer) > m_reader->GetFileSize())
     {
       //no need to seek when we want to seek to end of file
       //simply set the pointer at the end of the file
       m_reader->SetFilePointer(0,FILE_END);
-      return;
+      return false;
     }
 
     //set filepointer to filePos
@@ -109,11 +113,13 @@ void CTsFileSeek::Seek(CRefTime refTime)
     DWORD dwBytesRead;
     if (!SUCCEEDED(m_reader->Read(buffer, sizeof(buffer),&dwBytesRead)))
     {
-      return;
+      LogDebug("FileSeek: read failed at filePos: %x - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
+      return true;
     }
-    if (dwBytesRead==0) 
+    if (dwBytesRead <= 0) //end-of-file
     {
-      return;
+      LogDebug("FileSeek: end-of-file at filePos: %x - target time: %f, iterations: %d", (DWORD)filePos, seekTimeStamp, seekingIteration);
+      return true;
     }
     //process data
     m_pcrFound.Reset();
@@ -130,19 +136,29 @@ void CTsFileSeek::Seek(CRefTime refTime)
       // Make sure that seeking position is at least the target one
       if (0 <= diff && diff <= SEEKING_ACCURACY)
       {
-        LogDebug(" stop seek: %f at %x - target: %f, diff: %f",
-          clockFound, (DWORD)filePos, seekTimeStamp, diff);
+        LogDebug("FileSeek: stop seek: %f at %x - target: %f, diff: %f, iterations: %d",
+          clockFound, (DWORD)filePos, seekTimeStamp, diff, seekingIteration);
         m_reader->SetFilePointer(filePos,FILE_BEGIN);
-        return;
+        return false;
       }
 
+      noPCRIteration = 0;
       seekingIteration++;
       if( seekingIteration > MAX_SEEKING_ITERATIONS )
       {
-        LogDebug(" stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f",
+        LogDebug("FileSeek: stop seek max iterations reached (%d): %f at %x - target: %f, diff: %f",
           MAX_SEEKING_ITERATIONS, clockFound, (DWORD)filePos, seekTimeStamp, diff);
-        m_reader->SetFilePointer(filePos,FILE_BEGIN);
-        return;
+          
+        if (fabs(diff) < 2.0)
+        {
+          m_reader->SetFilePointer(filePos,FILE_BEGIN);
+        }
+        else
+        {
+          //Set the file pointer to the initial estimate - the best we can do...
+          m_reader->SetFilePointer(firstFilePos,FILE_BEGIN);
+        }
+        return false;
       }
 
       // lower bound becomes valid
@@ -162,10 +178,10 @@ void CTsFileSeek::Seek(CRefTime refTime)
 
       if (lastFilePos==filePos)
       {
-        LogDebug(" stop seek closer target found : %f at %x - target: %f, diff: %f",
+        LogDebug("FileSeek: stop seek closer target found : %f at %x - target: %f, diff: %f",
           clockFound, (DWORD)filePos, seekTimeStamp, diff);
         m_reader->SetFilePointer(filePos,FILE_BEGIN);
-        return;
+        return false;
       }
 
       Reset() ;   // Random jump, Reset "PacketSync"
@@ -174,8 +190,27 @@ void CTsFileSeek::Seek(CRefTime refTime)
     {
       //move filepointer forward and continue searching for a PCR
       filePos += sizeof(buffer);
+      noPCRIteration++;
+      if (noPCRIteration > MAX_BUFFER_ITERATIONS)
+      {
+        if (noPCRloop) //second time this has happened
+        {
+          LogDebug("FileSeek: stop seek, no PCR found, max iterations reached (%d)", MAX_BUFFER_ITERATIONS);
+          //Set the file pointer to the initial estimate - the best we can do...
+          m_reader->SetFilePointer(firstFilePos,FILE_BEGIN);
+          return false;
+        }
+        //Let's try looking for any PCR pid 
+        //starting again from the initial position
+        LogDebug("FileSeek: No PCR found (pid = %d), trying for any PCR pid", m_seekPid);
+        m_seekPid = -1;
+        filePos = firstFilePos;
+        noPCRIteration = 0;
+        noPCRloop = true;
+      }
     }
   }
+  return false;
 }
 
 
@@ -196,7 +231,7 @@ void CTsFileSeek::OnTsPacket(byte* tsPacket)
   if (field.Pcr.IsValid)
   {
     //got a pcr, is it the correct pid?
-    if ( (header.Pid==m_seekPid) || (m_seekPid<0) )
+    if ( (m_seekPid>0 && (header.Pid==m_seekPid)) || (m_seekPid<0) )
     {
       // pid is valid
       // did we have a pcr rollover ??

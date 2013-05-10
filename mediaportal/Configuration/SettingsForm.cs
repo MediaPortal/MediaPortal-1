@@ -421,24 +421,26 @@ namespace MediaPortal.Configuration
         Log.Info("add tv section");
         if (splashScreen != null)
         {
-          splashScreen.SetInformation("Adding television section...");
+          splashScreen.SetInformation("Adding TV/Radio section...");
         }
 
-        SectionSettings television = new TV();
-        AddSection(new ConfigPage(null, television, false));
+        SectionSettings tvradio = new TVRadio();
+        AddSection(new ConfigPage(null, tvradio, false));
 
-        Log.Info("  add tv client section");
-        AddSection(new ConfigPage(television, new TVClient(), false));
+        Log.Info("  add tv section");
+        AddSection(new ConfigPage(tvradio, new TV(), false));
+        Log.Info("  add radio section");
+        AddSection(new ConfigPage(tvradio, new Radio(), false));
         Log.Info("  add tv zoom section");
-        AddSection(new ConfigPage(television, new TVZoom(), false));
+        AddSection(new ConfigPage(tvradio, new TVZoom(), false));
         Log.Info("  add tv postprocessing section");
-        AddSection(new ConfigPage(television, new TVPostProcessing(), true));
+        AddSection(new ConfigPage(tvradio, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
-        AddSection(new ConfigPage(television, new TVTeletext(), true));
+        AddSection(new ConfigPage(tvradio, new TVTeletext(), true));
         if (ShowDebugOptions)
         {
           Log.Info("  add tv debug options section");
-          AddSection(new ConfigPage(television, new TVDebugOptions(), true));
+          AddSection(new ConfigPage(tvradio, new TVDebugOptions(), true));
         }
       }
     }
@@ -490,8 +492,6 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(music, new MusicSort(), true));
       Log.Info("  add music dsp section");
       AddSection(new ConfigPage(music, new MusicDSP(), true));
-      Log.Info("  add music asio section");
-      AddSection(new ConfigPage(music, new MusicASIO(), true));
     }
 
 
@@ -544,15 +544,11 @@ namespace MediaPortal.Configuration
       MovieDatabase movieDbConfig = new MovieDatabase();
       AddSection(new ConfigPage(movie, movieDbConfig, false));
       Log.Info("  add video player section");
-      AddSection(new ConfigPage(movie, new MoviePlayer(), false));
-      Log.Info("  add video zoom section");
-      AddSection(new ConfigPage(movie, new MovieZoom(), false));
-      Log.Info("  add video extensions section");
-      AddSection(new ConfigPage(movie, new MovieExtensions(), true));
-      Log.Info("  add video views section");
-      AddSection(new ConfigPage(movie, new MovieViews(), true));*/
-      /*Log.Info("  add blu-ray postprocessing section");
-      AddSection(new ConfigPage(bd, new BDPostProcessing(), true));*/
+      AddSection(new ConfigPage(movie, new MoviePlayer(), false));*/
+      Log.Info("  add blu-ray video zoom section");
+      AddSection(new ConfigPage(bd, new BDZoom(), false));
+      Log.Info("  add blu-ray postprocessing section");
+      AddSection(new ConfigPage(bd, new BDPostProcessing(), true));
     }
 
     private void AddTabDvd()
@@ -1041,17 +1037,35 @@ namespace MediaPortal.Configuration
           }
         }
 
-        // Check hostname for tv server (empty hostname is invalid)
-        if (UseTvServer)
+        // Check hostname for tv server if tv or radio is used
+        bool tvPluginEnabled = xmlreader.GetValueAsBool("plugins", "TV", false);
+        bool radioPluginEnabled = xmlreader.GetValueAsBool("plugins", "Radio", false);
+        if (UseTvServer && (tvPluginEnabled || radioPluginEnabled))
         {
           string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
           {
-            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV Client\" section. " +
+            // Show message box
+            DialogResult result = MessageBox.Show("There is a problem with the hostname specified in the \"TV/Radio\" section. " +
               "It will not be saved." + Environment.NewLine + Environment.NewLine + "Do you want to review it before exiting?",
               "MediaPortal Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            // If user wants to review hostname select "TV/Radio" section and return false
             if (result == DialogResult.Yes)
+            {
+              // Loop through the tree to find the "TV/Radio" node and select it
+              foreach (TreeNode parentNode in sectionTree.Nodes)
+              {
+                if (parentNode.Text == "TV/Radio")
+                {
+                      sectionTree.SelectedNode = parentNode;
+                      parentNode.EnsureVisible();
+                      return false;
+                }
+              }
               return false;
+            }
+
           }
         }
 

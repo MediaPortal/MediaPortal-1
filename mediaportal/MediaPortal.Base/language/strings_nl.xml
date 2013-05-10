@@ -2196,12 +2196,7 @@
     <String id="300093">Herstarten MP na crash</String>
     <String id="300094">Herstartvertraging in seconden</String>
     <String id="300095">Monitor uitschakelen (bij leeg scherm)</String>
-    <String id="300096">Monitor/TV inschakelen (opstarten vanuit stand-by)</String>
-    <String id="300097">S3 stand-by toestaan (ook als er wekapparaten aanwezig zijn)</String>
-    <String id="300098">Oplossing om bevriezen na het hervatten van MediaPortal te voorkomen</String>
-    <String id="300099">Herstarten van MediaPortal na het hervatten</String>
     <String id="300100">Weergeven van laatste module na het wekken</String>
-    <String id="300101">Gebruik schermkeuze om MediaPortal startscherm te kiezen</String>
     <String id="300102">Vertraging bij opstarten</String>
     <String id="300103">Bij MediaPortal opstarten</String>
     <String id="300104">Bij MediaPortal hervatten</String>
@@ -2255,10 +2250,10 @@
     <String id="300152">Afbeeldingen</String>
     <String id="300153">Alleen kleine miniaturen automatisch aanmaken</String>
     <String id="300154">Afbeeldingscache leegmaken</String>
-    <String id="300155">TV/Video's</String>
+    <String id="300155">Video's</String>
     <String id="300156">Automatisch miniaturen aanmaken</String>
     <String id="300157">Miniatuur in de rec-map laten</String>
-    <String id="300158">TV/Videos miniaturen verwijderen</String>
+    <String id="300158">Videos miniaturen verwijderen</String>
     <String id="300159">Voorbeeldweergave</String>
     <String id="300160">Rijen</String>
     <String id="300161">Databank</String>

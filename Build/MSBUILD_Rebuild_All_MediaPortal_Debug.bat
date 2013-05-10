@@ -11,8 +11,17 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
+echo Building native components...
+call VS_Rebuild_Debug_DirectShowFilters.bat
+
+echo.
 echo Building MediaPortal...
-"%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+set xml=Build_Report_%BUILD_TYPE%_MediaPortal.xml
+set html=Build_Report_%BUILD_TYPE%_MediaPortal.html
+set logger=/l:XmlFileLogger,"BuildReport\MSBuild.ExtensionPack.Loggers.dll";logfile=%xml%
+
+"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" %logger% /tv:3.5 /p:TargetFrameworkVersion=v3.5 /target:Rebuild /property:Configuration=%BUILD_TYPE%;Platform=x86 "%MediaPortal%\MediaPortal.sln" >> %log%
+BuildReport\msxsl %xml% _BuildReport_Files\BuildReport.xslt -o %html%
 
 echo.
 echo Reverting assemblies...

@@ -6,8 +6,7 @@
   <rememberLastFocusedControl>yes</rememberLastFocusedControl>
   <controls>
     <import>common.settings.xml</import>
-		
-		<import>common.time.xml</import>
+    <import>common.time.xml</import>
     <control>
       <description>background</description>
       <type>image</type>
@@ -30,7 +29,7 @@
       <texture>backslide2.png</texture>
       <colordiffuse>aaffffff</colordiffuse>
     </control>
-		<control>
+    <control>
       <description>Bluray regions</description>
       <type>image</type>
       <id>1</id>
@@ -39,7 +38,7 @@
       <height>325</height>
       <width>650</width>
       <texture mask="picturethumbmask.png">Blu-Ray_regions.png</texture>
-			<visible>yes</visible>
+      <visible>yes</visible>
     </control>
     <control>
       <description>buttons</description>
@@ -57,7 +56,7 @@
         <width>350</width>
         <onup>7</onup>
       </control>
-			<control>
+      <control>
         <description>AudioType</description>
         <type>button</type>
         <id>3</id>
@@ -78,37 +77,42 @@
         <label>2135</label>
         <width>350</width>
       </control>
-			<control>
+      <control>
         <description>Subtitles On/Off</description>
         <type>checkbutton</type>
         <id>6</id>
         <label>1196</label>
         <width>350</width>
-				<ondown>7</ondown>
-			</control>			
+        <ondown>8</ondown>
+      </control>
+      <control>
+        <description>Internal Blu_ray On/Off</description>
+        <type>checkbutton</type>
+        <id>8</id>
+        <label>1199</label>
+        <width>350</width>
+        <ondown>7</ondown>
+      </control>
     </control>
-		
-		<control>
-					<description>Parental age limit</description>
-					<type>label</type>
-					<id>102</id>
-					<posX>110</posX>
-					<posY>380</posY>
-					<label>300220</label>
-				</control>
-				<control>
-					<description>Age limit value</description>
-					<type>spincontrol</type>
-					<id>7</id>
-					<posX>280</posX>
-					<posY>425</posY>
-					<onleft>7</onleft>
-					<onup>6</onup>
-					<ondown>2</ondown>
-					<align>right</align>
-					<buddycontrolid>102</buddycontrolid>
-				</control>
-		
-		
+    <control>
+      <description>Parental age limit</description>
+      <type>label</type>
+      <id>102</id>
+      <posX>110</posX>
+      <posY>425</posY>
+      <label>300220</label>
+    </control>
+    <control>
+      <description>Age limit value</description>
+      <type>spincontrol</type>
+      <id>7</id>
+      <posX>280</posX>
+      <posY>470</posY>
+      <onleft>7</onleft>
+      <onup>8</onup>
+      <ondown>2</ondown>
+      <align>right</align>
+      <buddycontrolid>102</buddycontrolid>
+    </control>
   </controls>
 </window>
