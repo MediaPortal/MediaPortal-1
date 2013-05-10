@@ -331,7 +331,7 @@
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>
-    <playedColor>FF85CFFF</playedColor>
+    <playedColor>FF00B7FF</playedColor>
     <spaceBetweenItems>2</spaceBetweenItems>
 		<unfocusedAlpha applyToAll="true">130</unfocusedAlpha>
     <scrollOffset>1</scrollOffset>
