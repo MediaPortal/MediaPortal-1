@@ -357,7 +357,7 @@ namespace MediaPortal.GUI.LastFMRadio
 
     private void OnPlayBackEnded(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Music)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }
@@ -375,7 +375,7 @@ namespace MediaPortal.GUI.LastFMRadio
     /// <param name="filename">filename of item that was playing</param>
     private void OnPlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
     {
-      if (type != g_Player.MediaType.Music)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }
@@ -391,7 +391,7 @@ namespace MediaPortal.GUI.LastFMRadio
     /// <param name="filename">filename of item that was stopped</param>
     private void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
-      if (type != g_Player.MediaType.Music)
+      if (type != g_Player.MediaType.Radio)
       {
         return;
       }
