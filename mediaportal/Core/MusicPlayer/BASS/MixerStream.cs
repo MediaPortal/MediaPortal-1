@@ -375,7 +375,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return Bass.BASS_ChannelGetData(_mixer, buffer, length);
       }
-      catch (AccessViolationException)
+      catch (Exception)
       { }
       return 0;
     }

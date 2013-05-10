@@ -1490,6 +1490,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       MusicStream currentStream = GetCurrentStream();
 
+      MusicStream previousStream = null;
       bool result = true;
       Speed = 1; // Set playback Speed to normal speed
 
@@ -1543,6 +1544,7 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             currentStream.FadeOutStop();
           }
+          previousStream = currentStream;
         }
 
         _state = PlayState.Init;
@@ -1612,6 +1614,10 @@ namespace MediaPortal.MusicPlayer.BASS
                 Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
                 // The new stream has a different frequency or number of channels
                 // We need a new mixer
+                if (previousStream != null)
+                {
+                  previousStream.Dispose();
+                }
                 _mixer.Dispose();
                 _mixer = null;
                 _mixer = new MixerStream(this);
