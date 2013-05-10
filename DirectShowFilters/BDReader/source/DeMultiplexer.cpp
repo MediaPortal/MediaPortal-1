@@ -1757,8 +1757,8 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       m_audioStreams.push_back(audio);
 
       return;
-    }	
-		
+    }
+
     bd_player_settings& settings = m_filter.lib.GetBDPlayerSettings();
     int iAudioIdx_tmp = 0;
     for (int i(0); i < clip->audio_stream_count; i++)
@@ -1777,7 +1777,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       if(m_filter.lib.ForceTitleBasedPlayback())
       {
         if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
-        {        
+        {
           iAudioIdx_tmp = i;
           if (audio.audioType == settings.audioType)
             m_iAudioIdx = i;
@@ -1789,7 +1789,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       m_audioStreams.push_back(audio);
     }
 		
-    if (m_iAudioIdx < 0)
+    if (m_iAudioIdx < 0 || m_iAudioIdx >= clip->audio_stream_count)
       m_iAudioIdx = iAudioIdx_tmp;
 
     m_iAudioStream = m_iAudioIdx;
@@ -1931,18 +1931,18 @@ char* CDeMultiplexer::StreamFormatAsString(int pStreamType)
 
 LPCTSTR CDeMultiplexer::StreamAudioFormatAsString(int pStreamAudioChannel)
 {
-	switch (pStreamAudioChannel)
-	{
-	case BLURAY_AUDIO_FORMAT_MONO:
-		return _T("1.0");
-	case BLURAY_AUDIO_FORMAT_STEREO:
-		return _T("2.0");
-	case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
-		return _T("5.1");
-	case BLURAY_AUDIO_FORMAT_COMBO:
-		return _T("7.1");
-	default:
-		return _T("Unknown");
-	}
+  switch (pStreamAudioChannel)
+  {
+  case BLURAY_AUDIO_FORMAT_MONO:
+    return _T("1.0");
+  case BLURAY_AUDIO_FORMAT_STEREO:
+    return _T("2.0");
+  case BLURAY_AUDIO_FORMAT_MULTI_CHAN:
+    return _T("5.1");
+  case BLURAY_AUDIO_FORMAT_COMBO:
+    return _T("7.1");
+  default:
+    return _T("Unknown");
+  }
 }
 
