@@ -67,8 +67,8 @@
 		<id>40</id>
 		<posX>328</posX>
 		<posY>135</posY>
-		<font>font13</font>
-        <textcolor>6aa5cb</textcolor>
+		<font>font12</font>
+    <textcolor>6aa5cb</textcolor>
 		<animation effect="fade" time="800">WindowOpen</animation>
 		<animation effect="fade" time="300">WindowClose</animation>
 	</control>
@@ -87,7 +87,7 @@
 		<align>center</align>
 		<onleft>6</onleft>
 		<onright>8</onright>
-		<font>font13</font>
+		<font>font12</font>
 		<textureUp>arrow_round_right_nofocus.png</textureUp>
 		<textureDown>arrow_round_left_nofocus.png</textureDown>
 		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>

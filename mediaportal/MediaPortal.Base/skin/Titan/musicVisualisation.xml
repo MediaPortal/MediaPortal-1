@@ -24,7 +24,7 @@
 		<posY>68</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
@@ -36,7 +36,7 @@
 		<posY>68</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 
@@ -48,7 +48,7 @@
 		<posY>68</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<visible>no</visible>
 	</control>
