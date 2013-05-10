@@ -1206,7 +1206,7 @@ namespace MediaPortal.MusicPlayer.BASS
         VizWindow.Visible = false;
       }
 
-      if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
+      //if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
       {
         Stop();
       }
@@ -1250,7 +1250,14 @@ namespace MediaPortal.MusicPlayer.BASS
         VizWindow.Size = new Size(0, 0);
         VizWindow.TabIndex = 0;
         VizWindow.Enabled = false;
-        GUIGraphicsContext.form.Controls.Add(VizWindow);
+        try
+        {
+          GUIGraphicsContext.form.Controls.Add(VizWindow);
+        }
+        catch (Exception)
+        {
+          Log.Error("BASS: VizWindow exception");
+       }
       }
 
       GUIGraphicsContext.form.ResumeLayout();
@@ -1554,7 +1561,16 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        _streams.Add(stream);
+        try
+        {
+          _streams.Clear();
+          _streams.Add(stream);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("BASS: Could not add stream. Aborting playback. {0}", ex);
+        }
+
         if (stream.Filetype.FileMainType == FileMainType.CDTrack)
         {
           _isCDDAFile = true;
@@ -1791,7 +1807,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_mixer == null)
       {
         Log.Debug("BASS: Already stopped. Don't execute Stop a second time");
-        return;
+        //return;
       }
 
       // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
@@ -1889,7 +1905,14 @@ namespace MediaPortal.MusicPlayer.BASS
                        HandleSongEnded();
 
                        // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
-                       RemoveVisualizationWindow();
+                       try
+                       {
+                         RemoveVisualizationWindow();
+                       }
+                       catch (Exception)
+                       {
+                         Log.Error("BASS: Stop RemoveVisualizationWindow command caused an exception");
+                       }
 
                        // Switching back to normal playback mode
                        SwitchToDefaultPlaybackMode();
