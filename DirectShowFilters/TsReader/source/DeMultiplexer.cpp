@@ -542,7 +542,10 @@ void CDeMultiplexer::FlushVideo()
   m_bVideoAtEof=false;
   m_MinVideoDelta = 10.0 ;
   _InterlockedAnd(&m_AVDataLowCount, 0) ;
-  m_filter.m_bRenderingClockTooFast=false ;
+  if (!m_bShuttingDown)
+  {
+    m_filter.m_bRenderingClockTooFast=false;
+  }
   m_bSetVideoDiscontinuity=true;
   m_bVideoSampleLate=false;
   
@@ -580,7 +583,10 @@ void CDeMultiplexer::FlushAudio()
   m_bAudioAtEof = false;
   m_MinAudioDelta = 10.0;
   _InterlockedAnd(&m_AVDataLowCount, 0);
-  m_filter.m_bRenderingClockTooFast=false;
+  if (!m_bShuttingDown)
+  {
+    m_filter.m_bRenderingClockTooFast=false;
+  }
   m_bSetAudioDiscontinuity=true;
   m_bAudioSampleLate=false;
   
