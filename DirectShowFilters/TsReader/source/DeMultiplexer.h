@@ -160,6 +160,7 @@ public:
   long m_AVDataLowCount;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
+  bool m_bShuttingDown;
 
 private:
   struct stAudioStream
@@ -287,7 +288,6 @@ private:
   float m_MinAudioDelta;
   float m_MinVideoDelta;
 
-  bool m_bShuttingDown;
   
   int m_lastVidResX;
   int m_lastVidResY;
