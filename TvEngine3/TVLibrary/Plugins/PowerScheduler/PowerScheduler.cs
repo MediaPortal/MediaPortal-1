@@ -344,6 +344,9 @@ namespace TvEngine.PowerScheduler
         case ShutdownMode.Hibernate:
           SuspendSystem(source, (int)RestartOptions.Hibernate, force);
           break;
+        case ShutdownMode.Shutdown:
+          SuspendSystem(source, (int)RestartOptions.ShutDown, force);
+          break;
         case ShutdownMode.StayOn:
           Log.Debug("PS: Standby requested but system is configured to stay on");
           break;

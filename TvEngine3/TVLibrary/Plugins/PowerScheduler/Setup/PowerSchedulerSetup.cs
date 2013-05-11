@@ -491,7 +491,7 @@ namespace PowerScheduler.Setup
         }
 
         int shutdownMode = Convert.ToInt32(GetSetting("ShutdownMode", "0"));
-        if (shutdownMode < 0 || shutdownMode > 2)
+        if (shutdownMode < 0 || shutdownMode > 3)
           shutdownMode = 0;
         comboBoxShutdownMode.SelectedIndex = shutdownMode;
 

@@ -52,7 +52,7 @@ namespace MediaPortal.Plugins.Process
     {
       if (_audioDefaultDevice != null)
       {
-        _audioDefaultDevice.SafeDispose();          
+        _audioDefaultDevice.SafeDispose();
         _audioDefaultDevice = null;
       }
     }
@@ -61,47 +61,24 @@ namespace MediaPortal.Plugins.Process
 
     #region Public properties
 
-    public virtual bool IsMuted
+    public bool IsMuted
     {
       get
       {
-        try
-        {
-          if (_audioDefaultDevice != null)
-          {
-            return _audioDefaultDevice.Muted;
-          }
-          else
-          {
-            return VolumeHandler.Instance.IsMuted;
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("PS: Exception in IsMuted (get): {0}", ex);
-        }
-        return false;
+        if (_audioDefaultDevice != null)
+          return _audioDefaultDevice.Muted;
+        else
+          return VolumeHandler.Instance.IsMuted;
       }
       set
       {
-        try
-        {
-          if (_audioDefaultDevice != null)
-          {
-            _audioDefaultDevice.Muted = value;
-          }
-          else
-          {
-            VolumeHandler.Instance.IsMuted = value;
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("PS: Exception in IsMuted (set): {0}", ex);
-        }
+        if (_audioDefaultDevice != null)
+          _audioDefaultDevice.Muted = value;
+        else
+          VolumeHandler.Instance.IsMuted = value;
       }
     }
 
-    #endregion Properties
+    #endregion
   }
 }

@@ -432,7 +432,8 @@ namespace PowerScheduler.Setup
       this.comboBoxShutdownMode.Items.AddRange(new object[] {
             "(Hybrid) Sleep - S3",
             "Hibernate - S4",
-            "Stay on - S0"});
+            "Stay on - S0",
+            "Shutdown - S5"});
       this.comboBoxShutdownMode.Location = new System.Drawing.Point(84, 3);
       this.comboBoxShutdownMode.Name = "comboBoxShutdownMode";
       this.comboBoxShutdownMode.Size = new System.Drawing.Size(137, 21);

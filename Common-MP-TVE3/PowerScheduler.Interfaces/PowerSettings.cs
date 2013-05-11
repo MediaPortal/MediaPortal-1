@@ -34,7 +34,8 @@ namespace TvEngine.PowerScheduler.Interfaces
   {
     Suspend = 0,
     Hibernate = 1,
-    StayOn = 2
+    StayOn = 2,
+    Shutdown = 3
   }
 
   #endregion
@@ -303,6 +304,7 @@ namespace TvEngine.PowerScheduler.Interfaces
           case ShutdownMode.Suspend:
           case ShutdownMode.Hibernate:
           case ShutdownMode.StayOn:
+          case ShutdownMode.Shutdown:
             _shutdownMode = value;
             break;
           default:

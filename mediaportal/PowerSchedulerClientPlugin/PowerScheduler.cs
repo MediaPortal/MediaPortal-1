@@ -108,6 +108,11 @@ namespace MediaPortal.Plugins.Process
     private Thread _standbyWakeupThread;
 
     /// <summary>
+    /// Thread to restore the master audio mute state
+    /// </summary>
+    private Thread _restoreMuteThread;
+
+    /// <summary>
     /// Timer with support for waking up the system
     /// </summary>
     private WaitableTimer _wakeupTimer;
@@ -280,6 +285,9 @@ namespace MediaPortal.Plugins.Process
           break;
         case ShutdownMode.Hibernate:
           SuspendSystem(source, (int)RestartOptions.Hibernate, force);
+          break;
+        case ShutdownMode.Shutdown:
+          SuspendSystem(source, (int)RestartOptions.ShutDown, force);
           break;
         case ShutdownMode.StayOn:
           Log.Debug("PS: Standby requested but system is configured to stay on");
@@ -653,14 +661,20 @@ namespace MediaPortal.Plugins.Process
         // Unmute master volume
         if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
         {
-          using (MasterVolume _masterVolume = new MasterVolume())
+          try
           {
-            if (_masterVolume.IsMuted)
+            using (MasterVolume _masterVolume = new MasterVolume())
             {
-              Log.Debug("PS: Master volume is muted - unmute master volume");
-              _masterVolume.IsMuted = false;
+              if (_masterVolume.IsMuted)
+              {
+                Log.Debug("PS: Master volume is muted - unmute it");
+                _masterVolume.IsMuted = false;
+              }
             }
-            _mute = _masterVolume.IsMuted;
+          }
+          catch (Exception ex)
+          {
+            Log.Error("PS: Error in handling master volume - {0}", ex.Message);
           }
         }
 
@@ -730,6 +744,14 @@ namespace MediaPortal.Plugins.Process
           _standbyWakeupThread.Abort();
           _standbyWakeupThread.Join(100);
           _standbyWakeupThread = null;
+        }
+
+        // Stop and remove the RestoreMuteThread
+        if (_restoreMuteThread != null)
+        {
+          _restoreMuteThread.Abort();
+          _restoreMuteThread.Join(100);
+          _restoreMuteThread = null;
         }
 
         // Remove the EventWaitHandles
@@ -1267,12 +1289,7 @@ namespace MediaPortal.Plugins.Process
 
       // Save audio mute state
       if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
-      {
-        using (MasterVolume _masterVolume = new MasterVolume())
-        {
-          _mute = _masterVolume.IsMuted;
-        }
-      }
+        SaveMasterVolumeMuteState();
 
       // Run external command
       Log.Debug("PS: Run external command");
@@ -1316,24 +1333,13 @@ namespace MediaPortal.Plugins.Process
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void OnResumeSuspend()
     {
-      Log.Debug("PS: System has resumed from standby due to user activity");
-
       // Reset time of last user activity
       Log.Debug("PS: System has resumed from standby due to user activity - reset time of last user activity");
       _lastUserTime = DateTime.Now;
 
       // Restore master volume mute state
       if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
-      {
-        using (MasterVolume _masterVolume = new MasterVolume())
-        {
-          if (_masterVolume.IsMuted && !_mute)
-          {
-            Log.Debug("PS: Master volume was unmuted when suspending - unmute master volume");
-            _masterVolume.IsMuted = false;
-          }
-        }
-      }
+        RestoreMasterVolumeMuteState();
     }
 
     /// <summary>
@@ -1521,12 +1527,7 @@ namespace MediaPortal.Plugins.Process
       // Stop player and save audio mute state
       StopPlayer();
       if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
-      {
-        using (MasterVolume _masterVolume = new MasterVolume())
-        {
-          _mute = _masterVolume.IsMuted;
-        }
-      }
+        SaveMasterVolumeMuteState();
 
       // Run external command
       Log.Info("PS: Run external command");
@@ -1546,16 +1547,105 @@ namespace MediaPortal.Plugins.Process
 
       // Restore master volume mute state
       if (_settings.GetSetting("UnmuteMasterVolume").Get<bool>())
+        RestoreMasterVolumeMuteState();
+    }
+
+    /// <summary>
+    /// Saves the master volume mute state
+    /// </summary>
+    private void SaveMasterVolumeMuteState()
+    {
+      try
       {
         using (MasterVolume _masterVolume = new MasterVolume())
         {
-          if (_masterVolume.IsMuted && !_mute)
-          {
-            Log.Debug("PS: Master volume was unmuted when entering away mode - unmute master volume");
-            _masterVolume.IsMuted = false;
-          }
+          _mute = _masterVolume.IsMuted;
         }
       }
+      catch (Exception ex)
+      {
+        Log.Error("PS: Error in getting master volume - {0}", ex.Message);
+        _mute = false;
+      }
+      finally
+      {
+        Log.Debug("PS: Saved master volume mute state: {0}", _mute);
+      }
+    }
+
+    /// <summary>
+    /// Restores the master volume mute state if necessary
+    /// </summary>
+    private void RestoreMasterVolumeMuteState()
+    {
+      // Return if volume was muted
+      if (_mute)
+        return;
+
+      // Start thread to unmute master volume (must be asynchronous since it might take some time)
+      Log.Debug("PS: Start thread to restore master volume mute state");
+      _restoreMuteThread = new Thread(RestoreMuteThread);
+      _restoreMuteThread.Name = "PS RestoreMute";
+      _restoreMuteThread.Start();
+    }
+
+    private void RestoreMuteThread()
+    {
+      // Try to unmute the master volume three times since some audio
+      // devices need time to get reactivated after away / sleep mode
+      string errorMessage = String.Empty;
+      for (int i = 0; i < 3; i++)
+      {
+        // Wait some seconds until next try
+        if (i > 0)
+        {
+          Log.Debug("PS: Wait for {0} second(s)", i);
+          Thread.Sleep(1000 * i);
+        }
+        try
+        {
+          using (MasterVolume _masterVolume = new MasterVolume())
+          {
+            if (_masterVolume.IsMuted == false)
+            {
+              Log.Debug("PS: Master volume is unmuted - nothing to do");
+              return;
+            }
+            Log.Debug("PS: Master volume is muted - try to unmute it");
+            _masterVolume.IsMuted = false;
+            Log.Debug("PS: Successfully unmuted master volume");
+            return;
+          }
+        }
+        catch (ApplicationException appEx)
+        {
+          errorMessage = appEx.Message;
+          Log.Debug("PS: Cannot handle master volume - {0}", errorMessage);
+        }
+        catch (COMException comEx)
+        {
+          errorMessage = comEx.Message;
+          Log.Debug("PS: Cannot handle master volume - {0}", comEx.Message);
+        }
+        catch (ThreadAbortException)
+        {
+          Log.Debug("PS: RestoreMuteThread aborted");
+          return;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PS: Error in handling master volume - {0}", ex.Message);
+          return;
+        }
+
+        // Terminate if MP main thread has terminated
+        if (!_parentThread.IsAlive)
+        {
+          Log.Debug("PS: RestoreMuteThread terminated");
+          return;
+        }
+      }
+      Log.Error("PS: Error in handling master volume - " + errorMessage);
     }
 
     /// OnAction handler; if any action is received then last busy time is reset (i.e. idletimeout is reset)
@@ -1630,7 +1720,7 @@ namespace MediaPortal.Plugins.Process
         bool basicHome;
         using (Settings xmlreader = new MPSettings())
         {
-          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         }
 
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
