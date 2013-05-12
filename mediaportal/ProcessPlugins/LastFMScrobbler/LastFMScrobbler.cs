@@ -453,18 +453,36 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
       catch (Exception ex)
       {
-        Log.Error("Error in Last.fm AutoDJ");
+        Log.Error("Error in Last.fm AutoDJ - getting similar tracks");
         Log.Error(ex);
         return;
       }
+
       var dbTracks = GetSimilarTracksInDatabase(tracks);
+      if (dbTracks.Count == 0)
+      {
+        Log.Debug("Auto DJ: No similar local tracks found for {0} - {1} - trying top artist tracks", strArtist, strTrack);
+        try
+        {
+          tracks = LastFMLibrary.GetArtistTopTracks(strArtist);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
+          Log.Error(ex);
+          return;
+        }
+
+        dbTracks = GetSimilarTracksInDatabase(tracks);
+      }
+
       if (dbTracks.Count > 0)
       {
         AutoDJAddToPlaylist(dbTracks);
       }
       else
       {
-        Log.Info("Auto DJ: No similar local tracks found for {0} - {1}", strArtist, strTrack);
+        Log.Info("Auto DJ: Unable to match any tracks for {0} - {1}", strArtist, strTrack);
       }
     }
 
