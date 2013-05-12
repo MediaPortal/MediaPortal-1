@@ -57,11 +57,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.pbLastFMUser = new System.Windows.Forms.PictureBox();
       this.btnAddUser = new System.Windows.Forms.Button();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.chkAvoidDuplicates = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.chkDiferentVersions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkAutoDJ = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.numRandomness = new System.Windows.Forms.NumericUpDown();
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.chkDiferentVersions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.mpGroupBox3.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -149,6 +150,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Controls.Add(this.chkAvoidDuplicates);
       this.mpGroupBox1.Controls.Add(this.chkDiferentVersions);
       this.mpGroupBox1.Controls.Add(this.chkAutoDJ);
       this.mpGroupBox1.Controls.Add(this.numRandomness);
@@ -159,6 +161,32 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.mpGroupBox1.TabIndex = 6;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Auto DJ";
+      // 
+      // chkAvoidDuplicates
+      // 
+      this.chkAvoidDuplicates.AutoSize = true;
+      this.chkAvoidDuplicates.Checked = true;
+      this.chkAvoidDuplicates.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkAvoidDuplicates.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkAvoidDuplicates.Location = new System.Drawing.Point(12, 87);
+      this.chkAvoidDuplicates.Name = "chkAvoidDuplicates";
+      this.chkAvoidDuplicates.Size = new System.Drawing.Size(206, 17);
+      this.chkAvoidDuplicates.TabIndex = 6;
+      this.chkAvoidDuplicates.Text = "Avoid adding same track multiple times";
+      this.chkAvoidDuplicates.UseVisualStyleBackColor = true;
+      // 
+      // chkDiferentVersions
+      // 
+      this.chkDiferentVersions.AutoSize = true;
+      this.chkDiferentVersions.Checked = true;
+      this.chkDiferentVersions.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkDiferentVersions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkDiferentVersions.Location = new System.Drawing.Point(12, 58);
+      this.chkDiferentVersions.Name = "chkDiferentVersions";
+      this.chkDiferentVersions.Size = new System.Drawing.Size(217, 17);
+      this.chkDiferentVersions.TabIndex = 5;
+      this.chkDiferentVersions.Text = "Allow different versions of the same track";
+      this.chkDiferentVersions.UseVisualStyleBackColor = true;
       // 
       // chkAutoDJ
       // 
@@ -210,19 +238,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       this.btnCancel.UseVisualStyleBackColor = true;
       this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
       // 
-      // chkDiferentVersions
-      // 
-      this.chkDiferentVersions.AutoSize = true;
-      this.chkDiferentVersions.Checked = true;
-      this.chkDiferentVersions.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.chkDiferentVersions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chkDiferentVersions.Location = new System.Drawing.Point(12, 58);
-      this.chkDiferentVersions.Name = "chkDiferentVersions";
-      this.chkDiferentVersions.Size = new System.Drawing.Size(217, 17);
-      this.chkDiferentVersions.TabIndex = 5;
-      this.chkDiferentVersions.Text = "Allow different versions of the same track";
-      this.chkDiferentVersions.UseVisualStyleBackColor = true;
-      // 
       // LastFMConfig
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -263,5 +278,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private UserInterface.Controls.MPButton btnCancel;
     private UserInterface.Controls.MPCheckBox chkAutoDJ;
     private UserInterface.Controls.MPCheckBox chkDiferentVersions;
+    private UserInterface.Controls.MPCheckBox chkAvoidDuplicates;
   }
 }

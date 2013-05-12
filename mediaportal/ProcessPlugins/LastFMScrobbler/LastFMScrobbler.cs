@@ -47,6 +47,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static int _randomness = 100;
     private static bool _announceTracks;
     private static bool _scrobbleTracks;
+    private static bool _avoidDuplicates;
 
     private static void LoadSettings()
     {
@@ -57,6 +58,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         _allowMultipleVersions = xmlreader.GetValueAsBool("lastfm:test", "allowDiffVersions", true);
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
+        _avoidDuplicates = xmlreader.GetValueAsBool("lastfm:test", "avoidDuplicates", true);
       }
     }
 
@@ -523,7 +525,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
 
       // only add track that already exists in playlist if there is no alternative
-      if (dbTrackListing.Count > 1)
+      if (_avoidDuplicates && dbTrackListing.Count(track => !InPlaylist(track.FileName)) > 1)
       {
         dbTrackListing = dbTrackListing.Where(track => !InPlaylist(track.FileName)).ToList();
       }

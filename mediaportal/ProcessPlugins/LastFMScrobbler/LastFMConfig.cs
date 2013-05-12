@@ -82,12 +82,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", chkAutoDJ.Checked);
         xmlwriter.SetValueAsBool("lastfm:test", "allowDiffVersions", chkDiferentVersions.Checked);
+        xmlwriter.SetValueAsBool("lastfm:test", "avoidDuplicates", chkAvoidDuplicates.Checked);
         xmlwriter.SetValue("lastfm:test", "randomness", numRandomness.Value);
         xmlwriter.SetValueAsBool("lastfm:test", "announce", chkAnnounce.Checked);
         xmlwriter.SetValueAsBool("lastfm:test", "scrobble", chkScrobble.Checked);
       }      
     }
-
 
   }
 }
