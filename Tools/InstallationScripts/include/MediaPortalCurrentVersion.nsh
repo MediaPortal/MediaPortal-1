@@ -48,10 +48,10 @@
 	!define VER_REVISION_DISP		0
 
 	!if ${VER_REVISION} == 100
-		!define VER_TYPE "Alpha"
+		!define VER_TYPE "Pre Release"
 	!else if ${VER_REVISION} < 200
 		!define /math ALPHA ${VER_REVISION} - 99
-		!define VER_TYPE "Alpha{$ALPHA}"
+		!define VER_TYPE "Pre Release{$ALPHA}"
 		!undef ALPHA
 	!else if ${VER_REVISION} == 200
 		!define VER_TYPE "Beta"
@@ -67,7 +67,7 @@
 		!undef RC
 	!endif
 !endif
-#!define VER_TYPE        "Alpha"                 # can be "RC", "Beta". Please comment if Final release
+#!define VER_TYPE        "Pre-Release"                 # can be "RC", "Beta". Please comment if Final release
 
 
 !ifndef VER_BUILD

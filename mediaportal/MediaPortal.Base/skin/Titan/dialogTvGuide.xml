@@ -67,8 +67,8 @@
 		<id>40</id>
 		<posX>328</posX>
 		<posY>135</posY>
-		<font>font13</font>
-        <textcolor>6aa5cb</textcolor>
+		<font>font12</font>
+    <textcolor>6aa5cb</textcolor>
 		<animation effect="fade" time="800">WindowOpen</animation>
 		<animation effect="fade" time="300">WindowClose</animation>
 	</control>
@@ -87,7 +87,7 @@
 		<align>center</align>
 		<onleft>6</onleft>
 		<onright>8</onright>
-		<font>font13</font>
+		<font>font12</font>
 		<textureUp>arrow_round_right_nofocus.png</textureUp>
 		<textureDown>arrow_round_left_nofocus.png</textureDown>
 		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
@@ -151,7 +151,7 @@
 		<posY>6</posY>
 		<width>86</width>
 		<height>20</height>
-		<font>font13tvg</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="800">WindowOpen</animation>
 		<animation effect="fade" time="300">WindowClose</animation>
@@ -203,7 +203,7 @@
       <visible>no</visible>
       <id>26</id>
       <label>-</label>
-      <font>font13tvg</font>
+      <font>font12</font>
       <textcolor>FFFFFFF0</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -215,7 +215,7 @@
 		<id>24</id>
 		<visible>no</visible>
 		<label>-</label>
-		<font>font13tvg</font>
+		<font>font12</font>
 		<textcolor>99CCFF</textcolor>
 		<animation effect="fade" time="800">WindowOpen</animation>
 		<animation effect="fade" time="300">WindowClose</animation>

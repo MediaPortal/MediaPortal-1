@@ -402,7 +402,7 @@
 		<posY>100</posY>
 		<width>622</width>
 		<label>#TV.Recording1.Title</label>
-		<font>font13</font>
+		<font>font12</font>
 		<align>left</align>
 		<textcolor>FFB2D4F5</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -417,7 +417,7 @@
 		<posY>200</posY>
 		<width>622</width>
 		<label>#TV.Recording2.Title</label>
-		<font>font13</font>
+		<font>font12</font>
 		<align>left</align>
 		<textcolor>FFB2D4F5</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>

@@ -35,6 +35,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class MovieCodec : SectionSettings
   {
     private bool _init = false;
+    private bool settingLAVSlitter;
 
     /// <summary>
     /// 
@@ -206,6 +207,7 @@ namespace MediaPortal.Configuration.Sections
         string aacaudioCodec = xmlreader.GetValueAsString("movieplayer", "aacaudiocodec", "");
         string splitterFilter = xmlreader.GetValueAsString("movieplayer", "splitterfilter", "");
         string splitterFileFilter = xmlreader.GetValueAsString("movieplayer", "splitterfilefilter", "");
+        settingLAVSlitter = xmlreader.GetValueAsBool("movieplayer", "settinglavplitter", false);
 
         if (videoCodec == string.Empty)
         {
@@ -256,6 +258,15 @@ namespace MediaPortal.Configuration.Sections
         if (CheckSourceSplitter == string.Empty && (splitterFilter == "LAV Splitter Source" || splitterFileFilter == "LAV Splitter"))
         {
           ForceSourceSplitter.Checked = true;
+        }
+
+        // Enable WMV WMA codec for LAV suite (setting will be change only on first run and if lav is set as default splitter)
+        if (!settingLAVSlitter && (splitterFilter == "LAV Splitter Source" || splitterFileFilter == "LAV Splitter"))
+        {
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Splitter\\Formats", "asf");
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Audio\\Formats", "wma");
+          EnableWmvWmaLAVSettings(@"Software\\LAV\\Audio\\Formats", "wmalossless");
+          settingLAVSlitter = true;
         }
 
         audioCodecComboBox.Text = audioCodec;
@@ -357,6 +368,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "aacaudiocodec", aacAudioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "splitterfilter", SplitterComboBox.Text);
         xmlwriter.SetValue("movieplayer", "splitterfilefilter", SplitterFileComboBox.Text);
+        xmlwriter.SetValueAsBool("movieplayer", "settinglavplitter", settingLAVSlitter);
       }
     }
 
@@ -400,6 +412,27 @@ namespace MediaPortal.Configuration.Sections
                                          @"MediaPortal");
         }
       }
+    }
+
+    private bool EnableWmvWmaLAVSettings(string subkeysource, string valueKey)
+    {
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(subkeysource))
+      {
+        if (subkey != null)
+        {
+          try
+          {
+            subkey.SetValue(valueKey, unchecked((int)0x000000001),
+                            RegistryValueKind.DWord);
+            return true;
+          }
+          catch (Exception e)
+          {
+            return false;
+          }
+        }
+      }
+      return false;
     }
 
     private void ConfigCodecSection(object sender, EventArgs e, string selection)
