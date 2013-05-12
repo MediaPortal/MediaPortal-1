@@ -27,7 +27,7 @@ using MediaPortal.Common.Utils;
 // MediaPortal subsystems' breaking versions
 [assembly: SubsystemVersion("MP", "1.1.6.27644")]
 
-[assembly: SubsystemVersion("MP.SkinEngine", "1.3.100.0")] // MP 1.4.0 Pre-Release
+[assembly: SubsystemVersion("MP.SkinEngine", "1.3.100.0")] // MP 1.4.0 Pre Release
 [assembly: SubsystemVersion("MP.SkinEngine.Core", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.SkinEngine.Controls", "1.3.100.0")]
 [assembly: SubsystemVersion("MP.SkinEngine.Dialogs", "1.1.6.27644")]
@@ -60,8 +60,8 @@ using MediaPortal.Common.Utils;
 [assembly: SubsystemVersion("MP.Externals", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Externals.MediaInfo", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Externals.SQLite", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Externals.Gentle", "1.3.100.0")]
-[assembly: SubsystemVersion("MP.Externals.Log4Net", "1.3.100.0")]
+[assembly: SubsystemVersion("MP.Externals.Gentle", "1.3.100.0")]  // MP 1.4.0 Pre Release
+[assembly: SubsystemVersion("MP.Externals.Log4Net", "1.3.100.0")] // MP 1.4.0 Pre Release
 [assembly: SubsystemVersion("MP.Externals.BASS", "1.3.100.0")]
 
 [assembly: SubsystemVersion("MP.Config", "1.1.6.27644")]

@@ -378,19 +378,34 @@ namespace SetupTv.Sections
               card.RecordingFolder = nodeCard.Attributes["RecordingFolder"].Value;
               card.Enabled = (nodeCard.Attributes["Enabled"].Value == "True");
               card.CamType = Int32.Parse(nodeCard.Attributes["CamType"].Value);
-              card.TimeShiftFolder = nodeCard.Attributes["TimeShiftFolder"].Value;
-              card.RecordingFormat = Int32.Parse(nodeCard.Attributes["RecordingFormat"].Value);
-              card.DecryptLimit = Int32.Parse(nodeCard.Attributes["DecryptLimit"].Value);
-              card.PreloadCard = (nodeCard.Attributes["PreloadCard"].Value == "True");
-              card.CAM = (nodeCard.Attributes["CAM"].Value == "True");
+              if (nodeCard.Attributes["TimeShiftFolder"] != null)
+              {
+                card.TimeShiftFolder = nodeCard.Attributes["TimeShiftFolder"].Value;
+              }
+              if (nodeCard.Attributes["RecordingFormat"] != null)
+              {
+                card.RecordingFormat = Int32.Parse(nodeCard.Attributes["RecordingFormat"].Value);
+              }
+              if (nodeCard.Attributes["DecryptLimit"] != null)
+              {
+                card.DecryptLimit = Int32.Parse(nodeCard.Attributes["DecryptLimit"].Value);
+              }
+              if (nodeCard.Attributes["PreloadCard"] != null)
+              {
+                card.PreloadCard = (nodeCard.Attributes["PreloadCard"].Value == "True");
+              }
+              if (nodeCard.Attributes["CAM"] != null)
+              {
+                card.CAM = (nodeCard.Attributes["CAM"].Value == "True");
+              }
             }
             else
             {
               Log.Error("Import: Failed to import settings for card \"{0}\"", nodeCard.Attributes["Name"].Value);
             }
           }
-        }       
-        
+        }
+
         if (channelList != null)
         {
           foreach (XmlNode nodeChannel in channelList)
