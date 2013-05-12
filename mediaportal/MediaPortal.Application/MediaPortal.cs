@@ -2838,7 +2838,7 @@ public class MediaPortalApp : D3D, IRender
       return;
     }
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-    //RecoverDevice();
+    RecoverDevice();
     base.OnDeviceLost(sender, e);
   }
 

@@ -461,7 +461,7 @@ namespace MediaPortal
       Log.Debug("Main: RecreateSwapChain()");
 
       // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
-      if (!GUIGraphicsContext.IsDirectX9ExUsed() && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
+      if (!GUIGraphicsContext.IsDirectX9ExUsed() && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
       {
         g_Player.Stop();
         while (GUIGraphicsContext.IsPlaying)
