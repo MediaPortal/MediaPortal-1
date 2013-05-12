@@ -618,7 +618,7 @@ namespace MediaPortal.LastFM
       }
 
       using (var stream = response.GetResponseStream())
-      using (var reader = new StreamReader(stream))
+      using (var reader = new StreamReader(stream, Encoding.UTF8))
       {
         var resp = reader.ReadToEnd();
         xDoc = XDocument.Parse(resp);
