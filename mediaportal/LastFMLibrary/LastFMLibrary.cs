@@ -455,6 +455,51 @@ namespace MediaPortal.LastFM
       return lastFMFullArtist;
     }
 
+    /// <summary>
+    /// Get top tracks for artist
+    /// </summary>
+    /// <param name="artist">artist to lookup</param>
+    /// <returns>List of top tracks</returns>
+    public static List<LastFMSimilarTrack> GetArtistTopTracks(string artist)
+    {
+      var parms = new Dictionary<string, string>();
+      const string methodName = "artist.getTopTracks";
+      parms.Add("artist", artist);
+      var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
+      var xDoc = GetXml(buildLastFMString, "GET", false);
+
+      //TODO: should be refactored as shares 99% of code with getsimilartracks (that has extra match element)
+      var tracks = (from t in xDoc.Descendants("track")
+                    let trackName = (string)t.Element("name")
+                    let playcount = (int)t.Element("playcount")
+                    let mbid = (string)t.Element("mbid")
+                    let duration = (int)t.Element("duration")
+                    let trackURL = (string)t.Element("url")
+                    let artistElement = t.Element("artist")
+                    where artistElement != null
+                    let artistName = (string)artistElement.Element("name")
+                    let images = (
+                                   from i in t.Elements("image")
+                                   select new LastFMImage(
+                                     LastFMImage.GetImageSizeEnum((string)i.Attribute("size")),
+                                     (string)i
+                                     )
+                                 ).ToList()
+                    select new LastFMSimilarTrack
+                    {
+                      TrackTitle = trackName,
+                      Playcount = playcount,
+                      MusicBrainzId = mbid,
+                      Duration = duration,
+                      TrackURL = trackURL,
+                      ArtistName = artistName,
+                      Images = images
+                    }
+                    ).ToList();
+
+      return tracks;
+    }
+
     #endregion
 
     #region album methods
