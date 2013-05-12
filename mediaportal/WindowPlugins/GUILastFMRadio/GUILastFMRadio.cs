@@ -2,6 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -41,7 +42,7 @@ namespace MediaPortal.GUI.LastFMRadio
     [SkinControlAttribute((int)SkinControls.PLAYLIST_CONTROL)] protected GUIFacadeControl PlaylistControl = null;
 
     protected delegate void UpdateThumbsDelegate(GUIListItem item, string strThumbFile);
-    protected static TempFileCollection tfc;
+    protected static TempFileCollection Tfc;
     private static PlayListPlayer _playlistPlayer;
 
     private string _lastArtist;
@@ -117,7 +118,7 @@ namespace MediaPortal.GUI.LastFMRadio
       strButtonText = GUILocalizeStrings.Get(34000);
       strButtonImage = String.Empty;
       strButtonImageFocus = String.Empty;
-      strPictureImage = "hover_LastFmRadio.png";;
+      strPictureImage = "hover_LastFmRadio.png";
       return true;
     }
 
@@ -137,7 +138,7 @@ namespace MediaPortal.GUI.LastFMRadio
 
     public GUILastFMRadio()
     {
-      tfc = new TempFileCollection();
+      Tfc = new TempFileCollection();
     }
 
     #endregion
@@ -169,11 +170,11 @@ namespace MediaPortal.GUI.LastFMRadio
       LoadPlaylist();
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       Profile.MPSettings.Instance.SetValue("last.fm.Radio", "lastArtist", _lastArtist);
       Profile.MPSettings.Instance.SetValue("last.fm.Radio", "lastTag", _lastTag);
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -219,9 +220,10 @@ namespace MediaPortal.GUI.LastFMRadio
       {
         if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
         {
+          //TODO: needs removing
           Log.Error("Last.fm Radio Playlist Control.  OnClicked called ????!!!!????");
           Log.Error("=================================");
-          Log.Error(System.Environment.StackTrace);
+          Log.Error(Environment.StackTrace);
           Log.Error("=================================");
           return;
         }
@@ -244,7 +246,7 @@ namespace MediaPortal.GUI.LastFMRadio
     {
       if (!Win32API.IsConnectedToInternet())
       {
-        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
@@ -269,7 +271,7 @@ namespace MediaPortal.GUI.LastFMRadio
       catch (LastFMException ex)
       {
         Log.Error(ex);
-        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
@@ -310,7 +312,7 @@ namespace MediaPortal.GUI.LastFMRadio
           errMessage += ex.Message;
         }
 
-        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
@@ -342,7 +344,7 @@ namespace MediaPortal.GUI.LastFMRadio
           SourceDescription = "Last.fm Radio"
         };
 
-        Log.Info("Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackStreamingURL);
+        Log.Info("Last.fm Added - Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackStreamingURL);
 
         var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
         pl.Add(pli);
@@ -458,11 +460,11 @@ namespace MediaPortal.GUI.LastFMRadio
       {
         return;
       }
-      MusicTag tag = (MusicTag)item.MusicTag;
-      string trackImgURL = tag.Lyrics;
-      string tmpThumb = GetTemporaryThumbName(trackImgURL);
+      var tag = (MusicTag)item.MusicTag;
+      var trackImgURL = tag.Lyrics;
+      var tmpThumb = GetTemporaryThumbName(trackImgURL);
 
-      string strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
+      var strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);
       if (strThumb != string.Empty)
       {
         UpdateListItemImage(item, strThumb);
@@ -588,7 +590,7 @@ namespace MediaPortal.GUI.LastFMRadio
     private void ImageDownloadDoWork(string strTrackImgURL, string tmpThumbName, GUIListItem item)
     {
       Util.Utils.DownLoadImage(strTrackImgURL, tmpThumbName);
-      tfc.AddFile(tmpThumbName, false);
+      Tfc.AddFile(tmpThumbName, false);
       GUIGraphicsContext.form.Invoke(new UpdateThumbsDelegate(UpdateListItemImage), item, tmpThumbName);
 
     }
@@ -616,6 +618,18 @@ namespace MediaPortal.GUI.LastFMRadio
       item.ThumbnailImage = strThumb;
 
       var pli = _playlistPlayer.GetCurrentItem();
+      
+      //TODO: for debug and should be removed
+      if (pli == null)
+      {
+        Log.Info("MIKE LAST.FM RADIO REWORK: pli is null?!?!?!?!");
+        Log.Info("Current Song: {0}", _playlistPlayer.CurrentSong.ToString(CultureInfo.InvariantCulture));
+        Log.Info("Current pos: {0}", _playlistPlayer.CurrentPlaylistPos.ToString(CultureInfo.InvariantCulture));
+        Log.Info("Playlist name: {0}", _playlistPlayer.CurrentPlaylistName);
+        Log.Info("Playlist Type: {0}", _playlistPlayer.CurrentPlaylistType.ToString());
+        return;
+      }
+
       if (item.Path == pli.FileName)
       {
         GUIPropertyManager.SetProperty("#Play.Current.Thumb", strThumb);
