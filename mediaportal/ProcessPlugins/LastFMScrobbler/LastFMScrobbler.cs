@@ -522,6 +522,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         dbTrackListing.AddRange(trackListing);
       }
 
+      // only add track that already exists in playlist if there is no alternative
+      if (dbTrackListing.Count > 1)
+      {
+        dbTrackListing = dbTrackListing.Where(track => !InPlaylist(track.FileName)).ToList();
+      }
+
       return _allowMultipleVersions ? dbTrackListing : dbTrackListing.GroupBy(t => new {t.Artist, t.Title}).Select(y => y.First()).ToList();
     }
 
