@@ -1,9 +1,16 @@
-Bin
-bin
-obj
+[Bb]in
+[Oo]bj
 *.log
 *.suo
 *.sln.cache
 *.resharper
 *.user
 _ReSharper.*
+
+# Folder containing the nsis installers
+/Release
+
+# BuildReport files & folders
+/Build/_BuildReport_Files
+/Build/*.html
+/Build/*.xml
