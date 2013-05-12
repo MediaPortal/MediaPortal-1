@@ -1551,7 +1551,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (filePath == string.Empty)
         {
-          return result;
+          return false;
         }
 
         _filePath = filePath;
@@ -1562,17 +1562,8 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           return false;
         }
-
-        try
-        {
-          _streams.Clear();
-          _streams.Add(stream);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("BASS: Could not add stream. Aborting playback. {0}", ex);
-        }
-
+        
+        _streams.Add(stream);
         if (stream.Filetype.FileMainType == FileMainType.CDTrack)
         {
           _isCDDAFile = true;
