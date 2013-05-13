@@ -338,6 +338,7 @@ namespace MediaPortal.Player
         _subTitleExtensions.Add(".ass");
         _subTitleExtensions.Add(".dat");
         _subTitleExtensions.Add(".dks");
+        _subTitleExtensions.Add(".idx");
         _subTitleExtensions.Add(".js");
         _subTitleExtensions.Add(".jss");
         _subTitleExtensions.Add(".lrc");
