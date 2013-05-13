@@ -93,7 +93,7 @@
 		<posY>453</posY>
 		<width>773</width>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>BFffffff</textcolor>
 	</control>
 
@@ -105,7 +105,7 @@
 		<posY>428</posY>
 		<width>773</width>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>BFffffff</textcolor>
 	</control>
 
