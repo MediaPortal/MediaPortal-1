@@ -3587,7 +3587,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW && (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture))
+            if ((activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW) || (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture) && g_Player.Playing)
             {
               break;
             }
