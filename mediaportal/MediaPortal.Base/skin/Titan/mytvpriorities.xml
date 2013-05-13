@@ -69,7 +69,7 @@
 		<posY>30</posY>
 		<label>#date</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>ffa9d0f7</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -83,7 +83,7 @@
 		<posY>50</posY>
 		<label>#time</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>ffa9d0f7</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -96,7 +96,7 @@
 		<posX>260</posX>
 		<posY>530</posY>
 		<label>#itemcount</label>
-		<font>font13</font>
+		<font>font12</font>
 		<align>left</align>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -111,7 +111,7 @@
 		<posY>70</posY>
 		<width>400</width>
 		<label>#selecteditem</label>
-		<font>font13</font>
+		<font>font12</font>
 		<align>right</align>
 		<textcolor>ffffffff</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -165,7 +165,7 @@
 		<posY>550</posY>
 		<width>444</width>
 		<label>#TV.Scheduled.Title</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -179,7 +179,7 @@
 		<posY>575</posY>
 		<label>#TV.Scheduled.Time</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFB2D4F5</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -194,7 +194,7 @@
 		<width>764</width>
 		<height>81</height>
 		<label>#TV.Scheduled.Description</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -208,7 +208,7 @@
 		<posY>575</posY>
 		<label>#TV.Scheduled.Genre</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFB2D4F5</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
