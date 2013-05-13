@@ -123,7 +123,7 @@ struct TEXTURE_PLACE
 
 static FONT_DATA_T*            fontData = new FONT_DATA_T[MAX_FONTS];
 static TEXTURE_DATA_T*         textureData = new TEXTURE_DATA_T[MAX_TEXTURES];
-static LPDIRECT3DDEVICE9EX     m_pDevice = NULL;
+static LPDIRECT3DDEVICE9       m_pDevice = NULL;
 static CStateManagerInterface* m_pStateManager;
 static int                     textureZ[MAX_TEXTURES];
 static TEXTURE_PLACE*          texturePlace[MAX_TEXTURES];
@@ -140,7 +140,8 @@ static bool pathInitialized=false;
 int m_iTexturesInUse=0;
 int m_iScreenWidth=0;
 int m_iScreenHeight=0;
-D3DPOOL   m_ipoolFormat=D3DPOOL_MANAGED;
+D3DPOOL m_ipoolFormat=D3DPOOL_SYSTEMMEM;
+DWORD   m_d3dUsage=D3DUSAGE_DYNAMIC;
 
 void Log(char* txt)
 {
@@ -224,10 +225,12 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
   if (poolFormat==0)
   {
     m_ipoolFormat = D3DPOOL_SYSTEMMEM;
+    m_d3dUsage = D3DUSAGE_DYNAMIC;
   }
   else
   {
     m_ipoolFormat = D3DPOOL_MANAGED;
+    m_d3dUsage = D3DUSAGE_WRITEONLY;
   }
 }
 //*******************************************************************************************************************
@@ -239,7 +242,7 @@ void FontEngineSetDevice(void* device)
     return;
   }
   
-  m_pDevice = (LPDIRECT3DDEVICE9EX)device;
+  m_pDevice = (LPDIRECT3DDEVICE9)device;
   m_Filter = D3DTEXF_NONE;
 
   D3DCAPS9 caps;
@@ -259,8 +262,9 @@ void FontEngineSetDevice(void* device)
 
 HRESULT FontEngineSetMaximumFrameLatency(UINT maxLatency)
 {
-  if (m_pDevice)
-    return m_pDevice->SetMaximumFrameLatency(maxLatency);
+  // We know that only Vista and higher are going to call this method and they are using D3D9Ex always
+  if (m_pDevice && m_ipoolFormat == D3DPOOL_SYSTEMMEM)
+    return static_cast<LPDIRECT3DDEVICE9EX>(m_pDevice)->SetMaximumFrameLatency(maxLatency);
   else
     return S_FALSE;
 }
@@ -388,8 +392,8 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
   m_pDevice->CreateIndexBuffer(	MaxNumTextureVertices *sizeof(WORD),
-                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
-                                &textureData[selected].pIndexBuffer, NULL ) ;
+                                m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
+                                &textureData[selected].pIndexBuffer, NULL );
   WORD* pIndices;
   int triangle=0;
   textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
@@ -454,8 +458,8 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
   textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
 
   m_pDevice->CreateIndexBuffer( MaxNumTextureVertices *sizeof(WORD),
-                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
-                                &textureData[selected].pIndexBuffer, NULL ) ;
+                                m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
+                                &textureData[selected].pIndexBuffer, NULL );
   WORD* pIndices;
   int triangle=0;
   textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
@@ -1702,7 +1706,7 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
   fontData[fontNumber].dwNumTriangles=0;
 
   m_pDevice->CreateIndexBuffer(	MaxNumfontVertices *sizeof(WORD),
-                                D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, m_ipoolFormat, 
+                                m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat, 
                                 &fontData[fontNumber].pIndexBuffer, NULL ) ;
   WORD* pIndices;
   int triangle=0;
