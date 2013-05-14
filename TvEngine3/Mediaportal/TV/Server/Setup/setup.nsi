@@ -379,13 +379,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
-  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  File /r "${TVSERVER.BASE}\TuningParameters\*"
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
-  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  File /r "${TVSERVER.BASE}\WebEPG\*"
   ; XMLTV Data Directory
   SetOutPath "${COMMON_APPDATA}\xmltv"
-  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  File /r "${TVSERVER.BASE}\xmltv\*"
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
@@ -844,13 +844,13 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   #---------------------------- File Copy ----------------------
   ; Tuning Parameter Directory
   SetOutPath "${COMMON_APPDATA}\TuningParameters"
-  File /r /x .git "${TVSERVER.BASE}\TuningParameters\*"
+  File /r "${TVSERVER.BASE}\TuningParameters\*"
   ; WebEPG Grabbers Directory
   SetOutPath "${COMMON_APPDATA}\WebEPG"
-  File /r /x .git "${TVSERVER.BASE}\WebEPG\*"
+  File /r "${TVSERVER.BASE}\WebEPG\*"
   ; XMLTV Data Directory
   SetOutPath "${COMMON_APPDATA}\xmltv"
-  File /r /x .git "${TVSERVER.BASE}\xmltv\*"
+  File /r "${TVSERVER.BASE}\xmltv\*"
 
   ; Common Files
   SetOutPath "$MPdir.Base"
