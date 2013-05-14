@@ -20,7 +20,7 @@ the visualization window itself.  See MyMusicFullScreenVisualization.xml visuali
 		<posY>0</posY>
 		<label>-</label>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>White</textcolor>
 		<visible>no</visible>
 	</control>

@@ -24,22 +24,14 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.VersionProvider
 {
-  public class InstallerVersion : IVersionProvider
+  public class InstallerVersion : VersionProvider
   {
-    public string DisplayName
+    public override string DisplayName
     {
       get { return "Installer"; }
     }
 
-    public bool Validate(DependencyItem componentItem)
-    {
-      if (Version(componentItem.Id).CompareTo(componentItem.MinVersion) >= 0 &&
-          Version(componentItem.Id).CompareTo(componentItem.MaxVersion) <= 0)
-        return true;
-      return false;
-    }
-
-    public VersionInfo Version(string id)
+    public override VersionInfo Version(string id)
     {
       return new VersionInfo(typeof(InstallerVersion).Assembly.GetName().Version);
     }

@@ -432,6 +432,7 @@ namespace MediaPortal.Playlists
           if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
           {
             Player.BassMusicPlayer.Player.SwitchToDefaultPlaybackMode();
+            return;
           }
 
           _currentPlayList = PlayListType.PLAYLIST_NONE;

@@ -121,7 +121,7 @@ namespace MediaPortal.Configuration.Sections
         {
           // Hostname is valid, update database connection
           Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
-          if (UpdateGentleConfig(mpTextBoxHostname.Text, mpTextBoxHostname.Text.Equals(_settingsHostname)))
+          if (UpdateGentleConfig(mpTextBoxHostname.Text))
           {
             Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
             xmlwriter.SetValue("tvservice", "hostname", mpTextBoxHostname.Text);
@@ -458,11 +458,10 @@ namespace MediaPortal.Configuration.Sections
     /// The connection string is fetched from the TV server.
     /// </summary>
     /// <param name="hostname">The TV server's hostname</param>
-    /// <param name="unchanged">Indicates if the hostname has been loaded from the settings</param>
     /// <returns>Returns true, if the gentle.config file is updated</returns>
-    private bool UpdateGentleConfig(string hostname, bool unchanged)
+    private bool UpdateGentleConfig(string hostname)
     {
-      Log.Debug("UpdateGentleConfig({0}, {1})", hostname, unchanged);
+      Log.Debug("UpdateGentleConfig({0})", hostname);
 
       // Load the gentle.config file with the database connection string
       XmlNode node, nodeProvider;
@@ -480,13 +479,6 @@ namespace MediaPortal.Configuration.Sections
         MessageBox.Show(string.Format("Unable to open gentle.config" + Environment.NewLine + "{0}", ex.Message),
           "TV/Radio Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         return false;
-      }
-
-      // See if gentle.config has to be updated
-      if (unchanged && node.InnerText.IndexOf("Server=-;") == -1)
-      {
-        Log.Debug("UpdateGentleConfig: no need to update gentle.config file");
-        return true;
       }
 
       // Verify tvServer (could be down at the moment)
