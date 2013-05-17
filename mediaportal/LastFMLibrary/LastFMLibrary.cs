@@ -473,7 +473,7 @@ namespace MediaPortal.LastFM
                     let trackName = (string)t.Element("name")
                     let playcount = (int)t.Element("playcount")
                     let mbid = (string)t.Element("mbid")
-                    let duration = (int)t.Element("duration")
+                    let duration = (string)t.Element("duration")
                     let trackURL = (string)t.Element("url")
                     let artistElement = t.Element("artist")
                     where artistElement != null
@@ -490,7 +490,7 @@ namespace MediaPortal.LastFM
                       TrackTitle = trackName,
                       Playcount = playcount,
                       MusicBrainzId = mbid,
-                      Duration = duration,
+                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration),
                       TrackURL = trackURL,
                       ArtistName = artistName,
                       Images = images

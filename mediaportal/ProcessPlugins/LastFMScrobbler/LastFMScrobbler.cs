@@ -481,8 +481,14 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
           else
           {
             Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
-            Log.Error(ex);            
+            Log.Error(ex);
           }
+          return;
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
+          Log.Error(ex);
           return;
         }
 
