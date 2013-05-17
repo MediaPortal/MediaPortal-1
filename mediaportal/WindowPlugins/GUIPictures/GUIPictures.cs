@@ -634,6 +634,25 @@ namespace MediaPortal.GUI.Pictures
       base.OnAction(action);
     }
 
+    public override void Process()
+    {
+      GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+      if (SlideShow._enableResumeMusic)
+      {
+        // Enable only once to deinit stopped Fullscreen Video 
+        base.Process();
+        SlideShow._enableResumeMusic = false;
+      }
+      else if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_PICTURES) && !g_Player.Playing )
+      {
+        if (SlideShow.pausedMusic && SlideShow._returnedFromVideoPlayback)
+        {
+          SlideShow.resumePausedMusic();
+          SlideShow._returnedFromVideoPlayback = false;
+        }
+      }
+    }
+
     protected override void OnPageLoad()
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -668,7 +687,6 @@ namespace MediaPortal.GUI.Pictures
         {
           if (direction == 0)
           {
-            SlideShow._returnedFromVideoPlayback = false;
             SlideShow.Reset();
           }
         }
@@ -701,10 +719,6 @@ namespace MediaPortal.GUI.Pictures
             SlideShow._returnedFromVideoPlayback = false;
           }
           OnClickSlide(selectedItemIndex);
-        }
-        if (SlideShow.pausedMusic)
-        {
-          SlideShow.resumePausedMusic();
         }
 
         if (SlideShow._showRecursive)

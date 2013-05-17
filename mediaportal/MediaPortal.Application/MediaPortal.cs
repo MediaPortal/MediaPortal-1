@@ -712,7 +712,7 @@ public class MediaPortalApp : D3D, IRender
         foreach (var screen in Screen.AllScreens)
         {
           Log.Debug("Display: {0} - IsPrimary: {1} - BitsPerPixel: {2} - Bounds: {3}x{4} @ {5},{6} - WorkingArea: {7}x{8} @ {9},{10}",
-            screen.DeviceName, screen.Primary, screen.BitsPerPixel,
+            GetCleanDisplayName(screen), screen.Primary, screen.BitsPerPixel,
             screen.Bounds.Width, screen.Bounds.Height, screen.Bounds.X, screen.Bounds.Y,
             screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
         }
@@ -722,7 +722,8 @@ public class MediaPortalApp : D3D, IRender
         enumeration.Enumerate();
         foreach (GraphicsAdapterInfo ai in enumeration.AdapterInfoList)
         {
-          Log.Debug("Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}", ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
+          Log.Debug("Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}",
+            ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
         }
 
         // Localization strings for new splash screen and for MediaPortal itself
@@ -1063,8 +1064,9 @@ public class MediaPortalApp : D3D, IRender
     }
 
     GUIGraphicsContext.currentScreen = Screen.AllScreens[screenNumber];
+
     Log.Info("Main: MP is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
-             GUIGraphicsContext.currentScreen.DeviceName,
+             GetCleanDisplayName(GUIGraphicsContext.currentScreen),
              GUIGraphicsContext.currentScreen.Bounds.Location.X, GUIGraphicsContext.currentScreen.Bounds.Location.Y,
              GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
 
@@ -1500,7 +1502,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private bool OnSysCommand(ref Message msg)
   {
-    Log.Debug("Main: WM_SYSCOMMAND ({0})", Enum.GetName(typeof(SYSCOMMAND), msg.WParam.ToInt32()));
+    Log.Debug("Main: WM_SYSCOMMAND ({0})", Enum.GetName(typeof(SYSCOMMAND), msg.WParam.ToInt32() & 0xFFF0));
     bool result = true;
     switch (msg.WParam.ToInt32() & 0xFFF0)
     {
@@ -1714,12 +1716,12 @@ public class MediaPortalApp : D3D, IRender
               result = regKey.GetValue("DeviceDesc");
               if (result != null)
               {
-                deviceName = result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2);
+                deviceName = result.ToString().Contains(@"%;") ? result.ToString().Substring(result.ToString().IndexOf(@"%;", StringComparison.Ordinal) + 2) : result.ToString();
               }
             }
           }
         }
-        Log.Debug("Main: Device type is is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);  
+        Log.Debug("Main: Device type is {0} - Name: {1}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype), deviceName);
 
         // special chanding for audio renderer
         if (deviceInterface.dbcc_classguid == KSCATEGORY_RENDER)
@@ -1731,9 +1733,9 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-#pragma warning disable 168
+                #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
-#pragma warning restore 168
+                #pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -1742,6 +1744,10 @@ public class MediaPortalApp : D3D, IRender
               if (_stopOnLostAudioRenderer)
               {
                 g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
               }
               break;
 
@@ -1750,9 +1756,9 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-#pragma warning disable 168
+                #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
-#pragma warning restore 168
+                #pragma warning restore 168
               }
               catch (Exception exception)
               {
@@ -1777,7 +1783,7 @@ public class MediaPortalApp : D3D, IRender
     Screen screen = Screen.FromControl(this);
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
     {
-      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
+      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
       {
         Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
@@ -1822,7 +1828,7 @@ public class MediaPortalApp : D3D, IRender
     Screen screen = Screen.FromControl(this);
     if (!Equals(screen, GUIGraphicsContext.currentScreen))
     {
-      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GUIGraphicsContext.currentScreen.DeviceName, screen.DeviceName);
+      Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
       {
         Rectangle currentBounds = GUIGraphicsContext.currentScreen.Bounds;
@@ -2415,7 +2421,7 @@ public class MediaPortalApp : D3D, IRender
         Log.Warn("Main: Could not register for power settings notification GUID_SESSION_USER_PRESENCE");
       }
     } 
-    else
+    else if (OSInfo.OSInfo.VistaOrLater())
     {
       _displayStatusHandle = RegisterPowerSettingNotification(Handle, ref GUID_MONITOR_POWER_ON, DEVICE_NOTIFY_WINDOW_HANDLE);
       if (_displayStatusHandle == IntPtr.Zero)
@@ -2424,10 +2430,13 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
-    _awayModeHandle = RegisterPowerSettingNotification(Handle, ref GUID_SYSTEM_AWAYMODE, DEVICE_NOTIFY_WINDOW_HANDLE);
-    if (_awayModeHandle == IntPtr.Zero)
+    if (OSInfo.OSInfo.VistaOrLater())
     {
-      Log.Warn("Main: Could not register for power settings notification GUID_SYSTEM_AWAYMODE");
+      _awayModeHandle = RegisterPowerSettingNotification(Handle, ref GUID_SYSTEM_AWAYMODE, DEVICE_NOTIFY_WINDOW_HANDLE);
+      if (_awayModeHandle == IntPtr.Zero)
+      {
+        Log.Warn("Main: Could not register for power settings notification GUID_SYSTEM_AWAYMODE");
+      }
     }
   }
 
@@ -2822,70 +2831,15 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void OnDeviceLost(object sender, EventArgs e)
   {
-    Log.Warn("Main: ***** OnDeviceLost *****");
-    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
-    base.OnDeviceLost(sender, e);
-  }
-
-
-  /// <summary>
-  /// The device exists, but may have just been Reset().  Resources in
-  /// Pool.Managed and any other device state that persists during
-  /// rendering should be set here.  Render states, matrices, textures,
-  /// etc., that don't change during rendering can be set once here to
-  /// avoid redundant state setting during Render() or FrameMove().
-  /// </summary>
-  protected override void OnDeviceReset(Object sender, EventArgs e)
-  {
-    // Only perform the device reset if we're not shutting down MediaPortal.
-    if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
+    Log.Warn("Main: OnDeviceLost()");
+    if (!Created)
     {
-      Log.Info("Main: Resetting DX9 device");
-
-      int activeWin = GUIWindowManager.ActiveWindow;
-      if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow())
-      {
-        if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
-        {
-          activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
-        }
-      }
-
-      if (GUIGraphicsContext.DX9ExRealDeviceLost)
-      {
-        activeWin = (int)GUIWindow.Window.WINDOW_HOME;
-      }
-      // Device lost must be prioritized over this one!
-      else if (Currentmodulefullscreen())
-      {
-        activeWin = GUIWindowManager.GetPreviousActiveWindow();
-        GUIWindowManager.ShowPreviousWindow();
-      }
-
-      // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
-      GUIWindowManager.UnRoute();
-      GUIWindowManager.Dispose();
-      GUIFontManager.Dispose();
-      GUITextureManager.Dispose();
-      GUIGraphicsContext.DX9Device.EvictManagedResources();
-
-      GUIGraphicsContext.Load();
-      GUITextureManager.Init();
-      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-      GUIFontManager.InitializeDeviceObjects();
-
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        GUIWindowManager.PreInit();
-        GUIWindowManager.ActivateWindow(activeWin);
-        GUIWindowManager.OnDeviceRestored();
-      }
-      // Must set the FVF after reset
-      GUIFontManager.SetDevice();
-
-      GUIGraphicsContext.DX9ExRealDeviceLost = false;
-      Log.Info("Main: Resetting DX9 device done");
+      Log.Debug("Main: Form not created yet - ignoring Event");
+      return;
     }
+    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+    RecoverDevice();
+    base.OnDeviceLost(sender, e);
   }
 
   #endregion
@@ -2952,7 +2906,6 @@ public class MediaPortalApp : D3D, IRender
               {
                 _errorCounter = 0; //reset counter
                 Log.Info("Main: D3DERR_INVALIDCALL - {0}", dex.ToString());
-                GUIGraphicsContext.DX9ExRealDeviceLost = true;
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
               }
             }
@@ -2961,7 +2914,6 @@ public class MediaPortalApp : D3D, IRender
           case D3DERR_DEVICEHUNG:
           case D3DERR_DEVICEREMOVED:
             Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
-            GUIGraphicsContext.DX9ExRealDeviceLost = true;
             if (!RefreshRateChanger.RefreshRateChangePending)
             {
               g_Player.Stop();
@@ -3003,11 +2955,7 @@ public class MediaPortalApp : D3D, IRender
     }
 
     g_Player.Process();
-
-    if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
-    {
-      RecoverDevice();
-    }
+    RecoverDevice();
 
     if (g_Player.Playing)
     {
@@ -3587,7 +3535,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW && (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture))
+            if ((activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW) || (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture) && g_Player.Playing)
             {
               break;
             }
@@ -4654,7 +4602,6 @@ public class MediaPortalApp : D3D, IRender
     return cur.ToString("yyyy");
   }
 
-
   /// <summary>
   /// 
   /// </summary>
@@ -4698,6 +4645,24 @@ public class MediaPortalApp : D3D, IRender
         Log.Info("Main: User skin is not compatible, using skin {0} with theme {1}", GUIGraphicsContext.SkinName, GUIThemeManager.CurrentTheme);
       }
     }
+  }
+
+
+  /// <summary>
+  /// XP returns random garbage in a name of a display in .NET
+  /// </summary>
+  /// <param name="screen"></param>
+  /// <returns></returns>
+  protected static string GetCleanDisplayName(Screen screen)
+  {
+    if (OSInfo.OSInfo.VistaOrLater())
+    {
+      return screen.DeviceName;
+    }
+
+    int length = screen.DeviceName.IndexOf("\0", StringComparison.Ordinal);
+    string deviceName = length == -1 ? screen.DeviceName : screen.DeviceName.Substring(0, length);
+    return deviceName;
   }
 
   #endregion
