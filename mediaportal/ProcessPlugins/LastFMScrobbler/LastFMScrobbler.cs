@@ -187,7 +187,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Music && !(_announceTracks || MusicState.AutoDJEnabled)) return;
+      if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
 
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
       var plI = pl.First(plItem => plItem.FileName == filename);
