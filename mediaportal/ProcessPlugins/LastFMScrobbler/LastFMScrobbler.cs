@@ -187,13 +187,40 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Music) return;
+      if (type != g_Player.MediaType.Music && !(_announceTracks || MusicState.AutoDJEnabled)) return;
 
-      // only carry on if there is actually something to do
+      var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+      var plI = pl.First(plItem => plItem.FileName == filename);
+      if (plI == null || plI.MusicTag == null)
+      {
+        Log.Info("LastFMScrobbler: Unable to process song: {0}  as it does not exist in the playlist", filename);
+        return;
+      }
+
+      var currentSong = (MusicTag)plI.MusicTag;
+
+      if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+          (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+      {
+        Log.Warn("LastFMScrobbler: No track & artist tags found - Unable to process: {0}", filename);
+        return;
+      }
+
+      var artist = currentSong.Artist ?? currentSong.AlbumArtist;
+
       if (_announceTracks)
       {
-        new Thread(() => AnnounceTrack(filename)) { Name = "Announce/Auto DJ" }.Start();
+        new Thread(
+          () =>
+          AnnounceTrack(artist, currentSong.Title, currentSong.Album,
+                        currentSong.Duration.ToString(CultureInfo.InvariantCulture))) {Name = "Last.FM Announcer"}.Start();
       }
+
+      if (MusicState.AutoDJEnabled)
+      {
+        new Thread(() => AutoDJ(artist, currentSong.Title)) { Name = "AutoDJ" }.Start();        
+      }
+
     }
 
     /// <summary>
@@ -255,72 +282,34 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <summary>
     /// Announce now playing details on last.fm website
     /// </summary>
-    /// <param name="filename">track to be announced</param>
-    private static void AnnounceTrack(string filename)
+    /// <param name="artist">artist of track being played</param>
+    /// <param name="track">name of track being played</param>
+    /// <param name="album">album track being played is part of</param>
+    /// <param name="duration">duration of track being played</param>
+    private static void AnnounceTrack(string artist, string track, string album, string duration)
     {
-      // Get song details and announce on last.fm but do not announce webstream url
-      bool playingRemoteUrl = Util.Utils.IsRemoteUrl(filename);
-      if (!playingRemoteUrl)
+      try
       {
-        var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-        var plI = pl.First(plItem => plItem.FileName == filename);
-        if (plI == null || plI.MusicTag == null)
+        LastFMLibrary.UpdateNowPlaying(artist, track, album, duration);
+        Log.Info("Submitted last.fm now playing update for: {0} - {1}", artist, track);
+      }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
         {
-          Log.Info("Unable to announce song: {0}  as it does not exist in the playlist", filename);
-          return;
+          Log.Error("Last.fm error when announcing now playing track: {0} - {1}", artist, track);
+          Log.Error(ex.Message);
         }
-
-        var currentSong = (MusicTag) plI.MusicTag;
-
-        if (currentSong == null)
+        else
         {
-          Log.Warn("Unable to announce: {0}", filename);
-          Log.Warn("No tags found");
-          return;
+          Log.Error("Exception when updating now playing track on last.fm");
+          Log.Error(ex.InnerException ?? ex);
         }
-
-        if (string.IsNullOrEmpty(currentSong.Title))
-        {
-          Log.Warn("Unable to announce: {0}", filename);
-          Log.Warn("No title for track");
-          return;
-        }
-
-        var artist = currentSong.Artist;
-        if (string.IsNullOrEmpty(artist))
-        {
-          if (string.IsNullOrEmpty(currentSong.AlbumArtist))
-          {
-            Log.Warn("Unable to announce: {0}", filename);
-            Log.Warn("No artist or album artist found");
-            return;
-          }
-          artist = currentSong.AlbumArtist;
-        }
-
-        try
-        {
-          LastFMLibrary.UpdateNowPlaying(artist, currentSong.Title, currentSong.Album, currentSong.Duration.ToString(CultureInfo.InvariantCulture));
-          Log.Info("Submitted last.fm now playing update for: {0} - {1}", currentSong.Artist, currentSong.Title);
-        }
-        catch (LastFMException ex)
-        {
-          if (ex.LastFMError != LastFMException.LastFMErrorCode.UnknownError)
-          {
-            Log.Error("Last.fm error when announcing now playing track: {0} - {1}", currentSong.Artist, currentSong.Title);
-            Log.Error(ex.Message);
-          }
-          else
-          {
-            Log.Error("Exception when updating now playing track on last.fm");
-            Log.Error(ex.InnerException);
-          }
-        }
-
-        if (MusicState.AutoDJEnabled && PlayListPlayer.SingletonPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM)
-        {
-          AutoDJ(currentSong.Title, artist);
-        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Last.fm error when announcing now playing track: {0} - {1}", artist, track);
+        Log.Error(ex);
       }
     }
 
@@ -335,7 +324,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // only scrobble if enabled
       if (!_scrobbleTracks) return;
 
-      new Thread(() => ScrobbleTrack(filename, stoptime)) {Name = "Scrobble Thread"}.Start();
+      new Thread(() => ScrobbleTrack(filename, stoptime)) {Name = "Last.fm Scrobbler"}.Start();
     }
 
     /// <summary>
