@@ -49,6 +49,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool enableLB = false;
     private CropSettings cropSettings = new CropSettings();
     private int overScan = 0;
+    private float PixelAspectRatio; // Video pixel aspect ratio 
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -93,6 +94,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: On Video Ended");
       }
       LastSwitchedAspectRatio = 0f;
+      PixelAspectRatio = 0f;
       isPlaying = false;
     }
 
@@ -115,6 +117,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: On Video Stopped");
       }
       LastSwitchedAspectRatio = 0f;
+      PixelAspectRatio = 0f;
       isPlaying = false;
     }
 
@@ -267,8 +270,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       if (crop > 0)
       {
-        cropSettings.Top = (int)(crop / LastSwitchedAspectRatio);
-        cropSettings.Bottom = (int)(crop / LastSwitchedAspectRatio);
+        cropSettings.Top = (int)((float)crop / LastSwitchedAspectRatio);
+        cropSettings.Bottom = (int)((float)crop / LastSwitchedAspectRatio);
         cropSettings.Left = crop;
         cropSettings.Right = crop;
       }
@@ -291,11 +294,15 @@ namespace ProcessPlugins.ViewModeSwitcher
       if (ViewModeSwitcherEnabled && VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.VideoAspectRatioX != 0 &&
           VMR9Util.g_vmr9.VideoAspectRatioY != 0)
       {
+        if (VMR9Util.g_vmr9.VideoWidth != 0 && VMR9Util.g_vmr9.VideoHeight != 0 )
+        {
+          PixelAspectRatio = (float)VMR9Util.g_vmr9.VideoWidth / (float)VMR9Util.g_vmr9.VideoHeight;
+        }
         // calculate the current aspect ratio
         float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
         if (aspectRatio != LastSwitchedAspectRatio && isPlaying)
         {
-          Log.Debug("ViewModeSwitcher: OnVideoReceived() AR:{0}, LastAR:{1}", aspectRatio, LastSwitchedAspectRatio);
+          Log.Debug("ViewModeSwitcher: OnVideoReceived() Video AR: {0}, Last Video AR: {1}, Pixel AR: {2}", aspectRatio, LastSwitchedAspectRatio, PixelAspectRatio);
           LastSwitchedAspectRatio = aspectRatio;
           ProcessRules();
           LastDetectionResult = false;
@@ -333,6 +340,13 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void SetCropMode()
     {
+      if (PixelAspectRatio > 0f)
+      {
+        //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
+        Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", (LastSwitchedAspectRatio/PixelAspectRatio));
+        cropSettings.Left  = (int)((float)cropSettings.Left  / (LastSwitchedAspectRatio/PixelAspectRatio));
+        cropSettings.Right = (int)((float)cropSettings.Right / (LastSwitchedAspectRatio/PixelAspectRatio));
+      }
       GUIMessage msg = new GUIMessage();
       msg.Message = GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP;
       msg.Object = cropSettings;
