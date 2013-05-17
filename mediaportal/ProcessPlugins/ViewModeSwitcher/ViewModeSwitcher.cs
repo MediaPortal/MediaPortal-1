@@ -50,6 +50,11 @@ namespace ProcessPlugins.ViewModeSwitcher
     private CropSettings cropSettings = new CropSettings();
     private int overScan = 0;
     private float PixelAspectRatio; // Video pixel aspect ratio 
+    private bool isVideoReceived = false;
+    private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
+    private bool isAutoCrop = false;
+
+    private bool debugToggle = false;
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -61,6 +66,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: Performing manual crop");
       }
+      enableLB = true;
+      isAutoCrop = false;
       LastDetectionResult = false;
       workerEvent.Set();
       return "Cropping";
@@ -73,7 +80,24 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// <returns>A string to display to the user</returns>
     public string ToggleMode()
     {
-      return "Manual";
+      if (!isAutoCrop)
+      {
+        Log.Debug("ViewModeSwitcher: auto crop ON");
+        enableLB = true;
+        isAutoCrop = true;
+        LastDetectionResult = false;
+        workerEvent.Set();
+        return "Auto Crop";
+      }
+      else
+      {
+        Log.Debug("ViewModeSwitcher: auto crop OFF");
+        enableLB = true;
+        isAutoCrop = false;
+        LastDetectionResult = false;
+        workerEvent.Set();
+        return "Manual Crop";
+      }      
     }
 
     /// <summary>
@@ -95,7 +119,9 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
+      LastDetectionResult = true;
       isPlaying = false;
+      isVideoReceived = false;
     }
 
     /// <summary>
@@ -118,7 +144,9 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
+      LastDetectionResult = true;
       isPlaying = false;
+      isVideoReceived = false;
     }
 
     /// <summary>
@@ -136,6 +164,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: On Video Started");
       }
+      LastDetectionResult = true;
       isPlaying = true;
     }
 
@@ -149,6 +178,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: OnTVChannelChange... Reset rule processing!");
       }
       LastSwitchedAspectRatio = 0f;
+      PixelAspectRatio = 0f;
+      LastDetectionResult = true;
+      isVideoReceived = false;
     }
 
     /// <summary>
@@ -186,6 +218,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public override void Stop()
     {
       stopWorkerThread = true;
+      workerEvent.Set();
       Log.Debug("ViewModeSwitcher: Stop()");
     }
 
@@ -198,12 +231,41 @@ namespace ProcessPlugins.ViewModeSwitcher
           stopWorkerThread = false;
           return;
         }
-        if (!currentSettings.DisableLBGlobaly && !LastDetectionResult)
+        if (isVideoReceived)
         {
-          LastDetectionResult = true;
-          SingleCrop();
-        }
-        workerEvent.WaitOne(); // reset automatically        
+          if (debugToggle)  
+          {
+            Log.Debug("ViewModeSwitcher: Reset AR to original");
+            GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
+            SetCropMode(); //force AR type update
+            LastSwitchedAspectRatio = 0f;
+            LastDetectionResult = false;
+          }     
+          else
+          {     
+            CheckAspectRatios();
+            if (isAutoCrop)
+            {
+              LastDetectionResult = false;
+            }
+            if (!currentSettings.DisableLBGlobaly && !LastDetectionResult && enableLB)
+            {
+              if (currentSettings.verboseLog)
+              {
+                Log.Debug("ViewModeSwitcher: Black Bar detect");
+              }
+              LastDetectionResult = true;
+              SingleCrop();
+            }
+          }
+          //debugToggle = !debugToggle;   
+          videoRecvEvent.Set();
+          workerEvent.WaitOne(1000); // reset automatically - timeout after 500ms wait           
+        }   
+        else
+        {
+          workerEvent.WaitOne(); // reset automatically - sleep until triggered      
+        }   
       }
     }
 
@@ -286,31 +348,17 @@ namespace ProcessPlugins.ViewModeSwitcher
     }
 
     /// <summary>
-    /// This method runs in a thread and calculates the aspect ratio 
-    /// checks if a rule is affected
+    /// This method handles the GUIGraphicsContext.OnVideoReceived() calls
     /// </summary>
     private void OnVideoReceived()
     {
-      if (ViewModeSwitcherEnabled && VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.VideoAspectRatioX != 0 &&
-          VMR9Util.g_vmr9.VideoAspectRatioY != 0)
+      if (!isVideoReceived)
       {
-        if (VMR9Util.g_vmr9.VideoWidth != 0 && VMR9Util.g_vmr9.VideoHeight != 0 )
-        {
-          PixelAspectRatio = (float)VMR9Util.g_vmr9.VideoWidth / (float)VMR9Util.g_vmr9.VideoHeight;
-        }
-        // calculate the current aspect ratio
-        float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
-        if (aspectRatio != LastSwitchedAspectRatio && isPlaying)
-        {
-          Log.Debug("ViewModeSwitcher: OnVideoReceived() Video AR: {0}, Last Video AR: {1}, Pixel AR: {2}", aspectRatio, LastSwitchedAspectRatio, PixelAspectRatio);
-          LastSwitchedAspectRatio = aspectRatio;
-          ProcessRules();
-          LastDetectionResult = false;
-        }
-        if (!LastDetectionResult && enableLB)
-        {
-          workerEvent.Set();
-        }
+        Log.Debug("ViewModeSwitcher: OnVideoReceived()");
+        isVideoReceived = true;
+        videoRecvEvent.Reset();
+        workerEvent.Set();
+        videoRecvEvent.WaitOne();
       }
     }
 
@@ -340,16 +388,23 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void SetCropMode()
     {
-      if (PixelAspectRatio > 0f)
+      CropSettings tmpCropSettings = new CropSettings();
+      
+      tmpCropSettings.Left   = cropSettings.Left;
+      tmpCropSettings.Right  = cropSettings.Right;
+      tmpCropSettings.Top    = cropSettings.Top;
+      tmpCropSettings.Bottom = cropSettings.Bottom;
+
+      if (PixelAspectRatio > 0f && LastSwitchedAspectRatio > 0f)
       {
         //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
         Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", (LastSwitchedAspectRatio/PixelAspectRatio));
-        cropSettings.Left  = (int)((float)cropSettings.Left  / (LastSwitchedAspectRatio/PixelAspectRatio));
-        cropSettings.Right = (int)((float)cropSettings.Right / (LastSwitchedAspectRatio/PixelAspectRatio));
+        tmpCropSettings.Left  = (int)((float)tmpCropSettings.Left  / (LastSwitchedAspectRatio/PixelAspectRatio));
+        tmpCropSettings.Right = (int)((float)tmpCropSettings.Right / (LastSwitchedAspectRatio/PixelAspectRatio));
       }
       GUIMessage msg = new GUIMessage();
       msg.Message = GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP;
-      msg.Object = cropSettings;
+      msg.Object = tmpCropSettings;
       GUIWindowManager.SendMessage(msg);
     }
 
@@ -417,5 +472,31 @@ namespace ProcessPlugins.ViewModeSwitcher
       frame.Dispose();
       frame = null;
     }
+       
+        /// <summary>
+    /// This method runs in a thread and calculates the aspect ratio 
+    /// checks if a rule is affected
+    /// </summary>
+    private void CheckAspectRatios()
+    {
+      if (ViewModeSwitcherEnabled && VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.VideoAspectRatioX != 0 &&
+          VMR9Util.g_vmr9.VideoAspectRatioY != 0)
+      {
+        if (VMR9Util.g_vmr9.VideoWidth != 0 && VMR9Util.g_vmr9.VideoHeight != 0 )
+        {
+          PixelAspectRatio = (float)VMR9Util.g_vmr9.VideoWidth / (float)VMR9Util.g_vmr9.VideoHeight;
+        }
+        // calculate the current aspect ratio
+        float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
+        if (aspectRatio != LastSwitchedAspectRatio && isPlaying)
+        {
+          Log.Debug("ViewModeSwitcher: CheckAspectRatios() Video AR: {0}, Last Video AR: {1}, Pixel AR: {2}", aspectRatio, LastSwitchedAspectRatio, PixelAspectRatio);
+          LastSwitchedAspectRatio = aspectRatio;
+          ProcessRules();
+          LastDetectionResult = false;
+        }
+      }
+    }
+
   }
 }
