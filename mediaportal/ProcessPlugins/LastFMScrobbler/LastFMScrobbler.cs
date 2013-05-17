@@ -451,6 +451,22 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         tracks = LastFMLibrary.GetSimilarTracks(strArtist, strTrack);
       }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters &&
+            (ex.Message == "Artist not found" || ex.Message == "Track not found"))
+        {
+          Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", strArtist, strTrack);
+          Log.Debug("AutoDJ: {0}", ex.Message);
+          tracks = new List<LastFMSimilarTrack>();
+        }
+        else
+        {
+          Log.Error("Error in Last.fm AutoDJ - getting similar tracks");
+          Log.Error(ex);
+          return;
+        }
+      }
       catch (Exception ex)
       {
         Log.Error("Error in Last.fm AutoDJ - getting similar tracks");
@@ -466,10 +482,18 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         {
           tracks = LastFMLibrary.GetArtistTopTracks(strArtist);
         }
-        catch (Exception ex)
+        catch (LastFMException ex)
         {
-          Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
-          Log.Error(ex);
+          if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters &&
+              ex.Message == "The artist you supplied could not be found")
+          {
+            Log.Debug("AutoDJ: Last.fm does not recognise artist: {0}", strArtist);
+          }
+          else
+          {
+            Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
+            Log.Error(ex);            
+          }
           return;
         }
 
