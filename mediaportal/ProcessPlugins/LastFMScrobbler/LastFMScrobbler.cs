@@ -438,12 +438,11 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       IEnumerable<LastFMSimilarTrack> tracks;
       try
       {
-        tracks = LastFMLibrary.GetSimilarTracks(strArtist, strTrack);
+        tracks = LastFMLibrary.GetSimilarTracks(strTrack, strArtist);
       }
       catch (LastFMException ex)
       {
-        if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters &&
-            (ex.Message == "Artist not found" || ex.Message == "Track not found"))
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters)
         {
           Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", strArtist, strTrack);
           Log.Debug("AutoDJ: {0}", ex.Message);
