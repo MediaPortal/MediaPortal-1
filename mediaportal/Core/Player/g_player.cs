@@ -1362,7 +1362,7 @@ namespace MediaPortal.Player
             {
               type = MediaType.Music;
             }
-            if (MediaInfo != null && MediaInfo.hasVideo)
+            if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
             {
               type = MediaType.Video;
             }
@@ -1387,7 +1387,7 @@ namespace MediaPortal.Player
           ChangeDriveSpeed(strFile, DriveType.CD);
         }
 
-        if (MediaInfo != null && MediaInfo.hasVideo)
+        if (MediaInfo != null && MediaInfo.hasVideo && type == MediaType.Music)
         {
           type = MediaType.Video;
         }
