@@ -345,7 +345,8 @@ namespace MediaPortal.GUI.Music
         case Action.ActionType.ACTION_PAUSE:
         case Action.ActionType.ACTION_PREV_ITEM:
           if ((PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC) &&
-              (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_TEMP))
+              (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC_TEMP) &&
+              (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_LAST_FM))
           {
             LoadAndStartPlayList();
           }
