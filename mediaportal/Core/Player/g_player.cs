@@ -3441,6 +3441,7 @@ namespace MediaPortal.Player
         {
           if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
           {
+            GUIWindowManager.ShowPreviousWindow();
             return true;
           }
 
