@@ -63,6 +63,8 @@ namespace WindowPlugins.GUISettings
     [SkinControl(11)] protected GUIButtonControl btnSelectDefaultRefreshRate = null;
 
     private string _sDefaultHz;
+    private string _sDefaultHzValue = "60";
+    private string _sDefaultHzName;
     private ArrayList _defaultHz = new ArrayList();
 
     private string _name= string.Empty; 
@@ -73,7 +75,6 @@ namespace WindowPlugins.GUISettings
     private GUIListItem _newRefreshRateListItem = new GUIListItem();
     private int _defaultHzIndex = 0;
     private RefreshRateData _newRateDataInfo;
-    
 
     private class CultureComparer : IComparer
     {
@@ -111,6 +112,7 @@ namespace WindowPlugins.GUISettings
         btnUseDeviceReset.Selected = xmlreader.GetValueAsBool("general", "devicereset", false);
         btnForceRefreshRateChange.Selected = xmlreader.GetValueAsBool("general", "force_refresh_rate", false);
         _sDefaultHz = xmlreader.GetValueAsString("general", "default_hz", "");
+        _sDefaultHzName = xmlreader.GetValueAsString("general", "default_hz_name", "");
 
         String[] p = null;
         _defaultHzIndex = -1;
@@ -142,9 +144,30 @@ namespace WindowPlugins.GUISettings
           lcRefreshRatesList.Add(item);
           _defaultHz.Add(p[0]);
 
-          if (_sDefaultHz == hz)
+          if (_sDefaultHz == hz && _sDefaultHzName != null && _sDefaultHzName == name)
           {
             _defaultHzIndex = i - 1;
+          }
+        }
+
+        // Select Default Hz value
+        if (_defaultHzIndex == -1)
+        {
+          if (string.IsNullOrEmpty(_sDefaultHz))
+          {
+            _sDefaultHz = _sDefaultHzValue;
+          }
+
+          for (int i = 1; i < 100; i++)
+          {
+            string rate = RefreshRateData(lcRefreshRatesList.ListItems[i]).Refreshrate;
+            if (rate == _sDefaultHz)
+            {
+              _sDefaultHzName = RefreshRateData(lcRefreshRatesList.ListItems[i]).Name;
+              _defaultHzIndex = i;
+              SetProperties();
+              break;
+            }
           }
         }
 
@@ -169,11 +192,9 @@ namespace WindowPlugins.GUISettings
         if (_defaultHzIndex >= 0)
         {
           string rate = RefreshRateData(lcRefreshRatesList.ListItems[_defaultHzIndex]).Refreshrate;
+          string sDefaultHzName = RefreshRateData(lcRefreshRatesList.ListItems[_defaultHzIndex]).Name;
           xmlwriter.SetValue("general", "default_hz", rate);
-        }
-        else
-        {
-          xmlwriter.SetValue("general", "default_hz", string.Empty);
+          xmlwriter.SetValue("general", "default_hz_name", sDefaultHzName);
         }
 
         //delete all refreshrate entries, then re-add them.
@@ -187,10 +208,10 @@ namespace WindowPlugins.GUISettings
             continue;
           }
 
+          xmlwriter.RemoveEntry("general", "refreshrate0" + Convert.ToString(i) + "_name");
           xmlwriter.RemoveEntry("general", name + "_fps");
           xmlwriter.RemoveEntry("general", name + "_hz");
           xmlwriter.RemoveEntry("general", "refreshrate0" + Convert.ToString(i) + "_ext");
-          xmlwriter.RemoveEntry("general", "refreshrate0" + Convert.ToString(i) + "_name");
         }
 
         int j = 1;
@@ -201,10 +222,10 @@ namespace WindowPlugins.GUISettings
           string hz = RefreshRateData(item).Refreshrate;
           string extCmd = RefreshRateData(item).Action;
 
+          xmlwriter.SetValue("general", "refreshrate0" + Convert.ToString(j) + "_name", name);
           xmlwriter.SetValue("general", name + "_fps", fps);
           xmlwriter.SetValue("general", name + "_hz", hz);
           xmlwriter.SetValue("general", "refreshrate0" + Convert.ToString(j) + "_ext", extCmd);
-          xmlwriter.SetValue("general", "refreshrate0" + Convert.ToString(j) + "_name", name);
           j++;
         }
       }
@@ -243,6 +264,8 @@ namespace WindowPlugins.GUISettings
         if (control == btnDefault)
         {
           InsertDefaultValues();
+          //Set Default Hz value
+          _sDefaultHz = _sDefaultHzValue;
           SettingsChanged(true);
         }
         
@@ -276,7 +299,7 @@ namespace WindowPlugins.GUISettings
                 _newRefreshRateListItem.AlbumInfoTag = _newRateDataInfo;
                 _newRefreshRateListItem.OnItemSelected += OnItemSelected;
                 lcRefreshRatesList.Add(_newRefreshRateListItem);
-                _defaultHz.Add(_name);
+                _defaultHz.Add(_newRateDataInfo.Name);
                 UpdateRefreshRateDataFields();
                 SetProperties();
               }
@@ -444,11 +467,24 @@ namespace WindowPlugins.GUISettings
       //first time mp config is run, no refreshrate settings available, create the default ones.
       string[] p = new String[4];
       p[0] = "CINEMA";
-      p[1] = "23.976;24"; // fps
+      p[1] = "23.976"; // fps
       p[2] = "24"; //hz
       p[3] = ""; //action
       GUIListItem item = new GUIListItem();
       RefreshRateData refreshRateData = new RefreshRateData(p[0], p[1], p[2], p[3]);
+      item.Label = p[0];
+      item.AlbumInfoTag = refreshRateData;
+      item.OnItemSelected += OnItemSelected;
+      lcRefreshRatesList.Add(item);
+      _defaultHz.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "CINEMA24";
+      p[1] = "24"; // fps
+      p[2] = "24"; //hz
+      p[3] = ""; //action
+      item = new GUIListItem();
+      refreshRateData = new RefreshRateData(p[0], p[1], p[2], p[3]);
       item.Label = p[0];
       item.AlbumInfoTag = refreshRateData;
       item.OnItemSelected += OnItemSelected;
@@ -469,7 +505,7 @@ namespace WindowPlugins.GUISettings
       _defaultHz.Add(p[0]);
 
       p = new String[4];
-      p[0] = "HDTV";
+      p[0] = "PALHD";
       p[1] = "50"; // fps
       p[2] = "50"; //hz
       p[3] = ""; //action
@@ -483,7 +519,46 @@ namespace WindowPlugins.GUISettings
 
       p = new String[4];
       p[0] = "NTSC";
-      p[1] = "29.97;30"; // fps
+      p[1] = "29.97"; // fps
+      p[2] = "59"; //hz
+      p[3] = ""; //action
+      item = new GUIListItem();
+      refreshRateData = new RefreshRateData(p[0], p[1], p[2], p[3]);
+      item.Label = p[0];
+      item.AlbumInfoTag = refreshRateData;
+      item.OnItemSelected += OnItemSelected;
+      lcRefreshRatesList.Add(item);
+      _defaultHz.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "NTSCHD";
+      p[1] = "59.94"; // fps
+      p[2] = "59"; //hz
+      p[3] = ""; //action
+      item = new GUIListItem();
+      refreshRateData = new RefreshRateData(p[0], p[1], p[2], p[3]);
+      item.Label = p[0];
+      item.AlbumInfoTag = refreshRateData;
+      item.OnItemSelected += OnItemSelected;
+      lcRefreshRatesList.Add(item);
+      _defaultHz.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "ATSC";
+      p[1] = "30"; // fps
+      p[2] = "60"; //hz
+      p[3] = ""; //action
+      item = new GUIListItem();
+      refreshRateData = new RefreshRateData(p[0], p[1], p[2], p[3]);
+      item.Label = p[0];
+      item.AlbumInfoTag = refreshRateData;
+      item.OnItemSelected += OnItemSelected;
+      lcRefreshRatesList.Add(item);
+      _defaultHz.Add(p[0]);
+
+      p = new String[4];
+      p[0] = "ATSCHD";
+      p[1] = "60"; // fps
       p[2] = "60"; //hz
       p[3] = ""; //action
       item = new GUIListItem();
@@ -513,6 +588,18 @@ namespace WindowPlugins.GUISettings
       item.OnItemSelected += OnItemSelected;
       lcRefreshRatesList.Add(item);
       _defaultHz.Add(parameters[0]);
+
+      // Select Default Hz value
+      for (int i = 1; i < 100; i++)
+      {
+        string rate = RefreshRateData(lcRefreshRatesList.ListItems[i]).Refreshrate;
+        if (rate == _sDefaultHzValue)
+        {
+          _defaultHzIndex = i;
+          SetProperties();
+          break;
+        }
+      }
     }
 
     private void UpdateRefreshRateDataFields()
@@ -786,7 +873,7 @@ namespace WindowPlugins.GUISettings
       }
 
       _defaultHzIndex = dlg.SelectedLabel;
-      _sDefaultHz = dlg.SelectedLabelText;
+      _sDefaultHzName = dlg.SelectedLabelText;
       SetProperties();
     }
 
