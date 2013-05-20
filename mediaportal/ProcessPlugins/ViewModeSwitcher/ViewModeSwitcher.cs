@@ -54,7 +54,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private bool isAutoCrop = false;
 
-    private bool debugToggle = false;
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -203,6 +202,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       g_Player.PlayBackStopped += OnVideoStopped;
       g_Player.PlayBackStarted += OnVideoStarted;
       g_Player.TVChannelChanged += OnTVChannelChanged;
+      
+      isAutoCrop = currentSettings.UseAutoLBDetection;
 
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
@@ -224,6 +225,9 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void Worker()
     {
+      bool debugToggle = false;
+      int loopCount = 0;
+      
       while (true)
       {
         if (stopWorkerThread)
@@ -244,23 +248,27 @@ namespace ProcessPlugins.ViewModeSwitcher
           else
           {     
             CheckAspectRatios();
-            if (isAutoCrop)
+            if ((loopCount%4) == 0)
             {
-              LastDetectionResult = false;
-            }
-            if (!currentSettings.DisableLBGlobaly && !LastDetectionResult && enableLB)
-            {
-              if (currentSettings.verboseLog)
+              if (isAutoCrop)
               {
-                Log.Debug("ViewModeSwitcher: Black Bar detect");
+                LastDetectionResult = false;
               }
-              LastDetectionResult = true;
-              SingleCrop();
+              if (!currentSettings.DisableLBGlobaly && !LastDetectionResult && enableLB)
+              {
+                if (currentSettings.verboseLog)
+                {
+                  Log.Debug("ViewModeSwitcher: Black Bar detect");
+                }
+                LastDetectionResult = true;
+                SingleCrop();
+              }
             }
           }
           //debugToggle = !debugToggle;   
+          loopCount++;
           videoRecvEvent.Set();
-          workerEvent.WaitOne(1000); // reset automatically - timeout after 500ms wait           
+          workerEvent.WaitOne(247); // reset automatically - timeout after 247ms wait           
         }   
         else
         {
@@ -274,6 +282,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>    
     private void ProcessRules()
     {
+      bool updateCrop = false;
       int width = VMR9Util.g_vmr9.VideoWidth;
       int height = VMR9Util.g_vmr9.VideoHeight;
       if (currentSettings.verboseLog)
@@ -311,10 +320,12 @@ namespace ProcessPlugins.ViewModeSwitcher
           {
             overScan = tmpRule.OverScan;
             Crop(overScan);
+            updateCrop = true;
           }
           if (tmpRule.ChangeAR)
           {
             SetAspectRatio(tmpRule.Name, tmpRule.ViewMode);
+            updateCrop = true;
           }
           break; // do not process any additional rule after a rule fits (better for offset function)
         }
@@ -325,6 +336,11 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Info("ViewModeSwitcher: Processing the fallback rule!");
         Crop(currentSettings.fboverScan);
         SetAspectRatio("Fallback rule", currentSettings.FallBackViewMode);
+        updateCrop = true;
+      }
+      if (updateCrop)
+      {
+        SetCropMode();
       }
     }
 
@@ -344,7 +360,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         cropSettings.Left = currentSettings.CropLeft;
         cropSettings.Right = currentSettings.CropRight;
       }
-      SetCropMode();
     }
 
     /// <summary>
@@ -372,15 +387,15 @@ namespace ProcessPlugins.ViewModeSwitcher
       Log.Info("ViewModeSwitcher: Switching to viewmode: " + AR);
       GUIGraphicsContext.ARType = AR;
 
-      if (currentSettings.ShowSwitchMsg)
-      {
-        GUIDialogNotify SwitchMsg =
-          (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        SwitchMsg.SetHeading("ViewModeSwitcher");
-        SwitchMsg.SetText(MessageString + " > " + AR);
-        SwitchMsg.TimeOut = 2;
-        SwitchMsg.DoModal(GUIWindowManager.ActiveWindow);
-      }
+      //if (currentSettings.ShowSwitchMsg)
+      //{
+      //  GUIDialogNotify SwitchMsg =
+      //    (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      //  SwitchMsg.SetHeading("ViewModeSwitcher");
+      //  SwitchMsg.SetText(MessageString + " > " + AR);
+      //  SwitchMsg.TimeOut = 2;
+      //  SwitchMsg.DoModal(GUIWindowManager.ActiveWindow);
+      //}
     }
 
     /// <summary>
@@ -413,6 +428,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void SingleCrop()
     {
+      bool updateCrop = false;
+      
       if (GUIGraphicsContext.RenderBlackImage)
       {
         LastDetectionResult = false;
@@ -459,14 +476,23 @@ namespace ProcessPlugins.ViewModeSwitcher
         cropSettings.Bottom = cropV; // GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
         cropSettings.Left = cropH; // bounds.Left;
         cropSettings.Right = cropH; // GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
-        SetCropMode();
+        updateCrop = true;
       }
+      
       if (newasp >= 1)
       {
         float asp = (float)(frame.Width) / (float)(frame.Height);
         //Log.Debug("asp: {0}, newasp: {1}", asp, newasp);      
         if (Math.Abs(asp - newasp) > 0.2 && LastSwitchedAspectRatio > 1.5)
+        {
           SetAspectRatio("4:3 inside 16:9", Geometry.Type.NonLinearStretch);
+        }
+        updateCrop = true;
+      } 
+          
+      if (updateCrop)
+      {
+        SetCropMode();
       }
 
       frame.Dispose();

@@ -29,17 +29,18 @@ namespace ProcessPlugins.ViewModeSwitcher
   public class ViewModeswitcherSettings
   {
     public RuleSet ViewModeRules = new RuleSet();
-    public bool verboseLog;
-    public bool ShowSwitchMsg;
-    public bool UseFallbackRule;
+    public bool verboseLog = false;
+    public bool ShowSwitchMsg = false;
+    public bool UseFallbackRule = true;
     public Geometry.Type FallBackViewMode = Geometry.Type.Normal;
-    public bool DisableLBGlobaly;
+    public bool DisableLBGlobaly = false;
     public decimal LBBlackLevel = 40;
     public int CropLeft = 0;
     public int CropRight = 0;
     public int CropTop = 0;
     public int CropBottom = 0;
     public int fboverScan = 0;
+    public bool UseAutoLBDetection = false;
 
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -52,6 +53,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmDisableLBGlobaly = "parmdisablelbglobaly";
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
+    private const string ParmUseAutoLBDetection = "parmUseAutoLBDetection";
+    
 
     public static Geometry.Type StringToViewMode(string strViewmode)
     {
@@ -132,7 +135,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropLeft = reader.GetValueAsInt("tv", "cropleft", 0);
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
-        CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);
+        CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);        
+        UseAutoLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, false);
+        
 
         bool tmpReturn = false;
         ViewModeRules.Clear();
@@ -243,6 +248,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRuleCount, ViewModeRules.Count.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBBlackLevel.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
+        //xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, UseAutoLBDetection);
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {
