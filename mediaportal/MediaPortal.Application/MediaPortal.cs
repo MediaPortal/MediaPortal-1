@@ -831,7 +831,8 @@ public class MediaPortalApp : D3D, IRender
           for (int i = _startupDelay; i > 0; i--)
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
-            Application.DoEvents();  // process message queue
+            Thread.Sleep(1000);
+            Application.DoEvents();
           }
         }
 
@@ -1509,7 +1510,6 @@ public class MediaPortalApp : D3D, IRender
       // user clicked on minimize button
       case SC_MINIMIZE:
         Log.Debug("Main: SC_MINIMIZE");
-        MinimizeToTray();
         break;
 
       // Windows is requesting to turn off the display
