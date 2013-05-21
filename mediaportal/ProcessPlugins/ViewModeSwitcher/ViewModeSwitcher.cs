@@ -53,7 +53,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private bool isAutoCrop = false;
-    private Geometry.Type LastGeometry = Geometry.Type.Normal;
 
 
     /// <summary>
@@ -118,7 +117,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
-      LastGeometry = Geometry.Type.Normal;
       LastDetectionResult = true;
       isPlaying = false;
       isVideoReceived = false;
@@ -142,12 +140,16 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: On Video Stopped");
       }
+      //Put the worker thread into idle mode
+      isPlaying = false;
+      videoRecvEvent.Reset();
+      workerEvent.Set();
+      videoRecvEvent.WaitOne(500);
+      isVideoReceived = false;
+      
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
-      LastGeometry = Geometry.Type.Normal;
       LastDetectionResult = true;
-      isPlaying = false;
-      isVideoReceived = false;
     }
 
     /// <summary>
@@ -166,6 +168,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: On Video Started");
       }
       LastDetectionResult = true;
+      isVideoReceived = false;
       isPlaying = true;
     }
 
@@ -180,7 +183,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
-      LastGeometry = Geometry.Type.Normal;
       LastDetectionResult = true;
       isVideoReceived = false;
     }
@@ -238,7 +240,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           stopWorkerThread = false;
           return;
         }
-        if (isVideoReceived)
+        if (isVideoReceived && isPlaying)
         {
           if (debugToggle)  
           {
@@ -275,6 +277,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         }   
         else
         {
+          videoRecvEvent.Set();
           workerEvent.WaitOne(); // reset automatically - sleep until triggered      
         }   
       }
@@ -370,13 +373,18 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void OnVideoReceived()
     {
+      if (!isPlaying)
+      {
+        isVideoReceived = false;
+        return;
+      }
       if (!isVideoReceived)
       {
         Log.Debug("ViewModeSwitcher: OnVideoReceived()");
         isVideoReceived = true;
         videoRecvEvent.Reset();
         workerEvent.Set();
-        videoRecvEvent.WaitOne();
+        videoRecvEvent.WaitOne(500);
       }
     }
 
@@ -387,14 +395,13 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// <param name="AR">the aspect ratio to switch to</param>
     private bool SetAspectRatio(string MessageString, Geometry.Type AR)
     {
-      if (LastGeometry == AR)
+      if (GUIGraphicsContext.ARType == AR)
       {
         return false;
       }
         
       Log.Info("ViewModeSwitcher: Switching to viewmode: " + AR);
       GUIGraphicsContext.ARType = AR;
-      LastGeometry = AR;
 
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
@@ -476,16 +483,20 @@ namespace ProcessPlugins.ViewModeSwitcher
         return;
       }
 
-      int cropH = Math.Min(GUIGraphicsContext.VideoSize.Width - bounds.Right, bounds.Left);
+      Log.Debug("Bounds -> left: {0}, right: {1}, top: {2}, bottom: {3}", bounds.Left, bounds.Right, bounds.Top, bounds.Bottom);      
+
+      int cropH = Math.Min(frame.Width - bounds.Right, bounds.Left);
       if (cropH < overScan)
         cropH = overScan;
 
-      int cropV = Math.Min(GUIGraphicsContext.VideoSize.Height - bounds.Bottom, bounds.Top);
+      int cropV = Math.Min(frame.Height - bounds.Bottom, bounds.Top);
       if (cropV < overScan / LastSwitchedAspectRatio)
         cropV = (int)((float)overScan / LastSwitchedAspectRatio);
 
       if (cropV > cropH / LastSwitchedAspectRatio)
         cropV = (int)((float)cropH / LastSwitchedAspectRatio);
+
+      Log.Debug("Crop -> cropH: {0}, cropV: {1}", cropH, cropV);      
 
       float newasp = (float)(frame.Width - cropH * 2) / (float)(frame.Height - cropV * 2);
       if (newasp < 1) // faulty crop
@@ -496,7 +507,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       else // (newasp >= 1)
       {
         float asp = (float)(frame.Width) / (float)(frame.Height);
-        //Log.Debug("asp: {0}, newasp: {1}", asp, newasp);      
+        Log.Debug("asp: {0}, newasp: {1}", asp, newasp);      
         if (Math.Abs(asp - newasp) > 0.2 && LastSwitchedAspectRatio > 1.5)
         {
           if (SetAspectRatio("4:3 inside 16:9", Geometry.Type.NonLinearStretch))
@@ -511,9 +522,9 @@ namespace ProcessPlugins.ViewModeSwitcher
       if ((Math.Abs(cropH - cropSettings.Left) > 1) || (Math.Abs(cropV - cropSettings.Top) > 1))
       {
         cropSettings.Top = cropV; //bounds.Top;
-        cropSettings.Bottom = cropV; // GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
+        cropSettings.Bottom = cropV; // frame.Height - (bounds.Bottom + 1);
         cropSettings.Left = cropH; // bounds.Left;
-        cropSettings.Right = cropH; // GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
+        cropSettings.Right = cropH; // frame.Width - (bounds.Right + 1);
         updateCrop = true;
       }      
           
@@ -541,7 +552,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
         // calculate the current aspect ratio
         float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
-        if (aspectRatio != LastSwitchedAspectRatio && isPlaying)
+        if (aspectRatio != LastSwitchedAspectRatio)
         {
           Log.Debug("ViewModeSwitcher: CheckAspectRatios() Video AR: {0}, Last Video AR: {1}, Pixel AR: {2}", aspectRatio, LastSwitchedAspectRatio, PixelAspectRatio);
           LastSwitchedAspectRatio = aspectRatio;
