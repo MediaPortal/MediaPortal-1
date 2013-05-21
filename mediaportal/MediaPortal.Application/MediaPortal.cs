@@ -1510,6 +1510,7 @@ public class MediaPortalApp : D3D, IRender
       // user clicked on minimize button
       case SC_MINIMIZE:
         Log.Debug("Main: SC_MINIMIZE");
+        MinimizeToTray();
         break;
 
       // Windows is requesting to turn off the display
