@@ -431,77 +431,147 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <summary>
     /// Handles AutoDJ details of identifying similar tracks and choosing which to add to playlist
     /// </summary>
-    /// <param name="strArtist">Artist of track</param>
-    /// <param name="strTrack">Name of track</param>
-    public static void AutoDJ(string strArtist, string strTrack)
+    /// <param name="artist">Artist of track</param>
+    /// <param name="track">Name of track</param>
+    public static void AutoDJ(string artist, string track)
+    {
+      // try and match similar track to one being played
+      var tracks = GetSimilarTracks(artist, track);
+      if (LocalTracksAdded(tracks))
+      {
+        return;
+      }
+
+      // no match so lets attempt to lookup similar tracks based on artists top tracks
+      Log.Debug("Unable to match similar tracks for {0} - {1} : trying similar tracks for top artist tracks", artist, track);
+      tracks = GetArtistTopTracks(artist);
+      var i = 0;
+      if (tracks != null)
+      {
+        foreach (var lastFmTrack in tracks)
+        {
+          if (i == 5)
+          { // only check at most 5 tracks to prevent flooding last.fm with requests
+            break;
+          }
+
+          tracks = GetSimilarTracks(lastFmTrack.ArtistName, lastFmTrack.TrackTitle);
+          if (LocalTracksAdded(tracks))
+          {
+            return;
+          }
+
+          i++;
+        }
+      }
+
+      // still no match so lets just try and match top artist tracks
+      Log.Debug("Unable to match similar top artist tracks for {0} : trying top artist tracks", artist);
+      tracks = GetArtistTopTracks(artist);
+      if (LocalTracksAdded(tracks))
+      {
+        return;
+      }
+      
+      Log.Info("Auto DJ: Unable to match any tracks for {0} - {1}", artist, track);
+    }
+
+
+    /// <summary>
+    /// Checks last.fm for similar tracks and handle any errors that might occur
+    /// </summary>
+    /// <param name="artist">Artist to check</param>
+    /// <param name="track">Track title to check</param>
+    /// <returns>Similar tracks as defined by last.fm or null</returns>
+    private static IEnumerable<LastFMSimilarTrack> GetSimilarTracks(string artist, string track)
     {
       IEnumerable<LastFMSimilarTrack> tracks;
       try
       {
-        tracks = LastFMLibrary.GetSimilarTracks(strTrack, strArtist);
+        tracks = LastFMLibrary.GetSimilarTracks(track, artist);
       }
       catch (LastFMException ex)
       {
         if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters)
         {
-          Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", strArtist, strTrack);
+          Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", artist, track);
           Log.Debug("AutoDJ: {0}", ex.Message);
-          tracks = new List<LastFMSimilarTrack>();
         }
         else
         {
           Log.Error("Error in Last.fm AutoDJ - getting similar tracks");
           Log.Error(ex);
-          return;
         }
+        return null;
       }
       catch (Exception ex)
       {
         Log.Error("Error in Last.fm AutoDJ - getting similar tracks");
         Log.Error(ex);
-        return;
+        return null;
       }
 
-      var dbTracks = GetSimilarTracksInDatabase(tracks);
-      if (dbTracks.Count == 0)
+      return tracks;
+    }
+
+    /// <summary>
+    /// Checks last.fm for top artist tracks and handle any errors that might occur 
+    /// </summary>
+    /// <param name="artist">Artist to search for</param>
+    /// <returns>Similar tracks as defined by last.fm or null</returns>
+    private static IEnumerable<LastFMSimilarTrack> GetArtistTopTracks(string artist)
+    {
+      IEnumerable<LastFMSimilarTrack> tracks;
+      try
       {
-        Log.Debug("Auto DJ: No similar local tracks found for {0} - {1} - trying top artist tracks", strArtist, strTrack);
-        try
+        tracks = LastFMLibrary.GetArtistTopTracks(artist);
+      }
+      catch (LastFMException ex)
+      {
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters &&
+            ex.Message == "The artist you supplied could not be found")
         {
-          tracks = LastFMLibrary.GetArtistTopTracks(strArtist);
+          Log.Debug("AutoDJ: Last.fm does not recognise artist: {0}", artist);
         }
-        catch (LastFMException ex)
-        {
-          if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters &&
-              ex.Message == "The artist you supplied could not be found")
-          {
-            Log.Debug("AutoDJ: Last.fm does not recognise artist: {0}", strArtist);
-          }
-          else
-          {
-            Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
-            Log.Error(ex);
-          }
-          return;
-        }
-        catch (Exception ex)
+        else
         {
           Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
           Log.Error(ex);
-          return;
         }
-
-        dbTracks = GetSimilarTracksInDatabase(tracks);
+        return null;
       }
-
-      if (dbTracks.Count > 0)
+      catch (Exception ex)
       {
-        AutoDJAddToPlaylist(dbTracks);
+        Log.Error("Error in Last.fm AutoDJ - getting artist top tracks");
+        Log.Error(ex);
+        return null;
       }
-      else
+
+      return tracks;
+    }
+
+    /// <summary>
+    /// Checks a collection of tracks from last.fm against the users local database
+    /// If tracks are matched then these tracks will be considered by auto DJ
+    /// </summary>
+    /// <param name="tracks">Collection of tracks to check for local copies</param>
+    /// <returns>True if tracks were added to playlist else false</returns>
+    private static bool LocalTracksAdded(IEnumerable<LastFMSimilarTrack> tracks)
+    {
+      if (tracks == null)
       {
-        Log.Info("Auto DJ: Unable to match any tracks for {0} - {1}", strArtist, strTrack);
+        return false;
       }
+
+      var dbTracks = GetSimilarTracksInDatabase(tracks);
+
+      if (dbTracks.Count == 0)
+      {
+        return false;
+      }
+
+      AutoDJAddToPlaylist(dbTracks);
+      return true;
     }
 
     /// <summary>
