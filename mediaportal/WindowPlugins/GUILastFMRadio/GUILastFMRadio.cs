@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.LastFMRadio
       var sessionKey = mdb.GetLastFMSK();
       var currentUser = mdb.GetLastFMUser();
       var a = new LastFMLibrary(sessionKey, currentUser); //TODO this is just making _SK get loaded.   No need to actual instansiate
-      return Load(GUIGraphicsContext.Skin + @"\lastFmRadio.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinDirectory(@"\lastFmRadio.xml"));
     }
 
     protected override void OnPageLoad()
@@ -565,16 +565,19 @@ namespace MediaPortal.GUI.LastFMRadio
 
     private void RemovePlayListItem(int iItem)
     {
-      GUIListItem pItem = PlaylistControl[iItem];
-      if (pItem == null)
+      var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+      var pli = pl[iItem];
+      if (pli == null)
       {
         return;
       }
-      string strFileName = pItem.Path;
 
-     _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, strFileName);
+     _playlistPlayer.Remove(PlayListType.PLAYLIST_LAST_FM, pli.FileName);
 
-      LoadPlaylist();
+      if (GUIWindowManager.ActiveWindow == GetID)
+      {
+        LoadPlaylist();
+      }
     }
 
     #endregion
