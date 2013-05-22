@@ -41,6 +41,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public int CropBottom = 0;
     public int fboverScan = 0;
     public bool UseAutoLBDetection = false;
+    public Geometry.Type PillarBoxViewMode = Geometry.Type.NonLinearStretch;
 
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -54,7 +55,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
     private const string ParmUseAutoLBDetection = "parmUseAutoLBDetection";
-    
+    private const string ParmPillarBoxViewMode = "parmpillarboxviewmode";    
+
 
     public static Geometry.Type StringToViewMode(string strViewmode)
     {
@@ -137,6 +139,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);        
         UseAutoLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, false);
+        String tmpPillarBoxViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmPillarBoxViewMode, "NonLinearStretch");
+        PillarBoxViewMode = StringToViewMode(tmpPillarBoxViewMode);
         
 
         bool tmpReturn = false;
@@ -249,6 +253,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBBlackLevel.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
         //xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, UseAutoLBDetection);
+        //xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmPillarBoxViewMode, ParmPillarBoxViewMode.ToString());
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

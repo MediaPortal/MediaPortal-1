@@ -53,6 +53,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private bool isAutoCrop = false;
+    private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
 
 
     /// <summary>
@@ -167,6 +168,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: On Video Started");
       }
+      LastSwitchedGeometry = GUIGraphicsContext.ARType;
       LastDetectionResult = true;
       isVideoReceived = false;
       isPlaying = true;
@@ -251,7 +253,19 @@ namespace ProcessPlugins.ViewModeSwitcher
             LastDetectionResult = false;
           }     
           else
-          {     
+          { 
+            if (LastSwitchedGeometry != GUIGraphicsContext.ARType)
+            {
+                //Geometry (zoom mode) has been changed by user
+                //so disable black bar detection and 
+                //reset cropping to fallback settings
+              Log.Debug("ViewModeSwitcher: Zoom mode changed by user");
+              enableLB = false;
+              Crop(currentSettings.fboverScan);
+              SetCropMode();
+              LastSwitchedGeometry = GUIGraphicsContext.ARType;
+            }
+            
             CheckAspectRatios();
             if ((loopCount%4) == 0)
             {
@@ -381,6 +395,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       if (!isVideoReceived)
       {
         Log.Debug("ViewModeSwitcher: OnVideoReceived()");
+        LastSwitchedGeometry = GUIGraphicsContext.ARType;
         isVideoReceived = true;
         videoRecvEvent.Reset();
         workerEvent.Set();
@@ -395,6 +410,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// <param name="AR">the aspect ratio to switch to</param>
     private bool SetAspectRatio(string MessageString, Geometry.Type AR)
     {
+      LastSwitchedGeometry = AR;
+      
       if (GUIGraphicsContext.ARType == AR)
       {
         return false;
@@ -510,7 +527,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("asp: {0}, newasp: {1}", asp, newasp);      
         if (Math.Abs(asp - newasp) > 0.2 && LastSwitchedAspectRatio > 1.5)
         {
-          if (SetAspectRatio("4:3 inside 16:9", Geometry.Type.NonLinearStretch))
+          if (SetAspectRatio("4:3 inside 16:9", currentSettings.PillarBoxViewMode))
           {
             updateCrop = true;
           }
