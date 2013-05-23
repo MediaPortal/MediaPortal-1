@@ -4634,7 +4634,7 @@ public class MediaPortalApp : D3D, IRender
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth/screenHeight);
-        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "Titan" : "Default";
         Config.SkinName = GUIGraphicsContext.SkinName;
         SkinSettings.Load();
 
