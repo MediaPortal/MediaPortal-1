@@ -405,7 +405,7 @@ HRESULT CDeMultiplexer::FlushToChapter(UINT32 nChapter)
   return hr;
 }
 
-void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime)
+void CDeMultiplexer::Flush(bool pSeeking, REFERENCE_TIME rtSeekTime)
 {
   LogDebug("demux:flushing");
 
@@ -416,7 +416,7 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
-  FlushPESBuffers(pDiscardData, !pDiscardData);
+  FlushPESBuffers(true, false);
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
@@ -424,12 +424,9 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSe
 
   m_playlistManager->ClearAllButCurrentClip();
 
-  if (pDiscardData)
-  {
-    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-    if (pDVBSubtitleFilter)
-      pDVBSubtitleFilter->NotifyChannelChange();
-  }
+  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+  if (pDVBSubtitleFilter)
+    pDVBSubtitleFilter->NotifyChannelChange();
 
   FlushAudio();
   FlushVideo();
@@ -641,7 +638,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
-      Flush(true, true, 0LL);
+      Flush(true, 0LL);
       break;
 
     case BD_EVENT_STILL_TIME:
@@ -742,7 +739,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             LogDebug("demux: current clip was interrupted - triggering flush");
             //TODO get clipstart relative to clip start
             REFERENCE_TIME rtClipStart = 0LL;
-            Flush(true, true, rtClipStart);
+            Flush(true, rtClipStart);
           }
         }
 
