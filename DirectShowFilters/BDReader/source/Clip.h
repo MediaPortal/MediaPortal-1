@@ -98,6 +98,11 @@ public:
   REFERENCE_TIME m_rtClipAudioStartingOffset;
   REFERENCE_TIME m_rtClipVideoStartingOffset;
 
+  // true would indicate that this is the first audio packet
+  bool firstAudio;
+  // true would indicate that this is the first video packet
+  bool firstVideo;
+
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
   typedef vector<Packet*>::iterator ivecAudioBuffers;
@@ -109,11 +114,6 @@ protected:
   CCritSec m_sectionRead;
   CCritSec m_sectionVectorAudio;
   CCritSec m_sectionVectorVideo;
-
-  // true would indicate that this is the first audio packet
-  bool firstAudio;
-  // true would indicate that this is the first video packet
-  bool firstVideo;
 
   bool m_bCalculateAudioOffset;
   bool m_bCalculateVideoOffset;
