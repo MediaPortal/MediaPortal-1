@@ -247,7 +247,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   audioPlaybackPosition += FAKE_AUDIO_DURATION;
 
   if (bSetAudioSuperceeded)
-    superceeded |= SUPERCEEDED_AUDIO_RETURN;
+    superceeded |= SUPERCEEDED_AUDIO_RETURN | SUPERCEEDED_AUDIO_FILL;
 
   return packet;
 }
@@ -313,12 +313,12 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
 
 void CClip::Superceed(int superceedType)
 {
-  superceeded|=superceedType;
-  LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
-  if ((superceedType == SUPERCEEDED_AUDIO_FILL) && firstAudio && !firstVideo) 
+  if ((superceedType == SUPERCEEDED_AUDIO_FILL) && noAudio)
+    LogDebug("Superceed clip %d,%d = %4X - ignored as fake audio", nPlaylist, nClip, superceeded);
+  else
   {
-    LogDebug("Setting Fake Audio for clip %d", nClip);
-    noAudio = true;
+    superceeded |= superceedType;
+    LogDebug("Superceed clip %d,%d = %4X", nPlaylist, nClip, superceeded);
   }
 }
 
@@ -417,7 +417,6 @@ bool CClip::HasVideo()
   CAutoLock vectorVLock(&m_sectionVectorVideo);
 //  if (!noAudio  && firstAudio ) return false;
   if (!m_videoPmt) return false;
-  if (firstVideo && !IsSuperceeded(SUPERCEEDED_VIDEO_FILL) && m_vecClipVideoPackets.size() < 2) return false;
   if (m_vecClipVideoPackets.size()>0) return true;
   return false;
 }
@@ -425,7 +424,8 @@ bool CClip::HasVideo()
 REFERENCE_TIME CClip::Incomplete()
 {
   // clip not played so not incomplete
-  if (!firstPacketReturned || !firstPacketAccepted) return 0LL;
+  if (!firstPacketReturned || !firstPacketAccepted || firstVideo)
+    return 0LL;
 
   REFERENCE_TIME ret = clipDuration - earliestPacketAccepted + playlistFirstPacketTime - PlayedDuration();
   if (ret > 5000000LL)
@@ -450,7 +450,11 @@ REFERENCE_TIME CClip::PlayedDuration()
   }
 
   if (audioPlaybackPosition < videoPlaybackPosition)
+  {
     finish = videoPlaybackPosition;
+    LogDebug("CClip::PlayedDuration - A: %I64d < V: %I64d", audioPlaybackPosition, videoPlaybackPosition);
+  }
+
   playDuration = finish - playlistFirstPacketTime;
   if (abs(clipDuration - playDuration) < HALF_SECOND) 
   {
@@ -463,7 +467,6 @@ REFERENCE_TIME CClip::PlayedDuration()
     return 0LL;
   }
   LogDebug("CClip::PlayedDuration %I64d - clip (%d,%d) partially played finish %I64d start %I64d", finish - earliestPacketAccepted, nPlaylist, nClip, finish, earliestPacketAccepted);
-  if (!noAudio) return lastAudioPosition - firstAudioPosition;
   return finish - earliestPacketAccepted;
 }
 
