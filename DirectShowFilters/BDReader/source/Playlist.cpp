@@ -181,16 +181,47 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
   CAutoLock vectorLock(&m_sectionVector);
   bool ret = true;
 
-  if (m_vecClips.size())
+  CClip* videoClip = NULL;
+  CClip* audioClip = NULL;
+
+  int clipsSize = m_vecClips.size();
+
+  if (clipsSize > 0)
   {
-    (*m_itCurrentAudioSubmissionClip)->Superceed(SUPERCEEDED_AUDIO_FILL);
-    (*m_itCurrentVideoSubmissionClip)->Superceed(SUPERCEEDED_VIDEO_FILL);
+    videoClip = *m_itCurrentVideoSubmissionClip;
+    audioClip = *m_itCurrentAudioSubmissionClip;
   }
 
+  if (videoClip && videoClip->firstVideo)
+  {
+    Packet* packet = new Packet();
+    packet->rtStart = videoClip->lastAudioPosition;
+    packet->nClipNumber = videoClip->nClip;
+    packet->nPlaylist = videoClip->nPlaylist;
 
-  if (m_vecClips.size()) PushClips();
+    AcceptVideoPacket(packet);
+  }
+  
+  if (audioClip && audioClip->firstAudio)
+  {
+    Packet* packet = new Packet();
+    packet->rtStart = audioClip->lastAudioPosition;
+    packet->nClipNumber = audioClip->nClip;
+    packet->nPlaylist = audioClip->nPlaylist;
+
+    AcceptAudioPacket(packet);
+  }
+
+  if (audioClip)
+    audioClip->Superceed(SUPERCEEDED_AUDIO_FILL);
+
+  if (videoClip)
+    videoClip->Superceed(SUPERCEEDED_VIDEO_FILL);
+
+  PushClips();
   m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, seekTarget, interrupted));
-  if (m_vecClips.size() == 1)
+
+  if (clipsSize == 0)
   {
     // initialise
     m_itCurrentAudioPlayBackClip=m_itCurrentVideoPlayBackClip=m_itCurrentAudioSubmissionClip=m_itCurrentVideoSubmissionClip=m_vecClips.begin();
@@ -410,12 +441,15 @@ vector<CClip*> CPlaylist::Superceed()
 
 void CPlaylist::PushClips()
 {
-  m_itCurrentAudioPlayBackClipPos = m_itCurrentAudioPlayBackClip-m_vecClips.begin();
-  m_itCurrentVideoPlayBackClipPos = m_itCurrentVideoPlayBackClip-m_vecClips.begin();
-  m_itCurrentAudioSubmissionClipPos = m_itCurrentAudioSubmissionClip-m_vecClips.begin();
-  m_itCurrentVideoSubmissionClipPos = m_itCurrentVideoSubmissionClip-m_vecClips.begin();
-
+  if (m_vecClips.size() > 0)
+  {
+    m_itCurrentAudioPlayBackClipPos = m_itCurrentAudioPlayBackClip - m_vecClips.begin();
+    m_itCurrentVideoPlayBackClipPos = m_itCurrentVideoPlayBackClip - m_vecClips.begin();
+    m_itCurrentAudioSubmissionClipPos = m_itCurrentAudioSubmissionClip - m_vecClips.begin();
+    m_itCurrentVideoSubmissionClipPos = m_itCurrentVideoSubmissionClip - m_vecClips.begin();
+  }
 }
+
 void CPlaylist::PopClips()
 {
   m_itCurrentAudioPlayBackClip = m_vecClips.begin() + m_itCurrentAudioPlayBackClipPos;
