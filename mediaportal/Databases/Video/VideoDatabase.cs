@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using MediaPortal.Database;
+using MediaPortal.Player;
 using SQLite.NET;
 
 namespace MediaPortal.Video.Database
@@ -380,6 +381,22 @@ namespace MediaPortal.Video.Database
     public static void SetMovieStopTime(int iFileId, int stoptime)
     {
       _database.SetMovieStopTime(iFileId, stoptime);
+    }
+
+    /// <summary>
+    /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
+    /// </summary>
+    public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
+    {
+      return _database.GetMovieStopTimeAndResumeData(iFileId, out resumeData, g_Player.BdDefaultTitle);
+    }
+
+    /// <summary>
+    /// Deprecated Method (this one will not use the new Blu-ray Title mode resume)
+    /// </summary>
+    public static void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
+    {
+      _database.SetMovieStopTimeAndResumeData(iFileId, stoptime, resumeData, g_Player.BdDefaultTitle);
     }
 
     public static int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle)
