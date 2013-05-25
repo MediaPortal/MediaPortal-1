@@ -52,7 +52,8 @@ namespace MediaPortal.Configuration.Sections
     private DataGridViewTextBoxColumn gridColRR;
     private DataGridViewTextBoxColumn gridColAction;
     private string sDefaultHz;
-    private string sDefaultHzValue = "60";
+    private string sDefaultHzValue = "60"; // 60Hz Setting
+    private string sDefaultHzNameValue = "ATSCHD"; // 60Hz Setting
     private string sDefaultHzName;
 
     public GeneralDynamicRefreshRate()
@@ -467,6 +468,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void InsertDefaultValues()
     {
+      string nameBackup = null;
+      if (defaultHz.SelectedItem != null)
+      {
+        nameBackup = defaultHz.SelectedItem.ToString();
+      }
+
       defaultHz.Items.Clear();
       Settings xmlreader = new MPSettings();
       //first time mp config is run, no refreshrate settings available, create the default ones.
@@ -554,16 +561,18 @@ namespace MediaPortal.Configuration.Sections
       // Populate defaultHz items
       if (dataGridViewRR.Rows.Count > 0)
       {
+        defaultHz.SelectedItem = nameBackup;
         if (defaultHz.SelectedItem == null)
         {
           foreach (DataGridViewRow rowDefault in dataGridViewRR.Rows)
           {
             string name = (string)rowDefault.Cells[0].Value;
             string hz = (string)rowDefault.Cells[2].Value;
-            if (sDefaultHz == hz)
+            if (sDefaultHz == hz && name == sDefaultHzNameValue)
             {
               defaultHz.SelectedItem = rowDefault.Cells[0].Value;
               sDefaultHzName = name;
+              chkUseDefaultRR.Checked = false;
               break;
             }
           }
@@ -677,6 +686,12 @@ namespace MediaPortal.Configuration.Sections
 
       string currentValue = dataGridViewRR.CurrentCell.Value.ToString().ToLowerInvariant();
 
+      string nameBackup = null;
+      if (defaultHz.SelectedItem != null)
+      {
+        nameBackup = defaultHz.SelectedItem.ToString();
+      }
+
       int i = 0;
       defaultHz.Items.Clear();
       foreach (DataGridViewRow row in dataGridViewRR.Rows)
@@ -696,10 +711,27 @@ namespace MediaPortal.Configuration.Sections
           {
             defaultHz.Items.Add(row.Cells[0].Value);
           }
-          if ((string)row.Cells[2].Value == sDefaultHz && defaultHz.SelectedItem == null)
-            defaultHz.SelectedItem = row.Cells[0].Value;
         }
         i++;
+      }
+      // Populate defaultHz items
+      if (dataGridViewRR.Rows.Count > 0)
+      {
+        defaultHz.SelectedItem = nameBackup;
+        if (defaultHz.SelectedItem == null)
+        {
+          foreach (DataGridViewRow rowDefault in dataGridViewRR.Rows)
+          {
+            string name = (string)rowDefault.Cells[0].Value;
+            string hz = (string)rowDefault.Cells[2].Value;
+            if (sDefaultHz == hz && name == sDefaultHzNameValue)
+            {
+              defaultHz.SelectedItem = rowDefault.Cells[0].Value;
+              sDefaultHzName = name;
+              break;
+            }
+          }
+        }
       }
     }
 
