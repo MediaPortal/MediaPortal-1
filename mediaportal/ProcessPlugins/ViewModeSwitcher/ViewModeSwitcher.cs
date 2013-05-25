@@ -54,6 +54,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private bool isAutoCrop = false;
     private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
+    private bool isPillarBox = false;
 
 
     /// <summary>
@@ -121,6 +122,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       LastDetectionResult = true;
       isPlaying = false;
       isVideoReceived = false;
+      isPillarBox = false;
     }
 
     /// <summary>
@@ -151,6 +153,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       LastSwitchedAspectRatio = 0f;
       PixelAspectRatio = 0f;
       LastDetectionResult = true;
+      isPillarBox = false;
     }
 
     /// <summary>
@@ -187,6 +190,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       PixelAspectRatio = 0f;
       LastDetectionResult = true;
       isVideoReceived = false;
+      isPillarBox = false;
     }
 
     /// <summary>
@@ -533,6 +537,16 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           cropH = overScan;
           cropV = (int)((float)overScan / LastSwitchedAspectRatio);
+          isPillarBox = true;
+        }
+        else
+        {
+          if (isPillarBox)
+          {
+            //Force CheckAspectRatios() update 
+            LastSwitchedAspectRatio = 0f;
+          }
+          isPillarBox = false;
         }
       } 
 
