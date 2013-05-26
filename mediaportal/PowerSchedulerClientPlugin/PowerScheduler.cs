@@ -1415,7 +1415,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
             if (_denySuspendQuery)
             {
               Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-              SuspendSystem("", (int)(msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND ? RestartOptions.Hibernate : RestartOptions.Suspend), false);
+              SuspendSystemWithOptions("", (int)(msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND ? RestartOptions.Hibernate : RestartOptions.Suspend), false);
               msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
             }
             break;

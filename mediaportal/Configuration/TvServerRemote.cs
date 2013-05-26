@@ -79,53 +79,53 @@ namespace MediaPortal.Configuration
       }
     }
 
-    /// <summary>
-    /// Retrieve a list of MediaPortal genres from the TV server (calls TvControl.TvServer.GetMpGenres()).
-    /// </summary>
-    /// <returns>List of MediaPortal genre objects</returns>
-    public static List<MpGenre> GetMpGenres()
-    {
-      List<MpGenre> genres = new List<MpGenre>();
-      try
-      {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
-        if (assem != null)
-        {
-          Type[] types = assem.GetExportedTypes();
-          foreach (Type exportedType in types)
-          {
-            try
-            {
-              if (exportedType.Name == "TvServer")
-              {
-                // Execute the remote method call to the tv server.
-                Object exportedObject = null;
-                exportedObject = Activator.CreateInstance(exportedType);
-                MethodInfo methodInfo = exportedType.GetMethod("GetMpGenres",
-                                                                BindingFlags.Public | BindingFlags.Instance);
-                List<MpGenre> result = methodInfo.Invoke(exportedObject, null) as List<MpGenre>;
-                if (result != null)
-                  genres = result;
-                break;
-              }
-            }
-            catch (TargetInvocationException ex)
-            {
-              Log.Error("GetMpGenres: Failed to load program genres {0}", ex.ToString());
-            }
-            catch (Exception gex)
-            {
-              Log.Error("GetMpGenres: Failed to load settings {0}", gex.Message);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("GetMpGenres: Exception loading TvControl assembly - {0}", ex);
-      }
-      return genres;
-    }
+    ///// <summary>
+    ///// Retrieve a list of MediaPortal genres from the TV server (calls TvControl.TvServer.GetMpGenres()).
+    ///// </summary>
+    ///// <returns>List of MediaPortal genre objects</returns>
+    //public static List<MpGenre> GetMpGenres()
+    //{
+    //  List<MpGenre> genres = new List<MpGenre>();
+    //  try
+    //  {
+    //    Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+    //    if (assem != null)
+    //    {
+    //      Type[] types = assem.GetExportedTypes();
+    //      foreach (Type exportedType in types)
+    //      {
+    //        try
+    //        {
+    //          if (exportedType.Name == "TvServer")
+    //          {
+    //            // Execute the remote method call to the tv server.
+    //            Object exportedObject = null;
+    //            exportedObject = Activator.CreateInstance(exportedType);
+    //            MethodInfo methodInfo = exportedType.GetMethod("GetMpGenres",
+    //                                                            BindingFlags.Public | BindingFlags.Instance);
+    //            List<MpGenre> result = methodInfo.Invoke(exportedObject, null) as List<MpGenre>;
+    //            if (result != null)
+    //              genres = result;
+    //            break;
+    //          }
+    //        }
+    //        catch (TargetInvocationException ex)
+    //        {
+    //          Log.Error("GetMpGenres: Failed to load program genres {0}", ex.ToString());
+    //        }
+    //        catch (Exception gex)
+    //        {
+    //          Log.Error("GetMpGenres: Failed to load settings {0}", gex.Message);
+    //        }
+    //      }
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Log.Error("GetMpGenres: Exception loading TvControl assembly - {0}", ex);
+    //  }
+    //  return genres;
+    //}
 
     /// <summary>
     /// Retrieves the tv database connection string and provider from the Tv server

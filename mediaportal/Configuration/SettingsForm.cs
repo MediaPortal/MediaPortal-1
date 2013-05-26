@@ -1050,7 +1050,7 @@ namespace MediaPortal.Configuration
         bool radioPluginEnabled = xmlreader.GetValueAsBool("plugins", "Radio", false);
         if (UseTvServer && (tvPluginEnabled || radioPluginEnabled))
         {
-          string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
+          hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
           {
             // Show message box

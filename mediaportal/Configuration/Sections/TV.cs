@@ -119,11 +119,12 @@ namespace MediaPortal.Configuration.Sections
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
       Enabled = true;
 
+      // TODO Resolve
       // Retrieve the languages and language codes for the Epg.
-      List<KeyValuePair<String, String>> langs = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
-      FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, langs);
-      FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, langs);
-      _SingleSeat = Network.IsSingleSeat();
+      //List<KeyValuePair<String, String>> langs = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
+      //FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, langs);
+      //FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, langs);
+      //_SingleSeat = Network.IsSingleSeat();
     }
 
     private void FillLists(MPListView availList, MPListView preferredList, string preferredLanguages, List<KeyValuePair<string, string>> languages)
