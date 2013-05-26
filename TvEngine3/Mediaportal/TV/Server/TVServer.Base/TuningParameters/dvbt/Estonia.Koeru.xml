@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
+<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TVServer.Base/TuningParameters/dvbt/Estonia.Koeru.xml
     <Frequency>762000</Frequency>
     <Bandwidth>8000</Bandwidth>
+=======
+    <Frequency>618000</Frequency>
+    <BandWidth>8</BandWidth>
+>>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TVServer.Base/TuningParameters/dvbt/Estonia.Koeru.xml
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
@@ -17,8 +22,13 @@
     <IsDvbT2>False</IsDvbT2>
   </DVBTTuning>
   <DVBTTuning>
+<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TVServer.Base/TuningParameters/dvbt/Estonia.Koeru.xml
     <Frequency>810000</Frequency>
     <Bandwidth>8000</Bandwidth>
+=======
+    <Frequency>682000</Frequency>
+    <BandWidth>8</BandWidth>
+>>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TVServer.Base/TuningParameters/dvbt/Estonia.Koeru.xml
     <Offset>125</Offset>
     <CellId>0</CellId>
     <CellIdExtension>0</CellIdExtension>
