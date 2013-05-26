@@ -13,6 +13,8 @@ namespace MediaPortal.ServiceImplementations
     #region Constructors/Destructors
     public Log4NetWrapper()
     {
+      var logLevel = (Level)MediaPortal.Profile.MPSettings.Instance.GetValueAsInt("general", "loglevel", 3);
+      SetLogLevel(logLevel);
     }
     #endregion
 
