@@ -824,14 +824,15 @@ namespace Mediaportal.TV.Server.TVLibrary
           _streamer = null;
           this.LogInfo("Controller: streamer stopped...");
         }
-        //stop the thumbnail processor
-        if (_thumbProcessor != null)
-        {
-          Log.Info("Controller: stop thumb processor...");
-          _thumbProcessor.Stop();
-          _thumbProcessor = null;
-          Log.Info("Controller: thumb processor stopped...");
-        }
+        // TODO Resolve
+        ////stop the thumbnail processor
+        //if (_thumbProcessor != null)
+        //{
+        //  Log.Info("Controller: stop thumb processor...");
+        //  _thumbProcessor.Stop();
+        //  _thumbProcessor = null;
+        //  Log.Info("Controller: thumb processor stopped...");
+        //}
         //stop the recording scheduler
         if (_scheduler != null)
         {

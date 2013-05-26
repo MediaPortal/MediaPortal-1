@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using TvDatabase;
 using TvEngine.Events;
 using TvLibrary.Interfaces;

@@ -24,6 +24,8 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;

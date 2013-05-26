@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TvThumbnails; // TODO Resolve
+//using TvThumbnails; // TODO Resolve
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -131,12 +131,13 @@ namespace Mediaportal.TV.Server.TVLibrary.DiskManagement
         File.Delete(fileName);
       }
 
-      string thumbNail = string.Format("{0}\\{1}{2}",
-        Thumbs.ThumbnailFolder,
-        Path.GetFileNameWithoutExtension(fileNameForRec),
-        ".jpg");
-      Log.Debug(" - deleting '{0}'", thumbNail);
-      File.Delete(thumbNail);
+      // TODO Resolve
+      //string thumbNail = string.Format("{0}\\{1}{2}",
+      //  Thumbs.ThumbnailFolder,
+      //  Path.GetFileNameWithoutExtension(fileNameForRec),
+      //  ".jpg");
+      //Log.Debug(" - deleting '{0}'", thumbNail);
+      //File.Delete(thumbNail);
     }
 
     /// <summary>

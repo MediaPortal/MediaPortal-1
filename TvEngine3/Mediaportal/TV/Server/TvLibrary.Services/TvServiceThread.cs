@@ -1,26 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
 using System.Runtime.CompilerServices;
-=======
-using System.Reflection;
-using System.IO;
-using System.Security.Principal;
-using System.ServiceProcess;
-using System.Threading;
-using System.Windows.Forms;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting;
-using System.Xml;
-using MediaPortal.Common.Utils.Logger;
-using TvDatabase;
-using TvLibrary.Log;
-using TvControl;
-using TvEngine;
-using TvEngine.Interfaces;
-using TvLibrary.Interfaces;
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -38,300 +19,8 @@ namespace Mediaportal.TV.Server.TVLibrary
 {
   public class TvServiceThread : IPowerEventHandler
   {
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
 
 
-=======
-    private bool _priorityApplied;
-    private Thread _tvServiceThread = null;
-    private static Thread _unhandledExceptionInThread = null;
-
-    const int SERVICE_ACCEPT_PRESHUTDOWN = 0x100;   // not supported on Windows XP
-    const int SERVICE_CONTROL_PRESHUTDOWN = 0xf;    // not supported on Windows XP
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Service1"/> class.
-    /// </summary>
-    public Service1()
-    {
-      if (Environment.OSVersion.Version.Major >= 6)
-      {
-        // Enable pre-shutdown notification by accessing the ServiceBase class's internals through .NET reflection (code by Siva Chandran P)
-        FieldInfo acceptedCommandsFieldInfo = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
-        if (acceptedCommandsFieldInfo != null)
-        {
-          int value = (int)acceptedCommandsFieldInfo.GetValue(this);
-          acceptedCommandsFieldInfo.SetValue(this, value | SERVICE_ACCEPT_PRESHUTDOWN);
-        } 
-      }
-
-      AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-      InitializeComponent();
-    }
-
-    public static bool HasThreadCausedAnUnhandledException(Thread thread)
-    {
-      bool hasCurrentThreadCausedAnUnhandledException = false;
-
-      if (_unhandledExceptionInThread != null)
-      {
-        hasCurrentThreadCausedAnUnhandledException = (_unhandledExceptionInThread.ManagedThreadId ==
-                                                      thread.ManagedThreadId);
-      }
-
-      return hasCurrentThreadCausedAnUnhandledException;
-    }
-
-    /// <summary>
-    /// Handles the UnhandledException event of the CurrentDomain control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-    private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-      Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
-      _unhandledExceptionInThread = Thread.CurrentThread;
-      ExitCode = -1; //tell windows that the service failed.      
-      OnStop(); //cleanup
-      Environment.Exit(-1);
-    }
-
-
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    private static void Main(string[] args)
-    {
-      // Init Common logger -> this will enable TVPlugin to write in the Mediaportal.log file
-      var loggerName = Path.GetFileNameWithoutExtension(Environment.GetCommandLineArgs()[0]);
-      var dataPath = Log.GetPathName();
-      var loggerPath = Path.Combine(dataPath, "log");
-#if DEBUG
-      if (loggerName != null) loggerName = loggerName.Replace(".vshost", "");
-#endif
-      CommonLogger.Instance = new CommonLog4NetLogger(loggerName, dataPath, loggerPath);
-
-      
-      NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-
-      string opt = null;
-      if (args.Length >= 1)
-      {
-        opt = args[0];
-      }
-
-      if (opt != null && opt.ToUpperInvariant() == "/INSTALL")
-      {
-        TransactedInstaller ti = new TransactedInstaller();
-        ProjectInstaller mi = new ProjectInstaller();
-        ti.Installers.Add(mi);
-        String path = String.Format("/assemblypath={0}",
-                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
-        InstallContext ctx = new InstallContext("", cmdline);
-        ti.Context = ctx;
-        ti.Install(new Hashtable());
-        return;
-      }
-      if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
-      {
-        TransactedInstaller ti = new TransactedInstaller();
-        ProjectInstaller mi = new ProjectInstaller();
-        ti.Installers.Add(mi);
-        String path = String.Format("/assemblypath={0}",
-                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
-        InstallContext ctx = new InstallContext("", cmdline);
-        ti.Context = ctx;
-        ti.Uninstall(null);
-        return;
-      }
-      // When using /DEBUG switch (in visual studio) the TvService is not run as a service
-      // Make sure the real TvService is disabled before debugging with /DEBUG
-      if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
-      {
-        Service1 s = new Service1();
-        s.DoStart(new string[] { "/DEBUG" });
-        do
-        {
-          Thread.Sleep(100);
-        } while (true);
-      }
-
-      // More than one user Service may run within the same process. To add
-      // another service to this process, change the following line to
-      // create a second service object. For example,
-      //
-      //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
-      //
-      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
-      ServicesToRun[0].CanShutdown = true;    // Allow OnShutdown() 
-      ServiceBase.Run(ServicesToRun);
-    }
-
-    public void DoStart(string[] args)
-    {
-      OnStart(args);
-    }
-
-    public void DoStop()
-    {
-      OnStop();
-    }
-
-    /// <summary>
-    /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
-    /// </summary>
-    /// <param name="args">Data passed by the start command.</param>
-    protected override void OnStart(string[] args)
-    {
-      if (_tvServiceThread == null)
-      {
-        if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
-        {
-          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
-        }
-        TvServiceThread tvServiceThread = new TvServiceThread();
-        ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
-        _tvServiceThread = new Thread(tvServiceThreadStart);
-
-        _tvServiceThread.IsBackground = false;
-
-        // apply process priority on initial service start.
-        if (!_priorityApplied)
-        {
-          try
-          {
-            applyProcessPriority();
-            _priorityApplied = true;
-          }
-          catch (Exception ex)
-          {
-            // applyProcessPriority can generate an exception when we cannot connect to the database
-            Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
-          }
-        }
-
-        _tvServiceThread.Start();
-
-        while (!TvServiceThread.Started)
-        {
-          Thread.Sleep(20);
-        }
-      }
-    }
-
-    private void applyProcessPriority()
-    {
-      try
-      {
-        string connectionString, provider;
-        GetDatabaseConnectionString(out connectionString, out provider);
-        Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
-
-        TvBusinessLayer layer = new TvBusinessLayer();
-        int processPriority = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
-
-        switch (processPriority)
-        {
-          case 0:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
-            break;
-          case 1:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
-            break;
-          case 2:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
-            _tvServiceThread.Priority = ThreadPriority.AboveNormal;
-            break;
-          case 3:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-            _tvServiceThread.Priority = ThreadPriority.Normal;
-            break;
-          case 4:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
-            _tvServiceThread.Priority = ThreadPriority.BelowNormal;
-            break;
-          case 5:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Idle;
-            _tvServiceThread.Priority = ThreadPriority.Lowest;
-            break;
-          default:
-            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-            _tvServiceThread.Priority = ThreadPriority.Normal;
-            break;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
-      }
-    }
-
-    private static void GetDatabaseConnectionString(out string connectionString, out string provider)
-    {
-      connectionString = "";
-      provider = "";
-      try
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
-        connectionString = nodeConnection.InnerText;
-        provider = nodeProvider.InnerText;
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-    }
-
-
-    /// <summary>
-    /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
-    /// </summary>
-    protected override void OnStop()
-    {
-      if (_tvServiceThread != null && _tvServiceThread.IsAlive)
-      {
-        _tvServiceThread.Abort();
-        _tvServiceThread.Join();
-        _tvServiceThread = null;
-      }
-    }
-
-    /// <summary>
-    /// When implemented in a derived class, executes when the system is shutting down. Specifies what should occur immediately prior to the system shutting down.
-    /// </summary>
-    protected override void OnShutdown()
-    {
-      OnStop();
-    }
-
-    /// <summary>
-    /// When implemented in a derived class, executes when the Service Control Manager (SCM) passes a custom command to the service. Specifies actions to take when a command with the specified parameter value occurs.
-    /// </summary>
-    /// <param name="command"></param>
-    protected override void OnCustomCommand(int command)
-    {
-      // Check for pre-shutdown notification (code by Siva Chandran P)
-      if (command == SERVICE_CONTROL_PRESHUTDOWN)
-      {
-        OnStop();
-      }
-      else
-        base.OnCustomCommand(command);
-    }
-  }
-
-  public class TvServiceThread : IPowerEventHandler
-  {
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
     #region variables
 
     private Thread _tvServiceThread;
@@ -700,45 +389,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       return true;
     }
 
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
-=======
-    /// <summary>
-    /// Starts the remoting interface
-    /// </summary>
-    private void StartRemoting()
-    {
-      try
-      {
-        // create the object reference and make the singleton instance available
-        RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
-        RemoteControl.Clear();
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-    }
-
-    /// <summary>
-    /// Stops the remoting interface
-    /// </summary>
-    private void StopRemoting()
-    {
-      Log.WriteFile("TV service StopRemoting");
-      try
-      {
-        if (_controller != null)
-        {
-          RemotingServices.Disconnect(_controller);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      Log.WriteFile("Remoting stopped");
-    }
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
 
     #endregion
 
@@ -827,41 +477,20 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void DoStop()
     {
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
       //if (!Started)
       //  return;
       this.LogDebug("TV Service: stopping");
 
       if (InitializedEvent != null)
-=======
-      if (!_started)
-        return;
-
-      Log.WriteFile("TV Service: stopping");
-
-      // Reset "Global\MPTVServiceInitializedEvent"
-      if (_InitializedEvent != null)
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
       {
         InitializedEvent.Reset();
       }
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
       if (ServiceManager.Instance.InternalControllerService != null)
-=======
-
-      // Stop the plugins
-      StopPlugins();
-
-      // Stop remoting and deinit the TvController
-      StopRemoting();
-      RemoteControl.Clear();
-      if (_controller != null)
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
       {
         ServiceManager.Instance.InternalControllerService.DeInit();
       }
 
-      // Terminate the power event thread
+      StopPlugins();
       if (_powerEventThreadId != 0)
       {
         this.LogDebug("TV Service: OnStop asking PowerEventThread to exit");
@@ -870,7 +499,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
-
       _started = false;
       this.LogDebug("TV Service: stopped");
     }
@@ -972,22 +600,14 @@ namespace Mediaportal.TV.Server.TVLibrary
 
           Thread.CurrentThread.Name = "TVService";
 
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_applicationPath);
 
           this.LogDebug("TVService v" + versionInfo.FileVersion + " is starting up on " +
                         OSInfo.OSInfo.GetOSDisplayVersion());
-=======
-          // Log TvService start and versions
-          FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
-            OSInfo.OSInfo.GetOSDisplayVersion());
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
 
-          // Warn about unsupported operating systems
+          //Check for unsupported operating systems
           OSPrerequisites.OSPrerequisites.OsCheck(false);
 
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
           _powerEventThread = new Thread(PowerEventThread) { Name = "PowerEventThread", IsBackground = true };
           _powerEventThread.Start();
           ServiceManager.Instance.InternalControllerService.Init();
@@ -995,32 +615,6 @@ namespace Mediaportal.TV.Server.TVLibrary
 
           _started = true;
           if (InitializedEvent != null)
-=======
-          // Start the power event thread
-          _powerEventThread = new Thread(PowerEventThread);
-          _powerEventThread.Name = "PowerEventThread";
-          _powerEventThread.IsBackground = true;
-          _powerEventThread.Start();
-
-          // Init the TvController and start remoting
-          _controller = new TVController();
-          _controller.Init();
-          StartRemoting();
-
-          // Start the plugins
-          StartPlugins();
-
-          // Set "Global\MPTVServiceInitializedEvent"
-          if (_InitializedEvent != null)
-          {
-            _InitializedEvent.Set();
-          }
-          _started = true;
-          Log.Info("TV service: Started");
-
-          // Wait for termination
-          while (true)
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
           {
             InitializedEvent.Set();
           }
@@ -1029,29 +623,13 @@ namespace Mediaportal.TV.Server.TVLibrary
           DoStop();
         }
       }
-      catch (ThreadAbortException)
-      {
-        Log.Info("TvService is beeing stopped");
-      }
       catch (Exception ex)
       {
-<<<<<<< HEAD:TvEngine3/Mediaportal/TV/Server/TvLibrary.Services/TvServiceThread.cs
         //wait for thread to exit. eg. when stopping tvservice       
         this.LogError(ex, "TvService OnStart failed");
         //_started = true; // otherwise the onstop code will not complete.
         DoStop();
         throw;
-=======
-        if (_started)
-          Log.Error("TvService terminated unexpectedly: {0}", ex.ToString());
-        else
-          Log.Error("TvService failed not start: {0}", ex.ToString());
-      }
-      finally
-      {
-        _started = true; // otherwise the onstop code will not complete.
-        OnStop();
->>>>>>> remotes/origin/master:TvEngine3/TVLibrary/TvService/Service1.cs
       }
     }
   }
