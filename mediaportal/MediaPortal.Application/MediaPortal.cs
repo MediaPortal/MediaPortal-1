@@ -831,7 +831,8 @@ public class MediaPortalApp : D3D, IRender
           for (int i = _startupDelay; i > 0; i--)
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
-            Application.DoEvents();  // process message queue
+            Thread.Sleep(1000);
+            Application.DoEvents();
           }
         }
 
