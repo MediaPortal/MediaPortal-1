@@ -426,7 +426,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TvService\bin\${BUILD_TYPE}\TvService.exe.config"
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
-  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  ;File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
@@ -438,7 +438,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; thumbnail software
   File "${TVSERVER.BASE}\ffmpeg.exe"
-  File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
+  ;File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll" // TODO Resolve
 
   ; CustomDevice plugin 3rd party resource assemblies
   SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
@@ -520,7 +520,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
-  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  ;File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\log4net.dll"
@@ -722,9 +722,9 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\hauppauge.dll"
   Delete "$INSTDIR\StreamingServer.dll"
   Delete "$INSTDIR\Ionic.Zip.dll"
-  Delete "$INSTDIR\Interop.SHDocVw.dll"
+  ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
-  Delete "$INSTDIR\TvThumbnails.dll"
+  ;Delete "$INSTDIR\TvThumbnails.dll"  // TODO Resolve
 
   ; Remove SetupTV Plugins files installed
   Delete "$INSTDIR\Plugins\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
@@ -798,7 +798,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+  ;Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
   Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.dll"
@@ -916,7 +916,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\TVLibrary\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.dll"
   File "${git_TVServer}\Server\SetupControls\bin\${BUILD_TYPE}\Mediaportal.TV.Server.SetupControls.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
-  File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
+  ;File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\Castle.Core.dll"
@@ -1097,7 +1097,7 @@ ${MementoSectionEnd}
   ;Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVService.ServiceAgents.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.RuleBasedScheduler.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
-  Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
+  ;Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
