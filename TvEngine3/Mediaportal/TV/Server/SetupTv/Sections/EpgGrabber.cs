@@ -70,16 +70,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       try
       {
         mpListView2.Items.Clear();
-        List<KeyValuePair<String, String>> languages = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
+        // TODO Resolve
+        //List<KeyValuePair<String, String>> languages = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
 
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(languagesSettingsKey);        
-        foreach (KeyValuePair<String, String> language in languages)
-        {
-          ListViewItem item = new ListViewItem(new string[] { language.Value, language.Key });
-          mpListView2.Items.Add(item);
-          item.Tag = language.Key;
-          item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
-        }
+        //foreach (KeyValuePair<String, String> language in languages)
+        //{
+        //  ListViewItem item = new ListViewItem(new string[] { language.Value, language.Key });
+        //  mpListView2.Items.Add(item);
+        //  item.Tag = language.Key;
+        //  item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
+        //}
         mpListView2.Sort();
 
       }
