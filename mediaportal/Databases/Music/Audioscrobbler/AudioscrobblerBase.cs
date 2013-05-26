@@ -663,7 +663,7 @@ namespace MediaPortal.Music.Database
 
     private static bool AttemptRadioHandshake()
     {
-      string tmpUser = HttpUtility.UrlEncode(username).ToLower();
+      string tmpUser = HttpUtility.UrlEncode(username).ToLowerInvariant();
       string tmpPass = HashSingleString(password);
       string url = RADIO_SCROBBLER_URL
                    + "radio/handshake.php?"
@@ -1525,10 +1525,10 @@ namespace MediaPortal.Music.Database
       ////UTF8Encoding encoding = new UTF8Encoding();
       ////byte[] barr = hash.ComputeHash(encoding.GetBytes(password));
 
-      ////string tmp = CryptoConvert.ToHex(barr).ToLower();
+      ////string tmp = CryptoConvert.ToHex(barr).ToLowerInvariant();
 
       ////barr = hash.ComputeHash(encoding.GetBytes(tmp + md5challenge));
-      ////string md5response = CryptoConvert.ToHex(barr).ToLower();
+      ////string md5response = CryptoConvert.ToHex(barr).ToLowerInvariant();
 
       ////return md5response;
 

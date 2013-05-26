@@ -401,7 +401,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       //
       foreach (ServiceController ctrl in ServiceController.GetServices())
       {
-        if (ctrl.DisplayName.ToLower() != irss_app.ToLower() || ctrl.Status != ServiceControllerStatus.Running)
+        if (ctrl.DisplayName.ToLowerInvariant() != irss_app.ToLowerInvariant() || ctrl.Status != ServiceControllerStatus.Running)
         {
           continue;
         }

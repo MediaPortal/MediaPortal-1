@@ -1376,14 +1376,25 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
 
     public bool WndProc(ref Message msg)
     {
-      bool singleSeat = _settings.GetSetting("SingleSeat").Get<bool>();
       if (msg.Msg == WM_POWERBROADCAST)
       {
+        bool singleSeat;
+        try
+        {
+          singleSeat = _settings.GetSetting("SingleSeat").Get<bool>(); 
+        }
+        catch (Exception)
+        {
+          Log.Warn("PSClientPlugin: Plugin not ready yet - not processing message");
+          return false;
+        }
+        
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
           case PBT_APMQUERYSTANDBYFAILED:
             break;
+
           case PBT_APMRESUMEAUTOMATIC:
           case PBT_APMRESUMECRITICAL:
           case PBT_APMRESUMESTANDBY:
@@ -1391,6 +1402,7 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
             OnResume();
             SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
             break;
+
           case PBT_APMQUERYSUSPEND:
           case PBT_APMQUERYSTANDBY:
             if (singleSeat)
@@ -1403,15 +1415,11 @@ namespace Mediaportal.TV.PowerSchedulerClientPlugin
             if (_denySuspendQuery)
             {
               Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-              SuspendSystemWithOptions("",
-                            (int)
-                            (msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND
-                               ? RestartOptions.Hibernate
-                               : RestartOptions.Suspend), false);
+              SuspendSystem("", (int)(msg.WParam.ToInt32() == PBT_APMQUERYSUSPEND ? RestartOptions.Hibernate : RestartOptions.Suspend), false);
               msg.Result = new IntPtr(BROADCAST_QUERY_DENY);
-              break;
             }
             break;
+
           case PBT_APMSUSPEND:
           case PBT_APMSTANDBY:
             OnStandBy();

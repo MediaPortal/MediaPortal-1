@@ -941,7 +941,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       }
     }
 
-    private bool OnSelectedRecording(int iItem)
+    protected override bool OnSelectedRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)

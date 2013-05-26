@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,11 +34,11 @@ namespace WindowPlugins.GUISettings
   public class GUISettingsGUIGeneral : GUIInternalWindow
   {
     [SkinControl(30)] protected GUICheckButton cmAllowRememberLastFocusedItem = null;
-    [SkinControl(31)] protected GUICheckButton cmAutosize = null;
-    [SkinControl(32)] protected GUICheckButton cmHideextensions = null;
-    [SkinControl(33)] protected GUICheckButton cmFileexistscache = null;
-    [SkinControl(34)] protected GUICheckButton cmEnableguisounds = null;
-    [SkinControl(35)] protected GUICheckButton cmMousesupport = null;
+    [SkinControl(31)] protected GUICheckButton cmHideextensions = null;
+    [SkinControl(32)] protected GUICheckButton cmFileexistscache = null;
+    [SkinControl(33)] protected GUICheckButton cmEnableguisounds = null;
+    [SkinControl(34)] protected GUICheckButton cmMousesupport = null;
+    [SkinControl(35)] protected GUICheckButton cmReduceFrameRate = null;
 
     [SkinControl(40)] protected GUIButtonControl btnHomeUsage = null;
 
@@ -88,11 +88,11 @@ namespace WindowPlugins.GUISettings
       {
         // GUI settings
         cmAllowRememberLastFocusedItem.Selected = xmlreader.GetValueAsBool("gui", "allowRememberLastFocusedItem", true);
-        cmAutosize.Selected = xmlreader.GetValueAsBool("gui", "autosize", true);
         cmHideextensions.Selected = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         cmFileexistscache.Selected = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
         cmEnableguisounds.Selected = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
         cmMousesupport.Selected = xmlreader.GetValueAsBool("gui", "mousesupport", false);
+        cmReduceFrameRate.Selected = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
 
         bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", true);
         bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
@@ -109,11 +109,11 @@ namespace WindowPlugins.GUISettings
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("gui", "allowRememberLastFocusedItem", cmAllowRememberLastFocusedItem.Selected);
-        xmlwriter.SetValueAsBool("gui", "autosize", cmAutosize.Selected);
         xmlwriter.SetValueAsBool("gui", "hideextensions", cmHideextensions.Selected);
         xmlwriter.SetValueAsBool("gui", "fileexistscache", cmFileexistscache.Selected);
         xmlwriter.SetValueAsBool("gui", "enableguisounds", cmEnableguisounds.Selected);
         xmlwriter.SetValueAsBool("gui", "mousesupport", cmMousesupport.Selected);
+        xmlwriter.SetValueAsBool("gui", "reduceframerate", cmReduceFrameRate.Selected);
       }
     }
 
@@ -124,10 +124,6 @@ namespace WindowPlugins.GUISettings
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       if (control == cmAllowRememberLastFocusedItem)
-      {
-        SettingsChanged(true);
-      }
-      if (control == cmAutosize)
       {
         SettingsChanged(true);
       }
@@ -144,6 +140,10 @@ namespace WindowPlugins.GUISettings
         SettingsChanged(true);
       }
       if (control == cmMousesupport)
+      {
+        SettingsChanged(true);
+      }
+      if (control == cmReduceFrameRate)
       {
         SettingsChanged(true);
       }

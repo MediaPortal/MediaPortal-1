@@ -83,7 +83,6 @@
 				<type>checkbutton</type>
 				<id>14</id>
 				<label>300137</label>
-				<ondown>26</ondown>
 			</control>
 			
 	</control>
@@ -130,17 +129,49 @@
 					
 	<control Style="SettingsCheckButtonMedium">
 		<description>Enable selected Backdrop</description>
-		<type>checkbutton</type>
+	  <type>menubutton</type>
 		<id>26</id>
 		<posX>655</posX>
-		<posY>711</posY>
-		<label>Enable selected backdrops</label>			
-		<selected>#(skin.hassetting('#skin.show.selectedbackdrops'))</selected>
-		<onclick>#(skin.togglesetting('#skin.show.selectedbackdrops'))</onclick>
+		<posY>711</posY>		
+		<mode>dialoglist</mode>
+		<dialogTitle>Choose selected Background</dialogTitle>
+		<valueTextInButton>yes</valueTextInButton>
+		<valuePrefixText>Selected Background: </valuePrefixText>
+		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel26))</onclick>
+		<binding>#skin.basichome.background</binding>
+		<subitems>
+			<subitem>none</subitem>
+			<subitem>default</subitem>
+		</subitems>
 		<onup>14</onup>
 		<ondown>27</ondown>
 	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>!plugin.isenabled(Fanart Handler)</visible>
+	</control>
+	
+	<control Style="SettingsCheckButtonMedium">
+		<description>Enable selected Backdrop</description>
+	  <type>menubutton</type>
+		<id>36</id>
+		<posX>655</posX>
+		<posY>711</posY>		
+		<mode>dialoglist</mode>
+		<dialogTitle>Choose selected Background</dialogTitle>
+		<valueTextInButton>yes</valueTextInButton>
+		<valuePrefixText>Selected Background: </valuePrefixText>
+		<onclick>#(skin.setstring('#skin.basichome.background',#selectedlabel36))</onclick>
+		<binding>#skin.basichome.background</binding>
+		<subitems>
+			<subitem>none</subitem>
+			<subitem>default</subitem>
+			<subitem>FanartHandler</subitem>
+		</subitems>
+		<onup>14</onup>
+		<ondown>27</ondown>
+	  <animation effect="fade" time="150">WindowOpen</animation>
+	  <animation effect="fade" time="150">WindowClose</animation>
+	  <visible>plugin.isenabled(Fanart Handler)</visible>
 	</control>
 	
 	<control Style="SettingsCheckButtonMedium">
@@ -152,7 +183,6 @@
 		<label>Enable latest Videos</label>			
 		<selected>#(skin.hassetting('#skin.enable.latest.myVideo'))</selected>
 		<onclick>#(skin.togglesetting('#skin.enable.latest.myVideo'))</onclick>
-		<onup>26</onup>
 		<ondown>28</ondown>
 	  <animation effect="fade" time="150">WindowOpen</animation>
 	  <animation effect="fade" time="150">WindowClose</animation>

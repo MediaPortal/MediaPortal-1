@@ -33,7 +33,7 @@
     <posY>170</posY>
     <control>
       <description>TV On/Off button</description>
-      <type>togglebutton</type>
+      <type>checkbutton</type>
       <id>8</id>
       <label>707</label>
       <onup>17</onup>
@@ -130,8 +130,8 @@
       <description>TV Shows</description>
       <type>button</type>
       <id>76</id>
-      <hyperlink>25</hyperlink>
-      <label>3</label>
+      <hyperlink>9811</hyperlink>
+      <label>1300</label>
       <onup>13</onup>
       <ondown>77</ondown>
       <onright>99</onright>
@@ -141,8 +141,8 @@
       <description>Videos</description>
       <type>button</type>
       <id>77</id>
-      <hyperlink>9811</hyperlink>
-      <label>1300</label>
+      <hyperlink>25</hyperlink>
+      <label>3</label>
       <onup>76</onup>
       <ondown>8</ondown>
       <onright>99</onright>

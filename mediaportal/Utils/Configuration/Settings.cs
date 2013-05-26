@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -123,35 +123,35 @@ namespace MediaPortal.Profile
     public Settings(string fileName, bool isCached)
     {
       // Each skin may have its own SkinSettings.xml file so we need to use the entire path to detect a cache hit.
-      xmlFileName = Path.GetFullPath(fileName).ToLowerInvariant();
+      _xmlFileName = Path.GetFullPath(fileName).ToLowerInvariant();
 
       _isCached = isCached;
 
       if (_isCached)
-        xmlCache.TryGetValue(xmlFileName, out xmlDoc);
+        XMLCache.TryGetValue(_xmlFileName, out _xmlDoc);
 
-      if (xmlDoc == null)
+      if (_xmlDoc == null)
       {
-        xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
+        _xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
 
         if (_isCached)
-          xmlCache.Add(xmlFileName, xmlDoc);
+          XMLCache.Add(_xmlFileName, _xmlDoc);
       }
     }
 
     public bool HasSection<T>(string section)
     {
-      return xmlDoc.HasSection<T>(section);
+      return _xmlDoc.HasSection<T>(section);
     }
 
     public IDictionary<string, T> GetSection<T>(string section)
     {
-      return xmlDoc.GetSection<T>(section);
+      return _xmlDoc.GetSection<T>(section);
     }
 
     public string GetValue(string section, string entry)
     {
-      object value = xmlDoc.GetValue(section, entry);
+      object value = _xmlDoc.GetValue(section, entry);
       return value == null ? string.Empty : value.ToString();
     }
 
@@ -211,7 +211,7 @@ namespace MediaPortal.Profile
 
     public void SetValue(string section, string entry, object objValue)
     {
-      xmlDoc.SetValue(section, entry, objValue);
+      _xmlDoc.SetValue(section, entry, objValue);
     }
 
     public void SetValueAsBool(string section, string entry, bool bValue)
@@ -221,12 +221,12 @@ namespace MediaPortal.Profile
 
     public void RemoveEntry(string section, string entry)
     {
-      xmlDoc.RemoveEntry(section, entry);
+      _xmlDoc.RemoveEntry(section, entry);
     }
 
     public static void ClearCache()
     {
-      xmlCache.Clear();
+      XMLCache.Clear();
     }
 
     #region IDisposable Members
@@ -235,7 +235,7 @@ namespace MediaPortal.Profile
     {
       if (!_isCached)
       {
-        xmlDoc.Save();
+        _xmlDoc.Save();
       }
     }
 
@@ -243,20 +243,25 @@ namespace MediaPortal.Profile
 
     public static void SaveCache()
     {
-      foreach (var doc in xmlCache)
+      lock (ThisLock)
       {
-        doc.Value.Save();
+        foreach (var doc in XMLCache)
+        {
+          doc.Value.Save();
+        }
       }
+
     }
 
     #endregion
 
     #region Fields
 
-    private bool _isCached;
-    private static Dictionary<string, ISettingsProvider> xmlCache = new Dictionary<string, ISettingsProvider>();
-    private string xmlFileName;
-    private ISettingsProvider xmlDoc;
+    private readonly bool _isCached;
+    private static readonly Dictionary<string, ISettingsProvider> XMLCache = new Dictionary<string, ISettingsProvider>();
+    private readonly string _xmlFileName;
+    private readonly ISettingsProvider _xmlDoc;
+    private static readonly Object ThisLock = new Object();
 
     #endregion Fields
   }

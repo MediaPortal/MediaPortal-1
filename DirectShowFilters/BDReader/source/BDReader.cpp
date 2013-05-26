@@ -40,8 +40,8 @@
 #include "..\..\alloctracing.h"
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
-extern void LogDebug(const char *fmt, ...);
-extern void GetLogFile(char *pLog);
+extern void LogDebug(const char* fmt, ...);
+extern void GetLogFile(TCHAR* pLog);
 
 const AMOVIESETUP_MEDIATYPE acceptAudioPinTypes =
 {
@@ -69,7 +69,7 @@ const AMOVIESETUP_PIN pins[] =
 
 const AMOVIESETUP_FILTER BDReader =
 {
-  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 3, pins
+  &CLSID_BDReader, L"MediaPortal BD Reader", MERIT_NORMAL + 1000, 3, pins, CLSID_LegacyAmFilterCategory
 };
 
 CFactoryTemplate g_Templates[] =
@@ -715,6 +715,11 @@ STDMETHODIMP CBDReaderFilter::GetDuration(REFERENCE_TIME* pDuration)
     pDuration = 0;
 
   return NOERROR;
+}
+
+STDMETHODIMP CBDReaderFilter::GetAudioChannelCount(long lIndex)
+{
+  return m_demultiplexer.GetAudioChannelCount((int)lIndex);
 }
 
 STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *pmt)

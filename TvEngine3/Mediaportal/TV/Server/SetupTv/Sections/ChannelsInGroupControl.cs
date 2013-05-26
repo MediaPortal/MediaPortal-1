@@ -310,7 +310,9 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           FormEditChannel dlg = new FormEditChannel();
           dlg.Channel = channel;
           dlg.ShowDialog();
-          map.Channel = dlg.Channel;
+          listView1.Items[indexes[0]].Text = channel.DisplayName;
+          listView1.Items[indexes[0]].SubItems[1].Text = channel.ChannelNumber.ToString();
+          //map.Channel = dlg.Channel; //TODO Resolve
           return;
         }
       }

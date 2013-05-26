@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9002</id>
@@ -22,7 +22,7 @@
       <layout>StackLayout</layout>
       <control>
         <description>Blank Display with Video</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>40</id>
         <width>225</width>
         <label>9116</label>
@@ -30,7 +30,7 @@
       </control>
       <control>
         <description>Enable Display Actions</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>41</id>
         <width>225</width>
         <label>9117</label>
@@ -44,7 +44,7 @@
       </control>
       <control>
         <description>Blank Display on Idle</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>43</id>
         <width>225</width>
         <label>9119</label>

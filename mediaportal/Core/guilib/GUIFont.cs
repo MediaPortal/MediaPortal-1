@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,9 +28,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
-using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
-using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Font = System.Drawing.Font;
@@ -73,33 +71,6 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIFont : IDisposable
   {
-    #region imports
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineInitialize(int iScreenWidth, int iScreenHeight, int poolFormat);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineAddFont(int fontNumber, void* fontTexture, int firstChar, int endChar,
-                                                        float textureScale, float textureWidth, float textureHeight,
-                                                        float fSpacingPerChar, int maxVertices);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveFont(int fontNumber);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue1,
-                                                              float fValue2, float fValue3, float fValue4);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart,
-                                                           uint intColor, int maxWidth, float[,] matrix);
-
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresent3D(int fontNumber);
-
-    #endregion
-
     #region enums
 
     // Font rendering flags
@@ -156,7 +127,7 @@ namespace MediaPortal.GUI.Library
       : this()
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
-      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
+      DXNative.FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
                            (int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
@@ -174,7 +145,7 @@ namespace MediaPortal.GUI.Library
       : this()
     {
       //Log.Debug("GUIFont:ctor({0}) fontengine: Initialize()", fontName);
-      FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
+      DXNative.FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height,
                            (int)GUIGraphicsContext.GetTexturePoolType());
       _fontName = fontName;
       _fileName = fileName;
@@ -382,28 +353,44 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwColor">The font color.</param>
     /// <param name="strText">The actual text.</param>
     /// <param name="alignment">The alignment of the text.</param>
+    /// <param name="maxWidth"></param>
     /// <param name="iShadowAngle">The angle parameter of the shadow; zero degrees along x-axis.</param>
     /// <param name="iShadowDistance">The distance parameter of the shadow.</param>
     /// <param name="dwShadowColor">The shadow color.</param>
     public void DrawShadowText(float fOriginX, float fOriginY, long dwColor,
                                string strText,
                                GUIControl.Alignment alignment,
-                               int fWidth,
+                               int maxWidth,
                                int iShadowAngle,
                                int iShadowDistance,
                                long dwShadowColor)
     {
       lock (GUIFontManager.Renderlock)
       {
+        var clipRect = new Rectangle();
+
         // Draw the shadow
-        float fShadowX =
-          (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-        float fShadowY =
-          (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
-        DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, fWidth);
+        var fShadowX = (float)Math.Round(iShadowDistance * Math.Cos(ConvertDegreesToRadians(iShadowAngle)));
+        var fShadowY = (float)Math.Round(iShadowDistance * Math.Sin(ConvertDegreesToRadians(iShadowAngle)));
+        
+        clipRect.X      = (int)(fOriginX + fShadowX);
+        clipRect.Y      = (int)(fOriginY + fShadowY);
+        clipRect.Width  = maxWidth > 0 ? maxWidth - (int)fShadowX : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
+        
+        GUIGraphicsContext.BeginClip(clipRect);
+        DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, maxWidth);
+        GUIGraphicsContext.EndClip();
 
         // Draw the text
-        DrawText(fOriginX, fOriginY, dwColor, strText, alignment, fWidth);
+        clipRect.X      = (int)(fOriginX);
+        clipRect.Y      = (int)(fOriginY);
+        clipRect.Width  = maxWidth > 0 ? maxWidth : GUIGraphicsContext.Width - clipRect.X;
+        clipRect.Height = GUIGraphicsContext.Height - clipRect.Y;
+        
+        GUIGraphicsContext.BeginClip(clipRect);
+        DrawText(fOriginX, fOriginY, dwColor, strText, alignment, maxWidth);
+        GUIGraphicsContext.EndClip();
       }
     }
 
@@ -459,7 +446,7 @@ namespace MediaPortal.GUI.Library
     {
       if (ID >= 0)
       {
-        FontEnginePresent3D(ID);
+        DXNative.FontEnginePresent3D(ID);
       }
     }
 
@@ -837,8 +824,8 @@ namespace MediaPortal.GUI.Library
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
-          FontEngineDrawText3D(ID, (void*)(context.ptr.ToPointer()), (int)xpos, (int)ypos, (uint)color, maxWidth,
-                               matrix);
+          DXNative.FontEngineDrawText3D(ID, (void*)(context.ptr.ToPointer()), (int)xpos, (int)ypos, (uint)color, maxWidth,
+                                               matrix);
           return;
         }
       }
@@ -894,8 +881,8 @@ namespace MediaPortal.GUI.Library
             float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
             IntPtr ptrStr = Marshal.StringToCoTaskMemUni(text); //SLOW
-            FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint)intColor, maxWidth,
-                                 matrix);
+            DXNative.FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint)intColor, maxWidth,
+                                                 matrix);
             Marshal.FreeCoTaskMem(ptrStr);
             return;
           }
@@ -951,7 +938,7 @@ namespace MediaPortal.GUI.Library
       textwidth = 0.0f;
       textheight = 0.0f;
 
-      if (null == text || text == string.Empty || _textureCoords == null)
+      if (string.IsNullOrEmpty(text) || _textureCoords == null)
       {
         return;
       }
@@ -1031,7 +1018,7 @@ namespace MediaPortal.GUI.Library
           //Log.Debug("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
           if (ID >= 0)
           {
-            FontEngineRemoveFont(ID);
+            DXNative.FontEngineRemoveFont(ID);
           }
         }
         _fontAdded = false;
@@ -1275,7 +1262,7 @@ namespace MediaPortal.GUI.Library
       _textureFont = null;
       if (_fontAdded && ID >= 0)
       {
-        FontEngineRemoveFont(ID);
+        DXNative.FontEngineRemoveFont(ID);
       }
       _fontAdded = false;
     }
@@ -1300,15 +1287,15 @@ namespace MediaPortal.GUI.Library
         IntPtr upTexture = DirectShowUtil.GetUnmanagedTexture(_textureFont);
         unsafe
         {
-          FontEngineAddFont(ID, upTexture.ToPointer(), _StartCharacter, _EndCharacter, _textureScale, _textureWidth,
-                            _textureHeight, _spacingPerChar, MaxNumfontVertices);
+          DXNative.FontEngineAddFont(ID, upTexture.ToPointer(), _StartCharacter, _EndCharacter, _textureScale, _textureWidth,
+                                            _textureHeight, _spacingPerChar, MaxNumfontVertices);
         }
 
         int length = _textureCoords.GetLength(0);
         for (int i = 0; i < length; ++i)
         {
-          FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2],
-                                  _textureCoords[i, 3]);
+          DXNative.FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2],
+                                                  _textureCoords[i, 3]);
         }
         _fontAdded = true;
       }

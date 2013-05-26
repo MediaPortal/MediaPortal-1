@@ -123,16 +123,14 @@
     <animation effect="fade" time="250">WindowClose</animation>
   	<posX>571</posX>
 		<posY>360</posY>
-		<layout>StackLayout(7, Vertical, true)</layout>
+		<layout>StackLayout(6, Vertical, true)</layout>
         
 			<control>
 				<description>Play Button</description>
 				<type>button</type>
 				<id>2</id>
 				<label>208</label>
-				<onleft>24</onleft>
-				<onright>24</onright>
-				<onup>6</onup>
+				<onup>97270</onup>
 				<ondown>3</ondown>
 		    <textureFocus>myvideos_play_focus.png</textureFocus>
 		    <textureNoFocus>myvideos_play_nofocus.png</textureNoFocus>
@@ -142,62 +140,44 @@
 
 			<control>
 				<description>Plot</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>3</id>
 				<label>207</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
-				<onleft>24</onleft>
-				<onright>24</onright>
 				<onup>2</onup>
 				<ondown>4</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
 			<control>
 				<description>Cast</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>4</id>
 				<label>206</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
-				<onleft>22</onleft>
-				<onright>22</onright>
 				<onup>3</onup>
 				<ondown>7</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 	
       <control>
         <description>User Review Button</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>7</id>
         <label>183</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
-        <onleft>24</onleft>
-        <onright>24</onright>
         <onup>4</onup>
         <ondown>5</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
       </control>
 	
 			<control>
@@ -205,8 +185,6 @@
 				<type>button</type>
 				<id>5</id>
 				<label>184</label>
-				<onleft>24</onleft>
-				<onright>24</onright>
 				<onup>7</onup>
 				<ondown>26</ondown>
 		    <textcolor>FF000000</textcolor>
@@ -218,8 +196,6 @@
         <type>button</type>
         <id>26</id>
         <label>118</label>
-				<onleft>24</onleft>
-				<onright>24</onright>
         <onup>5</onup>
         <ondown>6</ondown>
 		    <textcolor>FF000000</textcolor>
@@ -228,24 +204,29 @@
 	
 			<control>
 				<description>Watched</description>
-				<type>togglebutton</type>
+				<type>checkbutton</type>
 				<id>6</id>
 				<label>1010</label>
-  			<font>TitanLight12</font>
+  			<font>font12</font>
         <textXOff>32</textXOff>
         <textYOff>12</textYOff>
-				<onleft>24</onleft>
-				<onright>24</onright>
 				<onup>26</onup>
-				<ondown>10</ondown>
+				<ondown>97270</ondown>
 		   	<textcolor>FF000000</textcolor>
 				<textcolorNoFocus>ffffffff</textcolorNoFocus>
-        <textureFocus>button_tv_on_focus.png</textureFocus>
-        <textureNoFocus>button_tv_on_nofocus.png</textureNoFocus>
-        <AltTextureFocus>button_tv_off_focus.png</AltTextureFocus>
-        <AltTextureNoFocus>button_tv_off_nofocus.png</AltTextureNoFocus>
 			</control>
 			
+			<control>
+        <description>Trakt Button</description>
+        <type>button</type>
+        <id>97270</id>
+        <label>Trakt</label>
+        <onup>6</onup>
+        <ondown>2</ondown>
+		    <textcolor>FF000000</textcolor>
+				<textcolorNoFocus>ffffffff</textcolorNoFocus>
+				<visible>plugin.isenabled(Trakt)</visible>
+      </control>
 	</control>
 
 	<control>
@@ -556,35 +537,36 @@
 		<id>20</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
 		<label>#plot</label>
-		<visible>!Control.IsVisible(24)+!Control.IsVisible(23)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
 	</control>
 
-	<control Style="textBoxDetails">
+	<control>
 		<description>textarea</description>
 		<type>textbox</type>
 		<id>22</id>
 		<posX>1020</posX>
-		<posY>630</posY>
+		<posY>670</posY>
 		<height>240</height>
-		<width>800</width>
+		<width>750</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
 		<onup>2</onup>
 		<ondown>2</ondown>
 		<label>#cast</label>
-		<spinPosX>1250</spinPosX>
-		<spinPosY>840</spinPosY>
-		<spinWidth>28</spinWidth>
-		<spinHeight>28</spinHeight>
+		<spinWidth>18</spinWidth>
+		<spinHeight>16</spinHeight>
+		<spinPosX>1776</spinPosX>
+		<spinPosY>832</spinPosY>
+		<spinAlign>right</spinAlign>
+		<spinColor>FFFFFFFF</spinColor>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>
 	</control>
@@ -595,7 +577,7 @@
 		<id>23</id>
 		<posX>1020</posX>
 		<posY>670</posY>
-		<height>190</height>
+		<height>180</height>
 		<width>800</width>
 		<onleft>2</onleft>
 		<onright>2</onright>
@@ -615,22 +597,6 @@
 		<width>550</width>
 		<height>73</height>
 		<texture>logoframe.png</texture>
-		<visible>!Control.IsVisible(24)</visible>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>
-	</control>
-			
-	<control>
-		<description>certification logo</description>
-		<type>image</type>
-		<id>101</id>
-		<posX>806</posX>
-		<posY>888</posY>
-		<width>60</width>
-		<height>60</height>
-    <keepaspectratio>yes</keepaspectratio>
-    <centered>yes</centered>
-		<texture>certification\#MovingPictures.SelectedMovie.certification.png</texture>
 		<visible>!Control.IsVisible(24)</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
     <animation effect="fade" time="250">WindowClose</animation>

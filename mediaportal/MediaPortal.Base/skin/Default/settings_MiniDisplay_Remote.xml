@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>9006</id>
@@ -30,14 +30,14 @@
       </control>
       <control>
         <description>Disable Remote</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>50</id>
         <width>225</width>
         <label>9145</label>
       </control>
       <control>
         <description>Disable Repeat</description>
-        <type>togglebutton</type>
+        <type>checkbutton</type>
         <id>51</id>
         <width>225</width>
         <label>9146</label>

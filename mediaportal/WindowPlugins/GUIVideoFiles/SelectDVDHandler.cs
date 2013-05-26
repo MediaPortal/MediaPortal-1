@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Video
           byte[] resumeData = null;
           if ((idMovie >= 0) && (idFile >= 0))
           {
-            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+            timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData, g_Player.SetResumeBDTitleState);
             //Log.Info("GUIVideoFiles: OnPlayBackStopped for DVD - idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
             if (timeMovieStopped > 0)
             {
@@ -321,7 +321,7 @@ namespace MediaPortal.GUI.Video
             file = selectBdHandler.GetFolderVideoFile(pItem.Path);
           }
           else if (!pItem.IsFolder ||
-                   (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
+                   (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLowerInvariant())))
           {
             file = pItem.Path;
           }
@@ -444,7 +444,7 @@ namespace MediaPortal.GUI.Video
         return string.Empty;
 
       // IFind first movie file in folder
-      string strExtension = Path.GetExtension(path).ToLower();
+      string strExtension = Path.GetExtension(path).ToLowerInvariant();
       if (VirtualDirectory.IsImageFile(strExtension))
       {
         return path;

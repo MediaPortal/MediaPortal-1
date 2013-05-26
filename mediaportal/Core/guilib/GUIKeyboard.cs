@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Windows.Controls;
 
@@ -917,10 +918,10 @@ namespace MediaPortal.GUI.Library
           smsLastKeyInternalPos = 0;
 
           string tmpKeys = smsKeyMap[keyPressed];
-          //if (_shiftTurnedOn) tmpKeys = tmpKeys.ToUpper();
+          //if (_shiftTurnedOn) tmpKeys = tmpKeys.ToUpper(CultureInfo.CurrentCulture);
           if ((_capsLockTurnedOn && !_shiftTurnedOn) || (!_capsLockTurnedOn && _shiftTurnedOn))
           {
-            tmpKeys = tmpKeys.ToUpper();
+            tmpKeys = tmpKeys.ToUpper(CultureInfo.CurrentCulture);
             smsLastShiftState = true;
           }
           else
@@ -942,7 +943,7 @@ namespace MediaPortal.GUI.Library
           Press(Xkey.XK_BACKSPACE);
 
           string tmpKeys = smsKeyMap[keyPressed];
-          if (smsLastShiftState) tmpKeys = tmpKeys.ToUpper();
+          if (smsLastShiftState) tmpKeys = tmpKeys.ToUpper(CultureInfo.CurrentCulture);
           char tmpChar = tmpKeys[smsLastKeyInternalPos];
 
           /*Action tmpAction = new Action(new MediaPortal.GUI.Library.Key(tmpChar, (int)tmpChar),

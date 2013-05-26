@@ -14,59 +14,57 @@
 			<animation effect="fade" time="400">windowopen</animation>
 			<animation effect="fade" time="400">windowclose</animation>
 		</control>
+		
+    <control>
+    	<description>group element</description>
+      <type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="0">WindowClose</animation>
+			<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
 
-	<control>
-		<type>image</type>
-		<id>0</id>
-		<posX>561</posX>
-		<posY>396</posY>
-		<width>798</width>
-		<height>579</height>
-		<texture>dialog_background.png</texture>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
+      <control>
+      	<id>0</id>
+        <type>image</type>
+        <posX>441</posX>
+        <posY>296</posY>
+        <width>1040</width>
+        <height>679</height>
+        <texture>context_background.png</texture>
+      </control>
+			
+      <control>
+      	<id>4</id>
+        <description>Heading text label</description>
+        <type>label</type>
+        <posX>560</posX>
+        <posY>386</posY>
+				<width>820</width>
+        <font>font22</font>
+        <textcolor>ff393939</textcolor>
+        <label>181</label>
+      </control>
 
-	<control>
-		<description>Heading text label</description>
-		<type>label</type>
-		<id>4</id>
-    <posX>680</posX>
-    <posY>502</posY>
-		<width>580</width>
-    <font>fontB16</font>
-    <textcolor>ff393939</textcolor>
-		<label>181</label>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
-
-	<control>
-		<description>textarea</description>
-		<type>textbox</type>
-		<id>3</id>
-		<posX>678</posX>
-		<posY>583</posY>
-		<width>560</width>
-		<height>300</height>
-		<onleft>2</onleft>
-		<onright>2</onright>
-		<onup>2</onup>
-		<ondown>2</ondown>
-		<spinPosX>678</spinPosX>
-		<spinPosY>855</spinPosY>
-		<spinWidth>18</spinWidth>
-		<spinHeight>16</spinHeight>
-		<spinAlign>left</spinAlign>
-		<spinColor>FF393939</spinColor>
-		<textcolor>FF393939</textcolor>
-    <font>TitanLight12</font>
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="0">WindowClose</animation>
-		<animation effect="slide" start="0,200" end="0,0" tween="quadratic" easing="in" time="150" delay="0">WindowOpen</animation>
-	</control>
-
+			<control>
+				<description>textarea</description>
+				<type>textbox</type>
+				<id>3</id>
+				<posX>560</posX>
+				<posY>583</posY>
+				<width>820</width>
+				<height>300</height>
+				<onleft>2</onleft>
+				<onright>2</onright>
+				<onup>2</onup>
+				<ondown>2</ondown>
+				<spinPosX>678</spinPosX>
+				<spinPosY>855</spinPosY>
+				<spinWidth>18</spinWidth>
+				<spinHeight>16</spinHeight>
+				<spinAlign>left</spinAlign>
+				<spinColor>FF393939</spinColor>
+				<textcolor>FF393939</textcolor>
+				<font>TitanLight12</font>
+			</control>
+		</control>
 </controls>
 </window>

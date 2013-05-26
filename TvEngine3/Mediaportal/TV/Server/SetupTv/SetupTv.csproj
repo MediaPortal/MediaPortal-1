@@ -499,6 +499,10 @@
       <Project>{A2BFFBDD-3BEA-4B68-94F1-C34D2BE10AEB}</Project>
       <Name>TvService.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TvThumbnails\TvThumbnails.csproj">
+      <Project>{95F4BF8F-5664-40C9-8DA8-C5E9B79B8115}</Project>
+      <Name>TvThumbnails</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Sections\TvRecording.resx">

@@ -372,7 +372,7 @@ namespace TvPlugin
       string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
 
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, mediaType, chapters))
+      if (g_Player.Play(fileName, mediaType, chapters, false)) // Force to use TsReader if true it will use Movie Codec and Splitter
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {

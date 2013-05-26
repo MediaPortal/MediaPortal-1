@@ -33,7 +33,7 @@ namespace MediaPortal.Util
 {
   public class VideoThumbCreator
   {
-    private static string ExtractApp = "mtn.exe";
+    private static string ExtractApp = "ffmpeg.exe";
     private static string ExtractorPath = Config.GetFile(Config.Dir.Base, "MovieThumbnailer", ExtractApp);
     private static int PreviewColumns = 2;
     private static int PreviewRows = 2;
@@ -46,9 +46,9 @@ namespace MediaPortal.Util
     {
       using (Settings xmlreader = new MPSettings())
       {
-        PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 1);
-        PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 1);
-        LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
+        PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "videothumbcols", 1);
+        PreviewRows = xmlreader.GetValueAsInt("thumbnails", "videothumbrows", 1);
+        LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "videosharepreview", false);
         Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}",
                   PreviewColumns, PreviewRows, LeaveShareThumb);
         NeedsConfigRefresh = false;
@@ -136,13 +136,19 @@ namespace MediaPortal.Util
         postGapSec = 600;
       }
       bool Success = false;
-      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"",
+      /*string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"",
                                            preGapSec, postGapSec, PreviewColumns, PreviewRows, blank, 0, aVideoPath);
       string ExtractorFallbackArgs = string.Format(
         " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, blank,
-        0, aVideoPath);
+        0, aVideoPath);*/
+      
+      string strFilenamewithoutExtension = Path.ChangeExtension(aVideoPath, null);
+      string ffmpegArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",5),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", PreviewColumns, PreviewRows);
+      string ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_s.jpg\"", preGapSec, aVideoPath, ffmpegArgs, strFilenamewithoutExtension);
+      string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_s.jpg\"", 5, aVideoPath, ffmpegArgs, strFilenamewithoutExtension);
+      
       // Honour we are using a unix app
-      ExtractorArgs = ExtractorArgs.Replace('\\', '/');
+      //ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
       {
         // Use this for the working dir to be on the safe side
@@ -172,7 +178,7 @@ namespace MediaPortal.Util
           Utils.KillProcess(Path.ChangeExtension(ExtractApp, null));
           try
           {
-            // remove the _s which mdn appends to its files
+            // remove the _s which mtn appends to its files
             File.Move(OutputThumb, ShareThumb);
           }
           catch (FileNotFoundException)
@@ -201,10 +207,16 @@ namespace MediaPortal.Util
 
         if (aCacheThumb && Success)
         {
-          if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
+          if (!Util.Utils.FileExistsInCache(ShareThumb))
+          {
+            return false;
+          }
+          if (Picture.CreateThumbnailVideo(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
                                       0, false))
-            Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
-                                    (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+          {
+            Picture.CreateThumbnailVideo(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
+                                    (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0, false);
+          }
         }
 
         if (!LeaveShareThumb)

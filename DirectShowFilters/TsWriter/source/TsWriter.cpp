@@ -74,7 +74,8 @@ const AMOVIESETUP_FILTER sudDump =
     L"MediaPortal Ts Writer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
     1,                          // Number pins
-    &sudPins                    // Pin details
+    &sudPins,                   // Pin details
+    CLSID_LegacyAmFilterCategory
 };
 
 void DumpTs(byte* tspacket)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,12 +25,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.Diagnostics;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Services;
-using MediaPortal.Threading;
 using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -54,72 +53,6 @@ namespace Mediaportal.TV.TvPlugin
 {
   public class TvRecorded : RecordedBase, IComparer<GUIListItem>
   {
-  
-
-    #region ThumbCacher
-
-    public class RecordingThumbCacher
-    {
-  
-
-      private Work work;
-
-      public RecordingThumbCacher()
-      {
-        work = new Work(new DoWorkHandler(PerformRequest));
-        work.ThreadPriority = ThreadPriority.BelowNormal;
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
-      }
-
-      private void PerformRequest()
-      {
-        if (_thumbCreationActive)
-        {
-          return;
-        }
-        try
-        {
-          _thumbCreationActive = true;
-
-          IList<Recording> recordings = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaTypeEnum.TV).ToList();
-          for (int i = recordings.Count - 1; i >= 0; i--)
-          {
-            string recFileName = TVUtil.GetFileNameForRecording(recordings[i]);
-            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
-                                             Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
-                                             Utils.GetThumbExtension());
-
-            if ((!TVHome.UseRTSP()) && !Utils.FileExistsInCache(thumbNail))
-            {              
-              try
-              {
-                Thread.Sleep(250);             
-                if (VideoThumbCreator.CreateVideoThumb(recFileName, thumbNail, true, true))
-                {
-                  this.LogInfo("RecordedTV: Thumbnail successfully created for - {0}", Utils.SplitFilename(recFileName));
-                }
-                else
-                {
-                  this.LogInfo("RecordedTV: No thumbnail created for - {0}", Utils.SplitFilename(recFileName));
-                }
-                Thread.Sleep(250);
-              }
-              catch (Exception ex)
-              {
-                this.LogError(ex, "RecordedTV: No thumbnail created for {0}", Utils.SplitFilename(recFileName));
-              }
-            }
-          }
-        }
-        finally
-        {
-          _thumbCreationActive = false;
-        }
-      }
-    }
-
-    #endregion
-
     #region Variables
 
     private enum Controls
@@ -152,8 +85,6 @@ namespace Mediaportal.TV.TvPlugin
     private DBView _currentDbView = DBView.Recordings;
     private static Recording _activeRecording = null;
     private static bool _bIsLiveRecording = false;
-    private static bool _thumbCreationActive = false;
-    private static bool _createRecordedThumbs = true;
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
@@ -162,8 +93,6 @@ namespace Mediaportal.TV.TvPlugin
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
 
-    private RecordingThumbCacher thumbworker = null;
-    
     [SkinControl(6)]
     protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)]
@@ -220,10 +149,7 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
-        _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
       }
-
-      thumbworker = null;
     }
 
     protected override void SaveSettings()
@@ -284,6 +210,29 @@ namespace Mediaportal.TV.TvPlugin
       PreInit();
       ResetAllControls();
       return bResult;
+    }
+
+    // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when
+    // the player is not playing)...
+    private void OnNewAction(Action action)
+    {
+      if ((action.wID == Action.ActionType.ACTION_PLAY
+           || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+          && GUIWindowManager.ActiveWindow == GetID)
+      {
+        GUIListItem item = facadeLayout.SelectedListItem;
+
+        if (item == null || item.Label == ".." || item.IsFolder)
+        {
+          return;
+        }
+
+        if (GetFocusControlId() == facadeLayout.GetID)
+        {
+          // only start something is facade is focused
+          OnSelectedRecording(facadeLayout.SelectedListItemIndex);
+        }
+      }
     }
 
     public override void OnAction(Action action)
@@ -359,26 +308,6 @@ namespace Mediaportal.TV.TvPlugin
       GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
-      if (thumbworker == null)
-      {
-        if (_createRecordedThumbs)
-        {
-          _createRecordedThumbs = (!TVHome.UseRTSP());
-
-          if (!_createRecordedThumbs)
-          {
-            this.LogInfo("GUIRecordedTV: skipping thumbworker thread - RTSP mode is in use");
-          }
-          else
-          {
-            thumbworker = new RecordingThumbCacher();
-          }
-        }
-      }
-      else
-      {
-        this.LogInfo("GUIRecordedTV: thumbworker already running - didn't start another one");
-      }
     }
 
     protected override bool AllowLayout(GUIFacadeControl.Layout layout)
@@ -741,11 +670,29 @@ namespace Mediaportal.TV.TvPlugin
 
     private void LoadDirectory()
     {
+      var watch = new Stopwatch(); watch.Reset(); watch.Start(); // TODO Resolve
+
       List<GUIListItem> itemlist = new List<GUIListItem>();
       try
       {
         GUIControl.ClearControl(GetID, facadeLayout.GetID);
         IEnumerable<Recording> recordings = ServiceAgents.Instance.RecordingServiceAgent.ListAllRecordingsByMediaType(MediaTypeEnum.TV);
+
+        SwitchLayout();
+
+        // lookup radio channel ID in radio group map (smallest table that could identify a radio channel) to remove radiochannels from recording list
+        IEnumerable<int> radiogroupIDs = RadioGroupMap.ListAll().Select(radiogroup => radiogroup.IdChannel).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + radiogroupIDs.Count() + "' radiogroupIDs after '{0}' ms.", watch.ElapsedMilliseconds);
+
+        //List<Recording> recordings = (from r in Recording.ListAll()where !(from rad in radiogroups select rad.IdChannel).Contains(r.IdChannel)select r).ToList();
+        List<Recording> recordings = Recording.ListAll().Where(rec => radiogroupIDs.All(id => rec.IdChannel != id)).ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + recordings.Count + "' recordings after '{0}' ms.", watch.ElapsedMilliseconds);
+
+        // load the active recordings once to mark them later in GUI lists and groups
+        List<Recording> activerecordings = Recording.ListAllActive().ToList();
+        Log.Debug("LoadDirectory() - finished loading '" + activerecordings.Count + "' activerecordings after '{0} ms.", watch.ElapsedMilliseconds);
+
+        bool singleRecording = false; // check if this is a single recording and therefore should be placed in a folder
 
         if (_currentLabel == string.Empty)
         {          
@@ -788,9 +735,41 @@ namespace Mediaportal.TV.TvPlugin
         }        
         else
         {
-          // Showing a merged folders content
-          GUIListItem item = new GUIListItem("..");
-          item.IsFolder = true;
+                  i.Label = folder.Title;
+                  i.Label2 = GetSpokenViewDate(folder.StartTime);
+                }
+
+                break;
+              case DBView.Channel:
+                // recordings can be linked to channels that no longer exist.
+                i.Label = folder.ReferencedChannel() == null ? GUILocalizeStrings.Get(1507) : folder.ReferencedChannel().DisplayName;
+                i.Label2 = GetSpokenViewDate(folder.StartTime);
+                break;
+              case DBView.Genre:
+                i.Label = folder.Genre;
+                i.Label2 = GetSpokenViewDate(folder.StartTime);
+                break;
+            }
+            i.Label2 = GetSpokenViewDate(folder.StartTime);
+            i.TVTag = folder;
+            i.IsFolder = !singleRecording;
+            if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
+            Utils.SetDefaultIcons(i);
+            i.ThumbnailImage = i.IconImageBig;
+            facadeLayout.Add(i);
+            
+            if (string.IsNullOrEmpty(i.Label)) 	
+            {
+              i.Label = GUILocalizeStrings.Get(2014); //unknown
+            }
+          }
+        }
+        else
+        {
+          // Showing a folders content
+
+          // add parent item
+          var item = new GUIListItem("..") {IsFolder = true};
           Utils.SetDefaultIcons(item);
           itemlist.Add(item);
 
@@ -821,6 +800,7 @@ namespace Mediaportal.TV.TvPlugin
             {
               // Add new list item for this recording
               item = BuildItemFromRecording(rec);
+            if (activerecordings.Contains(rec)) item.PinImage = Thumbs.TvRecordingIcon;
               item.Label = TVUtil.GetDisplayTitle(rec);
               if (item != null)
               {
@@ -834,6 +814,7 @@ namespace Mediaportal.TV.TvPlugin
       {
         this.LogError(ex, "TvRecorded: Error fetching recordings from database");
       }
+      Log.Debug("LoadDirectory() - finished loading facade items after '{0}' ms.", watch.ElapsedMilliseconds);
 
       try
       {
@@ -865,6 +846,9 @@ namespace Mediaportal.TV.TvPlugin
       SwitchLayout();
       OnSort();
       UpdateProperties();
+
+      watch.Stop();
+      Log.Debug("LoadDirectory() - finished sorting facade after '{0}' ms.", watch.ElapsedMilliseconds);
     }
 
     public static string GetRecordingDisplayName(Recording rec)
@@ -894,7 +878,6 @@ namespace Mediaportal.TV.TvPlugin
       string strDefaultUnseenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoBig.png";
       string strDefaultSeenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoSeenBig.png";
       GUIListItem item = null;
-      string strChannelName = GUILocalizeStrings.Get(2014); // unknown      
 
       try
       {
@@ -902,16 +885,12 @@ namespace Mediaportal.TV.TvPlugin
         try
         {
           // Re-imported channels might still be valid but their channel does not need to be present anymore...
-          refCh = aRecording.Channel;
-        }
-        catch (Exception) { }
-        if (refCh != null)
-        {
-          strChannelName = refCh.DisplayName;
-        }        
+        string strChannelName = refCh != null ? refCh.DisplayName : GUILocalizeStrings.Get(1507); // unknown
 
-        // this.LogDebug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.title, aRecording.ProgramCategory.category, strChannelName);
-        item = new GUIListItem();
+
+        // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.Title, aRecording.Genre, strChannelName);
+        item = new GUIListItem { TVTag = aRecording };
+
         switch (_currentDbView)
         {
           case DBView.Recordings:
@@ -921,20 +900,51 @@ namespace Mediaportal.TV.TvPlugin
             item.Label = strChannelName;
             break;
           case DBView.Genre:
-            item.Label = TVUtil.GetCategory(aRecording.ProgramCategory);
+            item.Label = !String.IsNullOrEmpty(aRecording.Genre) ? aRecording.Genre : GUILocalizeStrings.Get(2014); // unknown
+            //item.Label = TVUtil.GetCategory(aRecording.ProgramCategory); // TODO Resolve
             break;
           case DBView.History:
             item.Label = GetSpokenViewDate(aRecording.StartTime);
             break;
         }
 
-        item.TVTag = aRecording;
-
         // Set a default logo indicating the watched status
         string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-        string previewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
+        string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
+
+        if (!Utils.FileExistsInCache(PreviewThumb))
+        {
+          Log.Debug("Thumbnail {0} does not exist in local thumbs folder - get it from TV server", PreviewThumb);
+          string thumbnailFilename = string.Format("{0}{1}",
+                                            Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
+                                            Utils.GetThumbExtension());
+
+          try
+          {
+            byte[] thumbData = RemoteControl.Instance.GetRecordingThumbnail(thumbnailFilename);
+
+            if (thumbData.Length > 0)
+            {
+              using (FileStream fs = new FileStream(PreviewThumb, FileMode.Create))
+              {
+                fs.Write(thumbData, 0, thumbData.Length);
+                fs.Close();
+                fs.Dispose();
+              }
+              Utils.DoInsertExistingFileIntoCache(PreviewThumb);
+            }
+            else
+            {
+              Log.Debug("Thumbnail {0} not found on TV server", thumbnailFilename);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Error fetching thumbnail {0} from TV server - {1}", thumbnailFilename, ex.Message);
+          }
+        }
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
@@ -944,15 +954,15 @@ namespace Mediaportal.TV.TvPlugin
         }
 
         // Display previews only if the option to create them is active                
-        if (Utils.FileExistsInCache(previewThumb))
+        if (Utils.FileExistsInCache(PreviewThumb))
         {
           // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(previewThumb);          
+          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);          
           if (Utils.FileExistsInCache(PreviewThumbLarge))
           {
-            previewThumb = PreviewThumbLarge;
+            PreviewThumb = PreviewThumbLarge;
           }
-          item.ThumbnailImage = item.IconImageBig = previewThumb;
+          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
         }
         else
         {
@@ -962,12 +972,7 @@ namespace Mediaportal.TV.TvPlugin
         }
         item.IconImage = SmallThumb;
 
-        //Mark the recording with a "rec. symbol" if it is an active recording.
-        if (IsRecordingActual(aRecording))
-        {
-          item.PinImage = Thumbs.TvRecordingIcon;
         }
-      }
       catch (Exception singleex)
       {
         item = null;
@@ -1042,7 +1047,7 @@ namespace Mediaportal.TV.TvPlugin
       }
     }
 
-    private bool OnSelectedRecording(int iItem)
+    protected override bool OnSelectedRecording(int iItem)
     {
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1441,11 +1446,7 @@ namespace Mediaportal.TV.TvPlugin
         {
           return 0;
         }
-        if (item1 == null)
-        {
-          return -1;
-        }
-        if (item2 == null)
+        if (item1 == null || item2 == null)
         {
           return -1;
         }
@@ -1466,200 +1467,118 @@ namespace Mediaportal.TV.TvPlugin
           return 1;
         }
 
-        int iComp = 0;
-        TimeSpan ts;
         Recording rec1 = (Recording)item1.TVTag;
         Recording rec2 = (Recording)item2.TVTag;
 
-        string rec1DisplayName = "";
-        string rec2DisplayName = "";
+        int iComp;
+        SortMethod cSortMethod = _currentSortMethod;
 
-        if (rec1.Channel != null)
+        while (true) // starting with main sortmethod and sorting by secondary rules
         {
-          rec1DisplayName = rec1.Channel.DisplayName;
-        }        
-        if (rec2.Channel != null)
-        {
-          rec2DisplayName = rec2.Channel.DisplayName;
-        }
-        switch (_currentSortMethod)
-        {
+          switch (cSortMethod)
+          {
           case SortMethod.Played:
+              {
             item1.Label2 = string.Format("{0} {1}", rec1.TimesWatched, GUILocalizeStrings.Get(677)); //times
             item2.Label2 = string.Format("{0} {1}", rec2.TimesWatched, GUILocalizeStrings.Get(677)); //times
-            if (rec1.TimesWatched == rec2.TimesWatched)
+                if (rec1.TimesWatched != rec2.TimesWatched)
             {
-              goto case SortMethod.Name;
+                  return m_bSortAscending ? rec1.TimesWatched - rec2.TimesWatched : rec2.TimesWatched - rec1.TimesWatched;
             }
-            else
-            {
-              if (m_bSortAscending)
-              {
-                return rec1.TimesWatched - rec2.TimesWatched;
+
+                cSortMethod = SortMethod.Name;
+                break;
               }
-              else
-              {
-                return rec2.TimesWatched - rec1.TimesWatched;
-              }
-            }
+
           case SortMethod.Name:
-            if (m_bSortAscending)
             {
               iComp = string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2), true);
-              if (iComp == 0)
+                if (iComp != 0)
               {
-                goto case SortMethod.Channel;
+                  return m_bSortAscending ? iComp : -iComp;
               }
-              else
-              {
-                return iComp;
+
+                cSortMethod = SortMethod.Channel;
+                break;
               }
-            }
-            else
-            {
-              iComp = string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1), true);
-              if (iComp == 0)
-              {
-                goto case SortMethod.Channel;
-              }
-              else
-              {
-                return iComp;
-              }
-            }
+
           case SortMethod.Channel:
-            if (m_bSortAscending)
             {
-              iComp = string.Compare(rec1DisplayName, rec2DisplayName, true);
-              if (iComp == 0)
+                // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+                // set channel name to unknown channel string (1507) to avoid null reference exceptions
+                Channel ch1 = rec1.ReferencedChannel();
+                Channel ch2 = rec2.ReferencedChannel();
+                string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+                string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+
+                iComp = string.Compare(ch1Name, ch2Name, true);
+                if (iComp != 0)
               {
-                goto case SortMethod.Date;
+                  return m_bSortAscending ? iComp : -iComp;
               }
-              else
-              {
-                return iComp;
+
+                cSortMethod = SortMethod.Date;
+                break;
               }
-            }
-            else
-            {
-              iComp = string.Compare(rec2DisplayName, rec1DisplayName, true);
-              if (iComp == 0)
-              {
-                goto case SortMethod.Date;
-              }
-              else
-              {
-                return iComp;
-              }
-            }
           case SortMethod.Duration:
             {
               TimeSpan duration1 = (rec1.EndTime - rec1.StartTime);
               TimeSpan duration2 = rec2.EndTime - rec2.StartTime;
-              if (m_bSortAscending)
+                if (duration1 != duration2)
               {
-                if (duration1 == duration2)
-                {
-                  goto case SortMethod.Date;
+                  return duration1 > duration2 ? 1 : -1;
                 }
-                if (duration1 > duration2)
-                {
-                  return 1;
+
+                cSortMethod = SortMethod.Date;
+                break;
                 }
-                return -1;
-              }
-              else
-              {
-                if (duration1 == duration2)
-                {
-                  goto case SortMethod.Date;
-                }
-                if (duration1 < duration2)
-                {
-                  return 1;
-                }
-                return -1;
-              }
-            }
           case SortMethod.Date:
-            if (m_bSortAscending)
             {
-              if (rec1.StartTime == rec2.StartTime)
+                if (rec1.StartTime != rec2.StartTime)
               {
+                  return m_bSortAscending ? (rec1.StartTime < rec2.StartTime ? 1 : -1) : (rec1.StartTime > rec2.StartTime ? 1 : -1);
+              }
                 return 0;
               }
-              if (rec1.StartTime < rec2.StartTime)
-              {
-                return 1;
-              }
-              return -1;
-            }
-            else
-            {
-              if (rec1.StartTime == rec2.StartTime)
-              {
-                return 0;
-              }
-              if (rec1.StartTime > rec2.StartTime)
-              {
-                return 1;
-              }
-              return -1;
-            }
+
           case SortMethod.Genre:
-            var categoryRec1 = TVUtil.GetCategory(rec1.ProgramCategory);
-            var categoryRec2 = TVUtil.GetCategory(rec2.ProgramCategory);
-            item1.Label2 = categoryRec1;            
-            item2.Label2 = categoryRec2;
-            if (categoryRec1 != categoryRec2)
+              {
+                var categoryRec1 = TVUtil.GetCategory(rec1.ProgramCategory); // TODO Resolve
+                var categoryRec2 = TVUtil.GetCategory(rec2.ProgramCategory);
+                item1.Label2 = rec1.Genre;
+                item2.Label2 = rec2.Genre;
+
+                if (rec1.Genre != rec2.Genre)
             {
-              if (m_bSortAscending)
-              {
-                return string.Compare(categoryRec1, categoryRec2, true);
+                  return m_bSortAscending ? string.Compare(rec1.Genre, rec2.Genre, true) : string.Compare(rec2.Genre, rec1.Genre, true);
               }
-              else
-              {
-                return string.Compare(categoryRec2, categoryRec1, true);
-              }
-            }
+
             if (rec1.StartTime != rec2.StartTime)
             {
-              if (m_bSortAscending)
-              {
-                ts = rec1.StartTime - rec2.StartTime;
-                return (int)(ts.Minutes);
+                  return m_bSortAscending ? (rec1.StartTime - rec2.StartTime).Minutes : (rec2.StartTime - rec1.StartTime).Minutes;
               }
-              else
-              {
-                ts = rec2.StartTime - rec1.StartTime;
-                return (int)(ts.Minutes);
-              }
-            }
+
             if (rec1.IdChannel != rec2.IdChannel)
             {
-              if (m_bSortAscending)
-              {
-                return string.Compare(rec1DisplayName, rec2DisplayName);
+                  // if there is no referenced channel (eg. recording that links to a channel that is now deleted)
+                  // set channel name to unknown channel string (1507) to avoid null reference exceptions
+                  Channel ch1 = rec1.ReferencedChannel();
+                  Channel ch2 = rec2.ReferencedChannel();
+                  string ch1Name = ch1 == null ? GUILocalizeStrings.Get(1507) : ch1.DisplayName;
+                  string ch2Name = ch2 == null ? GUILocalizeStrings.Get(1507) : ch2.DisplayName;
+                  return m_bSortAscending ? string.Compare(ch1Name, ch2Name) : string.Compare(ch2Name, ch1Name);
               }
-              else
-              {
-                return string.Compare(rec2DisplayName, rec1DisplayName);
-              }
-            }
+
             if (TVUtil.GetDisplayTitle(rec1) != TVUtil.GetDisplayTitle(rec2))
             {
-              if (m_bSortAscending)
-              {
-                return string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2));
+                  return m_bSortAscending ? string.Compare(TVUtil.GetDisplayTitle(rec1), TVUtil.GetDisplayTitle(rec2)) : string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1));
               }
-              else
-              {
-                return string.Compare(TVUtil.GetDisplayTitle(rec2), TVUtil.GetDisplayTitle(rec1));
+
+                cSortMethod = SortMethod.Date;
+                break;
               }
             }
-            return 0;
         }
-        return 0;
       }
       catch (Exception ex)
       {

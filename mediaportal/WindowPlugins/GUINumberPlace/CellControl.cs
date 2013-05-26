@@ -115,7 +115,8 @@ namespace MediaPortal.GUI.NumberPlace
                                        string.Format("icon_numberplace_overlay_{0}.png", i + 1), 0xFFFFFFFF);
         m_imgOverlay[i].AllocResources();
       }
-      m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, "font18",
+
+      m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, this.FontName,
                                     string.Empty, 0xFFFFFFFF, Alignment.ALIGN_CENTER, VAlignment.ALIGN_MIDDLE, false,
                                     _shadowAngle, _shadowDistance, _shadowColor);
       _colorOverlay = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height,

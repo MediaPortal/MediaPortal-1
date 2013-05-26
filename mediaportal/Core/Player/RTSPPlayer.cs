@@ -221,7 +221,7 @@ namespace MediaPortal.Player
             intCount++;
           }
         }
-        string extension = Path.GetExtension(m_strCurrentFile).ToLower();
+        string extension = Path.GetExtension(m_strCurrentFile).ToLowerInvariant();
         if (IsRadio == false)
         {
           if (strVideoCodec.Length > 0)

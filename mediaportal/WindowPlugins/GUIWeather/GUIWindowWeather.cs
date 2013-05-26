@@ -424,10 +424,10 @@ namespace MediaPortal.GUI.Weather
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
       _geochronGenerator = null;
       GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
       clockImage.RemoveMemoryImageTexture();

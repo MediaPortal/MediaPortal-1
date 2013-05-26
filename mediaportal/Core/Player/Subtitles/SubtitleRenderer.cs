@@ -186,9 +186,6 @@ namespace MediaPortal.Player.Subtitles
 
   public class SubtitleRenderer
   {
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
-
     private bool _useBitmap = false; // if false use teletext
     private int _activeSubPage = -1; // if use teletext, what page
     private static SubtitleRenderer _instance = null;
@@ -411,7 +408,7 @@ namespace MediaPortal.Player.Subtitles
             // allocate new texture
             texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1,
                                   Usage.Dynamic,
-                                  Format.A8R8G8B8, Pool.Default);
+                                  Format.A8R8G8B8, GUIGraphicsContext.GetTexturePoolType());
 
             if (texture == null)
             {
@@ -797,7 +794,7 @@ namespace MediaPortal.Player.Subtitles
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
 
           // enable alpha blending so that the subtitle is rendered with transparent background
-          FontEngineSetAlphaBlend(1); //TRUE
+          DXNative.FontEngineSetRenderState((int)D3DRENDERSTATETYPE.D3DRS_ALPHABLENDENABLE, 1);
 
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering
@@ -844,11 +841,12 @@ namespace MediaPortal.Player.Subtitles
       if (_vertexBuffer == null)
       {
         Log.Debug("Subtitle: Creating vertex buffer");
+        var usage = OSInfo.OSInfo.VistaOrLater() ? Usage.Dynamic | Usage.WriteOnly : 0;
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                        4, GUIGraphicsContext.DX9Device,
-                                        Usage.Dynamic | Usage.WriteOnly,
-                                        CustomVertex.TransformedTextured.Format,
-                                        GUIGraphicsContext.GetTexturePoolType());
+                                         4, GUIGraphicsContext.DX9Device,
+                                         usage,
+                                         CustomVertex.TransformedTextured.Format,
+                                         GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 

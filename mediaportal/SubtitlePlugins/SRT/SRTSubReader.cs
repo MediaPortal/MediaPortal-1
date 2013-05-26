@@ -40,7 +40,7 @@ namespace MediaPortal.Subtitle
 
     public override bool SupportsFile(string strFileName)
     {
-      string strExt = Path.GetExtension(strFileName).ToLower();
+      string strExt = Path.GetExtension(strFileName).ToLowerInvariant();
       if (strExt == ".srt")
       {
         return true;

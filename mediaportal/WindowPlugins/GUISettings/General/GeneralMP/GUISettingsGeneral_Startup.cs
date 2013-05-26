@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,20 +24,23 @@ using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
 
+// ReSharper disable CheckNamespace
 namespace MediaPortal.GUI.Settings
+// ReSharper restore CheckNamespace
 {
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUISettingsGeneralStartup : GUIInternalWindow
+  public sealed class GUISettingsGeneralStartup : GUIInternalWindow
   {
-    [SkinControl(10)] protected GUICheckButton cmStartfullscreen = null;
-    [SkinControl(11)] protected GUICheckButton cmUsefullscreensplash = null;
-    [SkinControl(12)] protected GUICheckButton cmAlwaysontop = null;
-    [SkinControl(13)] protected GUICheckButton cmHidetaskbar = null;
-    [SkinControl(14)] protected GUICheckButton cmAutostart = null;
-    [SkinControl(15)] protected GUICheckButton cmMinimizeonstartup = null;
-    [SkinControl(16)] protected GUICheckButton cmMinimizeonexit = null;
+    [SkinControl(10)] private readonly GUICheckButton _cmStartfullscreen = null;
+    [SkinControl(11)] private readonly GUICheckButton _cmUsefullscreensplash = null;
+    [SkinControl(12)] private readonly GUICheckButton _cmAlwaysontop = null;
+    [SkinControl(13)] private readonly GUICheckButton _cmHidetaskbar = null;
+    [SkinControl(14)] private readonly GUICheckButton _cmAutostart = null;
+    [SkinControl(15)] private readonly GUICheckButton _cmMinimizeonstartup = null;
+    [SkinControl(16)] private readonly GUICheckButton _cmMinimizeonexit = null;
+    [SkinControl(17)] private readonly GUICheckButton _cmMinimizeonfocusloss = null;
 
     public GUISettingsGeneralStartup()
     {
@@ -56,13 +59,14 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         // startup settings
-        cmStartfullscreen.Selected = xmlreader.GetValueAsBool("general", "startfullscreen", true);
-        cmUsefullscreensplash.Selected = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
-        cmAlwaysontop.Selected = xmlreader.GetValueAsBool("general", "alwaysontop", false);
-        cmHidetaskbar.Selected = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
-        cmAutostart.Selected = xmlreader.GetValueAsBool("general", "autostart", false);
-        cmMinimizeonstartup.Selected = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
-        cmMinimizeonexit.Selected = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
+        _cmStartfullscreen.Selected = xmlreader.GetValueAsBool("general", "startfullscreen", true);
+        _cmUsefullscreensplash.Selected = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
+        _cmAlwaysontop.Selected = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        _cmHidetaskbar.Selected = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
+        _cmAutostart.Selected = xmlreader.GetValueAsBool("general", "autostart", false);
+        _cmMinimizeonstartup.Selected = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
+        _cmMinimizeonexit.Selected = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
+        _cmMinimizeonfocusloss.Selected = xmlreader.GetValueAsBool("general", "minimizeonfocusloss", false);
       }
     }
 
@@ -70,12 +74,12 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValueAsBool("general", "startfullscreen", cmStartfullscreen.Selected);
-        xmlwriter.SetValueAsBool("general", "usefullscreensplash", cmUsefullscreensplash.Selected);
-        xmlwriter.SetValueAsBool("general", "alwaysontop", cmAlwaysontop.Selected);
+        xmlwriter.SetValueAsBool("general", "startfullscreen", _cmStartfullscreen.Selected);
+        xmlwriter.SetValueAsBool("general", "usefullscreensplash", _cmUsefullscreensplash.Selected);
+        xmlwriter.SetValueAsBool("general", "alwaysontop", _cmAlwaysontop.Selected);
         try
         {
-          if (cmAlwaysontop.Selected) // always on top
+          if (_cmAlwaysontop.Selected) // always on top
           {
             using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
             {
@@ -83,38 +87,44 @@ namespace MediaPortal.GUI.Settings
             }
           }
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch (Exception) { }
+        // ReSharper restore EmptyGeneralCatchClause
 
-        xmlwriter.SetValueAsBool("general", "hidetaskbar", cmHidetaskbar.Selected);
-        xmlwriter.SetValueAsBool("general", "autostart", cmAutostart.Selected);
+        xmlwriter.SetValueAsBool("general", "hidetaskbar", _cmHidetaskbar.Selected);
+        xmlwriter.SetValueAsBool("general", "autostart", _cmAutostart.Selected);
         try
         {
-          if (cmAutostart.Selected) // autostart on boot
+          if (_cmAutostart.Selected) // autostart on boot
           {
+        Log.Debug("AUTOSTART");
             string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
-            using (
-              RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",
-                                                                   true)
-              )
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             {
-              if (subkey != null) subkey.SetValue("MediaPortal", fileName);
+              if (subkey != null)
+              {
+                subkey.SetValue("MediaPortal", fileName);
+              }
             }
           }
           else
           {
-            using (
-              RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",
-                                                                   true)
-              )
+            using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             {
-              if (subkey != null) subkey.DeleteValue("MediaPortal", false);
+              if (subkey != null)
+              {
+                subkey.DeleteValue("MediaPortal", false);
+              }
             }
           }
         }
+        // ReSharper disable EmptyGeneralCatchClause
         catch (Exception) { }
+        // ReSharper restore EmptyGeneralCatchClause
 
-        xmlwriter.SetValueAsBool("general", "minimizeonstartup", cmMinimizeonstartup.Selected);
-        xmlwriter.SetValueAsBool("general", "minimizeonexit", cmMinimizeonexit.Selected);
+        xmlwriter.SetValueAsBool("general", "minimizeonstartup", _cmMinimizeonstartup.Selected);
+        xmlwriter.SetValueAsBool("general", "minimizeonexit", _cmMinimizeonexit.Selected);
+        xmlwriter.SetValueAsBool("general", "minimizeonfocusloss", _cmMinimizeonfocusloss.Selected);
       }
     }
 
@@ -128,25 +138,25 @@ namespace MediaPortal.GUI.Settings
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(101019)); //General - Startup
       base.OnPageLoad();
 
-      if (!MediaPortal.Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
+      if (!Util.Utils.IsGUISettingsWindow(GUIWindowManager.GetPreviousActiveWindow()))
       {
-        if (MediaPortal.GUI.Settings.GUISettings.IsPinLocked() && !MediaPortal.GUI.Settings.GUISettings.RequestPin())
+        if (GUISettings.IsPinLocked() && !GUISettings.RequestPin())
         {
           GUIWindowManager.CloseCurrentWindow();
         }
       }
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+    protected override void OnPageDestroy(int newWindowId)
     {
       SaveSettings();
 
-      if (GUISettings.SettingsChanged && !Util.Utils.IsGUISettingsWindow(new_windowId))
+      if (GUISettings.SettingsChanged && !Util.Utils.IsGUISettingsWindow(newWindowId))
       {
         GUISettings.OnRestartMP(GetID);
       }
 
-      base.OnPageDestroy(new_windowId);
+      base.OnPageDestroy(newWindowId);
     }
 
     public override void OnAction(Action action)
@@ -162,31 +172,35 @@ namespace MediaPortal.GUI.Settings
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       // Startup/Resume
-      if (control == cmStartfullscreen)
+      if (control == _cmStartfullscreen)
       {
         SettingsChanged(true);
       }
-      if (control == cmUsefullscreensplash)
+      if (control == _cmUsefullscreensplash)
       {
         SettingsChanged(true);
       }
-      if (control == cmAlwaysontop)
+      if (control == _cmAlwaysontop)
       {
         SettingsChanged(true);
       }
-      if (control == cmHidetaskbar)
+      if (control == _cmHidetaskbar)
       {
         SettingsChanged(true);
       }
-      if (control == cmAutostart)
+      if (control == _cmAutostart)
       {
         SettingsChanged(true);
       }
-      if (control == cmMinimizeonstartup)
+      if (control == _cmMinimizeonstartup)
       {
         SettingsChanged(true);
       }
-      if (control == cmMinimizeonexit)
+      if (control == _cmMinimizeonexit)
+      {
+        SettingsChanged(true);
+      }
+      if (control == _cmMinimizeonfocusloss)
       {
         SettingsChanged(true);
       }
@@ -198,7 +212,7 @@ namespace MediaPortal.GUI.Settings
     
     private void SettingsChanged(bool settingsChanged)
     {
-      MediaPortal.GUI.Settings.GUISettings.SettingsChanged = settingsChanged;
+      GUISettings.SettingsChanged = settingsChanged;
     }
 
   }

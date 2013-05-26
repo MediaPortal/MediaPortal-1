@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using Microsoft.Win32;
 using BassVis_Api;
@@ -47,7 +48,6 @@ namespace MediaPortal.Visualization
 
     private int _TargetFPS = 20;
     private BASSVIS_PARAM _visParam = null;
-    private BASSVIS_PARAM _mBase = null;
 
     #endregion
 
@@ -201,22 +201,22 @@ namespace MediaPortal.Visualization
         vizType = VisualizationInfo.PluginType.None;
       }
 
-      else if (Path.GetExtension(path).ToLower().CompareTo(".svp") == 0)
+      else if (Path.GetExtension(path).ToLowerInvariant().CompareTo(".svp") == 0)
       {
         vizType = VisualizationInfo.PluginType.Sonique;
       }
 
-      else if (path.ToLower().CompareTo("g-force") == 0)
+      else if (path.ToLowerInvariant().CompareTo("g-force") == 0)
       {
         vizType = VisualizationInfo.PluginType.GForce;
       }
 
-      else if (path.ToLower().CompareTo("whitecap") == 0)
+      else if (path.ToLowerInvariant().CompareTo("whitecap") == 0)
       {
         vizType = VisualizationInfo.PluginType.WhiteCap;
       }
 
-      else if (path.ToLower().CompareTo("softskies") == 0)
+      else if (path.ToLowerInvariant().CompareTo("softskies") == 0)
       {
         vizType = VisualizationInfo.PluginType.SoftSkies;
       }
@@ -267,8 +267,6 @@ namespace MediaPortal.Visualization
     /// <returns></returns>
     public List<VisualizationInfo> GetVisualizationPluginsInfo()
     {
-      // Get a handle to our program instance
-      IntPtr hInstance = Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]);
 
       _VisualizationPluginsInfo.Clear();
       try
@@ -322,7 +320,7 @@ namespace MediaPortal.Visualization
 
         if (soniqueVisPaths != null && soniqueVisPaths[0] != "")
         {
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, hInstance, VizRenderWindow.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, VizRenderWindow.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           for (int i = 0; i < soniqueVisPaths.Length; i++)
           {
@@ -334,13 +332,19 @@ namespace MediaPortal.Visualization
 
             if (_visParam.VisHandle != 0)
             {
-              BassVis.BASSVIS_Free(_visParam, ref _mBase);
-              _mBase = new BASSVIS_PARAM(_visParam.Kind);
-              _visParam.VisHandle = _mBase.VisHandle;
+              int counter = 0;
+
+              bool bFree = BassVis.BASSVIS_Free(_visParam);
+              while ((!bFree) && (counter <= 10))
+              {
+                bFree = BassVis.BASSVIS_IsFree(_visParam);
+                System.Windows.Forms.Application.DoEvents();
+                counter++;
+              }
+              _visParam.VisHandle = 0;
             }
 
             BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
-            _mBase = new BASSVIS_PARAM(_visParam.Kind, _visParam.VisHandle);
 
             string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
             if (pluginname != null)

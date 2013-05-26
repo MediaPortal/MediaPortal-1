@@ -81,7 +81,10 @@ namespace MediaPortal.GUI.Pictures
           _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
         }
       }
-
+      if (_autoShuffle)
+      {
+        Shuffle();
+      }
 
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
@@ -124,7 +127,7 @@ namespace MediaPortal.GUI.Pictures
         _loadVideoPlayback = true;
 
         g_Player.Stop();
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video, null, true);
+        g_Player.Play(slideFilePath, g_Player.MediaType.Video, null, true, 0, false, true);
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
@@ -366,6 +369,7 @@ namespace MediaPortal.GUI.Pictures
     private MusicDatabase mDB = null;
     private bool _autoShuffleMusic = false;
     public bool _showRecursive = false;
+    public bool _enableResumeMusic = true;
 
     #endregion
 
@@ -409,7 +413,9 @@ namespace MediaPortal.GUI.Pictures
               ShowPrevious();
             }
             if (SlideDirection == 0)
+            {
               GUIWindowManager.ShowPreviousWindow();
+            }
           }
           else
           {
@@ -422,7 +428,9 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
+          {
             Reset();
+          }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
 
@@ -798,6 +806,7 @@ namespace MediaPortal.GUI.Pictures
       {
         resumePausedMusic();
       }
+
       //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
@@ -1172,10 +1181,6 @@ namespace MediaPortal.GUI.Pictures
     {
       LoadSettings();
       _isBackgroundMusicPlaying = false;
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
       _slideDirection = 1;
       _isSlideShow = true;
     }
@@ -1185,10 +1190,6 @@ namespace MediaPortal.GUI.Pictures
       LoadSettings();
       _isBackgroundMusicPlaying = false;
       StartBackgroundMusic(path);
-      if (_autoShuffle)
-      {
-        Shuffle();
-      }
       _slideDirection = 1;
       _isSlideShow = true;
     }
@@ -1219,6 +1220,7 @@ namespace MediaPortal.GUI.Pictures
       _userZoomLevel = 1.0f;
       _lastSegmentIndex = -1;
       _showRecursive = false;
+      _enableResumeMusic = true;
 
       if (null != _backgroundSlide)
       {
@@ -2824,8 +2826,8 @@ namespace MediaPortal.GUI.Pictures
       Song song = new Song();
 
       // If we don't have a tag in the db, we use the filename without the extension as song.title
-      song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
-      mDB.GetSongByFileName(g_Player.CurrentFile, ref song);
+      if (!mDB.GetSongByFileName(g_Player.CurrentFile, ref song))
+        song.Title = Path.GetFileNameWithoutExtension(g_Player.CurrentFile);
 
       // Show Dialog
       dlg.Reset();

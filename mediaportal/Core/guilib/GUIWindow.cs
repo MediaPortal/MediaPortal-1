@@ -19,21 +19,15 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Player;
 using MediaPortal.ExtensionMethods;
-using System.Linq;
 
 namespace MediaPortal.GUI.Library
 {
@@ -62,6 +56,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public enum Window
     {
+// ReSharper disable InconsistentNaming
       WINDOW_INVALID = -1,
       WINDOW_HOME = 0,
       WINDOW_TV = 1,
@@ -200,15 +195,14 @@ namespace MediaPortal.GUI.Library
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
       WINDOW_SEARCH_RADIO = 8900 // gemx
-      
-
+// ReSharper restore InconsistentNaming
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
-      /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-      /// if window may not be jumped to directly via InputMapper,
-      /// add it to blacklist in InputMappingForm!!!
-      /// (windows with DIALOG in the enum name are blacklisted automatically)
+      // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
+      // if window may not be jumped to directly via InputMapper,
+      // add it to blacklist in InputMappingForm!!!
+      // (windows with DIALOG in the enum name are blacklisted automatically)
       
       
     }
@@ -272,7 +266,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
+    /// <param name="skinFile">filename of xml skin file which belongs to this window</param>
     public GUIWindow(string skinFile)
       : this()
     {
@@ -355,7 +349,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Move the control with the specified id to the end of the control list (will render last; in front of other controls).
     /// </summary>
-    /// <param name="dwId">ID of the control</param>
+    /// <param name="ctrl">ID of the control</param>
     public void SendToFront(ref GUIControl ctrl)
     {
       // Remove the control from the collection and add it back to the end of the collection.
@@ -373,7 +367,7 @@ namespace MediaPortal.GUI.Library
       {
         for (int x = 0; x < Children.Count; ++x)
         {
-          ((GUIControl)Children[x]).OnInit();
+          Children[x].OnInit();
         }
       }
       catch (Exception ex)
@@ -442,10 +436,10 @@ namespace MediaPortal.GUI.Library
     {
       for (int i = 0; i < controlList.Count; ++i)
       {
-        GUIControl control = (GUIControl)controlList[i];
-        int controlID;
+        GUIControl control = controlList[i];
         if (control.IsVisible)
         {
+          int controlID;
           if (control.InControl(x, y, out controlID))
           {
             return true;
@@ -463,26 +457,32 @@ namespace MediaPortal.GUI.Library
     /// Load the XML file for this window which 
     /// contains a definition of which controls the GUI has
     /// </summary>
-    /// <param name="_skinFileName">filename of the .xml file</param>
+    /// <param name="skinFileName">filename of the .xml file</param>
     /// <returns></returns>
-    public virtual bool Load(string _skinFileName)
+    public virtual bool Load(string skinFileName)
     {
       _isSkinLoaded = false;
-      if ((_skinFileName == null) || (_skinFileName == ""))
+      if (string.IsNullOrEmpty(skinFileName))
       {
         return false;
       }
+      _windowXmlFileName = skinFileName;
 
-      _windowXmlFileName = _skinFileName;
-
-      // if windows supports delayed loading then do nothing
+      // if windows supports delayed loading then do nothing else load the xml file now
       if (SupportsDelayedLoad)
       {
         return true;
       }
 
-      //else load xml file now
-      return LoadSkin();
+      // else load xml file now
+      LoadSkin();
+      if (!_windowAllocated)
+      {
+        AllocResources();
+    }
+
+      return true;
+
     }
 
     /// <summary>
@@ -535,11 +535,11 @@ namespace MediaPortal.GUI.Library
         {
           foreach (XmlNode nodeAnimation in nodeListAnimations)
           {
-            if (nodeAnimation.InnerText.ToLower() == "windowopen")
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowopen")
             {
               _showAnimation.Create(nodeAnimation);
             }
-            if (nodeAnimation.InnerText.ToLower() == "windowclose")
+            if (nodeAnimation.InnerText.ToLowerInvariant() == "windowclose")
             {
               _closeAnimation.Create(nodeAnimation);
             }
@@ -577,7 +577,9 @@ namespace MediaPortal.GUI.Library
         }
 
         // find any XAML complex/compound properties
-        foreach (XmlNode node in doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]"))
+        var xmlNodeList = doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]");
+        if (xmlNodeList != null)
+          foreach (XmlNode node in xmlNodeList)
         {
           string xml = node.OuterXml;
 
@@ -598,27 +600,26 @@ namespace MediaPortal.GUI.Library
         XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
         if (nodeOverlay != null)
         {
-          if (nodeOverlay.InnerText != null)
+          string allowed = nodeOverlay.InnerText.ToLowerInvariant();
+          switch (allowed)
           {
-            string allowed = nodeOverlay.InnerText.ToLower();
-            if (allowed == "yes" || allowed == "true")
-            {
+            case "true":
+            case "yes":
               _isOverlayAllowed = true;
-            }
-            else if (allowed == "no" || allowed == "false")
-            {
+              break;
+            case "false":
+            case "no":
               _isOverlayAllowed = false;
-            }
-            else
-            {
+              break;
+            default:
               _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
+              break;
             }
             if (!string.IsNullOrEmpty(allowed.Trim()))
             {
               _isOverlayAllowedOriginalCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
             }
           }
-        }
 
         IDictionary<string, string> defines = LoadDefines(doc);
 
@@ -626,10 +627,8 @@ namespace MediaPortal.GUI.Library
         XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
         if (nodeAutoHideTopbar != null)
         {
-          if (nodeAutoHideTopbar.InnerText != null)
-          {
             _autoHideTopbarType = AutoHideTopBar.UseDefault;
-            string allowed = nodeAutoHideTopbar.InnerText.ToLower();
+          string allowed = nodeAutoHideTopbar.InnerText.ToLowerInvariant();
             if (allowed == "yes" || allowed == "true")
             {
               _autoHideTopbarType = AutoHideTopBar.Yes;
@@ -639,30 +638,25 @@ namespace MediaPortal.GUI.Library
               _autoHideTopbarType = AutoHideTopBar.No;
             }
           }
-        }
 
         // Configure the Topbar disable setting
         XmlNode nodeDisableTopbar = doc.DocumentElement.SelectSingleNode("/window/disabletopbar");
         _disableTopBar = false;
         if (nodeDisableTopbar != null)
         {
-          if (nodeDisableTopbar.InnerText != null)
-          {
-            string allowed = nodeDisableTopbar.InnerText.ToLower();
+          string allowed = nodeDisableTopbar.InnerText.ToLowerInvariant();
             if (allowed == "yes" || allowed == "true")
             {
               _disableTopBar = true;
             }
           }
-        }
         _rememberLastFocusedControl = false;
         if (GUIGraphicsContext.AllowRememberLastFocusedItem)
         {
-          XmlNode nodeRememberLastFocusedControl =
-            doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
+          XmlNode nodeRememberLastFocusedControl = doc.DocumentElement.SelectSingleNode("/window/rememberLastFocusedControl");
           if (nodeRememberLastFocusedControl != null)
           {
-            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLower();
+            string rememberLastFocusedControlStr = nodeRememberLastFocusedControl.InnerText.ToLowerInvariant();
             if (rememberLastFocusedControlStr == "yes" || rememberLastFocusedControlStr == "true")
             {
               _rememberLastFocusedControl = true;
@@ -671,6 +665,8 @@ namespace MediaPortal.GUI.Library
         }
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/window/controls/*");
 
+        if (nodeList != null)
+        {
         foreach (XmlNode node in nodeList)
         {
           switch (node.Name)
@@ -705,6 +701,7 @@ namespace MediaPortal.GUI.Library
               break;
           }
         }
+        }
 
         // TODO: remove this when all XAML parser or will result in double initialization
         ((ISupportInitialize)this).EndInit();
@@ -733,7 +730,7 @@ namespace MediaPortal.GUI.Library
     /// This method will load a single control from the xml node
     /// </summary>
     /// <param name="node">XmlNode describing the control</param>
-    /// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
+    /// <param name="defines">on return this will contain an arraylist of all controls loaded</param>
     protected void LoadControl(XmlNode node, IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
@@ -793,7 +790,9 @@ namespace MediaPortal.GUI.Library
           return false;
         }
 
-        foreach (XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
+        var xmlNodeList = doc.DocumentElement.SelectNodes("/window/controls/control");
+        if (xmlNodeList != null)
+          foreach (XmlNode controlNode in xmlNodeList)
         {
           LoadControl(controlNode, defines);
         }
@@ -822,7 +821,9 @@ namespace MediaPortal.GUI.Library
         bool createAsProperty;
         bool evaluateNow;
 
-        foreach (XmlNode node in document.SelectNodes("/window/define"))
+        var xmlNodeList = document.SelectNodes("/window/define");
+        if (xmlNodeList != null)
+          foreach (XmlNode node in xmlNodeList)
         {
           string[] tokens = node.InnerText.Split(':');
 
@@ -834,7 +835,7 @@ namespace MediaPortal.GUI.Library
           // Determine if the define should be promoted to a property.
           createAsProperty = false;
 
-          if (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value))
+            if (node.Attributes != null && (node.Attributes["property"] != null && !string.IsNullOrEmpty(node.Attributes["property"].Value)))
           {
             try
             {
@@ -848,7 +849,7 @@ namespace MediaPortal.GUI.Library
 
           // Determine if the define should be evaluated now.
           evaluateNow = false;
-          if (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value))
+            if (node.Attributes != null && (node.Attributes["evaluateNow"] != null && !string.IsNullOrEmpty(node.Attributes["evaluateNow"].Value)))
           {
             try
             {
@@ -960,7 +961,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual void SetObject(object obj)
     {
-      this.instance = obj;
+      instance = obj;
     }
 
     private void UpdateOverlayAllowed()
@@ -1032,7 +1033,6 @@ namespace MediaPortal.GUI.Library
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0,
                                           _rememberLastFocusedControlId, 0, 0, null);
           OnMessage(msg);
-          msg = null;
         }
         int id = GetFocusControlId();
         if (id >= 0)
@@ -1050,7 +1050,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void OnPageDestroy(int new_windowId)
+    protected virtual void OnPageDestroy(int newWindowId)
     {
       if (_rememberLastFocusedControl)
       {
@@ -1063,8 +1063,8 @@ namespace MediaPortal.GUI.Library
 
       if (GUIGraphicsContext.IsFullScreenVideo == false)
       {
-        if (new_windowId != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-            new_windowId != (int)Window.WINDOW_TVFULLSCREEN)
+        if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
+            newWindowId != (int)Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
           if (HasAnimation(AnimationType.WindowClose) && !_skipAnimation) //&& !IsDialog)
@@ -1079,16 +1079,10 @@ namespace MediaPortal.GUI.Library
               {
                 break;
               }
-              if (GUIGraphicsContext.Vmr9Active)
+              if (GUIGraphicsContext.Vmr9Active && (VMR9Util.g_vmr9 != null && !VMR9Util.g_vmr9.Enabled))
               {
-                if (VMR9Util.g_vmr9 != null)
-                {
-                  if (!VMR9Util.g_vmr9.Enabled)
-                  {
                     break;
                   }
-                }
-              }
               GUIWindowManager.Process();
             }
             GUIWindowManager.IsSwitchingToNewWindow = switching;
@@ -1183,7 +1177,7 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              Log.Warn("GUIWindow: Did not AllocResources for Control # {0}", ((GUIControl)(Children[i])).GetID);
+              Log.Warn("GUIWindow: Did not AllocResources for Control # {0}", Children[i].GetID);
             }
           }
           catch (Exception ex2)
@@ -1249,18 +1243,18 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected virtual void OnWindowLoaded()
     {
-      this._windowLoaded = false;
+      _windowLoaded = false;
       _listPositions = new List<CPosition>();
 
-      for (int i = 0; i < Children.Count; ++i)
+      foreach (GUIControl child in Children)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = child;
         control.StorePosition();
         CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
         _listPositions.Add(pos);
       }
 
-      FieldInfo[] allFields = this.GetType().GetFields(BindingFlags.Instance
+      FieldInfo[] allFields = GetType().GetFields(BindingFlags.Instance
                                                        | BindingFlags.NonPublic
                                                        | BindingFlags.FlattenHierarchy
                                                        | BindingFlags.Public);
@@ -1285,7 +1279,7 @@ namespace MediaPortal.GUI.Library
                         atrb.ID,
                         ex.Message,
                         ex.StackTrace,
-                        this.ToString());
+                        ToString());
             }
           }
           else
@@ -1295,7 +1289,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      this._windowLoaded = true;
+      _windowLoaded = true;
     }
 
     /// <summary>
@@ -1326,9 +1320,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void UpdateVisibility()
     {
-      for (int x = 0; x < Children.Count; ++x)
+      foreach (GUIControl child in Children)
       {
-        GUIGroup grp = Children[x] as GUIGroup;
+        GUIGroup grp = child as GUIGroup;
         if (grp != null)
         {
           grp.UpdateVisibility();
@@ -1339,7 +1333,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          Children[x].UpdateVisibility();
+          child.UpdateVisibility();
         }
       }
     }
@@ -1350,9 +1344,9 @@ namespace MediaPortal.GUI.Library
     /// <returns>id of control or -1 if no control has the focus</returns>
     public virtual int GetFocusControlId()
     {
-      for (int x = 0; x < Children.Count; ++x)
+      foreach (GUIControl child in Children)
       {
-        GUIGroup grp = Children[x] as GUIGroup;
+        GUIGroup grp = child as GUIGroup;
         if (grp != null)
         {
           int iFocusedControlId = grp.GetFocusControlId();
@@ -1364,7 +1358,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          var guicontrol = Children[x];
+          var guicontrol = child;
           if (guicontrol.Focus)
           {
             return guicontrol.GetID;
@@ -1405,7 +1399,6 @@ namespace MediaPortal.GUI.Library
 
       Dispose();
       Load(_windowXmlFileName);
-      //LoadSkin();
       AllocResources();
     }
 
@@ -1419,8 +1412,6 @@ namespace MediaPortal.GUI.Library
       {
         DoRestoreSkin();
       }
-      //lock (this)
-      {
         try
         {
           if (!_isSkinLoaded)
@@ -1444,13 +1435,11 @@ namespace MediaPortal.GUI.Library
               float x = (GUIGraphicsContext.Width - fW) / 2f;
               float y = (GUIGraphicsContext.Height - fH) / 2f;
               font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT, -1);
-              strLine = null;
             }
-            font = null;
           }
           GUIGraphicsContext.SetScalingResolution(0, 0, false);
           //uint currentTime = (uint) (DXUtil.Timer(DirectXTimer.GetAbsoluteTime)*1000.0);
-          uint currentTime = (uint)System.Windows.Media.Animation.AnimationTimer.TickCount;
+        uint currentTime = (uint)AnimationTimer.TickCount;
           // render our window animation - returns false if it needs to stop rendering
           if (!RenderAnimation(currentTime))
           {
@@ -1459,19 +1448,20 @@ namespace MediaPortal.GUI.Library
 
           UpdateOverlayAllowed();
           _hasWindowVisibilityUpdated = true;
-          foreach (GUIControl control in Children)
+        // TODO must do a proper fix
+        for (int i = 0; i < Children.Count; i++)
           {
+          GUIControl control = Children[i];
             control.UpdateVisibility();
             control.DoRender(timePassed, currentTime);
           }
-
+        
           GUIWaitCursor.Render();
         }
         catch (Exception ex)
         {
           Log.Error("render exception:{0}", ex.ToString());
         }
-      }
       _hasRendered = true;
     }
 
@@ -1512,9 +1502,6 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      int id;
-      //lock (this)
-      {
         if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
         {
           OnShowContextMenu();
@@ -1530,9 +1517,10 @@ namespace MediaPortal.GUI.Library
         {
           GUIMessage msg;
           // mouse moved, check which control has the focus
+        int id;
           if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
           {
-            OnMouseMove((int)action.fAmount1, (int)action.fAmount2, action);
+          OnMouseMove((int) action.fAmount1, (int) action.fAmount2, action);
             id = GetFocusControlId();
             if (id >= 0)
             {
@@ -1543,7 +1531,7 @@ namespace MediaPortal.GUI.Library
           // mouse clicked if there is a hit pass the action
           if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
           {
-            OnMouseClick((int)action.fAmount1, (int)action.fAmount2, action);
+          OnMouseClick((int) action.fAmount1, (int) action.fAmount2, action);
             id = GetFocusControlId();
             if (id >= 0)
             {
@@ -1575,7 +1563,6 @@ namespace MediaPortal.GUI.Library
           // set focus to the default control then
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0, null);
           OnMessage(msg);
-          msg = null;
           id = GetFocusControlId();
           if (id >= 0)
           {
@@ -1587,7 +1574,6 @@ namespace MediaPortal.GUI.Library
           Log.Error("OnAction exception:{0}", ex.ToString());
         }
       }
-    }
 
     public virtual bool Focused
     {
@@ -1610,7 +1596,7 @@ namespace MediaPortal.GUI.Library
       }
 
       //lock (this)
-      _skipAnimation = (message.Param2 == 0 ? false: true);
+      _skipAnimation = (message.Param2 != 0);
       if (!_skipAnimation)
       {
         AnimationTrigger(message);
@@ -1669,7 +1655,10 @@ namespace MediaPortal.GUI.Library
               else
               {
                 LoadSkin();
-                //AllocResources(); // Mantis 0002389 - Double AllocResources
+                if (!_windowAllocated)
+                {
+                  AllocResources();
+              }
               }
 
               InitControls();
@@ -1693,13 +1682,10 @@ namespace MediaPortal.GUI.Library
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
 
-              if (message.Param1 != (int)Window.WINDOW_INVALID)
+              if (message.Param1 != (int) Window.WINDOW_INVALID && message.Param1 != GetID)
               {
-                if (message.Param1 != GetID)
-                {
                   _previousWindowId = message.Param1;
                 }
-              }
 
               int controlId = _defaultControlId;
               if (message.Param3 > 0)
@@ -1712,11 +1698,11 @@ namespace MediaPortal.GUI.Library
               OnMessage(msg);
 
               GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
-              Log.Debug("Window: {0} init", this.ToString());
+              Log.Debug("Window: {0} init", ToString());
 
               _hasRendered = false;
 
-              if (message.Object != null && message.Object.GetType() == typeof (string))
+              if (message.Object is string)
               {
                 _loadParameter = (string)message.Object;
               }
@@ -1744,12 +1730,14 @@ namespace MediaPortal.GUI.Library
               {
                 OnPageDestroy(message.Param1);
 
-                Log.Debug("Window: {0} deinit", this.ToString());
+                Log.Debug("Window: {0} deinit", ToString());
                 DeInitControls();
                 Dispose();
                 GUITextureManager.CleanupThumbs();
+#if DEBUG
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
+#endif
                 _shouldRestore = true;
                 _skipAnimation = false;
                 return true;
@@ -1771,8 +1759,6 @@ namespace MediaPortal.GUI.Library
                     GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID,
                                                              cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
                     cntlFocused.OnMessage(msgLostFocus);
-                    msgLostFocus = null;
-                    cntlFocused = null;
                   }
                   GUIControl cntTarget = GetControl(message.TargetControlId);
                   if (cntTarget != null)
@@ -1783,7 +1769,6 @@ namespace MediaPortal.GUI.Library
                     //UpdateVisibility();   //Bav: reverting change, because it is creating a nonfocused status, when a focus is switching from one control to the other
                     cntTarget.OnMessage(message);
                   }
-                  cntTarget = null;
                 }
                 id = GetFocusControlId();
                 if (id >= 0)
@@ -1817,7 +1802,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int i = Children.Count - 1; i >= 0; i--)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = Children[i];
         bool bFocus;
         int controlID;
         if (control.HitTest(cx, cy, out controlID, out bFocus))
@@ -1831,20 +1816,15 @@ namespace MediaPortal.GUI.Library
           control.OnAction(action);
           return;
         }
-        else
-        {
-          // no control selected
-          //LooseFocus();
           control.Focus = false;
         }
       }
-    }
 
     protected virtual void OnMouseClick(int posX, int posY, Action action)
     {
       for (int i = Children.Count - 1; i >= 0; i--)
       {
-        GUIControl control = (GUIControl)Children[i];
+        GUIControl control = Children[i];
         bool bFocus;
         int controlID;
         if (control.HitTest(posX, posY, out controlID, out bFocus))
@@ -1862,7 +1842,6 @@ namespace MediaPortal.GUI.Library
     private void TemporaryAnimationTrigger()
     {
       //BAV: Testing
-      return;
       //if (_children == null)
       //  return;
 
@@ -1885,7 +1864,7 @@ namespace MediaPortal.GUI.Library
       {
         if (element is GUIAnimation)
         {
-          ((GUIAnimation)element).OnMessage(message);
+          element.OnMessage(message);
         }
       }
     }
@@ -1894,7 +1873,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIControlCollection controlList
     {
-      get { return this.Children; }
+      get { return Children; }
     }
 
     public virtual bool IsDialog
@@ -1944,7 +1923,7 @@ namespace MediaPortal.GUI.Library
       {
         return true;
       }
-      else if (_closeAnimation.AnimationType == AnimationType.WindowClose)
+      if (_closeAnimation.AnimationType == AnimationType.WindowClose)
       {
         return true;
       }
@@ -2061,27 +2040,13 @@ namespace MediaPortal.GUI.Library
 
     public GUIControlCollection Children
     {
-      get
-      {
-        if (_children == null)
-        {
-          _children = new GUIControlCollection();
+      get { return _children ?? (_children = new GUIControlCollection()); }
         }
-        return _children;
-      }
-    }
 
     public StoryboardCollection Storyboards
     {
-      get
-      {
-        if (_storyboards == null)
-        {
-          _storyboards = new StoryboardCollection();
+      get { return _storyboards ?? (_storyboards = new StoryboardCollection()); }
         }
-        return _storyboards;
-      }
-    }
 
     public bool WindowLoaded
     {

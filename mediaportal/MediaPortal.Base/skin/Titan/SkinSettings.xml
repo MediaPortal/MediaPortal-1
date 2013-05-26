@@ -34,5 +34,8 @@
     <entry name="#skin.basichome.moviePlugin">MyVideo</entry>
     <entry name="#skin.mymusic.info">None</entry>
     <entry name="#skin.tvguide.rows"> 7</entry>
+		<entry name="#skin.layout.movingpictures.thumbview">default</entry>
+		<entry name="#skin.layout.movingpictures.details">default</entry>
+		<entry name="#skin.layout.tvseries.widebanner">default</entry>
   </section>
 </profile>

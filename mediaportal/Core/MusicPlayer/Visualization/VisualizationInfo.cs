@@ -177,11 +177,11 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      string pluginClisd = clsid.ToLower();
+      string pluginClisd = clsid.ToLowerInvariant();
 
       for (int i = 0; i < BlackList.Length; i++)
       {
-        string curClsid = BlackList[i].ToLower();
+        string curClsid = BlackList[i].ToLowerInvariant();
 
         if (pluginClisd == curClsid)
         {

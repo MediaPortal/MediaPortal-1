@@ -95,7 +95,7 @@ namespace MediaPortal.Util
         foreach (Match cover in covers)
         {
           // Get cover - using mid quality cover
-          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
+          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLowerInvariant().Contains("mid.jpg"))
           //{
           _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
           //}
@@ -117,7 +117,7 @@ namespace MediaPortal.Util
         foreach (Match cover in covers)
         {
           // Get cover - using mid quality cover
-          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("mid.jpg"))
+          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLowerInvariant().Contains("mid.jpg"))
           //{
           _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
           //}
@@ -161,7 +161,7 @@ namespace MediaPortal.Util
         foreach (Match actorImage in actorImages)
         {
           // Get cover - using mid quality cover
-          if (HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value).ToLower().Contains("original"))
+          if (HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value).ToLowerInvariant().Contains("original"))
           {
             actorThumbs.Add(HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value));
           }

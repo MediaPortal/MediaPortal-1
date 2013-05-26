@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.Video
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
     private bool _settingsLoaded;
+    private bool _usemoviecodects = false;
 
     public GUIVideoFullscreen()
     {
@@ -133,6 +134,7 @@ namespace MediaPortal.GUI.Video
       {
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+        _usemoviecodects = xmlreader.GetValueAsBool("movieplayer", "usemoviecodects", false);
       }
 
       SettingsLoaded = false;
@@ -161,10 +163,22 @@ namespace MediaPortal.GUI.Video
         key1 = "mytv";
         key2 = "mytv";
       }
+      if (_usemoviecodects && g_Player.CurrentFile.EndsWith(".ts"))
+      {
+        key1 = "movieplayer";
+        key2 = "movies";
+      }
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
+        bool BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
+
+        if (BDInternalMenu && g_Player.CurrentFile.EndsWith(".bdmv"))
+        {
+          key1 = "bdplayerAR";
+          key2 = "bdplayer";
+        }
 
         string aspectRatioText = xmlreader.GetValueAsString(key1, "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(aspectRatioText);

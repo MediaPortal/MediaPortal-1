@@ -207,7 +207,7 @@
     <id>1</id>
     <width>150</width>
     <label>#name</label>
-    <font>font13</font>
+    <font>font12</font>
 		<textcolor>ffffffff</textcolor>
   </control> -->
 	  
@@ -227,7 +227,7 @@
       <id>1</id>
       <width>150</width>
       <label>#action</label>
-      <font>font13</font>
+      <font>font12</font>
       <textcolor>ffffffff</textcolor>
 		</control> -->
   </control>

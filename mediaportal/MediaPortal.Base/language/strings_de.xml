@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -45,6 +45,7 @@
     <String id="44">Dez</String>
     <String id="50" prefix="Meine ">DVDs</String>
     <String id="51">Disc abspielen</String>
+    <String id="59">Hinweis: Diese Einstellungen sind nicht verfügbar - kein TV lugin installiert.</String>
     <String id="60">Warte auf den Start des TV-Service...</String>
     <String id="61">Warte {0} Sekunde(n) vor dem Start...</String>
     <String id="62">Initialisiere DirectX...</String>
@@ -994,6 +995,7 @@
     <String id="1196">Untertitel einschalten</String>
     <String id="1197">DXVA deaktivieren</String>
     <String id="1198">DVD-Navigator</String>
+    <String id="1199">Internen Blu-ray Player aktivieren</String>
     <String id="1200">Einrichtungs-Assistent</String>
     <String id="1201">Video von Anfang an wiedergeben</String>
     <String id="1202">Sortieren: Auto</String>
@@ -1088,6 +1090,7 @@
     <String id="1317">Lade interne Skripts...</String>
     <String id="1318">Untertitel speichern</String>
     <String id="1319">Geänderte Untertiteldatei speichern?</String>
+    <String id="1320">{0} als {1} &#10;</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
     <String id="1442">Textlauf horizontal</String>
@@ -1520,10 +1523,16 @@
     <String id="6041">Vorgestern</String>
     <String id="6042">Sprungschrittgröße in Sekunden eingeben</String>
     <String id="6050">Diese Woche</String>
+    <String id="6055">Früher in dieser Woche</String>
+    <String id="6056">Letzte Woche</String>
     <String id="6060">Dieser Monat</String>
+    <String id="6062">Früher in diesem Monat</String>
+    <String id="6065">Letzter Monat</String>
     <String id="6070">Dieses Jahr</String>
+    <String id="6075">Früher in diesem Jahr</String>
     <String id="6080">Letztes Jahr</String>
     <String id="6090">Älter</String>
+    <String id="6095">Zukünftig</String>
     <String id="8000" prefix="Meine ">E-Mails</String>
     <String id="8001">E-Mails abrufen</String>
     <String id="8002">Autocheck aus</String>
@@ -1929,9 +1938,29 @@
     <String id="100763" prefix="Meine ">Radioaufnahmen</String>
     <String id="100800" prefix="Meine ">Erweiterungen</String>
     <String id="101000">Tastatur</String>
+    <String id="101001">Datei-Erweiterungen</String>
     <String id="101002">Standard Bildschirm-Tastatur</String>
     <String id="101003">Web Bildschirm-Tastatur</String>
     <String id="101004">SMS Bildschirm-Tastatur</String>
+    <String id="101005">GUI - Vorschaubilder</String>
+    <String id="101006">GUI - OSD</String>
+    <String id="101007">Volumen</String>
+    <String id="101008">Allgemein - Dynamische Wiederholrate</String>
+    <String id="101010">Videos - Datenbank</String>
+    <String id="101011">Musik - Datenbank</String>
+    <String id="101012">Bilder - Datenbank</String>
+    <String id="101013">Musik - Aktueller Titel</String>
+    <String id="101014">Playliste</String>
+    <String id="101015">Bilder - Diaschau</String>
+    <String id="101016">Allgemein</String>
+    <String id="101017">Allgemein - Resume</String>
+    <String id="101018">Allgemein - MediaPortal</String>
+    <String id="101019">Allgemein - Startup</String>
+    <String id="101020">Allgemein - Bildschirmschoner</String>
+    <String id="101021">GUI</String>
+    <String id="101022">GUI - Allgemein</String>
+    <String id="101023">Videos - Anderes</String>
+    <String id="101024">Blu-ray</String>
     <String id="102000">Auswahldialog</String>
     <String id="102001" prefix="Meine ">Musik/Info</String>
     <String id="102002">Dialog Ok</String>
@@ -2169,12 +2198,7 @@
     <String id="300093">MP nach Absturz neu starten</String>
     <String id="300094">Neustart-Verzögerung in Sekunden</String>
     <String id="300095">Bildschirm ausschalten (bei Dunkeltastung des Bildschirms)</String>
-    <String id="300096">Bildschirm einschalten (nach Standby)</String>
-    <String id="300097">S3-Standby zulassen (auch wenn Wake-Up-Geräte vorhanden)</String>
-    <String id="300098">Workaround für MediaPortal-Freeze nach Wiederaufnahme</String>
-    <String id="300099">Neustart MediaPortal nach Wiederaufnahme</String>
     <String id="300100">Letztes aktives Modul nach Wake-Up anzeigen</String>
-    <String id="300101">MP-Startbildschirm mit Screen Selector auswählen</String>
     <String id="300102">Startverzögerung</String>
     <String id="300103">Bei Start von MediaPortal</String>
     <String id="300104">Bei Wiederaufnahme von MediaPortal</String>
@@ -2196,7 +2220,6 @@
     <String id="300120">Skin</String>
     <String id="300121">On-Screen-Display</String>
     <String id="300122">Letzte fokussierte Elemente merken</String>
-    <String id="300123">Fenstergröße automatisch an Skin-Abmessungen anpassen</String>
     <String id="300124">Datei-Erweiterungen ausblenden (.mp3, .avi...)</String>
     <String id="300125">Datei-Existenz-Cache aktivieren</String>
     <String id="300126">Sound-Effekte des Skins aktivieren</String>
@@ -2228,10 +2251,10 @@
     <String id="300152">Bilder</String>
     <String id="300153">Nur kleine Vorschaubilder erstellen</String>
     <String id="300154">Bilder-Cache leeren</String>
-    <String id="300155">TV/Videos</String>
+    <String id="300155">Videos</String>
     <String id="300156">Vorschaubilder automatisch erstellen</String>
     <String id="300157">Vorschaubild im Aufnahme-Ordner speichern</String>
-    <String id="300158">TV/Videos-Vorschaubilder löschen</String>
+    <String id="300158">Video-Vorschaubilder löschen</String>
     <String id="300159">Aufteilung Vorschaubild</String>
     <String id="300160">Reihen</String>
     <String id="300161">Datenbank</String>
@@ -2300,5 +2323,10 @@
     <String id="300224">Video-Vorschaubilder global deaktivieren</String>
     <String id="300225">"Sortier-Titel" verwenden</String>
     <String id="300226">Nur internen nfo-Scraper verwenden</String>
+    <String id="300227">Veraltete Vorschaubilder löschen</String>
+    <String id="300228">Stoppen von LiveTV bestätigen</String>
+    <String id="300229">In Tray minimieren bei Fokuswechsel</String>
+    <String id="300230">Wiedergabe stoppen bei Entfernen eines Audio-Renderers</String>
+    <String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
   </Section>
 </Language>

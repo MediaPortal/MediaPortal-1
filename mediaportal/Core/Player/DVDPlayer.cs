@@ -512,7 +512,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
-        aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLower();
+        aspectRatioMode = xmlreader.GetValueAsString("dvdplayer", "armode", "").ToLowerInvariant();
         if (aspectRatioMode == "crop")
         {
           arMode = AspectRatioMode.Crop;
@@ -531,7 +531,7 @@ namespace MediaPortal.Player
           arMode = AspectRatioMode.StretchedAsPrimary;
         }
         useAC3Filter = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
-        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLower();
+        displayMode = xmlreader.GetValueAsString("dvdplayer", "displaymode", "").ToLowerInvariant();
         if (displayMode == "default")
         {
           _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;

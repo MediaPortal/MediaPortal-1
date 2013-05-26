@@ -103,8 +103,8 @@ namespace MediaPortal.Video.Database
     void DeleteMovieStopTime(int iFileId);
     int GetMovieStopTime(int iFileId);
     void SetMovieStopTime(int iFileId, int stoptime);
-    int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData);
-    void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData);
+    int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData, int bdtitle);
+    void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData, int bdtitle);
     int GetVideoDuration(int iFileId);
     int GetMovieDuration(int iMovieId);
     void SetVideoDuration(int iFileId, int duration);
@@ -121,6 +121,7 @@ namespace MediaPortal.Video.Database
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
     void GetMovies(ref ArrayList movies);
     int GetMovieId(string strFilenameAndPath);
+    int GetTitleBDId(int iFileId, out byte[] resumeData);
     bool HasSubtitle(string strFilenameAndPath);
     void SetThumbURL(int lMovieId, string thumbURL);
     

@@ -36,9 +36,6 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_TIME  86400000L
-#define DRIFT_RATE 0.5f
-
 extern void LogDebug(const char *fmt, ...) ;
 extern DWORD m_tGTStartTime;
 
@@ -203,9 +200,17 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
   m_bInFillBuffer = false;
-  m_bPinNoAddPMT = false;
   m_bPinNoNewSegFlush = false;
+  m_bPinNoAddPMT = false;
   m_bAddPMT = true;
+  if (m_pTsReaderFilter->m_bForceFFDShowSyncFix)
+  {
+    m_pTsReaderFilter->m_bFastSyncFFDShow = true;
+  }
+  else
+  {
+    m_pTsReaderFilter->m_bFastSyncFFDShow = false;
+  }
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (!SUCCEEDED(hr)) return E_FAIL;
 
@@ -226,9 +231,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     LogDebug("vidPin:CompleteConnect() ok, filter: %s", szName);
     
     m_bConnected=true;
-    
-    m_pTsReaderFilter->m_bFastSyncFFDShow = false;
-    
+        
     CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
     m_pTsReaderFilter->m_videoDecoderCLSID = ref;
     if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO)
@@ -245,7 +248,7 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
     {
       m_bPinNoNewSegFlush = true;
       //LogDebug("vidPin:CompleteConnect() MS DTV-DVD Video Decoder connected, disable NewSegFlush");
-    }
+    }    
   }
   else
   {
@@ -256,7 +259,6 @@ HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 
   if (m_pTsReaderFilter->IsTimeShifting())
   {
-    //m_rtDuration=CRefTime(MAX_TIME);
     REFERENCE_TIME refTime;
     m_pTsReaderFilter->GetDuration(&refTime);
     m_rtDuration=CRefTime(refTime);
@@ -440,13 +442,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             
       if(m_bDownstreamFlush)
       {
-        if( !m_bPinNoNewSegFlush ) //MS DTV video decoder can hang if we flush at the wrong time...
-        {
-          //Downstream flush
-          //LogDebug("vidPin : Downstream flush") ;
-          DeliverBeginFlush();
-          DeliverEndFlush();
-        }
+        //Downstream flush
+        LogDebug("vidPin : Downstream flush") ;
+        DeliverBeginFlush();
+        DeliverEndFlush();
         m_bDownstreamFlush=false;
       }
       
@@ -507,7 +506,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
                                                                       
           if (m_dRateSeeking == 1.0)
           {
-            if ((fTime < 0.3) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10))
+            if ((fTime < 0.3) && (m_pTsReaderFilter->State() == State_Running) && (m_sampleCount > 10) && !ForcePresent)
             {              
               if (!demux.m_bVideoSampleLate) 
               {
@@ -527,7 +526,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //Discard late samples at start of play,
             //and samples outside a sensible timing window during play 
             //(helps with signal corruption recovery)
-            if ((fTime > (ForcePresent ? -0.5 : -0.3)) && (fTime < (stallPoint + 1.0)))
+            if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (stallPoint + 1.0)))
             {
               //if ((fTime > stallPoint) && (m_pTsReaderFilter->State() == State_Running))
               if ((fTime > stallPoint) && (m_sampleCount > 10))
@@ -757,7 +756,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
     DeliverBeginFlush();
     DeliverEndFlush();
   }
-  
+
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay( );
@@ -789,15 +788,25 @@ HRESULT CVideoPin::ChangeStop()
 }
 HRESULT CVideoPin::ChangeRate()
 {
+  CDeMultiplexer& demux = m_pTsReaderFilter->GetDemultiplexer();
+
   if( m_dRateSeeking <= 0 )
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }
-  if( m_dRateSeeking > 2.0 && (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO 
-                                || m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_LAVVIDEO))
+  
+  if( m_dRateSeeking > 4.0 && 
+     ((demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_H264) || 
+      (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG4)) )
   {
-    //FFDShow video decoder doesn't handle rate > 2.0 properly
+    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+    return E_FAIL;
+  }
+  
+  if( m_dRateSeeking > 2.0 && (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO))
+  {
+    //Some video decoders don't handle higher rates properly
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }

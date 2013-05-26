@@ -91,10 +91,10 @@ namespace MediaPortal.GUI.Music
     [SkinControl(21)] protected GUIButtonControl btnSave = null;
     [SkinControl(22)] protected GUIButtonControl btnClear = null;
     [SkinControl(26)] protected GUIButtonControl btnNowPlaying = null;
-    [SkinControl(27)] protected GUIToggleButtonControl btnScrobble = null;
+    [SkinControl(27)] protected GUICheckButton btnScrobble = null;
     [SkinControl(28)] protected GUIButtonControl btnScrobbleMode = null;
     [SkinControl(29)] protected GUIButtonControl btnScrobbleUser = null;
-    [SkinControl(30)] protected GUIToggleButtonControl btnRepeatPlaylist = null;
+    [SkinControl(30)] protected GUICheckButton btnRepeatPlaylist = null;
 
 
     public GUIMusicPlayList()
@@ -572,29 +572,17 @@ namespace MediaPortal.GUI.Music
           if (facadeLayout.Count > 0)
           {
             btnClear.Disabled = false;
-            //            btnPlay.Disabled = false;
             btnSave.Disabled = false;
-
-            if (ScrobblerOn)
-            {
-              btnScrobble.Selected = true;
-            }
-            else
-            {
-              btnScrobble.Selected = false;
-            }
           }
           else
           {
             btnClear.Disabled = true;
-            //            btnPlay.Disabled = true;
             btnSave.Disabled = true;
           }
         }
         else
         {
           btnClear.Disabled = true;
-          //          btnPlay.Disabled = true;
           btnSave.Disabled = true;
         }
       }

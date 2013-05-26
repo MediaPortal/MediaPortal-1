@@ -159,7 +159,7 @@ namespace Mediaportal.TV.TvPlugin
     [SkinControl(7)]
     protected GUIButtonControl btnChannel = null;
     [SkinControl(8)]
-    protected GUIToggleButtonControl btnTvOnOff = null;
+    protected GUICheckButton btnTvOnOff = null;
     [SkinControl(13)]
     protected GUIButtonControl btnTeletext = null;
     [SkinControl(24)]
@@ -322,6 +322,29 @@ namespace Mediaportal.TV.TvPlugin
 
       // replace g_player's ShowFullScreenWindowTV
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
+
+      // Delete tv thumbs from local thumbs folder and file existence cache
+      Log.Debug("TVHome.OnAdded: Delete thumb files in {0}", Thumbs.TVRecorded);
+      try
+      {
+        string[] strFiles = Directory.GetFiles(Thumbs.TVRecorded, @"*" + MediaPortal.Util.Utils.GetThumbExtension());
+        foreach (string strFile in strFiles)
+        {
+          try
+          {
+            File.Delete(strFile);
+            Utils.DoInsertNonExistingFileIntoCache(strFile);
+          }
+          catch (Exception delex)
+          {
+            Log.Error("TVHome.OnAdded: Cannot delete file {0} - {1}", strFile, delex.Message);
+          }
+        }
+      }
+      catch (Exception direx)
+      {
+        Log.Error("TVHome.OnAdded: Cannot get files from directory {0} - {1}", Thumbs.TVRecorded, direx.Message);
+      }
 
       try
       {
@@ -3666,7 +3689,8 @@ namespace Mediaportal.TV.TvPlugin
         }
       }
 
-      if (!g_Player.Play(timeshiftFileName, mediaType))
+      // Force use TsReader
+      if (!g_Player.Play(timeshiftFileName, mediaType, null, false))
       {
         StopPlayback();
       }

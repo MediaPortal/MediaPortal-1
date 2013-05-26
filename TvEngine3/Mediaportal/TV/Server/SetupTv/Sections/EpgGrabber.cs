@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -70,17 +70,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       try
       {
         mpListView2.Items.Clear();
-        Languages languages = new Languages();
-        List<String> codes = languages.GetLanguageCodes();
-        List<String> list = languages.GetLanguages();
+        List<KeyValuePair<String, String>> languages = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
 
         Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSetting(languagesSettingsKey);        
-
-        for (int j = 0; j < list.Count; j++)
+        foreach (KeyValuePair<String, String> language in languages)
         {
-          ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+          ListViewItem item = new ListViewItem(new string[] { language.Value, language.Key });
           mpListView2.Items.Add(item);
-          item.Tag = codes[j];
+          item.Tag = language.Key;
           item.Checked = setting.Value.IndexOf((string)item.Tag) >= 0;
         }
         mpListView2.Sort();

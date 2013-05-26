@@ -51,7 +51,7 @@ namespace MediaPortal.Music.Database
 
     #region public method
 
-    public bool GetArtists(string strArtist, out  List<AllMusicArtistMatch> artists)
+    public bool GetArtists(string strArtist, out List<AllMusicArtistMatch> artists)
     {
       Log.Debug("AllmusicScraper.  Searching-Artist: {0}", strArtist);
       artists = new List<AllMusicArtistMatch>();
@@ -65,34 +65,49 @@ namespace MediaPortal.Music.Database
       }
 
       var matches = ArtistURLRegEx.Matches(artistSearchHtml);
-      var strCleanArtist = EncodeString(CleanArtist(strArtist));
+      var strCleanArtist = CleanString(strArtist);
 
       //TODO needs image url in regexp
       artists.AddRange(from Match m in matches
-                       let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString()))
+                       let strCleanMatch = CleanString(m.Groups["artist"].ToString())
                        let strYearsActive = m.Groups["years"].ToString().Trim()
                        let strArtistUrl = m.Groups["artistURL"].ToString()
                        let strGenre = m.Groups["genres"].ToString()
                        where strCleanArtist == strCleanMatch
-                       where ! string.IsNullOrEmpty(strYearsActive)
-                       select new AllMusicArtistMatch { Artist = strArtist, YearsActive = strYearsActive, ArtistUrl = strArtistUrl, Genre = strGenre});
+                       where !string.IsNullOrEmpty(strYearsActive)
+                       select
+                         new AllMusicArtistMatch
+                           {
+                             Artist = strArtist,
+                             YearsActive = strYearsActive,
+                             ArtistUrl = strArtistUrl,
+                             Genre = strGenre
+                           });
 
-      if(artists.Count == 0)
+      if (artists.Count == 0)
       {
         // still possible that search returned values but none match our artist
         // try again but this time do not include years active
-        artists.AddRange(from Match m in matches 
-                         let strCleanMatch = EncodeString(CleanArtist(m.Groups["artist"].ToString())) 
-                         let strYearsActive = m.Groups["years"].ToString().Trim() 
-                         let strArtistUrl = m.Groups["artistURL"].ToString() 
+        artists.AddRange(from Match m in matches
+                         let strCleanMatch = CleanString(m.Groups["artist"].ToString())
+                         let strYearsActive = m.Groups["years"].ToString().Trim()
+                         let strArtistUrl = m.Groups["artistURL"].ToString()
                          let strGenre = m.Groups["genres"].ToString()
-                         where strCleanArtist == strCleanMatch 
-                         select new AllMusicArtistMatch {Artist = strArtist, YearsActive = strYearsActive, ArtistUrl = strArtistUrl, Genre = strGenre });
+                         where strCleanArtist == strCleanMatch
+                         select
+                           new AllMusicArtistMatch
+                             {
+                               Artist = strArtist,
+                               YearsActive = strYearsActive,
+                               ArtistUrl = strArtistUrl,
+                               Genre = strGenre
+                             });
       }
 
-      Log.Debug("AllmusicScraper.  Searched-Artist: {0} Found: {1} matches", strArtist, artists.Count.ToString(CultureInfo.InvariantCulture));
+      Log.Debug("AllmusicScraper.  Searched-Artist: {0} Found: {1} matches", strArtist,
+                artists.Count.ToString(CultureInfo.InvariantCulture));
 
-        return artists.Count != 0;
+      return artists.Count != 0;
     }
 
     public bool GetArtistHtml(AllMusicArtistMatch allMusicArtistMatch, out string strHTML)
@@ -112,8 +127,13 @@ namespace MediaPortal.Music.Database
         strURL = strArtistUrl + "/overview/compilations#discography";
         if (!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
         {
-          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found", strAlbum);
-          return false;
+          Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found in compilaitions.  Checking singles & EPs", strAlbum);
+          strURL = strArtistUrl + "/overview/singles#discography";
+          if (!GetAlbumURL(strURL, strAlbum, out strAlbumURL))
+          {
+            Log.Debug("AllmusicScraper.  Searching-Album: {0} - not found", strAlbum);
+            return false;
+          }
         }
       }
 
@@ -133,52 +153,17 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      strAlbum = strAlbum.ToLower();
+      var strCleanAlbum = CleanString(strAlbum);
 
-      // build up a list of possible alternatives
-
-      // attempt to remove stack endings (eg. disc2, (CD2) etc)
-      var strStripStackEnding = strAlbum;
-      Util.Utils.RemoveStackEndings(ref strStripStackEnding);
-      // try and remove any thing else in brackets at end of album name
-      // eg. (remastered), (special edition), (vinyl) etc
-      var strAlbumRemoveBrackets = BracketRegEx.Replace(strAlbum, "$1").Trim();
-      // try and repalce all punctuation to try and get a match
-      // sometimes you have three dots in one format but two in another
-      var strRemovePunctuation = PunctuationRegex.Replace(strAlbum, "").Trim();
-      // replace & and + with "and"
-      var strAndAlbum = strAlbum.Replace("&", "and").Replace("+", "and");
-
-      var albumFound = false;
       for (var m = AlbumURLRegEx.Match(discHTML); m.Success; m = m.NextMatch())
       {
-        var strFoundValue = m.Groups["albumName"].ToString().ToLower();
-        strFoundValue = System.Web.HttpUtility.HtmlDecode(strFoundValue);
-        var strFoundPunctuation = PunctuationRegex.Replace(strFoundValue, "");
-        var strFoundAnd = strFoundValue.Replace("&", "and").Replace("+", "and");
+        var strFoundValue = CleanString(m.Groups["albumName"].ToString());
 
-        if (strFoundValue == strAlbum.ToLower())
+        if (strFoundValue != strCleanAlbum)
         {
-          albumFound = true;
+          continue;
         }
-        else if (strFoundValue == strStripStackEnding.ToLower())
-        {
-          albumFound = true;
-        }
-        else if (strFoundValue == strAlbumRemoveBrackets.ToLower())
-        {
-          albumFound = true;
-        }
-        else if (strFoundPunctuation == strRemovePunctuation.ToLower())
-        {
-          albumFound = true;
-        }
-        else if (strAndAlbum == strFoundAnd)
-        {
-          albumFound = true;
-        }
-
-        if (!albumFound) continue;
+        
         strAlbumURL = m.Groups["albumURL"].ToString();
         break;
       }
@@ -202,25 +187,40 @@ namespace MediaPortal.Music.Database
       {
         sb.Append(t);
       }
-      var strClean = Uri.EscapeDataString(sb.ToString().Normalize(NormalizationForm.FormC)).ToLower();
+      var strClean = Uri.EscapeDataString(sb.ToString().Normalize(NormalizationForm.FormC)).ToLower(CultureInfo.CurrentCulture);
 
       return strClean;
     }
 
     /// <summary>
-    /// Improve changes of matching artist by replacing & and + with "and"
-    /// on both side of comparison
-    /// Also remove "The"
+    /// Improve changes of matching artists and albums by replacing & and + with "and" on both side of comparison
+    /// Also remove "The" and normalise output to remove accents and finally html decode
     /// </summary>
-    /// <param name="strArtist">artist we are searching for</param>
+    /// <param name="strUncleanString">artist we are searching for</param>
     /// <returns>Cleaned artist string</returns>
-    private static string CleanArtist(string strArtist)
+    private static string CleanString(string strUncleanString)
     {
-      var strCleanArtist = strArtist.ToLower();
-      strCleanArtist = strCleanArtist.Replace("&", "and");
-      strCleanArtist = strCleanArtist.Replace("+", "and");
-      strCleanArtist = Regex.Replace(strCleanArtist, "^the ", "", RegexOptions.IgnoreCase);
-      return strCleanArtist;
+      var strDecodedString = System.Web.HttpUtility.HtmlDecode(strUncleanString);
+
+      var stFormD = strDecodedString.Normalize(NormalizationForm.FormD);
+      var sb = new StringBuilder();
+
+      foreach (var t in from t in stFormD let uc = CharUnicodeInfo.GetUnicodeCategory(t) where uc != UnicodeCategory.NonSpacingMark select t)
+      {
+        sb.Append(t);
+      }
+
+      var strCleanString = sb.ToString().Normalize(NormalizationForm.FormC).ToLower(CultureInfo.CurrentCulture);
+      strCleanString = strCleanString.Replace("&", "and");
+      strCleanString = strCleanString.Replace("+", "and");
+      strCleanString = Regex.Replace(strCleanString, "^the ", "", RegexOptions.IgnoreCase);
+      // attempt to remove stack endings (eg. disc2, (CD2) etc)
+      Util.Utils.RemoveStackEndings(ref strCleanString);
+      // try and remove any thing else in brackets at end of string eg. (remastered), (special edition), (vinyl) etc
+      strCleanString = BracketRegEx.Replace(strCleanString, "$1");
+      // try and repalce all punctuation to try and get a match; sometimes you have three dots in one format but two in another
+      strCleanString = PunctuationRegex.Replace(strCleanString, "");
+      return strCleanString.Trim();
     }
 
     #endregion

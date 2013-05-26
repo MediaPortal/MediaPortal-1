@@ -27,6 +27,12 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+//using Gentle.Framework;
+//using TvDatabase;
+//using TvControl;
+//using TvLibrary.Log;
+using TvThumbnails; // TODO Resolve
+//using SetupTv.Dialogs;
 using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupTV.Dialogs;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
@@ -238,6 +244,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       enableDiskQuotaControls();
 
       LoadComboBoxDrive();
+
+      checkBoxTVThumbs.Checked = (layer.GetSetting("TVThumbnailsEnabled", "yes").Value == "yes");
+      checkBoxShareThumb.Checked = (layer.GetSetting("TVThumbnailsLeaveShareThumb", "no").Value == "yes");
+      numericUpDownThumbColumns.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsColumns", "1").Value);
+      numericUpDownThumbRows.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsRows", "1").Value);
+      trackBarQuality.Value = Convert.ToInt32(layer.GetSetting("TVThumbnailsQuality", "4").Value);
     }
 
     private static decimal ValueSanityCheck(int value, int min, int max)
@@ -280,6 +292,28 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.SettingServiceAgent.SaveValue("recordMaxFreeCardsToTry", (int) numericUpDownMaxFreeCardsToTry.Value);      
 
       UpdateDriveInfo(true);
+
+      setting = layer.GetSetting("TVThumbnailsEnabled", "yes");
+      if (setting.Value != (checkBoxTVThumbs.Checked ? "yes" : "no"))
+        _needRestart = checkBoxTVThumbs.Checked;
+      setting.Value = checkBoxTVThumbs.Checked ? "yes" : "no";
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsLeaveShareThumb", "yes");
+      setting.Value = checkBoxShareThumb.Checked ? "yes" : "no";
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsColumns", "1");
+      setting.Value = numericUpDownThumbColumns.Value.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsRows", "1");
+      setting.Value = numericUpDownThumbRows.Value.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("TVThumbnailsQuality", "4");
+      setting.Value = trackBarQuality.Value.ToString();
+      setting.Persist();
     }
 
     #endregion
@@ -405,7 +439,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       MatroskaTagHandler.OnTagLookupCompleted -= OnLookupCompleted;
 
-      SaveSettings();
       if (_needRestart)
       {
         if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
@@ -492,6 +525,87 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     {
       this.LogDebug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
       _needRestart = true;
+    }
+
+    private void buttonClearTVThumbs_Click(object sender, EventArgs e)
+    {
+      Log.Debug("Delete thumb files in thumbs folder {0}", Thumbs.ThumbnailFolder);
+      try
+      {
+        foreach (FileInfo f in new DirectoryInfo(Thumbs.ThumbnailFolder).GetFiles("*.jpg"))
+          f.Delete();
+        _needRestart = true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Could not delete thumb files - {0}", ex.Message);
+      }
+    }
+
+    private void trackBarQuality_ValueChanged(object sender, EventArgs e)
+    {
+      switch (trackBarQuality.Value)
+      {
+        case 0:
+          Thumbs.Quality = Thumbs.ThumbQuality.fastest;
+          break;
+        case 1:
+          Thumbs.Quality = Thumbs.ThumbQuality.fast;
+          break;
+        case 2:
+          Thumbs.Quality = Thumbs.ThumbQuality.average;
+          break;
+        case 3:
+          Thumbs.Quality = Thumbs.ThumbQuality.higher;
+          break;
+        case 4:
+          Thumbs.Quality = Thumbs.ThumbQuality.highest;
+          break;
+      }
+      setThumbQualityLabels();
+      _needRestart = true;
+    }
+
+    private void setThumbQualityLabels()
+    {
+      switch (trackBarQuality.Value)
+      {
+        case 0:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Nearest Neighbor";
+          // labelCurrentSmoothing.Text = "None";
+          labelRecommendedCurrent.Text = @"Small CRTs";
+          break;
+        case 1:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Speed";
+          // labelCurrentInterpolation.Text = "Low";
+          // labelCurrentSmoothing.Text = "High Speed";
+          labelRecommendedCurrent.Text = "Small wide CRTs, medium CRTs";
+          break;
+        case 2:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "Default";
+          // labelCurrentInterpolation.Text = "Default";
+          // labelCurrentSmoothing.Text = "Default";
+          labelRecommendedCurrent.Text = "Large wide CRTs, small LCDs";
+          break;
+        case 3:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "Assume Linear";
+          // labelCurrentInterpolation.Text = "High Quality";
+          // labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "LCDs, Plasmas";
+          break;
+        case 4:
+          labelCurrentResolution.Text = Convert.ToString((int)Thumbs.ThumbLargeResolution);
+          // labelCurrentCompositing.Text = "High Quality";
+          // labelCurrentInterpolation.Text = "High Quality Bicubic";
+          // labelCurrentSmoothing.Text = "High Quality";
+          labelRecommendedCurrent.Text = "Very large LCDs, Projectors";
+          break;
+      }
     }
 
     #endregion
