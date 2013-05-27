@@ -107,7 +107,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "audioscrobbler", "usesmskeyboard");
       RemoveEntry(settings, "musicmisc", "fetchlastfmcovers");
       RemoveEntry(settings, "musicmisc", "fetchlastfmtopalbums");
-      RemoveEntry(settings, "musicmisc", "fetchlastfmtracktags");
+      RemoveEntry(settings, "musicmisc", "lookupSimilarTracks");
       RemoveEntry(settings, "musicmisc", "switchArtistOnLastFMSubmit");
       RemoveEntry(settings, "musicfiles", "autoshuffle");
 

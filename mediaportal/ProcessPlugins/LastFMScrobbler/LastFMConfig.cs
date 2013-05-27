@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.LastFM;
 using MediaPortal.Music.Database;
 using MediaPortal.Profile;
@@ -50,7 +51,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
       catch (Exception ex)
       {
-        //TODO: provide some feedback / logging on error
+        Log.Error("Error getting user info for: {0}", MusicDatabase.Instance.GetLastFMUser());
+        Log.Error(ex);
         return;
       }
 

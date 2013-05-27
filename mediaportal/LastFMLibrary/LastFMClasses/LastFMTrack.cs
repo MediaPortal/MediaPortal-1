@@ -84,6 +84,41 @@ namespace MediaPortal.LastFM
   public class LastFMSimilarTrack : LastFMTrackInfo
   {
     public float Match { get; set; }
+
+    public static List<LastFMSimilarTrack> GetSimilarTracks(XDocument xDoc)
+    {
+      var tracks = (from t in xDoc.Descendants("track")
+                    let trackName = (string)t.Element("name")
+                    let playcount = (int)t.Element("playcount")
+                    let mbid = (string)t.Element("mbid")
+                    let duration = (string)t.Element("duration")
+                    let match = (string)t.Element("match")
+                    let trackURL = (string)t.Element("url")
+                    let artistElement = t.Element("artist")
+                    where artistElement != null
+                    let artistName = (string)artistElement.Element("name")
+                    let images = (
+                                   from i in t.Elements("image")
+                                   select new LastFMImage(
+                                     LastFMImage.GetImageSizeEnum((string)i.Attribute("size")),
+                                     (string)i
+                                     )
+                                 ).ToList()
+                    select new LastFMSimilarTrack
+                    {
+                      TrackTitle = trackName,
+                      Playcount = playcount,
+                      MusicBrainzId = mbid,
+                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration),
+                      Match = string.IsNullOrEmpty(match) ? 0 : float.Parse(match),
+                      TrackURL = trackURL,
+                      ArtistName = artistName,
+                      Images = images
+                    }
+                    ).ToList();
+      return tracks;
+    }
+
   }
 
   public class LastFMStreamingTrack : LastFMTrackBase

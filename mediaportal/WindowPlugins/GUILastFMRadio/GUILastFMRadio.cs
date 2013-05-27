@@ -183,7 +183,14 @@ namespace MediaPortal.GUI.LastFMRadio
       if (string.IsNullOrEmpty(user))
       {
         Log.Error("No last.fm User Setup.  Unable to play last.fm radio");
-        //TODO: Need to show pop up to user
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          dlgNotify.SetText(GUILocalizeStrings.Get(34064));
+          dlgNotify.DoModal(GetID);
+        }
+        return;
       }
 
       if (controlId == (int)SkinControls.USER_RECOMMENDED_BUTTON)
@@ -220,11 +227,8 @@ namespace MediaPortal.GUI.LastFMRadio
       {
         if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
         {
-          //TODO: needs removing
-          Log.Error("Last.fm Radio Playlist Control.  OnClicked called ????!!!!????");
-          Log.Error("=================================");
-          Log.Error(Environment.StackTrace);
-          Log.Error("=================================");
+          //Not sure why this is called for current track but somehow OnClicked is getting fired
+          //for current track with no user interaction.   Ignore these events
           return;
         }
         _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
@@ -250,7 +254,7 @@ namespace MediaPortal.GUI.LastFMRadio
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
-          dlgNotify.SetText("An internet connection is required for last.fm radio");
+          dlgNotify.SetText(GUILocalizeStrings.Get(34064));
           dlgNotify.DoModal(GetID);
         }
         return;
@@ -331,7 +335,7 @@ namespace MediaPortal.GUI.LastFMRadio
           Title = lastFMTrack.TrackTitle,
           FileName = lastFMTrack.TrackStreamingURL,
           Duration = lastFMTrack.Duration,
-          Lyrics = lastFMTrack.ImageURL //TODO: this should not be lyrics
+          ImageURL = lastFMTrack.ImageURL
         };
         var pli = new PlayListItem
         {
@@ -461,7 +465,7 @@ namespace MediaPortal.GUI.LastFMRadio
         return;
       }
       var tag = (MusicTag)item.MusicTag;
-      var trackImgURL = tag.Lyrics;
+      var trackImgURL = tag.ImageURL;
       var tmpThumb = GetTemporaryThumbName(trackImgURL);
 
       var strThumb = GUIMusicBaseWindow.GetCoverArt(item.IsFolder, item.Path, tag);

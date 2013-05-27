@@ -211,26 +211,6 @@ namespace MediaPortal.LastFM
       GetXml(buildLastFMString, "POST", false);
     }
 
-    /// <summary>
-    /// Cache scrobble to submit to last.fm later
-    /// </summary>
-    /// <param name="artist">artist of track that was played</param>
-    /// <param name="track">name of track that was played</param>
-    /// <param name="album">album that track that was played is part of</param>
-    /// <param name="isUserSubmitted">True if track was selected by user or false if by system (radio / auto DJ etc)</param> 
-    /// <param name="dtPlayed">Date track was played</param>
-    public static void CacheScrobble(string artist, string track, string album, bool isUserSubmitted, DateTime dtPlayed)
-    {
-      //TODO: write to cache file (or database?)
-    }
-
-    public static void SumbitCachedScrobbles()
-    {
-      var tracks = new List<LastFMScrobbleTrack>();
-      //TODO: code to load cached tracks
-      ScrobbleTracks(tracks);
-    }
-
     #endregion
 
     #region radio methods
@@ -322,37 +302,7 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
       var xDoc = GetXml(buildLastFMString, "GET", false);
 
-      var tracks = (from t in xDoc.Descendants("track")
-                     let trackName = (string) t.Element("name")
-                     let playcount = (int) t.Element("playcount")
-                     let mbid = (string) t.Element("mbid")
-                     let duration = (int) t.Element("duration")
-                     let match = (float) t.Element("match")
-                     let trackURL = (string) t.Element("url")
-                     let artistElement = t.Element("artist")
-                     where artistElement != null
-                     let artistName = (string) artistElement.Element("name")
-                     let images = (
-                                    from i in t.Elements("image")
-                                    select new LastFMImage(
-                                      LastFMImage.GetImageSizeEnum((string) i.Attribute("size")),
-                                      (string) i
-                                      )
-                                  ).ToList()
-                     select new LastFMSimilarTrack
-                       {
-                         TrackTitle = trackName,
-                         Playcount = playcount,
-                         MusicBrainzId = mbid,
-                         Duration = duration,
-                         Match = match,
-                         TrackURL = trackURL,
-                         ArtistName = artistName,
-                         Images = images
-                       }
-                    ).ToList();
-
-      return tracks;
+      return LastFMSimilarTrack.GetSimilarTracks(xDoc);
     }
 
     /// <summary>
@@ -468,36 +418,7 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
       var xDoc = GetXml(buildLastFMString, "GET", false);
 
-      //TODO: should be refactored as shares 99% of code with getsimilartracks (that has extra match element)
-      var tracks = (from t in xDoc.Descendants("track")
-                    let trackName = (string)t.Element("name")
-                    let playcount = (int)t.Element("playcount")
-                    let mbid = (string)t.Element("mbid")
-                    let duration = (string)t.Element("duration")
-                    let trackURL = (string)t.Element("url")
-                    let artistElement = t.Element("artist")
-                    where artistElement != null
-                    let artistName = (string)artistElement.Element("name")
-                    let images = (
-                                   from i in t.Elements("image")
-                                   select new LastFMImage(
-                                     LastFMImage.GetImageSizeEnum((string)i.Attribute("size")),
-                                     (string)i
-                                     )
-                                 ).ToList()
-                    select new LastFMSimilarTrack
-                    {
-                      TrackTitle = trackName,
-                      Playcount = playcount,
-                      MusicBrainzId = mbid,
-                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration),
-                      TrackURL = trackURL,
-                      ArtistName = artistName,
-                      Images = images
-                    }
-                    ).ToList();
-
-      return tracks;
+      return LastFMSimilarTrack.GetSimilarTracks(xDoc);
     }
 
     #endregion

@@ -121,6 +121,7 @@ namespace MediaPortal.GUI.Music
     private object _imageMutex = null;
     private string _vuMeter = "none";
     private static readonly Random Randomizer = new Random();
+    private bool _lookupSimilarTracks;
 
     #endregion
 
@@ -153,6 +154,7 @@ namespace MediaPortal.GUI.Music
         VizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
+        _lookupSimilarTracks = xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true);
 
         if (ShowViz && VizName != "None")
         {
@@ -538,9 +540,11 @@ namespace MediaPortal.GUI.Music
         dlg.AddLocalizedString(33041);
       }
 
-      //TODO: need to only show if last.fm enabled
-      dlg.AddLocalizedString(34010);  //last.fm love
-      dlg.AddLocalizedString(34011);  //last.fm ban
+      if (PluginManager.IsPluginNameEnabled2("LastFMScrobbler"))
+      {
+        dlg.AddLocalizedString(34010); //last.fm love
+        dlg.AddLocalizedString(34011); //last.fm ban
+      }
 
       dlg.DoModal(GetID);
 
@@ -1194,48 +1198,53 @@ namespace MediaPortal.GUI.Music
 
     private void DoLastFMLove()
     {
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
       string dlgText = GUILocalizeStrings.Get(34010) + " : " + CurrentTrackTag.Title;
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
+
       try
       {
         LastFMLibrary.LoveTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
       }
       catch (Exception ex)
       {
-        //TODO: Should feedback if error
         Log.Error("Error in DoLastFMLove");
         Log.Error(ex);
+        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
       }
+
+      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+      dlgNotifyLastFM.SetText(dlgText);
+      dlgNotifyLastFM.TimeOut = 2;
+      dlgNotifyLastFM.DoModal(GetID);
       
     }
 
     private void DoLastFMBan()
     {
-      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
-      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
       string dlgText = GUILocalizeStrings.Get(34011) + " : " + CurrentTrackTag.Title;
-      dlgNotifyLastFM.SetText(dlgText);
-      dlgNotifyLastFM.TimeOut = 2;
-      dlgNotifyLastFM.DoModal(GetID);
+
       try
       {
         LastFMLibrary.BanTrack(CurrentTrackTag.Artist, CurrentTrackTag.Title);
       }
       catch (Exception ex)
       {
-        //TODO: Should feedback if error
         Log.Error("Error in DoLastFMBan");
         Log.Error(ex);
+        dlgText = GUILocalizeStrings.Get(1025) + "\n" + dlgText; // prepend "An Error has occurred"
       }
+
+      var dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+      dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+      dlgNotifyLastFM.SetText(dlgText);
+      dlgNotifyLastFM.TimeOut = 2;
+      dlgNotifyLastFM.DoModal(GetID);
     }
 
     private void UpdateSimilarTracks(string filename)
     {
-      //TODO: check here for last.fm and do not update ?
+      if (!_lookupSimilarTracks) return;
+
       lstSimilarTracks.Clear();
 
       var worker = new BackgroundWorker();

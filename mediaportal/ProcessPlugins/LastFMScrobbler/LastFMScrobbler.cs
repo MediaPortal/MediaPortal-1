@@ -60,7 +60,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
         _avoidDuplicates = xmlreader.GetValueAsBool("lastfm:test", "avoidDuplicates", true);
-        _autoDJFilter = xmlreader.GetValueAsString("lastfm:test", "autoDJFilter", "default value string here");
+        _autoDJFilter = xmlreader.GetValueAsString("lastfm:test", "autoDJFilter", string.Empty);
       }
     }
 
@@ -384,7 +384,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       if (!Win32API.IsConnectedToInternet())
       {
-        LastFMLibrary.CacheScrobble(artist, currentSong.Title, currentSong.Album, true, DateTime.UtcNow);
+        CacheScrobble(currentSong);
         Log.Info("No internet connection so unable to scrobble: {0} - {1}", currentSong.Title, artist);
         Log.Info("Scrobble has been cached");
         return;
@@ -400,7 +400,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         if (ex.LastFMError == LastFMException.LastFMErrorCode.ServiceOffline ||
             ex.LastFMError == LastFMException.LastFMErrorCode.ServiceUnavailable)
         {
-          LastFMLibrary.CacheScrobble(artist, currentSong.Title,currentSong.Album,true,DateTime.UtcNow);
+          CacheScrobble(currentSong);
           Log.Info("Unable to scrobble: {0} - {1}", currentSong.Title, artist);
           Log.Info("Scrobble has been cached");
         }
@@ -411,6 +411,15 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         }
       }
       
+    }
+
+    #endregion
+
+    #region cache scrobbles
+
+    public static void CacheScrobble(MusicTag tag)
+    {
+      //TODO: implement cache here and also somewhere implement resubmission
     }
 
     #endregion
@@ -625,8 +634,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
                                                                   DatabaseUtility.RemoveInvalidChars(track.TrackTitle), _autoDJFilter)))
       {
-        //TODO; remove debug logging
-        Log.Debug("MIKE: {0}", strSql);
         List<Song> trackListing;
         MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
 
