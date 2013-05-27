@@ -31,7 +31,6 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogExif : GUIDialogWindow
   {
-    [SkinControl(2)] protected GUILabelControl lblHeading = null;
     [SkinControl(3)] protected GUIImage imgPicture = null;
     [SkinControl(20)] protected GUILabelControl lblImgTitle = null;
     [SkinControl(21)] protected GUILabelControl lblImgDimensions = null;
@@ -61,6 +60,14 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogPictureInfo.xml"));
     }
 
+    public override void DoModal(int ParentID)
+    {
+      AllocResources();
+      InitControls();
+
+      base.DoModal(ParentID);
+    }
+
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -86,28 +93,6 @@ namespace MediaPortal.Dialogs
       }
       return base.OnMessage(message);
     }
-
-    public void SetHeading(string strLine)
-    {
-      //LoadSkin();
-      AllocResources();
-      InitControls();
-
-      lblHeading.Label = strLine;
-    }
-
-    public void SetHeading(int iString)
-    {
-      if (iString == 0)
-      {
-        SetHeading(string.Empty);
-      }
-      else
-      {
-        SetHeading(GUILocalizeStrings.Get(iString));
-      }
-    }
-
 
     public string FileName
     {
