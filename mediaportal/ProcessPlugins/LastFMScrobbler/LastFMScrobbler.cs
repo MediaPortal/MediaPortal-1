@@ -48,6 +48,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static bool _announceTracks;
     private static bool _scrobbleTracks;
     private static bool _avoidDuplicates;
+    private static string _autoDJFilter;
 
     private static void LoadSettings()
     {
@@ -59,6 +60,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         _announceTracks = xmlreader.GetValueAsBool("lastfm:test", "announce", true);
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
         _avoidDuplicates = xmlreader.GetValueAsBool("lastfm:test", "avoidDuplicates", true);
+        _autoDJFilter = xmlreader.GetValueAsString("lastfm:test", "autoDJFilter", "default value string here");
       }
     }
 
@@ -206,19 +208,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
-      var artist = currentSong.Artist ?? currentSong.AlbumArtist;
-
       if (_announceTracks)
       {
         new Thread(
           () =>
-          AnnounceTrack(artist, currentSong.Title, currentSong.Album,
-                        currentSong.Duration.ToString(CultureInfo.InvariantCulture))) {Name = "Last.FM Announcer"}.Start();
+          AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
+                        currentSong.Duration.ToString(CultureInfo.InvariantCulture))) { Name = "Last.FM Announcer" }.Start();
       }
 
       if (MusicState.AutoDJEnabled)
       {
-        new Thread(() => AutoDJ(artist, currentSong.Title)) { Name = "AutoDJ" }.Start();        
+        new Thread(() => AutoDJ(currentSong)) { Name = "AutoDJ" }.Start();        
       }
 
     }
@@ -431,20 +431,19 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <summary>
     /// Handles AutoDJ details of identifying similar tracks and choosing which to add to playlist
     /// </summary>
-    /// <param name="artist">Artist of track</param>
-    /// <param name="track">Name of track</param>
-    public static void AutoDJ(string artist, string track)
+    /// <param name="tag">Tag of track to lookup</param>
+    public static void AutoDJ(MusicTag tag)
     {
       // try and match similar track to one being played
-      var tracks = GetSimilarTracks(artist, track);
-      if (LocalTracksAdded(tracks))
+      var tracks = GetSimilarTracks(tag);
+      if (LocalTracksAdded(tracks, tag))
       {
         return;
       }
 
       // no match so lets attempt to lookup similar tracks based on artists top tracks
-      Log.Debug("Unable to match similar tracks for {0} - {1} : trying similar tracks for top artist tracks", artist, track);
-      tracks = GetArtistTopTracks(artist);
+      Log.Debug("Unable to match similar tracks for {0} - {1} : trying similar tracks for top artist tracks", tag.Artist, tag.Title);
+      tracks = GetArtistTopTracks(tag.Artist);
       var i = 0;
       if (tracks != null)
       {
@@ -455,8 +454,9 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
             break;
           }
 
-          tracks = GetSimilarTracks(lastFmTrack.ArtistName, lastFmTrack.TrackTitle);
-          if (LocalTracksAdded(tracks))
+          var lastFmTag = new MusicTag {Artist = lastFmTrack.ArtistName, Title = lastFmTrack.TrackTitle};
+          tracks = GetSimilarTracks(lastFmTag);
+          if (LocalTracksAdded(tracks, tag))
           {
             return;
           }
@@ -466,35 +466,34 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
 
       // still no match so lets just try and match top artist tracks
-      Log.Debug("Unable to match similar top artist tracks for {0} : trying top artist tracks", artist);
-      tracks = GetArtistTopTracks(artist);
-      if (LocalTracksAdded(tracks))
+      Log.Debug("Unable to match similar top artist tracks for {0} : trying top artist tracks", tag.Artist);
+      tracks = GetArtistTopTracks(tag.Artist);
+      if (LocalTracksAdded(tracks, tag))
       {
         return;
       }
       
-      Log.Info("Auto DJ: Unable to match any tracks for {0} - {1}", artist, track);
+      Log.Info("Auto DJ: Unable to match any tracks for {0} - {1}", tag.Artist, tag.Title);
     }
 
 
     /// <summary>
     /// Checks last.fm for similar tracks and handle any errors that might occur
     /// </summary>
-    /// <param name="artist">Artist to check</param>
-    /// <param name="track">Track title to check</param>
+    /// <param name="tag">MusicTag of file to check</param>
     /// <returns>Similar tracks as defined by last.fm or null</returns>
-    private static IEnumerable<LastFMSimilarTrack> GetSimilarTracks(string artist, string track)
+    private static IEnumerable<LastFMSimilarTrack> GetSimilarTracks(MusicTag tag)
     {
       IEnumerable<LastFMSimilarTrack> tracks;
       try
       {
-        tracks = LastFMLibrary.GetSimilarTracks(track, artist);
+        tracks = LastFMLibrary.GetSimilarTracks(tag.Title, tag.Artist);
       }
       catch (LastFMException ex)
       {
         if (ex.LastFMError == LastFMException.LastFMErrorCode.InvalidParameters)
         {
-          Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", artist, track);
+          Log.Debug("AutoDJ: Unable to get similar track for : {0} - {1}", tag.Artist, tag.Title);
           Log.Debug("AutoDJ: {0}", ex.Message);
         }
         else
@@ -555,15 +554,16 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// If tracks are matched then these tracks will be considered by auto DJ
     /// </summary>
     /// <param name="tracks">Collection of tracks to check for local copies</param>
+    /// <param name="tag">Tags of track we are looking up</param>
     /// <returns>True if tracks were added to playlist else false</returns>
-    private static bool LocalTracksAdded(IEnumerable<LastFMSimilarTrack> tracks)
+    private static bool LocalTracksAdded(IEnumerable<LastFMSimilarTrack> tracks, MusicTag tag)
     {
       if (tracks == null)
       {
         return false;
       }
 
-      var dbTracks = GetSimilarTracksInDatabase(tracks);
+      var dbTracks = GetSimilarTracksInDatabase(tracks, tag);
 
       if (dbTracks.Count == 0)
       {
@@ -613,17 +613,20 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// Takes a list of tracks supplied by last.fm and matches them to tracks in the database
     /// </summary>
     /// <param name="tracks">List of last FM tracks to check</param>
+    /// <param name="tag">Tags of track we are looking up</param>
     /// <returns>List of matched songs from input that exist in the users database</returns>
-    private static List<Song> GetSimilarTracksInDatabase(IEnumerable<LastFMSimilarTrack> tracks)
+    private static List<Song> GetSimilarTracksInDatabase(IEnumerable<LastFMSimilarTrack> tracks, MusicTag tag)
     {
       // list contains songs which exist in users collection
       var dbTrackListing = new List<Song>();
 
       //identify which are available in users collection (ie. we can use they for auto DJ mode)
-      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}'",
+      foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}' {2}",
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
-                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle))))
+                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle), _autoDJFilter)))
       {
+        //TODO; remove debug logging
+        Log.Debug("MIKE: {0}", strSql);
         List<Song> trackListing;
         MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
 
