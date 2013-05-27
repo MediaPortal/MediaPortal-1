@@ -49,6 +49,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static bool _scrobbleTracks;
     private static bool _avoidDuplicates;
     private static string _autoDJFilter;
+    private static bool _userDefined = true;
 
     private static void LoadSettings()
     {
@@ -61,6 +62,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         _scrobbleTracks = xmlreader.GetValueAsBool("lastfm:test", "scrobble", true);
         _avoidDuplicates = xmlreader.GetValueAsBool("lastfm:test", "avoidDuplicates", true);
         _autoDJFilter = xmlreader.GetValueAsString("lastfm:test", "autoDJFilter", string.Empty);
+      }
+
+      var sk = MusicDatabase.Instance.GetLastFMSK();
+      if (string.IsNullOrEmpty(sk))
+      {
+        _userDefined = false;
       }
     }
 
@@ -321,8 +328,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of track that was stopped</param>
     private static void DoOnChangedOrStopped(int stoptime, string filename)
     {
-      // only scrobble if enabled
-      if (!_scrobbleTracks) return;
+      // only scrobble if enabled and we actually have a user defined
+      if (!_scrobbleTracks || !_userDefined) return;
 
       new Thread(() => ScrobbleTrack(filename, stoptime)) {Name = "Last.fm Scrobbler"}.Start();
     }
