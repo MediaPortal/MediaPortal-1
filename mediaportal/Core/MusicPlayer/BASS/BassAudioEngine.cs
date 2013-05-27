@@ -1980,30 +1980,28 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      bool result = true;
-
       try
       {
         MusicStream stream = GetCurrentStream();
-        long pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
+        long pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
 
         double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
-        double offsetSecs = (double)ms / 1000.0;
+        double newPos = timePos + (double)ms / 1000.0;
 
-        if (timePos + offsetSecs >= stream.TotalStreamSeconds)
+        if (newPos >= stream.TotalStreamSeconds)
         {
           return false;
         }
 
         // the elapsed time length
-        BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos + offsetSecs));
+        Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
       }
       catch
       {
         return false;
       }
 
-      return result;
+      return true;
     }
 
     /// <summary>
@@ -2026,33 +2024,29 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      MusicStream stream = GetCurrentStream();
-      bool result = true;
-
       try
       {
-        long len = Bass.BASS_ChannelGetLength(stream.BassStream); // length in bytes
-
-        long pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
+        MusicStream stream = GetCurrentStream();
+        long pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
 
         double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
-        double offsetSecs = (double)ms / 1000.0;
+        double newPos = timePos - (double)ms / 1000.0;
 
-        if (timePos - offsetSecs <= 0)
+        if (newPos <= 0)
         {
           return false;
         }
 
         // the elapsed time length
-        BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos - offsetSecs));
+        Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
       }
 
       catch
       {
-        result = false;
+        return false;
       }
 
-      return result;
+      return true;
     }
 
     /// <summary>
