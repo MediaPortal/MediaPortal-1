@@ -831,7 +831,8 @@ public class MediaPortalApp : D3D, IRender
           for (int i = _startupDelay; i > 0; i--)
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
-            Application.DoEvents();  // process message queue
+            Thread.Sleep(1000);
+            Application.DoEvents();
           }
         }
 
@@ -4634,7 +4635,7 @@ public class MediaPortalApp : D3D, IRender
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth/screenHeight);
-        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "Titan" : "Default";
         Config.SkinName = GUIGraphicsContext.SkinName;
         SkinSettings.Load();
 
