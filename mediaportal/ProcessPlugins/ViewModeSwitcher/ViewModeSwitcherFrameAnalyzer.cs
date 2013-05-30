@@ -150,28 +150,60 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
         mid = (low + high) / 2;
       }
-
-      if (topLine == 0)
+      if (topLine < 1)
       {
         topLine = 1;
       }
 
-      // vertical scan of left half of screen      
-      for (int line = 1; line < frame.Width * 0.25f; line++)
+      //Left black bar binary search scan
+      mid = 1;
+      low = 1;
+      high = (int)(frame.Width * 0.25f);
+
+      while (low <= high)
       {
-        ScanLine(line, topLine, frame.Height - topLine, false);
+        ScanLine(mid, leftStart, leftEnd, false);
         if (IsContent(leftStart, leftEnd))
         {
-          leftLine = line;
+          high = mid - 1;
+          leftLine = mid;
           foundLeft = true;
           if (ViewModeSwitcher.currentSettings.verboseLog)
           {
             Log.Debug("ViewModeSwitcher: Found left line: {0}", leftLine);
             //DrawLine(leftLine, leftStart, leftEnd, Color.Red, false);
           }
-          break;
         }
+        else
+        {
+          low = mid + 1;
+        }
+        mid = (low + high) / 2;
       }
+      if (leftLine < 1)
+      {
+        leftLine = 1;
+      }
+
+//      // vertical scan of left half of screen      
+//      for (int line = 1; line < frame.Width * 0.25f; line++)
+//      {
+//        int tmpTopLine = Math.Max(topLine, leftStart));
+//        int tmpBotLine = Math.Min((frame.Height - topLine), leftEnd);
+//        ScanLine(line, tmpTopLine, tmpBotLine, false);
+//        if (IsContent(leftStart, leftEnd))
+//        {
+//          leftLine = line;
+//          foundLeft = true;
+//          if (ViewModeSwitcher.currentSettings.verboseLog)
+//          {
+//            Log.Debug("ViewModeSwitcher: Found left line: {0}", leftLine);
+//            //DrawLine(leftLine, leftStart, leftEnd, Color.Red, false);
+//          }
+//          break;
+//        }
+//      }
+
       if (!foundLeft && !foundTop)
       {
         bounds.Y = 0;
@@ -182,22 +214,55 @@ namespace ProcessPlugins.ViewModeSwitcher
         //return false;
       }
 
-      // vertical scan of right half of screen
-      for (int line = frame.Width - 1; line > frame.Width * 0.75f; line--)
+
+      //Right black bar binary search scan
+      low = (int)(frame.Width * 0.75f);
+      high = frame.Width - 1;
+      mid = high;
+      while (low <= high)
       {
-        ScanLine(line, topLine, frame.Height - topLine, false);
+        ScanLine(mid, rightStart, rightEnd, false);
         if (IsContent(rightStart, rightEnd))
         {
-          rightLine = line;
+          low = mid + 1;
+          rightLine = mid;
           foundRight = true;
           if (ViewModeSwitcher.currentSettings.verboseLog)
           {
             Log.Debug("ViewModeSwitcher: Found right line: {0}", rightLine);
             //DrawLine(rightLine, rightStart, rightEnd, Color.Coral, false);
           }
-          break;
         }
+        else
+        {
+          high = mid - 1;
+        }
+        mid = (low + high) / 2;
       }
+      if (rightLine >= frame.Width)
+      {
+        rightLine = frame.Width - 1;
+      }
+
+//      // vertical scan of right half of screen
+//      for (int line = frame.Width - 1; line > frame.Width * 0.75f; line--)
+//      {
+//        int tmpTopLine = Math.Max(topLine, rightStart);
+//        int tmpBotLine = Math.Min((frame.Height - topLine), rightEnd);
+//        ScanLine(line, tmpTopLine, tmpBotLine, false);
+//        if (IsContent(rightStart, rightEnd))
+//        {
+//          rightLine = line;
+//          foundRight = true;
+//          if (ViewModeSwitcher.currentSettings.verboseLog)
+//          {
+//            Log.Debug("ViewModeSwitcher: Found right line: {0}", rightLine);
+//            //DrawLine(rightLine, rightStart, rightEnd, Color.Coral, false);
+//          }
+//          break;
+//        }
+//      }
+
       if (!foundLeft && !foundRight)
       {
         bounds.Y = 0;
@@ -231,6 +296,10 @@ namespace ProcessPlugins.ViewModeSwitcher
           high = mid - 1;
         }
         mid = (low + high) / 2;
+      }
+      if (bottomLine >= frame.Height)
+      {
+        bottomLine = frame.Height - 1;
       }
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
