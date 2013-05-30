@@ -560,7 +560,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         {
           Log.Debug("ViewModeSwitcher: SingleCrop(), Symmetry check failed");
         }
-        LastDetectionResult = false;
         return;
       }
 
