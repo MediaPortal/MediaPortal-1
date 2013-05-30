@@ -120,13 +120,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: On Video Ended");
       }
-      LastSwitchedAspectRatio = 0f;
-      LastAnamorphFactor = 0f;
-      LastDetectionResult = true;
       isPlaying = false;
       isVideoReceived = false;
-      isPillarBox = false;
-      updatePending = false;
     }
 
     /// <summary>
@@ -152,13 +147,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       videoRecvEvent.Reset();
       workerEvent.Set();
       videoRecvEvent.WaitOne(500);
-      isVideoReceived = false;
-      
-      LastSwitchedAspectRatio = 0f;
-      LastAnamorphFactor = 0f;
-      LastDetectionResult = true;
-      isPillarBox = false;
-      updatePending = false;
+      isVideoReceived = false;      
     }
 
     /// <summary>
@@ -177,10 +166,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: On Video Started");
       }
       LastSwitchedGeometry = GUIGraphicsContext.ARType;
-      LastDetectionResult = true;
       isVideoReceived = false;
       isPlaying = true;
-      updatePending = false;
     }
 
     /// <summary>
@@ -192,12 +179,10 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: OnTVChannelChange... Reset rule processing!");
       }
-      LastSwitchedAspectRatio = 0f;
-      LastAnamorphFactor = 0f;
-      LastDetectionResult = true;
       isVideoReceived = false;
-      isPillarBox = false;
-      updatePending = false;
+      videoRecvEvent.Reset();
+      workerEvent.Set();
+      videoRecvEvent.WaitOne(500);
     }
 
     /// <summary>
@@ -302,6 +287,13 @@ namespace ProcessPlugins.ViewModeSwitcher
         }   
         else
         {
+          LastSwitchedAspectRatio = 0f;
+          LastAnamorphFactor = 0f;
+          LastDetectionResult = true;
+          isPillarBox = false;
+          updatePending = false;
+          
+          Log.Debug("ViewModeSwitcher: Worker thread -> idle");
           videoRecvEvent.Set();
           workerEvent.WaitOne(); // reset automatically - sleep until triggered      
         }   
@@ -495,7 +487,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       tmpCropSettings.Top    = cropSettings.Top;
       tmpCropSettings.Bottom = cropSettings.Bottom;
 
-      if (LastAnamorphFactor > 0f)
+      if ((LastAnamorphFactor > 0f) && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
       {
         //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
         Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", LastAnamorphFactor);
@@ -539,11 +531,11 @@ namespace ProcessPlugins.ViewModeSwitcher
       
       float Hsym = 1.0f;
       float Vsym = 1.0f;
-      if (bounds.Left > 20)
+      if (bounds.Left > 20 || ((frame.Width - bounds.Right) > 20 && bounds.Left > 0))
       {
         Hsym = (float)(frame.Width - bounds.Right)/(float)bounds.Left;
       }
-      if (bounds.Top > 20)
+      if (bounds.Top > 20 || ((frame.Height - bounds.Bottom) > 20 && bounds.Top > 0))
       {
         Vsym = (float)(frame.Height - bounds.Bottom)/(float)bounds.Top;
       }
@@ -554,7 +546,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       
       //Check for symmetry of black bars - asymmetric bars are probably a false detection
-      if ((Hsym > 1.05) || (Hsym < 0.95) || (Vsym > 1.05) || (Vsym < 0.95))
+      if ((Hsym > 1.1) || (Hsym < 0.9) || (Vsym > 1.1) || (Vsym < 0.9))
       {
         if (currentSettings.verboseLog)
         {
