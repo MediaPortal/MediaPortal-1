@@ -185,25 +185,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         leftLine = 1;
       }
 
-//      // vertical scan of left half of screen      
-//      for (int line = 1; line < frame.Width * 0.25f; line++)
-//      {
-//        int tmpTopLine = Math.Max(topLine, leftStart));
-//        int tmpBotLine = Math.Min((frame.Height - topLine), leftEnd);
-//        ScanLine(line, tmpTopLine, tmpBotLine, false);
-//        if (IsContent(leftStart, leftEnd))
-//        {
-//          leftLine = line;
-//          foundLeft = true;
-//          if (ViewModeSwitcher.currentSettings.verboseLog)
-//          {
-//            Log.Debug("ViewModeSwitcher: Found left line: {0}", leftLine);
-//            //DrawLine(leftLine, leftStart, leftEnd, Color.Red, false);
-//          }
-//          break;
-//        }
-//      }
-
       if (!foundLeft && !foundTop)
       {
         bounds.Y = 0;
@@ -243,25 +224,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         rightLine = frame.Width - 1;
       }
-
-//      // vertical scan of right half of screen
-//      for (int line = frame.Width - 1; line > frame.Width * 0.75f; line--)
-//      {
-//        int tmpTopLine = Math.Max(topLine, rightStart);
-//        int tmpBotLine = Math.Min((frame.Height - topLine), rightEnd);
-//        ScanLine(line, tmpTopLine, tmpBotLine, false);
-//        if (IsContent(rightStart, rightEnd))
-//        {
-//          rightLine = line;
-//          foundRight = true;
-//          if (ViewModeSwitcher.currentSettings.verboseLog)
-//          {
-//            Log.Debug("ViewModeSwitcher: Found right line: {0}", rightLine);
-//            //DrawLine(rightLine, rightStart, rightEnd, Color.Coral, false);
-//          }
-//          break;
-//        }
-//      }
 
       if (!foundLeft && !foundRight)
       {

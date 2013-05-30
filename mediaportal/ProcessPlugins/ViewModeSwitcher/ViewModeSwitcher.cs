@@ -416,7 +416,10 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       if (updatePending)
       {
-        Log.Debug("ViewModeSwitcher: OnVideoReceived(), Updating AR and crop");
+        if (currentSettings.verboseLog)
+        {
+          Log.Debug("ViewModeSwitcher: OnVideoReceived(), Updating AR and crop");
+        }
         SetAspectRatio(NewGeometryMessage, LastSwitchedGeometry);
         SetCropMode();
         updatePending = false;
@@ -533,8 +536,33 @@ namespace ProcessPlugins.ViewModeSwitcher
         LastDetectionResult = false;
         return;
       }
-
-      Log.Debug("Bounds -> left: {0}, right: {1}, top: {2}, bottom: {3}", bounds.Left, bounds.Right, bounds.Top, bounds.Bottom);      
+      
+      float Hsym = 1.0f;
+      float Vsym = 1.0f;
+      if (bounds.Left > 20)
+      {
+        Hsym = (float)(frame.Width - bounds.Right)/(float)bounds.Left;
+      }
+      if (bounds.Top > 20)
+      {
+        Vsym = (float)(frame.Height - bounds.Bottom)/(float)bounds.Top;
+      }
+      
+      if (currentSettings.verboseLog)
+      {
+        Log.Debug("ViewModeSwitcher: SingleCrop(), Detected BB -> left: {0}, right: {1}, top: {2}, bottom: {3}, Hsym: {4}, Vsym: {5}", bounds.Left, (frame.Width - bounds.Right), bounds.Top, (frame.Height - bounds.Bottom), Hsym, Vsym); 
+      }
+      
+      //Check for symmetry of black bars - asymmetric bars are probably a false detection
+      if ((Hsym > 1.05) || (Hsym < 0.95) || (Vsym > 1.05) || (Vsym < 0.95))
+      {
+        if (currentSettings.verboseLog)
+        {
+          Log.Debug("ViewModeSwitcher: SingleCrop(), Symmetry check failed");
+        }
+        LastDetectionResult = false;
+        return;
+      }
 
       int cropH = Math.Min(frame.Width - bounds.Right, bounds.Left);
       cropH = Math.Max(cropH, overScan);
@@ -543,7 +571,10 @@ namespace ProcessPlugins.ViewModeSwitcher
       cropV = Math.Max(cropV,(int)((float)overScan / LastSwitchedAspectRatio));
       cropV = Math.Min(cropV,(int)((float)cropH / LastSwitchedAspectRatio));
 
-      Log.Debug("Crop -> cropH: {0}, cropV: {1}", cropH, cropV);      
+      if (currentSettings.verboseLog)
+      {
+        Log.Debug("ViewModeSwitcher: SingleCrop(), cropH: {0}, cropV: {1}", cropH, cropV);      
+      }
 
       float newasp = (float)(frame.Width - cropH * 2) / (float)(frame.Height - cropV * 2);      
       if (LastAnamorphFactor > 0f)
@@ -559,15 +590,12 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       else // (newasp >= 1)
       {
-        float asp = (float)(frame.Width) / (float)(frame.Height);
-        if (LastAnamorphFactor > 0f)
+        if (currentSettings.verboseLog)
         {
-          //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
-          asp *= LastAnamorphFactor;
+          Log.Debug("ViewModeSwitcher: SingleCrop(), Video AR: {0}, Cropped AR: {1}", LastSwitchedAspectRatio, newasp);      
         }
-
-        Log.Debug("asp: {0}, newasp: {1}", asp, newasp);      
-        if (Math.Abs(asp - newasp) > 0.2 && LastSwitchedAspectRatio > 1.5)
+        
+        if (newasp > 1.20 && newasp < 1.46 && LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95)
         {
           if (SetNewGeometry("4:3 inside 16:9", currentSettings.PillarBoxViewMode))
           {
@@ -592,7 +620,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
       } 
 
-      if ((Math.Abs(cropH - cropSettings.Left) > 1) || (Math.Abs(cropV - cropSettings.Top) > 1))
+      if ((Math.Abs(cropH - cropSettings.Left) > 2) || (Math.Abs(cropV - cropSettings.Top) > 2))
       {
         cropSettings.Top = cropV; //bounds.Top;
         cropSettings.Bottom = cropV; // frame.Height - (bounds.Bottom + 1);
