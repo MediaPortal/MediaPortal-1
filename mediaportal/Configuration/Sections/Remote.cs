@@ -471,6 +471,7 @@ namespace MediaPortal.Configuration.Sections
             checkBoxFireDTVExtendedLogging.Enabled = false;
             buttonFireDTVMapping.Enabled = false;
             groupBoxFireDTVRecieiverSettings.Enabled = false;
+            Log.Info("FireDTV: FiresatApi.dll could not be found on your system!");
           }
         }
         catch (Exception)
