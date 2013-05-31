@@ -54,6 +54,8 @@ namespace MediaPortal.GUI.Pictures
 
       GUIPictures tmpGUIpictures = (GUIPictures) GUIWindowManager.GetWindow((int) Window.WINDOW_PICTURES);
 
+      bool _autoShuffleFolder = false;
+
       if (_isSlideShow && _showRecursive)
       {
         // Analyse only folder and not picture/video items
@@ -66,24 +68,26 @@ namespace MediaPortal.GUI.Pictures
             tmpGUIpictures.AddDir(SlideShow, _currentSlide._filePath);
             _slideRecursive.Add(_currentSlide._filePath);
           }
-          if (_slideDirection == 1 && _slideRecursive.Contains(_currentSlide._filePath))
+          if (_slideRecursive.Contains(_currentSlide._filePath))
           {
-            _slideList.Remove(_currentSlide._filePath);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          if (_slideDirection == 1 || _slideDirection == 0)
+          {
             ShowNext();
-            slideFilePath = _slideList[--_currentSlideIndex];
           }
-          if (_slideDirection == -1 && _slideRecursive.Contains(_currentSlide._filePath))
+          if (_slideDirection == -1)
           {
-            _slideList.Remove(_currentSlide._filePath);
             ShowPrevious();
-            slideFilePath = _slideList[--_currentSlideIndex];
           }
-          _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[--_currentSlideIndex]);
+          _autoShuffleFolder = true;
         }
       }
-      if (_autoShuffle)
+      if (_autoShuffle && (_isSlideShow || _showRecursive) && _autoShuffleFolder)
       {
-        Shuffle();
+        Shuffle(true, false);
       }
 
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
@@ -143,6 +147,11 @@ namespace MediaPortal.GUI.Pictures
 
       // Get Name of actual played slide.
       GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
+
+      if (_showRecursive && !_autoShuffleFolder)
+      {
+        _slideRecursiveItem.Add(_currentSlide._filePath);
+      }
 
       return _currentSlide;
     }
@@ -277,6 +286,7 @@ namespace MediaPortal.GUI.Pictures
     public List<string> _slideList = new List<string>();
     public List<string> _slideFolder = new List<string>();
     public List<string> _slideRecursive = new List<string>();
+    public List<string> _slideRecursiveItem = new List<string>();
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -554,7 +564,7 @@ namespace MediaPortal.GUI.Pictures
         case Action.ActionType.ACTION_NEXT_PICTURE:
           if (_lastSegmentIndex != -1)
           {
-            ShowNext(true);
+            ShowNext(false, true);
             _slideDirection = 1;
           }
           else if (_isSlideShow)
@@ -568,7 +578,7 @@ namespace MediaPortal.GUI.Pictures
 
           if (!_isPictureZoomed)
           {
-            ShowNext();
+            ShowNext(false, true);
           }
           else
           {
@@ -852,9 +862,9 @@ namespace MediaPortal.GUI.Pictures
                   if (_autoRepeat)
                   {
                     _currentSlideIndex = 0;
-                    if (_autoShuffle)
+                    if (_autoShuffle && (_isSlideShow || _showRecursive))
                     {
-                      Shuffle();
+                      Shuffle(false, _autoRepeat);
                     }
                   }
                   else
@@ -1158,9 +1168,34 @@ namespace MediaPortal.GUI.Pictures
       get { return _isSlideShow; }
     }
 
-    public void Shuffle()
+    public void Shuffle(bool _recursive, bool _autoRepeat)
     {
       Random r = new Random(DateTime.Now.Millisecond);
+
+      if (_recursive)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (_slideList.Contains(strSlide))
+          {
+            _slideList.Remove(strSlide);
+          }
+        }
+      }
+
+      if (_autoRepeat)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (!_slideList.Contains(strSlide))
+          {
+            _slideList.Add(strSlide);
+          }
+        }
+      }
+
       int nItemCount = _slideList.Count;
 
       // iterate through each catalogue item performing arbitrary swaps
@@ -1183,6 +1218,10 @@ namespace MediaPortal.GUI.Pictures
       _isBackgroundMusicPlaying = false;
       _slideDirection = 1;
       _isSlideShow = true;
+      if (_autoShuffle && (_isSlideShow || _showRecursive))
+      {
+        Shuffle(false, false);
+      }
     }
 
     public void StartSlideShow(string path)
@@ -1192,11 +1231,16 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       _slideDirection = 1;
       _isSlideShow = true;
+      if (_autoShuffle && (_isSlideShow || _showRecursive))
+      {
+        Shuffle(false, false);
+      }
     }
 
 
     public void Reset()
     {
+      _slideRecursiveItem.Clear();
       _slideList.Clear();
       _slideFolder.Clear();
       _slideRecursive.Clear();
@@ -1246,10 +1290,10 @@ namespace MediaPortal.GUI.Pictures
 
     public void ShowNext()
     {
-      ShowNext(false);
+      ShowNext(false, false);
     }
 
-    private void ShowNext(bool jump)
+    private void ShowNext(bool jump, bool next)
     {
       if (!_isSlideShow)
       {
@@ -1268,13 +1312,13 @@ namespace MediaPortal.GUI.Pictures
       GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
 
-      if (_currentSlideIndex == 0)
+      if (_currentSlideIndex == 0 && !next)
       {
         if (_autoRepeat)
         {
-          if (_autoShuffle)
+          if (_autoShuffle && (_isSlideShow || _showRecursive))
           {
-            Shuffle();
+            Shuffle(false, _autoRepeat);
           }
         }
         else
