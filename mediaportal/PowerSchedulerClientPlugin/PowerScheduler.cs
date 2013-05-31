@@ -1005,40 +1005,63 @@ namespace MediaPortal.Plugins.Process
       bool boolSetting;
       int intSetting;
       string stringSetting;
-      PowerSetting setting;
+      PowerSetting powerSetting;
 
       Log.Debug("PS: LoadSettings()");
 
       // Load initial settings only once
       if (_settings == null)
       {
-        _settings = new PowerSettings();
-        changed = true;
-
-        // Set constant values (needed for backward compatibility)
-        _settings.ForceShutdown = false;
-        _settings.ExtensiveLogging = false;
-        _settings.PreNoShutdownTime = 300;
-        _settings.CheckInterval = 15;
-
         using (Settings reader = new MPSettings())
         {
+
+          // Check if update of old PS settings is necessary
+          if (reader.GetValue("psclientplugin", "ExpertMode") == "")
+          {
+            // Initialise list of old and new settings names to update
+            List<String[]> settingNames = new List<String[]>();
+            settingNames.Add(new String[] { "homeonly", "HomeOnly" });
+            settingNames.Add(new String[] { "idletimeout", "IdleTimeout" });
+            settingNames.Add(new String[] { "shutdownenabled", "ShutdownEnabled" });
+            settingNames.Add(new String[] { "shutdownmode", "ShutdownMode" });
+
+            // Update settings names
+            foreach (String[] settingName in settingNames)
+            {
+              String settingValue = reader.GetValue("psclientplugin", settingName[0]);
+              if (settingValue != "")
+              {
+                reader.RemoveEntry("psclientplugin", settingName[0]);
+                reader.SetValue("psclientplugin", settingName[1], settingValue);
+              }
+            }
+          }
+
+          _settings = new PowerSettings();
+          changed = true;
+
+          // Set constant values (needed for backward compatibility)
+          _settings.ForceShutdown = false;
+          _settings.ExtensiveLogging = false;
+          _settings.PreNoShutdownTime = 300;
+          _settings.CheckInterval = 15;
+
           // Check if we only should suspend in MP's home window
           boolSetting = reader.GetValueAsBool("psclientplugin", "HomeOnly", false);
-          setting = _settings.GetSetting("HomeOnly");
-          setting.Set<bool>(boolSetting);
+          powerSetting = _settings.GetSetting("HomeOnly");
+          powerSetting.Set<bool>(boolSetting);
           Log.Debug("PS: Only allow standby when on home window: {0}", boolSetting);
 
           // Get external command
           stringSetting = reader.GetValueAsString("psclientplugin", "Command", String.Empty);
-          setting = _settings.GetSetting("Command");
-          setting.Set<string>(stringSetting);
+          powerSetting = _settings.GetSetting("Command");
+          powerSetting.Set<string>(stringSetting);
           Log.Debug("PS: Run command on power state change: {0}", stringSetting);
 
           // Check if we should unmute the master volume
           boolSetting = reader.GetValueAsBool("psclientplugin", "UnmuteMasterVolume", true);
-          setting = _settings.GetSetting("UnmuteMasterVolume");
-          setting.Set<bool>(boolSetting);
+          powerSetting = _settings.GetSetting("UnmuteMasterVolume");
+          powerSetting.Set<bool>(boolSetting);
           Log.Debug("PS: Unmute master volume: {0}", boolSetting);
 
           // Detect single-seat

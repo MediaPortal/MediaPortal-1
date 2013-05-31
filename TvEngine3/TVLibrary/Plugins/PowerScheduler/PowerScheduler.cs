@@ -1068,13 +1068,52 @@ namespace TvEngine.PowerScheduler
       bool boolSetting;
       int intSetting;
       string stringSetting;
-      PowerSetting setting;
+      PowerSetting powerSetting;
 
       Log.Debug("PS: LoadSettings()");
+
+      TvBusinessLayer layer = new TvBusinessLayer();
 
       // Load initial settings only once
       if (_settings == null)
       {
+        // Check if update of old PS settings is necessary
+        Setting setting = layer.GetSetting("PowerSchedulerExpertMode");
+        if (setting.Value == "")
+        {
+          setting.Remove();
+
+          // Initialise list of old and new settings to update
+          List<String[]> settingNames = new List<String[]>();
+          settingNames.Add(new String[] { "PreventStandybyWhenSpecificSharesInUse", "PowerSchedulerActiveShares" });
+          settingNames.Add(new String[] { "PreventStandybyWhenSharesInUse", "PowerSchedulerActiveSharesEnabled" });
+          settingNames.Add(new String[] { "PowerSchedulerEpgCommand", "PowerSchedulerEPGCommand" });
+          settingNames.Add(new String[] { "PreventStandbyWhenGrabbingEPG", "PowerSchedulerEPGPreventStandby" });
+          settingNames.Add(new String[] { "WakeupSystemForEPGGrabbing", "PowerSchedulerEPGWakeup" });
+          settingNames.Add(new String[] { "EPGWakeupConfig", "PowerSchedulerEPGWakeupConfig" });
+          settingNames.Add(new String[] { "NetworkMonitorEnabled", "PowerSchedulerNetworkMonitorEnabled" });
+          settingNames.Add(new String[] { "NetworkMonitorIdleLimit", "PowerSchedulerNetworkMonitorIdleLimit" });
+          settingNames.Add(new String[] { "PowerSchedulerPreNoShutdownTime", "PowerSchedulerPreNoStandbyTime" });
+          settingNames.Add(new String[] { "PowerSchedulerShutdownActive", "PowerSchedulerShutdownEnabled" });
+          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedStart", "PowerSchedulerStandbyHoursFrom" });
+          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedEnd", "PowerSchedulerStandbyHoursTo" });
+
+          // Update settings names
+          foreach (String[] settingName in settingNames)
+          {
+            setting = layer.GetSetting(settingName[0], "---");
+            if (setting.Value != "---")
+            {
+              setting.Tag = settingName[1];
+              setting.Persist();
+            }
+            else
+            {
+              setting.Remove();
+            }
+          }
+        }
+
         _settings = new PowerSettings();
         changed = true;
 
@@ -1083,8 +1122,6 @@ namespace TvEngine.PowerScheduler
         _settings.ExtensiveLogging = false;
         _settings.CheckInterval = 15;
       }
-
-      TvBusinessLayer layer = new TvBusinessLayer();
 
       // Check if PowerScheduler should actively put the system into standby
       boolSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownEnabled", "false").Value);
@@ -1178,11 +1215,11 @@ namespace TvEngine.PowerScheduler
       }
 
       // Get external command
-      setting = _settings.GetSetting("Command");
+      powerSetting = _settings.GetSetting("Command");
       stringSetting = layer.GetSetting("PowerSchedulerCommand", String.Empty).Value;
-      if (!stringSetting.Equals(setting.Get<string>()))
+      if (!stringSetting.Equals(powerSetting.Get<string>()))
       {
-        setting.Set<string>(stringSetting);
+        powerSetting.Set<string>(stringSetting);
         Log.Debug("PS: Run command on power state change: {0}", stringSetting);
         changed = true;
       }
