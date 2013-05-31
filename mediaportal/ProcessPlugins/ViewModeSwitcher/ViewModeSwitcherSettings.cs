@@ -42,6 +42,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public int fboverScan = 0;
     public bool UseAutoLBDetection = false;
     public Geometry.Type PillarBoxViewMode = Geometry.Type.NonLinearStretch;
+    public bool UseMaxHCrop = true;
 
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -55,7 +56,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
     private const string ParmUseAutoLBDetection = "parmUseAutoLBDetection";
-    private const string ParmPillarBoxViewMode = "parmpillarboxviewmode";    
+    private const string ParmPillarBoxViewMode = "parmpillarboxviewmode";  
+    private const string ParmUseMaxHCrop = "parmUseMaxHCrop";  
 
 
     public static Geometry.Type StringToViewMode(string strViewmode)
@@ -138,9 +140,10 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);        
-        UseAutoLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, false);
+        UseAutoLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, false);       
         String tmpPillarBoxViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmPillarBoxViewMode, "NonLinearStretch");
         PillarBoxViewMode = StringToViewMode(tmpPillarBoxViewMode);
+        UseMaxHCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseMaxHCrop, true);
         
 
         bool tmpReturn = false;
@@ -254,6 +257,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
         //xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, UseAutoLBDetection);
         //xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmPillarBoxViewMode, ParmPillarBoxViewMode.ToString());
+        //xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseMaxHCrop, UseMaxHCrop);
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

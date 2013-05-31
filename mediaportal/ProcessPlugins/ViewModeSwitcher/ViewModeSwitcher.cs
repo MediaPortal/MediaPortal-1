@@ -56,7 +56,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
     private bool isPillarBox = false;
     private bool updatePending = false;    
-   // private Geometry.Type NewGeometry = Geometry.Type.Normal;
     private string NewGeometryMessage = " ";
 
 
@@ -88,7 +87,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: auto crop ON");
         enableLB = true;
         isAutoCrop = true;
-        LastDetectionResult = false;
         workerEvent.Set();
         return "BB detect > Auto";
       }
@@ -97,8 +95,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: auto crop OFF");
         enableLB = true;
         isAutoCrop = false;
-        LastDetectionResult = false;
-        workerEvent.Set();
         return "BB detect > Manual";
       }      
     }
@@ -293,7 +289,10 @@ namespace ProcessPlugins.ViewModeSwitcher
           isPillarBox = false;
           updatePending = false;
           
-          Log.Debug("ViewModeSwitcher: Worker thread -> idle");
+          if (currentSettings.verboseLog)
+          {
+            Log.Debug("ViewModeSwitcher: Worker thread -> idle");
+          }
           videoRecvEvent.Set();
           workerEvent.WaitOne(); // reset automatically - sleep until triggered      
         }   
@@ -449,28 +448,28 @@ namespace ProcessPlugins.ViewModeSwitcher
       Log.Info("ViewModeSwitcher: Switching to viewmode: " + AR);
       GUIGraphicsContext.ARType = AR;
 
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
-        guiMsg.Label = "ViewModeSwitcher";
-        
-        if (!enableLB || currentSettings.DisableLBGlobaly)
-        {
-          guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Off");
-        }
-        else if (!isAutoCrop)
-        {
-          guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Manual");
-        }
-        else
-        {
-          guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Auto");
-        }  
-            
-        guiMsg.Param1 = 5;
-
-        GUIGraphicsContext.SendMessage(guiMsg);
-      }   
+      //if (GUIGraphicsContext.IsFullScreenVideo && currentSettings.ShowSwitchMsg)
+      //{
+      //  GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
+      //  guiMsg.Label = "ViewModeSwitcher";
+      //  
+      //  if (!enableLB || currentSettings.DisableLBGlobaly)
+      //  {
+      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Off");
+      //  }
+      //  else if (!isAutoCrop)
+      //  {
+      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Manual");
+      //  }
+      //  else
+      //  {
+      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Auto");
+      //  }  
+      //      
+      //  guiMsg.Param1 = 3;
+      //
+      //  GUIGraphicsContext.SendMessage(guiMsg);
+      //}   
       
       return true;   
     }
@@ -487,17 +486,46 @@ namespace ProcessPlugins.ViewModeSwitcher
       tmpCropSettings.Top    = cropSettings.Top;
       tmpCropSettings.Bottom = cropSettings.Bottom;
 
-      if ((LastAnamorphFactor > 0f) && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
+      if (LastAnamorphFactor > 0f && LastSwitchedAspectRatio > 0f && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
       {
+        
+        float CropLeft  = (float)cropSettings.Left;
+        float CropRight = (float)cropSettings.Right;
+
+        if (currentSettings.UseMaxHCrop)
+        {      
+          //Adjust vertical crop value to match horiz crop value (without picture distortion)
+          tmpCropSettings.Top    = Math.Max(cropSettings.Top,    (int)(CropLeft  / LastSwitchedAspectRatio));
+          tmpCropSettings.Bottom = Math.Max(cropSettings.Bottom, (int)(CropRight / LastSwitchedAspectRatio));
+        }
+        else
+        {
+          //Adjust horiz crop value to match vertical crop value (without picture distortion)
+          CropLeft  = Math.Min(CropLeft,  ((float)cropSettings.Top    * LastSwitchedAspectRatio));
+          CropRight = Math.Min(CropRight, ((float)cropSettings.Bottom * LastSwitchedAspectRatio));
+        }
+        
         //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
         Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", LastAnamorphFactor);
-        tmpCropSettings.Left  = (int)((float)tmpCropSettings.Left  / LastAnamorphFactor);
-        tmpCropSettings.Right = (int)((float)tmpCropSettings.Right / LastAnamorphFactor);
+        tmpCropSettings.Left  = (int)(CropLeft  / LastAnamorphFactor);
+        tmpCropSettings.Right = (int)(CropRight / LastAnamorphFactor);                
       }
+      
       GUIMessage msg = new GUIMessage();
       msg.Message = GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP;
       msg.Object = tmpCropSettings;
       GUIWindowManager.SendMessage(msg);
+
+      if (GUIGraphicsContext.IsFullScreenVideo && currentSettings.ShowSwitchMsg)
+      {
+        GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
+        guiMsg.Label = "ViewModeSwitcher";        
+        guiMsg.Label2 = ("ViewMode: " + LastSwitchedGeometry + ", AR: " + LastSwitchedAspectRatio + ", Bar detect: " + (enableLB && !currentSettings.DisableLBGlobaly) + ", H crop: " + tmpCropSettings.Left + ", V crop: " + tmpCropSettings.Top);            
+        guiMsg.Param1 = 3;
+
+        GUIGraphicsContext.SendMessage(guiMsg);
+      }   
+
     }
 
     /// <summary>
