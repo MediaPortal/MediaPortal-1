@@ -408,7 +408,7 @@ namespace MediaPortal.Player.Subtitles
             // allocate new texture
             texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1,
                                   Usage.Dynamic,
-                                  Format.A8R8G8B8, Pool.Default);
+                                  Format.A8R8G8B8, GUIGraphicsContext.GetTexturePoolType());
 
             if (texture == null)
             {
@@ -841,11 +841,12 @@ namespace MediaPortal.Player.Subtitles
       if (_vertexBuffer == null)
       {
         Log.Debug("Subtitle: Creating vertex buffer");
+        var usage = OSInfo.OSInfo.VistaOrLater() ? Usage.Dynamic | Usage.WriteOnly : 0;
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                        4, GUIGraphicsContext.DX9Device,
-                                        Usage.Dynamic | Usage.WriteOnly,
-                                        CustomVertex.TransformedTextured.Format,
-                                        GUIGraphicsContext.GetTexturePoolType());
+                                         4, GUIGraphicsContext.DX9Device,
+                                         usage,
+                                         CustomVertex.TransformedTextured.Format,
+                                         GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 

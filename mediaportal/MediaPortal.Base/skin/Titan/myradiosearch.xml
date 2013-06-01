@@ -290,7 +290,7 @@
 		<posY>520</posY>
 		<label>#Radio.Search.Genre</label>
 		<align>right</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFB2D4F5</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>

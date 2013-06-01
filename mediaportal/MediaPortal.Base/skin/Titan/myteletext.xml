@@ -103,7 +103,7 @@
 		<visible>no</visible>
 		<id>26</id>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
@@ -117,7 +117,7 @@
 		<posY>250</posY>
 		<id>27</id>
 		<label>-</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>

@@ -129,7 +129,7 @@
       <loop>yes</loop>
       <randomize>true</randomize>
       <keepaspectratio>no</keepaspectratio>
-      <visible>control.isvisible(39)+skin.hassetting(#skin.fanart.basichome)</visible>
+      <visible>plugin.isenabled(Fanart Handler)+control.isvisible(39)+skin.hassetting(#skin.fanart.basichome)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>

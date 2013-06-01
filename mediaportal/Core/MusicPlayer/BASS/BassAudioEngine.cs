@@ -1206,7 +1206,7 @@ namespace MediaPortal.MusicPlayer.BASS
         VizWindow.Visible = false;
       }
 
-      if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
+      //if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
       {
         Stop();
       }
@@ -1250,7 +1250,14 @@ namespace MediaPortal.MusicPlayer.BASS
         VizWindow.Size = new Size(0, 0);
         VizWindow.TabIndex = 0;
         VizWindow.Enabled = false;
-        GUIGraphicsContext.form.Controls.Add(VizWindow);
+        try
+        {
+          GUIGraphicsContext.form.Controls.Add(VizWindow);
+        }
+        catch (Exception)
+        {
+          Log.Error("BASS: VizWindow exception");
+       }
       }
 
       GUIGraphicsContext.form.ResumeLayout();
@@ -1483,6 +1490,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       MusicStream currentStream = GetCurrentStream();
 
+      MusicStream previousStream = null;
       bool result = true;
       Speed = 1; // Set playback Speed to normal speed
 
@@ -1536,13 +1544,14 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             currentStream.FadeOutStop();
           }
+          previousStream = currentStream;
         }
 
         _state = PlayState.Init;
 
         if (filePath == string.Empty)
         {
-          return result;
+          return false;
         }
 
         _filePath = filePath;
@@ -1553,7 +1562,7 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           return false;
         }
-
+        
         _streams.Add(stream);
         if (stream.Filetype.FileMainType == FileMainType.CDTrack)
         {
@@ -1596,6 +1605,10 @@ namespace MediaPortal.MusicPlayer.BASS
                 Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
                 // The new stream has a different frequency or number of channels
                 // We need a new mixer
+                if (previousStream != null)
+                {
+                  previousStream.Dispose();
+                }
                 _mixer.Dispose();
                 _mixer = null;
                 _mixer = new MixerStream(this);
@@ -1791,7 +1804,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_mixer == null)
       {
         Log.Debug("BASS: Already stopped. Don't execute Stop a second time");
-        return;
+        //return;
       }
 
       // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
@@ -1865,8 +1878,11 @@ namespace MediaPortal.MusicPlayer.BASS
                          }
                        }
 
-                       _mixer.Dispose();
-                       _mixer = null;
+                       if (_mixer != null)
+                       {
+                         _mixer.Dispose();
+                         _mixer = null;
+                       }
 
                        // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
                        if (_isCDDAFile)
@@ -1886,7 +1902,14 @@ namespace MediaPortal.MusicPlayer.BASS
                        HandleSongEnded();
 
                        // Remove the Viz Window from the Main Form as it causes troubles to other plugin overlay window
-                       RemoveVisualizationWindow();
+                       try
+                       {
+                         RemoveVisualizationWindow();
+                       }
+                       catch (Exception)
+                       {
+                         Log.Error("BASS: Stop RemoveVisualizationWindow command caused an exception");
+                       }
 
                        // Switching back to normal playback mode
                        SwitchToDefaultPlaybackMode();

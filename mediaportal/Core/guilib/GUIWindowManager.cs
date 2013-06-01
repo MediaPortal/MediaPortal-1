@@ -651,15 +651,6 @@ namespace MediaPortal.GUI.Library
       LockAndDoOnAllRegisteredWindows(window => window.OnDeviceRestored());
     }
 
-    /// <summary>
-    /// Called by the runtime when the DirectX device has been lost
-    /// just let all windoww know about this so they can free their directx resources
-    /// </summary>
-    public static void OnDeviceLost()
-    {
-      LockAndDoOnAllRegisteredWindows(window => window.OnDeviceLost());
-    }
-
     #endregion
 
     #region window switching
