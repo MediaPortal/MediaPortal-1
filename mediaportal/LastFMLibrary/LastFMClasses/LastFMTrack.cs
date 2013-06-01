@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -87,6 +88,8 @@ namespace MediaPortal.LastFM
 
     public static List<LastFMSimilarTrack> GetSimilarTracks(XDocument xDoc)
     {
+
+      var ci = new CultureInfo("en-GB");
       var tracks = (from t in xDoc.Descendants("track")
                     let trackName = (string)t.Element("name")
                     let playcount = (string)t.Element("playcount")
@@ -107,10 +110,10 @@ namespace MediaPortal.LastFM
                     select new LastFMSimilarTrack
                     {
                       TrackTitle = trackName,
-                      Playcount = string.IsNullOrEmpty(playcount) ? 0 : int.Parse(playcount),
+                      Playcount = string.IsNullOrEmpty(playcount) ? 0 : int.Parse(playcount, ci),
                       MusicBrainzId = mbid,
-                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration),
-                      Match = string.IsNullOrEmpty(match) ? 0 : float.Parse(match),
+                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration, ci),
+                      Match = string.IsNullOrEmpty(match) ? 0 : float.Parse(match, ci),
                       TrackURL = trackURL,
                       ArtistName = artistName,
                       Images = images
