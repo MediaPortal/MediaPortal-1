@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,12 +19,13 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using System.Threading;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TvLibrary.Log;
+using System.Diagnostics;
+using System.Threading;
 
 namespace TvEngine.PowerScheduler
 {

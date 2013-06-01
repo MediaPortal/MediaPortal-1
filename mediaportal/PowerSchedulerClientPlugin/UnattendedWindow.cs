@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2012 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2012 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ namespace MediaPortal.Plugins.Process
 
     public override bool Init()
     {
-      Log.Info("PS: UnattendedWindow.Init");
+      Log.Info("PSClientPlugin.UnattendedWindow.Init");
 
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\psclientplugin_unattended.xml"));
     }

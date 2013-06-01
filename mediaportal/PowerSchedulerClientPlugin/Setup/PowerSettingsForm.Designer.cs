@@ -244,7 +244,7 @@
       this.comboBoxSleepButtonActionDC.FormattingEnabled = true;
       this.comboBoxSleepButtonActionDC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxSleepButtonActionDC.Location = new System.Drawing.Point(470, 222);
@@ -260,7 +260,7 @@
       this.comboBoxPowerButtonActionDC.FormattingEnabled = true;
       this.comboBoxPowerButtonActionDC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxPowerButtonActionDC.Location = new System.Drawing.Point(470, 197);
@@ -276,7 +276,7 @@
       this.comboBoxLidCloseActionDC.FormattingEnabled = true;
       this.comboBoxLidCloseActionDC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxLidCloseActionDC.Location = new System.Drawing.Point(470, 172);
@@ -421,7 +421,7 @@
       this.comboBoxSleepButtonActionAC.FormattingEnabled = true;
       this.comboBoxSleepButtonActionAC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxSleepButtonActionAC.Location = new System.Drawing.Point(156, 222);
@@ -436,7 +436,7 @@
       this.comboBoxPowerButtonActionAC.FormattingEnabled = true;
       this.comboBoxPowerButtonActionAC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxPowerButtonActionAC.Location = new System.Drawing.Point(156, 197);
@@ -451,7 +451,7 @@
       this.comboBoxLidCloseActionAC.FormattingEnabled = true;
       this.comboBoxLidCloseActionAC.Items.AddRange(new object[] {
             "Do nothing",
-            "Sleep",
+            "(Hybrid) Sleep",
             "Hibernate",
             "Shutdown"});
       this.comboBoxLidCloseActionAC.Location = new System.Drawing.Point(156, 172);
