@@ -885,6 +885,7 @@ namespace MediaPortal.GUI.Pictures
                   }
                   else
                   {
+                    _currentSlideIndex--;
                     // How to exit back to GUIPictures?
                     ShowPreviousWindow();
                   }

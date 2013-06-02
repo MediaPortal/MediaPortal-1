@@ -729,18 +729,24 @@ namespace MediaPortal.GUI.Pictures
         // Select latest item played from slideshow/slideshow recursive (random or not)
         string strSelectedItem = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
         SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
-
-        LoadFolderSettings(SlideShow._folderCurrentItem);
-        LoadDirectory(SlideShow._folderCurrentItem);
-        int totalItemCount = facadeLayout.Count;
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
-        for (int i = 0; i < totalItemCount; i++)
+        if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(SlideShow._folderCurrentItem))
         {
-          if (facadeLayout[i].Label == strSelectedItem)
+          LoadFolderSettings(SlideShow._folderCurrentItem);
+          LoadDirectory(SlideShow._folderCurrentItem);
+          int totalItemCount = facadeLayout.Count;
+          for (int i = 0; i < totalItemCount; i++)
           {
-            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
-            break;
+            if (facadeLayout[i].Label == strSelectedItem)
+            {
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+              SlideShow._folderCurrentItem = null;
+              break;
+            }
           }
+        }
+        else
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
         }
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
