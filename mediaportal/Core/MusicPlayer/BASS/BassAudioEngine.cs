@@ -2206,7 +2206,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else if (_speed < 0 && ts.TotalMilliseconds > 120)
         {
-          SeekReverse(80 * -_speed);
+          SeekReverse(80 * -_speed + (int)ts.TotalMilliseconds);
           _seekUpdate = DateTime.Now;
         }
       }
