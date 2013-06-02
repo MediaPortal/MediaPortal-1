@@ -725,6 +725,23 @@ namespace MediaPortal.GUI.Pictures
         {
           SlideShow._showRecursive = false;
         }
+
+        // Select latest item played from slideshow/slideshow recursive (random or not)
+        string strSelectedItem = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
+        SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+
+        LoadFolderSettings(SlideShow._folderCurrentItem);
+        LoadDirectory(SlideShow._folderCurrentItem);
+        int totalItemCount = facadeLayout.Count;
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
+        for (int i = 0; i < totalItemCount; i++)
+        {
+          if (facadeLayout[i].Label == strSelectedItem)
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+            break;
+          }
+        }
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
@@ -1475,6 +1492,9 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+      // Needed to set GUIDialogExif
+      exifDialog.Restore();
+      exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = item.Path;
       exifDialog.DoModal(GetID);
       // Fix for Mantis issue: 0001709: Background not correct after viewing pictures properties twice

@@ -48,9 +48,9 @@ namespace MediaPortal.GUI.Pictures
       {
         return null;
       }
-      string slideFilePath = _slideList[_currentSlideIndex];
+      GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
 
-      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+      _currentSlide = _slideCache.GetCurrentSlide(GUIPictures.fileNameCheck);
 
       GUIPictures tmpGUIpictures = (GUIPictures) GUIWindowManager.GetWindow((int) Window.WINDOW_PICTURES);
 
@@ -82,15 +82,20 @@ namespace MediaPortal.GUI.Pictures
           }
 
           _currentSlide = _slideCache.GetCurrentSlide(_slideList[--_currentSlideIndex]);
+          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
           _autoShuffleFolder = true;
         }
       }
       if (_autoShuffle && (_isSlideShow || _showRecursive) && _autoShuffleFolder)
       {
         Shuffle(true, false);
+        // Select first item after shuffle from a recursive folder
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+        GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
       }
 
-      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
+      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
 
       ResetCurrentZoom(_currentSlide);
 
@@ -98,7 +103,7 @@ namespace MediaPortal.GUI.Pictures
 
       Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
-      if (Util.Utils.IsVideo(slideFilePath))
+      if (Util.Utils.IsVideo(GUIPictures.fileNameCheck))
       {
         // TODO Handle when it's Radio Stream
         /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
@@ -131,7 +136,7 @@ namespace MediaPortal.GUI.Pictures
         _loadVideoPlayback = true;
 
         g_Player.Stop();
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video, null, true, 0, false, true);
+        g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
@@ -143,14 +148,19 @@ namespace MediaPortal.GUI.Pictures
         _returnedFromVideoPlayback = true;
       }
       else
+      {
         _slideDirection = 0;
+      }
 
       // Get Name of actual played slide.
       GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
 
-      if (_showRecursive && !_autoShuffleFolder)
+      if (_showRecursive)
       {
-        _slideRecursiveItem.Add(_currentSlide._filePath);
+        if (!_slideRecursiveItem.Contains(_currentSlide._filePath))
+        {
+          _slideRecursiveItem.Add(_currentSlide._filePath);
+        }
       }
 
       return _currentSlide;
@@ -287,6 +297,7 @@ namespace MediaPortal.GUI.Pictures
     public List<string> _slideFolder = new List<string>();
     public List<string> _slideRecursive = new List<string>();
     public List<string> _slideRecursiveItem = new List<string>();
+    public string _folderCurrentItem;
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -439,6 +450,11 @@ namespace MediaPortal.GUI.Pictures
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
           {
+            // Get folder path for recursive selectedItemIndex.
+            if (_slideList.Count != 0)
+            {
+              _folderCurrentItem = _slideList[_currentSlideIndex];
+            }
             Reset();
           }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
@@ -2407,6 +2423,9 @@ namespace MediaPortal.GUI.Pictures
     private void OnShowInfo()
     {
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+      // Needed to set GUIDialogExif
+      exifDialog.Restore();
+      exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
     }
