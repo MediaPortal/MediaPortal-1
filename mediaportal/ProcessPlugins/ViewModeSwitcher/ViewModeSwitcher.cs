@@ -59,6 +59,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private string NewGeometryMessage = " ";
     private float fCropH = 0f; // stores the last hor crop value. 
     private float fCropV = 0f; // stores the last hor crop value. 
+    private float fWidthH = 0f; // stores the last 'real' video width value. 
+    private float fHeightV = 0f; // stores the last 'real' video width value. 
 
 
     /// <summary>
@@ -370,7 +372,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void Crop(float crop)
     {
-      if (crop > 0)
+      if (crop > 0f && LastSwitchedAspectRatio > 0f)
       {
         fCropH = crop;
         fCropV = crop / LastSwitchedAspectRatio;
@@ -453,7 +455,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// set the oversan of MediaPortal by setting crop parameters
     /// </summary>
     private void SetCropMode()
-    {      
+    {           
       float cropH = fCropH;
       float cropV = fCropV;
 
@@ -464,11 +466,15 @@ namespace ProcessPlugins.ViewModeSwitcher
           if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
           {
             //Adjust horiz crop value to match vertical crop value (without picture distortion)
-            cropH = fCropV * LastSwitchedAspectRatio;
+            float extraHcropLimit = fWidthH * LastAnamorphFactor * 0.075f;
+            cropH = Math.Min(fCropV * LastSwitchedAspectRatio, fCropH + extraHcropLimit);
+            cropV = cropH / LastSwitchedAspectRatio;
           }
           else
           {
-            cropV = (fCropH / LastSwitchedAspectRatio);
+            float extraVcropLimit = fHeightV * 0.075f;      
+            cropV = Math.Min(fCropH / LastSwitchedAspectRatio, fCropV + extraVcropLimit);
+            cropH = cropV * LastSwitchedAspectRatio;
           }           
         }
         else
@@ -480,7 +486,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           else
           {
-            cropV = (fCropH / LastSwitchedAspectRatio);
+            cropV = fCropH / LastSwitchedAspectRatio;
           }
         }       
       }
@@ -521,6 +527,12 @@ namespace ProcessPlugins.ViewModeSwitcher
     private void SingleCrop()
     {
       bool updateCrop = false;
+      
+      if (LastSwitchedAspectRatio < 0.1f)
+      {
+        LastDetectionResult = false;
+        return;
+      }
       
       if (GUIGraphicsContext.RenderBlackImage)
       {
@@ -602,29 +614,44 @@ namespace ProcessPlugins.ViewModeSwitcher
           //'Pillar boxed' 4:3 inside 16:9 video
           if (SetNewGeometry("4:3 inside 16:9", currentSettings.PillarBoxViewMode))
           {
-            if (currentSettings.PillarBoxViewMode != Geometry.Type.NonLinearStretch)
-            {
-              //NonLinearStretch needs full side bar cropping, other modes don't
-              cropH = overScan;
-              cropV = overScan / LastSwitchedAspectRatio;
-            }
             updateCrop = true;
+          }
+          if (currentSettings.PillarBoxViewMode != Geometry.Type.NonLinearStretch)
+          {
+            //NonLinearStretch needs full side bar cropping, other modes don't
+            cropH = overScan;
+            cropV = overScan / LastSwitchedAspectRatio;
+          }
+          else
+          {
+            //Add overscan to NonLinearStretch
+            cropH += overScan;
+            cropV += overScan / LastSwitchedAspectRatio;
           }
           isPillarBox = true;
         }
         else
         {
           //Normal video 
-          if (isPillarBox)
-          {
-            //Force CheckAspectRatios() update 
-            LastSwitchedAspectRatio = 0f;
-          }
-          isPillarBox = false;
-          
           //Use overscan cropping if larger than detected black bars
           cropH = Math.Max(cropH, overScan);
           cropV = Math.Max(cropV, overScan / LastSwitchedAspectRatio);
+          
+          if (isPillarBox)
+          {
+            if (currentSettings.verboseLog)
+            {
+              Log.Debug("ViewModeSwitcher: SingleCrop(), PillarBox -> Normal");      
+            }
+            //Force CheckAspectRatios() update 
+            updatePending = false;   
+            isPillarBox = false;
+            LastSwitchedAspectRatio = 0f;
+            frame.Dispose();
+            frame = null;
+            return;
+          }
+          isPillarBox = false;          
         }
       } 
 
@@ -633,7 +660,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: SingleCrop(), Real cropH: {0}, cropV: {1}", cropH, cropV);      
       }
 
-      if ((Math.Abs(cropH - fCropH) > 2) || (Math.Abs(cropV - fCropV) > 2))
+      if ((Math.Abs(cropH - fCropH) > 5) || (Math.Abs(cropV - fCropV) > 3))
       {
         fCropH = cropH;
         fCropV = cropV;
@@ -663,7 +690,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         float anamorphFactor = 0f;
         if (VMR9Util.g_vmr9.VideoWidth != 0 && VMR9Util.g_vmr9.VideoHeight != 0 )
         {
-          float pixelAR = (float)VMR9Util.g_vmr9.VideoWidth / (float)VMR9Util.g_vmr9.VideoHeight;
+          fWidthH  = (float)VMR9Util.g_vmr9.VideoWidth;
+          fHeightV = (float)VMR9Util.g_vmr9.VideoHeight;
+          float pixelAR = fWidthH / fHeightV;
           anamorphFactor = (aspectRatio/pixelAR);
         }
         if (aspectRatio != LastSwitchedAspectRatio)
