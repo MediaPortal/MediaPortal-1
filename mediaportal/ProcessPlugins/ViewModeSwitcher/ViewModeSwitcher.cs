@@ -47,8 +47,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool stopWorkerThread = false;
     private bool isPlaying = false;
     private bool enableLB = false;
-    private CropSettings cropSettings = new CropSettings();
-    private int overScan = 0;
+//    private CropSettings cropSettings = new CropSettings();
+    private float overScan = 0f;
     private float LastAnamorphFactor; // Video anamorphic correction factor (Video AR/Pixel AR) 
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
@@ -57,6 +57,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool isPillarBox = false;
     private bool updatePending = false;    
     private string NewGeometryMessage = " ";
+    private float fCropH = 0f; // stores the last hor crop value. 
+    private float fCropV = 0f; // stores the last hor crop value. 
 
 
     /// <summary>
@@ -253,7 +255,7 @@ namespace ProcessPlugins.ViewModeSwitcher
                 //reset cropping to fallback settings
               Log.Debug("ViewModeSwitcher: Zoom mode changed by user");
               enableLB = false;
-              Crop(currentSettings.fboverScan);
+              Crop((float)currentSettings.fboverScan);
               LastSwitchedGeometry = GUIGraphicsContext.ARType;
               updatePending = true;   
             }
@@ -317,7 +319,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
 
       int currentRule = -1;
-      overScan = 0;
+      overScan = 0f;
       enableLB = false;
       for (int i = 0; i < currentSettings.ViewModeRules.Count; i++)
       {
@@ -340,7 +342,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           if (tmpRule.ChangeOs || !enableLB)
           {
-            overScan = tmpRule.OverScan;
+            overScan = (float)tmpRule.OverScan;
             Crop(overScan);
             updateCrop = true;
           }
@@ -356,7 +358,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       if (currentSettings.UseFallbackRule && currentRule == -1 && height != 100 && width != 100)
       {
         Log.Info("ViewModeSwitcher: Processing the fallback rule!");
-        Crop(currentSettings.fboverScan);
+        Crop((float)currentSettings.fboverScan);
         SetNewGeometry("Fallback rule", currentSettings.FallBackViewMode);
         updateCrop = true;
       }
@@ -366,21 +368,17 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
     }
 
-    private void Crop(int crop)
+    private void Crop(float crop)
     {
       if (crop > 0)
       {
-        cropSettings.Top = (int)((float)crop / LastSwitchedAspectRatio);
-        cropSettings.Bottom = (int)((float)crop / LastSwitchedAspectRatio);
-        cropSettings.Left = crop;
-        cropSettings.Right = crop;
+        fCropH = crop;
+        fCropV = crop / LastSwitchedAspectRatio;
       }
       else
       {
-        cropSettings.Top = currentSettings.CropTop;
-        cropSettings.Bottom = currentSettings.CropBottom;
-        cropSettings.Left = currentSettings.CropLeft;
-        cropSettings.Right = currentSettings.CropRight;
+        fCropH = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+        fCropV = (float)(Math.Min(currentSettings.CropTop, currentSettings.CropBottom));
       }
     }
 
@@ -447,29 +445,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         
       Log.Info("ViewModeSwitcher: Switching to viewmode: " + AR);
       GUIGraphicsContext.ARType = AR;
-
-      //if (GUIGraphicsContext.IsFullScreenVideo && currentSettings.ShowSwitchMsg)
-      //{
-      //  GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
-      //  guiMsg.Label = "ViewModeSwitcher";
-      //  
-      //  if (!enableLB || currentSettings.DisableLBGlobaly)
-      //  {
-      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Off");
-      //  }
-      //  else if (!isAutoCrop)
-      //  {
-      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Manual");
-      //  }
-      //  else
-      //  {
-      //    guiMsg.Label2 = (MessageString + " > " + AR + " | BB detect > Auto");
-      //  }  
-      //      
-      //  guiMsg.Param1 = 3;
-      //
-      //  GUIGraphicsContext.SendMessage(guiMsg);
-      //}   
       
       return true;   
     }
@@ -478,39 +453,52 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// set the oversan of MediaPortal by setting crop parameters
     /// </summary>
     private void SetCropMode()
-    {
-      CropSettings tmpCropSettings = new CropSettings();
-      
-      tmpCropSettings.Left   = cropSettings.Left;
-      tmpCropSettings.Right  = cropSettings.Right;
-      tmpCropSettings.Top    = cropSettings.Top;
-      tmpCropSettings.Bottom = cropSettings.Bottom;
+    {      
+      float cropH = fCropH;
+      float cropV = fCropV;
 
-      if (LastAnamorphFactor > 0f && LastSwitchedAspectRatio > 0f && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
-      {
-        
-        float CropLeft  = (float)cropSettings.Left;
-        float CropRight = (float)cropSettings.Right;
-
+      if (LastSwitchedAspectRatio > 0f && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
+      {        
         if (currentSettings.UseMaxHCrop)
-        {      
-          //Adjust vertical crop value to match horiz crop value (without picture distortion)
-          tmpCropSettings.Top    = Math.Max(cropSettings.Top,    (int)(CropLeft  / LastSwitchedAspectRatio));
-          tmpCropSettings.Bottom = Math.Max(cropSettings.Bottom, (int)(CropRight / LastSwitchedAspectRatio));
+        { 
+          if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
+          {
+            //Adjust horiz crop value to match vertical crop value (without picture distortion)
+            cropH = fCropV * LastSwitchedAspectRatio;
+          }
+          else
+          {
+            cropV = (fCropH / LastSwitchedAspectRatio);
+          }           
         }
         else
         {
-          //Adjust horiz crop value to match vertical crop value (without picture distortion)
-          CropLeft  = Math.Min(CropLeft,  ((float)cropSettings.Top    * LastSwitchedAspectRatio));
-          CropRight = Math.Min(CropRight, ((float)cropSettings.Bottom * LastSwitchedAspectRatio));
-        }
-        
-        //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
-        Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", LastAnamorphFactor);
-        tmpCropSettings.Left  = (int)(CropLeft  / LastAnamorphFactor);
-        tmpCropSettings.Right = (int)(CropRight / LastAnamorphFactor);                
+          if (fCropV < (fCropH / LastSwitchedAspectRatio)) 
+          {
+            //Adjust horiz crop value to match vertical crop value (without picture distortion)
+            cropH = fCropV * LastSwitchedAspectRatio;
+          }
+          else
+          {
+            cropV = (fCropH / LastSwitchedAspectRatio);
+          }
+        }       
       }
-      
+
+      if (LastAnamorphFactor > 0f)
+      { 
+        //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
+        //Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", LastAnamorphFactor);
+        cropH /= LastAnamorphFactor;
+      }       
+
+      CropSettings tmpCropSettings = new CropSettings();
+
+      tmpCropSettings.Left   = (int)cropH;
+      tmpCropSettings.Right  = tmpCropSettings.Left;
+      tmpCropSettings.Top    = (int)cropV;
+      tmpCropSettings.Bottom = tmpCropSettings.Top;
+     
       GUIMessage msg = new GUIMessage();
       msg.Message = GUIMessage.MessageType.GUI_MSG_PLANESCENE_CROP;
       msg.Object = tmpCropSettings;
@@ -525,7 +513,6 @@ namespace ProcessPlugins.ViewModeSwitcher
 
         GUIGraphicsContext.SendMessage(guiMsg);
       }   
-
     }
 
     /// <summary>
@@ -583,29 +570,25 @@ namespace ProcessPlugins.ViewModeSwitcher
         return;
       }
 
-      int cropH = Math.Min(frame.Width - bounds.Right, bounds.Left);
-      cropH = Math.Max(cropH, overScan);
+      //Use the smallest black bar size
+      float cropH = (float)(Math.Min(frame.Width - bounds.Right, bounds.Left));
+      float cropV = (float)(Math.Min(frame.Height - bounds.Bottom, bounds.Top));
 
-      int cropV = Math.Min(frame.Height - bounds.Bottom, bounds.Top);
-      cropV = Math.Max(cropV,(int)((float)overScan / LastSwitchedAspectRatio));
-      cropV = Math.Min(cropV,(int)((float)cropH / LastSwitchedAspectRatio));
+      //Work out actual picture aspect ratio
+      float newasp = ((float)frame.Width - cropH * 2) / ((float)frame.Height - cropV * 2);      
 
-      if (currentSettings.verboseLog)
-      {
-        Log.Debug("ViewModeSwitcher: SingleCrop(), cropH: {0}, cropV: {1}", cropH, cropV);      
-      }
-
-      float newasp = (float)(frame.Width - cropH * 2) / (float)(frame.Height - cropV * 2);      
+      //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio.
+      //After this correction, cropH value is in 'real' video pixels, not source pixels
       if (LastAnamorphFactor > 0f)
       {
-        //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
         newasp *= LastAnamorphFactor;
+        cropH *= LastAnamorphFactor; 
       }
 
       if (newasp < 1) // faulty crop
       {
         cropH = overScan;
-        cropV = (int)((float)overScan / LastSwitchedAspectRatio);
+        cropV = overScan / LastSwitchedAspectRatio;
       }
       else // (newasp >= 1)
       {
@@ -616,13 +599,14 @@ namespace ProcessPlugins.ViewModeSwitcher
         
         if (newasp > 1.20 && newasp < 1.46 && LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95)
         {
+          //'Pillar boxed' 4:3 inside 16:9 video
           if (SetNewGeometry("4:3 inside 16:9", currentSettings.PillarBoxViewMode))
           {
             if (currentSettings.PillarBoxViewMode != Geometry.Type.NonLinearStretch)
             {
               //NonLinearStretch needs full side bar cropping, other modes don't
               cropH = overScan;
-              cropV = (int)((float)overScan / LastSwitchedAspectRatio);
+              cropV = overScan / LastSwitchedAspectRatio;
             }
             updateCrop = true;
           }
@@ -630,21 +614,29 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
         else
         {
+          //Normal video 
           if (isPillarBox)
           {
             //Force CheckAspectRatios() update 
             LastSwitchedAspectRatio = 0f;
           }
           isPillarBox = false;
+          
+          //Use overscan cropping if larger than detected black bars
+          cropH = Math.Max(cropH, overScan);
+          cropV = Math.Max(cropV, overScan / LastSwitchedAspectRatio);
         }
       } 
 
-      if ((Math.Abs(cropH - cropSettings.Left) > 2) || (Math.Abs(cropV - cropSettings.Top) > 2))
+      if (currentSettings.verboseLog)
       {
-        cropSettings.Top = cropV; //bounds.Top;
-        cropSettings.Bottom = cropV; // frame.Height - (bounds.Bottom + 1);
-        cropSettings.Left = cropH; // bounds.Left;
-        cropSettings.Right = cropH; // frame.Width - (bounds.Right + 1);
+        Log.Debug("ViewModeSwitcher: SingleCrop(), Real cropH: {0}, cropV: {1}", cropH, cropV);      
+      }
+
+      if ((Math.Abs(cropH - fCropH) > 2) || (Math.Abs(cropV - fCropV) > 2))
+      {
+        fCropH = cropH;
+        fCropV = cropV;
         updateCrop = true;
       }      
           
