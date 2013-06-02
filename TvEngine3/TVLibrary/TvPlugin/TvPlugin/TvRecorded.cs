@@ -910,7 +910,8 @@ namespace TvPlugin
           item.ThumbnailImage = String.Empty;
         }
 
-        if (!item.IsFolder)
+        // only set the icon image to channel logo for individual recordings or if we are in channel view
+        if (!item.IsFolder || _currentDbView == DBView.Channel)
         {
           item.IconImage = SmallThumb;
         }
