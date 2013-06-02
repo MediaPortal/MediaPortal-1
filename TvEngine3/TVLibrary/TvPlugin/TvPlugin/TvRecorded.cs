@@ -694,7 +694,7 @@ namespace TvPlugin
 
           foreach (var folder in groups)
           {
-            var i = new GUIListItem();
+            var i = new GUIListItem {TVTag = folder};
             switch (_currentDbView)
             {
               case DBView.History:
@@ -705,8 +705,8 @@ namespace TvPlugin
                 singleRecording = (recordings.Count(r => r.Title == folder.Title) == 1);
                 if (singleRecording)
                 {
-                  i = BuildItemFromRecording(folder);
                   var ts = folder.EndTime - folder.StartTime;
+                  i.Label = TVUtil.GetDisplayTitle(folder);
                   i.Label2 = String.Format("{0} ({1})",
                                            Utils.GetNamedDate(folder.StartTime),
                                            Utils.SecondsToHMString((int)ts.TotalSeconds));
@@ -724,16 +724,15 @@ namespace TvPlugin
                 i.Label2 = GetSpokenViewDate(folder.StartTime);
                 break;
               case DBView.Genre:
-                i.Label = folder.Genre;
+                i.Label = !String.IsNullOrEmpty(folder.Genre) ? folder.Genre : GUILocalizeStrings.Get(2014); // unknown
                 i.Label2 = GetSpokenViewDate(folder.StartTime);
                 break;
             }
-            i.Label2 = GetSpokenViewDate(folder.StartTime);
-            i.TVTag = folder;
             i.IsFolder = !singleRecording;
-            if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
             Utils.SetDefaultIcons(i);
-            i.ThumbnailImage = i.IconImageBig;
+            SetRecordingThumbs(folder, i);
+            if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
+
             facadeLayout.Add(i);
             
             if (string.IsNullOrEmpty(i.Label)) 	
@@ -781,7 +780,9 @@ namespace TvPlugin
             if (!addToList) continue;
 
             // Add new list item for this recording
-            item = BuildItemFromRecording(rec);
+
+            item = new GUIListItem {TVTag = rec};
+            SetRecordingThumbs(rec, item);
             if (activerecordings.Contains(rec)) item.PinImage = Thumbs.TvRecordingIcon;
             item.Label = TVUtil.GetDisplayTitle(rec);
             var ts = rec.EndTime - rec.StartTime;
@@ -832,11 +833,8 @@ namespace TvPlugin
       return aRecording.IsRecording;
     }
 
-    private GUIListItem BuildItemFromRecording(Recording aRecording)
+    private void SetRecordingThumbs(Recording aRecording, GUIListItem item)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
-      GUIListItem item = null;
 
       try
       {
@@ -845,28 +843,6 @@ namespace TvPlugin
         // Re-imported channels might still be valid but their channel does not need to be present anymore...
         string strChannelName = refCh != null ? refCh.DisplayName : GUILocalizeStrings.Get(1507); // unknown
 
-
-        // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.Title, aRecording.Genre, strChannelName);
-        item = new GUIListItem { TVTag = aRecording };
-
-        switch (_currentDbView)
-        {
-          case DBView.Recordings:
-            item.Label = TVUtil.GetDisplayTitle(aRecording);
-            break;
-          case DBView.Channel:
-            item.Label = strChannelName;
-            break;
-          case DBView.Genre:
-            item.Label = !String.IsNullOrEmpty(aRecording.Genre) ? aRecording.Genre : GUILocalizeStrings.Get(2014); // unknown
-            break;
-          case DBView.History:
-            item.Label = GetSpokenViewDate(aRecording.StartTime);
-            break;
-        }
-
-        // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
         string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
@@ -903,6 +879,12 @@ namespace TvPlugin
           }
         }
 
+        string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
+        string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
+
+        // Set a default logo indicating the watched status
+        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
+        
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
         if (Utils.FileExistsInCache(StationLogo))
@@ -914,7 +896,7 @@ namespace TvPlugin
         if (Utils.FileExistsInCache(PreviewThumb))
         {
           // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);          
+          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
           if (Utils.FileExistsInCache(PreviewThumbLarge))
           {
             PreviewThumb = PreviewThumbLarge;
@@ -927,16 +909,17 @@ namespace TvPlugin
           item.IconImageBig = SmallThumb;
           item.ThumbnailImage = String.Empty;
         }
-        item.IconImage = SmallThumb;
 
+        if (!item.IsFolder)
+        {
+          item.IconImage = SmallThumb;
+        }
       }
       catch (Exception singleex)
       {
         item = null;
         Log.Warn("TVRecorded: Error building item from recording {0}\n{1}", aRecording.FileName, singleex.ToString());
       }
-
-      return item;
     }
 
     private void SetLabels()
