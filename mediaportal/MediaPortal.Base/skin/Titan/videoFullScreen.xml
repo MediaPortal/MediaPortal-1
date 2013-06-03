@@ -203,137 +203,127 @@
 			<description>2x image</description>
 			<type>image</type>
 			<id>17</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>4x image</description>
 			<type>image</type>
 			<id>18</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>8x image</description>
 			<type>image</type>
 			<id>19</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>16x image</description>
 			<type>image</type>
 			<id>20</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>32x image</description>
 			<type>image</type>
 			<id>21</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>- 2x image</description>
 			<type>image</type>
 			<id>23</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>- 4x image</description>
 			<type>image</type>
 			<id>24</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>- 8x image</description>
 			<type>image</type>
 			<id>25</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>- 16x image</description>
 			<type>image</type>
 			<id>26</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<description>- 32x image</description>
 			<type>image</type>
 			<id>27</id>
-			<posX>1150</posX>
-			<posY>20</posY>
-			<width>134</width>
-			<height>71</height>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
-			<colordiffuse>White</colordiffuse>
 		</control>
 	
 		<control>
 			<type>image</type>
 			<id>500</id>
-			<posX>977</posX>
-			<posY>18</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
 			<width>32</width>
 			<height>32</height>
 			<texture>osdaudiomutenf.png</texture>

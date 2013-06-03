@@ -725,6 +725,7 @@ namespace MediaPortal.GUI.Pictures
         {
           SlideShow._showRecursive = false;
         }
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }

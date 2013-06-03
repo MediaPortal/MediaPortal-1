@@ -214,6 +214,14 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// Returns the Tag Info set from an Internet Stream
+    /// </summary>
+    public TAG_INFO StreamTags
+    {
+      get { return _tagInfo; }  
+    }
+
     #endregion
     
     #endregion
