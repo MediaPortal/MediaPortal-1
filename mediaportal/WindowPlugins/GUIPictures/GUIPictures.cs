@@ -727,26 +727,33 @@ namespace MediaPortal.GUI.Pictures
         }
 
         // Select latest item played from slideshow/slideshow recursive (random or not)
-        string strSelectedItem = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
-        SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
-        if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(SlideShow._folderCurrentItem))
+        if (disp == Display.Files)
         {
-          LoadFolderSettings(SlideShow._folderCurrentItem);
-          LoadDirectory(SlideShow._folderCurrentItem);
-          int totalItemCount = facadeLayout.Count;
-          for (int i = 0; i < totalItemCount; i++)
+          string strSelectedItem = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
+          SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+          if (selectedItemIndex >= 0 && !String.IsNullOrEmpty(SlideShow._folderCurrentItem))
           {
-            if (facadeLayout[i].Label == strSelectedItem)
+            LoadFolderSettings(SlideShow._folderCurrentItem);
+            LoadDirectory(SlideShow._folderCurrentItem);
+            int totalItemCount = facadeLayout.Count;
+            for (int i = 0; i < totalItemCount; i++)
             {
-              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
-              SlideShow._folderCurrentItem = null;
-              break;
+              if (facadeLayout[i].Label == strSelectedItem)
+              {
+                GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+                SlideShow._folderCurrentItem = null;
+                break;
+              }
             }
+          }
+          else
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
           }
         }
         else
         {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
         }
       }
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -2269,6 +2276,20 @@ namespace MediaPortal.GUI.Pictures
           // Wrong path for date view, go back to top level
           currentFolder = "";
           LoadDateView(currentFolder);
+        }
+        int totalItemCount = facadeLayout.Count;
+        //string strSelectedItem = folderHistory.Get(currentFolder);
+        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+        string strSelectedItem = Util.Utils.GetFileNameWithExtension(SlideShow._folderCurrentItem);
+        SlideShow._folderCurrentItem = Path.GetDirectoryName(SlideShow._folderCurrentItem);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
+        for (int i = 0; i < totalItemCount; i++)
+        {
+          if (facadeLayout[i].Label == strSelectedItem)
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
+            break;
+          }
         }
       }
       catch (Exception ex)
