@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using MediaPortal.Configuration;
@@ -198,6 +199,12 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     {
       if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
 
+      if (!Win32API.IsConnectedToInternet())
+      {
+        Log.Info("No internet connection detected.  Can not process last.fm announce or Auto DJ");
+        return;
+      }
+
       var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
       var plI = pl.First(plItem => plItem.FileName == filename);
       if (plI == null || plI.MusicTag == null)
@@ -350,40 +357,47 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         Log.Info("Unable to scrobble song: {0}  as it does not exist in the playlist");
         return;
       }
-
       var currentSong = (MusicTag)plI.MusicTag;
+      ScrobbleTrack(currentSong, stoptime);
+    }
 
-      if (currentSong == null)
+    /// <summary>
+    /// Scrobble track to last.fm
+    /// </summary>
+    /// <param name="tag">tag details of track to scrobble</param>
+    /// <param name="stoptime">how long song had played for</param>
+    /// <exception cref="ArgumentNullException">Tag must be provided</exception>
+    public static void ScrobbleTrack(MusicTag tag, int stoptime)
+    {
+      if (tag == null)
       {
-        Log.Info("Unable to scrobble: {0}", filename);
-        Log.Info("No tags found");
-        return;
+        throw new ArgumentNullException("tag");
       }
 
-      if (string.IsNullOrEmpty(currentSong.Title))
+      if (string.IsNullOrEmpty(tag.Title))
       {
-        Log.Info("Unable to scrobble: {0}", filename);
+        Log.Info("Unable to scrobble: {0}", tag.FileName);
         Log.Info("No title for track");
         return;
       }
 
-      var artist = currentSong.Artist;
+      var artist = tag.Artist;
       if (string.IsNullOrEmpty(artist))
       {
-        if (string.IsNullOrEmpty(currentSong.AlbumArtist))
+        if (string.IsNullOrEmpty(tag.AlbumArtist))
         {
-          Log.Info("Unable to scrobble: {0}", filename);
+          Log.Info("Unable to scrobble: {0}", tag.FileName);
           Log.Info("No artist or album artist found");
           return;
         }
-        artist = currentSong.AlbumArtist;
+        artist = tag.AlbumArtist;
       }
 
-      if (currentSong.Duration < 30)
+      if (tag.Duration < 30)
       { // last.fm say not to scrobble songs that last less than 30 seconds
         return;
       }
-      if (stoptime < 240 && stoptime < (currentSong.Duration / 2))
+      if (stoptime < 240 && stoptime < (tag.Duration / 2))
       { // last.fm say only to scrobble is more than 4 minutes has been listned to or 
         // at least hald the duration of the song
         return;
@@ -391,29 +405,29 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
       if (!Win32API.IsConnectedToInternet())
       {
-        CacheScrobble(currentSong);
-        Log.Info("No internet connection so unable to scrobble: {0} - {1}", currentSong.Title, artist);
+        CacheScrobble(tag, DateTime.UtcNow);
+        Log.Info("No internet connection so unable to scrobble: {0} - {1}", tag.Title, artist);
         Log.Info("Scrobble has been cached");
         return;
       }
-
+      
       try
       {
-        LastFMLibrary.Scrobble(artist, currentSong.Title, currentSong.Album);
-        Log.Info("Last.fm scrobble: {0} - {1}", currentSong.Title, artist);
+        LastFMLibrary.Scrobble(artist, tag.Title, tag.Album);
+        Log.Info("Last.fm scrobble: {0} - {1}", tag.Title, artist);
       }
       catch (LastFMException ex)
       {
         if (ex.LastFMError == LastFMException.LastFMErrorCode.ServiceOffline ||
             ex.LastFMError == LastFMException.LastFMErrorCode.ServiceUnavailable)
         {
-          CacheScrobble(currentSong);
-          Log.Info("Unable to scrobble: {0} - {1}", currentSong.Title, artist);
+          CacheScrobble(tag, DateTime.UtcNow);
+          Log.Info("Unable to scrobble: {0} - {1}", tag.Title, artist);
           Log.Info("Scrobble has been cached");
         }
         else
         {
-          Log.Error("Unable to scrobble: {0} - {1}", currentSong.Title, artist);
+          Log.Error("Unable to scrobble: {0} - {1}", tag.Title, artist);
           Log.Error(ex);
         }
       }
@@ -424,9 +438,61 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
     #region cache scrobbles
 
-    public static void CacheScrobble(MusicTag tag)
+    /// <summary>
+    /// Cache scrobble to submit to last.fm later
+    /// </summary>
+    /// <param name="tag">tag details of track being scrobbled</param>
+    /// <param name="dtPlayed">When track was played</param>
+    public static void CacheScrobble(MusicTag tag, DateTime dtPlayed)
     {
-      //TODO: implement cache here and also somewhere implement resubmission
+      var artist = tag.Artist ?? tag.AlbumArtist;
+      CacheScrobble(artist, tag.Title, tag.Album, true, DateTime.UtcNow);
+    }
+
+    /// <summary>
+    /// Cache scrobble to submit to last.fm later
+    /// </summary>
+    /// <param name="artist">artist of track that was played</param>
+    /// <param name="track">name of track that was played</param>
+    /// <param name="album">album that track that was played is part of</param>
+    /// <param name="isUserSubmitted">True if track was selected by user or false if by system (radio / auto DJ etc)</param> 
+    /// <param name="dtPlayed">When track was played</param>
+    public static void CacheScrobble(string artist, string track, string album, bool isUserSubmitted, DateTime dtPlayed)
+    {
+      var path = Config.GetFile(Config.Dir.Database, "lastfmcache.txt");
+      using (StreamWriter sw = File.AppendText(path))
+      {
+        sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}", artist, track, album, isUserSubmitted, dtPlayed);
+      }	
+
+    }
+
+    /// <summary>
+    /// Read cached scrobbles and submit
+    /// </summary>
+    public static void SubmitCachedScrobbles()
+    {
+      var tracks = new List<LastFMScrobbleTrack>();
+      var path = Config.GetFile(Config.Dir.Database, "lastfmcache.txt");
+      using (StreamReader sr = File.OpenText(path))
+      {
+        string s;
+        while ((s = sr.ReadLine()) != null)
+        {
+          var t = s.Split('\t');
+          var a = new LastFMScrobbleTrack
+            {
+              ArtistName = t[0],
+              TrackTitle = t[1],
+              AlbumName = t[2],
+              UserSelected = t[3] == "true",
+              DatePlayed = DateTime.UtcNow
+            };
+          tracks.Add(a);
+        }
+      }
+      
+      LastFMLibrary.ScrobbleTracks(tracks);
     }
 
     #endregion
@@ -636,10 +702,16 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       // list contains songs which exist in users collection
       var dbTrackListing = new List<Song>();
 
+      var filter = BuildAutoDJFilter(_autoDJFilter, tag);
+      if (!string.IsNullOrEmpty(filter))
+      {
+        Log.Debug("Applying filter: {0}", filter);
+      }
+
       //identify which are available in users collection (ie. we can use they for auto DJ mode)
       foreach (var strSql in tracks.Select(track => String.Format("select * from tracks where strartist like '%| {0} |%' and strTitle = '{1}' {2}",
                                                                   DatabaseUtility.RemoveInvalidChars(track.ArtistName),
-                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle), _autoDJFilter)))
+                                                                  DatabaseUtility.RemoveInvalidChars(track.TrackTitle), filter)))
       {
         List<Song> trackListing;
         MusicDatabase.Instance.GetSongsBySQL(strSql, out trackListing);
@@ -654,6 +726,42 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       }
 
       return _allowMultipleVersions ? dbTrackListing : dbTrackListing.GroupBy(t => new {t.Artist, t.Title}).Select(y => y.First()).ToList();
+    }
+
+    private static string BuildAutoDJFilter(string filterMask, MusicTag tag)
+    {
+      var filter = filterMask;
+      if (!string.IsNullOrEmpty(tag.Genre))
+      {
+        filter = filter.Replace("{genre}", "'" + tag.Genre + "'");
+      }
+      if (!string.IsNullOrEmpty(tag.Album))
+      {
+        filter = filter.Replace("{album}", "'" + tag.Album + "'");
+      }
+      if (!string.IsNullOrEmpty(tag.AlbumArtist))
+      {
+        filter = filter.Replace("{albumartist}", "'" + tag.AlbumArtist + "'");
+      }
+      if (!string.IsNullOrEmpty(tag.Artist))
+      {
+        filter = filter.Replace("{albumartist}", "'" + tag.Artist + "'");
+      }
+      if (tag.Year > 0)
+      {
+        filter = filter.Replace("{year}", tag.Year.ToString(CultureInfo.InvariantCulture));
+      }
+      if (tag.Rating > 0)
+      {
+        filter = filter.Replace("{rating}", tag.Rating.ToString(CultureInfo.InvariantCulture));
+      }
+      if (tag.BPM > 0)
+      {
+        filter = filter.Replace("{BPM}", tag.BPM.ToString(CultureInfo.InvariantCulture));
+      }
+      filter = filter.Replace("{dir}", "'" + Path.GetDirectoryName(tag.FileName) + "'");
+
+      return filter;
     }
 
     #endregion
