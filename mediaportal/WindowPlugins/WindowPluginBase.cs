@@ -250,8 +250,6 @@ namespace WindowPlugins
 
       if (control == facadeLayout)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
-        OnMessage(msg);
         if (actionType == Action.ActionType.ACTION_SHOW_INFO)
         {
           OnInfo(SelectedFacadeItem());
@@ -264,6 +262,11 @@ namespace WindowPlugins
         if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
         {
           OnQueueItem(SelectedFacadeItem());
+        }
+        if (actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN || actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
+          OnMessage(msg);
         }
       }
 
