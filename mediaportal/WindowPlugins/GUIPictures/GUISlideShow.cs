@@ -2423,12 +2423,15 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnShowInfo()
     {
+      bool bPause = _isPaused;
+      _isPaused = true;
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       // Needed to set GUIDialogExif
       exifDialog.Restore();
       exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
+      _isPaused = bPause;
     }
 
 
