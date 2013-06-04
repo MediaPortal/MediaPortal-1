@@ -601,6 +601,11 @@ namespace MediaPortal.GUI.Pictures
           {
             if ((_currentSlideIndex >= _slideList.Count - 1) && !_autoRepeat)
             {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
               // We reach the end of slideshow
               _slideDirection = 0;
               ShowPreviousWindow();
@@ -1269,6 +1274,9 @@ namespace MediaPortal.GUI.Pictures
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {
         Shuffle(false, false);
+        // Reset currentSlideIndex when slideshow start from context menu
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
     }
 
@@ -1282,6 +1290,9 @@ namespace MediaPortal.GUI.Pictures
       if (_autoShuffle && (_isSlideShow || _showRecursive))
       {
         Shuffle(false, false);
+        // Reset currentSlideIndex when slideshow start from context menu
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
       }
     }
 
