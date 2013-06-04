@@ -685,6 +685,23 @@ namespace MediaPortal.GUI.Pictures
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
+        case Action.ActionType.ACTION_PAUSE:
+          if (_isSlideShow)
+          {
+            if (_isPictureZoomed)
+            {
+              _userZoomLevel = 1.0f;
+              ZoomBackGround(_defaultZoomFactor);
+              _isPaused = false;
+            }
+            else
+            {
+              _isPaused = !_isPaused;
+            }
+          }
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+
         case Action.ActionType.ACTION_ZOOM_OUT:
           if (_userZoomLevel == 1.0f)
           {
