@@ -1777,12 +1777,26 @@ namespace MediaPortal.GUI.Pictures
           if (item.Label != ".." && !SlideShow._slideFolder.Contains(item.Label))
           {
             SlideShow._slideFolder.Add(item.Path);
-            SlideShow.Add(item.Path);
+            if (_playVideosInSlideshows)
+            {
+              SlideShow.Add(item.Path);
+            }
+            else if (!Util.Utils.IsVideo(item.Path))
+            {
+              SlideShow.Add(item.Path);
+            }
           }
         }
         else if (!item.IsRemote)
         {
-          SlideShow.Add(item.Path);
+          if (_playVideosInSlideshows)
+          {
+            SlideShow.Add(item.Path);
+          }
+          else if (!Util.Utils.IsVideo(item.Path))
+          {
+            SlideShow.Add(item.Path);
+          }
         }
       }
     }
@@ -1864,7 +1878,14 @@ namespace MediaPortal.GUI.Pictures
           {
             continue;
           }
-          SlideShow.Add(item.Path);
+          if (_playVideosInSlideshows)
+          {
+            SlideShow.Add(item.Path);
+          }
+          else if (!Util.Utils.IsVideo(item.Path))
+          {
+            SlideShow.Add(item.Path);
+          }
         }
       }
       if (SlideShow.Count > 0)
