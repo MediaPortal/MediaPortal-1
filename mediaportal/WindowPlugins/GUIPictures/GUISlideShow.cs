@@ -435,6 +435,11 @@ namespace MediaPortal.GUI.Pictures
             }
             if (SlideDirection == 0)
             {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
               GUIWindowManager.ShowPreviousWindow();
             }
           }
@@ -1308,6 +1313,7 @@ namespace MediaPortal.GUI.Pictures
       _lastSegmentIndex = -1;
       _showRecursive = false;
       _enableResumeMusic = true;
+      _returnedFromVideoPlayback = false;
 
       if (null != _backgroundSlide)
       {
