@@ -594,7 +594,16 @@ namespace MediaPortal.GUI.Pictures
 
           if (!_isPictureZoomed)
           {
-            ShowNext(false, true);
+            if ((_currentSlideIndex >= _slideList.Count - 1) && !_autoRepeat)
+            {
+              // We reach the end of slideshow
+              _slideDirection = 0;
+              ShowPreviousWindow();
+            }
+            else
+            {
+              ShowNext(false, true);
+            }
           }
           else
           {
