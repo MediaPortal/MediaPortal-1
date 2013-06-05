@@ -287,7 +287,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       // ColChangeAR
       // 
       this.ColChangeAR.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.ColChangeAR.HeaderText = "ChangeAR";
+      //this.ColChangeAR.HeaderText = "ChangeAR";
+      this.ColChangeAR.HeaderText = "Auto LB";
       this.ColChangeAR.Name = "ColChangeAR";
       this.ColChangeAR.ReadOnly = true;
       this.ColChangeAR.Width = 84;

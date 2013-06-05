@@ -61,6 +61,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private float fCropV = 0f; // stores the last hor crop value. 
     private float fWidthH = 0f; // stores the last 'real' video width value. 
     private float fHeightV = 0f; // stores the last 'real' video width value. 
+    private bool workerBusy = false;
 
 
     /// <summary>
@@ -221,8 +222,10 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     public override void Stop()
     {
+      videoRecvEvent.Reset();
       stopWorkerThread = true;
       workerEvent.Set();
+      videoRecvEvent.WaitOne(500);
       Log.Debug("ViewModeSwitcher: Stop()");
     }
 
@@ -235,11 +238,14 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         if (stopWorkerThread)
         {
+          workerBusy = false;
           stopWorkerThread = false;
+          videoRecvEvent.Set();
           return;
         }
         if (isVideoReceived && isPlaying)
         {
+          workerBusy = true;
           if (debugToggle)  
           {
             Log.Debug("ViewModeSwitcher: Reset AR to original");
@@ -287,11 +293,13 @@ namespace ProcessPlugins.ViewModeSwitcher
         }   
         else
         {
+          workerBusy = false;
           LastSwitchedAspectRatio = 0f;
           LastAnamorphFactor = 0f;
           LastDetectionResult = true;
           isPillarBox = false;
           updatePending = false;
+          loopCount = 3; //Perform a black-bar detect one loop cycle after start
           
           if (currentSettings.verboseLog)
           {
@@ -357,7 +365,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
       }
       //process the fallback rule if no other rule has fitted
-      if (currentSettings.UseFallbackRule && currentRule == -1 && height != 100 && width != 100)
+      if (currentSettings.UseFallbackRule && currentRule == -1)
       {
         Log.Info("ViewModeSwitcher: Processing the fallback rule!");
         Crop((float)currentSettings.fboverScan);
@@ -368,6 +376,58 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         updatePending = true;   
       }
+    }
+
+    /// <summary>
+    /// checks if a rule is fitting and executes it
+    /// Used only for processing 'pillar box' video e.g. 4:3 inside 16:9
+    /// </summary>    
+    private bool CheckRulesNegAR(float negAR)
+    {
+      bool retVal = false;
+      int width = VMR9Util.g_vmr9.VideoWidth;
+      int height = VMR9Util.g_vmr9.VideoHeight;
+      if (currentSettings.verboseLog)
+      {
+        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoAR " + negAR);
+        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoWidth " + width);
+        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoHeight " + height);
+      }
+
+      int currentRule = -1;
+      for (int i = 0; i < currentSettings.ViewModeRules.Count; i++)
+      {
+        Rule tmpRule = currentSettings.ViewModeRules[i];
+
+        if (tmpRule.Enabled
+            && ((negAR <= tmpRule.ARFrom && negAR >= tmpRule.ARTo) ||
+                (negAR >= tmpRule.ARFrom && negAR <= tmpRule.ARTo))
+            && width >= tmpRule.MinWidth
+            && width <= tmpRule.MaxWidth
+            && height >= tmpRule.MinHeight
+            && height <= tmpRule.MaxHeight)
+        {
+          currentRule = i;
+
+          Log.Info("ViewModeSwitcher: CheckRulesNegAR(), Rule \"" + tmpRule.Name + "\" fits conditions.");
+          if (tmpRule.ChangeOs)
+          {
+            overScan = (float)tmpRule.OverScan;
+          }
+          if (tmpRule.ChangeAR)
+          {
+            retVal = SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
+          }
+          break; // do not process any additional rule after a rule fits (better for offset function)
+        }
+      }
+      //process the fallback rule if no other rule has fitted
+      if (currentRule == -1)
+      {
+        Log.Info("ViewModeSwitcher: CheckRulesNegAR(), Using fallback NonLinearStretch mode");
+        retVal = SetNewGeometry("Fb 4:3 inside 16:9", Geometry.Type.NonLinearStretch);
+      }
+      return retVal;
     }
 
     private void Crop(float crop)
@@ -401,10 +461,13 @@ namespace ProcessPlugins.ViewModeSwitcher
         updatePending = false;
         LastSwitchedGeometry = GUIGraphicsContext.ARType;
         isVideoReceived = true;
-        videoRecvEvent.Reset();
         workerEvent.Set();
-        videoRecvEvent.WaitOne(500);
       }
+      else if (!workerBusy)
+      {
+        workerEvent.Set();
+      }
+      
       if (updatePending)
       {
         if (currentSettings.verboseLog)
@@ -466,13 +529,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
           {
             //Adjust horiz crop value to match vertical crop value (without picture distortion)
-            float extraHcropLimit = fWidthH * LastAnamorphFactor * 0.075f;
+            float extraHcropLimit = fWidthH * LastAnamorphFactor * 0.0625f;
             cropH = Math.Min(fCropV * LastSwitchedAspectRatio, fCropH + extraHcropLimit);
             cropV = cropH / LastSwitchedAspectRatio;
           }
           else
           {
-            float extraVcropLimit = fHeightV * 0.075f;      
+            float extraVcropLimit = fHeightV * 0.0625f;      
             cropV = Math.Min(fCropH / LastSwitchedAspectRatio, fCropV + extraVcropLimit);
             cropH = cropV * LastSwitchedAspectRatio;
           }           
@@ -553,6 +616,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       if (!analyzer.FindBounds(frame, ref bounds))
       {
         LastDetectionResult = false;
+        frame.Dispose();
+        frame = null;
         return;
       }
       
@@ -579,6 +644,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         {
           Log.Debug("ViewModeSwitcher: SingleCrop(), Symmetry check failed");
         }
+        frame.Dispose();
+        frame = null;
         return;
       }
 
@@ -597,10 +664,11 @@ namespace ProcessPlugins.ViewModeSwitcher
         cropH *= LastAnamorphFactor; 
       }
 
-      if (newasp < 1) // faulty crop
+      if (newasp < 1.1 || newasp > 2.7) // faulty crop
       {
-        cropH = overScan;
-        cropV = overScan / LastSwitchedAspectRatio;
+        frame.Dispose();
+        frame = null;
+        return;
       }
       else // (newasp >= 1)
       {
@@ -612,11 +680,11 @@ namespace ProcessPlugins.ViewModeSwitcher
         if (newasp > 1.20 && newasp < 1.46 && LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95)
         {
           //'Pillar boxed' 4:3 inside 16:9 video
-          if (SetNewGeometry("4:3 inside 16:9", currentSettings.PillarBoxViewMode))
+          if (CheckRulesNegAR(-newasp))
           {
             updateCrop = true;
           }
-          if (currentSettings.PillarBoxViewMode != Geometry.Type.NonLinearStretch)
+          if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
           {
             //NonLinearStretch needs full side bar cropping, other modes don't
             cropH = overScan;

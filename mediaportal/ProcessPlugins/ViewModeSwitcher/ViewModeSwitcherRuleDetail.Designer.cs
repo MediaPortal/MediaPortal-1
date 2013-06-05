@@ -295,7 +295,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.cbViewModeSwitchEnabled.Name = "cbViewModeSwitchEnabled";
       this.cbViewModeSwitchEnabled.Size = new System.Drawing.Size(235, 17);
       this.cbViewModeSwitchEnabled.TabIndex = 7;
-      this.cbViewModeSwitchEnabled.Text = "This rule switches to the following viewmode";
+      //this.cbViewModeSwitchEnabled.Text = "This rule switches to the following viewmode";
+      this.cbViewModeSwitchEnabled.Text = "Enable Auto LB            Switch to viewmode";
       this.cbViewModeSwitchEnabled.UseVisualStyleBackColor = true;
       this.cbViewModeSwitchEnabled.CheckedChanged += new System.EventHandler(this.cbViewModeSwitchEnabled_CheckedChanged);
       // 
