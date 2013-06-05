@@ -130,6 +130,12 @@ namespace SetupTv.Sections
       mpComboBoxPrio.Items.Add("Below Normal");
       mpComboBoxPrio.Items.Add("Idle");
 
+      mpComboBoxLog.Items.Clear();
+      mpComboBoxLog.Items.Add("Error");
+      mpComboBoxLog.Items.Add("Warning");
+      mpComboBoxLog.Items.Add("Information");
+      mpComboBoxLog.Items.Add("Debug");
+
       try
       {
         mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
@@ -138,6 +144,16 @@ namespace SetupTv.Sections
       catch (Exception)
       {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
+      }
+
+      try
+      {
+        mpComboBoxLog.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value);
+        //default is debug=5       
+      }
+      catch (Exception)
+      {
+        mpComboBoxPrio.SelectedIndex = 5; //fall back to default which is debug=5
       }
 
       BuildLists(layer);
@@ -178,6 +194,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("processPriority", "3");
       s.Value = mpComboBoxPrio.SelectedIndex.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("loglevel", "3");
+      s.Value = mpComboBoxLog.SelectedIndex.ToString();
       s.Persist();
 
       s = layer.GetSetting("delayCardDetect", "0");
@@ -415,6 +435,12 @@ namespace SetupTv.Sections
     private void button3_Click(object sender, EventArgs e)
     {
       MoveEncodersDown(mpListViewAudio, _bindingAudioEncoders);
+    }
+
+    private void mpComboBoxLog_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      var logLevel = (LogLevel) mpComboBoxLog.SelectedIndex + 2; // Legacy log levels exist and first value starts at index 2 rather than 0
+      Log.SetLogLevel(logLevel);
     }
   }
 }

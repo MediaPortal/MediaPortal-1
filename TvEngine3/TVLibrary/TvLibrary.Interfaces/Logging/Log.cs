@@ -215,6 +215,15 @@ namespace TvLibrary.Log
                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
     }
 
+    /// <summary>
+    /// Set the log level
+    /// </summary>
+    /// <param name="level">level to set</param>
+    public static void SetLogLevel(LogLevel level)
+    {
+      CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(level);
+    }
+
     #endregion
 
     #region Private methods
@@ -445,6 +454,19 @@ namespace TvLibrary.Log
         catch (Exception) {}
       }
     }
+
+    private static CommonLogLevel ConvertToCommonLogLevel(LogLevel logLevel)
+    {
+      switch (logLevel)
+      {
+        case LogLevel.Debug: return CommonLogLevel.Debug;
+        case LogLevel.Error: return CommonLogLevel.Error;
+        case LogLevel.Information: return CommonLogLevel.Information;
+        case LogLevel.Warning: return CommonLogLevel.Warning;
+        default: return CommonLogLevel.All;
+      }
+    }
+
 
     #endregion
   }

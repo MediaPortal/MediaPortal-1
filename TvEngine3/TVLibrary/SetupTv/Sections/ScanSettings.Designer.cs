@@ -79,6 +79,8 @@ namespace SetupTv.Sections
       this.columnHeaderAudioPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderAudioName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderAudioReusable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+      this.lblLogLevel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxLog = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -103,9 +105,9 @@ namespace SetupTv.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageApplication);
       this.tabControl1.Controls.Add(this.tabPageScan);
       this.tabControl1.Controls.Add(this.tabPageSoftwareEncoder);
@@ -130,13 +132,15 @@ namespace SetupTv.Sections
       // 
       // groupBox8
       // 
-      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox8.Controls.Add(this.lblLogLevel);
+      this.groupBox8.Controls.Add(this.mpComboBoxLog);
       this.groupBox8.Controls.Add(this.lblPriority);
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
       this.groupBox8.Name = "groupBox8";
-      this.groupBox8.Size = new System.Drawing.Size(464, 50);
+      this.groupBox8.Size = new System.Drawing.Size(464, 112);
       this.groupBox8.TabIndex = 81;
       this.groupBox8.TabStop = false;
       this.groupBox8.Text = "TVService";
@@ -162,12 +166,12 @@ namespace SetupTv.Sections
       // 
       // groupBox6
       // 
-      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox6.Controls.Add(this.label45);
       this.groupBox6.Controls.Add(this.label44);
       this.groupBox6.Controls.Add(this.delayDetectUpDown);
-      this.groupBox6.Location = new System.Drawing.Point(6, 62);
+      this.groupBox6.Location = new System.Drawing.Point(6, 136);
       this.groupBox6.Name = "groupBox6";
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
       this.groupBox6.TabIndex = 80;
@@ -176,14 +180,14 @@ namespace SetupTv.Sections
       // 
       // label45
       // 
-      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.label45.Location = new System.Drawing.Point(6, 27);
       this.label45.Name = "label45";
       this.label45.Size = new System.Drawing.Size(452, 35);
       this.label45.TabIndex = 80;
       this.label45.Text = "Some cards (e.g. Hauppauge Nova-T 500) take a long time to initialize after stand" +
-          "by. Therefore use this option below to force a delay should it be required.";
+    "by. Therefore use this option below to force a delay should it be required.";
       // 
       // label44
       // 
@@ -510,7 +514,7 @@ namespace SetupTv.Sections
       this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(19, 377);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(357, 13);
+      this.label2.Size = new System.Drawing.Size(352, 13);
       this.label2.TabIndex = 6;
       this.label2.Text = "Number of tuners each reusable encoder can be used with (0 = unlimited)";
       // 
@@ -564,9 +568,9 @@ namespace SetupTv.Sections
       this.mpListViewVideo.AllowUserToAddRows = false;
       this.mpListViewVideo.AllowUserToDeleteRows = false;
       this.mpListViewVideo.AllowUserToResizeRows = false;
-      this.mpListViewVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewVideo.BackgroundColor = System.Drawing.SystemColors.Window;
       this.mpListViewVideo.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
       this.mpListViewVideo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -656,9 +660,9 @@ namespace SetupTv.Sections
       this.mpListViewAudio.AllowUserToAddRows = false;
       this.mpListViewAudio.AllowUserToDeleteRows = false;
       this.mpListViewAudio.AllowUserToResizeRows = false;
-      this.mpListViewAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewAudio.BackgroundColor = System.Drawing.SystemColors.Window;
       this.mpListViewAudio.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
       this.mpListViewAudio.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -707,6 +711,25 @@ namespace SetupTv.Sections
       this.columnHeaderAudioReusable.HeaderText = "Reuse";
       this.columnHeaderAudioReusable.Name = "columnHeaderAudioReusable";
       this.columnHeaderAudioReusable.Width = 55;
+      // 
+      // lblLogLevel
+      // 
+      this.lblLogLevel.AutoSize = true;
+      this.lblLogLevel.Location = new System.Drawing.Point(6, 61);
+      this.lblLogLevel.Name = "lblLogLevel";
+      this.lblLogLevel.Size = new System.Drawing.Size(57, 13);
+      this.lblLogLevel.TabIndex = 78;
+      this.lblLogLevel.Text = "Log Level:";
+      // 
+      // mpComboBoxLog
+      // 
+      this.mpComboBoxLog.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxLog.FormattingEnabled = true;
+      this.mpComboBoxLog.Location = new System.Drawing.Point(125, 58);
+      this.mpComboBoxLog.Name = "mpComboBoxLog";
+      this.mpComboBoxLog.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxLog.TabIndex = 79;
+      this.mpComboBoxLog.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLog_SelectedIndexChanged);
       // 
       // ScanSettings
       // 
@@ -798,5 +821,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.NumericUpDown numericUpDownReuseLimit;
     private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel lblLogLevel;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxLog;
   }
 }

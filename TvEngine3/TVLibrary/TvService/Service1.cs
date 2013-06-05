@@ -219,6 +219,8 @@ namespace TvService
           }
         }
 
+        SetLogLevel();
+
         _tvServiceThread.Start();
 
         while (!TvServiceThread.Started)
@@ -226,6 +228,13 @@ namespace TvService
           Thread.Sleep(20);
         }
       }
+    }
+
+    private void SetLogLevel()
+    {
+      var layer = new TvBusinessLayer();
+      var logLevel = (LogLevel) int.Parse(layer.GetSetting("loglevel", "5").Value); // default is debug
+      Log.SetLogLevel(logLevel);
     }
 
     private void applyProcessPriority()
