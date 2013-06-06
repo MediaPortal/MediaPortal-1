@@ -137,6 +137,12 @@ namespace MediaPortal.GUI.Pictures
 
         g_Player.Stop();
         g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
+        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.Dispose();
+        }
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
@@ -466,15 +472,18 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (mDB == null)
+          if (g_Player.IsMusic)
           {
-            mDB = MusicDatabase.Instance;
+            if (mDB == null)
+            {
+              mDB = MusicDatabase.Instance;
+            }
+            if (!resumeSong)
+            {
+              ShowSong();
+            }
+            resumeSong = false;
           }
-          if (!resumeSong)
-          {
-            ShowSong();
-          }
-          resumeSong = false;
           break;
       }
       return base.OnMessage(message);
