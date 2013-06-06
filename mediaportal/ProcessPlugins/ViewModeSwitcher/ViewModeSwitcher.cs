@@ -593,7 +593,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
         guiMsg.Label = "ViewModeSwitcher";        
-        guiMsg.Label2 = ("ViewMode: " + LastSwitchedGeometry + ", AR: " + LastSwitchedAspectRatio + ", Bar detect: " + (enableLB && !currentSettings.DisableLBGlobaly) + ", H crop: " + tmpCropSettings.Left + ", V crop: " + tmpCropSettings.Top);            
+        guiMsg.Label2 = ("ViewMode: " + LastSwitchedGeometry + ", AR: " + LastSwitchedAspectRatio + ", BB det: " + (enableLB && !currentSettings.DisableLBGlobaly) + ", Auto BB: " + useAutoCrop + ", H crop: " + tmpCropSettings.Left + ", V crop: " + tmpCropSettings.Top);            
         guiMsg.Param1 = 3;
 
         GUIGraphicsContext.SendMessage(guiMsg);
