@@ -3587,7 +3587,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures/videos we don't want to change music track
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture) || g_Player.IsVideo)
             {
               g_Player.Pause();
             }
@@ -3609,7 +3609,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures/videos we don't want to change music track
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture || g_Player.IsVideo))
             {
               if (g_Player.Paused)
               {
@@ -3638,7 +3638,7 @@ public class MediaPortalApp : D3D, IRender
             // When MyPictures Plugin shows the pictures/videos we don't want to change music track
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture || g_Player.IsVideo))
             {
               if (g_Player.Paused)
               {
