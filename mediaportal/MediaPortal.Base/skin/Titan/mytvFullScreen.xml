@@ -22,10 +22,10 @@
 			<description>background image when pause, forward, rewind</description>
 			<type>image</type>
 			<id>111</id>
-    		<posX>183</posX>
-    		<posY>820</posY>
-    		<width>1553</width>
-    		<height>238</height>
+    	<posX>183</posX>
+    	<posY>820</posY>
+    	<width>1553</width>
+    	<height>238</height>
 			<texture>osd_pause_bg.png</texture>
 			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
 		</control>
@@ -35,7 +35,7 @@
     		<id>1</id>
     		<description>Clock</description>
     		<posX>275</posX>
-    		<posY>918</posY>
+    		<posY>913</posY>
     		<width>144</width>
     		<font>TitanLight12</font>
     		<align>center</align>
@@ -96,10 +96,10 @@
 			<description>TV Progress Bar</description>
 			<type>tvprogress</type>
 			<id>100</id>
-    		<posX>578</posX>
-    		<posY>909</posY>
-    		<width>758</width>
-    		<height>15</height>
+    	<posX>589</posX>
+    	<posY>909</posY>
+    	<width>758</width>
+    	<height>15</height>
 			<toptexture>-</toptexture>
 			<TextureOffsetY>0</TextureOffsetY>
 			<bottomtexture>-</bottomtexture>
@@ -218,18 +218,20 @@
 			<description>Pause image</description>
 			<type>image</type>
 			<id>16</id>
-			<posX>934</posX>
+			<posX>-2000</posX>
 			<posY>976</posY>
 			<visible>player.paused+control.isvisible(111)</visible>
-			<texture>video-pause.png</texture>
+			<texture>osd_pause.png</texture>
 		</control>
 
 		<control>
 			<description>2x image</description>
 			<type>image</type>
 			<id>17</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.forwarding2x+control.isvisible(111)</visible>
 			<texture>video+2x.png</texture>
 		</control>
@@ -238,8 +240,10 @@
 			<description>4x image</description>
 			<type>image</type>
 			<id>18</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.forwarding4x+control.isvisible(111)</visible>
 			<texture>video+4x.png</texture>
 		</control>
@@ -248,8 +252,10 @@
 			<description>8x image</description>
 			<type>image</type>
 			<id>19</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.forwarding8x+control.isvisible(111)</visible>
 			<texture>video+8x.png</texture>
 		</control>
@@ -258,8 +264,10 @@
 			<description>16x image</description>
 			<type>image</type>
 			<id>20</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.forwarding16x+control.isvisible(111)</visible>
 			<texture>video+16x.png</texture>
 		</control>
@@ -268,8 +276,10 @@
 			<description>32x image</description>
 			<type>image</type>
 			<id>21</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.forwarding32x+control.isvisible(111)</visible>
 			<texture>video+32x.png</texture>
 		</control>
@@ -278,8 +288,10 @@
 			<description>- 2x image</description>
 			<type>image</type>
 			<id>23</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.rewinding2x+control.isvisible(111)</visible>
 			<texture>video-2x.png</texture>
 		</control>
@@ -288,8 +300,10 @@
 			<description>- 4x image</description>
 			<type>image</type>
 			<id>24</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>!window.isosdvisible+player.rewinding4x+control.isvisible(111)</visible>
 			<texture>video-4x.png</texture>
 		</control>
@@ -298,8 +312,10 @@
 			<description>- 8x image</description>
 			<type>image</type>
 			<id>25</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.rewinding8x+control.isvisible(111)</visible>
 			<texture>video-8x.png</texture>
 		</control>
@@ -308,8 +324,10 @@
 			<description>- 16x image</description>
 			<type>image</type>
 			<id>26</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.rewinding16x+control.isvisible(111)</visible>
 			<texture>video-16x.png</texture>
 		</control>
@@ -318,8 +336,10 @@
 			<description>- 32x image</description>
 			<type>image</type>
 			<id>27</id>
-			<posX>934</posX>
-			<posY>976</posY>
+    	<posX>898</posX>
+    	<posY>978</posY>
+			<width>111</width>
+			<height>26</height>
 			<visible>player.rewinding32x+control.isvisible(111)</visible>
 			<texture>video-32x.png</texture>
 		</control>
@@ -349,7 +369,7 @@
     		<visible>no</visible>
     	</control>
 
-		********************************* PAUSE Screen ********************************************* -->
+		<!-- ********************************* PAUSE Screen ********************************************* -->
 		<control>
 			<description>MSGBox</description>
 			<type>button</type>
