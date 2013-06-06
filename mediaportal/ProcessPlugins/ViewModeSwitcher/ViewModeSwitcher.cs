@@ -355,11 +355,11 @@ namespace ProcessPlugins.ViewModeSwitcher
           {
             enableLB = true;
           }
-          if (tmpRule.ChangeAR)
+          if (tmpRule.AutoCrop)
           {
             useAutoCrop = true;
           }
-          if (tmpRule.ChangeOs)
+          if (tmpRule.MaxCrop)
           {
             useMaxCrop = true;
           }

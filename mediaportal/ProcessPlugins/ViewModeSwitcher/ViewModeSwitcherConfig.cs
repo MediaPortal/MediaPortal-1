@@ -91,8 +91,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         dg_RuleSets.Rows.Add(tmpRule.Enabled, tmpRule.Name, tmpRule.ARFrom.ToString(), tmpRule.ARTo.ToString(),
                              tmpRule.MinWidth.ToString(), tmpRule.MaxWidth.ToString(), tmpRule.MinHeight.ToString(),
-                             tmpRule.MaxHeight.ToString(), tmpRule.ChangeAR, tmpRule.ViewMode.ToString(),
-                             tmpRule.ChangeOs, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
+                             tmpRule.MaxHeight.ToString(), tmpRule.AutoCrop, tmpRule.ViewMode.ToString(),
+                             tmpRule.MaxCrop, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
       }
     }
 
@@ -114,9 +114,9 @@ namespace ProcessPlugins.ViewModeSwitcher
       tmpRule.MaxWidth = 800;
       tmpRule.MinHeight = 400;
       tmpRule.MaxHeight = 600;
-      tmpRule.ChangeAR = true;
+      tmpRule.AutoCrop = false;
       tmpRule.ViewMode = Geometry.Type.Normal;
-      tmpRule.ChangeOs = false;
+      tmpRule.MaxCrop = true;
       tmpRule.OverScan = 0;
       tmpRule.EnableLBDetection = false;
 

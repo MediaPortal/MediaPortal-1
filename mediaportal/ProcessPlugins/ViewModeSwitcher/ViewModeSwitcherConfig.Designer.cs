@@ -66,9 +66,9 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.ColMaxWidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.ColMinHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.ColMaxHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.ColChangeAR = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.ColAutoCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.ColViewMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.ColChangeOS = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.ColMaxCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.ColOverscan = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.ColEnableLBDetect = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.bCancel = new System.Windows.Forms.Button();
@@ -207,9 +207,9 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.ColMaxWidth,
             this.ColMinHeight,
             this.ColMaxHeight,
-            this.ColChangeAR,
+            this.ColAutoCrop,
             this.ColViewMode,
-            this.ColChangeOS,
+            this.ColMaxCrop,
             this.ColOverscan,
             this.ColEnableLBDetect});
       this.dg_RuleSets.Location = new System.Drawing.Point(6, 16);
@@ -284,14 +284,14 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.ColMaxHeight.ReadOnly = true;
       this.ColMaxHeight.Width = 83;
       // 
-      // ColChangeAR
+      // ColAutoCrop
       // 
-      this.ColChangeAR.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      //this.ColChangeAR.HeaderText = "ChangeAR";
-      this.ColChangeAR.HeaderText = "Auto LB";
-      this.ColChangeAR.Name = "ColChangeAR";
-      this.ColChangeAR.ReadOnly = true;
-      this.ColChangeAR.Width = 84;
+      this.ColAutoCrop.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      //this.ColAutoCrop.HeaderText = "ChangeAR";
+      this.ColAutoCrop.HeaderText = "Auto LB";
+      this.ColAutoCrop.Name = "ColAutoCrop";
+      this.ColAutoCrop.ReadOnly = true;
+      this.ColAutoCrop.Width = 84;
       // 
       // ColViewMode
       // 
@@ -301,14 +301,14 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.ColViewMode.ReadOnly = true;
       this.ColViewMode.Width = 82;
       // 
-      // ColChangeOS
+      // ColMaxCrop
       // 
-      this.ColChangeOS.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      //this.ColChangeOS.HeaderText = "ChangeOS";
-      this.ColChangeOS.HeaderText = "Max crop";
-      this.ColChangeOS.Name = "ColChangeOS";
-      this.ColChangeOS.ReadOnly = true;
-      this.ColChangeOS.Width = 84;
+      this.ColMaxCrop.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+      //this.ColMaxCrop.HeaderText = "ChangeOS";
+      this.ColMaxCrop.HeaderText = "Max crop";
+      this.ColMaxCrop.Name = "ColMaxCrop";
+      this.ColMaxCrop.ReadOnly = true;
+      this.ColMaxCrop.Width = 84;
       // 
       // ColOverscan
       // 
@@ -510,9 +510,9 @@ namespace ProcessPlugins.ViewModeSwitcher
     private System.Windows.Forms.DataGridViewTextBoxColumn ColMaxWidth;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColMinHeight;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColMaxHeight;
-    private System.Windows.Forms.DataGridViewTextBoxColumn ColChangeAR;
+    private System.Windows.Forms.DataGridViewTextBoxColumn ColAutoCrop;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColViewMode;
-    private System.Windows.Forms.DataGridViewTextBoxColumn ColChangeOS;
+    private System.Windows.Forms.DataGridViewTextBoxColumn ColMaxCrop;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColOverscan;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColEnableLBDetect;
     private System.Windows.Forms.CheckBox cbUseFallbackRule;

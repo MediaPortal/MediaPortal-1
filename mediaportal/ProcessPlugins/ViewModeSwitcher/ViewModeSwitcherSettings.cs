@@ -151,9 +151,9 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = false;
+          tmpRule.AutoCrop = false;
           tmpRule.ViewMode = Geometry.Type.Zoom14to9;
-          tmpRule.ChangeOs = true;
+          tmpRule.MaxCrop = true;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = true;
           ViewModeRules.Add(tmpRule);
@@ -167,9 +167,9 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = false;
+          tmpRule.AutoCrop = false;
           tmpRule.ViewMode = Geometry.Type.Normal;
-          tmpRule.ChangeOs = true;
+          tmpRule.MaxCrop = true;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = true;
           ViewModeRules.Add(tmpRule);
@@ -183,9 +183,9 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = false;
+          tmpRule.AutoCrop = false;
           tmpRule.ViewMode = Geometry.Type.NonLinearStretch;
-          tmpRule.ChangeOs = true;
+          tmpRule.MaxCrop = true;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = false;
           ViewModeRules.Add(tmpRule);
@@ -215,11 +215,11 @@ namespace ProcessPlugins.ViewModeSwitcher
             Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinHeight", "0"));
           tmpRule.MaxHeight =
             Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight", "0"));
-          tmpRule.ChangeAR = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeAR", true);
+          tmpRule.AutoCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "AutoCrop", true);
           String tmpViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode",
                                                        "Normal");
           tmpRule.ViewMode = StringToViewMode(tmpViewMode);
-          tmpRule.ChangeOs = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeOS", true);
+          tmpRule.MaxCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxCrop", true);
           tmpRule.OverScan =
             Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan", "0"));
           tmpRule.EnableLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName,
@@ -245,9 +245,9 @@ namespace ProcessPlugins.ViewModeSwitcher
             Log.Debug("ViewModeSwitcher: Rule " + i + ", MaxWidth:  " + tmpRule.MaxWidth         );
             Log.Debug("ViewModeSwitcher: Rule " + i + ", MinHeight: " + tmpRule.MinHeight        );
             Log.Debug("ViewModeSwitcher: Rule " + i + ", MaxHeight: " + tmpRule.MaxHeight        );
-            Log.Debug("ViewModeSwitcher: Rule " + i + ", ChangeAR:  " + tmpRule.ChangeAR         );
+            Log.Debug("ViewModeSwitcher: Rule " + i + ", AutoCrop:  " + tmpRule.AutoCrop         );
             Log.Debug("ViewModeSwitcher: Rule " + i + ", ViewMode:  " + tmpRule.ViewMode         );
-            Log.Debug("ViewModeSwitcher: Rule " + i + ", ChangeOs:  " + tmpRule.ChangeOs         );
+            Log.Debug("ViewModeSwitcher: Rule " + i + ", MaxCrop:  " + tmpRule.MaxCrop         );
             Log.Debug("ViewModeSwitcher: Rule " + i + ", OverScan:  " + tmpRule.OverScan         );
             Log.Debug("ViewModeSwitcher: Rule " + i + ", EnLBDet:   " + tmpRule.EnableLBDetection);
           }
@@ -298,12 +298,12 @@ namespace ProcessPlugins.ViewModeSwitcher
                              tmpRule.MinHeight.ToString());
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight",
                              tmpRule.MaxHeight.ToString());
-          xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeAR",
-                                   tmpRule.ChangeAR);
+          xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "AutoCrop",
+                                   tmpRule.AutoCrop);
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode",
                              tmpRule.ViewMode.ToString());
-          xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeOS",
-                                   tmpRule.ChangeOs);
+          xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxCrop",
+                                   tmpRule.MaxCrop);
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan",
                              tmpRule.OverScan.ToString());
           xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "EnableLBDetection",

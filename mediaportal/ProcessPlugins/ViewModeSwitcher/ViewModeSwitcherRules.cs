@@ -33,9 +33,9 @@ namespace ProcessPlugins.ViewModeSwitcher
     public int MaxWidth = 9999;
     public int MinHeight;
     public int MaxHeight = 9999;
-    public bool ChangeAR = true;
+    public bool AutoCrop = false;
     public Geometry.Type ViewMode = Geometry.Type.Normal;
-    public bool ChangeOs = true;
+    public bool MaxCrop = true;
     public int OverScan;
     public bool EnableLBDetection;
     public int VerticalOffSetZoom;

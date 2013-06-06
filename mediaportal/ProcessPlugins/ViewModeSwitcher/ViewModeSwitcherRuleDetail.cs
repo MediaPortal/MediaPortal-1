@@ -50,8 +50,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       txbMaxWidth.Text = currentRule.MaxWidth.ToString();
       txbMinHeight.Text = currentRule.MinHeight.ToString();
       txbMaxHeight.Text = currentRule.MaxHeight.ToString();
-      cbAutoCropEnabled.Checked = currentRule.ChangeAR;
-      cbMaxCropEnabled.Checked = currentRule.ChangeOs;
+      cbAutoCropEnabled.Checked = currentRule.AutoCrop;
+      cbMaxCropEnabled.Checked = currentRule.MaxCrop;
       txbOverScan.Text = currentRule.OverScan.ToString();
       cmbViewMode.SelectedItem = currentRule.ViewMode.ToString();
       cb_EnableLBDetection.Checked = currentRule.EnableLBDetection;
@@ -73,13 +73,13 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
       currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
 
-      currentRule.ChangeAR = cbAutoCropEnabled.Checked;
+      currentRule.AutoCrop = cbAutoCropEnabled.Checked;
 
       String tmpViewMode = cmbViewMode.Text;
 
       currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
 
-      currentRule.ChangeOs = cbMaxCropEnabled.Checked;
+      currentRule.MaxCrop = cbMaxCropEnabled.Checked;
       currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
       currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
 
