@@ -1333,7 +1333,6 @@ namespace MediaPortal.GUI.Pictures
       _lastSegmentIndex = -1;
       _showRecursive = false;
       _enableResumeMusic = true;
-      _returnedFromVideoPlayback = false;
 
       if (null != _backgroundSlide)
       {

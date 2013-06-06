@@ -648,8 +648,8 @@ namespace MediaPortal.GUI.Pictures
         if (SlideShow.pausedMusic && SlideShow._returnedFromVideoPlayback)
         {
           SlideShow.resumePausedMusic();
-          SlideShow._returnedFromVideoPlayback = false;
         }
+        SlideShow._returnedFromVideoPlayback = false;
       }
     }
 
