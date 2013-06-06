@@ -304,7 +304,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       // ColChangeOS
       // 
       this.ColChangeOS.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.ColChangeOS.HeaderText = "ChangeOS";
+      //this.ColChangeOS.HeaderText = "ChangeOS";
+      this.ColChangeOS.HeaderText = "Max crop";
       this.ColChangeOS.Name = "ColChangeOS";
       this.ColChangeOS.ReadOnly = true;
       this.ColChangeOS.Width = 84;

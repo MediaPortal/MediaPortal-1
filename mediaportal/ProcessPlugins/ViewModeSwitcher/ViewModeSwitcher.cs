@@ -52,7 +52,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     private float LastAnamorphFactor; // Video anamorphic correction factor (Video AR/Pixel AR) 
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
-    private bool isAutoCrop = false;
     private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
     private bool isPillarBox = false;
     private bool updatePending = false;    
@@ -62,6 +61,9 @@ namespace ProcessPlugins.ViewModeSwitcher
     private float fWidthH = 0f; // stores the last 'real' video width value. 
     private float fHeightV = 0f; // stores the last 'real' video width value. 
     private bool workerBusy = false;
+    private bool useMaxCrop = false;
+    private bool useAutoCrop = false;
+    private bool forceAutoCrop = false;
 
 
     /// <summary>
@@ -87,11 +89,12 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// <returns>A string to display to the user</returns>
     public string ToggleMode()
     {
-      if (!isAutoCrop)
+      if (!forceAutoCrop)
       {
         Log.Debug("ViewModeSwitcher: auto crop ON");
         enableLB = true;
-        isAutoCrop = true;
+        forceAutoCrop = true;
+        useAutoCrop = true;
         workerEvent.Set();
         return "BB detect > Auto";
       }
@@ -99,7 +102,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         Log.Debug("ViewModeSwitcher: auto crop OFF");
         enableLB = true;
-        isAutoCrop = false;
+        forceAutoCrop = false;
+        useAutoCrop = false;
         return "BB detect > Manual";
       }      
     }
@@ -207,8 +211,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       g_Player.PlayBackStarted += OnVideoStarted;
       g_Player.TVChannelChanged += OnTVChannelChanged;
       
-      isAutoCrop = currentSettings.UseAutoLBDetection;
-
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
       t.IsBackground = true;
@@ -271,7 +273,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             CheckAspectRatios();
             if ((loopCount%4) == 0)
             {
-              if (isAutoCrop)
+              if (useAutoCrop)
               {
                 LastDetectionResult = false;
               }
@@ -299,6 +301,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           LastDetectionResult = true;
           isPillarBox = false;
           updatePending = false;
+          forceAutoCrop = false;
           loopCount = 3; //Perform a black-bar detect one loop cycle after start
           
           if (currentSettings.verboseLog)
@@ -316,7 +319,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>    
     private void ProcessRules()
     {
-      bool updateCrop = false;
       int width = VMR9Util.g_vmr9.VideoWidth;
       int height = VMR9Util.g_vmr9.VideoHeight;
       if (currentSettings.verboseLog)
@@ -331,11 +333,14 @@ namespace ProcessPlugins.ViewModeSwitcher
       int currentRule = -1;
       overScan = 0f;
       enableLB = false;
+      useAutoCrop = forceAutoCrop;
+      useMaxCrop = false;
       for (int i = 0; i < currentSettings.ViewModeRules.Count; i++)
       {
         Rule tmpRule = currentSettings.ViewModeRules[i];
 
         if (tmpRule.Enabled
+            && tmpRule.ARFrom > 0f && tmpRule.ARTo > 0f
             && LastSwitchedAspectRatio >= tmpRule.ARFrom
             && LastSwitchedAspectRatio <= tmpRule.ARTo
             && width >= tmpRule.MinWidth
@@ -350,56 +355,71 @@ namespace ProcessPlugins.ViewModeSwitcher
           {
             enableLB = true;
           }
-          if (tmpRule.ChangeOs || !enableLB)
+          if (tmpRule.ChangeAR)
+          {
+            useAutoCrop = true;
+          }
+          if (tmpRule.ChangeOs)
+          {
+            useMaxCrop = true;
+          }
+          if (tmpRule.OverScan > 0)
           {
             overScan = (float)tmpRule.OverScan;
             Crop(overScan);
-            updateCrop = true;
           }
-          if (tmpRule.ChangeAR)
+          else
           {
-            SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
-            updateCrop = true;
+            overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+            Crop(0f);
           }
+          SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
           break; // do not process any additional rule after a rule fits (better for offset function)
         }
       }
-      //process the fallback rule if no other rule has fitted
-      if (currentSettings.UseFallbackRule && currentRule == -1)
+      
+      if (currentRule == -1) //No rule match
       {
-        Log.Info("ViewModeSwitcher: Processing the fallback rule!");
-        Crop((float)currentSettings.fboverScan);
-        SetNewGeometry("Fallback rule", currentSettings.FallBackViewMode);
-        updateCrop = true;
+        //process the fallback rule if enabled
+        if (currentSettings.UseFallbackRule)
+        {
+          Log.Info("ViewModeSwitcher: Processing the fallback rule!");
+          if (currentSettings.fboverScan > 0)
+          {
+            overScan = (float)currentSettings.fboverScan;
+            Crop(overScan);
+          }
+          else
+          {
+            overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+            Crop(0f);
+          }
+          SetNewGeometry("Fallback rule", currentSettings.FallBackViewMode);
+        }
+        else
+        {
+          Log.Info("ViewModeSwitcher: No rule found!");
+          overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+          Crop(0f); //Use TV cropping
+          SetNewGeometry("No rule", GUIGraphicsContext.ARType); //Do nothing...
+        }
       }
-      if (updateCrop)
-      {
-        updatePending = true;   
-      }
+      
+      updatePending = true;   
     }
 
     /// <summary>
     /// checks if a rule is fitting and executes it
     /// Used only for processing 'pillar box' video e.g. 4:3 inside 16:9
     /// </summary>    
-    private bool CheckRulesNegAR(float negAR)
+    private bool CheckRulesPB(float negAR, int width, int height)
     {
-      bool retVal = false;
-      int width = VMR9Util.g_vmr9.VideoWidth;
-      int height = VMR9Util.g_vmr9.VideoHeight;
-      if (currentSettings.verboseLog)
-      {
-        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoAR " + negAR);
-        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoWidth " + width);
-        Log.Debug("ViewModeSwitcher: CheckRulesNegAR(), VideoHeight " + height);
-      }
-
-      int currentRule = -1;
       for (int i = 0; i < currentSettings.ViewModeRules.Count; i++)
       {
         Rule tmpRule = currentSettings.ViewModeRules[i];
 
         if (tmpRule.Enabled
+            && tmpRule.ARFrom < 0f && tmpRule.ARTo < 0f
             && ((negAR <= tmpRule.ARFrom && negAR >= tmpRule.ARTo) ||
                 (negAR >= tmpRule.ARFrom && negAR <= tmpRule.ARTo))
             && width >= tmpRule.MinWidth
@@ -407,27 +427,21 @@ namespace ProcessPlugins.ViewModeSwitcher
             && height >= tmpRule.MinHeight
             && height <= tmpRule.MaxHeight)
         {
-          currentRule = i;
 
-          Log.Info("ViewModeSwitcher: CheckRulesNegAR(), Rule \"" + tmpRule.Name + "\" fits conditions.");
-          if (tmpRule.ChangeOs)
+          if (currentSettings.verboseLog)
+          {
+            Log.Debug("ViewModeSwitcher: CheckRulesPB(), VideoAR " + negAR + "VideoWidth " + width + "VideoHeight " + height);
+            Log.Info("ViewModeSwitcher: CheckRulesPB(), Rule \"" + tmpRule.Name + "\" fits conditions.");
+          }
+          if (tmpRule.OverScan > 0)
           {
             overScan = (float)tmpRule.OverScan;
           }
-          if (tmpRule.ChangeAR)
-          {
-            retVal = SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
-          }
-          break; // do not process any additional rule after a rule fits (better for offset function)
+          SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
+          return true; // do not process any additional rule after a rule fits
         }
       }
-      //process the fallback rule if no other rule has fitted
-      if (currentRule == -1)
-      {
-        Log.Info("ViewModeSwitcher: CheckRulesNegAR(), Using fallback NonLinearStretch mode");
-        retVal = SetNewGeometry("Fb 4:3 inside 16:9", Geometry.Type.NonLinearStretch);
-      }
-      return retVal;
+      return false;
     }
 
     private void Crop(float crop)
@@ -524,7 +538,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
       if (LastSwitchedAspectRatio > 0f && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
       {        
-        if (currentSettings.UseMaxHCrop)
+        if (useMaxCrop)
         { 
           if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
           {
@@ -677,13 +691,10 @@ namespace ProcessPlugins.ViewModeSwitcher
           Log.Debug("ViewModeSwitcher: SingleCrop(), Video AR: {0}, Cropped AR: {1}", LastSwitchedAspectRatio, newasp);      
         }
         
-        if (newasp > 1.20 && newasp < 1.46 && LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95)
+        //Check for 'Pillar Boxed' 4:3 inside 16:9 video
+        if (LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95
+             && (CheckRulesPB(-newasp, frame.Width, frame.Height)))
         {
-          //'Pillar boxed' 4:3 inside 16:9 video
-          if (CheckRulesNegAR(-newasp))
-          {
-            updateCrop = true;
-          }
           if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
           {
             //NonLinearStretch needs full side bar cropping, other modes don't
@@ -695,6 +706,11 @@ namespace ProcessPlugins.ViewModeSwitcher
             //Add overscan to NonLinearStretch
             cropH += overScan;
             cropV += overScan / LastSwitchedAspectRatio;
+          }
+          
+          if (!isPillarBox) //Only update on first detection
+          {
+            updateCrop = true;
           }
           isPillarBox = true;
         }

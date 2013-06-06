@@ -40,9 +40,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public int CropTop = 0;
     public int CropBottom = 0;
     public int fboverScan = 0;
-    public bool UseAutoLBDetection = false;
     public Geometry.Type PillarBoxViewMode = Geometry.Type.NonLinearStretch;
-    public bool UseMaxHCrop = true;
 
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -55,8 +53,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmDisableLBGlobaly = "parmdisablelbglobaly";
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
-    private const string ParmUseAutoLBDetection = "parmUseAutoLBDetection";
-    private const string ParmUseMaxHCrop = "parmUseMaxHCrop";  
 
 
     public static Geometry.Type StringToViewMode(string strViewmode)
@@ -139,8 +135,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);        
-        UseAutoLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, false);       
-        UseMaxHCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseMaxHCrop, true);
         
 
         bool tmpReturn = false;
@@ -157,7 +151,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = true;
+          tmpRule.ChangeAR = false;
           tmpRule.ViewMode = Geometry.Type.Zoom14to9;
           tmpRule.ChangeOs = true;
           tmpRule.OverScan = 8;
@@ -173,7 +167,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = true;
+          tmpRule.ChangeAR = false;
           tmpRule.ViewMode = Geometry.Type.Normal;
           tmpRule.ChangeOs = true;
           tmpRule.OverScan = 8;
@@ -189,7 +183,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ChangeAR = true;
+          tmpRule.ChangeAR = false;
           tmpRule.ViewMode = Geometry.Type.NonLinearStretch;
           tmpRule.ChangeOs = true;
           tmpRule.OverScan = 8;
@@ -285,8 +279,6 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRuleCount, ViewModeRules.Count.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBBlackLevel.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
-        xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseAutoLBDetection, UseAutoLBDetection);
-        xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseMaxHCrop, UseMaxHCrop);
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

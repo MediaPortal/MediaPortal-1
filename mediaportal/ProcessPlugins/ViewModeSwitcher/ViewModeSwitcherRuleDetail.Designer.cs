@@ -307,7 +307,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.cbOverScanEnabled.Name = "cbOverScanEnabled";
       this.cbOverScanEnabled.Size = new System.Drawing.Size(182, 17);
       this.cbOverScanEnabled.TabIndex = 9;
-      this.cbOverScanEnabled.Text = "This rule uses following overscan";
+      //this.cbOverScanEnabled.Text = "This rule uses following overscan";
+      this.cbOverScanEnabled.Text =   "Maximum Crop             Overscan";
       this.cbOverScanEnabled.UseVisualStyleBackColor = true;
       this.cbOverScanEnabled.CheckedChanged += new System.EventHandler(this.cbOverScanEnabled_CheckedChanged);
       // 
