@@ -50,8 +50,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       txbMaxWidth.Text = currentRule.MaxWidth.ToString();
       txbMinHeight.Text = currentRule.MinHeight.ToString();
       txbMaxHeight.Text = currentRule.MaxHeight.ToString();
-      cbViewModeSwitchEnabled.Checked = currentRule.ChangeAR;
-      cbOverScanEnabled.Checked = currentRule.ChangeOs;
+      cbAutoCropEnabled.Checked = currentRule.ChangeAR;
+      cbMaxCropEnabled.Checked = currentRule.ChangeOs;
       txbOverScan.Text = currentRule.OverScan.ToString();
       cmbViewMode.SelectedItem = currentRule.ViewMode.ToString();
       cb_EnableLBDetection.Checked = currentRule.EnableLBDetection;
@@ -73,27 +73,27 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
       currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
 
-      currentRule.ChangeAR = cbViewModeSwitchEnabled.Checked;
+      currentRule.ChangeAR = cbAutoCropEnabled.Checked;
 
       String tmpViewMode = cmbViewMode.Text;
 
       currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
 
-      currentRule.ChangeOs = cbOverScanEnabled.Checked;
+      currentRule.ChangeOs = cbMaxCropEnabled.Checked;
       currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
       currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
 
       Close();
     }
 
-    private void cbViewModeSwitchEnabled_CheckedChanged(object sender, EventArgs e)
+    private void cbAutoCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      cmbViewMode.Enabled = cbViewModeSwitchEnabled.Checked;
+      //cmbViewMode.Enabled = cbAutoCropEnabled.Checked;
     }
 
-    private void cbOverScanEnabled_CheckedChanged(object sender, EventArgs e)
+    private void cbMaxCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      txbOverScan.Enabled = cbOverScanEnabled.Checked;
+      // txbOverScan.Enabled = cbMaxCropEnabled.Checked;
     }
   }
 }

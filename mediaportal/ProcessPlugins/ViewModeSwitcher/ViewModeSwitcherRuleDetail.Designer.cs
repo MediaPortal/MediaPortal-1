@@ -70,8 +70,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.label1 = new System.Windows.Forms.Label();
       this.txbName = new System.Windows.Forms.TextBox();
       this.lblRulename = new System.Windows.Forms.Label();
-      this.cbViewModeSwitchEnabled = new System.Windows.Forms.CheckBox();
-      this.cbOverScanEnabled = new System.Windows.Forms.CheckBox();
+      this.cbAutoCropEnabled = new System.Windows.Forms.CheckBox();
+      this.cbMaxCropEnabled = new System.Windows.Forms.CheckBox();
       this.bOK = new System.Windows.Forms.Button();
       this.bCancel = new System.Windows.Forms.Button();
       this.groupBox1.SuspendLayout();
@@ -112,8 +112,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.txbName);
       this.groupBox1.Controls.Add(this.lblRulename);
-      this.groupBox1.Controls.Add(this.cbViewModeSwitchEnabled);
-      this.groupBox1.Controls.Add(this.cbOverScanEnabled);
+      this.groupBox1.Controls.Add(this.cbAutoCropEnabled);
+      this.groupBox1.Controls.Add(this.cbMaxCropEnabled);
       this.groupBox1.Location = new System.Drawing.Point(12, 12);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(390, 260);
@@ -141,7 +141,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       // 
       // txbOverScan
       // 
-      this.txbOverScan.Enabled = false;
+      this.txbOverScan.Enabled = true;
       this.txbOverScan.Location = new System.Drawing.Point(200, 224);
       this.txbOverScan.Name = "txbOverScan";
       this.txbOverScan.Size = new System.Drawing.Size(63, 20);
@@ -150,7 +150,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       // cmbViewMode
       // 
       this.cmbViewMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbViewMode.Enabled = false;
+      this.cmbViewMode.Enabled = true;
       this.cmbViewMode.FormattingEnabled = true;
       this.cmbViewMode.Location = new System.Drawing.Point(253, 178);
       this.cmbViewMode.Name = "cmbViewMode";
@@ -288,29 +288,29 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.lblRulename.TabIndex = 3;
       this.lblRulename.Text = "Rule name";
       // 
-      // cbViewModeSwitchEnabled
+      // cbAutoCropEnabled
       // 
-      this.cbViewModeSwitchEnabled.AutoSize = true;
-      this.cbViewModeSwitchEnabled.Location = new System.Drawing.Point(12, 180);
-      this.cbViewModeSwitchEnabled.Name = "cbViewModeSwitchEnabled";
-      this.cbViewModeSwitchEnabled.Size = new System.Drawing.Size(235, 17);
-      this.cbViewModeSwitchEnabled.TabIndex = 7;
-      //this.cbViewModeSwitchEnabled.Text = "This rule switches to the following viewmode";
-      this.cbViewModeSwitchEnabled.Text = "Enable Auto LB            Switch to viewmode";
-      this.cbViewModeSwitchEnabled.UseVisualStyleBackColor = true;
-      this.cbViewModeSwitchEnabled.CheckedChanged += new System.EventHandler(this.cbViewModeSwitchEnabled_CheckedChanged);
+      this.cbAutoCropEnabled.AutoSize = true;
+      this.cbAutoCropEnabled.Location = new System.Drawing.Point(12, 180);
+      this.cbAutoCropEnabled.Name = "cbAutoCropEnabled";
+      this.cbAutoCropEnabled.Size = new System.Drawing.Size(235, 17);
+      this.cbAutoCropEnabled.TabIndex = 7;
+      //this.cbAutoCropEnabled.Text = "This rule switches to the following viewmode";
+      this.cbAutoCropEnabled.Text = "Enable Auto LB            Switch to viewmode";
+      this.cbAutoCropEnabled.UseVisualStyleBackColor = true;
+      this.cbAutoCropEnabled.CheckedChanged += new System.EventHandler(this.cbAutoCropEnabled_CheckedChanged);
       // 
-      // cbOverScanEnabled
+      // cbMaxCropEnabled
       // 
-      this.cbOverScanEnabled.AutoSize = true;
-      this.cbOverScanEnabled.Location = new System.Drawing.Point(12, 226);
-      this.cbOverScanEnabled.Name = "cbOverScanEnabled";
-      this.cbOverScanEnabled.Size = new System.Drawing.Size(182, 17);
-      this.cbOverScanEnabled.TabIndex = 9;
-      //this.cbOverScanEnabled.Text = "This rule uses following overscan";
-      this.cbOverScanEnabled.Text =   "Maximum Crop             Overscan";
-      this.cbOverScanEnabled.UseVisualStyleBackColor = true;
-      this.cbOverScanEnabled.CheckedChanged += new System.EventHandler(this.cbOverScanEnabled_CheckedChanged);
+      this.cbMaxCropEnabled.AutoSize = true;
+      this.cbMaxCropEnabled.Location = new System.Drawing.Point(12, 226);
+      this.cbMaxCropEnabled.Name = "cbMaxCropEnabled";
+      this.cbMaxCropEnabled.Size = new System.Drawing.Size(182, 17);
+      this.cbMaxCropEnabled.TabIndex = 9;
+      //this.cbMaxCropEnabled.Text = "This rule uses following overscan";
+      this.cbMaxCropEnabled.Text =   "Maximum Crop             Overscan";
+      this.cbMaxCropEnabled.UseVisualStyleBackColor = true;
+      this.cbMaxCropEnabled.CheckedChanged += new System.EventHandler(this.cbMaxCropEnabled_CheckedChanged);
       // 
       // bOK
       // 
@@ -378,8 +378,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private System.Windows.Forms.Button bOK;
     private System.Windows.Forms.Button bCancel;
     private System.Windows.Forms.ComboBox cmbViewMode;
-    private System.Windows.Forms.CheckBox cbOverScanEnabled;
-    private System.Windows.Forms.CheckBox cbViewModeSwitchEnabled;
+    private System.Windows.Forms.CheckBox cbMaxCropEnabled;
+    private System.Windows.Forms.CheckBox cbAutoCropEnabled;
     private System.Windows.Forms.TextBox txbOverScan;
     private System.Windows.Forms.Label label9;
     private System.Windows.Forms.CheckBox cb_EnableLBDetection;
