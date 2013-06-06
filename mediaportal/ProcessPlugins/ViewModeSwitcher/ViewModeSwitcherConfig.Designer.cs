@@ -207,11 +207,11 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.ColMaxWidth,
             this.ColMinHeight,
             this.ColMaxHeight,
-            this.ColAutoCrop,
             this.ColViewMode,
-            this.ColMaxCrop,
             this.ColOverscan,
-            this.ColEnableLBDetect});
+            this.ColEnableLBDetect,
+            this.ColAutoCrop,
+            this.ColMaxCrop});
       this.dg_RuleSets.Location = new System.Drawing.Point(6, 16);
       this.dg_RuleSets.MultiSelect = false;
       this.dg_RuleSets.Name = "dg_RuleSets";
@@ -288,7 +288,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       // 
       this.ColAutoCrop.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
       //this.ColAutoCrop.HeaderText = "ChangeAR";
-      this.ColAutoCrop.HeaderText = "Auto LB";
+      this.ColAutoCrop.HeaderText = "Auto BB";
       this.ColAutoCrop.Name = "ColAutoCrop";
       this.ColAutoCrop.ReadOnly = true;
       this.ColAutoCrop.Width = 84;
@@ -321,7 +321,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       // ColEnableLBDetect
       // 
       this.ColEnableLBDetect.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.ColEnableLBDetect.HeaderText = "LB Detection";
+      this.ColEnableLBDetect.HeaderText = "BB Detect On";
       this.ColEnableLBDetect.Name = "ColEnableLBDetect";
       this.ColEnableLBDetect.ReadOnly = true;
       this.ColEnableLBDetect.Width = 94;
@@ -361,7 +361,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.groupBox2.Size = new System.Drawing.Size(770, 78);
       this.groupBox2.TabIndex = 8;
       this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Letterbox Options";
+      this.groupBox2.Text = "Black Bar detection options";
       // 
       // label1
       // 
@@ -411,7 +411,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.cbDisableLBGlobaly.Name = "cbDisableLBGlobaly";
       this.cbDisableLBGlobaly.Size = new System.Drawing.Size(311, 17);
       this.cbDisableLBGlobaly.TabIndex = 0;
-      this.cbDisableLBGlobaly.Text = "Disable letterbox detection globally (even if enabled in a rule)";
+      this.cbDisableLBGlobaly.Text = "Disable Black Bar detection globally (even if enabled in a rule)";
       this.cbDisableLBGlobaly.UseVisualStyleBackColor = true;
       // 
       // bImport

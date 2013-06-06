@@ -127,7 +127,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.cb_EnableLBDetection.Name = "cb_EnableLBDetection";
       this.cb_EnableLBDetection.Size = new System.Drawing.Size(214, 17);
       this.cb_EnableLBDetection.TabIndex = 11;
-      this.cb_EnableLBDetection.Text = "This rule enables the letterbox detection";
+      this.cb_EnableLBDetection.Text = "This rule enables Black Bar detection";
       this.cb_EnableLBDetection.UseVisualStyleBackColor = true;
       // 
       // label9
@@ -296,7 +296,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.cbAutoCropEnabled.Size = new System.Drawing.Size(235, 17);
       this.cbAutoCropEnabled.TabIndex = 7;
       //this.cbAutoCropEnabled.Text = "This rule switches to the following viewmode";
-      this.cbAutoCropEnabled.Text = "Enable Auto LB            Switch to viewmode";
+      this.cbAutoCropEnabled.Text   = "Auto BB detect            Switch to viewmode";
       this.cbAutoCropEnabled.UseVisualStyleBackColor = true;
       this.cbAutoCropEnabled.CheckedChanged += new System.EventHandler(this.cbAutoCropEnabled_CheckedChanged);
       // 

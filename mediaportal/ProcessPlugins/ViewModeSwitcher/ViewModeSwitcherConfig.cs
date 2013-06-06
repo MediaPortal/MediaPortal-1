@@ -89,10 +89,24 @@ namespace ProcessPlugins.ViewModeSwitcher
       dg_RuleSets.Rows.Clear();
       foreach (Rule tmpRule in currentSettings.ViewModeRules)
       {
-        dg_RuleSets.Rows.Add(tmpRule.Enabled, tmpRule.Name, tmpRule.ARFrom.ToString(), tmpRule.ARTo.ToString(),
-                             tmpRule.MinWidth.ToString(), tmpRule.MaxWidth.ToString(), tmpRule.MinHeight.ToString(),
-                             tmpRule.MaxHeight.ToString(), tmpRule.AutoCrop, tmpRule.ViewMode.ToString(),
-                             tmpRule.MaxCrop, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
+//        dg_RuleSets.Rows.Add(tmpRule.Enabled, tmpRule.Name, tmpRule.ARFrom.ToString(), tmpRule.ARTo.ToString(),
+//                             tmpRule.MinWidth.ToString(), tmpRule.MaxWidth.ToString(), tmpRule.MinHeight.ToString(),
+//                             tmpRule.MaxHeight.ToString(), tmpRule.AutoCrop, tmpRule.ViewMode.ToString(),
+//                             tmpRule.MaxCrop, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
+
+        dg_RuleSets.Rows.Add(tmpRule.Enabled, 
+                             tmpRule.Name, 
+                             tmpRule.ARFrom.ToString(), 
+                             tmpRule.ARTo.ToString(),
+                             tmpRule.MinWidth.ToString(), 
+                             tmpRule.MaxWidth.ToString(), 
+                             tmpRule.MinHeight.ToString(),
+                             tmpRule.MaxHeight.ToString(), 
+                             tmpRule.ViewMode.ToString(),
+                             tmpRule.OverScan.ToString(), 
+                             tmpRule.EnableLBDetection,
+                             tmpRule.AutoCrop, 
+                             tmpRule.MaxCrop); 
       }
     }
 
@@ -108,12 +122,12 @@ namespace ProcessPlugins.ViewModeSwitcher
       Rule tmpRule = new Rule();
       tmpRule.Enabled = true;
       tmpRule.Name = "New rule";
-      tmpRule.ARFrom = 1.33f;
-      tmpRule.ARTo = 1.334f;
-      tmpRule.MinWidth = 700;
-      tmpRule.MaxWidth = 800;
-      tmpRule.MinHeight = 400;
-      tmpRule.MaxHeight = 600;
+      tmpRule.ARFrom = 1.2f;
+      tmpRule.ARTo = 1.46f;
+      tmpRule.MinWidth = 200;
+      tmpRule.MaxWidth = 2000;
+      tmpRule.MinHeight = 200;
+      tmpRule.MaxHeight = 2000;
       tmpRule.AutoCrop = false;
       tmpRule.ViewMode = Geometry.Type.Normal;
       tmpRule.MaxCrop = true;

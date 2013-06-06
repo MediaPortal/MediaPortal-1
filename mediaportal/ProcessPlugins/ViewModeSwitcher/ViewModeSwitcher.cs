@@ -57,13 +57,15 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool updatePending = false;    
     private string NewGeometryMessage = " ";
     private float fCropH = 0f; // stores the last hor crop value. 
-    private float fCropV = 0f; // stores the last hor crop value. 
+    private float fCropV = 0f; // stores the last vertical crop value. 
     private float fWidthH = 0f; // stores the last 'real' video width value. 
-    private float fHeightV = 0f; // stores the last 'real' video width value. 
+    private float fHeightV = 0f; // stores the last 'real' video height value. 
     private bool workerBusy = false;
     private bool useMaxCrop = false;
     private bool useAutoCrop = false;
     private bool forceAutoCrop = false;
+    private int LastWidth = 0; // stores the last frame grab width value. 
+    private int LastHeight = 0; // stores the last frame grab height value. 
 
 
     /// <summary>
@@ -777,11 +779,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           fWidthH  = (float)VMR9Util.g_vmr9.VideoWidth;
           fHeightV = (float)VMR9Util.g_vmr9.VideoHeight;
           float pixelAR = fWidthH / fHeightV;
-          anamorphFactor = (aspectRatio/pixelAR);
+          anamorphFactor = (aspectRatio/pixelAR);   
         }
-        if (aspectRatio != LastSwitchedAspectRatio)
+        if (aspectRatio != LastSwitchedAspectRatio || VMR9Util.g_vmr9.VideoHeight != LastHeight || VMR9Util.g_vmr9.VideoWidth != LastWidth)
         {
-          Log.Debug("ViewModeSwitcher: CheckAspectRatios() Video AR: {0}, Last Video AR: {1}, Anamorph: {2}", aspectRatio, LastSwitchedAspectRatio, anamorphFactor);
+          Log.Debug("ViewModeSwitcher: CheckAspectRatios() Video AR: {0}, Last Video AR: {1}, Anamorph: {2}, Width: {3}, Height: {4}", aspectRatio, LastSwitchedAspectRatio, anamorphFactor, VMR9Util.g_vmr9.VideoWidth, VMR9Util.g_vmr9.VideoHeight);
+          LastWidth  = VMR9Util.g_vmr9.VideoWidth; 
+          LastHeight = VMR9Util.g_vmr9.VideoHeight;
           LastSwitchedAspectRatio = aspectRatio;
           LastAnamorphFactor = anamorphFactor;
           ProcessRules();
