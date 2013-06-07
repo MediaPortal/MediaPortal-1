@@ -645,11 +645,22 @@ namespace MediaPortal.GUI.Pictures
       }
       else if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_PICTURES) && !g_Player.Playing )
       {
-        if (SlideShow.pausedMusic && SlideShow._returnedFromVideoPlayback)
+        if (SlideShow.pausedMusic && SlideShow._returnedFromVideoPlayback && !SlideShow._isBackgroundMusicPlaying)
         {
           SlideShow.resumePausedMusic();
         }
-        SlideShow._returnedFromVideoPlayback = false;
+        if (SlideShow._returnedFromVideoPlayback)
+        {
+          SlideShow._returnedFromVideoPlayback = false;
+        }
+        if (SlideShow.pausedMusic)
+        {
+          SlideShow.pausedMusic = false;
+        }
+        if (SlideShow._isBackgroundMusicPlaying)
+        {
+          SlideShow._isBackgroundMusicPlaying = false;
+        }
       }
     }
 

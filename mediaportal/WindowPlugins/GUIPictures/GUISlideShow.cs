@@ -387,7 +387,7 @@ namespace MediaPortal.GUI.Pictures
     private float _panXChange;
     private float _zoomChange;
     private bool _isLoadingRawPicture = false;
-    private bool _isBackgroundMusicPlaying = false;
+    public bool _isBackgroundMusicPlaying = false;
     private string[] _musicFileExtensions;
     private int _lastSegmentIndex = -1;
     private float _renderTimer;
