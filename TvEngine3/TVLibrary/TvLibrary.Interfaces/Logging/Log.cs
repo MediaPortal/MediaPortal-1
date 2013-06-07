@@ -221,6 +221,7 @@ namespace TvLibrary.Log
     /// <param name="level">level to set</param>
     public static void SetLogLevel(LogLevel level)
     {
+      Log.Info("Set loglevel to: {0}", level.ToString());
       CommonLogger.Instance.LogLevel = ConvertToCommonLogLevel(level);
     }
 

@@ -148,12 +148,12 @@ namespace SetupTv.Sections
 
       try
       {
-        mpComboBoxLog.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value);
-        //default is debug=5       
+        mpComboBoxLog.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value) - 2;
+        //default is debug=5 but first two options in enum (none and critical) are not used so offset by 2
       }
       catch (Exception)
       {
-        mpComboBoxPrio.SelectedIndex = 5; //fall back to default which is debug=5
+        mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is debug (4th entry in drop down; ie. index = 3)
       }
 
       BuildLists(layer);
@@ -196,8 +196,8 @@ namespace SetupTv.Sections
       s.Value = mpComboBoxPrio.SelectedIndex.ToString();
       s.Persist();
 
-      s = layer.GetSetting("loglevel", "3");
-      s.Value = mpComboBoxLog.SelectedIndex.ToString();
+      s = layer.GetSetting("loglevel", "5");
+      s.Value = (mpComboBoxLog.SelectedIndex + 2).ToString();
       s.Persist();
 
       s = layer.GetSetting("delayCardDetect", "0");
@@ -439,7 +439,7 @@ namespace SetupTv.Sections
 
     private void mpComboBoxLog_SelectedIndexChanged(object sender, EventArgs e)
     {
-      var logLevel = (LogLevel) mpComboBoxLog.SelectedIndex + 2; // Legacy log levels exist and first value starts at index 2 rather than 0
+      var logLevel = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Legacy log levels exist and first value starts at index 2 rather than 0
       Log.SetLogLevel(logLevel);
     }
   }

@@ -31,6 +31,8 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageApplication = new System.Windows.Forms.TabPage();
       this.groupBox8 = new System.Windows.Forms.GroupBox();
+      this.lblLogLevel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxLog = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblPriority = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxPrio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -79,8 +81,6 @@ namespace SetupTv.Sections
       this.columnHeaderAudioPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderAudioName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.columnHeaderAudioReusable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.lblLogLevel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBoxLog = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -140,10 +140,29 @@ namespace SetupTv.Sections
       this.groupBox8.Controls.Add(this.mpComboBoxPrio);
       this.groupBox8.Location = new System.Drawing.Point(6, 6);
       this.groupBox8.Name = "groupBox8";
-      this.groupBox8.Size = new System.Drawing.Size(464, 112);
+      this.groupBox8.Size = new System.Drawing.Size(464, 95);
       this.groupBox8.TabIndex = 81;
       this.groupBox8.TabStop = false;
       this.groupBox8.Text = "TVService";
+      // 
+      // lblLogLevel
+      // 
+      this.lblLogLevel.AutoSize = true;
+      this.lblLogLevel.Location = new System.Drawing.Point(6, 61);
+      this.lblLogLevel.Name = "lblLogLevel";
+      this.lblLogLevel.Size = new System.Drawing.Size(57, 13);
+      this.lblLogLevel.TabIndex = 78;
+      this.lblLogLevel.Text = "Log Level:";
+      // 
+      // mpComboBoxLog
+      // 
+      this.mpComboBoxLog.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxLog.FormattingEnabled = true;
+      this.mpComboBoxLog.Location = new System.Drawing.Point(125, 58);
+      this.mpComboBoxLog.Name = "mpComboBoxLog";
+      this.mpComboBoxLog.Size = new System.Drawing.Size(179, 21);
+      this.mpComboBoxLog.TabIndex = 79;
+      this.mpComboBoxLog.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLog_SelectedIndexChanged);
       // 
       // lblPriority
       // 
@@ -171,7 +190,7 @@ namespace SetupTv.Sections
       this.groupBox6.Controls.Add(this.label45);
       this.groupBox6.Controls.Add(this.label44);
       this.groupBox6.Controls.Add(this.delayDetectUpDown);
-      this.groupBox6.Location = new System.Drawing.Point(6, 136);
+      this.groupBox6.Location = new System.Drawing.Point(6, 118);
       this.groupBox6.Name = "groupBox6";
       this.groupBox6.Size = new System.Drawing.Size(464, 107);
       this.groupBox6.TabIndex = 80;
@@ -711,25 +730,6 @@ namespace SetupTv.Sections
       this.columnHeaderAudioReusable.HeaderText = "Reuse";
       this.columnHeaderAudioReusable.Name = "columnHeaderAudioReusable";
       this.columnHeaderAudioReusable.Width = 55;
-      // 
-      // lblLogLevel
-      // 
-      this.lblLogLevel.AutoSize = true;
-      this.lblLogLevel.Location = new System.Drawing.Point(6, 61);
-      this.lblLogLevel.Name = "lblLogLevel";
-      this.lblLogLevel.Size = new System.Drawing.Size(57, 13);
-      this.lblLogLevel.TabIndex = 78;
-      this.lblLogLevel.Text = "Log Level:";
-      // 
-      // mpComboBoxLog
-      // 
-      this.mpComboBoxLog.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxLog.FormattingEnabled = true;
-      this.mpComboBoxLog.Location = new System.Drawing.Point(125, 58);
-      this.mpComboBoxLog.Name = "mpComboBoxLog";
-      this.mpComboBoxLog.Size = new System.Drawing.Size(179, 21);
-      this.mpComboBoxLog.TabIndex = 79;
-      this.mpComboBoxLog.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxLog_SelectedIndexChanged);
       // 
       // ScanSettings
       // 
