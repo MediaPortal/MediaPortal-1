@@ -142,6 +142,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private float _cueTrackStartPos = 0;
     private float _cueTrackEndPos = 0;
 
+    private TAG_INFO _tagInfo;
+
     #endregion
 
     #region Properties
@@ -629,6 +631,7 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
+          _tagInfo = musicStream.StreamTags;
           if (InternetStreamSongChanged != null)
           {
             InternetStreamSongChanged(this);
@@ -1660,6 +1663,12 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           Log.Info("BASS: playback started");
 
+          // Set the Tag Info for Web Streams
+          if (stream.Filetype.FileMainType == FileMainType.WebStream)
+          {
+            _tagInfo = stream.StreamTags;
+          }
+
           // Slide in the Stream over the Cross fade Interval
           stream.SlideIn();
 
@@ -1980,30 +1989,28 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      bool result = true;
-
       try
       {
         MusicStream stream = GetCurrentStream();
-        long pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
+        long pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
 
         double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
-        double offsetSecs = (double)ms / 1000.0;
+        double newPos = timePos + (double)ms / 1000.0;
 
-        if (timePos + offsetSecs >= stream.TotalStreamSeconds)
+        if (newPos >= stream.TotalStreamSeconds)
         {
           return false;
         }
 
         // the elapsed time length
-        BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos + offsetSecs));
+        Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
       }
       catch
       {
         return false;
       }
 
-      return result;
+      return true;
     }
 
     /// <summary>
@@ -2026,33 +2033,29 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      MusicStream stream = GetCurrentStream();
-      bool result = true;
-
       try
       {
-        long len = Bass.BASS_ChannelGetLength(stream.BassStream); // length in bytes
-
-        long pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
+        MusicStream stream = GetCurrentStream();
+        long pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
 
         double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
-        double offsetSecs = (double)ms / 1000.0;
+        double newPos = timePos - (double)ms / 1000.0;
 
-        if (timePos - offsetSecs <= 0)
+        if (newPos <= 0)
         {
           return false;
         }
 
         // the elapsed time length
-        BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos - offsetSecs));
+        Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
       }
 
       catch
       {
-        result = false;
+        return false;
       }
 
-      return result;
+      return true;
     }
 
     /// <summary>
@@ -2212,7 +2215,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else if (_speed < 0 && ts.TotalMilliseconds > 120)
         {
-          SeekReverse(80 * -_speed);
+          SeekReverse(80 * -_speed + (int)ts.TotalMilliseconds);
           _seekUpdate = DateTime.Now;
         }
       }
@@ -2317,6 +2320,41 @@ namespace MediaPortal.MusicPlayer.BASS
     #endregion
 
     #region  Public Methods
+
+    /// <summary>
+    /// Returns the Tags of an AV Stream
+    /// </summary>
+    /// <returns></returns>
+    public MusicTag GetStreamTags()
+    {
+      MusicTag tag = new MusicTag();
+      if (_tagInfo == null)
+      {
+        return tag;
+      }
+
+      // So let's filter it out ourself
+      string title = _tagInfo.title;
+      int streamUrlIndex = title.IndexOf("';StreamUrl=");
+      if (streamUrlIndex > -1)
+      {
+        title = _tagInfo.title.Substring(0, streamUrlIndex);
+      }
+
+      tag.Album = _tagInfo.album;
+      tag.Artist = _tagInfo.artist;
+      tag.Title = title;
+      tag.Genre = _tagInfo.genre;
+      try
+      {
+        tag.Year = Convert.ToInt32(_tagInfo.year);
+      }
+      catch (FormatException)
+      {
+        tag.Year = 0;
+      }
+      return tag;
+    }
 
     /// <summary>
     /// Switches the Playback to Gapless

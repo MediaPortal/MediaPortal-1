@@ -831,7 +831,8 @@ public class MediaPortalApp : D3D, IRender
           for (int i = _startupDelay; i > 0; i--)
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
-            Application.DoEvents();  // process message queue
+            Thread.Sleep(1000);
+            Application.DoEvents();
           }
         }
 
@@ -3583,7 +3584,13 @@ public class MediaPortalApp : D3D, IRender
 
           // pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
-            g_Player.Pause();
+            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture) || g_Player.IsVideo)
+            {
+              g_Player.Pause();
+            }
             break;
 
           // fast forward...
@@ -3599,13 +3606,19 @@ public class MediaPortalApp : D3D, IRender
 
           // Decide if we want to have CD style of FF or Skip steps
           case Action.ActionType.ACTION_MUSIC_FORWARD:
-            if (g_Player.Paused)
+            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture || g_Player.IsVideo))
             {
-              g_Player.Pause();
-            }
-            if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
-            {
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+              if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+              {
+                g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+              }
             }
             break;
  
@@ -3622,13 +3635,19 @@ public class MediaPortalApp : D3D, IRender
 
           // Decide if we want to have CD style of Rew or Skip steps
           case Action.ActionType.ACTION_MUSIC_REWIND:
-            if (g_Player.Paused)
+            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
+            activeWindow = (GUIWindow.Window) Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture || g_Player.IsVideo))
             {
-              g_Player.Pause();
-            }
-            if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
-            {
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+              }
+              if (!MediaPortal.MusicPlayer.BASS.Config.UseSkipSteps)
+              {
+                g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+              }
             }
             break;
          }
@@ -4634,7 +4653,7 @@ public class MediaPortalApp : D3D, IRender
         float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
         float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth/screenHeight);
-        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+        GUIGraphicsContext.Skin = screenRatio > 1.5 ? "Titan" : "Default";
         Config.SkinName = GUIGraphicsContext.SkinName;
         SkinSettings.Load();
 
