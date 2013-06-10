@@ -3584,13 +3584,16 @@ public class MediaPortalApp : D3D, IRender
 
           // pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
-            // When MyPictures Plugin shows the pictures/videos we don't want to change music track
+            // When MyPictures Plugin shows the pictures we want to pause the slide show only, not the player
             activeWindowName = GUIWindowManager.ActiveWindow.ToString(CultureInfo.InvariantCulture);
             activeWindow = (GUIWindow.Window)Enum.Parse(typeof(GUIWindow.Window), activeWindowName);
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key) && (activeWindow != GUIWindow.Window.WINDOW_SLIDESHOW && !g_Player.IsPicture) || g_Player.IsVideo)
+            if ((activeWindow == GUIWindow.Window.WINDOW_SLIDESHOW) ||
+                (activeWindow == GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsPicture) && g_Player.Playing && !g_Player.IsVideo)
             {
-              g_Player.Pause();
+              break;
             }
+            g_Player.Pause();
+
             break;
 
           // fast forward...
