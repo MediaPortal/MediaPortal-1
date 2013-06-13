@@ -370,7 +370,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(105, 13);
       this.label1.TabIndex = 35;
-      this.label1.Text = "(16 - 255, default 40)";
+      this.label1.Text = "(16 - 255, default 32)";
       // 
       // numBlackLevel
       // 
@@ -390,7 +390,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.numBlackLevel.Size = new System.Drawing.Size(43, 20);
       this.numBlackLevel.TabIndex = 34;
       this.numBlackLevel.Value = new decimal(new int[] {
-            40,
+            32,
             0,
             0,
             0});

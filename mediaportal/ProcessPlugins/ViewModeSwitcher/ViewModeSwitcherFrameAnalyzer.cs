@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -42,8 +43,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private int rightStart = 0;
     private int rightEnd = 0;
 
-    private int maxBrightnessTreshold = 40;
-    private int minBrightnessTreshold = 16;
+    private int maxBrightnessTreshold = 32;
+    private int minBrightnessTreshold = 20;
 
     private float topScanStartFraction = 0.30f;
     private float topScanEndFraction = 0.70f;
@@ -77,6 +78,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Debug("ViewModeSwitcher: FindBounds");
       }
       this.frame = frame;
+
+      maxBrightnessTreshold = Math.Max((int)ViewModeSwitcher.currentSettings.LBBlackLevel, 16);
+      minBrightnessTreshold = Math.Max((maxBrightnessTreshold - 12), 16);
 
       int topLine = 0;
       int bottomLine = frame.Height - 1;
@@ -395,8 +399,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //if (ViewModeSwitcher.currentSettings.verboseLog)
       //  Log.Debug("ViewModeSwitcher: Max : R{0}, G{1}, B{2}", maxR, maxG, maxB);
 
-      //At least one pixel with brightness level over 40 is found
-      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBBlackLevel;
+      //At least one pixel with brightness level over 'LBBlackLevel' is found
       if (maxR > maxBrightnessTreshold || maxG > maxBrightnessTreshold || maxB > maxBrightnessTreshold)
       {
         return true;
@@ -405,8 +408,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       //if (ViewModeSwitcher.currentSettings.verboseLog)
       //  Log.Debug("ViewModeSwitcher: Number of pixel above treshold : R{0}, G{1}, B{2}", sumR, sumG, sumB);
 
-      //Over half of the number of pixels are above the brightness treshold
-      if (sumR > ((end - start) / 2) || sumG > ((end - start) / 2) || sumB > ((end - start) / 2))
+      //Over 25% of the pixels in the line are above the minimum brightness treshold
+      if (sumR > ((end - start) / 4) || sumG > ((end - start) / 4) || sumB > ((end - start) / 4))
       {
         return true;
       }

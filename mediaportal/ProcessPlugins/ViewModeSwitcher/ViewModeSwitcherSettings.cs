@@ -34,7 +34,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public bool UseFallbackRule = true;
     public Geometry.Type FallBackViewMode = Geometry.Type.Normal;
     public bool DisableLBGlobaly = false;
-    public decimal LBBlackLevel = 40;
+    public decimal LBBlackLevel = 32;
     public int CropLeft = 0;
     public int CropRight = 0;
     public int CropTop = 0;
@@ -129,7 +129,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         String tmpFallbackViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmFallbackViewMode, "Normal");
         FallBackViewMode = StringToViewMode(tmpFallbackViewMode);
         DisableLBGlobaly = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBGlobaly, false);
-        LBBlackLevel = reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmBlackLevel, 40);
+        LBBlackLevel = reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmBlackLevel, 32);
         fboverScan = reader.GetValueAsInt(ViewModeSwitcherSectionName, FallBackOverScan, 8);
         CropLeft = reader.GetValueAsInt("tv", "cropleft", 0);
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
@@ -208,13 +208,13 @@ namespace ProcessPlugins.ViewModeSwitcher
 
           tmpRule = new Rule();
           tmpRule.Enabled = true;
-          tmpRule.Name = "4:3 inside 16:9 SD";
+          tmpRule.Name = "4:3 inside 16:9";
           tmpRule.ARFrom = -1.20f;
           tmpRule.ARTo = -1.46f;
           tmpRule.MinWidth = 200;
-          tmpRule.MaxWidth = 799;
+          tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
-          tmpRule.MaxHeight = 599;
+          tmpRule.MaxHeight = 2000;
           tmpRule.ViewMode = Geometry.Type.NonLinearStretch;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = false;
@@ -224,15 +224,15 @@ namespace ProcessPlugins.ViewModeSwitcher
 
           tmpRule = new Rule();
           tmpRule.Enabled = true;
-          tmpRule.Name = "4:3 inside 16:9 HD";
-          tmpRule.ARFrom = -1.20f;
-          tmpRule.ARTo = -1.46f;
-          tmpRule.MinWidth = 800;
+          tmpRule.Name = "16:9 inside 4:3";
+          tmpRule.ARFrom = -1.47f;
+          tmpRule.ARTo = -1.95f;
+          tmpRule.MinWidth = 200;
           tmpRule.MaxWidth = 2000;
-          tmpRule.MinHeight = 600;
+          tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ViewMode = Geometry.Type.NonLinearStretch;
-          tmpRule.OverScan = 16;
+          tmpRule.ViewMode = Geometry.Type.Zoom14to9;
+          tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = false;
           tmpRule.AutoCrop = false;
           tmpRule.MaxCrop = true;

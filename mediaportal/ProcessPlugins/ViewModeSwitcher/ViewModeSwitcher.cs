@@ -64,9 +64,11 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool useMaxCrop = false;
     private bool useAutoCrop = false;
     private bool forceAutoCrop = false;
-    private int LastWidth = 0; // stores the last frame grab width value. 
-    private int LastHeight = 0; // stores the last frame grab height value. 
-
+    private int LastWidth = 0; // stores the last raw video width value. 
+    private int LastHeight = 0; // stores the last raw video height value. 
+    private float LastRawCropH = 0; // stores the last raw hcrop value. 
+    private float LastRawCropV = 0; // stores the last raw vcrop value. 
+    private int NoMatchCropCount = 0; 
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -288,6 +290,10 @@ namespace ProcessPlugins.ViewModeSwitcher
                 LastDetectionResult = true;
                 SingleCrop();
               }
+              else
+              {
+                NoMatchCropCount = 0;
+              }
             }
           }
           //debugToggle = !debugToggle;   
@@ -304,6 +310,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           isPillarBox = false;
           updatePending = false;
           forceAutoCrop = false;
+          NoMatchCropCount = 0;
           loopCount = 3; //Perform a black-bar detect one loop cycle after start
           
           if (currentSettings.verboseLog)
@@ -429,10 +436,9 @@ namespace ProcessPlugins.ViewModeSwitcher
             && height >= tmpRule.MinHeight
             && height <= tmpRule.MaxHeight)
         {
-
           if (currentSettings.verboseLog)
           {
-            Log.Debug("ViewModeSwitcher: CheckRulesPB(), VideoAR " + negAR + "VideoWidth " + width + "VideoHeight " + height);
+            Log.Debug("ViewModeSwitcher: CheckRulesPB(), VideoAR: {0}, VideoWidth: {1}, VideoHeight: {2}", negAR, width, height);
             Log.Info("ViewModeSwitcher: CheckRulesPB(), Rule \"" + tmpRule.Name + "\" fits conditions.");
           }
           if (tmpRule.OverScan > 0)
@@ -660,6 +666,11 @@ namespace ProcessPlugins.ViewModeSwitcher
         {
           Log.Debug("ViewModeSwitcher: SingleCrop(), Symmetry check failed");
         }
+        if (NoMatchCropCount < 3)
+        {
+          NoMatchCropCount++;
+          LastDetectionResult = false;
+        }
         frame.Dispose();
         frame = null;
         return;
@@ -668,78 +679,113 @@ namespace ProcessPlugins.ViewModeSwitcher
       //Use the smallest black bar size
       float cropH = (float)(Math.Min(frame.Width - bounds.Right, bounds.Left));
       float cropV = (float)(Math.Min(frame.Height - bounds.Bottom, bounds.Top));
+      
+      //Check for a close match (within 1% of width/height) to the previous crop values
+      if ((((Math.Abs(cropV - LastRawCropV))/(float)frame.Height) > 0.01) ||
+          (((Math.Abs(cropH - LastRawCropH))/(float)frame.Width)  > 0.01)) 
+      {
+        LastRawCropH = cropH;
+        LastRawCropV = cropV;
+        if (NoMatchCropCount < 3)
+        {
+          NoMatchCropCount++;
+          LastDetectionResult = false;
+        }
+        if (currentSettings.verboseLog)
+        {
+          Log.Debug("ViewModeSwitcher: SingleCrop(), No match with last crop : " + NoMatchCropCount);
+        }
+        frame.Dispose();
+        frame = null;
+        return;
+      }
+      
+      LastRawCropH = cropH;
+      LastRawCropV = cropV;
 
       //Work out actual picture aspect ratio
       float newasp = ((float)frame.Width - cropH * 2) / ((float)frame.Height - cropV * 2);      
+
+      bool checkPBv = false;
+      bool checkLBv = false; 
 
       //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio.
       //After this correction, cropH value is in 'real' video pixels, not source pixels
       if (LastAnamorphFactor > 0f)
       {
         newasp *= LastAnamorphFactor;
+        checkPBv = (cropV/(float)frame.Height < 0.02) 
+                     && LastSwitchedAspectRatio > 1.68 && LastSwitchedAspectRatio < 1.87 
+                     && newasp > 1.2 && newasp < 1.46;
+        checkLBv = (cropH/(float)frame.Width  < 0.02) 
+                     && LastSwitchedAspectRatio > 1.25 && LastSwitchedAspectRatio < 1.41 
+                     && newasp > 1.47 && newasp < 1.95; 
         cropH *= LastAnamorphFactor; 
       }
 
       if (newasp < 1.1 || newasp > 2.7) // faulty crop
       {
+        if (NoMatchCropCount < 3)
+        {
+          NoMatchCropCount++;
+          LastDetectionResult = false;
+        }
         frame.Dispose();
         frame = null;
         return;
-      }
-      else // (newasp >= 1)
+      }     
+
+      NoMatchCropCount = 0;
+               
+      if (currentSettings.verboseLog)
       {
-        if (currentSettings.verboseLog)
+        Log.Debug("ViewModeSwitcher: SingleCrop(), Video AR: {0}, Cropped AR: {1}", LastSwitchedAspectRatio, newasp);      
+      }
+      
+      //Check for 'Pillar Boxed' 4:3 inside 16:9 video, and 'Letter Boxed' 16:9 inside 4:3 video
+      if ((checkPBv || checkLBv) && (CheckRulesPB(-newasp, frame.Width, frame.Height)))
+      {
+        if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
         {
-          Log.Debug("ViewModeSwitcher: SingleCrop(), Video AR: {0}, Cropped AR: {1}", LastSwitchedAspectRatio, newasp);      
-        }
-        
-        //Check for 'Pillar Boxed' 4:3 inside 16:9 video
-        if (LastSwitchedAspectRatio > 1.60 && LastSwitchedAspectRatio < 1.95
-             && (CheckRulesPB(-newasp, frame.Width, frame.Height)))
-        {
-          if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
-          {
-            //NonLinearStretch needs full side bar cropping, other modes don't
-            cropH = overScan;
-            cropV = overScan / LastSwitchedAspectRatio;
-          }
-          else
-          {
-            //Add overscan to NonLinearStretch
-            cropH += overScan;
-            cropV += overScan / LastSwitchedAspectRatio;
-          }
-          
-          if (!isPillarBox) //Only update on first detection
-          {
-            updateCrop = true;
-          }
-          isPillarBox = true;
+          //NonLinearStretch needs full side bar cropping, other modes don't
+          cropH = overScan;
+          cropV = overScan / LastSwitchedAspectRatio;
         }
         else
         {
-          //Normal video 
-          //Use overscan cropping if larger than detected black bars
-          cropH = Math.Max(cropH, overScan);
-          cropV = Math.Max(cropV, overScan / LastSwitchedAspectRatio);
-          
-          if (isPillarBox)
-          {
-            if (currentSettings.verboseLog)
-            {
-              Log.Debug("ViewModeSwitcher: SingleCrop(), PillarBox -> Normal");      
-            }
-            //Force CheckAspectRatios() update 
-            updatePending = false;   
-            isPillarBox = false;
-            LastSwitchedAspectRatio = 0f;
-            frame.Dispose();
-            frame = null;
-            return;
-          }
-          isPillarBox = false;          
+          //Add overscan to NonLinearStretch
+          cropH += overScan;
+          cropV += overScan / LastSwitchedAspectRatio;
         }
-      } 
+        
+        if (!isPillarBox) //Only update on first detection
+        {
+          updateCrop = true;
+        }
+        isPillarBox = true;
+      }
+      else  //Normal video cropping
+      { 
+        //Use overscan cropping if larger than detected black bars
+        cropH = Math.Max(cropH, overScan);
+        cropV = Math.Max(cropV, overScan / LastSwitchedAspectRatio);
+        
+        if (isPillarBox)
+        {
+          if (currentSettings.verboseLog)
+          {
+            Log.Debug("ViewModeSwitcher: SingleCrop(), PillarBox -> Normal");      
+          }
+          //Force CheckAspectRatios() update 
+          updatePending = false;   
+          isPillarBox = false;
+          LastSwitchedAspectRatio = 0f;
+          frame.Dispose();
+          frame = null;
+          return;
+        }
+        isPillarBox = false;          
+      }
 
       if (currentSettings.verboseLog)
       {
