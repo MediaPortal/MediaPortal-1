@@ -97,16 +97,16 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
 
 CLibBlurayWrapper::~CLibBlurayWrapper()
 {
-  CAutoLock cRendertLock(&m_csRenderLock);
+  CAutoLock cRenderLock(&m_csRenderLock);
   CAutoLock cLibLock(&m_csLibLock);
+
+  m_pOverlayRenderer->SetD3DDevice(NULL);
 
   if (m_pBd)
   {
     _bd_register_overlay_proc(m_pBd, NULL, NULL);
     _bd_close(m_pBd);
   }
-
-  delete m_pOverlayRenderer;
 
   if (m_pTitleInfo)
     _bd_free_title_info(m_pTitleInfo);
