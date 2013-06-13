@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.Sections;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -186,7 +187,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
         if (MpPath != null && File.Exists(MpPath))
         {
-          result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
+            result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
         }
       }
       return result;
