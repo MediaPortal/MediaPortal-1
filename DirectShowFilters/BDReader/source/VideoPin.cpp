@@ -552,6 +552,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               else
               {
                 DeliverEndOfStream();
+                LogDebug("DeliverEndOFStream - EOS_THRESHOLD");
                 m_bClipEndingNotified = true;
               }
 
