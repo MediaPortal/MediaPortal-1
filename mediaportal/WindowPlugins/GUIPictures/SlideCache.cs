@@ -20,6 +20,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using MediaPortal.GUI.Library;
 
@@ -70,6 +71,14 @@ internal class SlideCache
     // wait for any (needed) prefetching to complete
     lock (_prefetchingThreadLock)
     {
+      bool itemFiles = File.Exists(slideFilePath);
+
+      if (!itemFiles)
+      {
+        CurrentSlide = new SlidePicture(slideFilePath, false);
+        return CurrentSlide;
+      }
+
       if (_prefetchingThread != null)
       {
         // only wait for the prefetching if it is for the slide file that we need
