@@ -49,7 +49,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       cbShowSwitchMsg.Checked = currentSettings.ShowSwitchMsg;
       cbUseFallbackRule.Checked = currentSettings.UseFallbackRule;
       cbDisableLBGlobaly.Checked = currentSettings.DisableLBGlobaly;
-      numBlackLevel.Value = currentSettings.LBBlackLevel;
+      numBlackLevel.Value = currentSettings.LBMaxBlackLevel;
       fbosUpDown.Value = currentSettings.fboverScan;
 
       ReBuildDataGrid();
@@ -68,7 +68,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentSettings.UseFallbackRule = cbUseFallbackRule.Checked;
       currentSettings.FallBackViewMode = ViewModeswitcherSettings.StringToViewMode(cmbFBViewMode.Text);
       currentSettings.DisableLBGlobaly = cbDisableLBGlobaly.Checked;
-      currentSettings.LBBlackLevel = numBlackLevel.Value;
+      currentSettings.LBMaxBlackLevel = numBlackLevel.Value;
       currentSettings.fboverScan = (int)fbosUpDown.Value;
       currentSettings.SaveSettings();
     }

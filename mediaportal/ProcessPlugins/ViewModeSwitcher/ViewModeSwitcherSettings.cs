@@ -34,14 +34,16 @@ namespace ProcessPlugins.ViewModeSwitcher
     public bool UseFallbackRule = true;
     public Geometry.Type FallBackViewMode = Geometry.Type.Normal;
     public bool DisableLBGlobaly = false;
-    public decimal LBBlackLevel = 32;
+    public decimal LBMaxBlackLevel = 32;
     public int CropLeft = 0;
     public int CropRight = 0;
     public int CropTop = 0;
     public int CropBottom = 0;
     public int fboverScan = 0;
     public Geometry.Type PillarBoxViewMode = Geometry.Type.NonLinearStretch;
-
+    public decimal LBMinBlackLevel = 16;
+    public bool disableForVideo = false;
+  
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
     private const string ParmVerboselog = "parmverboselog";
@@ -53,7 +55,12 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmDisableLBGlobaly = "parmdisablelbglobaly";
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
-
+    private const string ParmMinBlackLevel = "parmminblacklevel";
+    private const string ParmDisableForVideo = "parmdisableforvideo";
+    
+    //Settings file name
+    private const string SettingsFileName = "ViewModeSwitcher2.xml";
+    
 
     public static Geometry.Type StringToViewMode(string strViewmode)
     {
@@ -115,7 +122,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// <returns></returns>
     public bool LoadSettings(string ImportFileName)
     {
-      string tmpConfigFileName = Config.GetFile(Config.Dir.Config, "ViewModeSwitcher.xml");
+      string tmpConfigFileName = Config.GetFile(Config.Dir.Config, SettingsFileName);
       if (ImportFileName != string.Empty)
       {
         tmpConfigFileName = ImportFileName;
@@ -128,14 +135,15 @@ namespace ProcessPlugins.ViewModeSwitcher
         UseFallbackRule = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmUseFallbackRule, true);
         String tmpFallbackViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmFallbackViewMode, "Normal");
         FallBackViewMode = StringToViewMode(tmpFallbackViewMode);
-        DisableLBGlobaly = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBGlobaly, false);
-        LBBlackLevel = reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmBlackLevel, 32);
+        DisableLBGlobaly = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBGlobaly, false);        
+        LBMaxBlackLevel = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmBlackLevel, 32), 4), 255);
+        LBMinBlackLevel = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmMinBlackLevel, 16), 4), 255);
         fboverScan = reader.GetValueAsInt(ViewModeSwitcherSectionName, FallBackOverScan, 8);
         CropLeft = reader.GetValueAsInt("tv", "cropleft", 0);
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
-        CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);        
-        
+        CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);      
+        disableForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, false);
 
         bool tmpReturn = false;
         ViewModeRules.Clear();
@@ -302,7 +310,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     public void SaveSettings(string ExportFileName)
     {
-      string tmpConfigFileName = Config.GetFile(Config.Dir.Config, "ViewModeSwitcher.xml");
+      string tmpConfigFileName = Config.GetFile(Config.Dir.Config, SettingsFileName);
       if (ExportFileName != string.Empty)
       {
         tmpConfigFileName = ExportFileName;
@@ -314,10 +322,12 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmVerboselog, verboseLog);
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmShowSwitchMsg, ShowSwitchMsg);
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseFallbackRule, UseFallbackRule);
+        xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, disableForVideo);
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmFallbackViewMode, FallBackViewMode.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRuleCount, ViewModeRules.Count.ToString());
-        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBBlackLevel.ToString());
+        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBMaxBlackLevel.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
+        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmMinBlackLevel, LBMinBlackLevel.ToString());
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

@@ -53,7 +53,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
-    private bool isPillarBox = false;
+    private bool isPBorLB = false;
     private bool updatePending = false;    
     private string NewGeometryMessage = " ";
     private float fCropH = 0f; // stores the last hor crop value. 
@@ -167,6 +167,13 @@ namespace ProcessPlugins.ViewModeSwitcher
       // do not handle e.g. visualization window, last.fm player, etc
       if (type == g_Player.MediaType.Music)
       {
+        isPlaying = false;
+        return;
+      }
+
+      if (currentSettings.disableForVideo && (type != g_Player.MediaType.TV))
+      {
+        isPlaying = false;
         return;
       }
 
@@ -307,7 +314,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           LastSwitchedAspectRatio = 0f;
           LastAnamorphFactor = 0f;
           LastDetectionResult = true;
-          isPillarBox = false;
+          isPBorLB = false;
           updatePending = false;
           forceAutoCrop = false;
           NoMatchCropCount = 0;
@@ -421,8 +428,12 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// checks if a rule is fitting and executes it
     /// Used only for processing 'pillar box' video e.g. 4:3 inside 16:9
     /// </summary>    
-    private bool CheckRulesPB(float negAR, int width, int height)
+    private bool CheckRulesPBLB(float negAR, int width, int height, bool enable)
     {
+      if (!enable)
+      {
+        return false;
+      }
       for (int i = 0; i < currentSettings.ViewModeRules.Count; i++)
       {
         Rule tmpRule = currentSettings.ViewModeRules[i];
@@ -438,8 +449,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         {
           if (currentSettings.verboseLog)
           {
-            Log.Debug("ViewModeSwitcher: CheckRulesPB(), VideoAR: {0}, VideoWidth: {1}, VideoHeight: {2}", negAR, width, height);
-            Log.Info("ViewModeSwitcher: CheckRulesPB(), Rule \"" + tmpRule.Name + "\" fits conditions.");
+            Log.Debug("ViewModeSwitcher: CheckRulesPBLB(), VideoAR: {0}, VideoWidth: {1}, VideoHeight: {2}", negAR, width, height);
+            Log.Info("ViewModeSwitcher: CheckRulesPBLB(), Rule \"" + tmpRule.Name + "\" fits conditions.");
           }
           if (tmpRule.OverScan > 0)
           {
@@ -743,7 +754,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       
       //Check for 'Pillar Boxed' 4:3 inside 16:9 video, and 'Letter Boxed' 16:9 inside 4:3 video
-      if ((checkPBv || checkLBv) && (CheckRulesPB(-newasp, frame.Width, frame.Height)))
+      if (CheckRulesPBLB(-newasp, frame.Width, frame.Height, (checkPBv || checkLBv)))
       {
         if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
         {
@@ -758,11 +769,11 @@ namespace ProcessPlugins.ViewModeSwitcher
           cropV += overScan / LastSwitchedAspectRatio;
         }
         
-        if (!isPillarBox) //Only update on first detection
+        if (!isPBorLB) //Only update on first detection
         {
           updateCrop = true;
         }
-        isPillarBox = true;
+        isPBorLB = true;
       }
       else  //Normal video cropping
       { 
@@ -770,7 +781,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         cropH = Math.Max(cropH, overScan);
         cropV = Math.Max(cropV, overScan / LastSwitchedAspectRatio);
         
-        if (isPillarBox)
+        if (isPBorLB)
         {
           if (currentSettings.verboseLog)
           {
@@ -778,13 +789,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           //Force CheckAspectRatios() update 
           updatePending = false;   
-          isPillarBox = false;
+          isPBorLB = false;
           LastSwitchedAspectRatio = 0f;
           frame.Dispose();
           frame = null;
           return;
         }
-        isPillarBox = false;          
+        isPBorLB = false;          
       }
 
       if (currentSettings.verboseLog)

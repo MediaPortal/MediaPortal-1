@@ -44,7 +44,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private int rightEnd = 0;
 
     private int maxBrightnessTreshold = 32;
-    private int minBrightnessTreshold = 20;
+    private int minBrightnessTreshold = 16;
 
     private float topScanStartFraction = 0.30f;
     private float topScanEndFraction = 0.70f;
@@ -79,8 +79,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       this.frame = frame;
 
-      maxBrightnessTreshold = Math.Max((int)ViewModeSwitcher.currentSettings.LBBlackLevel, 16);
-      minBrightnessTreshold = Math.Max((maxBrightnessTreshold - 12), 16);
+      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMaxBlackLevel;
+      minBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMinBlackLevel;
 
       int topLine = 0;
       int bottomLine = frame.Height - 1;
@@ -399,7 +399,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //if (ViewModeSwitcher.currentSettings.verboseLog)
       //  Log.Debug("ViewModeSwitcher: Max : R{0}, G{1}, B{2}", maxR, maxG, maxB);
 
-      //At least one pixel with brightness level over 'LBBlackLevel' is found
+      //At least one pixel with brightness level over 'LBMaxBlackLevel' is found
       if (maxR > maxBrightnessTreshold || maxG > maxBrightnessTreshold || maxB > maxBrightnessTreshold)
       {
         return true;

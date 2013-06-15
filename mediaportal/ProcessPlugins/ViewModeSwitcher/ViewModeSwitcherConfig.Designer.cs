@@ -370,7 +370,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(105, 13);
       this.label1.TabIndex = 35;
-      this.label1.Text = "(16 - 255, default 32)";
+      this.label1.Text = "(4 - 255, default 32)";
       // 
       // numBlackLevel
       // 
@@ -381,7 +381,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             0,
             0});
       this.numBlackLevel.Minimum = new decimal(new int[] {
-            16,
+            4,
             0,
             0,
             0});
