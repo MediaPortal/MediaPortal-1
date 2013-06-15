@@ -78,8 +78,8 @@
       // 
       // groupBox
       // 
-      this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox.Controls.Add(this.labelIdleTimeoutDC1);
       this.groupBox.Controls.Add(this.numericUpDownIdleTimeoutDC);
       this.groupBox.Controls.Add(this.labelIdleTimeoutDC2);
@@ -139,7 +139,7 @@
       this.numericUpDownIdleTimeoutDC.AutoSize = true;
       this.numericUpDownIdleTimeoutDC.Location = new System.Drawing.Point(406, 99);
       this.numericUpDownIdleTimeoutDC.Maximum = new decimal(new int[] {
-            300,
+            360,
             0,
             0,
             0});
@@ -178,7 +178,7 @@
       this.numericUpDownIdleTimeoutAC.AutoSize = true;
       this.numericUpDownIdleTimeoutAC.Location = new System.Drawing.Point(92, 99);
       this.numericUpDownIdleTimeoutAC.Maximum = new decimal(new int[] {
-            300,
+            360,
             0,
             0,
             0});
@@ -341,6 +341,11 @@
       // numericUpDownHibernateAfterDC
       // 
       this.numericUpDownHibernateAfterDC.Location = new System.Drawing.Point(406, 123);
+      this.numericUpDownHibernateAfterDC.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
       this.numericUpDownHibernateAfterDC.Name = "numericUpDownHibernateAfterDC";
       this.numericUpDownHibernateAfterDC.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownHibernateAfterDC.TabIndex = 25;
@@ -510,6 +515,11 @@
       // numericUpDownHibernateAfterAC
       // 
       this.numericUpDownHibernateAfterAC.Location = new System.Drawing.Point(92, 123);
+      this.numericUpDownHibernateAfterAC.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
       this.numericUpDownHibernateAfterAC.Name = "numericUpDownHibernateAfterAC";
       this.numericUpDownHibernateAfterAC.Size = new System.Drawing.Size(50, 20);
       this.numericUpDownHibernateAfterAC.TabIndex = 5;

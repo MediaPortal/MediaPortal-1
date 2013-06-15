@@ -91,7 +91,17 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public string Name
     {
-      get { return "PowerScheduler"; }
+      get
+      {
+        object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+        if (attributes.Length > 0)
+        {
+          AssemblyProductAttribute attribute = attributes[0] as AssemblyProductAttribute;
+          if (attribute != null && attribute.Product != "MediaPortal")
+            return attribute.Product;
+        }
+        return "PowerScheduler";
+      }
     }
 
     /// <summary>
