@@ -1078,6 +1078,7 @@ namespace MediaPortal.Player
         _isInitialized = true;
         _subs = null;
         Log.Info("g_Player.PlayAudioStream({0})", strURL);
+        bool doStop = true;
         if (_player != null)
         {
           GUIGraphicsContext.ShowBackground = true;
@@ -1085,11 +1086,21 @@ namespace MediaPortal.Player
           OnStopped();
           if (_player != null)
           {
-            _player.Stop();
+            if (BassMusicPlayer.IsDefaultMusicPlayer && BassMusicPlayer.Player.Playing)
+            {
+              doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
+            }
           }
-          CachePlayer();
-          GUIGraphicsContext.form.Invalidate(true);
-          _player = null;
+          if (doStop)
+          {
+            if (_player != null)
+            {
+              _player.Stop();
+            }
+            CachePlayer();
+            GUIGraphicsContext.form.Invalidate(true);
+            _player = null;
+          }
         }
 
         if ((AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer) != AudioPlayer.DShow && !isMusicVideo)
