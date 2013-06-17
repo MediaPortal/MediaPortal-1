@@ -43,6 +43,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     public Geometry.Type PillarBoxViewMode = Geometry.Type.NonLinearStretch;
     public decimal LBMinBlackLevel = 16;
     public bool disableForVideo = false;
+    public bool disableLBForVideo = false;
+    public decimal LBSymLimitPercent = 10;
   
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -52,11 +54,13 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmShowSwitchMsg = "parmshowswitchmsg";
     private const string ParmUseFallbackRule = "parmusefallbackrule";
     private const string ParmFallbackViewMode = "parmfallbackviewmode";
-    private const string ParmDisableLBGlobaly = "parmdisablelbglobaly";
+    private const string ParmDisableLBGlobaly = "parmdisableLBglobaly";
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
     private const string ParmMinBlackLevel = "parmminblacklevel";
     private const string ParmDisableForVideo = "parmdisableforvideo";
+    private const string ParmDisableLBForVideo = "parmdisableLBforvideo";    
+    private const string ParmSymLimitPercent = "parmsymlimitpercent";
     
     //Settings file name
     private const string SettingsFileName = "ViewModeSwitcher2.xml";
@@ -143,7 +147,23 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);      
-        disableForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, false);
+        disableForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, false);  
+        disableLBForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBForVideo, false);                
+        LBSymLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmSymLimitPercent, 10), 5), 50);
+
+        if (verboseLog)
+        {                   
+          Log.Debug("ViewModeSwitcher: Global Rule, ShowSwitchMsg:     " + ShowSwitchMsg);
+          Log.Debug("ViewModeSwitcher: Global Rule, UseFallbackRule:   " + UseFallbackRule);
+          Log.Debug("ViewModeSwitcher: Global Rule, FallBackViewMode:  " + FallBackViewMode);
+          Log.Debug("ViewModeSwitcher: Global Rule, FallbackOverscan:  " + fboverScan);
+          Log.Debug("ViewModeSwitcher: Global Rule, DisableBBDetect:   " + DisableLBGlobaly);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBMaxBlackLevel:   " + LBMaxBlackLevel);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBMinBlackLevel:   " + LBMinBlackLevel);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBSymLimitPercent: " + LBSymLimitPercent);
+          Log.Debug("ViewModeSwitcher: Global Rule, disableForVideo:   " + disableForVideo);
+          Log.Debug("ViewModeSwitcher: Global Rule, disableBBForVideo: " + disableLBForVideo);
+        }
 
         bool tmpReturn = false;
         ViewModeRules.Clear();
@@ -323,11 +343,13 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmShowSwitchMsg, ShowSwitchMsg);
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmUseFallbackRule, UseFallbackRule);
         xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, disableForVideo);
+        xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBForVideo, disableLBForVideo);
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmFallbackViewMode, FallBackViewMode.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRuleCount, ViewModeRules.Count.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmBlackLevel, LBMaxBlackLevel.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, FallBackOverScan, fboverScan.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmMinBlackLevel, LBMinBlackLevel.ToString());
+        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmSymLimitPercent, LBSymLimitPercent.ToString());
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

@@ -47,7 +47,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool stopWorkerThread = false;
     private bool isPlaying = false;
     private bool enableLB = false;
-//    private CropSettings cropSettings = new CropSettings();
+    private bool disableLBGlobally = true;
     private float overScan = 0f;
     private float LastAnamorphFactor; // Video anamorphic correction factor (Video AR/Pixel AR) 
     private bool isVideoReceived = false;
@@ -69,6 +69,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private float LastRawCropH = 0; // stores the last raw hcrop value. 
     private float LastRawCropV = 0; // stores the last raw vcrop value. 
     private int NoMatchCropCount = 0; 
+    private float SymLimLow  = 0.9f; //Black bar symmetry check low limit
+    private float SymLimHigh = 1.1f; //Black bar symmetry check high limit
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -177,6 +179,15 @@ namespace ProcessPlugins.ViewModeSwitcher
         return;
       }
 
+      if (currentSettings.disableLBForVideo && (type != g_Player.MediaType.TV))
+      {
+        disableLBGlobally = true;
+      }
+      else
+      {
+        disableLBGlobally = currentSettings.DisableLBGlobaly;
+      }
+
       if (currentSettings.verboseLog)
       {
         Log.Debug("ViewModeSwitcher: On Video Started");
@@ -221,7 +232,10 @@ namespace ProcessPlugins.ViewModeSwitcher
       g_Player.PlayBackStopped += OnVideoStopped;
       g_Player.PlayBackStarted += OnVideoStarted;
       g_Player.TVChannelChanged += OnTVChannelChanged;
-      
+
+      SymLimLow  = 1.0f - ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check low limit
+      SymLimHigh = 1.0f + ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check high limit
+            
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
       t.IsBackground = true;
@@ -288,7 +302,7 @@ namespace ProcessPlugins.ViewModeSwitcher
               {
                 LastDetectionResult = false;
               }
-              if (!currentSettings.DisableLBGlobaly && !LastDetectionResult && enableLB)
+              if (!disableLBGlobally && !LastDetectionResult && enableLB)
               {
                 if (currentSettings.verboseLog)
                 {
@@ -610,7 +624,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         GUIMessage guiMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED, 0, 0, 0, 0, 0, null);
         guiMsg.Label = "ViewModeSwitcher";        
-        guiMsg.Label2 = ("ViewMode: " + LastSwitchedGeometry + ", AR: " + LastSwitchedAspectRatio + ", BB det: " + (enableLB && !currentSettings.DisableLBGlobaly) + ", Auto BB: " + useAutoCrop + ", H crop: " + tmpCropSettings.Left + ", V crop: " + tmpCropSettings.Top);            
+        guiMsg.Label2 = ("ViewMode: " + LastSwitchedGeometry + ", AR: " + LastSwitchedAspectRatio + ", BB det: " + (enableLB && !disableLBGlobally) + ", Auto BB: " + useAutoCrop + ", H crop: " + tmpCropSettings.Left + ", V crop: " + tmpCropSettings.Top);            
         guiMsg.Param1 = 3;
 
         GUIGraphicsContext.SendMessage(guiMsg);
@@ -671,7 +685,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       
       //Check for symmetry of black bars - asymmetric bars are probably a false detection
-      if ((Hsym > 1.1) || (Hsym < 0.9) || (Vsym > 1.1) || (Vsym < 0.9))
+      if ((Hsym > SymLimHigh) || (Hsym < SymLimLow) || (Vsym > SymLimHigh) || (Vsym < SymLimLow))
       {
         if (currentSettings.verboseLog)
         {
