@@ -641,14 +641,32 @@ namespace MediaPortal.GUI.Video
 
       if ((item.IsFolder && !item.IsBdDvdFolder))
       {
-        _currentSelectedItem = -1;
-        
-        if (facadeLayout != null)
-        {
-          _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
-        }
-        
-        LoadDirectory(path);
+          // Play all in folder
+          if (_playClicked)
+          {
+              if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+              {
+                  if (!_virtualDirectory.RequestPin(item.Path))
+                  {
+                      _playClicked = false;
+                      return;
+                  }
+
+                  OnPlayAll(item.Path);
+                  _playClicked = false;
+              }
+          }
+          else
+          {
+              _currentSelectedItem = -1;
+
+              if (facadeLayout != null)
+              {
+                  _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
+              }
+
+              LoadDirectory(path, true);
+          }
       }
       else
       {
