@@ -623,7 +623,6 @@ namespace MediaPortal.Player
     protected IBaseFilter VideoCodec = null;
     protected IBaseFilter AudioCodec = null;
     protected SubtitleSelector _subSelector = null;
-    protected SubtitleRenderer _dvbSubRenderer = null;
 
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -1365,10 +1364,6 @@ namespace MediaPortal.Player
           }
         }
 
-        if (_dvbSubRenderer != null)
-        {
-          _dvbSubRenderer.OnSeek(CurrentPosition);
-        }
         _state = PlayState.Playing;
         Log.Info("BDPlayer: current pos:{0} dur:{1}", CurrentPosition, Duration);
       }
@@ -1534,7 +1529,7 @@ namespace MediaPortal.Player
       {
         if (_subSelector != null)
         {
-          return _dvbSubRenderer.RenderSubtitles;
+          return true;//return _dvbSubRenderer.RenderSubtitles;
         }
         else
         {
@@ -1545,7 +1540,7 @@ namespace MediaPortal.Player
       {
         if (_subSelector != null)
         {
-          _dvbSubRenderer.RenderSubtitles = value;
+          //_dvbSubRenderer.RenderSubtitles = value;
         }
       }
     }
@@ -2710,16 +2705,6 @@ namespace MediaPortal.Player
         // Add preferred audio filters
         UpdateFilters("Audio");
 
-        // Let the subtitle engine handle the proper filters
-        try
-        {
-          SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
-        }
-        catch (Exception e)
-        {
-          Log.Error(e);
-        }
-        
         #endregion
 
         #region PostProcessingEngine Detection
@@ -2757,16 +2742,6 @@ namespace MediaPortal.Player
         _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = (IMediaSeeking)_graphBuilder;
 
-        try
-        {
-          SubtitleRenderer.GetInstance().SetPlayer(this);
-          _dvbSubRenderer = SubtitleRenderer.GetInstance();
-        }
-        catch (Exception e)
-        {
-          Log.Error(e);
-        }
-
         _subtitleStream = (Player.TSReaderPlayer.ISubtitleStream)_interfaceBDReader;
         if (_subtitleStream == null)
         {
@@ -2774,7 +2749,7 @@ namespace MediaPortal.Player
         }
 
         // if only dvb subs are enabled, pass null for ttxtDecoder
-        _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
+        _subSelector = new SubtitleSelector(_subtitleStream, null, null);
         EnableSubtitle = _subtitlesEnabled;
 
         //Sync Audio Renderer
@@ -2972,12 +2947,6 @@ namespace MediaPortal.Player
           }
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
           _graphBuilder = null;
-        }
-
-        if (_dvbSubRenderer != null)
-        {
-          _dvbSubRenderer.SetPlayer(null);
-          _dvbSubRenderer = null;
         }
 
         if (_vmr9 != null)
