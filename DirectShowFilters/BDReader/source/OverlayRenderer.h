@@ -29,6 +29,7 @@
 #include "OSDTexture.h"
 
 #define PALETTE_SIZE 256
+#define NUM_OF_PLANES 2
 
 class CLibBlurayWrapper;
 
@@ -47,23 +48,23 @@ private:
 
   void OpenOverlay(const BD_OVERLAY* pOv);
   void OpenOverlay(const BD_ARGB_OVERLAY* pOv);
-  void CloseOverlay(const int pPlane);
+  void CloseOverlay(const uint8_t plane);
 
   void CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
-  void ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv);
-  void ClearOverlay();
-  void DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv);
-  void DrawARGBBitmap(OSDTexture* pPlane, const BD_ARGB_OVERLAY* pOv);
+  void ClearArea(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv);
+  void ClearOverlay(const uint8_t plane);
+  void DrawBitmap(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv);
+  void DrawARGBBitmap(OSDTexture* pOsdTexture, const BD_ARGB_OVERLAY* pOv);
 
-  void DrawToTexture(OSDTexture* pPlane, IDirect3DTexture9* pTexture, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+  void DrawToTexture(OSDTexture* pOsdTexture, IDirect3DTexture9* pTexture, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void DecodePalette(const BD_OVERLAY* ov);
 
-  void CopyToFrontBuffer();
-  void ResetDirtyRect();
-  void ResetDirtyRect(uint16_t w, uint16_t h);
-  void AdjustDirtyRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+  void CopyToFrontBuffer(const uint8_t plane);
+  void ResetDirtyRect(const uint8_t plane);
+  void ResetDirtyRect(const uint8_t plane, uint16_t w, uint16_t h);
+  void AdjustDirtyRect(const uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
   void LogCommand(const BD_OVERLAY* ov);
   void LogARGBCommand(const BD_ARGB_OVERLAY* ov);
@@ -75,8 +76,8 @@ private:
   CLibBlurayWrapper* m_pLib;
   IDirect3DDevice9* m_pD3DDevice;
 
-  OSDTexture* m_pPlanes[2];
-  OSDTexture* m_pPlanesBackbuffer[2];
+  OSDTexture* m_pPlanes[NUM_OF_PLANES];
+  OSDTexture* m_pPlanesBackbuffer[NUM_OF_PLANES];
 
-  RECT m_dirtyRect;
+  RECT m_dirtyRect[NUM_OF_PLANES];
 };
