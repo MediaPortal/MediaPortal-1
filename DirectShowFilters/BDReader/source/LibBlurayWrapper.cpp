@@ -323,6 +323,9 @@ bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
   _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_MENU_LANG, m_playerSettings.menuLang);
   _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_COUNTRY_CODE, m_playerSettings.countryCode);
 
+  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_DECODE_PG, 1);
+  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_TEXT_CAP, 1);
+
   // Init event queue
   _bd_get_event(m_pBd, NULL);
 
