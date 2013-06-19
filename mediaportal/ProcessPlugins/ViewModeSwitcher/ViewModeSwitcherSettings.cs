@@ -197,7 +197,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxHeight = 2000;
           tmpRule.ViewMode = Geometry.Type.Zoom14to9;
           tmpRule.OverScan = 16;
-          tmpRule.EnableLBDetection = true;
+          tmpRule.EnableLBDetection = false;
           tmpRule.AutoCrop = false;
           tmpRule.MaxCrop = true;
           ViewModeRules.Add(tmpRule);
@@ -229,7 +229,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxHeight = 2000;
           tmpRule.ViewMode = Geometry.Type.Normal;
           tmpRule.OverScan = 16;
-          tmpRule.EnableLBDetection = true;
+          tmpRule.EnableLBDetection = false;
           tmpRule.AutoCrop = false;
           tmpRule.MaxCrop = true;
           ViewModeRules.Add(tmpRule);
@@ -243,7 +243,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
-          tmpRule.ViewMode = Geometry.Type.NonLinearStretch;
+          tmpRule.ViewMode = Geometry.Type.Zoom14to9;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = false;
           tmpRule.AutoCrop = false;

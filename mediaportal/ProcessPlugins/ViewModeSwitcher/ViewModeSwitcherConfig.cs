@@ -164,7 +164,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       try
       {
-        Process.Start("http://forum.team-mediaportal.com/viewmodeswitcher_plugin-t21365.html", "");
+        Process.Start("http://forum.team-mediaportal.com/threads/viewmodeswitcher-for-1-4-0.119781/", "");
       }
       catch (Exception ex)
       {
