@@ -912,7 +912,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // We reserve the removal of the filters from the graph for when the device is disposed, otherwise
       // the interface cannot easily be re-opened.
-      this.LogDebug("Digital Devices: result = true");
+      this.LogDebug("Digital Devices: result = success");
       return true;
     }
 

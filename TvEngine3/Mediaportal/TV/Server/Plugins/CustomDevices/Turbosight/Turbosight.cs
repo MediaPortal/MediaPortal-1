@@ -1349,7 +1349,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
       _dllLoaded = false;
 
-      this.LogDebug("Turbosight: result = true");
+      this.LogDebug("Turbosight: result = success");
       return true;
     }
 

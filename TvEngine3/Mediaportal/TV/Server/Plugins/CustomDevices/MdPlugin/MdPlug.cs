@@ -1191,7 +1191,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         _pidBuffer = IntPtr.Zero;
       }
 
-      this.LogDebug("MD Plugin: result = true");
+      this.LogDebug("MD Plugin: result = success");
       return true;
     }
 

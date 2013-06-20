@@ -1467,7 +1467,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _pmtBuffer = IntPtr.Zero;
       }
 
-      this.LogDebug("Digital Everywhere: result = true");
+      this.LogDebug("Digital Everywhere: result = success");
       return true;
     }
 

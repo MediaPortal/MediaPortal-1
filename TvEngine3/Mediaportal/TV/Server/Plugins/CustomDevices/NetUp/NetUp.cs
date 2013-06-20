@@ -908,7 +908,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         _mmiBuffer = IntPtr.Zero;
       }
 
-      this.LogDebug("NetUP: result = true");
+      this.LogDebug("NetUP: result = success");
       return true;
     }
 

@@ -646,7 +646,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
 
       _ciState = AVerMediaCiState.Empty;
 
-      this.LogDebug("AVerMedia: result = true");
+      this.LogDebug("AVerMedia: result = success");
       return true;
     }
 
