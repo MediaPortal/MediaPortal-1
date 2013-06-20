@@ -283,11 +283,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (channel is DVBSChannel)
-      {
-        return true;
-      }
-      return false;
+      return channel is DVBSChannel;
     }
 
     #endregion
@@ -307,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     }
 
     /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration:
+    /// Stop the device. The actual result of this function depends on device configuration.
     /// </summary>
     public override void Stop()
     {

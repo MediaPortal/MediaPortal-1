@@ -72,11 +72,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (channel is RadioWebStreamChannel && channel.MediaType == MediaTypeEnum.Radio)
-      {
-        return true;
-      }
-      return false;
+      return channel is RadioWebStreamChannel && channel.MediaType == MediaTypeEnum.Radio;
     }
 
     /// <summary>

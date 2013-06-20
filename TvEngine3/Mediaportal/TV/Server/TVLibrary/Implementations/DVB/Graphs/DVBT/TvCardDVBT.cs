@@ -193,11 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      if (channel is DVBTChannel)
-      {
-        return true;
-      }
-      return false;
+      return channel is DVBTChannel;
     }
 
     #endregion

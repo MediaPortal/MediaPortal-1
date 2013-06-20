@@ -135,11 +135,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       // My understanding is that the HD-PVR and Colossus are not able to capture audio-only streams. The
       // driver doesn't seem to create PMT if a video stream is not detected.
-      if (channel is AnalogChannel && channel.MediaType != MediaTypeEnum.Radio)
-      {
-        return true;
-      }
-      return true;
+      return channel is AnalogChannel && channel.MediaType != MediaTypeEnum.Radio;
     }
 
     #endregion

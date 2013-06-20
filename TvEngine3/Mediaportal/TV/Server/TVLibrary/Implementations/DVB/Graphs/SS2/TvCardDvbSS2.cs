@@ -1519,31 +1519,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     {
       if (_tunerType == CardType.DvbS)
       {
-        if (channel is DVBSChannel)
-        {
-          return true;
-        }
+        return channel is DVBSChannel;
       }
       else if (_tunerType == CardType.DvbT)
       {
-        if (channel is DVBTChannel)
-        {
-          return true;
-        }
+        return channel is DVBTChannel;
       }
       else if (_tunerType == CardType.DvbC)
       {
-        if (channel is DVBCChannel)
-        {
-          return true;
-        }
+        return channel is DVBCChannel;
       }
       else if (_tunerType == CardType.Atsc)
       {
-        if (channel is ATSCChannel)
-        {
-          return true;
-        }
+        return channel is ATSCChannel;
       }
       return false;
     }
@@ -1998,7 +1986,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     #endregion
 
     /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration:
+    /// Stop the device. The actual result of this function depends on device configuration.
     /// </summary>
     public override void Stop()
     {

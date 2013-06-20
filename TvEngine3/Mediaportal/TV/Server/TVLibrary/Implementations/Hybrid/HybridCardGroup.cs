@@ -90,10 +90,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     #region ITVCard Members
 
     /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration:
-    /// - graph stop
-    /// - graph pause
-    /// TODO graph destroy
+    /// Stop the device. The actual result of this function depends on device configuration.
     /// </summary>
     public void Stop()
     {
