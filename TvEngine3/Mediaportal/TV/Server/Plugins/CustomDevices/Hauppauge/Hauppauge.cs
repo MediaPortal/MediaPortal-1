@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
 
     #region constants
 
-    private static readonly Guid HcwBdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
+    private static readonly Guid HCW_BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
 
     #endregion
 
@@ -68,7 +68,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     {
       get
       {
-        return HcwBdaExtensionPropertySet;
+        return HCW_BDA_EXTENSION_PROPERTY_SET;
       }
     }
 
@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
 
       Marshal.WriteInt32(_paramBuffer, (Int32)pilot);
       hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot,
-        _instanceBuffer, InstanceSize,
+        _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(Int32)
       );
       if (hr == 0)
@@ -123,7 +123,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
 
       Marshal.WriteInt32(_paramBuffer, (Int32)rollOff);
       hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.RollOff,
-        _instanceBuffer, InstanceSize,
+        _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(Int32)
       );
       if (hr == 0)

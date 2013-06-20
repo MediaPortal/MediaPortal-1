@@ -35,8 +35,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 {
   public partial class SmarDtvUsbCiConfig : SectionSettings
   {
-
-
     private ReadOnlyCollection<SmarDtvUsbCiProduct> _products = null;
     private MPComboBox[] _tunerSelections = null;
     private Label[] _installStateLabels = null;

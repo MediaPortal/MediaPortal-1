@@ -33,8 +33,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
   /// </summary>
   public class GenpixOpenSource : BaseCustomDevice, IDiseqcDevice
   {
-
-
     #region enums
 
     private enum BdaExtensionProperty : int
@@ -55,7 +53,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     [StructLayout(LayoutKind.Sequential)]
     private struct DiseqcMessage
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
       public byte MessageLength;
     }
@@ -64,12 +62,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0x0b5221eb, 0xf4c4, 0x4976, 0xb9, 0x59, 0xef, 0x74, 0x42, 0x74, 0x64, 0xd9);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0x0b5221eb, 0xf4c4, 0x4976, 0xb9, 0x59, 0xef, 0x74, 0x42, 0x74, 0x64, 0xd9);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
 
-    private const int DiseqcMessageSize = 7;
-    private const int MaxDiseqcMessageLength = 6;
+    private const int DISEQC_MESSAGE_SIZE = 7;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 6;
 
     #endregion
 
@@ -128,7 +126,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Genpix (Open Source): device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -137,8 +135,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
 
       this.LogDebug("Genpix (Open Source): supported device detected");
       _isGenpixOpenSource = true;
-      _diseqcBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
-      _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+      _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_SIZE);
+      _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       return true;
     }
 
@@ -176,7 +174,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
       // a tone burst command.
       DiseqcMessage message = new DiseqcMessage();
       message.MessageLength = 1;
-      message.Message = new byte[MaxDiseqcMessageLength];
+      message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       if (toneBurstState == ToneBurst.ToneBurst)
       {
         message.Message[0] = (byte)GenpixToneBurst.ToneBurst;
@@ -187,9 +185,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
       }
 
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
-        _instanceBuffer, InstanceSize,
-        _diseqcBuffer, DiseqcMessageSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
+        _instanceBuffer, INSTANCE_SIZE,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
       if (hr == 0)
       {
@@ -220,7 +218,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
         this.LogDebug("Genpix (Open Source): command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Genpix (Open Source): command too long, length = {0}", command.Length);
         return false;
@@ -228,13 +226,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
 
       DiseqcMessage message = new DiseqcMessage();
       message.MessageLength = (byte)command.Length;
-      message.Message = new byte[MaxDiseqcMessageLength];
+      message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
 
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
-        _instanceBuffer, InstanceSize,
-        _diseqcBuffer, DiseqcMessageSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
+        _instanceBuffer, INSTANCE_SIZE,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
       if (hr == 0)
       {

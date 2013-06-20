@@ -33,8 +33,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 {
   public partial class DigitalDevicesConfig : SectionSettings
   {
-
-
     private List<DigitalDevicesCiSlot> _ciSlots = null;
     private NumericUpDown[] _decryptLimits = null;
     private MPTextBox[] _providerLists = null;

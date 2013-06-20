@@ -103,12 +103,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     /// <summary>
     /// The property set used for accessing and controlling CI slot properties.
     /// </summary>
-    public static readonly Guid CommonInterfacePropertySet = new Guid(0x0aa8a501, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
+    public static readonly Guid COMMON_INTERFACE_PROPERTY_SET = new Guid(0x0aa8a501, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
 
     /// <summary>
     /// A DsDevice device path fragment that is common to all Digital Devices KS software components.
     /// </summary>
-    public static readonly String CommonDevicePathSection = "fbca-11de-b16f-000000004d56";
+    public static readonly String COMMON_DEVICE_PATH_SECTION = "fbca-11de-b16f-000000004d56";
 
     /// <summary>
     /// Get a list containing the current settings for each of the known Digital Devices CI slots.
@@ -163,7 +163,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       try
       {
         int returnedByteCount;
-        int hr = (ciFilter as IKsPropertySet).Get(CommonInterfacePropertySet, (int)CommonInterfaceProperty.CamMenuTitle,
+        int hr = (ciFilter as IKsPropertySet).Get(COMMON_INTERFACE_PROPERTY_SET, (int)CommonInterfaceProperty.CamMenuTitle,
           buffer, bufferSize,
           buffer, bufferSize,
           out returnedByteCount
@@ -189,7 +189,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     public static bool IsDigitalDevicesCiDevice(DsDevice device)
     {
       if (device != null && device.Name != null &&
-        device.DevicePath.ToLowerInvariant().Contains(CommonDevicePathSection) &&
+        device.DevicePath.ToLowerInvariant().Contains(COMMON_DEVICE_PATH_SECTION) &&
         device.Name.ToLowerInvariant().Contains("common interface"))
       {
         return true;

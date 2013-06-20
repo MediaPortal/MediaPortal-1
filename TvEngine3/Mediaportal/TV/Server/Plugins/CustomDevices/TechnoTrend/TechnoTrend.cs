@@ -281,19 +281,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private struct ConnectionDescription  // TYPE_CONNECT_DESCR
     {
       public TtConnectionType ConnectionType;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String DialIn;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String ClientIpAddress;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String ServerIpAddress;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String TcpPort;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String ConnectionAuthenticationId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String LoginUserName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String LoginPassword;
       public byte RetryCount;
       public byte Timeout;      // unit = 10 ms
@@ -302,19 +302,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct FilterNames // TS_FilterNames
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String TunerFilterName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String TunerFilter2Name;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String CaptureFilterName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String AnalogTunerFilterName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String AnalogCaptureFilterName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String StbCaptureFilterName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxWindowsPathLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
       public String ProductName;
       public TtFrontEndType FrontEndType;
     }
@@ -962,11 +962,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 
     #region constants
 
-    private const int MaxWindowsPathLength = 260;
-    private const int MaxDiseqcCommandLength = 64;    // This is arbitrary - the hardware/interface limit is not known.
-    private const int TuneRequestSize = 100;
+    private const int MAX_WINDOWS_PATH_LENGTH = 260;
+    private const int MAX_DISEQC_COMMAND_LENGTH = 64;   // This is arbitrary - the hardware/interface limit is not known.
+    private const int TUNE_REQUEST_SIZE = 100;
 
-    private static readonly string[] ValidBudget2DeviceNames = new string[]
+    private static readonly string[] VALID_BUDGET2_DEVICE_NAMES = new string[]
     {
       "TechnoTrend BDA/DVB-C Tuner",
       "TechnoTrend BDA/DVB-S Tuner",
@@ -976,13 +976,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       "ttBudget2 BDA DVB-T Tuner"
     };
 
-    private static readonly string[] ValidBudget3DeviceNames = new string[]
+    private static readonly string[] VALID_BUDGET3_DEVICE_NAMES = new string[]
     {
       "TTHybridTV BDA DVBT Tuner",
       "TTHybridTV BDA ATSC Tuner"
     };
 
-    private static readonly string[] ValidUsb2DeviceNames = new string[]
+    private static readonly string[] VALID_USB2_DEVICE_NAMES = new string[]
     {
       "USB 2.0 BDA DVB-C Tuner",
       "USB 2.0 BDA DVB-S Tuner",
@@ -990,12 +990,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       "USB 2.0 BDA DVB-T Tuner"
     };
 
-    private static readonly string[] ValidPinnacleDeviceNames = new string[]
+    private static readonly string[] VALID_PINNACLE_DEVICE_NAMES = new string[]
     {
       "Pinnacle PCTV 4XXe Tuner"
     };
 
-    private static readonly string[] ValidDssDeviceNames = new string[]
+    private static readonly string[] VALID_DSS_DEVICE_NAMES = new string[]
     {
       "USB 2.0 BDA DSS Tuner"
     };
@@ -1052,35 +1052,35 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         return TtDeviceCategory.Unknown;
       }
 
-      foreach (String name in ValidBudget2DeviceNames)
+      foreach (String name in VALID_BUDGET2_DEVICE_NAMES)
       {
         if (filterInfo.achName.Equals(name))
         {
           return TtDeviceCategory.Budget2;
         }
       }
-      foreach (String name in ValidBudget3DeviceNames)
+      foreach (String name in VALID_BUDGET3_DEVICE_NAMES)
       {
         if (filterInfo.achName.Equals(name))
         {
           return TtDeviceCategory.Budget3;
         }
       }
-      foreach (String name in ValidUsb2DeviceNames)
+      foreach (String name in VALID_USB2_DEVICE_NAMES)
       {
         if (filterInfo.achName.Equals(name))
         {
           return TtDeviceCategory.Usb2;
         }
       }
-      foreach (String name in ValidPinnacleDeviceNames)
+      foreach (String name in VALID_PINNACLE_DEVICE_NAMES)
       {
         if (filterInfo.achName.Equals(name))
         {
           return TtDeviceCategory.Usb2Pinnacle;
         }
       }
-      foreach (String name in ValidDssDeviceNames)
+      foreach (String name in VALID_DSS_DEVICE_NAMES)
       {
         if (filterInfo.achName.Equals(name))
         {
@@ -1642,7 +1642,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       this.LogDebug("TechnoTrend: supported device detected, category = {0}, id = {1}", _deviceCategory, deviceId);
       _isTechnoTrend = true;
       _tunerType = tunerType;
-      _generalBuffer = Marshal.AllocCoTaskMem(TuneRequestSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(TUNE_REQUEST_SIZE);
       ReadDeviceInfo();
       if (_tunerType == CardType.DvbT)
       {
@@ -1820,7 +1820,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         }
       }
 
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TuneRequestSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TUNE_REQUEST_SIZE);
       TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
@@ -2220,7 +2220,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
 
       int length = command.Length;
-      if (length > MaxDiseqcCommandLength)
+      if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
         this.LogDebug("TechnoTrend: command too long, length = {0}", command.Length);
         return false;

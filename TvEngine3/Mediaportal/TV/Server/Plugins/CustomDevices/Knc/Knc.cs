@@ -387,7 +387,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
     #region constants
 
-    private static readonly string[] ValidDeviceNames = new string[]
+    private static readonly string[] VALID_DEVICE_NAMES = new string[]
     {
       "KNC BDA DVB-S",
       "KNC BDA DVB-S2",
@@ -410,7 +410,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       "Satelco EasyWatch PCI (DVB-T)"
     };
 
-    private static readonly string[] ValidDevicePaths = new string[]
+    private static readonly string[] VALID_DEVICE_PATHS = new string[]
     {
       // DVB-S - Old
       "ven_1131&dev_7146&subsys_4f561131",  // KNC
@@ -473,8 +473,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (not yet released)
     };
 
-    private const int CallbackSetSize = 28;
-    private const int MaxDiseqcCommandLength = 64;
+    private const int CALLBACK_SET_SIZE = 28;
+    private const int MAX_DISEQC_COMMAND_LENGTH = 64;
 
     #endregion
 
@@ -518,7 +518,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       List<String> devicePaths = new List<String>();
       foreach (DsDevice device in devices)
       {
-        foreach (String validTunerName in ValidDeviceNames)
+        foreach (String validTunerName in VALID_DEVICE_NAMES)
         {
           if (device.Name != null && device.Name.Equals(validTunerName))
           {
@@ -835,7 +835,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         this.LogDebug("KNC: failed to get the tuner filter name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
         return false;
       }
-      foreach (String validTunerName in ValidDeviceNames)
+      foreach (String validTunerName in VALID_DEVICE_NAMES)
       {
         if (tunerInfo.achName.Equals(validTunerName))
         {
@@ -908,7 +908,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       }
 
       this.LogDebug("KNC: supported device detected");
-      _diseqcBuffer = Marshal.AllocCoTaskMem(MaxDiseqcCommandLength);
+      _diseqcBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_COMMAND_LENGTH);
       _tunerFilter = tunerFilter;
       _graphBuilder = (IFilterGraph2)tunerInfo.pGraph;
 
@@ -1018,7 +1018,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       _callbacks.OnCloseDisplay = OnCiCloseDisplay;
       _callbacks.OnOpenDisplay = OnCiOpenDisplay;
       _callbacks.OnRequest = OnCiRequest;
-      _callbackBuffer = Marshal.AllocCoTaskMem(CallbackSetSize);
+      _callbackBuffer = Marshal.AllocCoTaskMem(CALLBACK_SET_SIZE);
       Marshal.StructureToPtr(_callbacks, _callbackBuffer, true);
 
       // Open the conditional access interface.
@@ -1329,7 +1329,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       }
 
       int length = command.Length;
-      if (length > MaxDiseqcCommandLength)
+      if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
         this.LogDebug("KNC: command too long, length = {0}", command.Length);
         return false;

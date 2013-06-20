@@ -35,7 +35,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
   /// </summary>
   public class Genpix : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
- 
     #region enums
 
     private enum BdaExtensionProperty : int
@@ -118,7 +117,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       public UInt32 DiseqcRepeats;          // Set to zero to send once, one to send twice, two to send three times etc.
 
       public UInt32 DiseqcMessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcMessage;
       public bool DiseqcForceHighVoltage;
 
@@ -131,12 +130,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xdf981009, 0x0d8a, 0x430e, 0xa8, 0x03, 0x17, 0xc5, 0x14, 0xdc, 0x8e, 0xc0);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xdf981009, 0x0d8a, 0x430e, 0xa8, 0x03, 0x17, 0xc5, 0x14, 0xdc, 0x8e, 0xc0);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
 
-    private const int BdaExtensionParamsSize = 68;
-    private const int MaxDiseqcMessageLength = 8;
+    private const int BDA_EXTENSION_PARAMS_SIZE = 68;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
 
     #endregion
 
@@ -182,7 +181,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Genpix: device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -191,8 +190,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
       this.LogDebug("Genpix: supported device detected");
       _isGenpix = true;
-      _generalBuffer = Marshal.AllocCoTaskMem(BdaExtensionParamsSize);
-      _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(BDA_EXTENSION_PARAMS_SIZE);
+      _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       return true;
     }
 
@@ -363,11 +362,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       command.DiseqcRepeats = 0;
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tune,
-        _instanceBuffer, InstanceSize,
-        _generalBuffer, BdaExtensionParamsSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tune,
+        _instanceBuffer, INSTANCE_SIZE,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -415,7 +414,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       command.DiseqcMessageLength = 0;
       command.DiseqcRepeats = 0;
       command.DiseqcForceHighVoltage = false;
-      command.DiseqcMessage = new byte[MaxDiseqcMessageLength];
+      command.DiseqcMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       if (toneBurstState == ToneBurst.ToneBurst)
       {
         command.DiseqcMessage[0] = (byte)GenpixToneBurst.ToneBurst;
@@ -426,9 +425,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
-        _instanceBuffer, InstanceSize,
-        _generalBuffer, BdaExtensionParamsSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
+        _instanceBuffer, INSTANCE_SIZE,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -459,7 +458,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
         this.LogDebug("Genpix: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Genpix: command too long, length = {0}", command.Length);
         return false;
@@ -469,13 +468,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       message.DiseqcMessageLength = (uint)command.Length;
       message.DiseqcRepeats = 0;
       message.DiseqcForceHighVoltage = true;
-      message.DiseqcMessage = new byte[MaxDiseqcMessageLength];
+      message.DiseqcMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.DiseqcMessage, 0, command.Length);
 
       Marshal.StructureToPtr(message, _generalBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Diseqc,
-        _instanceBuffer, InstanceSize,
-        _generalBuffer, BdaExtensionParamsSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc,
+        _instanceBuffer, INSTANCE_SIZE,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {

@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     private struct DiseqcMessage
     {
       public Int32 MessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
       public Int32 RepeatCount;       // Set to zero to send the message once, one => twice, two => three times... etc.
     }
@@ -61,10 +61,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0x7db2deea, 0x42b4, 0x423d, 0xa2, 0xf7, 0x19, 0xc3, 0x2e, 0x51, 0xcc, 0xc1);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0x7db2deea, 0x42b4, 0x423d, 0xa2, 0xf7, 0x19, 0xc3, 0x2e, 0x51, 0xcc, 0xc1);
 
-    private const int DiseqcMessageSize = 72;
-    private const int MaxDiseqcMessageLength = 64;
+    private const int DISEQC_MESSAGE_SIZE = 72;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 64;
 
     #endregion
 
@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcWrite, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Omicom: device does not support the Omicom property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -118,7 +118,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
 
       this.LogDebug("Omicom: supported device detected");
       _isOmicom = true;
-      _diseqcBuffer = Marshal.AllocCoTaskMem(DiseqcMessageSize);
+      _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_SIZE);
       return true;
     }
 
@@ -183,7 +183,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
 
       Marshal.WriteInt32(_diseqcBuffer, 0, (Int32)tone22kState);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(Int32), _diseqcBuffer, sizeof(Int32));
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(Int32), _diseqcBuffer, sizeof(Int32));
       if (hr == 0)
       {
         this.LogDebug("Omicom: result = success");
@@ -213,24 +213,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         this.LogDebug("Omicom: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Omicom: command too long, length = {0}", command.Length);
         return false;
       }
 
       DiseqcMessage message = new DiseqcMessage();
-      message.Message = new byte[MaxDiseqcMessageLength];
+      message.Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
       message.MessageLength = (byte)command.Length;
       message.RepeatCount = 0;
 
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
-      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DiseqcMessageSize);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcWrite,
-        _diseqcBuffer, DiseqcMessageSize,
-        _diseqcBuffer, DiseqcMessageSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
       if (hr == 0)
       {
@@ -259,25 +259,25 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         return false;
       }
 
-      for (int i = 0; i < DiseqcMessageSize; i++)
+      for (int i = 0; i < DISEQC_MESSAGE_SIZE; i++)
       {
         Marshal.WriteByte(_diseqcBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcRead,
-        _diseqcBuffer, DiseqcMessageSize,
-        _diseqcBuffer, DiseqcMessageSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcRead,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE,
+        _diseqcBuffer, DISEQC_MESSAGE_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DiseqcMessageSize)
+      if (hr != 0 || returnedByteCount != DISEQC_MESSAGE_SIZE)
       {
         this.LogDebug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DiseqcMessageSize);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_SIZE);
       DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(DiseqcMessage));
-      if (message.MessageLength > MaxDiseqcMessageLength)
+      if (message.MessageLength > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Omicom: reply too long, length = {0}", message.MessageLength);
         return false;

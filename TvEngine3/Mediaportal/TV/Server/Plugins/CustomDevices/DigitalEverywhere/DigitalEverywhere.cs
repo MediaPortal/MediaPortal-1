@@ -310,7 +310,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
       public byte NumberOfValidPids;
       private byte Padding3;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidFilterPids)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
       public UInt16[] FilterPids;
       private UInt16 Padding4;
     }
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
       public byte NumberOfValidPids;
       private byte Padding1;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidFilterPids)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
       public UInt16[] FilterPids;
       private UInt16 Padding2;
     }
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private struct DiseqcMessage
     {
       public byte MessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
     }
 
@@ -413,7 +413,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public DeToneBurst ToneBurst;
       public byte NumberOfMessages;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageCount)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_COUNT)]
       public DiseqcMessage[] DiseqcMessages;
     }
 
@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private struct LnbParamInfo
     {
       public Int32 NumberOfAntennas;       // range = 0 - 3
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxLnbParamCount)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LNB_PARAM_COUNT)]
       public LnbParams[] LnbParams;
     }
 
@@ -456,7 +456,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     {
       public byte MessageType;
       public byte MessageLength;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxCiErrorDebugMessageLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_CI_ERROR_DEBUG_MESSAGE_LENGTH)]
       public String Message;
     }
 
@@ -471,7 +471,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public bool More;
 
       public UInt16 DataLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPmtLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_LENGTH)]
       public byte[] Data;
       private UInt16 Padding2;
 
@@ -482,7 +482,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         Padding1 = 0;
         More = false;
         DataLength = 0;
-        Data = new byte[MaxPmtLength];
+        Data = new byte[MAX_PMT_LENGTH];
         Padding2 = 0;
       }
     }
@@ -491,33 +491,33 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
 
-    private const int MaxPmtLength = 1024;
-    private const int DvbsMultiplexParamsSize = 12;
-    private const int DvbsServiceParamsSize = 36;
-    private const int DvbsPidFilterParamsSize = 60;
-    private const int DvbtMultiplexParamsSize = 12;
-    private const int DvbtPidFilterParamsSize = 56;
-    private const int MaxPidFilterPids = 16;
-    private const int FirmwareVersionInfoSize = 8;
-    private const int FrontEndStatusInfoSize = 28;
-    private const int SystemInfoSize = 8;
-    private const int DiseqcMessageSize = 7;
-    private const int MaxDiseqcMessageLength = 6;
-    private const int LnbCommandSize = 25;
-    private const int MaxDiseqcMessageCount = 3;
-    private const int LnbParamsSize = 16;
-    private const int LnbParamInfoSize = 68;
-    private const int MaxLnbParamCount = 4;
-    private const int QpskTuneParamsSize = 12;
-    private const int CiErrorDebugMessageLength = 258;
-    private const int MaxCiErrorDebugMessageLength = 256;
-    private const int CaDataSize = 1036;
-    private const int DriverVersionInfoSize = 32;
-    private const int TemperatureInfoSize = 4;
+    private const int MAX_PMT_LENGTH = 1024;
+    private const int DVBS_MULTIPLEX_PARAMS_SIZE = 12;
+    private const int DVBS_SERVICE_PARAMS_SIZE = 36;
+    private const int DVBS_PID_FILTER_PARAMS_SIZE = 60;
+    private const int DVBT_MULTIPLEX_PARAMS_SIZE = 12;
+    private const int DVBT_PID_FILTER_PARAMS_SIZE = 56;
+    private const int MAX_PID_FILTER_PIDS = 16;
+    private const int FIRMWARE_VERSION_INFO_SIZE = 8;
+    private const int FRONT_END_STATUS_INFO_SIZE = 28;
+    private const int SYSTEM_INFO_SIZE = 8;
+    private const int DISEQC_MESSAGE_SIZE = 7;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 6;
+    private const int LNB_COMMAND_SIZE = 25;
+    private const int MAX_DISEQC_MESSAGE_COUNT = 3;
+    private const int LNB_PARAMS_SIZE = 16;
+    private const int LNB_PARAM_INFO_SIZE = 68;
+    private const int MAX_LNB_PARAM_COUNT = 4;
+    private const int QPSK_TUNE_PARAMS_SIZE = 12;
+    private const int CI_ERROR_DEBUG_MESSAGE_LENGTH = 258;
+    private const int MAX_CI_ERROR_DEBUG_MESSAGE_LENGTH = 256;
+    private const int CA_DATA_SIZE = 1036;
+    private const int DRIVER_VERSION_INFO_SIZE = 32;
+    private const int TEMPERATURE_INFO_SIZE = 4;
 
-    private const int MmiHandlerThreadSleepTime = 500;    // unit = ms
+    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;    // unit = ms
 
     #endregion
 
@@ -563,7 +563,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           Marshal.WriteByte(responsebuffer, i, 0);
         }
         int returnedByteCount;
-        hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.CiStatus,
+        hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.CiStatus,
           responsebuffer, bufferSize,
           responsebuffer, bufferSize,
           out returnedByteCount
@@ -599,9 +599,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       }
 
       Marshal.StructureToPtr(data, _mmiBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiHostToCam,
-        _mmiBuffer, CaDataSize,
-        _mmiBuffer, CaDataSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
+        _mmiBuffer, CA_DATA_SIZE,
+        _mmiBuffer, CA_DATA_SIZE
       );
       if (hr == 0)
       {
@@ -621,17 +621,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private void ReadDriverInfo()
     {
       this.LogDebug("Digital Everywhere: read driver information");
-      for (int i = 0; i < DriverVersionInfoSize; i++)
+      for (int i = 0; i < DRIVER_VERSION_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DriverVersion,
-        _generalBuffer, DriverVersionInfoSize,
-        _generalBuffer, DriverVersionInfoSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DriverVersion,
+        _generalBuffer, DRIVER_VERSION_INFO_SIZE,
+        _generalBuffer, DRIVER_VERSION_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DriverVersionInfoSize)
+      if (hr != 0 || returnedByteCount != DRIVER_VERSION_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -647,17 +647,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private void ReadHardwareInfo()
     {
       this.LogDebug("Digital Everywhere: read hardware/firmware information");
-      for (int i = 0; i < FirmwareVersionInfoSize; i++)
+      for (int i = 0; i < FIRMWARE_VERSION_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.FirmwareVersion,
-        _generalBuffer, FirmwareVersionInfoSize,
-        _generalBuffer, FirmwareVersionInfoSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.FirmwareVersion,
+        _generalBuffer, FIRMWARE_VERSION_INFO_SIZE,
+        _generalBuffer, FIRMWARE_VERSION_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != FirmwareVersionInfoSize)
+      if (hr != 0 || returnedByteCount != FIRMWARE_VERSION_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -676,17 +676,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private void ReadTemperature()
     {
       this.LogDebug("Digital Everywhere: read temperature");
-      for (int i = 0; i < TemperatureInfoSize; i++)
+      for (int i = 0; i < TEMPERATURE_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.Temperature,
-        _generalBuffer, TemperatureInfoSize,
-        _generalBuffer, TemperatureInfoSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Temperature,
+        _generalBuffer, TEMPERATURE_INFO_SIZE,
+        _generalBuffer, TEMPERATURE_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != TemperatureInfoSize)
+      if (hr != 0 || returnedByteCount != TEMPERATURE_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -697,7 +697,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       //   hardware version = 1.24.04
       //   firmware version = 1.5.02
       //   firmware build # = 30740
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TemperatureInfoSize);
+      DVB_MMI.DumpBinary(_generalBuffer, 0, TEMPERATURE_INFO_SIZE);
     }
 
     /// <summary>
@@ -706,24 +706,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private void ReadFrontEndStatus()
     {
       this.LogDebug("Digital Everywhere: read front end status information");
-      for (int i = 0; i < FrontEndStatusInfoSize; i++)
+      for (int i = 0; i < FRONT_END_STATUS_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.FrontendStatus,
-        _generalBuffer, FrontEndStatusInfoSize,
-        _generalBuffer, FrontEndStatusInfoSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.FrontendStatus,
+        _generalBuffer, FRONT_END_STATUS_INFO_SIZE,
+        _generalBuffer, FRONT_END_STATUS_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != FrontEndStatusInfoSize)
+      if (hr != 0 || returnedByteCount != FRONT_END_STATUS_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
       // Most of this info is not very useful.
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, FrontEndStatusInfoSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, FRONT_END_STATUS_INFO_SIZE);
       FrontEndStatusInfo status = (FrontEndStatusInfo)Marshal.PtrToStructure(_generalBuffer, typeof(FrontEndStatusInfo));
       this.LogDebug("  frequency        = {0} kHz", status.Frequency);
       this.LogDebug("  bit error rate   = {0}", status.BitErrorRate);
@@ -746,9 +746,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       this.LogDebug("Digital Everywhere: request application information");
       CaData data = new CaData(DeCiMessageTag.ApplicationInfo);
       Marshal.StructureToPtr(data, _generalBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiCamToHost,
-        _generalBuffer, CaDataSize,
-        _generalBuffer, CaDataSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+        _generalBuffer, CA_DATA_SIZE,
+        _generalBuffer, CA_DATA_SIZE
       );
       if (hr != 0)
       {
@@ -757,17 +757,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       }
 
       this.LogDebug("Digital Everywhere: read application information");
-      for (int i = 0; i < CaDataSize; i++)
+      for (int i = 0; i < CA_DATA_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiCamToHost,
-        _generalBuffer, CaDataSize,
-        _generalBuffer, CaDataSize,
+      hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+        _generalBuffer, CA_DATA_SIZE,
+        _generalBuffer, CA_DATA_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != CaDataSize)
+      if (hr != 0 || returnedByteCount != CA_DATA_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -826,7 +826,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       {
         while (!_stopMmiHandlerThread)
         {
-          Thread.Sleep(MmiHandlerThreadSleepTime);
+          Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
 
           int hr = GetCiStatus(out ciState);
           if (hr != 0)
@@ -877,9 +877,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
             this.LogDebug("Digital Everywhere: MMI data available, sending request");
             CaData data = new CaData(DeCiMessageTag.Mmi);
             Marshal.StructureToPtr(data, _mmiBuffer, true);
-            hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiCamToHost,
-              _mmiBuffer, CaDataSize,
-              _mmiBuffer, CaDataSize
+            hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+              _mmiBuffer, CA_DATA_SIZE,
+              _mmiBuffer, CA_DATA_SIZE
             );
             if (hr != 0)
             {
@@ -888,14 +888,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
             }
 
             this.LogDebug("Digital Everywhere: retrieving data");
-            for (int i = 0; i < CaDataSize; i++)
+            for (int i = 0; i < CA_DATA_SIZE; i++)
             {
               Marshal.WriteByte(_mmiBuffer, i, 0);
             }
             int returnedByteCount;
-            hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiCamToHost,
-              _mmiBuffer, CaDataSize,
-              _mmiBuffer, CaDataSize,
+            hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+              _mmiBuffer, CA_DATA_SIZE,
+              _mmiBuffer, CA_DATA_SIZE,
               out returnedByteCount
             );
             if (hr != 0)
@@ -968,7 +968,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         return false;
       }
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.TestInterface,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.TestInterface,
         IntPtr.Zero, 0, IntPtr.Zero, 0
       );
       if (hr != 0)
@@ -980,7 +980,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       this.LogDebug("Digital Everywhere: supported device detected");
       _isDigitalEverywhere = true;
       _tunerType = tunerType;
-      _generalBuffer = Marshal.AllocCoTaskMem(CaDataSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
 
       ReadDriverInfo();
       ReadHardwareInfo();
@@ -1099,7 +1099,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       // Apparently the FireDTV T also supports active antennas but it is unclear whether and how that power
       // supply might be turned on or off.
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1114,7 +1114,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       {
         Marshal.WriteByte(_generalBuffer, 0, (byte)DeLnbPower.Off);
       }
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
         _generalBuffer, 1,
         _generalBuffer, 1
       );
@@ -1164,7 +1164,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
       //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
       bool fullTransponder = true;
-      ushort[] filterPids = new ushort[MaxPidFilterPids];
+      ushort[] filterPids = new ushort[MAX_PID_FILTER_PIDS];
       byte validPidCount = 0;
       if (pids == null || pids.Count == 0 || (modulation != ModulationType.Mod8Psk && !forceEnable))
       {
@@ -1175,9 +1175,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         // If we get to here then the default approach is to enable the filter, but
         // there is one other constraint that applies: the filter PID limit.
         fullTransponder = false;
-        if (pids.Count > MaxPidFilterPids)
+        if (pids.Count > MAX_PID_FILTER_PIDS)
         {
-          this.LogDebug("Digital Everywhere: too many PIDs, hardware limit = {0}, actual count = {1}", MaxPidFilterPids, pids.Count);
+          this.LogDebug("Digital Everywhere: too many PIDs, hardware limit = {0}, actual count = {1}", MAX_PID_FILTER_PIDS, pids.Count);
           // When the forceEnable flag is set, we just set as many PIDs as possible.
           if (!forceEnable)
           {
@@ -1192,7 +1192,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
           fullTransponder = false;
           HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
-          while (en.MoveNext() && validPidCount < MaxPidFilterPids)
+          while (en.MoveNext() && validPidCount < MAX_PID_FILTER_PIDS)
           {
             filterPids[validPidCount++] = en.Current;
           }
@@ -1200,7 +1200,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       }
 
       BdaExtensionProperty property = BdaExtensionProperty.SelectPidsDvbS;
-      int bufferSize = DvbsPidFilterParamsSize;
+      int bufferSize = DVBS_PID_FILTER_PARAMS_SIZE;
       if (_tunerType == CardType.DvbS)
       {
         DvbsPidFilterParams filter = new DvbsPidFilterParams();
@@ -1213,7 +1213,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       else if (_tunerType == CardType.DvbT || _tunerType == CardType.DvbC)
       {
         property = BdaExtensionProperty.SelectPidsDvbT;
-        bufferSize = DvbtPidFilterParamsSize;
+        bufferSize = DVBT_PID_FILTER_PARAMS_SIZE;
         DvbtPidFilterParams filter = new DvbtPidFilterParams();
         filter.CurrentTransponder = true;
         filter.FullTransponder = fullTransponder;
@@ -1224,7 +1224,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
       //DVB_MMI.DumpBinary(_generalBuffer, 0, bufferSize);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)property,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)property,
         _generalBuffer, bufferSize,
         _generalBuffer, bufferSize
       );
@@ -1281,7 +1281,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         // LNB settings must be applied.
         LnbParamInfo lnbParams = new LnbParamInfo();
         lnbParams.NumberOfAntennas = 1;
-        lnbParams.LnbParams = new LnbParams[MaxLnbParamCount];
+        lnbParams.LnbParams = new LnbParams[MAX_LNB_PARAM_COUNT];
         lnbParams.LnbParams[0].AntennaNumber = 0;
         lnbParams.LnbParams[0].IsEast = true;
         lnbParams.LnbParams[0].OrbitalPosition = 160;
@@ -1290,11 +1290,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         lnbParams.LnbParams[0].HighBandLof = (UInt16)(dvbsChannel.LnbType.HighBandFrequency / 1000);
 
         Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
-        //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbParamInfoSize);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_PARAM_INFO_SIZE);
 
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SetLnbParams,
-          _generalBuffer, LnbParamInfoSize,
-          _generalBuffer, LnbParamInfoSize
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SetLnbParams,
+          _generalBuffer, LNB_PARAM_INFO_SIZE,
+          _generalBuffer, LNB_PARAM_INFO_SIZE
         );
         if (hr != 0)
         {
@@ -1342,11 +1342,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         }
 
         Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
-        //DVB_MMI.DumpBinary(_generalBuffer, 0, DvbsMultiplexParamsSize);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, DVBS_MULTIPLEX_PARAMS_SIZE);
 
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SelectMultiplexDvbS,
-          _generalBuffer, DvbsMultiplexParamsSize,
-          _generalBuffer, DvbsMultiplexParamsSize
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbS,
+          _generalBuffer, DVBS_MULTIPLEX_PARAMS_SIZE,
+          _generalBuffer, DVBS_MULTIPLEX_PARAMS_SIZE
         );
       }
       else
@@ -1373,10 +1373,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
 
           Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
-          DVB_MMI.DumpBinary(_generalBuffer, 0, DvbtMultiplexParamsSize);
-          hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.SelectMultiplexDvbT,
-            _generalBuffer, DvbtMultiplexParamsSize,
-            _generalBuffer, DvbtMultiplexParamsSize
+          DVB_MMI.DumpBinary(_generalBuffer, 0, DVBT_MULTIPLEX_PARAMS_SIZE);
+          hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbT,
+            _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE,
+            _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE
           );
         }
         else
@@ -1420,8 +1420,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         return false;
       }
 
-      _mmiBuffer = Marshal.AllocCoTaskMem(CaDataSize);
-      _pmtBuffer = Marshal.AllocCoTaskMem(CaDataSize);
+      _mmiBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
+      _pmtBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _isCamReady = IsInterfaceReady();
       if (_isCamReady)
       {
@@ -1446,7 +1446,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
         if (_mmiHandlerThread.IsAlive)
         {
           this.LogDebug("Digital Everywhere: warning, failed to join MMI handler thread => aborting thread");
@@ -1496,11 +1496,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       data.Data[0] = (byte)DeResetType.ForcedHardwareReset;
 
       Marshal.StructureToPtr(data, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, CaDataSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, CA_DATA_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiHostToCam,
-        _generalBuffer, CaDataSize,
-        _generalBuffer, CaDataSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
+        _generalBuffer, CA_DATA_SIZE,
+        _generalBuffer, CA_DATA_SIZE
       );
       if (hr == 0)
       {
@@ -1577,7 +1577,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       }
 
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-      if (rawPmt.Count > MaxPmtLength - 2)
+      if (rawPmt.Count > MAX_PMT_LENGTH - 2)
       {
         this.LogDebug("Digital Everywhere: buffer capacity too small");
         return false;
@@ -1594,11 +1594,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       lock (this)
       {
         Marshal.StructureToPtr(data, _pmtBuffer, true);
-        //DVB_MMI.DumpBinary(_pmtBuffer, 0, CaDataSize);
+        //DVB_MMI.DumpBinary(_pmtBuffer, 0, CA_DATA_SIZE);
 
-        hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.MmiHostToCam,
-          _pmtBuffer, CaDataSize,
-          _pmtBuffer, CaDataSize
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
+          _pmtBuffer, CA_DATA_SIZE,
+          _pmtBuffer, CA_DATA_SIZE
         );
       }
       if (hr == 0)
@@ -1740,11 +1740,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       lnbCommand.NumberOfMessages = 0;
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_COMMAND_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbControl,
-        _generalBuffer, LnbCommandSize,
-        _generalBuffer, LnbCommandSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,
+        _generalBuffer, LNB_COMMAND_SIZE,
+        _generalBuffer, LNB_COMMAND_SIZE
       );
       if (hr == 0)
       {
@@ -1775,7 +1775,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         this.LogDebug("Digital Everywhere: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Digital Everywhere: command too long, length = {0}", command.Length);
         return false;
@@ -1786,17 +1786,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       lnbCommand.Tone22k = De22k.Undefined;
       lnbCommand.ToneBurst = DeToneBurst.Undefined;
       lnbCommand.NumberOfMessages = 1;
-      lnbCommand.DiseqcMessages = new DiseqcMessage[MaxDiseqcMessageCount];
+      lnbCommand.DiseqcMessages = new DiseqcMessage[MAX_DISEQC_MESSAGE_COUNT];
       lnbCommand.DiseqcMessages[0].MessageLength = (byte)command.Length;
-      lnbCommand.DiseqcMessages[0].Message = new byte[MaxDiseqcMessageLength];
+      lnbCommand.DiseqcMessages[0].Message = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, lnbCommand.DiseqcMessages[0].Message, 0, command.Length);
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, LnbCommandSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_COMMAND_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbControl,
-        _generalBuffer, LnbCommandSize,
-        _generalBuffer, LnbCommandSize
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,
+        _generalBuffer, LNB_COMMAND_SIZE,
+        _generalBuffer, LNB_COMMAND_SIZE
       );
       if (hr == 0)
       {

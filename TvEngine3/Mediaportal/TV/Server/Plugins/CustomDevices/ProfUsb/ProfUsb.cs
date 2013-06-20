@@ -127,7 +127,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       public Prof22k Tone22k;                 // BdaExtensionProperty.Tone
       public ProfToneBurst ToneBurst;         // BdaExtensionProperty.Tone
       public ProfDiseqcPort DiseqcPort;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcRawCommand;         // BdaExtensionProperty.Motor
       public ProfIrCode IrCode;               // BdaExtensionProperty.Ir
       public byte LockState;                  // BdaExtensionProperty.TunerLock
@@ -143,11 +143,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
-    private const int BdaExtensionParamsSize = 288;
-    private const int MaxDiseqcMessageLength = 5;
-    private const int MacAddressLength = 6;
-    private const int DeviceIdLength = 8;
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
+
+    private const int BDA_EXTENSION_PARAMS_SIZE = 288;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 5;
+    private const int MAC_ADDRESS_LENGTH = 6;
+    private const int DEVICE_ID_LENGTH = 8;
 
     #endregion
 
@@ -169,7 +170,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       // Check whether custom tuning is supported.
       this.LogDebug("Prof (USB): checking for tuning property support");
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tuner, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tuner, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Prof (USB): property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -182,17 +183,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
       // MAC address.
       this.LogDebug("Prof (USB): reading MAC address");
-      for (int i = 0; i < MacAddressLength; i++)
+      for (int i = 0; i < MAC_ADDRESS_LENGTH; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.MacAddress,
-        _generalBuffer, MacAddressLength,
-        _generalBuffer, MacAddressLength,
+      hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MacAddress,
+        _generalBuffer, MAC_ADDRESS_LENGTH,
+        _generalBuffer, MAC_ADDRESS_LENGTH,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != MacAddressLength)
+      if (hr != 0 || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
         this.LogDebug("Prof (USB): result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -208,16 +209,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
       // Device ID.
       this.LogDebug("Prof (USB): reading device ID");
-      for (int i = 0; i < DeviceIdLength; i++)
+      for (int i = 0; i < DEVICE_ID_LENGTH; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DeviceId,
-        _generalBuffer, DeviceIdLength,
-        _generalBuffer, DeviceIdLength,
+      hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DeviceId,
+        _generalBuffer, DEVICE_ID_LENGTH,
+        _generalBuffer, DEVICE_ID_LENGTH,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DeviceIdLength)
+      if (hr != 0 || returnedByteCount != DEVICE_ID_LENGTH)
       {
         this.LogDebug("Prof (USB): result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -291,7 +292,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Motor, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Motor, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Prof (USB): device does not support the Prof USB property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -366,7 +367,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Prof (USB): property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -384,11 +385,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
         IntPtr.Zero, 0,
-        _generalBuffer, BdaExtensionParamsSize
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -481,11 +482,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       tuningParams.Modulation = (byte)dvbsChannel.ModulationType;
 
       Marshal.StructureToPtr(tuningParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tuner,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tuner,
         IntPtr.Zero, 0,
-        _generalBuffer, BdaExtensionParamsSize
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -518,7 +519,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tone,
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone,
                                   out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
@@ -543,11 +544,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Tone,
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone,
         IntPtr.Zero, 0,
-        _generalBuffer, BdaExtensionParamsSize
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -578,22 +579,22 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
         this.LogDebug("Prof (USB): command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Prof (USB): command too long, length = {0}", command.Length);
         return false;
       }
 
       BdaExtensionParams propertyParams = new BdaExtensionParams();
-      propertyParams.DiseqcRawCommand = new byte[MaxDiseqcMessageLength];
+      propertyParams.DiseqcRawCommand = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, propertyParams.DiseqcRawCommand, 0, command.Length);
 
       Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Motor,
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Motor,
         IntPtr.Zero, 0,
-        _generalBuffer, BdaExtensionParamsSize
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
       if (hr == 0)
       {

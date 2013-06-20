@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
     #region constants
 
-    private const int NbcParamsSize = 8;
+    private const int NBC_PARAMS_SIZE = 8;
 
     #endregion
 
@@ -229,8 +229,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
       Marshal.StructureToPtr(nbcParams, _paramBuffer, true);
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-        _instanceBuffer, InstanceSize,
-        _paramBuffer, NbcParamsSize
+        _instanceBuffer, INSTANCE_SIZE,
+        _paramBuffer, NBC_PARAMS_SIZE
       );
       if (hr != 0)
       {
@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
         Marshal.WriteInt32(_paramBuffer, 0, 0);
       }
       hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
-        _instanceBuffer, InstanceSize,
+        _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(Int32)
       );
       if (hr == 0)

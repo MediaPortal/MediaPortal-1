@@ -35,8 +35,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
   /// </summary>
   public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
- 
-
     #region enums
 
     private enum TeViiPolarisation

@@ -40,8 +40,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
   /// </summary>
   public class MdPlugin : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider
   {
-
-
     #region COM interface imports
 
     [ComImport, Guid("72e6dB8f-9f33-4d1c-a37c-de8148c0be74")]
@@ -162,7 +160,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       public PidFilter[] Filters;
 
       public UInt16 CaSystemCount;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCaSystemCount)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CA_SYSTEM_COUNT)]
       public CaSystem82[] CaSystems;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 5)]
       public String CaCountry;
@@ -182,7 +180,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
     [StructLayout(LayoutKind.Sequential)]
     private struct PidsToDecode  // TPids2Dec
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPidCount)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_COUNT)]
       public UInt16[] Pids;
       public UInt16 PidCount;
     }
@@ -197,10 +195,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
     #region constants
 
-    private const int Program82Size = 804;
-    private const int MaxCaSystemCount = 32;
-    private const int PidsToDecodeSize = 128;
-    private const int MaxPidCount = 63;
+    private const int PROGRAM82_SIZE = 804;
+    private const int MAX_CA_SYSTEM_COUNT = 32;
+    private const int PIDS_TO_DECODE_SIZE = 128;
+    private const int MAX_PID_COUNT = 63;
 
     #endregion
 
@@ -229,7 +227,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       this.LogDebug("MD Plugin: registering video and audio PIDs");
       programToDecode = new Program82();
       pidsToDecode = new PidsToDecode();
-      pidsToDecode.Pids = new UInt16[MaxPidCount];
+      pidsToDecode.Pids = new UInt16[MAX_PID_COUNT];
 
       programToDecode.ServiceId = pmt.ProgramNumber;
       programToDecode.PcrPid = pmt.PcrPid;
@@ -238,7 +236,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       {
         // When using a plugin with extended support, we can just
         // specify the PIDs that need to be decoded.
-        if (pidsToDecode.PidCount < MaxPidCount)
+        if (pidsToDecode.PidCount < MAX_PID_COUNT)
         {
           // TODO: restrict to video, audio, subtitle and teletext PIDs???
           pidsToDecode.Pids[pidsToDecode.PidCount++] = es.Pid;
@@ -401,7 +399,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
       // Merge the dictionaries and assemble the details to pass to the MD plugin.
       UInt16 count = 0;   // This variable will be used to count the number of distinct CA system-ECM-EMM combinations.
-      programToDecode.CaSystems = new CaSystem82[MaxCaSystemCount];
+      programToDecode.CaSystems = new CaSystem82[MAX_CA_SYSTEM_COUNT];
       IEnumerator<UInt32> en;
       this.LogDebug("MD Plugin: registering PIDs...");
       foreach (UInt16 caSystemId in seenEcmPids.Keys)
@@ -1165,8 +1163,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         return false;
       }
 
-      _programmeBuffer = Marshal.AllocCoTaskMem(Program82Size);
-      _pidBuffer = Marshal.AllocCoTaskMem(PidsToDecodeSize);
+      _programmeBuffer = Marshal.AllocCoTaskMem(PROGRAM82_SIZE);
+      _pidBuffer = Marshal.AllocCoTaskMem(PIDS_TO_DECODE_SIZE);
 
       this.LogDebug("MD Plugin: result = success");
       return true;
@@ -1403,9 +1401,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
       // Instruct the MD filter to decrypt the service.
       Marshal.StructureToPtr(programToDecode, _programmeBuffer, true);
-      //DVB_MMI.DumpBinary(_programmeBuffer, 0, Program82Size);
+      //DVB_MMI.DumpBinary(_programmeBuffer, 0, PROGRAM82_SIZE);
       Marshal.StructureToPtr(pidsToDecode, _pidBuffer, true);
-      //DVB_MMI.DumpBinary(_pidBuffer, 0, PidsToDecodeSize);
+      //DVB_MMI.DumpBinary(_pidBuffer, 0, PIDS_TO_DECODE_SIZE);
       try
       {
         IChangeChannel_Ex changeEx = freeSlot.Filter as IChangeChannel_Ex;

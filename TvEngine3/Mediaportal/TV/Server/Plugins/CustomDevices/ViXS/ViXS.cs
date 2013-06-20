@@ -31,11 +31,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
   /// </summary>
   public class ViXS : Microsoft.Microsoft
   {
-  
-
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
 
     #endregion
 
@@ -54,7 +52,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
       {
         // We override the Microsoft implementation of this property. This property set GUID is the only
         // difference between the generic Microsoft clear QAM implementation and the ViXS implementation.
-        return BdaExtensionPropertySet;
+        return BDA_EXTENSION_PROPERTY_SET;
       }
     }
 

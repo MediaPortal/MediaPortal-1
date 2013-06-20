@@ -69,13 +69,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
     #region constants
 
-    private static readonly Guid BdaExtensionDiseqcPropertySet = new Guid(0x0c12bf87, 0x5bc0, 0x4dda, 0x9d, 0x07, 0x21, 0xe5, 0xc2, 0xf3, 0xb9, 0xae);
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xa1aa3f96, 0x2ea, 0x4ccb, 0xa7, 0x14, 0x0, 0xbc, 0xd3, 0x98, 0xad, 0xb4);
+    private static readonly Guid BDA_EXTENSION_DISEQC_PROPERTY_SET = new Guid(0x0c12bf87, 0x5bc0, 0x4dda, 0x9d, 0x07, 0x21, 0xe5, 0xc2, 0xf3, 0xb9, 0xae);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xa1aa3f96, 0x2ea, 0x4ccb, 0xa7, 0x14, 0x0, 0xbc, 0xd3, 0x98, 0xad, 0xb4);
 
-    private const int KsPropertySize = 24;
-    private const int MaxDiseqcMessageLength = 8;
-    private const int MacAddressLength = 6;
-    private const int GeneralBufferSize = KsPropertySize + 4;
+    private const int KS_PROPERTY_SIZE = 24;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
+    private const int MAC_ADDRESS_LENGTH = 6;
+    private const int GENERAL_BUFFER_SIZE = KS_PROPERTY_SIZE + 4;
 
     #endregion
 
@@ -97,17 +97,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       // MAC address.
       this.LogDebug("Compro: reading MAC address");
-      for (int i = 0; i < MacAddressLength; i++)
+      for (int i = 0; i < MAC_ADDRESS_LENGTH; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.MacAddress,
-        _generalBuffer, MacAddressLength,
-        _generalBuffer, MacAddressLength,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MacAddress,
+        _generalBuffer, MAC_ADDRESS_LENGTH,
+        _generalBuffer, MAC_ADDRESS_LENGTH,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != MacAddressLength)
+      if (hr != 0 || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
         this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -167,7 +167,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
       if (hr != 0 || (support & KSPropertySupport.Get) == 0)
       {
         this.LogDebug("Compro: device does not support the Compro property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -176,8 +176,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       this.LogDebug("Compro: supported device detected");
       _isCompro = true;
-      _generalBuffer = Marshal.AllocCoTaskMem(GeneralBufferSize);
-      _commandBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
+      _commandBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
       ReadDeviceInfo();
       return true;
     }
@@ -202,7 +202,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.TonePower, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         Marshal.WriteByte(_commandBuffer, 0, (byte)ComproLnbPower.Off);
       }
 
-      hr = _propertySet.Set(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.TonePower,
+      hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
         IntPtr.Zero, 0,
         _commandBuffer, 1
       );
@@ -258,7 +258,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       if (toneBurstState != ToneBurst.None)
       {
-        hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
+        hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
                                     out support);
         if (hr != 0 || (support & KSPropertySupport.Set) == 0)
         {
@@ -275,7 +275,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
           {
             Marshal.WriteInt32(_commandBuffer, 0, 1);
           }
-          hr = _propertySet.Set(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
+          hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
             _generalBuffer, 4,
             _commandBuffer, 4
           );
@@ -287,7 +287,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         }
       }
 
-      hr = _propertySet.QuerySupported(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.TonePower,
+      hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
                                   out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
@@ -303,7 +303,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         {
           Marshal.WriteByte(_commandBuffer, 0, (byte)Compro22k.Off);
         }
-        hr = _propertySet.Set(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.TonePower,
+        hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
           IntPtr.Zero, 0,
           _commandBuffer, 1
         );
@@ -340,13 +340,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         this.LogDebug("Compro: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Compro: command too long, length = {0}", command.Length);
         return false;
       }
 
-      for (int i = 0; i < GeneralBufferSize; i++)
+      for (int i = 0; i < GENERAL_BUFFER_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
@@ -354,9 +354,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       Marshal.Copy(command, 0, _commandBuffer, command.Length);
 
-      int hr = _propertySet.Set(BdaExtensionDiseqcPropertySet, (int)BdaExtensionDiseqcProperty.DiseqcRaw,
-        _generalBuffer, GeneralBufferSize,
-        _commandBuffer, MaxDiseqcMessageLength
+      int hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcRaw,
+        _generalBuffer, GENERAL_BUFFER_SIZE,
+        _commandBuffer, MAX_DISEQC_MESSAGE_LENGTH
       );
       if (hr == 0)
       {

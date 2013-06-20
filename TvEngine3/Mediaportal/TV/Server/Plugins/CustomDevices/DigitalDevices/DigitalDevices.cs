@@ -147,21 +147,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     #region constants
 
-    private static readonly string[] ValidDeviceNamePrefixes = new string[]
+    private static readonly string[] VALID_DEVICE_NAME_PREFIXES = new string[]
     {
       "Digital Devices",
       "Mystique SaTiX-S2 Dual"
     };
 
-    private static readonly Guid CamControlMethodSet = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
+    private static readonly Guid CAM_CONTROL_METHOD_SET = new Guid(0x0aa8a511, 0xa240, 0x11de, 0xb1, 0x30, 0x00, 0x00, 0x00, 0x00, 0x4d, 0x56);
 
-    private const int MenuDataSize = 2048;  // This is arbitrary - an estimate of the buffer size needed to hold the largest menu.
-    private const int MenuChoiceSize = 8;
-    private const int MmiHandlerThreadSleepTime = 500;   // unit = ms
-    private const int KsMethodSize = 24;
-    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
-    private const int BdaDiseqcMessageSize = 16;
-    private const int MaxDiseqcMessageLength = 8;
+    private const int MENU_DATA_SIZE = 2048;  // This is arbitrary - an estimate of the buffer size needed to hold the largest menu.
+    private const int MENU_CHOICE_SIZE = 8;
+    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;  // unit = ms
+    private const int KS_METHOD_SIZE = 24;
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
+    private const int BDA_DISEQC_MESSAGE_SIZE = 16;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
 
     #endregion
 
@@ -351,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
               }
             }
           }
-          Thread.Sleep(MmiHandlerThreadSleepTime);
+          Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
         }
       }
       catch (ThreadAbortException)
@@ -373,14 +373,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     private bool ReadMmi(int slot, out MenuData menu)
     {
       menu = new MenuData();
-      for (int i = 0; i < MenuDataSize; i++)
+      for (int i = 0; i < MENU_DATA_SIZE; i++)
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
 
-      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
+      KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuDataSize, ref returnedByteCount);
+      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, MENU_DATA_SIZE, ref returnedByteCount);
       if (hr != 0)
       {
         // Attempting to check for an MMI message when the menu has not previously been
@@ -477,7 +477,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;
       }
 
-      if (!tunerDevicePath.ToLowerInvariant().Contains(DigitalDevicesCiSlots.CommonDevicePathSection))
+      if (!tunerDevicePath.ToLowerInvariant().Contains(DigitalDevicesCiSlots.COMMON_DEVICE_PATH_SECTION))
       {
         this.LogDebug("Digital Devices: device path does not contain the Digital Devices common section");
         return false;
@@ -501,7 +501,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
       else
       {
-        foreach (String prefix in ValidDeviceNamePrefixes)
+        foreach (String prefix in VALID_DEVICE_NAME_PREFIXES)
         {
           if (tunerFilterInfo.achName.StartsWith(prefix))
           {
@@ -520,8 +520,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         {
           this.LogDebug("Digital Devices: DiSEqC support detected");
           _deviceControl = tunerFilter as IBDA_DeviceControl;
-          _instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
-          _paramBuffer = Marshal.AllocCoTaskMem(BdaDiseqcMessageSize);
+          _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
+          _paramBuffer = Marshal.AllocCoTaskMem(BDA_DISEQC_MESSAGE_SIZE);
         }
       }
 
@@ -832,7 +832,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return false;
       }
 
-      _mmiBuffer = Marshal.AllocCoTaskMem(MenuDataSize);
+      _mmiBuffer = Marshal.AllocCoTaskMem(MENU_DATA_SIZE);
 
       // Fill in the menu title for each CI context if possible.
       String menuTitle;
@@ -895,7 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
         if (_mmiHandlerThread.IsAlive)
         {
           this.LogDebug("Digital Devices: warning, failed to join MMI handler thread => aborting thread");
@@ -949,8 +949,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       for (int i = 0; i < _ciContexts.Count; i++)
       {
         this.LogDebug("Digital Devices: reset slot {0} \"{1}\"", i + 1, _ciContexts[i].FilterName);
-        KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
-        int hr = (_ciContexts[i].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+        KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
+        int hr = (_ciContexts[i].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
         if (hr == 0)
         {
           this.LogDebug("Digital Devices: result = success");
@@ -1110,7 +1110,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
       Marshal.WriteInt32(buffer, (int)serviceId);
       DVB_MMI.DumpBinary(buffer, 0, paramSize);
-      int hr = (_ciContexts[context].Filter as IKsPropertySet).Set(DigitalDevicesCiSlots.CommonInterfacePropertySet, (int)CommonInterfaceProperty.DecryptProgram,
+      int hr = (_ciContexts[context].Filter as IKsPropertySet).Set(DigitalDevicesCiSlots.COMMON_INTERFACE_PROPERTY_SET, (int)CommonInterfaceProperty.DecryptProgram,
         buffer, paramSize,
         buffer, paramSize
       );
@@ -1223,9 +1223,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;
       }
 
-      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
+      KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+      int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1260,9 +1260,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;
       }
 
-      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
+      KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, IntPtr.Zero, 0, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1329,9 +1329,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       reply.Choice = choice;
       Marshal.StructureToPtr(reply, _mmiBuffer, true);
 
-      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
+      KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, MenuChoiceSize, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, MENU_CHOICE_SIZE, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1381,9 +1381,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       int bufferSize = 8 + Math.Max(4, answer.Length + 1);
       DVB_MMI.DumpBinary(_mmiBuffer, 0, bufferSize);
 
-      KsMethod method = new KsMethod(CamControlMethodSet, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
+      KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
-      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KsMethodSize, _mmiBuffer, bufferSize, ref returnedByteCount);
+      int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, bufferSize, ref returnedByteCount);
       if (hr == 0)
       {
         this.LogDebug("Digital Devices: result = success");
@@ -1440,7 +1440,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         this.LogDebug("Digital Devices: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Digital Devices: command too long, length = {0}", command.Length);
         return false;
@@ -1458,7 +1458,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // I'm not certain whether this property has to be set for each command sent, but we do it for safety.
       Marshal.WriteInt32(_paramBuffer, 0, 0);
-      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, InstanceSize, _paramBuffer, 4);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, 4);
       if (hr != 0)
       {
         this.LogDebug("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1468,11 +1468,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       BdaDiseqcMessage message = new BdaDiseqcMessage();
       message.RequestId = _requestId++;
       message.PacketLength = (uint)command.Length;
-      message.PacketData = new byte[MaxDiseqcMessageLength];
+      message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
       Marshal.StructureToPtr(message, _paramBuffer, true);
-      //DVB_MMI.DumpBinary(_paramBuffer, 0, BdaDiseqcMessageSize);
-      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize);
+      //DVB_MMI.DumpBinary(_paramBuffer, 0, BDA_DISEQC_MESSAGE_SIZE);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
       if (hr != 0)
       {
         this.LogDebug("Digital Devices: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1514,17 +1514,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return false;
       }
 
-      for (int i = 0; i < BdaDiseqcMessageSize; i++)
+      for (int i = 0; i < BDA_DISEQC_MESSAGE_SIZE; i++)
       {
         Marshal.WriteInt32(_paramBuffer, 0, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _paramBuffer, InstanceSize, _paramBuffer, BdaDiseqcMessageSize, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == BdaDiseqcMessageSize)
+      int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _paramBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE, out returnedByteCount);
+      if (hr == 0 && returnedByteCount == BDA_DISEQC_MESSAGE_SIZE)
       {
         // Copy the response into the return array.
         BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_paramBuffer, typeof(BdaDiseqcMessage));
-        if (message.PacketLength > MaxDiseqcMessageLength)
+        if (message.PacketLength > MAX_DISEQC_MESSAGE_LENGTH)
         {
           this.LogDebug("Digital Devices: response length is out of bounds, response length = {0}", message.PacketLength);
           return false;

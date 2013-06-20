@@ -37,8 +37,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
   /// </summary>
   public class Prof : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
-
-
     #region enums
 
     private enum BdaExtensionProperty
@@ -153,11 +151,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct BdaExtensionParams
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcTxMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_TX_MESSAGE_LENGTH)]
       public byte[] DiseqcTransmitMessage;
       public byte DiseqcTransmitMessageLength;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcRxMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_RX_MESSAGE_LENGTH)]
       public byte[] DiseqcReceiveMessage;
       public byte DiseqcReceiveMessageLength;
       private UInt16 Padding;
@@ -190,12 +188,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
 
-    private const int BdaExtensionParamsSize = 188;
-    private const int NbcTuningParamsSize = 20;
-    private const byte MaxDiseqcTxMessageLength = 151;  // 3 bytes per message * 50 messages
-    private const byte MaxDiseqcRxMessageLength = 9;    // reply fifo size, do not increase (hardware limitation)
+    private const int BDA_EXTENSION_PARAMS_SIZE = 188;
+    private const int NBC_TUNING_PARAMS_SIZE = 20;
+    private const byte MAX_DISEQC_TX_MESSAGE_LENGTH = 151;  // 3 bytes per message * 50 messages
+    private const byte MAX_DISEQC_RX_MESSAGE_LENGTH = 9;    // reply fifo size, do not increase (hardware limitation)
 
     #endregion
 
@@ -262,7 +260,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage, out support);
       // The original Conexant interface uses the set method; this interface uses the get method.
       if (hr != 0 || (support & KSPropertySupport.Get) == 0)
       {
@@ -360,7 +358,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       this.LogDebug("  roll-off       = {0}", command.RollOff);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -368,11 +366,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, NbcTuningParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, NBC_TUNING_PARAMS_SIZE);
 
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-        _generalBuffer, NbcTuningParamsSize,
-        _generalBuffer, NbcTuningParamsSize
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
+        _generalBuffer, NBC_TUNING_PARAMS_SIZE,
+        _generalBuffer, NBC_TUNING_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -414,12 +412,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-         _generalBuffer, BdaExtensionParamsSize,
-         _generalBuffer, BdaExtensionParamsSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
+         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
+         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
          out returnedByteCount
       );
       if (hr == 0)
@@ -473,12 +471,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-        _generalBuffer, BdaExtensionParamsSize,
-        _generalBuffer, BdaExtensionParamsSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
         out returnedByteCount
       );
       if (hr == 0)
@@ -510,14 +508,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
         this.LogDebug("Prof: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcTxMessageLength)
+      if (command.Length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
         this.LogDebug("Prof: command too long, length = {0}", command.Length);
         return false;
       }
 
       BdaExtensionParams propertyParams = new BdaExtensionParams();
-      propertyParams.DiseqcTransmitMessage = new byte[MaxDiseqcTxMessageLength];
+      propertyParams.DiseqcTransmitMessage = new byte[MAX_DISEQC_TX_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, propertyParams.DiseqcTransmitMessage, 0, command.Length);
       propertyParams.DiseqcTransmitMessageLength = (byte)command.Length;
       propertyParams.ReceiveMode = ProfDiseqcReceiveMode.NoReply;
@@ -526,12 +524,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       propertyParams.LnbPower = ProfLnbPower.On;
 
       Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BdaExtensionParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
-      int hr = _propertySet.Get(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
-        _generalBuffer, BdaExtensionParamsSize,
-        _generalBuffer, BdaExtensionParamsSize,
+      int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
+        _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
         out returnedByteCount
       );
       if (hr == 0)

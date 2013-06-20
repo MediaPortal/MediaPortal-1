@@ -42,8 +42,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
   /// </summary>
   public class SmarDtvUsbCi : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, ITvServerPlugin
   {
-
-
     #region enums
 
     private enum SmarDtvCiState : int
@@ -138,8 +136,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 
     #region constants
 
-    //private int ApplicationInfoSize = 360;
-    private int VersionInfoSize = 52;
+    //private int APPLICATION_INFO_SIZE = 360;
+    private int VERSION_INFO_SIZE = 52;
 
     #endregion
 
@@ -204,7 +202,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
     private Int32 OnApplicationInfo(IBaseFilter ciFilter, IntPtr info)
     {
       this.LogInfo("SmarDTV USB CI: application information callback");
-      //DVB_MMI.DumpBinary(info, 0, ApplicationInfoSize);
+      //DVB_MMI.DumpBinary(info, 0, APPLICATION_INFO_SIZE);
       ApplicationInfo appInfo = (ApplicationInfo)Marshal.PtrToStructure(info, typeof(ApplicationInfo));
       this.LogDebug("  type         = {0}", appInfo.ApplicationType);
       // Note: current drivers seem to have a bug that causes only the first byte in the manufacturer and code
@@ -557,15 +555,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallbackBuffer });
       if (hr == 0)
       {
-        IntPtr versionInfoBuffer = Marshal.AllocCoTaskMem(VersionInfoSize);
-        for (byte i = 0; i < VersionInfoSize; i++)
+        IntPtr versionInfoBuffer = Marshal.AllocCoTaskMem(VERSION_INFO_SIZE);
+        for (byte i = 0; i < VERSION_INFO_SIZE; i++)
         {
           Marshal.WriteByte(versionInfoBuffer, i, 0);
         }
         hr = (int)_ciType.GetMethod("USB2CI_GetVersion").Invoke(_ciFilter, new object [] { versionInfoBuffer });
         if (hr == 0)
         {
-          //DVB_MMI.DumpBinary(versionBuffer, 0, VersionInfoSize);
+          //DVB_MMI.DumpBinary(versionBuffer, 0, VERSION_INFO_SIZE);
           VersionInfo versionInfo = (VersionInfo)Marshal.PtrToStructure(versionInfoBuffer, typeof(VersionInfo));
           this.LogDebug("  plugin version     = {0}", versionInfo.PluginVersion);
           this.LogDebug("  BDA driver version = {0}", versionInfo.BdaVersion);

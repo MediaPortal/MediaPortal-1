@@ -198,10 +198,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       private UInt32 Reserved1;
       public TbsLnbPower LnbPower;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcTransmitMessage;
       public UInt32 DiseqcTransmitMessageLength;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDiseqcMessageLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcReceiveMessage;
       public UInt32 DiseqcReceiveMessageLength;
 
@@ -312,19 +312,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
     #region constants
 
-    private static readonly Guid BdaExtensionPropertySet = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
-    private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
-    private static readonly Guid IrPropertySet = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
+    private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+    private static readonly Guid USB_BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
+    private static readonly Guid IR_PROPERTY_SET = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
 
-    private const int TbsAccessParamsSize = 536;
-    private const int NbcTuningParamsSize = 20;
-    private const int MaxDiseqcMessageLength = 128;
-    private const int MaxPmtLength = 1024;
+    private const int TBS_ACCESS_PARAMS_SIZE = 536;
+    private const int NBC_TUNING_PARAMS_SIZE = 20;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 128;
+    private const int MAX_PMT_LENGTH = 1024;
 
-    private const int MmiMessageBufferSize = 512;
-    private const int MmiResponseBufferSize = 2048;
+    private const int MMI_MESSAGE_BUFFER_SIZE = 512;
+    private const int MMI_RESPONSE_BUFFER_SIZE = 2048;
 
-    private const int MmiHandlerThreadSleepTime = 2000;   // unit = ms
+    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 2000;   // unit = ms
 
     #endregion
 
@@ -530,11 +530,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         this.LogDebug("Turbosight: starting new MMI handler thread");
         // Clear the message queue and buffers in preparation for [first] use.
         _mmiMessageQueue = new List<MmiMessage>();
-        for (int i = 0; i < MmiMessageBufferSize; i++)
+        for (int i = 0; i < MMI_MESSAGE_BUFFER_SIZE; i++)
         {
           Marshal.WriteByte(_mmiMessageBuffer, i, 0);
         }
-        for (int i = 0; i < MmiResponseBufferSize; i++)
+        for (int i = 0; i < MMI_RESPONSE_BUFFER_SIZE; i++)
         {
           Marshal.WriteByte(_mmiResponseBuffer, i, 0);
         }
@@ -584,7 +584,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
           // If there is no CAM then we can't send or receive messages.
           if (!_isCamPresent)
           {
-            Thread.Sleep(MmiHandlerThreadSleepTime);
+            Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
             continue;
           }
 
@@ -643,7 +643,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
           {
             // Responses don't always arrive quickly so give the CAM time to respond if
             // the response isn't ready yet.
-            Thread.Sleep(MmiHandlerThreadSleepTime);
+            Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
 
             // If we are waiting for a response to a message that we sent
             // directly and we haven't received a response after 10 requests
@@ -675,12 +675,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
           byte lsb = Marshal.ReadByte(_mmiResponseBuffer, 5);
           byte msb = Marshal.ReadByte(_mmiResponseBuffer, 6);
           int length = (256 * msb) + lsb;
-          if (length > MmiResponseBufferSize - 7)
+          if (length > MMI_RESPONSE_BUFFER_SIZE - 7)
           {
             this.LogDebug("Turbosight: response too long, length = {0}", length);
             // We know we haven't got the complete response (DLL internal buffer overflow),
             // so wipe the message and response buffers and give up on this message.
-            for (int i = 0; i < MmiResponseBufferSize; i++)
+            for (int i = 0; i < MMI_RESPONSE_BUFFER_SIZE; i++)
             {
               Marshal.WriteByte(_mmiResponseBuffer, i, 0);
             }
@@ -734,7 +734,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
           // A message has been handled and now we move on to handling the
           // next message or revert to polling for messages from the CAM.
-          for (int i = 0; i < MmiResponseBufferSize; i++)
+          for (int i = 0; i < MMI_RESPONSE_BUFFER_SIZE; i++)
           {
             Marshal.WriteByte(_mmiResponseBuffer, i, 0);
           }
@@ -1011,14 +1011,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       _propertySet = tunerFilter as IKsPropertySet;
       if (_propertySet != null)
       {
-        hr = _propertySet.QuerySupported(UsbBdaExtensionPropertySet, (int)UsbBdaExtensionProperty.TbsAccess, out support);
+        hr = _propertySet.QuerySupported(USB_BDA_EXTENSION_PROPERTY_SET, (int)UsbBdaExtensionProperty.TbsAccess, out support);
         if (hr == 0 && support != 0)
         {
           // Okay, we've got a USB tuner here.
           this.LogDebug("Turbosight: supported device detected (USB interface)");
           _isTurbosight = true;
           _isUsb = true;
-          _propertySetGuid = UsbBdaExtensionPropertySet;
+          _propertySetGuid = USB_BDA_EXTENSION_PROPERTY_SET;
           _tbsAccessProperty = (int)UsbBdaExtensionProperty.TbsAccess;
         }
       }
@@ -1030,14 +1030,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         _propertySet = pin as IKsPropertySet;
         if (_propertySet != null)
         {
-          hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.TbsAccess, out support);
+          hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.TbsAccess, out support);
           if (hr == 0 && support != 0)
           {
             // Okay, we've got a PCIe or PCI tuner here.
             this.LogDebug("Turbosight: supported device detected (PCIe/PCI interface)");
             _isTurbosight = true;
             _isUsb = false;
-            _propertySetGuid = BdaExtensionPropertySet;
+            _propertySetGuid = BDA_EXTENSION_PROPERTY_SET;
             _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
           }
         }
@@ -1055,7 +1055,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       _tunerFilter = tunerFilter;
-      _generalBuffer = Marshal.AllocCoTaskMem(TbsAccessParamsSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(TBS_ACCESS_PARAMS_SIZE);
       return true;
     }
 
@@ -1144,7 +1144,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       this.LogDebug("  roll-off       = {0}", command.RollOff);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
+      int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Turbosight: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1152,11 +1152,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, NbcTuningParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, NBC_TUNING_PARAMS_SIZE);
 
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
-        _generalBuffer, NbcTuningParamsSize,
-        _generalBuffer, NbcTuningParamsSize
+      hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
+        _generalBuffer, NBC_TUNING_PARAMS_SIZE,
+        _generalBuffer, NBC_TUNING_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -1213,11 +1213,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -1283,9 +1283,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         return false;
       }
 
-      _mmiMessageBuffer = Marshal.AllocCoTaskMem(MmiMessageBufferSize);
-      _mmiResponseBuffer = Marshal.AllocCoTaskMem(MmiResponseBufferSize);
-      _pmtBuffer = Marshal.AllocCoTaskMem(MaxPmtLength + 2);  // + 2 for TBS PMT header
+      _mmiMessageBuffer = Marshal.AllocCoTaskMem(MMI_MESSAGE_BUFFER_SIZE);
+      _mmiResponseBuffer = Marshal.AllocCoTaskMem(MMI_RESPONSE_BUFFER_SIZE);
+      _pmtBuffer = Marshal.AllocCoTaskMem(MAX_PMT_LENGTH + 2);  // + 2 for TBS PMT header
       _mmiMessageQueue = new List<MmiMessage>();
       _isCamPresent = _camAvailable(_ciHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
@@ -1309,7 +1309,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
         if (_mmiHandlerThread.IsAlive)
         {
           this.LogDebug("Turbosight: warning, failed to join MMI handler thread => aborting thread");
@@ -1424,7 +1424,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-      if (rawPmt.Count > MaxPmtLength - 2)
+      if (rawPmt.Count > MAX_PMT_LENGTH - 2)
       {
         this.LogDebug("Turbosight: buffer capacity too small");
         return false;
@@ -1656,11 +1656,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
 
         Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-        //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+        //DVB_MMI.DumpBinary(_generalBuffer, 0, TBS_ACCESS_PARAMS_SIZE);
 
         hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
-          _generalBuffer, TbsAccessParamsSize,
-          _generalBuffer, TbsAccessParamsSize
+          _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
+          _generalBuffer, TBS_ACCESS_PARAMS_SIZE
         );
         if (hr == 0)
         {
@@ -1681,11 +1681,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TBS_ACCESS_PARAMS_SIZE);
 
       hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -1719,7 +1719,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         this.LogDebug("Turbosight: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Turbosight: command too long, length = {0}", command.Length);
         return false;
@@ -1728,15 +1728,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       TbsAccessParams accessParams = new TbsAccessParams();
       accessParams.AccessMode = TbsAccessMode.Diseqc;
       accessParams.DiseqcTransmitMessageLength = (uint)command.Length;
-      accessParams.DiseqcTransmitMessage = new byte[MaxDiseqcMessageLength];
+      accessParams.DiseqcTransmitMessage = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, accessParams.DiseqcTransmitMessage, 0, command.Length);
 
       Marshal.StructureToPtr(accessParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TbsAccessParamsSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, TBS_ACCESS_PARAMS_SIZE);
 
       int hr = _propertySet.Set(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -1765,7 +1765,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         return false;
       }
 
-      for (int i = 0; i < TbsAccessParamsSize; i++)
+      for (int i = 0; i < TBS_ACCESS_PARAMS_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
@@ -1774,8 +1774,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       accessParams.AccessMode = TbsAccessMode.Diseqc;
       int returnedByteCount;
       int hr = _propertySet.Get(_propertySetGuid, _tbsAccessProperty,
-        _generalBuffer, TbsAccessParamsSize,
-        _generalBuffer, TbsAccessParamsSize,
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
+        _generalBuffer, TBS_ACCESS_PARAMS_SIZE,
         out returnedByteCount
       );
       if (hr != 0)
@@ -1786,14 +1786,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
       DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
 
-      if (returnedByteCount != TbsAccessParamsSize)
+      if (returnedByteCount != TBS_ACCESS_PARAMS_SIZE)
       {
         this.LogDebug("Turbosight: result = failure, unexpected number of bytes ({0}) returned", returnedByteCount);
         return false;
       }
 
       accessParams = (TbsAccessParams)Marshal.PtrToStructure(_generalBuffer, typeof(TbsAccessParams));
-      if (accessParams.DiseqcReceiveMessageLength > MaxDiseqcMessageLength)
+      if (accessParams.DiseqcReceiveMessageLength > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("Turbosight: result = failure, unexpected number of message bytes ({0}) returned", accessParams.DiseqcReceiveMessageLength);
         return false;

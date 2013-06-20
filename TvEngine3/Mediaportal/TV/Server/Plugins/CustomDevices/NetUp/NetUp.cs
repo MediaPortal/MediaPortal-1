@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       public MmiApplicationType ApplicationType;
       public UInt16 Manufacturer;
       public UInt16 ManufacturerCode;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String RootMenuTitle;
     }
 
@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       // we can query for application info directly.
       public UInt16 Manufacturer;
       public UInt16 ManufacturerCode;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String RootMenuTitle;
     }
 
@@ -98,7 +98,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     private struct CaInfo   // TYP_SLOT_INFO
     {
       public UInt32 NumberOfCaSystemIds;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCaSystemIds)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CA_SYSTEM_IDS)]
       public UInt16[] CaSystemIds;
     }
 
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     private struct MmiMenuEntry
     {
       #pragma warning disable 0649
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Text;
       #pragma warning restore 0649
     }
@@ -115,13 +115,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     private struct MmiMenu    // NETUP_CAM_MENU
     {
       public bool IsMenu;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Title;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String SubTitle;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Footer;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxCamMenuEntries)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CAM_MENU_ENTRIES)]
       public MmiMenuEntry[] Entries;
       public UInt32 EntryCount;
     }
@@ -131,7 +131,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Prompt;
     }
 
@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     private struct MmiAnswer    // NETUP_CAM_MMI_ANSWER
     {
       public byte AnswerLength;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MaxStringLength)]
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Answer;
     }
 
@@ -259,14 +259,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           }
         }
 
-        IntPtr instanceBuffer = Marshal.AllocCoTaskMem(InstanceSize);
-        IntPtr commandBuffer = Marshal.AllocCoTaskMem(CommandSize);
+        IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
+        IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
         IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
         try
         {
           // Clear buffers. This is probably not actually needed, but better
           // to be safe than sorry!
-          for (int i = 0; i < InstanceSize; i++)
+          for (int i = 0; i < INSTANCE_SIZE; i++)
           {
             Marshal.WriteByte(instanceBuffer, i, 0);
           }
@@ -297,7 +297,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
             Marshal.WriteInt32(commandBuffer, 44, 0);
           }
 
-          hr = ps.Set(psGuid, 0, instanceBuffer, InstanceSize, commandBuffer, CommandSize);
+          hr = ps.Set(psGuid, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
           if (hr == 0)
           {
             returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
@@ -315,23 +315,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
     #region constants
 
-    private static readonly Guid NetUpBdaExtensionPropertySet = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
+    private static readonly Guid NETUP_BDA_EXTENSION_PROPERTY_SET = new Guid(0x5aa642f2, 0xbf94, 0x4199, 0xa9, 0x8c, 0xc2, 0x22, 0x20, 0x91, 0xe3, 0xc3);
 
-    private const int InstanceSize = 32;    // The size of a property instance (KSP_NODE) parameter.
-    private const int CommandSize = 48;
-    private const int ApplicationInfoSize = 6 + MaxStringLength;
-    private const int CiStateInfoSize = 8 + MaxStringLength;
-    private const int CaInfoSize = 4 + (MaxCaSystemIds * 2);
-    private const int MmiMenuSize = 8 + (MaxStringLength * (3 + MaxCamMenuEntries));
-    private const int MmiEnquirySize = 8 + MaxStringLength;
-    private const int MmiAnswerSize = 4 + MaxStringLength;
-    private const int MaxBufferSize = 65536;
-    private const int MaxStringLength = 256;
-    private const int MaxCaSystemIds = 256;
-    private const int MaxCamMenuEntries = 64;
-    private const int MaxDiseqcMessageLength = 64;        // This is to reduce the _generalBuffer size - the driver limit is MaxBufferSize.
+    private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
+    private const int COMMAND_SIZE = 48;
+    private const int APPLICATION_INFO_SIZE = 6 + MAX_STRING_LENGTH;
+    private const int CI_STATE_INFO_SIZE = 8 + MAX_STRING_LENGTH;
+    private const int CA_INFO_SIZE = 4 + (MAX_CA_SYSTEM_IDS * 2);
+    private const int MMI_MENU_SIZE = 8 + (MAX_STRING_LENGTH * (3 + MAX_CAM_MENU_ENTRIES));
+    private const int MMI_ENQUIRY_SIZE = 8 + MAX_STRING_LENGTH;
+    private const int MMI_ANSWER_SIZE = 4 + MAX_STRING_LENGTH;
+    private const int MAX_BUFFER_SIZE = 65536;
+    private const int MAX_STRING_LENGTH = 256;
+    private const int MAX_CA_SYSTEM_IDS = 256;
+    private const int MAX_CAM_MENU_ENTRIES = 64;
+    private const int MAX_DISEQC_MESSAGE_LENGTH = 64;         // This is to reduce the _generalBuffer size - the driver limit is MaxBufferSize.
 
-    private const int MmiHandlerThreadSleepTime = 2000;   // unit = ms
+    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 2000;   // unit = ms
 
     #endregion
 
@@ -365,7 +365,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       get
       {
-        return NetUpBdaExtensionPropertySet;
+        return NETUP_BDA_EXTENSION_PROPERTY_SET;
       }
     }
 
@@ -377,15 +377,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       this.LogDebug("NetUP: read application information");
 
-      for (int i = 0; i < ApplicationInfoSize; i++)
+      for (int i = 0; i < APPLICATION_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, ApplicationInfoSize);
+      NetUpCommand command = new NetUpCommand(NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, APPLICATION_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
 
-      if (hr == 0 && returnedByteCount == ApplicationInfoSize)
+      if (hr == 0 && returnedByteCount == APPLICATION_INFO_SIZE)
       {
         ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
         this.LogDebug("  type         = {0}", info.ApplicationType);
@@ -409,14 +409,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       this.LogDebug("NetUP: read conditional access information");
 
-      for (int i = 0; i < CaInfoSize; i++)
+      for (int i = 0; i < CA_INFO_SIZE; i++)
       {
         Marshal.WriteByte(_mmiBuffer, i, 0);
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CaInfoSize);
+      NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CA_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == CaInfoSize)
+      if (hr == 0 && returnedByteCount == CA_INFO_SIZE)
       {
         CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
         this.LogDebug("  # CAS IDs = {0}", info.NumberOfCaSystemIds);
@@ -444,15 +444,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
       // Use a local buffer here because this function is called from the MMI
       // polling thread as well as indirectly from the main TV service thread.
-      IntPtr buffer = Marshal.AllocCoTaskMem(CiStateInfoSize);
-      for (int i = 0; i < CiStateInfoSize; i++)
+      IntPtr buffer = Marshal.AllocCoTaskMem(CI_STATE_INFO_SIZE);
+      for (int i = 0; i < CI_STATE_INFO_SIZE; i++)
       {
         Marshal.WriteByte(buffer, i, 0);
       }
-      NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CiStateInfoSize);
+      NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CI_STATE_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == CiStateInfoSize)
+      if (hr == 0 && returnedByteCount == CI_STATE_INFO_SIZE)
       {
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
       }
@@ -504,7 +504,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       {
         while (!_stopMmiHandlerThread)
         {
-          Thread.Sleep(MmiHandlerThreadSleepTime);
+          Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
 
           CiStateInfo info;
           int hr = GetCiStatus(out info);
@@ -564,15 +564,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       MmiMenu mmi;
       lock (this)
       {
-        for (int i = 0; i < MmiMenuSize; i++)
+        for (int i = 0; i < MMI_MENU_SIZE; i++)
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
 
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MmiMenuSize);
+        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MMI_MENU_SIZE);
         int returnedByteCount;
         int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-        if (hr != 0 || returnedByteCount != MmiMenuSize)
+        if (hr != 0 || returnedByteCount != MMI_MENU_SIZE)
         {
           this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
@@ -633,20 +633,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       MmiEnquiry mmi;
       lock (this)
       {
-        for (int i = 0; i < MmiEnquirySize; i++)
+        for (int i = 0; i < MMI_ENQUIRY_SIZE; i++)
         {
           Marshal.WriteByte(_mmiBuffer, i, 0);
         }
 
-        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MmiEnquirySize);
+        NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MMI_ENQUIRY_SIZE);
         int returnedByteCount;
         int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-        if (hr != 0 || returnedByteCount != MmiEnquirySize)
+        if (hr != 0 || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
           this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
         }
-        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MmiEnquirySize);
+        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MMI_ENQUIRY_SIZE);
         mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
       }
 
@@ -744,7 +744,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         }
         this.LogDebug("NetUP: supported device detected");
         _isNetUp = true;
-        _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
+        _generalBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
         return true;
       }
 
@@ -802,7 +802,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
           this.LogDebug("NetUP: supported device detected");
           _isNetUp = true;
-          _generalBuffer = Marshal.AllocCoTaskMem(MaxDiseqcMessageLength);
+          _generalBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
           return true;
         }
         finally
@@ -870,7 +870,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         return false;
       }
 
-      _mmiBuffer = Marshal.AllocCoTaskMem(MmiMenuSize);
+      _mmiBuffer = Marshal.AllocCoTaskMem(MMI_MENU_SIZE);
 
       _isCamPresent = IsInterfaceReady();
 
@@ -892,7 +892,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         _stopMmiHandlerThread = true;
         // In the worst case scenario it should take approximately
         // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MmiHandlerThreadSleepTime * 2);
+        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
         if (_mmiHandlerThread.IsAlive)
         {
           this.LogDebug("NetUP: warning, failed to join MMI handler thread => aborting thread");
@@ -1198,7 +1198,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       }
 
       // We have a limit for the answer string length.
-      if (answer.Length > MaxStringLength)
+      if (answer.Length > MAX_STRING_LENGTH)
       {
         this.LogDebug("NetUP: answer too long, length = {0}", answer.Length);
         return false;
@@ -1217,9 +1217,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       lock (this)
       {
         Marshal.StructureToPtr(mmi, _mmiBuffer, true);
-        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MmiAnswerSize);
+        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MMI_ANSWER_SIZE);
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
-        NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MmiAnswerSize, IntPtr.Zero, 0);
+        NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MMI_ANSWER_SIZE, IntPtr.Zero, 0);
         int returnedByteCount;
         hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
@@ -1273,7 +1273,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         this.LogDebug("NetUP: command not supplied");
         return true;
       }
-      if (command.Length > MaxDiseqcMessageLength)
+      if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
         this.LogDebug("NetUP: command too long, length = {0}", command.Length);
         return false;

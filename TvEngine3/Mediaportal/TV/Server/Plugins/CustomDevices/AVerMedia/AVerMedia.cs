@@ -249,10 +249,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
 
     #region constants
 
-    private static readonly Guid _ciApiClsid = new Guid(0x68ace120, 0xe5b1, 0x48bd, 0xb8, 0x9f, 0x88, 0xdd, 0x96, 0xc2, 0x83, 0x8b);
+    private static readonly Guid CI_API_CLSID = new Guid(0x68ace120, 0xe5b1, 0x48bd, 0xb8, 0x9f, 0x88, 0xdd, 0x96, 0xc2, 0x83, 0x8b);
 
     // From version 1.1.0.29 of the COM object.
-    private static readonly string[] ValidDevices = new string[]
+    private static readonly string[] VALID_DEVICE_PATHS = new string[]
     {
       "ven_1131&dev_7160&subsys_1d551461",
       "ven_1131&dev_7160&subsys_26551461",  // A707 AVerTV Satellite Trinity
@@ -476,7 +476,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
         return true;
       }
 
-      foreach (String validDevicePath in ValidDevices)
+      foreach (String validDevicePath in VALID_DEVICE_PATHS)
       {
         if (tunerDevicePath.ToLowerInvariant().Contains(validDevicePath))
         {
@@ -517,7 +517,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
         return false;
       }
 
-      Type t = Type.GetTypeFromCLSID(_ciApiClsid);
+      Type t = Type.GetTypeFromCLSID(CI_API_CLSID);
       _ciApi = null;
       try
       {
