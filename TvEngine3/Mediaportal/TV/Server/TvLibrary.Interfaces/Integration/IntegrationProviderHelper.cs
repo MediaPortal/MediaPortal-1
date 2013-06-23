@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
@@ -40,9 +41,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Integration
       {
         return;
       }
-      IWindsorContainer container = Instantiator.Instance.Container(configFile);      
+      IWindsorContainer container = Instantiator.Instance.Container(configFile);
+      // Also add the "root" folder of plugin to assembly lookup paths
+      if (searchPath != ".")
+        AppDomain.CurrentDomain.AppendPrivatePath(searchPath);
+
       var assemblyFilter = new AssemblyFilter(searchPath, "*.Integration.*.dll");
-      
+
       container.Register(AllTypes.FromAssemblyInDirectory(assemblyFilter).BasedOn<IIntegrationProvider>().WithServiceBase().LifestyleSingleton());
       GlobalServiceProvider.Add(container.Resolve<IIntegrationProvider>());
     }
