@@ -48,11 +48,13 @@ namespace MediaPortal.GUI.Pictures
       {
         return null;
       }
-      string slideFilePath = _slideList[_currentSlideIndex];
+      GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
 
-      _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+      _currentSlide = _slideCache.GetCurrentSlide(GUIPictures.fileNameCheck);
 
       GUIPictures tmpGUIpictures = (GUIPictures) GUIWindowManager.GetWindow((int) Window.WINDOW_PICTURES);
+
+      bool _autoShuffleFolder = false;
 
       if (_isSlideShow && _showRecursive)
       {
@@ -66,27 +68,34 @@ namespace MediaPortal.GUI.Pictures
             tmpGUIpictures.AddDir(SlideShow, _currentSlide._filePath);
             _slideRecursive.Add(_currentSlide._filePath);
           }
-          if (_slideDirection == 1 && _slideRecursive.Contains(_currentSlide._filePath))
+          if (_slideRecursive.Contains(_currentSlide._filePath))
           {
-            _slideList.Remove(_currentSlide._filePath);
+            _slideList.Remove(_slideList[_currentSlideIndex]);
+          }
+          if (_slideDirection == 1 || _slideDirection == 0)
+          {
             ShowNext();
-            slideFilePath = _slideList[--_currentSlideIndex];
           }
-          if (_slideDirection == -1 && _slideRecursive.Contains(_currentSlide._filePath))
+          if (_slideDirection == -1)
           {
-            _slideList.Remove(_currentSlide._filePath);
             ShowPrevious();
-            slideFilePath = _slideList[--_currentSlideIndex];
           }
-          _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
+
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[--_currentSlideIndex]);
+          GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
+          _autoShuffleFolder = true;
         }
       }
-      if (_autoShuffle)
+      if (_autoShuffle && (_isSlideShow || _showRecursive) && _autoShuffleFolder)
       {
-        Shuffle();
+        Shuffle(true, false);
+        // Select first item after shuffle from a recursive folder
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+        GUIPictures.fileNameCheck = _slideList[_currentSlideIndex];
       }
 
-      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
+      GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(GUIPictures.fileNameCheck));
 
       ResetCurrentZoom(_currentSlide);
 
@@ -94,7 +103,7 @@ namespace MediaPortal.GUI.Pictures
 
       Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
-      if (Util.Utils.IsVideo(slideFilePath))
+      if (Util.Utils.IsVideo(GUIPictures.fileNameCheck))
       {
         // TODO Handle when it's Radio Stream
         /*if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
@@ -127,7 +136,13 @@ namespace MediaPortal.GUI.Pictures
         _loadVideoPlayback = true;
 
         g_Player.Stop();
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video, null, true, 0, false, true);
+        g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
+        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        if (dlg != null)
+        {
+          dlg.Reset();
+          dlg.Dispose();
+        }
         g_Player.ShowFullScreenWindow();
 
         if (_isSlideShow)
@@ -139,10 +154,20 @@ namespace MediaPortal.GUI.Pictures
         _returnedFromVideoPlayback = true;
       }
       else
+      {
         _slideDirection = 0;
+      }
 
       // Get Name of actual played slide.
       GUIPictures.fileNameCheck = Util.Utils.GetFileNameWithExtension(_currentSlide._filePath);
+
+      if (_showRecursive)
+      {
+        if (!_slideRecursiveItem.Contains(_currentSlide._filePath))
+        {
+          _slideRecursiveItem.Add(_currentSlide._filePath);
+        }
+      }
 
       return _currentSlide;
     }
@@ -277,6 +302,8 @@ namespace MediaPortal.GUI.Pictures
     public List<string> _slideList = new List<string>();
     public List<string> _slideFolder = new List<string>();
     public List<string> _slideRecursive = new List<string>();
+    public List<string> _slideRecursiveItem = new List<string>();
+    public string _folderCurrentItem;
     private int _slideTime = 0;
     private int _counter = 0;
 
@@ -360,7 +387,7 @@ namespace MediaPortal.GUI.Pictures
     private float _panXChange;
     private float _zoomChange;
     private bool _isLoadingRawPicture = false;
-    private bool _isBackgroundMusicPlaying = false;
+    public bool _isBackgroundMusicPlaying = false;
     private string[] _musicFileExtensions;
     private int _lastSegmentIndex = -1;
     private float _renderTimer;
@@ -414,6 +441,11 @@ namespace MediaPortal.GUI.Pictures
             }
             if (SlideDirection == 0)
             {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
               GUIWindowManager.ShowPreviousWindow();
             }
           }
@@ -429,21 +461,29 @@ namespace MediaPortal.GUI.Pictures
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
           {
+            // Get folder path for recursive selectedItemIndex.
+            if (_slideList.Count != 0)
+            {
+              _folderCurrentItem = _slideList[_currentSlideIndex];
+            }
             Reset();
           }
           GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (mDB == null)
+          if (g_Player.IsMusic)
           {
-            mDB = MusicDatabase.Instance;
+            if (mDB == null)
+            {
+              mDB = MusicDatabase.Instance;
+            }
+            if (!resumeSong)
+            {
+              ShowSong();
+            }
+            resumeSong = false;
           }
-          if (!resumeSong)
-          {
-            ShowSong();
-          }
-          resumeSong = false;
           break;
       }
       return base.OnMessage(message);
@@ -554,7 +594,7 @@ namespace MediaPortal.GUI.Pictures
         case Action.ActionType.ACTION_NEXT_PICTURE:
           if (_lastSegmentIndex != -1)
           {
-            ShowNext(true);
+            ShowNext(false, true);
             _slideDirection = 1;
           }
           else if (_isSlideShow)
@@ -568,7 +608,21 @@ namespace MediaPortal.GUI.Pictures
 
           if (!_isPictureZoomed)
           {
-            ShowNext();
+            if ((_currentSlideIndex >= _slideList.Count - 1) && !_autoRepeat)
+            {
+              // Get folder path for recursive selectedItemIndex.
+              if (_slideList.Count != 0)
+              {
+                _folderCurrentItem = _slideList[_currentSlideIndex];
+              }
+              // We reach the end of slideshow
+              _slideDirection = 0;
+              ShowPreviousWindow();
+            }
+            else
+            {
+              ShowNext(false, true);
+            }
           }
           else
           {
@@ -643,6 +697,23 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PAUSE_PICTURE:
+          if (_isSlideShow)
+          {
+            if (_isPictureZoomed)
+            {
+              _userZoomLevel = 1.0f;
+              ZoomBackGround(_defaultZoomFactor);
+              _isPaused = false;
+            }
+            else
+            {
+              _isPaused = !_isPaused;
+            }
+          }
+          _slideTime = (int)(DateTime.Now.Ticks / 10000);
+          break;
+
+        case Action.ActionType.ACTION_PAUSE:
           if (_isSlideShow)
           {
             if (_isPictureZoomed)
@@ -852,13 +923,14 @@ namespace MediaPortal.GUI.Pictures
                   if (_autoRepeat)
                   {
                     _currentSlideIndex = 0;
-                    if (_autoShuffle)
+                    if (_autoShuffle && (_isSlideShow || _showRecursive))
                     {
-                      Shuffle();
+                      Shuffle(false, _autoRepeat);
                     }
                   }
                   else
                   {
+                    _currentSlideIndex--;
                     // How to exit back to GUIPictures?
                     ShowPreviousWindow();
                   }
@@ -1158,9 +1230,34 @@ namespace MediaPortal.GUI.Pictures
       get { return _isSlideShow; }
     }
 
-    public void Shuffle()
+    public void Shuffle(bool _recursive, bool _autoRepeat)
     {
       Random r = new Random(DateTime.Now.Millisecond);
+
+      if (_recursive)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (_slideList.Contains(strSlide))
+          {
+            _slideList.Remove(strSlide);
+          }
+        }
+      }
+
+      if (_autoRepeat)
+      {
+        for (int i = 0; i < _slideRecursiveItem.Count; ++i)
+        {
+          string strSlide = _slideRecursiveItem[i];
+          if (!_slideList.Contains(strSlide))
+          {
+            _slideList.Add(strSlide);
+          }
+        }
+      }
+
       int nItemCount = _slideList.Count;
 
       // iterate through each catalogue item performing arbitrary swaps
@@ -1183,6 +1280,13 @@ namespace MediaPortal.GUI.Pictures
       _isBackgroundMusicPlaying = false;
       _slideDirection = 1;
       _isSlideShow = true;
+      if (_autoShuffle && (_isSlideShow || _showRecursive))
+      {
+        Shuffle(false, false);
+        // Reset currentSlideIndex when slideshow start from context menu
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+      }
     }
 
     public void StartSlideShow(string path)
@@ -1192,11 +1296,19 @@ namespace MediaPortal.GUI.Pictures
       StartBackgroundMusic(path);
       _slideDirection = 1;
       _isSlideShow = true;
+      if (_autoShuffle && (_isSlideShow || _showRecursive))
+      {
+        Shuffle(false, false);
+        // Reset currentSlideIndex when slideshow start from context menu
+        _currentSlideIndex = 0;
+        _currentSlide = _slideCache.GetCurrentSlide(_slideList[_currentSlideIndex]);
+      }
     }
 
 
     public void Reset()
     {
+      _slideRecursiveItem.Clear();
       _slideList.Clear();
       _slideFolder.Clear();
       _slideRecursive.Clear();
@@ -1246,10 +1358,10 @@ namespace MediaPortal.GUI.Pictures
 
     public void ShowNext()
     {
-      ShowNext(false);
+      ShowNext(false, false);
     }
 
-    private void ShowNext(bool jump)
+    private void ShowNext(bool jump, bool next)
     {
       if (!_isSlideShow)
       {
@@ -1268,13 +1380,13 @@ namespace MediaPortal.GUI.Pictures
       GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
       tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
 
-      if (_currentSlideIndex == 0)
+      if (_currentSlideIndex == 0 && !next)
       {
         if (_autoRepeat)
         {
-          if (_autoShuffle)
+          if (_autoShuffle && (_isSlideShow || _showRecursive))
           {
-            Shuffle();
+            Shuffle(false, _autoRepeat);
           }
         }
         else
@@ -2362,9 +2474,15 @@ namespace MediaPortal.GUI.Pictures
 
     private void OnShowInfo()
     {
+      bool bPause = _isPaused;
+      _isPaused = true;
       GUIDialogExif exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
+      // Needed to set GUIDialogExif
+      exifDialog.Restore();
+      exifDialog = (GUIDialogExif)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_EXIF);
       exifDialog.FileName = _backgroundSlide.FilePath;
       exifDialog.DoModal(GetID);
+      _isPaused = bPause;
     }
 
 

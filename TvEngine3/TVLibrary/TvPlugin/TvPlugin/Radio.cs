@@ -859,7 +859,7 @@ namespace TvPlugin
       
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      if (g_Player.Playing)
+      if (g_Player.Playing && !_currentChannel.IsWebstream())
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
         {

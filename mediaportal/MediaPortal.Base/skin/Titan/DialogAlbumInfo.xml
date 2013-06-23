@@ -60,10 +60,11 @@
   </control>
    
  	<control>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>1</id>
 		<posX>750</posX>
 		<posY>194</posY>
+		<width>880</width>
 		<textcolor>FF393939</textcolor>
 		<font>font22</font>
 		<label>#selecteditem</label>
@@ -86,8 +87,24 @@
 	</control>
 	
 	<control>
-		<description>Artist value</description>
-		<type>label</type>
+		<description>Artist value (Tracks)</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>951</posX>
+		<posY>318</posY>
+		<width>220</width>
+		<textcolor>FF393939</textcolor>
+		<font>TitanLight12</font>
+		<label>#AlbumInfo.Artist</label>
+		<visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+	</control>
+	
+	<control>
+		<description>Artist value (BIO)</description>
+		<type>fadelabel</type>
 		<id>0</id>
 		<posX>951</posX>
 		<posY>318</posY>
@@ -95,6 +112,7 @@
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
 		<label>#AlbumInfo.Artist</label>
+		<visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
@@ -114,8 +132,24 @@
 	</control>
 	
 	<control>
-		<description>Album value</description>
-		<type>label</type>
+		<description>Album value (Tracks)</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>951</posX>
+		<posY>280</posY>
+		<width>220</width>
+		<label>#AlbumInfo.Title</label>
+		<textcolor>FF393939</textcolor>
+		<font>TitanLight12</font>
+		<visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+	</control>
+
+	<control>
+		<description>Album value (BIO)</description>
+		<type>fadelabel</type>
 		<id>0</id>
 		<posX>951</posX>
 		<posY>280</posY>
@@ -123,11 +157,12 @@
 		<label>#AlbumInfo.Title</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
+		<visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 	</control>
-
+	
 	<control>
 		<description>Genre</description>
 		<type>label</type>
@@ -172,20 +207,37 @@
 
 
 	<control>
-		<description>Genre value</description>
-		<type>label</type>
+		<description>Genre value (Tracks)</description>
+		<type>fadelabel</type>
 		<id>0</id>
 		<posX>951</posX>
 		<posY>390</posY>
-		<width>560</width>
+		<width>220</width>
 		<label>#AlbumInfo.Genre</label>
 		<textcolor>FF393939</textcolor>
 		<font>TitanLight12</font>
+		<visible>!skin.hassetting(#AlbumInfo.ShowTracks)</visible>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="0">WindowClose</animation>
 		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
 	</control>
 
+	<control>
+		<description>Genre value (BIO)</description>
+		<type>fadelabel</type>
+		<id>0</id>
+		<posX>951</posX>
+		<posY>390</posY>
+		<width>800</width>
+		<label>#AlbumInfo.Genre</label>
+		<textcolor>FF393939</textcolor>
+		<font>TitanLight12</font>
+		<visible>skin.hassetting(#AlbumInfo.ShowTracks)</visible>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="0">WindowClose</animation>
+		<animation effect="slide" start="0,250" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+	</control>
+	
 	<control>
 		<description>Year value</description>
 		<type>label</type>
@@ -221,7 +273,7 @@
 		<posX>750</posX>
 		<posY>468</posY>
 		<width>860</width>
-		<height>300</height>
+		<height>292</height>
 		<textcolor>FF393939</textcolor>
     <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>

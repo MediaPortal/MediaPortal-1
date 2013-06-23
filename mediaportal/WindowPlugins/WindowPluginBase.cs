@@ -263,6 +263,11 @@ namespace WindowPlugins
         {
           OnQueueItem(SelectedFacadeItem());
         }
+        if (actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN || actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
+        {
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
+          OnMessage(msg);
+        }
       }
 
       UpdateButtonStates();
