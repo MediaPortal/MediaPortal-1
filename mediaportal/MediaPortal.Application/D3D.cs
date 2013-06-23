@@ -148,7 +148,6 @@ namespace MediaPortal
     private bool                       _isLoaded;                 //
     private bool                       _lastMouseCursor;          // holds the last mouse cursor state to keep state balance
     private bool                       _lostFocus;                // set to true if form lost focus
-    private bool                       _needReset;                // set to true when the D3D device needs a reset
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
     private bool                       _firstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
@@ -274,14 +273,6 @@ namespace MediaPortal
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    protected virtual void OnDeviceReset(Object sender, EventArgs e) { }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
     protected virtual void FrameMove() { }
 
 
@@ -382,10 +373,21 @@ namespace MediaPortal
     /// </summary>
     protected void ToggleFullscreen()
     {
+      Log.Debug("D3D: ToggleFullScreen()");
+
+      // disable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+
+      // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dialogMenu != null)
+      {
+        dialogMenu.Dispose();
+      }
 
       // reset device if necessary
       Windowed = !Windowed;
-      RecreateBackBuffer();
+      RecreateSwapChain();
       Windowed = !Windowed;
 
       // adjust form sizes and properties
@@ -452,27 +454,32 @@ namespace MediaPortal
       Update();
       Log.Info("D3D: Client Size: {0}x{1}", ClientSize.Width, ClientSize.Height);
       Log.Info("D3D: Screen size: {0}x{1}", GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
+
+      // enable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
     }
 
 
     /// <summary>
     /// reset device if back buffer does not match skin dimensions (e.g. 16:10 display with 16:9 skin, 720p skin on 1080p display etc.)
     /// </summary>
-    private void RecreateBackBuffer()
+    private void RecreateSwapChain()
     {
-      Log.Debug("Main: RecreateBackBuffer()");
+      Log.Debug("Main: RecreateSwapChain()");
+
+      // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
+      if (!GUIGraphicsContext.IsDirectX9ExUsed() && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
+      {
+        g_Player.Stop();
+        while (GUIGraphicsContext.IsPlaying)
+        {
+          Thread.Sleep(100);
+        }
+      }
 
       // halt rendering
       AppActive = false;
       int activeWin = GUIWindowManager.ActiveWindow;
-
-      // disable event handlers
-      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-      GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
-
-      // build new D3D presentation parameters
-      BuildPresentParams(Windowed);
-      GUIGraphicsContext.DX9Device.Reset(_presentParams);
 
       // stop window manager and dispose resources
       GUIWindowManager.UnRoute();
@@ -480,6 +487,33 @@ namespace MediaPortal
       GUIFontManager.Dispose();
       GUITextureManager.Dispose();
       GUIGraphicsContext.DX9Device.EvictManagedResources();
+
+      // build new D3D presentation parameters and reset device
+      BuildPresentParams(Windowed);
+      try
+      {
+        GUIGraphicsContext.DX9Device.Reset(_presentParams);
+      }
+      catch (InvalidCallException)
+      {
+        Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+      }
+      catch (DeviceLostException)
+      {
+        Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+      }
+      catch (DriverInternalErrorException)
+      {
+        Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+      }
+      catch (OutOfVideoMemoryException)
+      {
+        Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+      }
+      catch (OutOfMemoryException)
+      {
+        Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+      }
 
       // load resources
       GUIGraphicsContext.Load();
@@ -494,10 +528,6 @@ namespace MediaPortal
 
       // set new device for font manager
       GUIFontManager.SetDevice();
-
-      // enable event handlers
-      GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
-      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
 
       // continue rendering
       AppActive = true;
@@ -587,96 +617,61 @@ namespace MediaPortal
     /// </summary>
     protected void RecoverDevice()
     {
-      if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
+      // do not try to receover device, when MP does not set a lost state
+      if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST)
       {
-        if (g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
-        {
-          g_Player.Stop();
-        }
+        return;
+      }
 
-        if (!GUIGraphicsContext.IsDirectX9ExUsed())
+      // disable event handlers
+      GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
+
+      Log.Debug("D3D: RecoverDevice()");
+
+      // check cooperation level for D3D device only
+      if (!GUIGraphicsContext.IsDirectX9ExUsed())
+      {
+        Log.Debug("D3D: Testing cooperation level of device");
+        try
         {
-          try
-          {
-            Log.Debug("D3D: RecoverDevice called");
-            // Test the cooperative level to see if it's OK to render
-            GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-          }
-          catch (DeviceLostException)
-          {
-            // If the device was lost, do not render until we get it back
-            AppActive = false;
-            Log.Debug("D3D: DeviceLostException");
-            return;
-          }
-          catch (DeviceNotResetException)
-          {
-            Log.Debug("D3D: DeviceNotResetException");
-            _needReset = true;
-          }
+          GUIGraphicsContext.DX9Device.TestCooperativeLevel();
+        }
+        catch (DeviceLostException)
+        {
+          Log.Warn("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+          return;
+        }
+        catch (DeviceNotResetException)
+        {
+          Log.Warn("D3D: D3DERR_DEVICENOTRESET - device is lost but can be reset at this time");
+        }
+      }
+
+      // lock rendering loop and recreate the backbuffer for the current D3D device
+      RecreateSwapChain();
+
+      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+
+      // enable handlers
+      GUIGraphicsContext.DX9Device.DeviceLost += OnDeviceLost;
+
+
+      if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeStrFile.Length > 0)
+      {
+        RefreshRateChanger.RefreshRateChangePending = false;
+        if (RefreshRateChanger.RefreshRateChangeMediaType != RefreshRateChanger.MediaType.Unknown)
+        {
+          var t1 = (int)RefreshRateChanger.RefreshRateChangeMediaType;
+          var t2 = (g_Player.MediaType)t1;
+          g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile, t2);
         }
         else
         {
-          _needReset = true;
+          g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile);
         }
-
-        if (_needReset)
+        if ((g_Player.HasVideo || g_Player.HasViz) && RefreshRateChanger.RefreshRateChangeFullscreenVideo)
         {
-          if (GUIGraphicsContext.IsDirectX9ExUsed())
-          {
-            BuildPresentParams(Windowed);
-          }
-
-          // Reset the device and resize it
-          Log.Warn("D3D: Resetting DX9 device");
-          try
-          {
-            GUITextureManager.Dispose();
-            GUIFontManager.Dispose();
-
-            if (!GUIGraphicsContext.IsDirectX9ExUsed())
-            {
-              GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
-              _needReset = false;
-            }
-            else
-            {
-              Log.Warn("D3D: DirectX9Ex is lost or GPU hung --> Reinit of DX9Ex is needed.");
-              GUIGraphicsContext.DX9ExRealDeviceLost = true;
-              InitializeDevice();
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("D3D: Reset failed - {0}", ex.ToString());
-            GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
-            GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
-            InitializeDevice();
-            return;
-          }
-
-          Log.Debug("D3D: EnvironmentResized()");
-          EnvironmentResized(new CancelEventArgs());
-        }
-        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
-
-        if (RefreshRateChanger.RefreshRateChangePending && RefreshRateChanger.RefreshRateChangeStrFile.Length > 0)
-        {
-          RefreshRateChanger.RefreshRateChangePending = false;
-          if (RefreshRateChanger.RefreshRateChangeMediaType != RefreshRateChanger.MediaType.Unknown)
-          {
-            var t1 = (int)RefreshRateChanger.RefreshRateChangeMediaType;
-            var t2 = (g_Player.MediaType)t1;
-            g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile, t2);
-          }
-          else
-          {
-            g_Player.Play(RefreshRateChanger.RefreshRateChangeStrFile);
-          }
-          if ((g_Player.HasVideo || g_Player.HasViz) && RefreshRateChanger.RefreshRateChangeFullscreenVideo)
-          {
-            g_Player.ShowFullScreenWindow();
-          }
+          g_Player.ShowFullScreenWindow();
         }
       }
     }
@@ -786,9 +781,22 @@ namespace MediaPortal
         return;
       }
 
+      // Reset DialogMenu to avoid freeze on minimize
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dialogMenu != null)
+      {
+        dialogMenu.Dispose();
+      }
+
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
       if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
       {
+        if (dialogMenu != null)
+        {
+          dialogMenu.Reset();
+          dialogMenu.Dispose();
+        }
+
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
         AppActive = false;
@@ -1142,7 +1150,6 @@ namespace MediaPortal
 
       // Setup the event handlers for our device
       GUIGraphicsContext.DX9Device.DeviceLost  += OnDeviceLost;
-      GUIGraphicsContext.DX9Device.DeviceReset += OnDeviceReset;
 
       // Initialize the app's device-dependent objects
       try
@@ -1264,37 +1271,6 @@ namespace MediaPortal
         // ReSharper disable EmptyGeneralCatchClause
         catch {}
         // ReSharper restore EmptyGeneralCatchClause
-      }
-    }
-
-
-    /// <summary>
-    /// Fired when our environment was resized
-    /// </summary>
-    /// <param name="e">Set the cancel member to true to turn off automatic device reset</param>
-    private void EnvironmentResized(CancelEventArgs e)
-    {
-      // Check to see if we're closing or changing the form style
-      if (_isClosing)
-      {
-        // We are, cancel our reset, and exit
-        e.Cancel = true;
-        return;
-      }
-
-      // Check to see if we're minimizing and our rendering object
-      // is not the form, if so, cancel the resize
-      if (WindowState == FormWindowState.Minimized || !AppActive)
-      {
-        e.Cancel = true;
-      }
-
-      // Set up the fullscreen cursor
-      if (_showCursorWhenFullscreen && !Windowed)
-      {
-        var ourCursor = Cursor;
-        GUIGraphicsContext.DX9Device.SetCursor(ourCursor, true);
-        GUIGraphicsContext.DX9Device.ShowCursor(true);
       }
     }
 
@@ -1522,7 +1498,6 @@ namespace MediaPortal
 
         // remove the device lost and reset handlers as application is already closing down
         GUIGraphicsContext.DX9Device.DeviceLost  -= OnDeviceLost;
-        GUIGraphicsContext.DX9Device.DeviceReset -= OnDeviceReset;
         GUIGraphicsContext.DX9Device.Dispose();
       }
     }

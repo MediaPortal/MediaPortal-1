@@ -115,7 +115,7 @@ namespace MediaPortal
 
         CurrentDisplay = Screen.AllScreens[screenNumber];
         Log.Info("SplashScreen: Splash screen is using screen: {0} (Position: {1},{2} Dimensions: {3}x{4})",
-          CurrentDisplay.DeviceName, CurrentDisplay.Bounds.Location.X, CurrentDisplay.Bounds.Location.Y, CurrentDisplay.Bounds.Width, CurrentDisplay.Bounds.Height);
+          GetCleanDisplayName(CurrentDisplay), CurrentDisplay.Bounds.Location.X, CurrentDisplay.Bounds.Location.Y, CurrentDisplay.Bounds.Width, CurrentDisplay.Bounds.Height);
 
         if (useFullScreenSplash && startFullScreen)
         {
@@ -130,6 +130,23 @@ namespace MediaPortal
       {
         Log.Error("Error during splashscreen handling: {0}", e.Message);
       }
+    }
+
+    /// <summary>
+    /// XP returns random garbage in a name of a display in .NET
+    /// </summary>
+    /// <param name="screen"></param>
+    /// <returns></returns>
+    private static string GetCleanDisplayName(Screen screen)
+    {
+      if (OSInfo.OSInfo.VistaOrLater())
+      {
+        return screen.DeviceName;
+      }
+
+      int length = screen.DeviceName.IndexOf("\0", StringComparison.Ordinal);
+      string deviceName = length == -1 ? screen.DeviceName : screen.DeviceName.Substring(0, length);
+      return deviceName;
     }
 
     /// <summary>

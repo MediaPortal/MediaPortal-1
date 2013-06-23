@@ -58,7 +58,8 @@
       this.groupBoxSkin.Text = "Skin selection";
       // 
       // mpButtonEditSkinSettings
-      // 
+      //
+      this.mpButtonEditSkinSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonEditSkinSettings.Location = new System.Drawing.Point(263, 159);
       this.mpButtonEditSkinSettings.Name = "mpButtonEditSkinSettings";
       this.mpButtonEditSkinSettings.Size = new System.Drawing.Size(150, 23);

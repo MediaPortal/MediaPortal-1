@@ -128,27 +128,27 @@
         <visible>no</visible>
       </control>
       <control>
-        <description>TV Shows</description>
-        <type>button</type>
-        <id>76</id>
-        <hyperlink>25</hyperlink>
-        <label>3</label>
-        <onup>13</onup>
-        <ondown>77</ondown>
-        <onright>99</onright>
-        <visible>plugin.isenabled(MP-TV Series)</visible>
-      </control>
-      <control>
-        <description>Videos</description>
-        <type>button</type>
-        <id>77</id>
-        <hyperlink>9811</hyperlink>
-        <label>1300</label>
-        <onup>76</onup>
-        <ondown>8</ondown>
-        <onright>99</onright>
-        <visible>plugin.isenabled(Videos)</visible>
-      </control>
+      <description>TV Shows</description>
+      <type>button</type>
+      <id>76</id>
+      <hyperlink>9811</hyperlink>
+      <label>1300</label>
+      <onup>13</onup>
+      <ondown>77</ondown>
+      <onright>99</onright>
+      <visible>plugin.isenabled(MP-TV Series)</visible>
+    </control>
+    <control>
+      <description>Videos</description>
+      <type>button</type>
+      <id>77</id>
+      <hyperlink>25</hyperlink>
+      <label>3</label>
+      <onup>76</onup>
+      <ondown>8</ondown>
+      <onright>99</onright>
+      <visible>plugin.isenabled(Videos)</visible>
+    </control>
     </control>
     <control>
       <description>LCD image</description>

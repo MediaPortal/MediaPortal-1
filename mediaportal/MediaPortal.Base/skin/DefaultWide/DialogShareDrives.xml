@@ -227,7 +227,7 @@
 				</control>
 				<control>
 					<description>Remeber last folder On/Off</description>
-					<type>togglebutton</type>
+					<type>checkbutton</type>
 					<id>40</id>
 					<label>Remember last folder</label>
 					<posX>775</posX>
@@ -241,7 +241,7 @@
 				</control>
 				<control>
 					<description>Add  optical drives On/Off</description>
-					<type>togglebutton</type>
+					<type>checkbutton</type>
 					<id>41</id>
 					<label>Add optical drives</label>
 					<posX>775</posX>
@@ -255,7 +255,7 @@
 				</control>
 				<control>
 					<description>Auto switch removables On/Off</description>
-					<type>togglebutton</type>
+					<type>checkbutton</type>
 					<id>42</id>
 					<label>Switch to removables</label>
 					<posX>775</posX>

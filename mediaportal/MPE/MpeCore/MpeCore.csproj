@@ -214,6 +214,7 @@
     <Compile Include="Classes\VersionProvider\MediaPortalVersion.cs" />
     <Compile Include="Classes\VersionProvider\SkinVersion.cs" />
     <Compile Include="Classes\VersionProvider\TvServerVersion.cs" />
+    <Compile Include="Classes\VersionProvider\VersionProvider.cs" />
     <Compile Include="Classes\WizardButtonsEnum.cs" />
     <Compile Include="Classes\WizardNavigator.cs" />
     <Compile Include="Classes\ZipProvider\ZipProviderClass.cs" />

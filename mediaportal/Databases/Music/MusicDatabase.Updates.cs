@@ -1547,18 +1547,11 @@ namespace MediaPortal.Music.Database
 
                 if (!String.IsNullOrEmpty(mp3TagImage))
                 {
-                  if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution,
-                                                  (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                  {
-                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                  }
-                  if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                                  (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                  {
-                    Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
-                  }
+                  Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+                  Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
 
                   Util.Utils.FileDelete(mp3TagImage); // clean up the temp file directly
                 }
@@ -1612,18 +1605,11 @@ namespace MediaPortal.Music.Database
 
             if (foundThumb)
             {
-              if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution,
-                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-              {
-                Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
-              }
-              if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                              (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-              {
-                Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
-              }
+              Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int) Thumbs.ThumbResolution,
+                                           (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+              Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                           (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
             }
           }
         }
@@ -1648,13 +1634,8 @@ namespace MediaPortal.Music.Database
               if (Util.Utils.FileExistsInCache(sourceCover))
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
-                //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
-                if (
-                  !Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution,
-                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                {
-                  Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
-                }
+                Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int) Thumbs.ThumbLargeResolution,
+                                             (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                 Thread.Sleep(1);
               }
             }
@@ -1710,18 +1691,11 @@ namespace MediaPortal.Music.Database
 
               if (foundCover)
               {
-                if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution,
-                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                {
-                  Log.Info("MusicDatabase: Could not cache folder thumb from folder {0}", sharePath);
-                }
-                if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
-                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
-                {
-                  Log.Info("MusicDatabase: Could not cache large folder thumb from folder {0}", sharePath);
-                }
+                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int) Thumbs.ThumbResolution,
+                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+
+                Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int) Thumbs.ThumbLargeResolution,
+                                             (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               }
             }
             catch (Exception ex2)

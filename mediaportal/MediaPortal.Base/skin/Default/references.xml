@@ -4,7 +4,7 @@
   <skin>
     <width>960</width>
     <height>720</height>
-    <version>1.3.0.1</version>
+    <version>1.4.0.0</version>
     <author>The Fantastic Four (MP Design Team: cul8er, Tgx, ysmp, catavolt)</author>
   </skin>
   <style Name="NoShadow">
@@ -246,33 +246,6 @@
     <disabledcolor>60ffffff</disabledcolor>
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
-  </control>
-  <control>
-    <description>default togglebutton</description>
-    <type>togglebutton</type>
-    <id>0</id>
-    <posX>399</posX>
-    <posY>250</posY>
-    <width>230</width>
-    <height>40</height>
-    <textXOff>7</textXOff>
-    <textYOff>6</textYOff>
-    <textpadding>30</textpadding>
-    <textureFocus>togglebutton-on-focus.png</textureFocus>
-    <textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-    <AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-    <AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-    <label>-</label>
-    <font>font12</font>
-    <textcolor>ffffffff</textcolor>
-    <colordiffuse>ffffffff</colordiffuse>
-    <disabledcolor>ff808080</disabledcolor>
-    <textcolorNoFocus>ff6FAFE1</textcolorNoFocus>
-    <dimColor>ffcccccc</dimColor>
-    <shadowAngle>45</shadowAngle>
-    <shadowDistance>1</shadowDistance>
-    <shadowColor>ff000000</shadowColor>
-    <scrollStartDelaySec>0</scrollStartDelaySec>
   </control>
   <control>
     <description>sort button</description>

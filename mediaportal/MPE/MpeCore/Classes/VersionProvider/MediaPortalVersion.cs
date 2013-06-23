@@ -27,26 +27,24 @@ using MpeCore.Classes;
 
 namespace MpeCore.Classes.VersionProvider
 {
-  public class MediaPortalVersion : IVersionProvider
+  public class MediaPortalVersion : VersionProvider
   {
     public static readonly VersionInfo MinimumMPVersionRequired = new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion());
     
-    public string DisplayName
+    public override string DisplayName
     {
       get { return "MediaPortal"; }
     }
 
-    public bool Validate(DependencyItem componentItem)
+    public override bool Validate(DependencyItem dependency)
     {
-      if (componentItem.MinVersion.CompareTo(MinimumMPVersionRequired) < 0)
+      if (dependency.MinVersion < MinimumMPVersionRequired)
         return false;
-      if (Version(componentItem.Id).CompareTo(componentItem.MinVersion) >= 0 &&
-          Version(componentItem.Id).CompareTo(componentItem.MaxVersion) <= 0)
-        return true;
-      return false;
+
+      return base.Validate(dependency);
     }
 
-    public VersionInfo Version(string id)
+    public override VersionInfo Version(string id)
     {
       return new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion());
     }

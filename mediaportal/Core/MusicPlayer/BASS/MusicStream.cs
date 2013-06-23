@@ -214,6 +214,14 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// Returns the Tag Info set from an Internet Stream
+    /// </summary>
+    public TAG_INFO StreamTags
+    {
+      get { return _tagInfo; }  
+    }
+
     #endregion
     
     #endregion
@@ -674,7 +682,10 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _streamEventSyncHandles.Add(RegisterCrossFadeEvent(_stream));
       }
-      _streamEventSyncHandles.Add(RegisterPlaybackEndEvent(_stream));
+      else
+      {
+        _streamEventSyncHandles.Add(RegisterPlaybackEndEvent(_stream));
+      }
     }
 
     /// <summary>
@@ -763,24 +774,31 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       new Thread(() =>
                    {
-                     Log.Debug("BASS: X-Fading out stream {0}", _filePath);
-
-                     if (Config.CrossFadeIntervalMs > 0)
+                     try
                      {
-                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
-                                                       0, 0, 0, null);
-                       GUIWindowManager.SendThreadMessage(msg);
+                       Log.Debug("BASS: X-Fading out stream {0}", _filePath);
+
+                       if (Config.CrossFadeIntervalMs > 0)
+                       {
+                         // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
+                         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
+                                                         0, 0, 0, null);
+                         GUIWindowManager.SendThreadMessage(msg);
+                       }
+
+                       // We want to get informed, when Crossfading has ended
+                       _playBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
+                       Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate,
+                                                IntPtr.Zero);
+
+                       _crossFading = true;
+                       Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                                       Config.CrossFadeIntervalMs);
                      }
-
-                     // We want to get informed, when Crossfading has ended
-                     _playBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
-                     Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate,
-                                              IntPtr.Zero);
-
-                     _crossFading = true;
-                     Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0,
-                                                     Config.CrossFadeIntervalMs);
+                     catch (AccessViolationException)
+                     {
+                       Log.Error("BASS: Caught AccessViolationException in Crossfade Proc");
+                     }
                    }
       ) { Name = "BASS X-Fade" }.Start();
     }
@@ -798,6 +816,10 @@ namespace MediaPortal.MusicPlayer.BASS
                    {
                      _crossFading = false;
                      Log.Debug("BASS: Fading of stream finished.");
+                     if (MusicStreamMessage != null)
+                     {
+                       MusicStreamMessage(this, StreamAction.Ended);
+                     }
                    }
       ) { Name = "BASS X-FadeEnded" }.Start();
     }
