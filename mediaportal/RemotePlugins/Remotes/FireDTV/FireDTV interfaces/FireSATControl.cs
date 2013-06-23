@@ -61,7 +61,7 @@ namespace MediaPortal.InputDevices.FireDTV
         }
         else
         {
-          Log.Error("FireDTV: FiresatApi.dll could not be found on your system!");
+          Log.Info("FireDTV: FiresatApi.dll could not be found on your system!");
           return;
         }
 

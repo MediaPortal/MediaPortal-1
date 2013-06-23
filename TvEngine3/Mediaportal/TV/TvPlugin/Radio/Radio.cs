@@ -37,13 +37,13 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.TvPlugin.Helper;
 using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace Mediaportal.TV.TvPlugin.Radio
 {
   [PluginIcons("Resources\\TvPlugin.Radio.gif", "Resources\\TvPlugin.Radio_disabled.gif")]
   public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
-
     #region constants    
 
     #endregion
@@ -129,10 +129,11 @@ namespace Mediaportal.TV.TvPlugin.Radio
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
-        currentLayout = (GUIFacadeControl.Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)GUIFacadeControl.Layout.List);
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-
-        string tmpLine = xmlreader.GetValue("myradio", "sort");
+        
+        string tmpLine;
+        tmpLine = xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
         {
           if (tmpLine == "name")
@@ -382,13 +383,13 @@ namespace Mediaportal.TV.TvPlugin.Radio
         facadeLayout.EnableScrollLabel = currentSortMethod == SortMethod.Name;
     }
 
-    protected override bool AllowLayout(GUIFacadeControl.Layout layout)
+    protected override bool AllowLayout(Layout layout)
     {
       switch (layout)
       {
-        case GUIFacadeControl.Layout.List:
-        case GUIFacadeControl.Layout.SmallIcons:
-        case GUIFacadeControl.Layout.LargeIcons:
+        case Layout.List:
+        case Layout.SmallIcons:
+        case Layout.LargeIcons:
           return true;
       }
       return false;
@@ -510,30 +511,30 @@ namespace Mediaportal.TV.TvPlugin.Radio
             if (channel != null)
             {
               item = new GUIListItem();
-              item.Label = channel.DisplayName;
-              item.IsFolder = false;
-              item.MusicTag = channel;
-              item.AlbumInfoTag = map;
-              if (channel.IsWebstream())
-              {
-                item.IconImageBig = "DefaultMyradioStreamBig.png";
-                item.IconImage = "DefaultMyradioStream.png";
-              }
-              else
-              {
-                item.IconImageBig = "DefaultMyradioBig.png";
-                item.IconImage = "DefaultMyradio.png";
-              }
-              string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-              if (!string.IsNullOrEmpty(thumbnail))
-              {
-                item.IconImageBig = thumbnail;
-                item.IconImage = thumbnail;
-                item.ThumbnailImage = thumbnail;
-              }
-              facadeLayout.Add(item);
-              totalItems++;
+            item.Label = channel.DisplayName;
+            item.IsFolder = false;
+            item.MusicTag = channel;
+            item.AlbumInfoTag = map;
+            if (channel.IsWebstream())
+            {
+              item.IconImageBig = "DefaultMyradioStreamBig.png";
+              item.IconImage = "DefaultMyradioStream.png";
             }
+            else
+            {
+              item.IconImageBig = "DefaultMyradioBig.png";
+              item.IconImage = "DefaultMyradio.png";
+            }
+            string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+            if (!string.IsNullOrEmpty(thumbnail))
+            {
+              item.IconImageBig = thumbnail;
+              item.IconImage = thumbnail;
+              item.ThumbnailImage = thumbnail;
+            }
+            facadeLayout.Add(item);
+            totalItems++;
+          }
         }
       }
 
@@ -577,7 +578,34 @@ namespace Mediaportal.TV.TvPlugin.Radio
 
     private static void SetLabels()
     {
+      // TODO: why this is disabled?      
       return;
+      /*SortMethod method = currentSortMethod;
+
+      for (int i = 0; i < GetItemCount(); ++i)
+      {
+        GUIListItem item = GetItem(i);
+        if (item.MusicTag != null && !item.IsFolder)
+        {
+          Channel channel = (Channel)item.MusicTag;
+          IList details=channel.ReferringTuningDetail();
+          TuningDetail detail=(TuningDetail)details[0];
+          if (method == SortMethod.Bitrate)
+          {
+            if (detail.Bitrate > 0)
+              item.Label2 = detail.Bitrate.ToString();
+            else
+            {
+              double frequency = detail.Frequency;
+              if (detail.ChannelType==6)
+                frequency /= 1000000d;
+              else
+                frequency /= 1000d;
+              item.Label2 = System.String.Format("{0:###.##} MHz.", frequency);
+            }
+          }
+        }
+      }*/
     }
 
     #region Sort Members
@@ -826,7 +854,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
       
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 
-      if (g_Player.Playing)
+      if (g_Player.Playing && !_currentChannel.IsWebstream())
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
         {
