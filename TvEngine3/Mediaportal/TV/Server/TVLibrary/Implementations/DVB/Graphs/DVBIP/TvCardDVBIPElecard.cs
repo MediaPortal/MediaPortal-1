@@ -20,13 +20,13 @@
 
 using System;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvLibrary.Implementations.DVB
+namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles Elecard DVB-IP sources.
+  /// Implementation of <see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.ITVCard"/> which handles Elecard DVB-IP sources.
   /// </summary>
   public class TvCardDVBIPElecard : TvCardDVBIP
   {
@@ -41,6 +41,11 @@ namespace TvLibrary.Implementations.DVB
     {
       _defaultUrl = "elecard://0.0.0.0:1234:t=m2t/udp";
       _sourceFilterGuid = new Guid(0x62341545, 0x9318, 0x4671, 0x9d, 0x62, 0x9c, 0xaa, 0xcd, 0xd5, 0xd2, 0x0a);
+    }
+
+    protected override void AddSourceFilter()
+    {
+      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid, "DVB-IP Source Filter");
     }
   }
 }

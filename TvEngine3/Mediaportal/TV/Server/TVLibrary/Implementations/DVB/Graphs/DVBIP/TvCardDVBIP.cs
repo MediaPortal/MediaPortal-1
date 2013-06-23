@@ -30,21 +30,21 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles MediaPortal DVB-IP sources.
+  /// Implementation of <see cref="T:Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.ITVCard"/> which handles MediaPortal DVB-IP sources.
   /// </summary>
-  public class TvCardDVBIP : TvCardDvbBase, ITVCard
+  public class TvCardDVBIP : TvCardDvbBase
   {
     #region variables
 
     /// <summary>
     /// The DVB-IP source filter.
     /// </summary>
-    private IBaseFilter _filterStreamSource = null;
+    protected IBaseFilter _filterStreamSource = null;
 
     /// <summary>
     /// The instance number of this DVB-IP tuner.
     /// </summary>
-    private int _sequenceNumber = -1;
+    private readonly int _sequenceNumber = -1;
 
     /// <summary>
     /// The input pin for the first filter connected to the source filter.
@@ -75,6 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
+
       // Pause graph not supported.
       if (_idleMode == DeviceIdleMode.Pause)
       {
@@ -104,14 +105,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
           throw new TvException("The graph is already built.");
         }
 
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        _graphBuilder = (IFilterGraph2) new FilterGraph();
+        _capBuilder = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
         AddTsWriterFilterToGraph();
-        _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                          "DVB-IP Source Filter");
+        AddSourceFilter();
         IBaseFilter lastFilter = _filterStreamSource;
 
         // Check for and load plugins, adding any additional device filters to the graph.
@@ -188,9 +188,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
         const string tvcarddvbipGraphBuildingFailed = "TvCardDvbIp: graph building failed";
         this.LogError(ex, tvcarddvbipGraphBuildingFailed);
         Dispose();
-        _isDeviceInitialised = false;          
+        _isDeviceInitialised = false;
         throw new TvExceptionGraphBuildingFailed(tvcarddvbipGraphBuildingFailed, ex);
       }
+    }
+
+    /// <summary>
+    /// Adds the source filter to the graph. It will be loaded directly from filename, without need to be registered.
+    /// Derived classes may override this method to be able to use registered filters.
+    /// </summary>
+    protected virtual void AddSourceFilter()
+    {
+      _filterStreamSource = FilterLoader.LoadFilterFromDll("MPIPTVSource.ax", _sourceFilterGuid, true);
+      _graphBuilder.AddFilter(_filterStreamSource, "DVB-IP Source Filter");
     }
 
     /// <summary>
@@ -200,8 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     protected virtual void AddStreamSourceFilter(string url)
     {
       this.LogDebug("TvCardDvbIp: add source filter");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                                  "DVB-IP Source Filter");
+      AddSourceFilter();
       AMMediaType mpeg2ProgramStream = new AMMediaType();
       mpeg2ProgramStream.majorType = MediaType.Stream;
       mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
@@ -212,7 +221,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       mpeg2ProgramStream.formatType = FormatType.None;
       mpeg2ProgramStream.formatSize = 0;
       mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-      ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
+      ((IFileSourceFilter) _filterStreamSource).Load(url, mpeg2ProgramStream);
 
       // (Re)connect the source filter to the first filter in the chain.
       IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
@@ -261,7 +270,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       DVBIPChannel dvbipChannel = channel as DVBIPChannel;
       if (dvbipChannel == null)
       {
-        throw new TvException("TvCardDvbIp: channel is not a DVB-IP channel!!! " + channel.GetType().ToString());
+        throw new TvException("TvCardDvbIp: channel is not a DVB-IP channel!!! " + channel.GetType());
       }
 
       if (_useCustomTuning)
