@@ -4,9 +4,9 @@
         <name>Castle.Facilities.EventWiring</name>
     </assembly>
     <members>
-        <member name="T:Castle.Facilities.EventWiring.EventSubscribers">
+        <member name="T:Castle.Facilities.EventWiring.NaiveMethodNameExtractor">
             <summary>
-              Collects information about subscribers for given event
+              Extracts MethodInfo of metho invoked in delegate. Based on ILReader class from http://www.gocosmos.org project
             </summary>
         </member>
         <member name="T:Castle.Facilities.EventWiring.EventWiringException">
@@ -178,9 +178,9 @@
             </summary>
             <value>The handler.</value>
         </member>
-        <member name="T:Castle.Facilities.EventWiring.NaiveMethodNameExtractor">
+        <member name="T:Castle.Facilities.EventWiring.EventSubscribers">
             <summary>
-              Extracts MethodInfo of metho invoked in delegate. Based on ILReader class from http://www.gocosmos.org project
+              Collects information about subscribers for given event
             </summary>
         </member>
     </members>

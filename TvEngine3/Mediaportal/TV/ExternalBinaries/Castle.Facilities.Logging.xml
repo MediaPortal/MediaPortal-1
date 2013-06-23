@@ -4,11 +4,6 @@
         <name>Castle.Facilities.Logging</name>
     </assembly>
     <members>
-        <member name="T:Castle.Facilities.Logging.LoggerImplementation">
-            <summary>
-              The supported <see cref="T:Castle.Core.Logging.ILogger"/> implementations
-            </summary>
-        </member>
         <member name="T:Castle.Facilities.Logging.LoggerResolver">
             <summary>
               Custom resolver used by Windsor. It gives
@@ -59,6 +54,11 @@
               loads configuration from current AppDomain's config file (aka web.config/app.config)
             </summary>
             <returns> </returns>
+        </member>
+        <member name="T:Castle.Facilities.Logging.LoggerImplementation">
+            <summary>
+              The supported <see cref="T:Castle.Core.Logging.ILogger"/> implementations
+            </summary>
         </member>
     </members>
 </doc>
