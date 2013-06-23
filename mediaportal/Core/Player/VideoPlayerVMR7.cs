@@ -436,7 +436,8 @@ namespace MediaPortal.Player
             ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
-            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
+            ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+            subtitleLanguage.ToUpperInvariant().Contains(ci.ThreeLetterWindowsLanguageName))
         {
           CurrentSubtitleStream = i;
           Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
