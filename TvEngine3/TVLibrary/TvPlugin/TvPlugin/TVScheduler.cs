@@ -779,7 +779,11 @@ namespace TvPlugin
                      break;
           }
              item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
-             break;              
+             break;     
+       
+           case (int)ScheduleRecordingType.SeriesLink:
+              item.Label2 = GUILocalizeStrings.Get(200095, new object[] { rec.ReferencedChannel().DisplayName });
+              break;         
         }
         }
         else

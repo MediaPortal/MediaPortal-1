@@ -2105,6 +2105,10 @@
     <String id="200093">Disc mount time out reached!</String>
     <String id="200094">Keep trying for further 60 seconds?</String>
     <String id="200095">Video Stream</String>
+    <String id="210092">Record series</String>
+    <String id="210093">Quick record</String>
+    <String id="210094">Programme info</String>
+    <String id="210095">Series link on {0}</String>
     <String id="300000">Use pixel ratio correction</String>
     <String id="300001">Correction mode</String>
     <String id="300002">Display mode</String>
