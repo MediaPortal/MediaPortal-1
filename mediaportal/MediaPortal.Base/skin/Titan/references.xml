@@ -3,7 +3,7 @@
   <skin>
     <width>1920</width>
     <height>1080</height>
-    <version>1.3.0.1</version>
+    <version>1.4.0.0</version>
   </skin>
   <style Name="InfoLabel">
     <width>230</width>
@@ -458,10 +458,10 @@
     <image>-</image>
     <font>font12</font>
     <shadedColor>ffffffff</shadedColor>
-    <selectedColor>ffffffff</selectedColor>
-    <textcolor>FF85CFFF</textcolor>
-    <textcolor2>FF85CFFF</textcolor2>
-    <textcolor3>FF85CFFF</textcolor3>
+    <selectedColor>FF00B7FF</selectedColor>
+    <textcolor>ffffffff</textcolor>
+    <textcolor2>ffffffff</textcolor2>
+    <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
     <remoteColor>FFFC7B19</remoteColor>
     <downloadColor>fffc7b19</downloadColor>

@@ -17,47 +17,47 @@
       <height>1080</height>
       <texture>background.png</texture>
       <shouldCache>true</shouldCache>
+    </control>	
+		
+    <import>common.time.xml</import>
+		
+    <control>
+      <description>Menu</description>
+      <type>menu</type>
+      <id>50</id>
+      <posX>90</posX>
+      <posY>880</posY>
+      <width>1550</width>
+      <horizontal>yes</horizontal>		
+      <textcolor>ffffffff</textcolor>
+      <textColorNoFocus>ff6aa5cb</textColorNoFocus>
+      <textAlign>center</textAlign>
+      <buttonTextXOff>0</buttonTextXOff>
+      <buttonTextYOff>0</buttonTextYOff>
+      <buttonHeight>100</buttonHeight>
+      <buttonWidth>350</buttonWidth>		
+      <buttonOffset>0</buttonOffset>
+      <buttonFont>TitanLight20</buttonFont>
+      <spaceBetweenButtons>0</spaceBetweenButtons>
+      <numberOfButtons>5</numberOfButtons>
+      <textureButtonFocus>-</textureButtonFocus>
+      <textureButtonNoFocus>-</textureButtonNoFocus>
+      <hoverX>0</hoverX>
+      <hoverY>0</hoverY>
+      <hoverWidth>1920</hoverWidth>
+      <hoverHeight>1080</hoverHeight>
+      <hoverKeepAspectratio>no</hoverKeepAspectratio>
+      <scrollTime>150</scrollTime>
+      <scrollTimeMin>150</scrollTimeMin>
+      <mouseScrollTime>900</mouseScrollTime>
+      <mouseScrollTimeMin>450</mouseScrollTimeMin>
+      <textureBackground>-</textureBackground>
+      <onup>12</onup>
+      <ondown>12</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>       
     </control>
-	
-<import>common.time.xml</import>
-
-	<control>
-		<description>Menu</description>
-		<type>menu</type>
-		<id>50</id>
-    <posX>90</posX>
-    <posY>880</posY>
-    <width>1550</width>
-		<horizontal>yes</horizontal>		
-		<textcolor>ffffffff</textcolor>
-		<textColorNoFocus>ff6aa5cb</textColorNoFocus>
-		<textAlign>center</textAlign>
-		<buttonTextXOff>0</buttonTextXOff>
-		<buttonTextYOff>0</buttonTextYOff>
-		<buttonHeight>100</buttonHeight>
-		<buttonWidth>350</buttonWidth>		
-		<buttonOffset>0</buttonOffset>
-		<buttonFont>TitanLight20</buttonFont>
-		<spaceBetweenButtons>0</spaceBetweenButtons>
-    <numberOfButtons>5</numberOfButtons>
-    <textureButtonFocus>-</textureButtonFocus>
-    <textureButtonNoFocus>-</textureButtonNoFocus>
-		<hoverX>0</hoverX>
-		<hoverY>0</hoverY>
-		<hoverWidth>1920</hoverWidth>
-		<hoverHeight>1080</hoverHeight>
-		<hoverKeepAspectratio>no</hoverKeepAspectratio>
-    <scrollTime>150</scrollTime>
-    <scrollTimeMin>150</scrollTimeMin>
-    <mouseScrollTime>900</mouseScrollTime>
-    <mouseScrollTimeMin>450</mouseScrollTimeMin>
-    <textureBackground>-</textureBackground>
-		<onup>2</onup>
-		<ondown>2</ondown>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation>     
-	</control>
-
+		
     <control>
       <description>DEFAULT BACKGROUND</description>
       <type>image</type>
@@ -68,10 +68,10 @@
       <height>1080</height>
       <texture>fanart_overlay.png</texture>
       <shouldCache>true</shouldCache>
-	  <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>
-    
+		
     <control>
       <description>ICON</description>
       <type>image</type>
@@ -81,51 +81,52 @@
       <width>62</width>
       <height>55</height>
       <texture>icon_home.png</texture>
-	  <animation effect="fade" time="250">WindowOpen</animation>
-	  <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
     </control>	
-	
-	<control>
-		<id>1</id>
-		<type>image</type>
-		<posX>858</posX>
-		<posY>0</posY>
-		<texture>hiddenmenu_tab_up.png</texture>
-		<visible>![Control.HasFocus(2) | Control.HasFocus(3) | Control.HasFocus(4)] + !string.contains(#Titan.HiddenMenu, false)</visible>
-		<animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
-		<animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
-	</control>		
 		
     <control>
-		<description>RSS BACKGROUND</description>
-		<type>image</type>
-		<id>0</id>
-		<posX>52</posX>
-		<posY>958</posY>
-		<width>1820</width>
-		<height>84</height>
-		<texture>BasicHomeSubBG.png</texture>  
-		<animation effect="fade" time="250">WindowOpen</animation>
-		<animation effect="fade" time="250">WindowClose</animation>
+      <id>1</id>
+      <type>image</type>
+      <posX>858</posX>
+      <posY>0</posY>
+      <texture>hiddenmenu_tab_up.png</texture>
+      <visible>Control.HasFocus(50)</visible>
+      <animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
+      <animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
     </control>
-
-	<control>
-		<description>RSS items</description>
-		<type>fadelabel</type>
-		<id>1</id>
-		<posX>70</posX>
-		<posY>1000</posY>
-		<width>1810</width>
-		<height>30</height>
-		<font>font11</font>
-		<textcolor>000000</textcolor>
-		<label>#infoservice.feed.titles</label>
-		<visible>plugin.isenabled(InfoService) + !string.contains(#Titan.RSS, false)</visible>
-    <animation effect="fade" time="250">WindowOpen</animation>
-    <animation effect="fade" time="250">WindowClose</animation> 
-	</control>
-
-<import>myHome.exitmenu.xml</import>
-<import>common.overlay.xml</import>
+		
+    <control>
+      <description>RSS BACKGROUND</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>52</posX>
+      <posY>958</posY>
+      <width>1820</width>
+      <height>84</height>
+      <texture>BasicHomeSubBG.png</texture>  
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+		
+    <control>
+      <description>RSS items</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>70</posX>
+      <posY>1000</posY>
+      <width>1810</width>
+      <height>30</height>
+      <font>font11</font>
+      <textcolor>000000</textcolor>
+      <label>#infoservice.feed.titles</label>
+      <visible>plugin.isenabled(InfoService)+string.equals(#infoservice.feed.enabled, true)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>	
+		
+    <import>myHome.exitmenu.xml</import> 
+    <import>common.overlay.xml</import>
+		
 </controls>
 </window>

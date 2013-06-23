@@ -120,30 +120,44 @@ namespace MediaPortal.Configuration.Sections
       Enabled = true;
 
       // Retrieve the languages and language codes for the Epg.
-      List<KeyValuePair<String, String>> langs = TvLibrary.Epg.Languages.Instance.GetLanguagePairs();
-      FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, langs);
-      FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, langs);
+      Dictionary<String, String> languages = new Dictionary<String, String>();
+      foreach (KeyValuePair<String, String> kv in TvLibrary.Epg.Languages.Instance.GetLanguagePairs())
+      {
+        if (!languages.ContainsKey(kv.Key))
+        {
+          languages.Add(kv.Key, kv.Value);
+        }
+      }
+      // languages now holds one language name for each language code
+
+      FillLists(mpListViewAvailAudioLang, mpListViewPreferredAudioLang, preferredAudioLanguages, languages);
+      FillLists(mpListViewAvailSubLang, mpListViewPreferredSubLang, preferredSubLanguages, languages);
       _SingleSeat = Network.IsSingleSeat();
     }
 
-    private void FillLists(MPListView availList, MPListView preferredList, string preferredLanguages, List<KeyValuePair<string, string>> languages)
+    private void FillLists(MPListView availList, MPListView preferredList, string preferredLanguages, Dictionary<String, String> languages)
     {
       availList.Items.Clear();
       preferredList.Items.Clear();
+      string[] preferredLanguageKeys = preferredLanguages.Split(';');
+
+      // fill preferredList with the preferred languages
+      foreach (string key in preferredLanguageKeys)
+      {
+        if (!String.IsNullOrEmpty(key) && languages.ContainsKey(key) && !preferredList.Items.ContainsKey(key))
+        {
+          ListViewItem item = new ListViewItem(new string[] { languages[key], key }) { Name = key };
+          preferredList.Items.Add(item);
+        }
+      }
+
+      // fill availList with the rest of them
       foreach (KeyValuePair<string, string> kv in languages)
       {
-        ListViewItem item = new ListViewItem(new string[] { kv.Value, kv.Key });
-        item.Name = kv.Key;
-
-        MPListView list;
-        if (preferredLanguages.Contains(item.Name))
-          list = preferredList;
-        else
-          list = availList;
-
-        if (!list.Items.ContainsKey(item.Name))
+        if (!availList.Items.ContainsKey(kv.Key) && !preferredList.Items.ContainsKey(kv.Key))
         {
-          list.Items.Add(item);
+          ListViewItem item = new ListViewItem(new string[] { kv.Value, kv.Key }) { Name = kv.Key };
+          availList.Items.Add(item);
         }
       }
 

@@ -1731,8 +1731,8 @@ namespace MediaPortal.GUI.Library
                 Dispose();
                 GUITextureManager.CleanupThumbs();
 #if DEBUG
-                long lTotalMemory = GC.GetTotalMemory(true);
-                Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
+                //long lTotalMemory = GC.GetTotalMemory(true);
+                //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
 #endif
                 _shouldRestore = true;
                 _skipAnimation = false;

@@ -65,6 +65,7 @@
     <id>0</id>
 		<posX>750</posX>
 		<posY>194</posY>
+		<width>880</width>
 		<textcolor>FF393939</textcolor>
 		<font>font22</font>
     <label>#ArtistInfo.Artist</label>
@@ -224,7 +225,7 @@
 		<posX>750</posX>
 		<posY>468</posY>
 		<width>860</width>
-		<height>300</height>
+		<height>292</height>
 		<textcolor>FF393939</textcolor>
     <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>
@@ -240,7 +241,7 @@
 		<posX>750</posX>
 		<posY>468</posY>
 		<width>860</width>
-		<height>300</height>
+		<height>292</height>
 		<textcolor>FF393939</textcolor>
     <font>TitanLight12</font>
 		<animation effect="fade" time="250">WindowOpen</animation>

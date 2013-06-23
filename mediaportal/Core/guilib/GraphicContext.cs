@@ -1380,11 +1380,6 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// 
     /// </summary>
-    public static bool DX9ExRealDeviceLost { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
     /// <returns></returns>
     public static Pool GetTexturePoolType()
     {

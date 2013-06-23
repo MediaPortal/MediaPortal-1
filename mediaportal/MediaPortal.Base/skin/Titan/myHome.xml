@@ -6,6 +6,7 @@
 <disabletopbar>no</disabletopbar>
 <define>#header.label:Home</define>
 <controls>
+
     <control>
       <description>DEFAULT BACKGROUND</description>
       <type>image</type>
@@ -17,7 +18,9 @@
       <texture>background.png</texture>
       <shouldCache>true</shouldCache>
     </control>	
+		
     <import>common.time.xml</import>
+		
     <control>
       <description>Menu</description>
       <type>menu</type>
@@ -54,6 +57,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>       
     </control>
+		
     <control>
       <description>DEFAULT BACKGROUND</description>
       <type>image</type>
@@ -67,6 +71,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+		
     <control>
       <description>ICON</description>
       <type>image</type>
@@ -79,6 +84,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>	
+		
     <control>
       <id>1</id>
       <type>image</type>
@@ -89,6 +95,7 @@
       <animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
       <animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
     </control>
+		
     <control>
       <description>RSS BACKGROUND</description>
       <type>image</type>
@@ -101,6 +108,7 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+		
     <control>
       <description>RSS items</description>
       <type>fadelabel</type>
@@ -116,7 +124,9 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>	
+		
     <import>myHome.exitmenu.xml</import> 
     <import>common.overlay.xml</import>
+		
 </controls>
 </window>

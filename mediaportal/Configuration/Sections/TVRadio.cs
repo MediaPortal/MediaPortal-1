@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
           (mpTextBoxHostname.BackColor != Color.Red && VerifyHostname(mpTextBoxHostname.Text, verbose)))
         {
           // Hostname is valid, update database connection
-          Log.Debug("SaveSettings: hostname is valid - update gentle.config if needed");
+          Log.Debug("SaveSettings: hostname is valid - update gentle.config");
           if (UpdateGentleConfig(mpTextBoxHostname.Text))
           {
             Log.Debug("SaveSettings: update gentle.config was successfull - save hostname");
@@ -129,10 +129,7 @@ namespace MediaPortal.Configuration.Sections
           }
           else
           {
-            Log.Debug("SaveSettings: error in updating gentle.config - save empty string");
-            xmlwriter.SetValue("tvservice", "hostname", string.Empty);
-            mpTextBoxHostname.BackColor = Color.Red;
-            _verifiedHostname = string.Empty;
+            Log.Warn("SaveSettings: error in updating gentle.config from TV Server on host {0} - hostname will not be saved", mpTextBoxHostname.Text);
           }
         }
         else
