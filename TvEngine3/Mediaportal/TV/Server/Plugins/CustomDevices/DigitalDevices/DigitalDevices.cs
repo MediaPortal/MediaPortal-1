@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     {
       get
       {
-        if (_name != null && !_name.Equals(String.Empty))
+        if (!String.IsNullOrEmpty(_name))
         {
           return _name;
         }

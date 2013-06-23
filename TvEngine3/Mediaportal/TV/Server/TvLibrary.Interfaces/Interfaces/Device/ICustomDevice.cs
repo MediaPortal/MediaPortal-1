@@ -129,6 +129,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     {
       get
       {
+        // The following comments should be taken into account when considering how to set device priority...
+        // - TeVii, Hauppauge, Geniatech, Turbosight, DVBSky, Prof and possibly others all use or implement the
+        //   same Conexant property set for DiSEqC support, often adding custom extensions.
+        // - TeVii differentiates itself with a DLL that identifies its devices.
+        // - DVBSky drivers implement a unique property set, but also implement the Hauppauge property set.
+        // - Hauppauge drivers implement a unique property set.
+        // - The Turbosight plugin limits support by matching the tuner name.
+        // - The Prof USB plugin extends the base Prof plugin.
+        // - The Geniatech plugin checks for support of a unique property.
+        //
+        // The following priority hierarchy is used:
+        // DVBSky, TeVii [75] > Hauppauge, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech [50] > Conexant [40]
         return 50;
       }
     }

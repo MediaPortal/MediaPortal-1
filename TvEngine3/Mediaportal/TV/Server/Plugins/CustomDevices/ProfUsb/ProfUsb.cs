@@ -242,11 +242,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
     {
       get
       {
-        // TeVii, Hauppauge, Geniatech, Turbosight, DVBSky, Prof and possibly others all use or implement the
-        // same Conexant property set for DiSEqC support, often adding custom extensions. In order to ensure
-        // that the full device functionality is available for all hardware we use the following priority
-        // hierarchy:
-        // TeVii [75] > Hauppauge, DVBSky, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech [50] > Conexant [40]
         return 65;
       }
     }

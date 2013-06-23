@@ -86,13 +86,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     {
       get
       {
-        // TeVii, Hauppauge, Geniatech, Turbosight, DVBSky, Prof and possibly others all use or implement the
-        // same Conexant property set for DiSEqC support, often adding custom extensions. To make things
-        // even more complicated, DVBSky use the NetUP interface for their conditional access support. In
-        // order to ensure that the full device functionality is available for all hardware we use the
-        // following priority hierarchy:
-        // TeVii [75] > Hauppauge, DVBSky, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech, NetUP [50] > Conexant [40]
-        return 70;
+        return 75;
+      }
+    }
+
+    /// <summary>
+    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
+    /// name/number.
+    /// </summary>
+    public override String Name
+    {
+      get
+      {
+        return "DVBSky";
       }
     }
 
