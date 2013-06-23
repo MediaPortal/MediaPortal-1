@@ -51,12 +51,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     #region constants
 
     private static readonly Guid HCW_BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
+    private const int PARAM_BUFFER_SIZE = 4;
 
     #endregion
 
     #region variables
 
     private bool _isHauppauge = false;
+    private IntPtr _paramBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -181,6 +183,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
 
       this.LogDebug("Hauppauge: supported device detected");
       _isHauppauge = true;
+      _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
 
@@ -249,6 +252,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Hauppauge
     public override void Dispose()
     {
       base.Dispose();
+
+      if (_paramBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_paramBuffer);
+        _paramBuffer = IntPtr.Zero;
+      }
       _isHauppauge = false;
     }
 

@@ -50,7 +50,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DiseqcMessage
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
 
-    private const int DISEQC_MESSAGE_SIZE = 7;
+    private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));  // 7
     private const int MAX_DISEQC_MESSAGE_LENGTH = 6;
 
     #endregion

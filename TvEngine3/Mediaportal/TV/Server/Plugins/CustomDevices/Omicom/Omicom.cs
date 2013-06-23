@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
 
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0x7db2deea, 0x42b4, 0x423d, 0xa2, 0xf7, 0x19, 0xc3, 0x2e, 0x51, 0xcc, 0xc1);
 
-    private const int DISEQC_MESSAGE_SIZE = 72;
+    private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));  // 72
     private const int MAX_DISEQC_MESSAGE_LENGTH = 64;
 
     #endregion

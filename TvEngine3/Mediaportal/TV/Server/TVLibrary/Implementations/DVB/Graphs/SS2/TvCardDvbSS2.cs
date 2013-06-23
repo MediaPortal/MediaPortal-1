@@ -41,8 +41,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
   /// </summary>
   public class TvCardDvbSS2 : TvCardDvbBase, ICustomDevice, IPidFilterController, IDiseqcDevice
   {
-
-
     #region enums
 
     private enum B2c2Error
@@ -821,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       /// Register the given multicast MAC addresses with the interface.
       /// </summary>
       /// <remarks>
-      /// The maximum number of addresses that may be registered can be retrieved from MaxMacAddressCount.
+      /// The maximum number of addresses that may be registered can be retrieved from MAX_MAC_ADDRESS_COUNT.
       /// </remarks>
       /// <param name="addressList">The list of addresses to register.</param>
       /// <returns>an HRESULT indicating whether the MAC addresses were successfully registered</returns>
@@ -840,7 +838,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       /// Deregister the given multicast MAC addresses from the interface.
       /// </summary>
       /// <remarks>
-      /// The maximum number of addresses that may be deregistered is set at MaxMacAddressCount.
+      /// The maximum number of addresses that may be deregistered is set at MAX_MAC_ADDRESS_COUNT.
       /// </remarks>
       /// <param name="addressList">The list of addresses to deregister.</param>
       /// <returns>an HRESULT indicating whether the MAC addresses were successfully deregistered</returns>
@@ -1239,8 +1237,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 
     #region structs
 
-#pragma warning disable 0649, 0169
+    #pragma warning disable 0649, 0169
     // Some of these structs are used when marshaling from unmanaged to managed memory, like in ReadDeviceInfo().
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct TunerCapabilities
     {
       public B2c2TunerType TunerType;
@@ -1263,14 +1263,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 
     private struct MacAddress
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MacAddressLength)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAC_ADDRESS_LENGTH)]
       public byte[] Address;
     }
 
     private struct MacAddressList
     {
       public Int32 AddressCount;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxMacAddressCount)]
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_MAC_ADDRESS_COUNT)]
       public MacAddress[] Address;
     }
 
@@ -1281,9 +1281,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       public B2c2VideoAspectRatio AspectRatio;
       public B2c2VideoFrameRate FrameRate;
     }
-#pragma warning restore 0649, 0169
+    #pragma warning restore 0649, 0169
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode), ComVisible(true)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode), ComVisible(true)]
     private struct DeviceInfo
     {
       public UInt32 DeviceId;
@@ -1294,6 +1294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       [MarshalAs(UnmanagedType.I1)]
       public bool IsInUse;
       private byte Padding2;
+      private UInt16 Padding3;
       public UInt32 ProductId;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
       public String ProductName;
@@ -1343,13 +1344,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 
     #region constants
 
-    private static readonly Guid B2c2AdapterClass = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x00, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
+    private static readonly Guid B2C2_ADAPTER_CLSID = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x00, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
 
-    private const int MaxDeviceCount = 16;
-    private const int MacAddressLength = 6;
-    private const int MaxMacAddressCount = 32;
-    private const int DeviceInfoSize = 416;
-    private const int TunerCapabilitiesSize = 56;
+    private const int MAX_DEVICE_COUNT = 16;
+    private const int MAC_ADDRESS_LENGTH = 6;
+    private const int MAX_MAC_ADDRESS_COUNT = 32;
+    private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));                // 416
+    private static readonly int TUNER_CAPABILITIES_SIZE = Marshal.SizeOf(typeof(TunerCapabilities));  // 56
+    private static readonly int GENERAL_BUFFER_SIZE = TUNER_CAPABILITIES_SIZE;
 
     #endregion
 
@@ -1447,7 +1449,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           break;
       }
 
-      _generalBuffer = Marshal.AllocCoTaskMem(TunerCapabilitiesSize);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
     }
 
     /// <summary>
@@ -1844,7 +1846,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         {
           // Create, add and initialise the B2C2 source filter.
           this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
-          _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+          _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
           if (_filterB2c2Adapter == null)
           {
             this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
@@ -2054,7 +2056,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       IBaseFilter b2c2Source = null;
       try
       {
-        b2c2Source = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2c2AdapterClass, false));
+        b2c2Source = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
       }
       catch (Exception ex)
       {
@@ -2069,8 +2071,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       }
 
       // Get device details...
-      int size = DeviceInfoSize * MaxDeviceCount;
-      int deviceCount = MaxDeviceCount;
+      int size = DEVICE_INFO_SIZE * MAX_DEVICE_COUNT;
+      int deviceCount = MAX_DEVICE_COUNT;
       IntPtr structurePtr = Marshal.AllocCoTaskMem(size);
       for (int i = 0; i < size; i++)
       {
@@ -2100,7 +2102,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           Log.Debug("  product description = {0}", d.ProductDescription);
           Log.Debug("  product revision    = {0}", d.ProductRevision);
           Log.Debug("  product front end   = {0}", d.ProductFrontEnd);
-          structurePtr = IntPtr.Add(structurePtr, DeviceInfoSize);
+          structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
           contexts[i] = d;
         }
         Log.Debug("TvCardDvbSs2: result = success");
@@ -2128,11 +2130,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       }
 
       this.LogDebug("TvCardDvbSs2: reading capabilities");
-      for (int i = 0; i < TunerCapabilitiesSize; i++)
+      for (int i = 0; i < TUNER_CAPABILITIES_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
-      int returnedByteCount = TunerCapabilitiesSize;
+      int returnedByteCount = TUNER_CAPABILITIES_SIZE;
       hr = _tunerInterface.GetTunerCapabilities(_generalBuffer, ref returnedByteCount);
       if (hr != 0)
       {
@@ -2514,6 +2516,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       if (command == null || command.Length == 0)
       {
         this.LogDebug("TvCardDvbSs2: command not supplied");
+        return true;
+      }
+      if (command.Length > GENERAL_BUFFER_SIZE)
+      {
+        this.LogDebug("TvCardDvbSs2: buffer capacity too small");
         return true;
       }
 

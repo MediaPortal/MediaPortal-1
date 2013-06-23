@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// </summary>
     protected const int INSTANCE_SIZE = 32;
 
-    private const int DISEQC_MESSAGE_PARAMS_SIZE = 188;
+    private static readonly int DISEQC_MESSAGE_PARAMS_SIZE = Marshal.SizeOf(typeof(DiseqcMessageParams));   // 188
     private const int MAX_DISEQC_TX_MESSAGE_LENGTH = 151;   // 3 bytes per message * 50 messages, plus NULL termination
     private const int MAX_DISEQC_RX_MESSAGE_LENGTH = 9;     // reply first-in-first-out buffer size (hardware limited)
 
@@ -115,15 +115,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     protected IntPtr _instanceBuffer = IntPtr.Zero;
 
     /// <summary>
-    /// Buffer for property parameters.
-    /// </summary>
-    protected IntPtr _paramBuffer = IntPtr.Zero;
-
-    /// <summary>
     /// A reference to the property set instance.
     /// </summary>
     protected IKsPropertySet _propertySet = null;
 
+    // Buffer for property parameters.
+    private IntPtr _diseqcBuffer = IntPtr.Zero;
     private Guid _propertySetGuid = Guid.Empty;
 
     #endregion
@@ -226,7 +223,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       this.LogDebug("Conexant: supported device detected");
       _isConexant = true;
       _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
-      _paramBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_PARAMS_SIZE);
+      _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_PARAMS_SIZE);
       return true;
     }
 
@@ -276,12 +273,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       message.DiseqcReceiveMode = CxDiseqcReceiveMode.NoReply;
       message.IsLastMessage = true;
 
-      Marshal.StructureToPtr(message, _paramBuffer, true);
-      DVB_MMI.DumpBinary(_paramBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
+      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
         _instanceBuffer, INSTANCE_SIZE,
-        _paramBuffer, DISEQC_MESSAGE_PARAMS_SIZE
+        _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
 
       if (hr == 0)
@@ -342,12 +339,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       message.DiseqcReceiveMode = CxDiseqcReceiveMode.NoReply;
       message.IsLastMessage = true;
 
-      Marshal.StructureToPtr(message, _paramBuffer, true);
-      //DVB_MMI.DumpBinary(_paramBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
+      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
 
       int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
         _instanceBuffer, INSTANCE_SIZE,
-        _paramBuffer, DISEQC_MESSAGE_PARAMS_SIZE
+        _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
       if (hr == 0)
       {
@@ -391,10 +388,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
         Marshal.FreeCoTaskMem(_instanceBuffer);
         _instanceBuffer = IntPtr.Zero;
       }
-      if (_paramBuffer != IntPtr.Zero)
+      if (_diseqcBuffer != IntPtr.Zero)
       {
-        Marshal.FreeCoTaskMem(_paramBuffer);
-        _paramBuffer = IntPtr.Zero;
+        Marshal.FreeCoTaskMem(_diseqcBuffer);
+        _diseqcBuffer = IntPtr.Zero;
       }
       _isConexant = false;
     }

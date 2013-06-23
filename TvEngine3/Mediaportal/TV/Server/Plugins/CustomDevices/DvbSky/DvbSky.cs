@@ -55,11 +55,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     private static readonly Guid DVBSKY_BDA_EXTENSION_GENERAL_PROPERTY_SET = new Guid(0x03cbdcb9, 0x36dc, 0x4072, 0xac, 0x42, 0x2f, 0x94, 0xf4, 0xec, 0xa0, 0x5e);
     private static readonly Guid DVBSKY_BDA_EXTENSION_CA_PROPERTY_SET = new Guid(0x4fdc5d3a, 0x1543, 0x479e, 0x9f, 0xc3, 0xb7, 0xdb, 0xa4, 0x73, 0xfb, 0x95);
 
-    private const int INSTANCE_SIZE = 32;
-    private const int DISEQC_MESSAGE_PARAMS_SIZE = 188;
-    private const int MAX_DISEQC_TX_MESSAGE_LENGTH = 151;   // 3 bytes per message * 50 messages, plus NULL termination
-    private const int MAX_DISEQC_RX_MESSAGE_LENGTH = 9;     // reply first-in-first-out buffer size (hardware limited)
-
     #endregion
 
     #region variables

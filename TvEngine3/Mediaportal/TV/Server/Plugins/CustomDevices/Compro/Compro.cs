@@ -220,7 +220,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
         IntPtr.Zero, 0,
-        _commandBuffer, 1
+        _commandBuffer, sizeof(Byte)
       );
       if (hr == 0)
       {
@@ -276,8 +276,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
             Marshal.WriteInt32(_commandBuffer, 0, 1);
           }
           hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
-            _generalBuffer, 4,
-            _commandBuffer, 4
+            _generalBuffer, sizeof(Int32),
+            _commandBuffer, sizeof(Int32)
           );
           if (hr != 0)
           {
@@ -305,7 +305,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         }
         hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
           IntPtr.Zero, 0,
-          _commandBuffer, 1
+          _commandBuffer, sizeof(Byte)
         );
         if (hr != 0)
         {

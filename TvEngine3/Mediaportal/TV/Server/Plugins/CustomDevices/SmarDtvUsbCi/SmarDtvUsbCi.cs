@@ -107,6 +107,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
 
     #pragma warning disable 0649, 0169
     // These structs are used - they are marshaled from the COM interface.
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct VersionInfo
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
@@ -121,6 +123,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       public String FpgaVersion;
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApplicationInfo
     {
       public MmiApplicationType ApplicationType;
@@ -130,14 +133,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 352)]
       public String MenuTitle;
     }
+
     #pragma warning restore 0649, 0169
 
     #endregion
 
     #region constants
 
-    //private int APPLICATION_INFO_SIZE = 360;
-    private int VERSION_INFO_SIZE = 52;
+    //private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));    // 358
+    private static readonly int VERSION_INFO_SIZE = Marshal.SizeOf(typeof(VersionInfo));            // 52
+    private static readonly int CI_CALLBACKS_SIZE = Marshal.SizeOf(typeof(SmarDtvUsbCiCallbacks));  // 20
 
     #endregion
 
@@ -550,7 +555,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       _ciCallbacks.OnApplicationInfo = new OnSmarDtvUsbCiApplicationInfo(OnApplicationInfo);
       _ciCallbacks.OnCiState = new OnSmarDtvUsbCiState(OnCiState);
       _ciCallbacks.OnCloseMmi = new OnSmarDtvUsbCiCloseMmi(OnCloseMmi);
-      _ciCallbackBuffer = Marshal.AllocCoTaskMem(20);
+      _ciCallbackBuffer = Marshal.AllocCoTaskMem(CI_CALLBACKS_SIZE);
       Marshal.StructureToPtr(_ciCallbacks, _ciCallbackBuffer, true);
       int hr = (int)_ciType.GetMethod("USB2CI_Init").Invoke(_ciFilter, new object[] { _ciCallbackBuffer });
       if (hr == 0)

@@ -963,8 +963,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     #region constants
 
     private const int MAX_WINDOWS_PATH_LENGTH = 260;
+    private const int MAX_SERVICE_COUNT = 100;          // This is arbitrary.
     private const int MAX_DISEQC_COMMAND_LENGTH = 64;   // This is arbitrary - the hardware/interface limit is not known.
-    private const int TUNE_REQUEST_SIZE = 100;
+    private static readonly int FILTER_NAMES_SIZE = Marshal.SizeOf(typeof(FilterNames));        // 1824
+    private static readonly int TUNE_REQUEST_SIZE = Marshal.SizeOf(typeof(TtDvbsTuneRequest));  // 100 (the size is the same for all tune request structs)
+
+    private const int SERVICE_BUFFER_SIZE = MAX_SERVICE_COUNT * sizeof(UInt16);
+    private static readonly int GENERAL_BUFFER_SIZE = Math.Max(MAX_DISEQC_COMMAND_LENGTH, TUNE_REQUEST_SIZE);
 
     private static readonly string[] VALID_BUDGET2_DEVICE_NAMES = new string[]
     {
@@ -1152,8 +1157,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       this.LogDebug("TechnoTrend: read device information");
 
       // General product details.
-      IntPtr info = Marshal.AllocCoTaskMem(1824);
-      for (int i = 0; i < 1824; i++)
+      IntPtr info = Marshal.AllocCoTaskMem(FILTER_NAMES_SIZE);
+      for (int i = 0; i < FILTER_NAMES_SIZE; i++)
       {
         Marshal.WriteByte(info, i, 0);
       }
@@ -1642,7 +1647,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       this.LogDebug("TechnoTrend: supported device detected, category = {0}, id = {1}", _deviceCategory, deviceId);
       _isTechnoTrend = true;
       _tunerType = tunerType;
-      _generalBuffer = Marshal.AllocCoTaskMem(TUNE_REQUEST_SIZE);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       ReadDeviceInfo();
       if (_tunerType == CardType.DvbT)
       {
@@ -1887,7 +1892,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       {
         this.LogDebug("TechnoTrend: result = {0}", result);
         _isCiSlotPresent = true;
-        _serviceBuffer = Marshal.AllocCoTaskMem(200);
+        _serviceBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
         _descrambledServices = new HashSet<UInt16>();
       }
       else
@@ -2028,6 +2033,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       if (listAction == CaPmtListManagementAction.First || listAction == CaPmtListManagementAction.More)
       {
         return true;
+      }
+
+      if (_descrambledServices.Count > MAX_SERVICE_COUNT)
+      {
+        this.LogDebug("TechnoTrend: not able to descramble {0} services, limit is {1}", _descrambledServices.Count, MAX_SERVICE_COUNT);
+        return false;
       }
 
       // Send the updated list to the CAM.

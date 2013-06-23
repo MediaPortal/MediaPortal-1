@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct BdaExtensionParams
     {
       public UInt32 Frequency;              // unit = MHz
@@ -119,10 +119,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
       public UInt32 DiseqcMessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcMessage;
+      [MarshalAs(UnmanagedType.Bool)]
       public bool DiseqcForceHighVoltage;
 
       public UInt32 SignalStrength;         // range = 0 - 100%
       public UInt32 SignalQuality;          // range = 0 - 100%
+      [MarshalAs(UnmanagedType.Bool)]
       public bool SignalIsLocked;
     }
 
@@ -134,8 +136,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
 
-    private const int BDA_EXTENSION_PARAMS_SIZE = 68;
+    private static readonly int BDA_EXTENSION_PARAMS_SIZE = Marshal.SizeOf(typeof(BdaExtensionParams));   // 68
     private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
+
+    private static readonly int GENERAL_BUFFER_SIZE = BDA_EXTENSION_PARAMS_SIZE;
 
     #endregion
 
@@ -190,7 +194,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
       this.LogDebug("Genpix: supported device detected");
       _isGenpix = true;
-      _generalBuffer = Marshal.AllocCoTaskMem(BDA_EXTENSION_PARAMS_SIZE);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       return true;
     }

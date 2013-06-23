@@ -316,14 +316,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
     private static readonly Guid USB_BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
     private static readonly Guid IR_PROPERTY_SET = new Guid(0xb51c4994, 0x0054, 0x4749, 0x82, 0x43, 0x02, 0x9a, 0x66, 0x86, 0x36, 0x36);
 
-    private const int TBS_ACCESS_PARAMS_SIZE = 536;
-    private const int NBC_TUNING_PARAMS_SIZE = 20;
+    private static readonly int TBS_ACCESS_PARAMS_SIZE = Marshal.SizeOf(typeof(TbsAccessParams));   // 536
+    private static readonly int NBC_TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(NbcTuningParams));   // 20
     private const int MAX_DISEQC_MESSAGE_LENGTH = 128;
-    private const int MAX_PMT_LENGTH = 1024;
 
     private const int MMI_MESSAGE_BUFFER_SIZE = 512;
     private const int MMI_RESPONSE_BUFFER_SIZE = 2048;
 
+    private static readonly int GENERAL_BUFFER_SIZE = Math.Max(TBS_ACCESS_PARAMS_SIZE, NBC_TUNING_PARAMS_SIZE);
     private const int MMI_HANDLER_THREAD_SLEEP_TIME = 2000;   // unit = ms
 
     #endregion
@@ -1055,7 +1055,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       _tunerFilter = tunerFilter;
-      _generalBuffer = Marshal.AllocCoTaskMem(TBS_ACCESS_PARAMS_SIZE);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       return true;
     }
 
@@ -1285,7 +1285,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
 
       _mmiMessageBuffer = Marshal.AllocCoTaskMem(MMI_MESSAGE_BUFFER_SIZE);
       _mmiResponseBuffer = Marshal.AllocCoTaskMem(MMI_RESPONSE_BUFFER_SIZE);
-      _pmtBuffer = Marshal.AllocCoTaskMem(MAX_PMT_LENGTH + 2);  // + 2 for TBS PMT header
+      _pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE + 2);  // + 2 for TBS PMT header
       _mmiMessageQueue = new List<MmiMessage>();
       _isCamPresent = _camAvailable(_ciHandle);
       this.LogDebug("Turbosight: CAM available = {0}", _isCamPresent);
@@ -1423,17 +1423,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         return true;
       }
 
-      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-      if (rawPmt.Count > MAX_PMT_LENGTH - 2)
-      {
-        this.LogDebug("Turbosight: buffer capacity too small");
-        return false;
-      }
-
       // TBS have a short header at the start of the PMT.
       Marshal.WriteByte(_pmtBuffer, 0, (byte)listAction);
       Marshal.WriteByte(_pmtBuffer, 1, (byte)command);
       int offset = 2;
+      ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
       for (int i = 0; i < rawPmt.Count; i++)
       {
         Marshal.WriteByte(_pmtBuffer, offset++, rawPmt[i]);

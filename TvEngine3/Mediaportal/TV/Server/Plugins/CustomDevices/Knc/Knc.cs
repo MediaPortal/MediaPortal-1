@@ -473,7 +473,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       "ven_1131&dev_7160&subsys_03101894",  // DVB-T/DVB-C (not yet released)
     };
 
-    private const int CALLBACK_SET_SIZE = 28;
+    private static readonly int CALLBACK_SET_SIZE = Marshal.SizeOf(typeof(KncCiCallbacks));   // 28
+    // This limit is based on the Omicom SDK details. My understanding is that
+    // KNCBDACTRL.dll uses the same API/SDK (for DiSEqC) internally.
     private const int MAX_DISEQC_COMMAND_LENGTH = 64;
 
     #endregion

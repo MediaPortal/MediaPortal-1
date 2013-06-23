@@ -762,7 +762,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       int offset = 0;
       for (int i = 0; i < elementCount; i++)
       {
-        toReturn.Add(Marshal.PtrToStructure((IntPtr)(buffer.ToInt64() + offset), elementType));
+        toReturn.Add(Marshal.PtrToStructure(IntPtr.Add(buffer, offset), elementType));
         offset += size;
       }
       return toReturn;
@@ -773,7 +773,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       int offset = 0;
       for (int i = 0; i < elementCount; i++)
       {
-        toReturn.Add(Marshal.PtrToStringAnsi((IntPtr)(buffer.ToInt64() + offset), 3));
+        toReturn.Add(Marshal.PtrToStringAnsi(IntPtr.Add(buffer, offset), 3));
         offset += 4;
       }
       return toReturn;

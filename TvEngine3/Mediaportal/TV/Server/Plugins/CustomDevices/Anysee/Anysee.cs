@@ -21,6 +21,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -386,7 +387,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     #region structs
     // These structs are all aligned to 8 byte boundaries.
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct IrData
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -397,7 +398,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public Int32 Key;         // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct PlatformInfo
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -409,7 +410,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private Int32 Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct StatusInfo
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -425,7 +426,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private Int32 Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DriverVersion
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -436,7 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private Int32 Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct NimConfig
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -460,7 +461,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public AnyseeScanDirection ScanDirection;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbInfo
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -477,7 +478,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private byte[] Reserved;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct Capabilities
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -496,7 +497,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public AnyseeBroadcastSystem PrimaryBroadcastSystem;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct BoardInfo
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -513,7 +514,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       private Int32 Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DiseqcMessage
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
@@ -525,10 +526,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       public AnyseeToneBurst ToneBurst;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-      public byte[] Padding;
+      private byte[] Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApiString
     {
       #pragma warning disable 0649
@@ -537,7 +538,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       #pragma warning restore 0649
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfo    // tagCIStatus
     {
       public Int32 Size;
@@ -546,7 +547,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public ApiString Message;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenu  // MMIStrsBlock
     {
       public Int32 StringCount;
@@ -554,7 +555,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public IntPtr Entries;                // This is a pointer to an array of pointers.
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMessage   // tagCIMsgs
     {
       public Int32 DeviceIndex;
@@ -572,7 +573,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public IntPtr Menu;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct ApiCallbacks
     {
       [MarshalAs(UnmanagedType.FunctionPtr)]
@@ -581,7 +582,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public OnAnyseeMmiMessage OnMmiMessage;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct PmtData    // DTVCIPMT
     {
       public byte PmtByte6;                     // Byte 6 from the PMT section (PMT version, current next indicator). 
@@ -597,7 +598,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public EsPmtData[] EsPmt;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct EsPmtData
     {
       public UInt16 Pid;
@@ -619,7 +620,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     {
       #region structs
 
-      [StructLayout(LayoutKind.Sequential)]
+      [StructLayout(LayoutKind.Sequential, Pack = 1)]
       private struct CiDeviceInfo   // ANYSEECIDEVICESINFO
       {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICE_COUNT)]
@@ -696,7 +697,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       private const int API_INSTANCE_SIZE = 76;
       private const int MAX_DEVICE_COUNT = 32;
-      private const int CI_DEVICE_INFO_SIZE = MAX_DEVICE_COUNT * (MAX_API_STRING_LENGTH + 12);
+      private static readonly int CI_DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(CiDeviceInfo));   // 8576
       private const int API_ACCESS_THREAD_SLEEP_TIME = 500;   // unit = ms
 
       #endregion
@@ -880,7 +881,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         {
           Marshal.WriteByte(_ciApiInstance, i, 0);
         }
-        _windowHandle = Marshal.AllocCoTaskMem(4);
+        _windowHandle = Marshal.AllocCoTaskMem(IntPtr.Size);
 
         // Technically all access to the CI API functions should be made
         // from a separate thread because the CIAPI DLL only supports single
@@ -1112,29 +1113,31 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     private const int KS_PROPERTY_SIZE = 24;
     private const int RSSI_SIZE = KS_PROPERTY_SIZE + 8;
     private const int CNR_SIZE = KS_PROPERTY_SIZE + 8;
-    private const int IR_DATA_SIZE = KS_PROPERTY_SIZE + 8;
-    private const int PLATFORM_INFO_SIZE = KS_PROPERTY_SIZE + 8;
+    private static readonly int IR_DATA_SIZE = Marshal.SizeOf(typeof(IrData));                // 32
+    private static readonly int PLATFORM_INFO_SIZE = Marshal.SizeOf(typeof(PlatformInfo));    // 32
     private const int LOCKED_SIZE = KS_PROPERTY_SIZE + 8;
     private const int NIM_MODE_SIZE = KS_PROPERTY_SIZE + 8;
-    private const int STATUS_INFO_SIZE = KS_PROPERTY_SIZE + 24;
-    private const int DRIVER_VERSION_SIZE = KS_PROPERTY_SIZE + 8;
-    private const int NIM_CONFIG_SIZE = KS_PROPERTY_SIZE + 40;
-    private const int LNB_INFO_SIZE = KS_PROPERTY_SIZE + 40;
-    private const int CAPABILITIES_SIZE = KS_PROPERTY_SIZE + 32;
-    private const int BOARD_INFO_SIZE = KS_PROPERTY_SIZE + 24;
-    private const int DISEQC_MESSAGE_SIZE = KS_PROPERTY_SIZE + MAX_DISEQC_MESSAGE_LENGTH + 8;
+    private static readonly int STATUS_INFO_SIZE = Marshal.SizeOf(typeof(StatusInfo));        // 48
+    private static readonly int DRIVER_VERSION_SIZE = Marshal.SizeOf(typeof(DriverVersion));  // 32
+    private static readonly int NIM_CONFIG_SIZE = Marshal.SizeOf(typeof(NimConfig));          // 64
+    private static readonly int LNB_INFO_SIZE = Marshal.SizeOf(typeof(LnbInfo));              // 64
+    private static readonly int CAPABILITIES_SIZE = Marshal.SizeOf(typeof(Capabilities));     // 56
+    private static readonly int BOARD_INFO_SIZE = Marshal.SizeOf(typeof(BoardInfo));          // 48
+    private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));  // 48
     private const int MAX_DISEQC_MESSAGE_LENGTH = 16;
 
     private const int MAX_API_STRING_LENGTH = 256;
     private const int MAX_CAM_MENU_ENTRIES = 32;
-    private const int CI_STATE_INFO_SIZE = 8 + MAX_API_STRING_LENGTH;
-    private const int MMI_MENU_SIZE = (MAX_CAM_MENU_ENTRIES * MAX_API_STRING_LENGTH) + 8;
-    private const int MMI_MESSAGE_SIZE = 32 + MAX_API_STRING_LENGTH;
-    private const int API_CALLBACK_SIZE = 8;
+    private static readonly int CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));     // 264
+    private static readonly int MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));              // 8
+    private static readonly int MMI_MESSAGE_SIZE = Marshal.SizeOf(typeof(MmiMessage));        // 32
+    private static readonly int API_CALLBACK_SIZE = Marshal.SizeOf(typeof(ApiCallbacks));     // 8
     private const int MAX_DESCRIPTOR_DATA_LENGTH = 256;
     private const int MAX_PMT_ELEMENTARY_STREAMS = 50;
-    private const int ES_PMT_DATA_SIZE = 260;
-    private const int PMT_DATA_SIZE = 12 + MAX_DESCRIPTOR_DATA_LENGTH + (MAX_PMT_ELEMENTARY_STREAMS * ES_PMT_DATA_SIZE);
+    private static readonly int ES_PMT_DATA_SIZE = Marshal.SizeOf(typeof(EsPmtData));         // 260
+    private static readonly int PMT_DATA_SIZE = Marshal.SizeOf(typeof(PmtData));              // 13268
+
+    private static readonly int GENERAL_BUFFER_SIZE = new int[] { BOARD_INFO_SIZE, CAPABILITIES_SIZE, DISEQC_MESSAGE_SIZE, DRIVER_VERSION_SIZE, NIM_CONFIG_SIZE, PLATFORM_INFO_SIZE }.Max();
 
     #endregion
 
@@ -1458,7 +1461,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           this.LogDebug("Anysee: menu callbacks are not set");
         }
 
-        String prompt = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
+        String prompt = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
         this.LogDebug("  prompt    = {0}", prompt);
         this.LogDebug("  length    = {0}", msg.ExpectedAnswerLength);
         this.LogDebug("  key count = {0}", msg.KeyCount);
@@ -1489,9 +1492,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         this.LogDebug("Anysee: menu callbacks are not set");
       }
 
-      String title = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 0));
-      String subTitle = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 4));
-      String footer = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, 8));
+      String title = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
+      String subTitle = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size));
+      String footer = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size * 2));
       this.LogDebug("  title     = {0}", title);
       this.LogDebug("  sub-title = {0}", subTitle);
       this.LogDebug("  footer    = {0}", footer);
@@ -1510,10 +1513,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       }
 
       String entry;
-      int offset = 4 * msg.HeaderCount;
+      int offset = IntPtr.Size * msg.HeaderCount;
       for (int i = 0; i < msg.EntryCount; i++)
       {
-        entry = Marshal.PtrToStringAnsi((IntPtr)Marshal.ReadInt32(menu.Entries, offset + (i * 4)));
+        entry = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, offset));
+        offset += IntPtr.Size;
         this.LogDebug("  entry {0,-2}  = {1}", i + 1, entry);
         if (_ciMenuCallbacks != null)
         {
@@ -1678,7 +1682,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       {
         _callbackBuffer = Marshal.AllocCoTaskMem(API_CALLBACK_SIZE);
         Marshal.StructureToPtr(_apiCallbacks, _callbackBuffer, true);
-        if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallbacks, (IntPtr)Marshal.ReadInt32(_callbackBuffer, 0), (IntPtr)Marshal.ReadInt32(_callbackBuffer, 4)))
+        if (_ciApi.ExecuteCommand(AnyseeCiCommand.IsOpenSetCallbacks, Marshal.ReadIntPtr(_callbackBuffer, 0), Marshal.ReadIntPtr(_callbackBuffer, IntPtr.Size)))
         {
           this.LogDebug("Anysee: result = success");
           return true;

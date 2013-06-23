@@ -1528,7 +1528,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class Cat
   {
+    #region constants
 
+    public const int MAX_SIZE = 4096;
+
+    #endregion
 
     #region variables
 
@@ -1799,7 +1803,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// </summary>
   public class Pmt
   {
+    #region constants
 
+    public const int MAX_SIZE = 1024;
+
+    #endregion
 
     #region variables
 
@@ -2232,7 +2240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     public byte[] GetCaPmt(CaPmtListManagementAction listAction, CaPmtCommand command)
     {
       this.LogDebug("PMT: get CA PMT, list action = {0}, command = {1}", listAction, command);
-      byte[] tempCaPmt = new byte[4096];  // Max PMT length is 1024, and since CA PMT is a cut-down version of PMT this should be very safe.
+      byte[] tempCaPmt = new byte[MAX_SIZE];  // size of CA PMT <= size of PMT
       tempCaPmt[0] = (byte)listAction;
       tempCaPmt[1] = _rawPmt[3];
       tempCaPmt[2] = _rawPmt[4];

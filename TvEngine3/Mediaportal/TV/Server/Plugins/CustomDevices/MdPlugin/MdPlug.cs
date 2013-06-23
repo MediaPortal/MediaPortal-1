@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CaSystem82
     {
       public UInt16 CaType;
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       public UInt32 ProviderId;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct PidFilter
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 5)]
@@ -115,7 +115,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
     }
 
     // Note: many of the struct members aren't documented or used.
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct Program82
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 30)]
@@ -177,7 +177,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       private byte Padding4;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct PidsToDecode  // TPids2Dec
     {
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_COUNT)]
@@ -195,9 +195,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
 
     #region constants
 
-    private const int PROGRAM82_SIZE = 804;
+    private static readonly int PROGRAM82_SIZE = Marshal.SizeOf(typeof(Program82));           // 804
     private const int MAX_CA_SYSTEM_COUNT = 32;
-    private const int PIDS_TO_DECODE_SIZE = 128;
+    private static readonly int PIDS_TO_DECODE_SIZE = Marshal.SizeOf(typeof(PidsToDecode));   // 128
     private const int MAX_PID_COUNT = 63;
 
     #endregion
@@ -484,7 +484,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
             programToDecode.EcmPid = ecmPid;
           }
           count++;
-          if (count == 32)
+          if (count == MAX_CA_SYSTEM_COUNT)
           {
             this.LogDebug("MD Plugin: unable to register all PIDs");
             return count;
@@ -510,7 +510,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
           }
           programToDecode.CaSystems[count].ProviderId = providerId;
           count++;
-          if (count == 32)
+          if (count == MAX_CA_SYSTEM_COUNT)
           {
             return count;
           }
@@ -535,7 +535,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
           }
           programToDecode.CaSystems[count].ProviderId = providerId;
           count++;
-          if (count == 32)
+          if (count == MAX_CA_SYSTEM_COUNT)
           {
             return count;
           }
@@ -1377,6 +1377,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       // We don't know what the actual service type is in this
       // context, but we can at least indicate whether this is
       // a TV or radio service.
+      // TODO: Sebastiii removed this, why?
       //programToDecode.ServiceType = (byte)(dvbChannel.IsTv ? DvbServiceType.DigitalTelevision : DvbServiceType.DigitalRadio); //TODO look if needed
       programToDecode.ServiceType = (byte)DvbServiceType.DigitalTelevision;
 

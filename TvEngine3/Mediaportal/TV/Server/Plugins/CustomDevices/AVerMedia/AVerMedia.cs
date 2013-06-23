@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       public IntPtr PmtPtr;   // Note: if you send normal PMT, do not include the CRC.
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiMenuString
     {
       #pragma warning disable 0649
@@ -267,7 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       "ven_1131&dev_7160&subsys_71711461"   // A717 AVer3D Quadro HD
     };
 
-    private const int MaxPmtLength = 1024;
+    private static readonly int AVERMEDIA_PMT_SIZE = Marshal.SizeOf(typeof(AVerMediaPmt));   // 9
 
     #endregion
 
@@ -557,16 +557,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       // Unfortunately this pointer manipulation really is necessary.
       _ciStateChangeDelegate = OnCiStateChange;
       _ciStateChangeCallbackPtr = Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate);
-      _ciStateChangeIndirectionPtr = Marshal.AllocCoTaskMem(8);
+      _ciStateChangeIndirectionPtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_ciStateChangeIndirectionPtr, 0, _ciStateChangeCallbackPtr);
-      _ciStateChangeInterfacePtr = Marshal.AllocCoTaskMem(8);
+      _ciStateChangeInterfacePtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_ciStateChangeInterfacePtr, 0, _ciStateChangeIndirectionPtr);
 
       _mmiMessageDelegate = OnMmiMessage;
       _mmiMessageCallbackPtr = Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate);
-      _mmiMessageIndirectionPtr = Marshal.AllocCoTaskMem(8);
+      _mmiMessageIndirectionPtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_mmiMessageIndirectionPtr, 0, _mmiMessageCallbackPtr);
-      _mmiMessageInterfacePtr = Marshal.AllocCoTaskMem(8);
+      _mmiMessageInterfacePtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_mmiMessageInterfacePtr, 0, _mmiMessageIndirectionPtr);
 
       // Trim the device path to make it like "pci#ven_1131&dev_7160&subsys_26551461&rev_03#4&2165452d&0&0008#".
@@ -708,18 +708,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
 
       //byte[] caPmt = DvbMmiHandler.CreateCaPmtRequest(pmt.GetCaPmt(listAction, command));
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
-      //if (caPmt.Length > MaxPmtLength)
-      if (rawPmt.Count > MaxPmtLength)
-      {
-        this.LogDebug("AVerMedia: buffer capacity too small");
-        return false;
-      }
 
       /*AVerMediaPmt averPmt = new AVerMediaPmt();
       averPmt.Length = (short)caPmt.Length;
       averPmt.PmtPtr = Marshal.AllocCoTaskMem(caPmt.Length);
       Marshal.Copy(caPmt, 0, averPmt.PmtPtr, caPmt.Length);
-      IntPtr structPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(averPmt));
+      IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
       Marshal.StructureToPtr(averPmt, structPtr, true);*/
 
       AVerMediaPmt averPmt = new AVerMediaPmt();
@@ -729,10 +723,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       {
         Marshal.WriteByte(averPmt.PmtPtr, i, rawPmt[i]);
       }
-      IntPtr structPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(averPmt));
+      IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
       Marshal.StructureToPtr(averPmt, structPtr, true);
 
-      //DVB_MMI.DumpBinary(structPtr, 0, Marshal.SizeOf(averPmt));
+      //DVB_MMI.DumpBinary(structPtr, 0, AVERMEDIA_PMT_SIZE);
       //DVB_MMI.DumpBinary(averPmt.PmtPtr, 0, caPmt.Length);
 
       try

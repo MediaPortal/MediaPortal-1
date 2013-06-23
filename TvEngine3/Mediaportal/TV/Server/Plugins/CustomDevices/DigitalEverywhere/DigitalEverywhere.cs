@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -253,7 +254,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbsMultiplexParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
@@ -265,7 +266,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       private byte Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbsServiceParams
     {
       [MarshalAs(UnmanagedType.Bool)]
@@ -289,7 +290,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public UInt16 PmtPid;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbsPidFilterParams
     {
       [MarshalAs(UnmanagedType.Bool)]
@@ -315,7 +316,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       private UInt16 Padding4;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbtMultiplexParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 47000 - 860000
@@ -329,7 +330,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       private byte Padding;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbtPidFilterParams
     {
       [MarshalAs(UnmanagedType.Bool)]
@@ -346,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       private UInt16 Padding2;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct FirmwareVersionInfo
     {
       public byte HardwareMajor;
@@ -359,7 +360,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public byte BuildNumberLsb;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct FrontEndStatusInfo
     {
       public UInt32 Frequency;            // unit = kHz, intermediate frequency for DVB-S/2
@@ -385,7 +386,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       private byte Padding3;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct SystemInfo
     {
       public byte NumberOfAntennas;       // range = 0 - 3
@@ -397,7 +398,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public bool Lists;                  // ???
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DiseqcMessage
     {
       public byte MessageLength;
@@ -405,7 +406,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public byte[] Message;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbCommand
     {
       public byte Voltage;
@@ -417,7 +418,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public DiseqcMessage[] DiseqcMessages;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbParams
     {
       public UInt32 AntennaNumber;
@@ -430,7 +431,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public UInt16 HighBandLof;          // unit = MHz
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbParamInfo
     {
       public Int32 NumberOfAntennas;       // range = 0 - 3
@@ -438,7 +439,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public LnbParams[] LnbParams;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct QpskTuneParams
     {
       public UInt32 Frequency;            // unit = kHz, range = 950000 - 2150000
@@ -451,7 +452,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public bool IsHighBand;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct CiErrorDebugMessage
     {
       public byte MessageType;
@@ -460,7 +461,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public String Message;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CaData
     {
       public byte Slot;
@@ -494,29 +495,35 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
 
     private const int MAX_PMT_LENGTH = 1024;
-    private const int DVBS_MULTIPLEX_PARAMS_SIZE = 12;
-    private const int DVBS_SERVICE_PARAMS_SIZE = 36;
-    private const int DVBS_PID_FILTER_PARAMS_SIZE = 60;
-    private const int DVBT_MULTIPLEX_PARAMS_SIZE = 12;
-    private const int DVBT_PID_FILTER_PARAMS_SIZE = 56;
+    private static readonly int DVBS_MULTIPLEX_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbsMultiplexParams));     // 12
+    private static readonly int DVBS_SERVICE_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbsServiceParams));         // 36
+    private static readonly int DVBS_PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbsPidFilterParams));    // 60
+    private static readonly int DVBT_MULTIPLEX_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbtMultiplexParams));     // 12
+    private static readonly int DVBT_PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(DvbtPidFilterParams));    // 56
     private const int MAX_PID_FILTER_PIDS = 16;
-    private const int FIRMWARE_VERSION_INFO_SIZE = 8;
-    private const int FRONT_END_STATUS_INFO_SIZE = 28;
-    private const int SYSTEM_INFO_SIZE = 8;
-    private const int DISEQC_MESSAGE_SIZE = 7;
+    private static readonly int FIRMWARE_VERSION_INFO_SIZE = Marshal.SizeOf(typeof(FirmwareVersionInfo));     // 8
+    private static readonly int FRONT_END_STATUS_INFO_SIZE = Marshal.SizeOf(typeof(FrontEndStatusInfo));      // 28
+    private static readonly int SYSTEM_INFO_SIZE = Marshal.SizeOf(typeof(SystemInfo));            // 8
+    private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));      // 7
     private const int MAX_DISEQC_MESSAGE_LENGTH = 6;
-    private const int LNB_COMMAND_SIZE = 25;
+    private static readonly int LNB_COMMAND_SIZE = Marshal.SizeOf(typeof(LnbCommand));            // 25
     private const int MAX_DISEQC_MESSAGE_COUNT = 3;
-    private const int LNB_PARAMS_SIZE = 16;
-    private const int LNB_PARAM_INFO_SIZE = 68;
+    private static readonly int LNB_PARAMS_SIZE = Marshal.SizeOf(typeof(LnbParams));              // 16
+    private static readonly int LNB_PARAM_INFO_SIZE = Marshal.SizeOf(typeof(LnbParamInfo));       // 68
     private const int MAX_LNB_PARAM_COUNT = 4;
-    private const int QPSK_TUNE_PARAMS_SIZE = 12;
-    private const int CI_ERROR_DEBUG_MESSAGE_LENGTH = 258;
+    private static readonly int QPSK_TUNE_PARAMS_SIZE = Marshal.SizeOf(typeof(QpskTuneParams));   // 12
+    private static readonly int CI_ERROR_DEBUG_MESSAGE_LENGTH = Marshal.SizeOf(typeof(CiErrorDebugMessage));  // 258
     private const int MAX_CI_ERROR_DEBUG_MESSAGE_LENGTH = 256;
-    private const int CA_DATA_SIZE = 1036;
+    private static readonly int CA_DATA_SIZE = Marshal.SizeOf(typeof(CaData));  // 1036
     private const int DRIVER_VERSION_INFO_SIZE = 32;
     private const int TEMPERATURE_INFO_SIZE = 4;
 
+    private static readonly int GENERAL_BUFFER_SIZE = new int[]
+      {
+        CA_DATA_SIZE, DRIVER_VERSION_INFO_SIZE, DVBS_MULTIPLEX_PARAMS_SIZE, DVBT_MULTIPLEX_PARAMS_SIZE,
+        FIRMWARE_VERSION_INFO_SIZE, FRONT_END_STATUS_INFO_SIZE, LNB_COMMAND_SIZE, LNB_PARAM_INFO_SIZE,
+        TEMPERATURE_INFO_SIZE
+      }.Max();
     private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;    // unit = ms
 
     #endregion
@@ -980,7 +987,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       this.LogDebug("Digital Everywhere: supported device detected");
       _isDigitalEverywhere = true;
       _tunerType = tunerType;
-      _generalBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
 
       ReadDriverInfo();
       ReadHardwareInfo();
@@ -1115,8 +1122,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         Marshal.WriteByte(_generalBuffer, 0, (byte)DeLnbPower.Off);
       }
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower,
-        _generalBuffer, 1,
-        _generalBuffer, 1
+        _generalBuffer, sizeof(Byte),
+        _generalBuffer, sizeof(Byte)
       );
       if (hr == 0)
       {

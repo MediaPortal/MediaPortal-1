@@ -738,7 +738,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           return false;
         }
 
-        IntPtr pmtBuffer = Marshal.AllocCoTaskMem(2048);
+        IntPtr pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE);
         try
         {
           int pmtLength = _tsFilterInterface.PmtGetPmtData(_subChannelIndex, pmtBuffer);
@@ -795,7 +795,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       ThrowExceptionIfTuneCancelled();
       this.LogDebug("TvDvbChannel: subchannel {0} grab CAT", _subChannelId);
-      IntPtr catBuffer = Marshal.AllocCoTaskMem(4096);
+      IntPtr catBuffer = Marshal.AllocCoTaskMem(Cat.MAX_SIZE);
       try
       {
         DateTime dtNow = DateTime.Now;

@@ -190,23 +190,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
 
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
 
-    private const int BDA_EXTENSION_PARAMS_SIZE = 188;
-    private const int NBC_TUNING_PARAMS_SIZE = 20;
+    private static readonly int BDA_EXTENSION_PARAMS_SIZE = Marshal.SizeOf(typeof(BdaExtensionParams));   // 188
+    private static readonly int NBC_TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(NbcTuningParams));         // 20
+
     private const byte MAX_DISEQC_TX_MESSAGE_LENGTH = 151;  // 3 bytes per message * 50 messages
     private const byte MAX_DISEQC_RX_MESSAGE_LENGTH = 9;    // reply fifo size, do not increase (hardware limitation)
+
+    private static readonly int GENERAL_BUFFER_SIZE = Math.Max(BDA_EXTENSION_PARAMS_SIZE, NBC_TUNING_PARAMS_SIZE);
 
     #endregion
 
     #region variables
 
-    /// <summary>
-    /// A buffer for general use in synchronised methods in the Prof and ProfUsb classes.
-    /// </summary>
-    protected IntPtr _generalBuffer = IntPtr.Zero;
-
-    private IKsPropertySet _propertySet = null;
-
     private bool _isProf = false;
+    private IKsPropertySet _propertySet = null;
+    private IntPtr _generalBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -270,10 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
 
       this.LogDebug("Prof: supported device detected");
       _isProf = true;
-      // Note: this buffer is shared between the Prof and ProfUsb classes. It must be large enough to
-      // accomodate the largest struct from either class. At present the largest struct is the
-      // BdaExtensionParams struct in the ProfUsb class.
-      _generalBuffer = Marshal.AllocCoTaskMem(288);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       return true;
     }
 

@@ -145,10 +145,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
     private static readonly Guid BDA_EXTENSION_PROPERTY_SET = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 0xaa, 0x87, 0xb5, 0xe1, 0xdc, 0x41, 0x13);
 
-    private const int BDA_EXTENSION_PARAMS_SIZE = 288;
+    private static readonly int BDA_EXTENSION_PARAMS_SIZE = Marshal.SizeOf(typeof(BdaExtensionParams));   // 288
     private const int MAX_DISEQC_MESSAGE_LENGTH = 5;
-    private const int MAC_ADDRESS_LENGTH = 6;
     private const int DEVICE_ID_LENGTH = 8;
+    private const int MAC_ADDRESS_LENGTH = 6;
+
+    private static readonly int GENERAL_BUFFER_SIZE = BDA_EXTENSION_PARAMS_SIZE;
 
     #endregion
 
@@ -156,6 +158,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
     private bool _isProfUsb = false;
     private IKsPropertySet _propertySet = null;
+    private IntPtr _generalBuffer = IntPtr.Zero;  // We have our
     private bool _isCustomTuningSupported = false;
 
     #endregion
@@ -301,6 +304,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
 
       this.LogDebug("Prof (USB): tuner supports the USB interface");
       _isProfUsb = true;
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       ReadDeviceInfo();
       return true;
     }
@@ -615,9 +619,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb
     /// </summary>
     public override void Dispose()
     {
-      _propertySet = null;
-      _isProfUsb = false;
       base.Dispose();
+
+      _propertySet = null;
+      if (_generalBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_generalBuffer);
+        _generalBuffer = IntPtr.Zero;
+      }
+      _isProfUsb = false;
     }
 
     #endregion

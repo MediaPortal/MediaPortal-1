@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     public static string Convert(IntPtr ptr, string lang)
     {
-      if (ptr == (IntPtr) 0)
+      if (ptr == IntPtr.Zero)
         return "";
 
       int len = 0;

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -71,17 +72,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
       public MmiApplicationType ApplicationType;
+      private byte Padding;
       public UInt16 Manufacturer;
       public UInt16 ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String RootMenuTitle;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct CiStateInfo    // NETUP_CAM_STATUS
     {
       public NetUpCiState CiState;
@@ -94,7 +96,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       public String RootMenuTitle;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CaInfo   // TYP_SLOT_INFO
     {
       public UInt32 NumberOfCaSystemIds;
@@ -102,7 +104,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       public UInt16[] CaSystemIds;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiMenuEntry
     {
       #pragma warning disable 0649
@@ -111,9 +113,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       #pragma warning restore 0649
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiMenu    // NETUP_CAM_MENU
     {
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsMenu;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Title;
@@ -126,16 +129,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       public UInt32 EntryCount;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
     {
+      [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
+      private byte Padding1;
+      private Int16 Padding2;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
       public String Prompt;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct MmiAnswer    // NETUP_CAM_MMI_ANSWER
     {
       public byte AnswerLength;
@@ -261,7 +267,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
         IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
         IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
-        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
+        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(Int32));
         try
         {
           // Clear buffers. This is probably not actually needed, but better
@@ -319,18 +325,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 48;
-    private const int APPLICATION_INFO_SIZE = 6 + MAX_STRING_LENGTH;
-    private const int CI_STATE_INFO_SIZE = 8 + MAX_STRING_LENGTH;
-    private const int CA_INFO_SIZE = 4 + (MAX_CA_SYSTEM_IDS * 2);
-    private const int MMI_MENU_SIZE = 8 + (MAX_STRING_LENGTH * (3 + MAX_CAM_MENU_ENTRIES));
-    private const int MMI_ENQUIRY_SIZE = 8 + MAX_STRING_LENGTH;
-    private const int MMI_ANSWER_SIZE = 4 + MAX_STRING_LENGTH;
+    private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 262
+    private static readonly int CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 264
+    private static readonly int CA_INFO_SIZE = Marshal.SizeOf(typeof(CaInfo));                    // 516
+    private static readonly int MMI_MENU_SIZE = Marshal.SizeOf(typeof(MmiMenu));                  // 17160
+    private static readonly int MMI_ENQUIRY_SIZE = Marshal.SizeOf(typeof(MmiEnquiry));            // 264
+    private static readonly int MMI_ANSWER_SIZE = Marshal.SizeOf(typeof(MmiAnswer));              // 257
     private const int MAX_BUFFER_SIZE = 65536;
     private const int MAX_STRING_LENGTH = 256;
     private const int MAX_CA_SYSTEM_IDS = 256;
     private const int MAX_CAM_MENU_ENTRIES = 64;
     private const int MAX_DISEQC_MESSAGE_LENGTH = 64;         // This is to reduce the _generalBuffer size - the driver limit is MaxBufferSize.
 
+    private const int GENERAL_BUFFER_SIZE = MAX_DISEQC_MESSAGE_LENGTH;
+    private static readonly int MMI_BUFFER_SIZE = new int[] { APPLICATION_INFO_SIZE, CA_INFO_SIZE, CI_STATE_INFO_SIZE, MMI_ANSWER_SIZE, MMI_ENQUIRY_SIZE, MMI_MENU_SIZE }.Max();
     private const int MMI_HANDLER_THREAD_SLEEP_TIME = 2000;   // unit = ms
 
     #endregion
@@ -744,7 +752,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         }
         this.LogDebug("NetUP: supported device detected");
         _isNetUp = true;
-        _generalBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
+        _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
         return true;
       }
 
@@ -870,7 +878,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         return false;
       }
 
-      _mmiBuffer = Marshal.AllocCoTaskMem(MMI_MENU_SIZE);
+      _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
 
       _isCamPresent = IsInterfaceReady();
 

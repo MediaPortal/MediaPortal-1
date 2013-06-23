@@ -95,13 +95,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
     #region constants
 
-    private const int NBC_PARAMS_SIZE = 8;
+    private static readonly int NBC_PARAMS_SIZE = Marshal.SizeOf(typeof(NbcParams));    // 8
+    private static readonly int PARAM_BUFFER_SIZE = NBC_PARAMS_SIZE;
 
     #endregion
 
     #region variables
 
     private bool _isGeniatech = false;
+    private IntPtr _paramBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -158,6 +160,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
       this.LogDebug("Geniatech: supported device detected");
       _isGeniatech = true;
+      _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
 
@@ -298,6 +301,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
     public override void Dispose()
     {
       base.Dispose();
+
+      if (_paramBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_paramBuffer);
+        _paramBuffer = IntPtr.Zero;
+      }
       _isGeniatech = false;
     }
 

@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;  // unit = ms
     private const int KS_METHOD_SIZE = 24;
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
-    private const int BDA_DISEQC_MESSAGE_SIZE = 16;
+    private static readonly int BDA_DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(BdaDiseqcMessage));   // 16
     private const int MAX_DISEQC_MESSAGE_LENGTH = 8;
 
     #endregion
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     private IBDA_DeviceControl _deviceControl = null;
     private uint _requestId = 1;
     private IntPtr _instanceBuffer = IntPtr.Zero;
-    private IntPtr _paramBuffer = IntPtr.Zero;
+    private IntPtr _diseqcBuffer = IntPtr.Zero;
 
     #endregion
 
@@ -521,7 +521,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           this.LogDebug("Digital Devices: DiSEqC support detected");
           _deviceControl = tunerFilter as IBDA_DeviceControl;
           _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
-          _paramBuffer = Marshal.AllocCoTaskMem(BDA_DISEQC_MESSAGE_SIZE);
+          _diseqcBuffer = Marshal.AllocCoTaskMem(BDA_DISEQC_MESSAGE_SIZE);
         }
       }
 
@@ -1457,8 +1457,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
 
       // I'm not certain whether this property has to be set for each command sent, but we do it for safety.
-      Marshal.WriteInt32(_paramBuffer, 0, 0);
-      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, 4);
+      Marshal.WriteInt32(_diseqcBuffer, 0, 0);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, sizeof(Int32));
       if (hr != 0)
       {
         this.LogDebug("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1470,9 +1470,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       message.PacketLength = (uint)command.Length;
       message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
-      Marshal.StructureToPtr(message, _paramBuffer, true);
-      //DVB_MMI.DumpBinary(_paramBuffer, 0, BDA_DISEQC_MESSAGE_SIZE);
-      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
+      Marshal.StructureToPtr(message, _diseqcBuffer, true);
+      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, BDA_DISEQC_MESSAGE_SIZE);
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE);
       if (hr != 0)
       {
         this.LogDebug("Digital Devices: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1516,14 +1516,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       for (int i = 0; i < BDA_DISEQC_MESSAGE_SIZE; i++)
       {
-        Marshal.WriteInt32(_paramBuffer, 0, 0);
+        Marshal.WriteInt32(_diseqcBuffer, 0, 0);
       }
       int returnedByteCount;
-      int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _paramBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE, out returnedByteCount);
+      int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _diseqcBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE, out returnedByteCount);
       if (hr == 0 && returnedByteCount == BDA_DISEQC_MESSAGE_SIZE)
       {
         // Copy the response into the return array.
-        BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_paramBuffer, typeof(BdaDiseqcMessage));
+        BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(BdaDiseqcMessage));
         if (message.PacketLength > MAX_DISEQC_MESSAGE_LENGTH)
         {
           this.LogDebug("Digital Devices: response length is out of bounds, response length = {0}", message.PacketLength);
@@ -1578,10 +1578,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         Marshal.FreeCoTaskMem(_instanceBuffer);
         _instanceBuffer = IntPtr.Zero;
       }
-      if (_paramBuffer != IntPtr.Zero)
+      if (_diseqcBuffer != IntPtr.Zero)
       {
-        Marshal.FreeCoTaskMem(_paramBuffer);
-        _paramBuffer = IntPtr.Zero;
+        Marshal.FreeCoTaskMem(_diseqcBuffer);
+        _diseqcBuffer = IntPtr.Zero;
       }
       if (_propertySet != null)
       {

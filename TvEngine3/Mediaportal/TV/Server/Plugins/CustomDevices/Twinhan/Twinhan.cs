@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
@@ -216,7 +217,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       private byte[] Reserved2;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct PidFilterParams    // PID_FILTER_INFO
     {
       public TwinhanPidFilterMode FilterMode;
@@ -227,7 +228,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       public UInt16[] FilterPids;                             // Filter PID list.
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbParams  // LNB_DATA
     {
       [MarshalAs(UnmanagedType.I1)]
@@ -252,7 +253,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     }
 
     // New CI/MMI state info structure - CI API v2.
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfo    // THCIState
     {
       public TwinhanCiState CiState;
@@ -265,7 +266,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     }
 
     // Old CI/MMI state info structure - CI API v1.
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfoOld   // THCIStateOld
     {
       public TwinhanCiState CiState;
@@ -442,7 +443,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
     #endregion
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApplicationInfo    // THAppInfo
     {
       public UInt32 ApplicationType;
@@ -1076,18 +1077,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private const int INSTANCE_SIZE = 32;   // The size of a property instance (KSP_NODE) parameter.
     private const int COMMAND_SIZE = 40;
 
-    private const int DEVICE_INFO_SIZE = 240;
-    private const int DRIVER_INFO_SIZE = 256;
-    private const int PID_FILTER_PARAMS_SIZE = 72;
+    private static readonly int DEVICE_INFO_SIZE = Marshal.SizeOf(typeof(DeviceInfo));            // 240
+    private static readonly int DRIVER_INFO_SIZE = Marshal.SizeOf(typeof(DriverInfo));            // 256
+    private static readonly int PID_FILTER_PARAMS_SIZE = Marshal.SizeOf(typeof(PidFilterParams)); // 72
     private const int MAX_PID_FILTER_PIDS = 32;
-    private const int LNB_PARAMS_SIZE = 20;
-    private const int DiseqcMessageSize = 16;
+    private static readonly int LNB_PARAMS_SIZE = Marshal.SizeOf(typeof(LnbParams));              // 20
+    private static readonly int DISEQC_MESSAGE_SIZE = Marshal.SizeOf(typeof(DiseqcMessage));      // 16
     private const int MAX_DISEQC_MESSAGE_LENGTH = 12;
-    private const int CI_STATE_INFO_SIZE = 48;
-    private const int OLD_CI_STATE_INFO_SIZE = 8;
-    private const int APPLICATION_INFO_SIZE = 76;
-    private const int TUNING_PARAMS_SIZE = 16;
+    private static readonly int CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfo));         // 48
+    private static readonly int OLD_CI_STATE_INFO_SIZE = Marshal.SizeOf(typeof(CiStateInfoOld));  // 8
+    private static readonly int APPLICATION_INFO_SIZE = Marshal.SizeOf(typeof(ApplicationInfo));  // 76
+    private static readonly int TUNING_PARAMS_SIZE = Marshal.SizeOf(typeof(TuningParams));        // 16
 
+    private static readonly int GENERAL_BUFFER_SIZE = new int[]
+      {
+        DEVICE_INFO_SIZE, DISEQC_MESSAGE_SIZE, DRIVER_INFO_SIZE, LNB_PARAMS_SIZE,
+        PID_FILTER_PARAMS_SIZE, TUNING_PARAMS_SIZE
+      }.Max();
     private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;    // unit = ms
 
     // TerraTec have entended the length and number of
@@ -1157,7 +1163,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
       // Use local buffers here because this function is called from the MMI polling thread as well as
       // indirectly from the main TV service thread.
-      IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
       IntPtr responseBuffer = Marshal.AllocCoTaskMem(bufferSize);
       for (int i = 0; i < bufferSize; i++)
       {
@@ -1178,8 +1183,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       }
       finally
       {
-        Marshal.FreeCoTaskMem(commandBuffer);
-        commandBuffer = IntPtr.Zero;
         Marshal.FreeCoTaskMem(responseBuffer);
         responseBuffer = IntPtr.Zero;
       }
@@ -1668,7 +1671,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
           _isTerraTec = true;
         }
       }
-      _generalBuffer = Marshal.AllocCoTaskMem(DRIVER_INFO_SIZE);
+      _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
 
       ReadDeviceInfo();
       if (_isPidFilterSupported)
@@ -2023,7 +2026,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
 
       Marshal.WriteInt32(_generalBuffer, 0);
-      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, 4);
+      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, sizeof(Int32));
       hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
       {
@@ -2333,7 +2336,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       byte[] caPmt = pmt.GetCaPmt(listAction, command);
 
       // Send the data to the CAM. Use local buffers since PMT updates are asynchronous.
-      IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
       IntPtr pmtBuffer = Marshal.AllocCoTaskMem(caPmt.Length);
       try
       {
@@ -2353,8 +2355,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       }
       finally
       {
-        Marshal.FreeCoTaskMem(commandBuffer);
-        commandBuffer = IntPtr.Zero;
         Marshal.FreeCoTaskMem(pmtBuffer);
         pmtBuffer = IntPtr.Zero;
       }
@@ -2562,9 +2562,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       Buffer.BlockCopy(command, 0, message.Message, 0, command.Length);
 
       Marshal.StructureToPtr(message, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
+      //DVB_MMI.DumpBinary(_generalBuffer, 0, DISEQC_MESSAGE_SIZE);
 
-      TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DiseqcMessageSize, IntPtr.Zero, 0);
+      TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DISEQC_MESSAGE_SIZE, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = tcommand.Execute(_propertySet, out returnedByteCount);
       /*if (hr != 0)
@@ -2598,12 +2598,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         return false;
       }
 
-      for (int i = 0; i < DiseqcMessageSize; i++)
+      for (int i = 0; i < DISEQC_MESSAGE_SIZE; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
       }
 
-      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _generalBuffer, DiseqcMessageSize);
+      TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _generalBuffer, DISEQC_MESSAGE_SIZE);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
       if (hr == 0)
@@ -2613,7 +2613,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         response = new byte[message.MessageLength];
         Buffer.BlockCopy(message.Message, 0, response, 0, message.MessageLength);
 
-        DVB_MMI.DumpBinary(_generalBuffer, 0, DiseqcMessageSize);
+        DVB_MMI.DumpBinary(_generalBuffer, 0, DISEQC_MESSAGE_SIZE);
         return true;
       }
 
