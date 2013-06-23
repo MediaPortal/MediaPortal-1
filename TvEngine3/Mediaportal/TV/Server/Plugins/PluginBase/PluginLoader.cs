@@ -33,7 +33,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
   {
     private List<ITvServerPlugin> _plugins = new List<ITvServerPlugin>();
     private readonly List<Type> _incompatiblePlugins = new List<Type>();
-    
+
 
     /// <summary>
     /// returns a list of all plugins loaded.
@@ -58,23 +58,23 @@ namespace Mediaportal.TV.Server.Plugins.Base
     /// </summary>
     public virtual void Load()
     {
-       /*   
-       var container = new WindsorContainer();
-       container.Register(Component.For<IService>().ImplementedBy<Service>()
-       */
-                 
+      /*   
+      var container = new WindsorContainer();
+      container.Register(Component.For<IService>().ImplementedBy<Service>()
+      */
+
       _plugins.Clear();
       _incompatiblePlugins.Clear();
 
       try
-      {        
+      {
         var assemblyFilter = new AssemblyFilter("plugins");
         IWindsorContainer container = Instantiator.Instance.Container();
         container.Register(
-        AllTypes.FromAssemblyInDirectory(assemblyFilter).                        
+        AllTypes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ITvServerPlugin>().
-            If(t => IsPluginCompatible(t)).            
-            WithServiceBase().            
+            If(t => IsPluginCompatible(t)).
+            WithServiceBase().
             LifestyleSingleton()
             );
 
@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
         {
           this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
                         plugin.Author);
-        }      
+        }
       }
       catch (Exception ex)
       {
@@ -94,13 +94,13 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
     private bool IsPluginCompatible(Type type)
     {
-      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type);
+      bool isPluginCompatible = CompatibilityManager.IsPluginCompatible(type, true);
       if (!isPluginCompatible)
       {
         _incompatiblePlugins.Add(type);
         this.LogDebug("PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!", type.FullName);
       }
       return isPluginCompatible;
-    }    
+    }
   }
 }
