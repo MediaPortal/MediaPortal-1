@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
@@ -58,22 +60,18 @@ namespace Mediaportal.TV.Server.Plugins.Base
     /// </summary>
     public virtual void Load()
     {
-      /*   
-      var container = new WindsorContainer();
-      container.Register(Component.For<IService>().ImplementedBy<Service>()
-      */
-
       _plugins.Clear();
       _incompatiblePlugins.Clear();
-
       try
       {
-        var assemblyFilter = new AssemblyFilter("plugins");
+        // Load plugins from "plugins" subfolder, relative to calling assembly's location
+        string pluginFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Plugins");
+        var assemblyFilter = new AssemblyFilter(pluginFolder);
         IWindsorContainer container = Instantiator.Instance.Container();
         container.Register(
         AllTypes.FromAssemblyInDirectory(assemblyFilter).
             BasedOn<ITvServerPlugin>().
-            If(t => IsPluginCompatible(t)).
+            If(IsPluginCompatible).
             WithServiceBase().
             LifestyleSingleton()
             );
@@ -82,8 +80,7 @@ namespace Mediaportal.TV.Server.Plugins.Base
 
         foreach (ITvServerPlugin plugin in _plugins)
         {
-          this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
-                        plugin.Author);
+          this.LogDebug("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version, plugin.Author);
         }
       }
       catch (Exception ex)
