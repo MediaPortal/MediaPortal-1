@@ -60,8 +60,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
         item.SubItems.Add(plugin.Version);
-        bool setting = ServiceAgents.Instance.SettingServiceAgent.GetValue(String.Format("plugin{0}", plugin.Name), false);
-        item.Checked = setting;
+        Setting setting = ServiceAgents.Instance.SettingServiceAgent.GetSettingWithDefaultValue(String.Format("plugin{0}", plugin.Name), "false");
+        bool settingValue;
+        if (bool.TryParse(setting.Value, out settingValue))
+          item.Checked = settingValue;
         item.Tag = setting;
       }
       listGroup = listView1.Groups["listViewGroupIncompatible"];
