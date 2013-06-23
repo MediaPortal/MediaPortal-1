@@ -271,9 +271,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
     /// <param name="deviceName">The corresponding DsDevice name.</param>
+    /// <param name="deviceIndex">A unique index for the device. This index enables CI support for multiple instances of a product.</param>
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    private delegate IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] String deviceName);
+    private delegate IntPtr On_Start_CI(IBaseFilter tunerFilter, [MarshalAs(UnmanagedType.LPWStr)] String deviceName, Int32 deviceIndex);
 
     /// <summary>
     /// Check whether a CAM is present in the CI slot associated with a specific Turbosight device.
@@ -1275,7 +1276,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
 
       // Attempt to initialise the interface.
-      _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName);
+      _ciHandle = _onStartCi(_tunerFilter, _tunerFilterName, _apiIndex);
       if (_ciHandle == IntPtr.Zero || _ciHandle.ToInt64() == -1)
       {
         this.LogDebug("Turbosight: interface handle is null");
