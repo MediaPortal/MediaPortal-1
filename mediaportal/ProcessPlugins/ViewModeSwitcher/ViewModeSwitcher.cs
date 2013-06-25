@@ -71,6 +71,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private int NoMatchCropCount = 0; 
     private float SymLimLow  = 0.9f; //Black bar symmetry check low limit
     private float SymLimHigh = 1.1f; //Black bar symmetry check high limit
+    private float MaxCropLim = 0.06f; //Black bar MaxCrop limit (per side)
+    
 
     /// <summary>
     /// Implements IAutoCrop.Crop, executing a manual crop
@@ -235,6 +237,8 @@ namespace ProcessPlugins.ViewModeSwitcher
 
       SymLimLow  = 1.0f - ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check low limit
       SymLimHigh = 1.0f + ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check high limit
+      
+      MaxCropLim = ((float)currentSettings.LBMaxCropLimitPercent/200.0f); //Limit for maximum black-bar 'picture' cropping (per side)
             
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
@@ -296,7 +300,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             }
             
             CheckAspectRatios();
-            if ((loopCount%4) == 0)
+            if ((loopCount % currentSettings.LBdetectInterval) == 0)
             {
               if (useAutoCrop)
               {
@@ -332,7 +336,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           updatePending = false;
           forceAutoCrop = false;
           NoMatchCropCount = 0;
-          loopCount = 3; //Perform a black-bar detect one loop cycle after start
+          loopCount = (currentSettings.LBdetectInterval-1); //Perform a black-bar detect one loop cycle after start
           
           if (currentSettings.verboseLog)
           {
@@ -576,13 +580,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
           {
             //Adjust horiz crop value to match vertical crop value (without picture distortion)
-            float extraHcropLimit = fWidthH * LastAnamorphFactor * 0.0625f;
+            float extraHcropLimit = fWidthH * LastAnamorphFactor * MaxCropLim;
             cropH = Math.Min(fCropV * LastSwitchedAspectRatio, fCropH + extraHcropLimit);
             cropV = cropH / LastSwitchedAspectRatio;
           }
           else
           {
-            float extraVcropLimit = fHeightV * 0.0625f;      
+            float extraVcropLimit = fHeightV * MaxCropLim;      
             cropV = Math.Min(fCropH / LastSwitchedAspectRatio, fCropV + extraVcropLimit);
             cropH = cropV * LastSwitchedAspectRatio;
           }           

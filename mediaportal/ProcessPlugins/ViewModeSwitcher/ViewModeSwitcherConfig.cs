@@ -141,6 +141,10 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void bDelete_Click(object sender, EventArgs e)
     {
+      if (currentSettings.ViewModeRules.Count <= 0)
+      {
+        return;
+      }
       currentSettings.ViewModeRules.RemoveAt(dg_RuleSets.CurrentRow.Index);
       ReBuildDataGrid();
     }
