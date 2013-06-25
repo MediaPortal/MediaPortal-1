@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Xml;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -92,6 +93,32 @@ namespace MediaPortal.DeployTool.InstallationChecks
         {
           Utils.SetDeployXml("skin", "name", chosenSkin);
         }
+      }
+
+      // Remove PowerScheduler++ information from installed extensions
+      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        // Load the installed extensions file
+        doc.Load(InstalledMpesPath);
+
+        // Get all PackageClass nodes
+        XmlNodeList packageClassNodes = doc.SelectNodes("/ExtensionCollection/Items/PackageClass");
+        foreach (XmlNode packageClassNode in packageClassNodes)
+        {
+          // Remove node if GeneralInfo/Name is PowerSchedeuler++
+          XmlNode idNode = packageClassNode.SelectSingleNode("GeneralInfo/Id");
+          if (idNode.InnerText == "9b9bc24e-69ca-4abc-8810-f8f95bd4bbe6")
+          {
+            packageClassNode.ParentNode.RemoveChild(packageClassNode);
+            doc.Save(InstalledMpesPath);
+            break;
+          }
+        }
+      }
+      catch (Exception)
+      {
       }
 
       string targetDir = InstallationProperties.Instance["MPDir"];
