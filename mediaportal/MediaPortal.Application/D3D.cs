@@ -1127,6 +1127,11 @@ namespace MediaPortal
       else
       {
         Log.Info("D3D: Creating DirectX9 device");
+        if (!OSInfo.OSInfo.VistaOrLater())
+        {
+          // Override and do not use 'CreateFlags.PureDevice' for XP #4073
+          _createFlags = CreateFlags.HardwareVertexProcessing;
+        }
         GUIGraphicsContext.DX9Device = new Device(AdapterInfo.AdapterOrdinal,
                                                   _deviceType, 
                                                   _renderTarget,
