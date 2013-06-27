@@ -46,15 +46,15 @@ namespace ProcessPlugins.ViewModeSwitcher
     private int maxBrightnessTreshold = 32;
     private int minBrightnessTreshold = 16;
 
-    private float topScanStartFraction = 0.30f;
-    private float topScanEndFraction = 0.70f;
-    private float bottomScanEndFraction = 0.70f;
-    private float bottomScanStartFraction = 0.30f;
+    private double topScanStartFraction = 0.3;
+    private double topScanEndFraction = 0.7;
+    private double bottomScanEndFraction = 0.7;
+    private double bottomScanStartFraction = 0.3;
 
-    private float leftScanStartFraction = 0.30f;
-    private float leftScanEndFraction = 0.70f;
-    private float rightScanStartFraction = 0.30f;
-    private float rightScanEndFraction = 0.70f;
+    private double leftScanStartFraction = 0.3;
+    private double leftScanEndFraction = 0.7;
+    private double rightScanStartFraction = 0.3;
+    private double rightScanEndFraction = 0.7;
 
     private int[] histR = new int[256];
     private int[] histG = new int[256];
@@ -92,29 +92,29 @@ namespace ProcessPlugins.ViewModeSwitcher
       bool foundLeft = false;
       bool foundRight = false;
 
-      topStart = (int)(topScanStartFraction * frame.Width);
-      topEnd = (int)(topScanEndFraction * frame.Width);
+      topStart = (int)(topScanStartFraction * (double)frame.Width);
+      topEnd = (int)(topScanEndFraction * (double)frame.Width);
       if (topEnd >= frame.Width)
       {
         topEnd--;
       }
 
-      bottomStart = (int)(bottomScanStartFraction * frame.Width);
-      bottomEnd = (int)(bottomScanEndFraction * frame.Width);
+      bottomStart = (int)(bottomScanStartFraction * (double)frame.Width);
+      bottomEnd = (int)(bottomScanEndFraction * (double)frame.Width);
       if (bottomEnd >= frame.Width)
       {
         bottomEnd--;
       }
 
-      leftStart = (int)(leftScanStartFraction * frame.Height);
-      leftEnd = (int)(leftScanEndFraction * frame.Height);
+      leftStart = (int)(leftScanStartFraction * (double)frame.Height);
+      leftEnd = (int)(leftScanEndFraction * (double)frame.Height);
       if (leftEnd >= frame.Height)
       {
         leftEnd--;
       }
 
-      rightStart = (int)(rightScanStartFraction * frame.Height);
-      rightEnd = (int)(rightScanEndFraction * frame.Height);
+      rightStart = (int)(rightScanStartFraction * (double)frame.Height);
+      rightEnd = (int)(rightScanEndFraction * (double)frame.Height);
       if (rightEnd >= frame.Height)
       {
         rightEnd--;
@@ -132,7 +132,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //Top black bar binary search scan
       int mid = 1;
       int low = 1;
-      int high = (int)(frame.Height * 0.25f);
+      int high = (int)((double)frame.Height * 0.25);
 
       while (low <= high)
       {
@@ -162,7 +162,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //Left black bar binary search scan
       mid = 1;
       low = 1;
-      high = (int)(frame.Width * 0.25f);
+      high = (int)((double)frame.Width * 0.25);
 
       while (low <= high)
       {
@@ -201,7 +201,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
 
       //Right black bar binary search scan
-      low = (int)(frame.Width * 0.75f);
+      low = (int)((double)frame.Width * 0.75);
       high = frame.Width - 1;
       mid = high;
       while (low <= high)
@@ -240,7 +240,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
 
       //Bottom black bar binary search scan
-      low = (int)(frame.Height * 0.75f);
+      low = (int)((double)frame.Height * 0.75);
       high = frame.Height - 1;
       mid = high;
       while (low <= high)
@@ -270,8 +270,8 @@ namespace ProcessPlugins.ViewModeSwitcher
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
 
-      if (!foundBottom || bottomLine - topLine < frame.Height * 0.25f ||
-          rightLine - leftLine < frame.Width * 0.25f)
+      if (!foundBottom || (bottomLine - topLine) < (int)((double)frame.Height * 0.25) ||
+          (rightLine - leftLine) < (int)((double)frame.Width * 0.25))
       {
         if (ViewModeSwitcher.currentSettings.verboseLog)
         {

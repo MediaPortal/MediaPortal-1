@@ -27,8 +27,8 @@ namespace ProcessPlugins.ViewModeSwitcher
   {
     public bool Enabled = true;
     public string Name = "new rule";
-    public float ARFrom;
-    public float ARTo;
+    public double ARFrom;
+    public double ARTo;
     public int MinWidth;
     public int MaxWidth = 9999;
     public int MinHeight;

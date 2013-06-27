@@ -296,7 +296,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       // ColViewMode
       // 
       this.ColViewMode.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-      this.ColViewMode.HeaderText = "ViewMode";
+      this.ColViewMode.HeaderText = "ZoomMode";
       this.ColViewMode.Name = "ColViewMode";
       this.ColViewMode.ReadOnly = true;
       this.ColViewMode.Width = 82;

@@ -182,8 +182,8 @@ namespace ProcessPlugins.ViewModeSwitcher
           Rule tmpRule = new Rule();
           tmpRule.Enabled = true;
           tmpRule.Name = "4:3 SD";
-          tmpRule.ARFrom = 1.2f;
-          tmpRule.ARTo = 1.46f;
+          tmpRule.ARFrom = 1.2;
+          tmpRule.ARTo = 1.46;
           tmpRule.MinWidth = 200;
           tmpRule.MaxWidth = 799;
           tmpRule.MinHeight = 200;
@@ -198,8 +198,8 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule = new Rule();
           tmpRule.Enabled = true;
           tmpRule.Name = "4:3 HD";
-          tmpRule.ARFrom = 1.2f;
-          tmpRule.ARTo = 1.46f;
+          tmpRule.ARFrom = 1.2;
+          tmpRule.ARTo = 1.46;
           tmpRule.MinWidth = 800;
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 600;
@@ -214,8 +214,8 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule = new Rule();
           tmpRule.Enabled = true;
           tmpRule.Name = "16:9 SD";
-          tmpRule.ARFrom = 1.70f;
-          tmpRule.ARTo = 1.90f;
+          tmpRule.ARFrom = 1.7;
+          tmpRule.ARTo = 1.9;
           tmpRule.MinWidth = 200;
           tmpRule.MaxWidth = 799;
           tmpRule.MinHeight = 200;
@@ -230,8 +230,8 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule = new Rule();
           tmpRule.Enabled = true;
           tmpRule.Name = "16:9 HD";
-          tmpRule.ARFrom = 1.70f;
-          tmpRule.ARTo = 1.90f;
+          tmpRule.ARFrom = 1.7;
+          tmpRule.ARTo = 1.9;
           tmpRule.MinWidth = 800;
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 600;
@@ -245,9 +245,41 @@ namespace ProcessPlugins.ViewModeSwitcher
 
           tmpRule = new Rule();
           tmpRule.Enabled = true;
+          tmpRule.Name = "21:9 SD";
+          tmpRule.ARFrom = 2.2;
+          tmpRule.ARTo = 2.45;
+          tmpRule.MinWidth = 200;
+          tmpRule.MaxWidth = 799;
+          tmpRule.MinHeight = 200;
+          tmpRule.MaxHeight = 599;
+          tmpRule.ViewMode = Geometry.Type.Zoom14to9;
+          tmpRule.OverScan = 8;
+          tmpRule.EnableLBDetection = true;
+          tmpRule.AutoCrop = true;
+          tmpRule.MaxCrop = true;
+          ViewModeRules.Add(tmpRule);
+
+          tmpRule = new Rule();
+          tmpRule.Enabled = true;
+          tmpRule.Name = "21:9 HD";
+          tmpRule.ARFrom = 2.2;
+          tmpRule.ARTo = 2.45;
+          tmpRule.MinWidth = 800;
+          tmpRule.MaxWidth = 2000;
+          tmpRule.MinHeight = 600;
+          tmpRule.MaxHeight = 2000;
+          tmpRule.ViewMode = Geometry.Type.Zoom14to9;
+          tmpRule.OverScan = 16;
+          tmpRule.EnableLBDetection = false;
+          tmpRule.AutoCrop = false;
+          tmpRule.MaxCrop = true;
+          ViewModeRules.Add(tmpRule);
+
+          tmpRule = new Rule();
+          tmpRule.Enabled = true;
           tmpRule.Name = "4:3 inside 16:9";
-          tmpRule.ARFrom = -1.20f;
-          tmpRule.ARTo = -1.46f;
+          tmpRule.ARFrom = -1.2;
+          tmpRule.ARTo = -1.46;
           tmpRule.MinWidth = 200;
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
@@ -262,13 +294,29 @@ namespace ProcessPlugins.ViewModeSwitcher
           tmpRule = new Rule();
           tmpRule.Enabled = true;
           tmpRule.Name = "16:9 inside 4:3";
-          tmpRule.ARFrom = -1.47f;
-          tmpRule.ARTo = -1.95f;
+          tmpRule.ARFrom = -1.47;
+          tmpRule.ARTo = -1.95;
           tmpRule.MinWidth = 200;
           tmpRule.MaxWidth = 2000;
           tmpRule.MinHeight = 200;
           tmpRule.MaxHeight = 2000;
           tmpRule.ViewMode = Geometry.Type.Zoom;
+          tmpRule.OverScan = 8;
+          tmpRule.EnableLBDetection = false;
+          tmpRule.AutoCrop = false;
+          tmpRule.MaxCrop = true;
+          ViewModeRules.Add(tmpRule);
+
+          tmpRule = new Rule();
+          tmpRule.Enabled = true;
+          tmpRule.Name = "21:9 inside 16:9";
+          tmpRule.ARFrom = -2.1;
+          tmpRule.ARTo = -2.57;
+          tmpRule.MinWidth = 200;
+          tmpRule.MaxWidth = 2000;
+          tmpRule.MinHeight = 200;
+          tmpRule.MaxHeight = 2000;
+          tmpRule.ViewMode = Geometry.Type.Zoom14to9;
           tmpRule.OverScan = 8;
           tmpRule.EnableLBDetection = false;
           tmpRule.AutoCrop = false;
@@ -286,12 +334,29 @@ namespace ProcessPlugins.ViewModeSwitcher
             tmpReturn = true;
           }
           tmpRule.Name = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Name", "noname");
-          tmpRule.ARFrom =
-            (float)
-            Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom", "0"));
-          tmpRule.ARTo =
-            (float)
-            Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo", "0"));
+                    
+          int tmpARFrom = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFromX1000", "0"));
+          tmpRule.ARFrom = ((double)tmpARFrom)/1000.0;
+//          if (tmpARFrom == 0)
+//          {
+//            tmpRule.ARFrom = Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom", "0"));
+//          }
+//          else
+//          {
+//            tmpRule.ARFrom = ((double)tmpARFrom)/1000.0;
+//          }
+
+          int tmpARTo = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARToX1000", "0"));          
+          tmpRule.ARTo = ((double)tmpARTo)/1000.0;
+//          if (tmpARTo == 0)
+//          {
+//            tmpRule.ARTo = Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo", "0"));
+//          }
+//          else
+//          {
+//            tmpRule.ARTo = ((double)tmpARTo)/1000.0;
+//          }
+            
           tmpRule.MinWidth =
             Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth", "0"));
           tmpRule.MaxWidth =
@@ -368,10 +433,15 @@ namespace ProcessPlugins.ViewModeSwitcher
           xmlwriter.SetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Enabled",
                                    tmpRule.Enabled);
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Name", tmpRule.Name);
-          xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom",
-                             tmpRule.ARFrom.ToString());
-          xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo",
-                             tmpRule.ARTo.ToString());
+          
+          int tmpARFrom = Convert.ToInt32(tmpRule.ARFrom * 1000.0);
+          xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFromX1000",
+                             tmpARFrom.ToString());
+                             
+          int tmpARTo = Convert.ToInt32(tmpRule.ARTo * 1000.0);
+          xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARToX1000",
+                             tmpARTo.ToString());
+                             
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth",
                              tmpRule.MinWidth.ToString());
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxWidth",

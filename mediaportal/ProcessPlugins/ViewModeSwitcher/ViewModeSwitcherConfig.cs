@@ -122,8 +122,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       Rule tmpRule = new Rule();
       tmpRule.Enabled = true;
       tmpRule.Name = "New rule";
-      tmpRule.ARFrom = 1.2f;
-      tmpRule.ARTo = 1.46f;
+      tmpRule.ARFrom = 1.2;
+      tmpRule.ARTo = 1.46;
       tmpRule.MinWidth = 200;
       tmpRule.MaxWidth = 2000;
       tmpRule.MinHeight = 200;

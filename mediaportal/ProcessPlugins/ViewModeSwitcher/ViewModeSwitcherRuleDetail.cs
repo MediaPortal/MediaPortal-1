@@ -66,8 +66,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       currentRule.Enabled = cbEnabled.Checked;
       currentRule.Name = txbName.Text;
-      currentRule.ARFrom = (float)Convert.ToDouble(txbARFrom.Text);
-      currentRule.ARTo = (float)Convert.ToDouble(txbARTo.Text);
+      currentRule.ARFrom = Math.Max(Math.Min(Convert.ToDouble(txbARFrom.Text), 20.0), -20.0);
+      currentRule.ARTo   = Math.Max(Math.Min(Convert.ToDouble(txbARTo.Text), 20.0), -20.0);
       currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
       currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
       currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);

@@ -37,7 +37,7 @@ namespace ProcessPlugins.ViewModeSwitcher
   public class ViewModeSwitcher : PlugInBase, IAutoCrop
   {
     public static readonly ViewModeswitcherSettings currentSettings = new ViewModeswitcherSettings();
-    private float LastSwitchedAspectRatio; // stores the last automatically set ratio. 
+    private double LastSwitchedAspectRatio; // stores the last automatically set ratio. 
     private readonly FrameGrabber grabber = FrameGrabber.GetInstance();
     private FrameAnalyzer analyzer = null;
     private bool LastDetectionResult = true;
@@ -48,30 +48,30 @@ namespace ProcessPlugins.ViewModeSwitcher
     private bool isPlaying = false;
     private bool enableLB = false;
     private bool disableLBGlobally = true;
-    private float overScan = 0f;
-    private float LastAnamorphFactor; // Video anamorphic correction factor (Video AR/Pixel AR) 
+    private double overScan = 0.0;
+    private double LastAnamorphFactor; // Video anamorphic correction factor (Video AR/Pixel AR) 
     private bool isVideoReceived = false;
     private AutoResetEvent videoRecvEvent = new AutoResetEvent(false);
     private Geometry.Type LastSwitchedGeometry = Geometry.Type.Normal;
     private bool isPBorLB = false;
     private bool updatePending = false;    
     private string NewGeometryMessage = " ";
-    private float fCropH = 0f; // stores the last hor crop value. 
-    private float fCropV = 0f; // stores the last vertical crop value. 
-    private float fWidthH = 0f; // stores the last 'real' video width value. 
-    private float fHeightV = 0f; // stores the last 'real' video height value. 
+    private double fCropH = 0.0; // stores the last hor crop value. 
+    private double fCropV = 0.0; // stores the last vertical crop value. 
+    private double fWidthH = 0.0; // stores the last 'real' video width value. 
+    private double fHeightV = 0.0; // stores the last 'real' video height value. 
     private bool workerBusy = false;
     private bool useMaxCrop = false;
     private bool useAutoCrop = false;
     private bool forceAutoCrop = false;
     private int LastWidth = 0; // stores the last raw video width value. 
     private int LastHeight = 0; // stores the last raw video height value. 
-    private float LastRawCropH = 0; // stores the last raw hcrop value. 
-    private float LastRawCropV = 0; // stores the last raw vcrop value. 
+    private double LastRawCropH = 0; // stores the last raw hcrop value. 
+    private double LastRawCropV = 0; // stores the last raw vcrop value. 
     private int NoMatchCropCount = 0; 
-    private float SymLimLow  = 0.9f; //Black bar symmetry check low limit
-    private float SymLimHigh = 1.1f; //Black bar symmetry check high limit
-    private float MaxCropLim = 0.06f; //Black bar MaxCrop limit (per side)
+    private double SymLimLow  = 0.9; //Black bar symmetry check low limit
+    private double SymLimHigh = 1.1; //Black bar symmetry check high limit
+    private double MaxCropLim = 0.06; //Black bar MaxCrop limit (per side)
     
 
     /// <summary>
@@ -235,10 +235,10 @@ namespace ProcessPlugins.ViewModeSwitcher
       g_Player.PlayBackStarted += OnVideoStarted;
       g_Player.TVChannelChanged += OnTVChannelChanged;
 
-      SymLimLow  = 1.0f - ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check low limit
-      SymLimHigh = 1.0f + ((float)currentSettings.LBSymLimitPercent/100.0f); //Black bar symmetry check high limit
+      SymLimLow  = 1.0 - ((double)currentSettings.LBSymLimitPercent/100.0); //Black bar symmetry check low limit
+      SymLimHigh = 1.0 + ((double)currentSettings.LBSymLimitPercent/100.0); //Black bar symmetry check high limit
       
-      MaxCropLim = ((float)currentSettings.LBMaxCropLimitPercent/200.0f); //Limit for maximum black-bar 'picture' cropping (per side)
+      MaxCropLim = ((double)currentSettings.LBMaxCropLimitPercent/200.0); //Limit for maximum black-bar 'picture' cropping (per side)
             
       // start the thread that will execute the actual cropping
       Thread t = new Thread(new ThreadStart(instance.Worker));
@@ -282,7 +282,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             Log.Debug("ViewModeSwitcher: Reset AR to original");
             GUIGraphicsContext.ARType = Geometry.Type.Zoom14to9;
             updatePending = true; //force AR type update
-            LastSwitchedAspectRatio = 0f;
+            LastSwitchedAspectRatio = 0.0;
             LastDetectionResult = false;
           }     
           else if (!updatePending)
@@ -294,7 +294,7 @@ namespace ProcessPlugins.ViewModeSwitcher
                 //reset cropping to fallback settings
               Log.Debug("ViewModeSwitcher: Zoom mode changed by user");
               enableLB = false;
-              Crop((float)currentSettings.fboverScan);
+              Crop((double)currentSettings.fboverScan);
               LastSwitchedGeometry = GUIGraphicsContext.ARType;
               updatePending = true;   
             }
@@ -329,8 +329,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         else
         {
           workerBusy = false;
-          LastSwitchedAspectRatio = 0f;
-          LastAnamorphFactor = 0f;
+          LastSwitchedAspectRatio = 0.0;
+          LastAnamorphFactor = 0.0;
           LastDetectionResult = true;
           isPBorLB = false;
           updatePending = false;
@@ -365,7 +365,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
 
       int currentRule = -1;
-      overScan = 0f;
+      overScan = 0.0;
       enableLB = false;
       useAutoCrop = forceAutoCrop;
       useMaxCrop = false;
@@ -374,7 +374,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Rule tmpRule = currentSettings.ViewModeRules[i];
 
         if (tmpRule.Enabled
-            && tmpRule.ARFrom > 0f && tmpRule.ARTo > 0f
+            && tmpRule.ARFrom > 0.0 && tmpRule.ARTo > 0.0
             && LastSwitchedAspectRatio >= tmpRule.ARFrom
             && LastSwitchedAspectRatio <= tmpRule.ARTo
             && width >= tmpRule.MinWidth
@@ -399,13 +399,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           if (tmpRule.OverScan > 0)
           {
-            overScan = (float)tmpRule.OverScan;
+            overScan = (double)tmpRule.OverScan;
             Crop(overScan);
           }
           else
           {
-            overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
-            Crop(0f);
+            overScan = (double)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+            Crop(0.0);
           }
           SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
           break; // do not process any additional rule after a rule fits (better for offset function)
@@ -420,21 +420,21 @@ namespace ProcessPlugins.ViewModeSwitcher
           Log.Info("ViewModeSwitcher: Processing the fallback rule!");
           if (currentSettings.fboverScan > 0)
           {
-            overScan = (float)currentSettings.fboverScan;
+            overScan = (double)currentSettings.fboverScan;
             Crop(overScan);
           }
           else
           {
-            overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
-            Crop(0f);
+            overScan = (double)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+            Crop(0.0);
           }
           SetNewGeometry("Fallback rule", currentSettings.FallBackViewMode);
         }
         else
         {
           Log.Info("ViewModeSwitcher: No rule found!");
-          overScan = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
-          Crop(0f); //Use TV cropping
+          overScan = (double)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+          Crop(0.0); //Use TV cropping
           SetNewGeometry("No rule", GUIGraphicsContext.ARType); //Do nothing...
         }
       }
@@ -446,7 +446,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// checks if a rule is fitting and executes it
     /// Used only for processing 'pillar box' video e.g. 4:3 inside 16:9
     /// </summary>    
-    private bool CheckRulesPBLB(float negAR, int width, int height, bool enable)
+    private bool CheckRulesPBLB(double negAR, int width, int height, bool enable)
     {
       if (!enable)
       {
@@ -457,7 +457,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Rule tmpRule = currentSettings.ViewModeRules[i];
 
         if (tmpRule.Enabled
-            && tmpRule.ARFrom < 0f && tmpRule.ARTo < 0f
+            && tmpRule.ARFrom < 0.0 && tmpRule.ARTo < 0.0
             && ((negAR <= tmpRule.ARFrom && negAR >= tmpRule.ARTo) ||
                 (negAR >= tmpRule.ARFrom && negAR <= tmpRule.ARTo))
             && width >= tmpRule.MinWidth
@@ -472,7 +472,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           if (tmpRule.OverScan > 0)
           {
-            overScan = (float)tmpRule.OverScan;
+            overScan = (double)tmpRule.OverScan;
           }
           SetNewGeometry(tmpRule.Name, tmpRule.ViewMode);
           return true; // do not process any additional rule after a rule fits
@@ -481,17 +481,17 @@ namespace ProcessPlugins.ViewModeSwitcher
       return false;
     }
 
-    private void Crop(float crop)
+    private void Crop(double crop)
     {
-      if (crop > 0f && LastSwitchedAspectRatio > 0f)
+      if (crop > 0.0 && LastSwitchedAspectRatio > 0.0)
       {
         fCropH = crop;
         fCropV = crop / LastSwitchedAspectRatio;
       }
       else
       {
-        fCropH = (float)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
-        fCropV = (float)(Math.Min(currentSettings.CropTop, currentSettings.CropBottom));
+        fCropH = (double)(Math.Min(currentSettings.CropLeft, currentSettings.CropRight));
+        fCropV = (double)(Math.Min(currentSettings.CropTop, currentSettings.CropBottom));
       }
     }
 
@@ -570,23 +570,23 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void SetCropMode()
     {           
-      float cropH = fCropH;
-      float cropV = fCropV;
+      double cropH = fCropH;
+      double cropV = fCropV;
 
-      if (LastSwitchedAspectRatio > 0f && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
+      if (LastSwitchedAspectRatio > 0.0 && (LastSwitchedGeometry != Geometry.Type.NonLinearStretch))
       {        
         if (useMaxCrop)
         { 
           if (fCropV > (fCropH / LastSwitchedAspectRatio)) 
           {
             //Adjust horiz crop value to match vertical crop value (without picture distortion)
-            float extraHcropLimit = fWidthH * LastAnamorphFactor * MaxCropLim;
+            double extraHcropLimit = fWidthH * LastAnamorphFactor * MaxCropLim;
             cropH = Math.Min(fCropV * LastSwitchedAspectRatio, fCropH + extraHcropLimit);
             cropV = cropH / LastSwitchedAspectRatio;
           }
           else
           {
-            float extraVcropLimit = fHeightV * MaxCropLim;      
+            double extraVcropLimit = fHeightV * MaxCropLim;      
             cropV = Math.Min(fCropH / LastSwitchedAspectRatio, fCropV + extraVcropLimit);
             cropH = cropV * LastSwitchedAspectRatio;
           }           
@@ -605,7 +605,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         }       
       }
 
-      if (LastAnamorphFactor > 0f)
+      if (LastAnamorphFactor > 0.0)
       { 
         //Correction to crop settings for anamorphic video i.e. when pixel aspect ratio != video aspect ratio
         //Log.Debug("ViewModeSwitcher: SetCropMode() Anamorph factor: {0}", LastAnamorphFactor);
@@ -672,15 +672,15 @@ namespace ProcessPlugins.ViewModeSwitcher
         return;
       }
       
-      float Hsym = 1.0f;
-      float Vsym = 1.0f;
+      double Hsym = 1.0;
+      double Vsym = 1.0;
       if (bounds.Left > 20 || ((frame.Width - bounds.Right) > 20 && bounds.Left > 0))
       {
-        Hsym = (float)(frame.Width - bounds.Right)/(float)bounds.Left;
+        Hsym = (double)(frame.Width - bounds.Right)/(double)bounds.Left;
       }
       if (bounds.Top > 20 || ((frame.Height - bounds.Bottom) > 20 && bounds.Top > 0))
       {
-        Vsym = (float)(frame.Height - bounds.Bottom)/(float)bounds.Top;
+        Vsym = (double)(frame.Height - bounds.Bottom)/(double)bounds.Top;
       }
       
       if (currentSettings.verboseLog)
@@ -706,12 +706,12 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
 
       //Use the smallest black bar size
-      float cropH = (float)(Math.Min(frame.Width - bounds.Right, bounds.Left));
-      float cropV = (float)(Math.Min(frame.Height - bounds.Bottom, bounds.Top));
+      double cropH = (double)(Math.Min(frame.Width - bounds.Right, bounds.Left));
+      double cropV = (double)(Math.Min(frame.Height - bounds.Bottom, bounds.Top));
       
       //Check for a close match (within 1% of width/height) to the previous crop values
-      if ((((Math.Abs(cropV - LastRawCropV))/(float)frame.Height) > 0.01) ||
-          (((Math.Abs(cropH - LastRawCropH))/(float)frame.Width)  > 0.01)) 
+      if ((((Math.Abs(cropV - LastRawCropV))/(double)frame.Height) > 0.01) ||
+          (((Math.Abs(cropH - LastRawCropH))/(double)frame.Width)  > 0.01)) 
       {
         LastRawCropH = cropH;
         LastRawCropV = cropV;
@@ -733,22 +733,40 @@ namespace ProcessPlugins.ViewModeSwitcher
       LastRawCropV = cropV;
 
       //Work out actual picture aspect ratio
-      float newasp = ((float)frame.Width - cropH * 2) / ((float)frame.Height - cropV * 2);      
+      double newasp = ((double)frame.Width - cropH * 2) / ((double)frame.Height - cropV * 2);      
 
       bool checkPBv = false;
-      bool checkLBv = false; 
 
-      //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio.
-      //After this correction, cropH value is in 'real' video pixels, not source pixels
-      if (LastAnamorphFactor > 0f)
+      if (LastAnamorphFactor > 0.0)
       {
+        //Correction for anamorphic video i.e. when pixel aspect ratio != video aspect ratio.
         newasp *= LastAnamorphFactor;
-        checkPBv = (cropV/(float)frame.Height < 0.02) 
-                     && LastSwitchedAspectRatio > 1.68 && LastSwitchedAspectRatio < 1.87 
-                     && newasp > 1.2 && newasp < 1.46;
-        checkLBv = (cropH/(float)frame.Width  < 0.02) 
-                     && LastSwitchedAspectRatio > 1.25 && LastSwitchedAspectRatio < 1.41 
-                     && newasp > 1.47 && newasp < 1.95; 
+        
+        //Check for letterbox/pillarbox video
+        if (LastSwitchedAspectRatio > 1.68 && LastSwitchedAspectRatio < 1.87 )
+        {
+          if ((cropV/(double)frame.Height < 0.02) && newasp > 1.2 && newasp < 1.46)
+          {
+            checkPBv = true;
+          }
+          else if ((cropH/(double)frame.Width  < 0.02) && newasp > 2.1 && newasp < 2.57)
+          {
+            checkPBv = true;
+          }
+        }
+        else if (LastSwitchedAspectRatio > 1.25 && LastSwitchedAspectRatio < 1.41)
+        {
+          if ((cropH/(double)frame.Width  < 0.02) && newasp > 1.47 && newasp < 1.95)
+          {
+            checkPBv = true;
+          }
+          else if ((cropH/(double)frame.Width  < 0.02) && newasp > 2.1 && newasp < 2.57)
+          {
+            checkPBv = true;
+          }
+        }
+        
+        //After this correction, cropH value is in 'real' video pixels, not source pixels
         cropH *= LastAnamorphFactor; 
       }
 
@@ -772,7 +790,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       
       //Check for 'Pillar Boxed' 4:3 inside 16:9 video, and 'Letter Boxed' 16:9 inside 4:3 video
-      if (CheckRulesPBLB(-newasp, frame.Width, frame.Height, (checkPBv || checkLBv)))
+      if (CheckRulesPBLB(-newasp, frame.Width, frame.Height, checkPBv))
       {
         if (LastSwitchedGeometry != Geometry.Type.NonLinearStretch)
         {
@@ -808,7 +826,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           //Force CheckAspectRatios() update 
           updatePending = false;   
           isPBorLB = false;
-          LastSwitchedAspectRatio = 0f;
+          LastSwitchedAspectRatio = 0.0;
           frame.Dispose();
           frame = null;
           return;
@@ -847,13 +865,13 @@ namespace ProcessPlugins.ViewModeSwitcher
           VMR9Util.g_vmr9.VideoAspectRatioY != 0)
       {
         // calculate the current aspect ratio
-        float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
-        float anamorphFactor = 0f;
+        double aspectRatio = (double)VMR9Util.g_vmr9.VideoAspectRatioX / (double)VMR9Util.g_vmr9.VideoAspectRatioY;
+        double anamorphFactor = 0.0;
         if (VMR9Util.g_vmr9.VideoWidth != 0 && VMR9Util.g_vmr9.VideoHeight != 0 )
         {
-          fWidthH  = (float)VMR9Util.g_vmr9.VideoWidth;
-          fHeightV = (float)VMR9Util.g_vmr9.VideoHeight;
-          float pixelAR = fWidthH / fHeightV;
+          fWidthH  = (double)VMR9Util.g_vmr9.VideoWidth;
+          fHeightV = (double)VMR9Util.g_vmr9.VideoHeight;
+          double pixelAR = fWidthH / fHeightV;
           anamorphFactor = (aspectRatio/pixelAR);   
         }
         if (aspectRatio != LastSwitchedAspectRatio || VMR9Util.g_vmr9.VideoHeight != LastHeight || VMR9Util.g_vmr9.VideoWidth != LastWidth)
