@@ -731,35 +731,42 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     private static string BuildAutoDJFilter(string filterMask, MusicTag tag)
     {
       var filter = filterMask;
-      if (!string.IsNullOrEmpty(tag.Genre))
+      try
       {
-        filter = filter.Replace("{genre}", "'" + tag.Genre + "'");
+        if (!string.IsNullOrEmpty(tag.Genre))
+        {
+          filter = filter.Replace("{genre}", "'" + tag.Genre + "'");
+        }
+        if (!string.IsNullOrEmpty(tag.Album))
+        {
+          filter = filter.Replace("{album}", "'" + tag.Album + "'");
+        }
+        if (!string.IsNullOrEmpty(tag.AlbumArtist))
+        {
+          filter = filter.Replace("{albumartist}", "'" + tag.AlbumArtist + "'");
+        }
+        if (!string.IsNullOrEmpty(tag.Artist))
+        {
+          filter = filter.Replace("{albumartist}", "'" + tag.Artist + "'");
+        }
+        if (tag.Year > 0)
+        {
+          filter = filter.Replace("{year}", tag.Year.ToString(CultureInfo.InvariantCulture));
+        }
+        if (tag.Rating > 0)
+        {
+          filter = filter.Replace("{rating}", tag.Rating.ToString(CultureInfo.InvariantCulture));
+        }
+        if (tag.BPM > 0)
+        {
+          filter = filter.Replace("{BPM}", tag.BPM.ToString(CultureInfo.InvariantCulture));
+        }
+        filter = filter.Replace("{dir}", "'" + Path.GetDirectoryName(tag.FileName) + "'");
       }
-      if (!string.IsNullOrEmpty(tag.Album))
+      catch (Exception ex)
       {
-        filter = filter.Replace("{album}", "'" + tag.Album + "'");
+        Log.Debug("Applying filter failed: {0}, exception {1}", filter, ex);
       }
-      if (!string.IsNullOrEmpty(tag.AlbumArtist))
-      {
-        filter = filter.Replace("{albumartist}", "'" + tag.AlbumArtist + "'");
-      }
-      if (!string.IsNullOrEmpty(tag.Artist))
-      {
-        filter = filter.Replace("{albumartist}", "'" + tag.Artist + "'");
-      }
-      if (tag.Year > 0)
-      {
-        filter = filter.Replace("{year}", tag.Year.ToString(CultureInfo.InvariantCulture));
-      }
-      if (tag.Rating > 0)
-      {
-        filter = filter.Replace("{rating}", tag.Rating.ToString(CultureInfo.InvariantCulture));
-      }
-      if (tag.BPM > 0)
-      {
-        filter = filter.Replace("{BPM}", tag.BPM.ToString(CultureInfo.InvariantCulture));
-      }
-      filter = filter.Replace("{dir}", "'" + Path.GetDirectoryName(tag.FileName) + "'");
 
       return filter;
     }
