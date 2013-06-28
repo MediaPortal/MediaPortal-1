@@ -335,44 +335,26 @@ namespace ProcessPlugins.ViewModeSwitcher
           }
           tmpRule.Name = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Name", "noname");
                     
-          int tmpARFrom = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFromX1000", "0"));
+          int tmpARFrom = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFromX1000", "1200"));
           tmpRule.ARFrom = ((double)tmpARFrom)/1000.0;
-//          if (tmpARFrom == 0)
-//          {
-//            tmpRule.ARFrom = Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom", "0"));
-//          }
-//          else
-//          {
-//            tmpRule.ARFrom = ((double)tmpARFrom)/1000.0;
-//          }
 
-          int tmpARTo = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARToX1000", "0"));          
+          int tmpARTo = Convert.ToInt32(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARToX1000", "1460"));          
           tmpRule.ARTo = ((double)tmpARTo)/1000.0;
-//          if (tmpARTo == 0)
-//          {
-//            tmpRule.ARTo = Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo", "0"));
-//          }
-//          else
-//          {
-//            tmpRule.ARTo = ((double)tmpARTo)/1000.0;
-//          }
             
           tmpRule.MinWidth =
-            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth", "0"));
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth", "200"));
           tmpRule.MaxWidth =
-            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxWidth", "0"));
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxWidth", "2000"));
           tmpRule.MinHeight =
-            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinHeight", "0"));
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinHeight", "200"));
           tmpRule.MaxHeight =
-            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight", "0"));
-          String tmpViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode",
-                                                       "Normal");
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight", "2000"));
+          String tmpViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode", "Normal");
           tmpRule.ViewMode = StringToViewMode(tmpViewMode);
           tmpRule.OverScan =
-            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan", "0"));
-          tmpRule.EnableLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName,
-                                                            ParmRulePrefix + i + "EnableLBDetection", false);
-          tmpRule.AutoCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "AutoCrop", true);
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan", "8"));
+          tmpRule.EnableLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "EnableLBDetection", false);
+          tmpRule.AutoCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "AutoCrop", false);
           tmpRule.MaxCrop = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxCrop", true);
           ViewModeRules.Add(tmpRule);
 

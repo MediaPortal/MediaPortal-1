@@ -26,16 +26,16 @@ namespace ProcessPlugins.ViewModeSwitcher
   public class Rule
   {
     public bool Enabled = true;
-    public string Name = "new rule";
-    public double ARFrom;
-    public double ARTo;
-    public int MinWidth;
-    public int MaxWidth = 9999;
-    public int MinHeight;
-    public int MaxHeight = 9999;
+    public string Name = "New rule";
+    public double ARFrom = 1.2;
+    public double ARTo = 1.46;
+    public int MinWidth = 200;
+    public int MaxWidth = 2000;
+    public int MinHeight = 200;
+    public int MaxHeight = 2000;
     public Geometry.Type ViewMode = Geometry.Type.Normal;
-    public int OverScan;
-    public bool EnableLBDetection;
+    public int OverScan = 8;
+    public bool EnableLBDetection = false;
     public bool AutoCrop = false;
     public bool MaxCrop = true;
   }

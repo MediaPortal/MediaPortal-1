@@ -131,7 +131,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       tmpRule.AutoCrop = false;
       tmpRule.ViewMode = Geometry.Type.Normal;
       tmpRule.MaxCrop = true;
-      tmpRule.OverScan = 0;
+      tmpRule.OverScan = 8;
       tmpRule.EnableLBDetection = false;
 
       currentSettings.ViewModeRules.Add(tmpRule);
@@ -151,6 +151,10 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void bModify_Click(object sender, EventArgs e)
     {
+      if (currentSettings.ViewModeRules.Count <= 0)
+      {
+        return;
+      }
       ViewModeSwitcherRuleDetail frmRuleDetail = new ViewModeSwitcherRuleDetail();
       frmRuleDetail.MainForm = this;
       if (frmRuleDetail.ShowDialog() == DialogResult.OK)
