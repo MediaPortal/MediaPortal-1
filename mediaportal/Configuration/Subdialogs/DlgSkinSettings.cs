@@ -1312,7 +1312,8 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Enforce border highighting when genres are colored.
-      if (cbGenreColoring.Checked)
+      // #MP1-2433 Keep code but seems we don't need it anymore
+      /*if (cbGenreColoring.Checked)
       {
         cbBorderHighlight.Checked = true;
         cbBorderHighlight.Enabled = false;
@@ -1320,7 +1321,7 @@ namespace MediaPortal.Configuration.Sections
       else
       {
         cbBorderHighlight.Enabled = true;
-      }
+      }*/
     }
 
     private void cbColoredGuide_CheckedChanged(object sender, EventArgs e)
