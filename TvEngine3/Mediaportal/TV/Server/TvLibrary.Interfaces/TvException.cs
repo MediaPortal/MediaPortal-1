@@ -209,7 +209,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     public TvException(string message)
       : base(message) { }
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
@@ -217,5 +216,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// <param name="innerException">The inner exception.</param>
     public TvException(string message, Exception innerException)
       : base(message, innerException) { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="args">Arguments to the message.</param>
+    public TvException(string message, params object[] args)
+      : base(string.Format(message, args)) { }
   }
 }
