@@ -28,7 +28,7 @@ namespace MediaPortal.DeployTool.Sections
     private bool rbFreshChecked;
     private bool rbReinstallChecked;
     public static bool reInstallForce = false;
-    public static bool freshForce = false;
+    public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
     public UpgradeDlg()
     {
