@@ -125,18 +125,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
-    /// </summary>
-    public override String Name
-    {
-      get
-      {
-        return "Compro";
-      }
-    }
-
-    /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
