@@ -328,7 +328,7 @@ static bool isTextConnection(IPin* pPin)
 }
 
 //load internal subtitles through TextPassThruFilter
-void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedSubs)
+void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedSubs, LCID lcidci)
 {
 	BeginEnumFilters(pGB, pEF, pBF)
 	{
@@ -392,7 +392,7 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 				ApplyStyleSubStream(pSubStream);
 				if (m_pSS == 0 && ((m_pSS = pBF) != 0)) 
 				{
-					InitInternalSubs(pBF);
+					InitInternalSubs(pBF, lcidci);
 					m_intSubStream = pSubStream;
 				}
 				else 
@@ -420,7 +420,7 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 	EndEnumFilters
 }
 
-void CSubManager::InitInternalSubs(IBaseFilter* pBF)
+void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 {
 	if(!m_pSS) return;
 	DWORD cStreams = 0;
@@ -439,7 +439,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 
 			if(dwGroup == 2)
 			{
-				CString lang, track(pszName);
+				CString lang, langForced, track(pszName);
 				if (lcid == 0)
 				{
 					lang = pszName;
@@ -463,8 +463,16 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 						memset(&trackElement, 0, sizeof(trackElement));
 						pTrackInfo->GetTrackInfo(i, &trackElement);
 						if (trackElement.FlagForced) {
-							m_forcedSubIndex = m_intSubs.GetCount() - 1;;
-							ATLTRACE("subtitle track %d is forced", i);
+							langForced = pszName;
+							if (m_forcedSubIndex <= -1 && langForced.Find(L"Forced Subtitles (auto)") >= 0)
+							{
+								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+							}
+							else if (lcid == lcidci && langForced.Find(L"Forced Subtitles (auto)") <= 0)
+							{
+								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+								ATLTRACE("subtitle track %d is forced", i);
+							}
 						}
 					}
 				}
@@ -591,7 +599,7 @@ void CSubManager::SaveToDisk()
 	}
 }
 
-void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
+void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {
 	{//hook vmr
 		CComPtr<IBaseFilter> vmr;
@@ -626,7 +634,7 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
 	}
 	bool onlyShowForcedSubs = g_onlyShowForcedSubs ? true : false;
-	LoadInternalSubtitles(pGB, onlyShowForcedSubs);
+	LoadInternalSubtitles(pGB, onlyShowForcedSubs, lcidci);
 	LoadExternalSubtitles(fn, paths, onlyShowForcedSubs);
 	if(GetCount() > 0)
 	{
