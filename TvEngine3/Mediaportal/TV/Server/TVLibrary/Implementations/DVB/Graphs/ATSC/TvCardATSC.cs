@@ -30,31 +30,17 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC/QAM tuners with BDA drivers.
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC terrestrial and cable tuners with BDA drivers.
   /// </summary>
-  public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardATSC : TvCardDvbBase
   {
-    #region variables
+    #region constructor
 
     /// <summary>
-    /// A pre-configured tuning space, used to speed up the tuning process. 
+    /// Initialise a new instance of the <see cref="TvCardATSC"/> class.
     /// </summary>
-    private IATSCTuningSpace _tuningSpace = null;
-
-    /// <summary>
-    /// A tune request template, used to speed up the tuning process.
-    /// </summary>
-    private IATSCChannelTuneRequest _tuneRequest = null;
-
-    #endregion
-
-    #region ctor
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardATSC"/> class.
-    /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
-    /// <param name="device">The device.</param>
+    /// <param name="epgEvents">The EPG events interface for the instance to use.</param>
+    /// <param name="device">The <see cref="DsDevice"/> instance that the instance will encapsulate.</param>
     public TvCardATSC(IEpgEvents epgEvents, DsDevice device)
       : base(epgEvents, device)
     {
@@ -63,100 +49,83 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 
     #endregion
 
-    #region graphbuilding
+    #region graph building
 
     /// <summary>
-    /// Create the BDA tuning space for the tuner. This will be used for BDA tuning.
+    /// Create and register the BDA tuning space for the device.
     /// </summary>
-    protected override void CreateTuningSpace()
+    /// <returns>the tuning space that was created</returns>
+    protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("TvCardAtsc: create tuning space");
+      this.LogDebug("TvCardAtsc: CreateTuningSpace()");
 
-      // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
-      ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
-      if (container == null)
-      {
-        this.LogError("TvCardAtsc: failed to get the tuning space container");
-        return;
-      }
-
-      ITuner tuner = (ITuner)_filterNetworkProvider;
-      ITuneRequest request;
-
-      IEnumTuningSpaces enumTuning;
-      container.get_EnumTuningSpaces(out enumTuning);
+      IATSCTuningSpace tuningSpace = null;
+      IATSCLocator locator = null;
       try
       {
-        ITuningSpace[] spaces = new ITuningSpace[2];
-        while (true)
+        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+        if (container == null)
         {
-          int fetched;
-          enumTuning.Next(1, spaces, out fetched);
-          if (fetched != 1)
-          {
-            break;
-          }
-          string name;
-          spaces[0].get_UniqueName(out name);
-          if (name.Equals("MediaPortal ATSC TuningSpace"))
-          {
-            this.LogDebug("TvCardAtsc: found correct tuningspace");
-            _tuningSpace = (IATSCTuningSpace)spaces[0];
-            tuner.put_TuningSpace(_tuningSpace);
-            _tuningSpace.CreateTuneRequest(out request);
-            _tuneRequest = (IATSCChannelTuneRequest)request;
-            Release.ComObject("ATSC tuner tuning space container", ref container);
-            return;
-          }
-          Release.ComObject("ATSC tuner tuning space", ref spaces[0]);
+          throw new TvException("Failed to get ITuningSpaceContainer handle from SystemTuningSpaces instance.");
         }
+
+        tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
+        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
+        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
+        hr |= tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
+        hr |= tuningSpace.put_CountryCode(0);
+        hr |= tuningSpace.put_InputType(TunerInputType.Antenna);
+        hr |= tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel
+        hr |= tuningSpace.put_MaxPhysicalChannel(158);  // 69 for terrestrial, 158 for cable
+        hr |= tuningSpace.put_MaxChannel(99);           // the number of scannable major channels
+        hr |= tuningSpace.put_MinMinorChannel(0);
+        hr |= tuningSpace.put_MinPhysicalChannel(1);    // 1 for terrestrial, 2 for cable
+        hr |= tuningSpace.put_MinChannel(1);
+
+        locator = (IATSCLocator)new ATSCLocator();
+        hr |= locator.put_CarrierFrequency(-1);
+        hr |= locator.put_PhysicalChannel(-1);
+        hr |= locator.put_SymbolRate(-1);
+        hr |= locator.put_Modulation(ModulationType.Mod8Vsb); // 8 VSB is terrestrial, 64 or 256 QAM is cable
+        hr |= locator.put_InnerFEC(FECMethod.MethodNotSet);
+        hr |= locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_OuterFEC(FECMethod.MethodNotSet);
+        hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_TSID(-1);
+
+        hr |= tuningSpace.put_DefaultLocator(locator);
+        if (hr != 0)
+        {
+          this.LogWarn("TvCardAtsc: potential error in CreateTuningSpace(), hr = 0x{0:X}", hr);
+        }
+
+        object index;
+        hr = container.Add(tuningSpace, out index);
+        HResult.ThrowException(hr, "Failed to Add() on ITuningSpaceContainer.");
+        return tuningSpace;
+      }
+      catch (Exception)
+      {
+        Release.ComObject("ATSC tuner tuning space", ref tuningSpace);
+        Release.ComObject("ATSC tuner locator", ref locator);
+        throw;
       }
       finally
       {
-        Release.ComObject("ATSC tuner tuning space enumerator", ref enumTuning);
+        Release.ComObject("ATSC tuner tuning space container", ref systemTuningSpaces);
       }
-
-      // We didn't find our tuning space registered in the system, so create a new one.
-      this.LogDebug("TvCardAtsc: create new tuningspace");
-      _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
-      _tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
-      _tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
-      _tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
-      _tuningSpace.put_CountryCode(0);
-      _tuningSpace.put_InputType(TunerInputType.Antenna);
-      _tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel
-      _tuningSpace.put_MaxPhysicalChannel(158);  // 69 for ATSC, 158 for cable (QAM)
-      _tuningSpace.put_MaxChannel(99);           // the number of scannable major channels
-      _tuningSpace.put_MinMinorChannel(0);
-      _tuningSpace.put_MinPhysicalChannel(1);    // 1 for ATSC, 2 for cable (QAM)
-      _tuningSpace.put_MinChannel(1);
-
-      IATSCLocator locator = (IATSCLocator)new ATSCLocator();
-      locator.put_CarrierFrequency(-1);
-      locator.put_PhysicalChannel(-1);
-      locator.put_SymbolRate(-1);
-      locator.put_Modulation(ModulationType.Mod8Vsb); // 8 VSB is ATSC, 256 QAM is cable
-      locator.put_InnerFEC(FECMethod.MethodNotSet);
-      locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_OuterFEC(FECMethod.MethodNotSet);
-      locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_TSID(-1);
-
-      _tuningSpace.put_DefaultLocator(locator);
-
-      object newIndex;
-      container.Add(_tuningSpace, out newIndex);
-      Release.ComObject("ATSC tuner tuning space container", ref container);
-
-      tuner.put_TuningSpace(_tuningSpace);
-      _tuningSpace.CreateTuneRequest(out request);
-      _tuneRequest = (IATSCChannelTuneRequest)request;
     }
 
-    protected override DVBBaseChannel CreateChannel()
+    /// <summary>
+    /// The registered name of BDA tuning space for the device.
+    /// </summary>
+    protected override string TuningSpaceName
     {
-      return new ATSCChannel();
+      get
+      {
+        return "MediaPortal ATSC Tuning Space";
+      }
     }
 
     #endregion
@@ -166,34 +135,63 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns>the assembled tune request</returns>
-    protected override ITuneRequest AssembleTuneRequest(IChannel channel)
+    /// <param name="tuningSpace">The device's tuning space.</param>
+    /// <param name="channel">The channel to translate into a tune request.</param>
+    /// <returns>a tune request instance</returns>
+    protected override ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
       {
-        this.LogDebug("TvCardAtsc: channel is not an ATSC/QAM channel!!! {0}", channel.GetType().ToString());
-        return null;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
       ILocator locator;
-      int hr = _tuningSpace.get_DefaultLocator(out locator);
-      IATSCLocator atscLocator = (IATSCLocator)locator;
-      hr |= atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
-      hr |= atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
-      hr |= atscLocator.put_Modulation(atscChannel.ModulationType);
-
-      hr |= _tuneRequest.put_Channel(atscChannel.MajorChannel);
-      hr |= _tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
-      hr |= _tuneRequest.put_Locator(locator);
-
-      if (hr != 0)
+      int hr = tuningSpace.get_DefaultLocator(out locator);
+      HResult.ThrowException(hr, "Failed to get_DefaultLocator() on ITuningSpace.");
+      try
       {
-        Log.Error("TvCardAtsc: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
+        IATSCLocator atscLocator = locator as IATSCLocator;
+        if (atscLocator == null)
+        {
+          throw new TvException("Failed to get IATSCLocator handle from ILocator.");
+        }
+        hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
+        hr |= atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
+        hr |= atscLocator.put_Modulation(atscChannel.ModulationType);
+        hr |= atscLocator.put_TSID(atscChannel.TransportId);
 
-      return _tuneRequest;
+        ITuneRequest tuneRequest;
+        hr = tuningSpace.CreateTuneRequest(out tuneRequest);
+        HResult.ThrowException(hr, "Failed to CreateTuneRequest() on ITuningSpace.");
+        try
+        {
+          IATSCChannelTuneRequest atscTuneRequest = tuneRequest as IATSCChannelTuneRequest;
+          if (atscTuneRequest == null)
+          {
+            throw new TvException("Failed to get IATSCChannelTuneRequest handle from ITuneRequest.");
+          }
+          hr |= atscTuneRequest.put_Channel(atscChannel.MajorChannel);
+          hr |= atscTuneRequest.put_MinorChannel(atscChannel.MinorChannel);
+          hr |= atscTuneRequest.put_Locator(locator);
+
+          if (hr != 0)
+          {
+            this.LogWarn("TvCardAtsc: potential error in AssembleTuneRequest(), hr = 0x{0:X}", hr);
+          }
+
+          return atscTuneRequest;
+        }
+        catch (Exception)
+        {
+          Release.ComObject("ATSC tuner tune request", ref tuneRequest);
+          throw;
+        }
+      }
+      finally
+      {
+        Release.ComObject("ATSC tuner locator", ref locator);
+      }
     }
 
     /// <summary>
@@ -201,19 +199,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     /// </summary>
     public override ITVScanning ScanningInterface
     {
-      get { return new ATSCScanning(this); }
+      get
+      {
+        return new ATSCScanning(this);
+      }
     }
 
     /// <summary>
-    /// Check if the tuner can tune to a specific channel.
+    /// Check if the device can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the device can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
       return channel is ATSCChannel;
     }
 
     #endregion
+
+    // TODO: remove this method, it should not be required and it is bad style!
+    protected override DVBBaseChannel CreateChannel()
+    {
+      return new ATSCChannel();
+    }
   }
 }

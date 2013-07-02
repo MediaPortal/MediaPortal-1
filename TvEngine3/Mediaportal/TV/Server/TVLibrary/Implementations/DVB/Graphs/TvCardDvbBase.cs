@@ -53,6 +53,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     #region variables
 
     /// <summary>
+    /// A pre-configured tuning space, used to speed up the tuning process. 
+    /// </summary>
+    private ITuningSpace _tuningSpace = null;
+
+    /// <summary>
     /// Capture graph builder
     /// </summary>
     protected ICaptureGraphBuilder2 _capBuilder;
@@ -192,14 +197,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
 
       this.LogDebug("TvCardDvbBase: using BDA tuning");
-      ITuneRequest tuneRequest = AssembleTuneRequest(channel);
-      if (tuneRequest == null)
-      {
-        throw new TvException("TvCardDvbBase: failed to assemble tune request");
-      }
+      ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
       this.LogDebug("TvCardDvbBase: calling put_TuneRequest");
       int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
       this.LogDebug("TvCardDvbBase: put_TuneRequest returned, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      Release.ComObject("Base DVB tuner tune request", ref tuneRequest);
 
       // TerraTec tuners return a positive HRESULT value when already tuned with the required
       // parameters. See mantis 3469 for more details.
@@ -212,10 +214,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns>the assembled tune request</returns>
-    protected virtual ITuneRequest AssembleTuneRequest(IChannel channel)
+    /// <param name="tuningSpace">The device's tuning space.</param>
+    /// <param name="channel">The channel to translate into a tune request.</param>
+    /// <returns>a tune request instance</returns>
+    protected virtual ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
     {
+      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
       return null;
     }
 
@@ -388,15 +392,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     #region subchannel management
 
     /// <summary>
-    /// Frees the sub channel.
-    /// </summary>
-    /// <param name="id">Handle to the subchannel.</param>
-    public override void FreeSubChannel(int id)
-    {
-      base.FreeSubChannel(id);
-    }
-
-    /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
     /// <param name="channel">The service or channel to associate with the subchannel.</param>
@@ -438,9 +433,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
         AddNetworkProviderFilter();
         AddTsWriterFilterToGraph();
-        if (!_useInternalNetworkProvider)
+        if (!_useInternalNetworkProvider && _filterNetworkProvider != null)
         {
-          CreateTuningSpace();
+          _tuningSpace = GetTuningSpace();
+          if (_tuningSpace == null)
+          {
+            _tuningSpace = CreateTuningSpace();
+          }
+          ITuner tuner = _filterNetworkProvider as ITuner;
+          if (tuner == null)
+          {
+            throw new TvException("Failed to get ITuner handle from network provider.");
+          }
+          int hr = tuner.put_TuningSpace(_tuningSpace);
+          HResult.ThrowException(hr, "Failed to put_TuningSpace() on ITuner.");
+
           AddMpeg2DemuxerToGraph();
         }
         AddAndConnectBdaBoardFilters(_device);
@@ -497,11 +504,89 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     }
 
     /// <summary>
-    /// Create the BDA tuning space for the tuner. This will be used for BDA tuning.
+    /// The registered name of BDA tuning space for the device.
     /// </summary>
-    protected virtual void CreateTuningSpace()
+    protected virtual string TuningSpaceName
     {
-      // (Not abstract to avoid forcing the DVB-IP and SS2 classes to implement this.)
+      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
+      get
+      {
+        return string.Empty;
+      }
+    }
+
+    /// <summary>
+    /// Get the registered BDA tuning space for the device if it exists.
+    /// </summary>
+    /// <returns>the registed tuning space</returns>
+    private ITuningSpace GetTuningSpace()
+    {
+      this.LogDebug("TvCardDvbBase: get tuning space");
+
+      // We're going to enumerate the tuning spaces registered in the system to
+      // see if we can find the correct MediaPortal tuning space.
+      SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
+      try
+      {
+        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+        if (container == null)
+        {
+          throw new TvException("Failed to get ITuningSpaceContainer handle from SystemTuningSpaces instance.");
+        }
+
+        IEnumTuningSpaces enumTuningSpaces;
+        int hr = container.get_EnumTuningSpaces(out enumTuningSpaces);
+        HResult.ThrowException(hr, "Failed to get_EnumTuningSpaces() on ITuningSpaceContainer.");
+        try
+        {
+          // Enumerate...
+          ITuningSpace[] spaces = new ITuningSpace[2];
+          int fetched;
+          while (enumTuningSpaces.Next(1, spaces, out fetched) == 0 && fetched == 1)
+          {
+            try
+            {
+              // Is this the one we're looking for?
+              string name;
+              hr = spaces[0].get_UniqueName(out name);
+              HResult.ThrowException(hr, "Failed to get_UniqueName() on ITuningSpace.");
+              if (name.Equals(TuningSpaceName))
+              {
+                this.LogDebug("TvCardDvbBase: found correct tuning space");
+                return spaces[0];
+              }
+              else
+              {
+                Release.ComObject("Base DVB tuner tuning space", ref spaces[0]);
+              }
+            }
+            catch (Exception)
+            {
+              Release.ComObject("Base DVB tuner tuning space", ref spaces[0]);
+              throw;
+            }
+          }
+          return null;
+        }
+        finally
+        {
+          Release.ComObject("Base DVB tuner tuning space enumerator", ref enumTuningSpaces);
+        }
+      }
+      finally
+      {
+        Release.ComObject("Base DVB tuner tuning space container", ref systemTuningSpaces);
+      }
+    }
+
+    /// <summary>
+    /// Create and register the BDA tuning space for the device.
+    /// </summary>
+    /// <returns>the tuning space that was created</returns>
+    protected virtual ITuningSpace CreateTuningSpace()
+    {
+      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
+      return null;
     }
 
     /// <summary>
@@ -511,7 +596,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       this.LogDebug("TvCardDvbBase: add network provider");
 
-      string networkProviderName = String.Empty;
+      string networkProviderName = string.Empty;
       if (_useInternalNetworkProvider)
       {
         networkProviderName = "MediaPortal Network Provider";

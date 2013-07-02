@@ -28,7 +28,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// This class handles HRESULT codes returned by COM classes and assemblies.
   /// </summary>
   /// <remarks>
-  /// An HRESULT code is a 32 bit value layed out as follows:
+  /// An HRESULT code is a 32 bit value laid out as follows:
   ///
   ///   3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1
   ///   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
@@ -444,6 +444,81 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     public override int GetHashCode()
     {
       return _hresult.GetHashCode();
+    }
+
+    /// <summary>
+    /// Throw an exception for an HRESULT code.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="DsError.ThrowExceptionForHR()"/>. The difference here is that we
+    /// throw an exception for any non-zero HRESULT, and we use DXGetErrorString().
+    /// </remarks>
+    /// <param name="hr">The HRESULT code.</param>
+    public static void ThrowException(int hr)
+    {
+      if (hr == 0)
+      {
+        return;
+      }
+
+      string errorString = GetDXErrorString(hr);
+      string errorDescription = DsError.GetErrorText(hr);
+      if (errorString != null)
+      {
+        errorString = string.Format("0x{0:X} ({1})", hr, errorString);
+        if (errorDescription != null)
+        {
+          errorString += " - " + errorDescription;
+        }
+        throw new TvException(errorString);
+      }
+      else
+      {
+        Marshal.ThrowExceptionForHR(hr);
+      }
+    }
+
+    /// <summary>
+    /// Throw an exception for an HRESULT code.
+    /// </summary>
+    /// <remarks>
+    /// See <see cref="DsError.ThrowExceptionForHR()"/>. The difference here is that we
+    /// throw an exception for any non-zero HRESULT, and we use DXGetErrorString().
+    /// </remarks>
+    /// <param name="hr">The HRESULT code.</param>
+    /// <param name="description">A description that gives error context.</param>
+    public static void ThrowException(int hr, string description)
+    {
+      if (hr == 0)
+      {
+        return;
+      }
+
+      string errorString = GetDXErrorString(hr);
+      string errorDescription = DsError.GetErrorText(hr);
+
+      // If a string is returned, build a COM error from it.
+      if (errorString != null)
+      {
+        errorString = string.Format("0x{0:X} ({1})", hr, errorString);
+        if (errorDescription != null)
+        {
+          errorString += " - " + errorDescription;
+        }
+        if (description != null)
+        {
+          errorString += ". " + description;
+        }
+        throw new TvException(errorString);
+      }
+      else if (description != null)
+      {
+        throw new TvException("0x{0:X} - {1}", hr, errorString);
+      }
+      else
+      {
+        Marshal.ThrowExceptionForHR(hr);
+      }
     }
 
     #endregion

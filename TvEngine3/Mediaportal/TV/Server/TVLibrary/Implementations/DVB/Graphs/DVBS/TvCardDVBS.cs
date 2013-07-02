@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -33,16 +34,11 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-S/S2 tuners with BDA drivers.
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles satellite tuners with BDA drivers.
   /// </summary>
   public class TvCardDVBS : TvCardDvbBase
   {
     #region variables
-
-    /// <summary>
-    /// A pre-configured tuning space, used to speed up the tuning process. 
-    /// </summary>
-    private IDVBSTuningSpace _tuningSpace = null;
 
     /// <summary>
     /// The DiSEqC control interface for the tuner.
@@ -69,13 +65,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardDVBS"/> class.
+    /// Initialise a new instance of the <see cref="TvCardDVBS"/> class.
     /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
-    /// <param name="device">The device.</param>
+    /// <param name="epgEvents">The EPG events interface for the instance to use.</param>
+    /// <param name="device">The <see cref="DsDevice"/> instance that the instance will encapsulate.</param>
     public TvCardDVBS(IEpgEvents epgEvents, DsDevice device)
       : base(epgEvents, device)
     {
@@ -99,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 
     #endregion
 
-    #region graphbuilding
+    #region graph building
 
     /// <summary>
     /// Build the BDA filter graph.
@@ -123,95 +119,75 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     }
 
     /// <summary>
-    /// Create the BDA tuning space for the tuner. This will be used for BDA tuning.
+    /// Create and register the BDA tuning space for the device.
     /// </summary>
-    protected override void CreateTuningSpace()
+    /// <returns>the tuning space that was created</returns>
+    protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("TvCardDvbS: create tuning space");
+      this.LogDebug("TvCardDvbS: CreateTuningSpace()");
 
-      // Check if the system already has an appropriate tuning space.
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
-      ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
-      if (container == null)
-      {
-        this.LogError("TvCardDvbS: failed to get the tuning space container");
-        return;
-      }
-
-      ITuner tuner = (ITuner)_filterNetworkProvider;
-
-      // Defaults: Ku linear "universal" LNB settings.
-      int lowOsc = 9750000;
-      int hiOsc = 10600000;
-      int switchFrequency = 11700000;
-
-      IEnumTuningSpaces enumTuning;
-      container.get_EnumTuningSpaces(out enumTuning);
+      IDVBSTuningSpace tuningSpace = null;
+      IDVBSLocator locator = null;
       try
       {
-        ITuningSpace[] spaces = new ITuningSpace[2];
-        while (true)
+        ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
+        if (container == null)
         {
-          int fetched;
-          enumTuning.Next(1, spaces, out fetched);
-          if (fetched != 1)
-          {
-            break;
-          }
-          string name;
-          spaces[0].get_UniqueName(out name);
-          if (name.Equals("MediaPortal DVBS TuningSpace"))
-          {
-            this.LogDebug("TvCardDvbS: found correct tuningspace");
-            _tuningSpace = (IDVBSTuningSpace)spaces[0];
-            _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-            _tuningSpace.put_LowOscillator(lowOsc);
-            _tuningSpace.put_HighOscillator(hiOsc);
-            _tuningSpace.put_LNBSwitch(switchFrequency);
-            tuner.put_TuningSpace(_tuningSpace);
-            Release.ComObject("DVB-S tuner tuning space container", ref container);
-            return;
-          }
-          Release.ComObject("DVB-S tuner tuning space", ref spaces[0]);
+          throw new TvException("Failed to get ITuningSpaceContainer handle from SystemTuningSpaces instance.");
         }
+
+        tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
+        int hr = tuningSpace.put_UniqueName(TuningSpaceName);
+        hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
+        hr |= tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+        hr |= tuningSpace.put_SystemType(DVBSystemType.Satellite);
+        hr |= tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+        hr |= tuningSpace.put_LowOscillator(9750000);
+        hr |= tuningSpace.put_HighOscillator(10600000);
+        hr |= tuningSpace.put_LNBSwitch(11700000);
+
+        locator = (IDVBSLocator)new DVBSLocator();
+        hr |= locator.put_CarrierFrequency(-1);
+        hr |= locator.put_SymbolRate(-1);
+        hr |= locator.put_Modulation(ModulationType.ModNotSet);
+        hr |= locator.put_InnerFEC(FECMethod.MethodNotSet);
+        hr |= locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
+        hr |= locator.put_OuterFEC(FECMethod.MethodNotSet);
+        hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
+
+        hr |= tuningSpace.put_DefaultLocator(locator);
+        if (hr != 0)
+        {
+          this.LogWarn("TvCardDvbS: potential error in CreateTuningSpace(), hr = 0x{0:X}", hr);
+        }
+
+        object index;
+        hr = container.Add(tuningSpace, out index);
+        HResult.ThrowException(hr, "Failed to Add() on ITuningSpaceContainer.");
+        return tuningSpace;
+      }
+      catch (Exception)
+      {
+        Release.ComObject("Satellite tuner tuning space", ref tuningSpace);
+        Release.ComObject("Satellite tuner locator", ref locator);
+        throw;
       }
       finally
       {
-        Release.ComObject("DVB-S tuner tuning space enumerator", ref enumTuning);
+        Release.ComObject("Satellite tuner tuning space container", ref systemTuningSpaces);
       }
-
-      // We didn't find our tuning space registered in the system, so create a new one.
-      this.LogDebug("TvCardDvbS: create new tuningspace");
-      _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
-      _tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
-      _tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
-      _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
-      _tuningSpace.put_SystemType(DVBSystemType.Satellite);
-      _tuningSpace.put_LowOscillator(lowOsc);
-      _tuningSpace.put_HighOscillator(hiOsc);
-      _tuningSpace.put_LNBSwitch(switchFrequency);
-
-      IDVBSLocator locator = (IDVBSLocator)new DVBSLocator();
-      locator.put_CarrierFrequency(-1);
-      locator.put_SymbolRate(-1);
-      locator.put_Modulation(ModulationType.ModNotSet);
-      locator.put_InnerFEC(FECMethod.MethodNotSet);
-      locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_OuterFEC(FECMethod.MethodNotSet);
-      locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
-
-      _tuningSpace.put_DefaultLocator(locator);
-
-      object newIndex;
-      container.Add(_tuningSpace, out newIndex);
-      Release.ComObject("DVB-S tuner tuning space container", ref container);
-
-      tuner.put_TuningSpace(_tuningSpace);
     }
 
-    protected override DVBBaseChannel CreateChannel()
+    /// <summary>
+    /// The registered name of BDA tuning space for the device.
+    /// </summary>
+    protected override string TuningSpaceName
     {
-      return new DVBSChannel();
+      get
+      {
+        return "MediaPortal Satellite Tuning Space";
+      }
     }
 
     #endregion
@@ -236,51 +212,81 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     /// <summary>
     /// Assemble a BDA tune request for a given channel.
     /// </summary>
-    /// <param name="channel">The channel that will be tuned.</param>
-    /// <returns>the assembled tune request</returns>
-    protected override ITuneRequest AssembleTuneRequest(IChannel channel)
+    /// <param name="tuningSpace">The device's tuning space.</param>
+    /// <param name="channel">The channel to translate into a tune request.</param>
+    /// <returns>a tune request instance</returns>
+    protected override ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
     {
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        this.LogDebug("TvCardDvbS: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
-        return null;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
-      int hr = _tuningSpace.put_LowOscillator(dvbsChannel.LnbType.LowBandFrequency);
-      hr |= _tuningSpace.put_HighOscillator(dvbsChannel.LnbType.HighBandFrequency);
-      hr |= _tuningSpace.put_LNBSwitch(dvbsChannel.LnbType.SwitchFrequency);
+      IDVBSTuningSpace dvbsTuningSpace = tuningSpace as IDVBSTuningSpace;
+      if (dvbsTuningSpace == null)
+      {
+        throw new TvException("Failed to get IDVBSTuningSpace handle from ITuningSpace.");
+      }
+      int hr = dvbsTuningSpace.put_LowOscillator(dvbsChannel.LnbType.LowBandFrequency);
+      hr |= dvbsTuningSpace.put_HighOscillator(dvbsChannel.LnbType.HighBandFrequency);
+      hr |= dvbsTuningSpace.put_LNBSwitch(dvbsChannel.LnbType.SwitchFrequency);
 
       ILocator locator;
-      hr |= _tuningSpace.get_DefaultLocator(out locator);
-      IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-      hr |= dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
-      hr |= dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-      hr |= dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-      hr |= dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
-      hr |= dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-
-      ITuneRequest request;
-      hr |= _tuningSpace.CreateTuneRequest(out request);
-      IDVBTuneRequest tuneRequest = (IDVBTuneRequest)request;
-      hr |= tuneRequest.put_ONID(dvbsChannel.NetworkId);
-      hr |= tuneRequest.put_TSID(dvbsChannel.TransportId);
-      hr |= tuneRequest.put_SID(dvbsChannel.ServiceId);
-      hr |= tuneRequest.put_Locator(locator);
-
-      if (hr != 0)
+      hr |= tuningSpace.get_DefaultLocator(out locator);
+      HResult.ThrowException(hr, "Failed to get_DefaultLocator() on ITuningSpace.");
+      try
       {
-        Log.Error("TvCardDvbS: warning, potential error in assemble tune request, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
+        IDVBSLocator dvbsLocator = locator as IDVBSLocator;
+        if (dvbsLocator == null)
+        {
+          throw new TvException("Failed to get IDVBSLocator handle from ILocator.");
+        }
+        hr = dvbsLocator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+        hr |= dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+        hr |= dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+        hr |= dvbsLocator.put_Modulation(dvbsChannel.ModulationType);
+        hr |= dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
 
-      return tuneRequest;
+        ITuneRequest tuneRequest;
+        hr = tuningSpace.CreateTuneRequest(out tuneRequest);
+        HResult.ThrowException(hr, "Failed to CreateTuneRequest() on ITuningSpace.");
+        try
+        {
+          IDVBTuneRequest dvbTuneRequest = tuneRequest as IDVBTuneRequest;
+          if (dvbTuneRequest == null)
+          {
+            throw new TvException("Failed to get IDVBTuneRequest handle from ITuneRequest.");
+          }
+          hr |= dvbTuneRequest.put_ONID(dvbsChannel.NetworkId);
+          hr |= dvbTuneRequest.put_TSID(dvbsChannel.TransportId);
+          hr |= dvbTuneRequest.put_SID(dvbsChannel.ServiceId);
+          hr |= dvbTuneRequest.put_Locator(locator);
+
+          if (hr != 0)
+          {
+            this.LogWarn("TvCardDvbS: potential error in AssembleTuneRequest(), hr = 0x{0:X}", hr);
+          }
+
+          return dvbTuneRequest;
+        }
+        catch (Exception)
+        {
+          Release.ComObject("Satellite tuner tune request", ref tuneRequest);
+          throw;
+        }
+      }
+      finally
+      {
+        Release.ComObject("Satellite tuner locator", ref locator);
+      }
     }
 
     /// <summary>
-    /// Check if the tuner can tune to a specific channel.
+    /// Check if the device can tune to a specific channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the device can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
       return channel is DVBSChannel;
@@ -314,6 +320,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
       {
         _diseqcController.SwitchToChannel(null);
       }
+    }
+
+    // TODO: remove this method, it should not be required and it is bad style!
+    protected override DVBBaseChannel CreateChannel()
+    {
+      return new DVBSChannel();
     }
   }
 }
