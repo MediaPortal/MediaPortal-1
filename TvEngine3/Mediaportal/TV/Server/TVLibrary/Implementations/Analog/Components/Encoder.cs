@@ -971,6 +971,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                                   Crossbar _crossbar, Capture _capture)
     {
       //Log.this.LogDebug("analog: AddTvMultiPlexer");
+      _filterMultiplexer = null;
       DsDevice[] devicesHW;
       DsDevice[] devicesSW;
       DsDevice[] devices;
@@ -1009,38 +1010,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         this.LogDebug("analog: AddTvMultiPlexer try:{0} {1}", devices[i].Name, i);
         // if multiplexer is in use, we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
+        {
           continue;
-        int hr;
+        }
         try
         {
-          //add multiplexer to graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("analog: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //failed to add it to graph, continue with the next multiplexer
-          if (tmp != null)
+          int hr;
+          try
           {
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Encoder multiplexer filter candidate", ref tmp);
+            //add multiplexer to graph
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
+          catch (Exception)
+          {
+            this.LogDebug("analog: cannot add filter to graph");
+            continue;
+          }
+          if (hr != 0)
+          {
+            //failed to add it to graph, continue with the next multiplexer
+            if (tmp != null)
+            {
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Encoder multiplexer filter candidate", ref tmp);
+            }
+            continue;
+          }
+          // try to connect the multiplexer to encoders/capture devices
+          if (ConnectMultiplexer(tmp, matchPinNames, _graphBuilder, _tuner, _capture))
+          {
+            // succeeded, we're done
+            _filterMultiplexer = tmp;
+            _multiplexerDevice = devices[i];
+            this.LogDebug("analog: AddTvMultiPlexer succeeded");
+            break;
+          }
         }
-        // try to connect the multiplexer to encoders/capture devices
-        if (ConnectMultiplexer(tmp, matchPinNames, _graphBuilder, _tuner, _capture))
+        finally
         {
-          // succeeded, we're done
-          _filterMultiplexer = tmp;
-          _multiplexerDevice = devices[i];
-          DevicesInUse.Instance.Add(_multiplexerDevice);
-          this.LogDebug("analog: AddTvMultiPlexer succeeded");
-          break;
+          if (_filterMultiplexer == null)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
         // unable to connect it, remove the filter and continue with the next one
         _graphBuilder.RemoveFilter(tmp);
@@ -1130,7 +1142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         IBaseFilter tmp;
         //if encoder is in use, we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
         {
           this.LogDebug("analog:  skip :{0} (inuse)", devices[i].Name);
           continue;
@@ -1145,6 +1157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         catch (Exception)
         {
           this.LogDebug("analog: cannot add filter {0} to graph", devices[i].Name);
+          DevicesInUse.Instance.Remove(devices[i]);
           continue;
         }
         if (hr != 0)
@@ -1155,10 +1168,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("Encoder encoder filter candidate", ref tmp);
           }
+          DevicesInUse.Instance.Remove(devices[i]);
           continue;
         }
         if (tmp == null)
+        {
+          DevicesInUse.Instance.Remove(devices[i]);
           continue;
+        }
         // Encoder has been added to the graph
         // Now some cards have 2 encoder types, one for mpeg-2 transport stream and one for
         // mpeg-2 program stream. We dont want the mpeg-2 transport stream !
@@ -1214,6 +1231,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                             devices[i].Name);
           _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("Encoder encoder filter candidate", ref tmp);
+          DevicesInUse.Instance.Remove(devices[i]);
           continue;
         }
         // get the input pins of the encoder (can be 1 or 2 inputs)
@@ -1232,7 +1250,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             //succeeded, encoder has been added and we are done
             _filterVideoEncoder = tmp;
             _videoEncoderDevice = devices[i];
-            DevicesInUse.Instance.Add(_videoEncoderDevice);
             this.LogDebug("analog: AddTvEncoderFilter succeeded (encoder with 2 inputs)");
             //            success = true;
             finished = true;
@@ -1263,7 +1280,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 //this worked. but we're not done yet. We probably need to add a video encoder also
                 _filterAudioEncoder = tmp;
                 _audioEncoderDevice = devices[i];
-                DevicesInUse.Instance.Add(_audioEncoderDevice);
                 //                success = true;
                 this.LogDebug("analog: AddTvEncoderFilter succeeded (audio encoder)");
                 // if video encoder was already added, then we're done.
@@ -1281,7 +1297,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 //this worked. but we're not done yet. We probably need to add a audio encoder also
                 _filterVideoEncoder = tmp;
                 _videoEncoderDevice = devices[i];
-                DevicesInUse.Instance.Add(_videoEncoderDevice);
                 //                success = true;
                 this.LogDebug("analog: AddTvEncoderFilter succeeded (video encoder)");
                 // if audio encoder was already added, then we're done.
@@ -1301,7 +1316,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             {
               _filterVideoEncoder = tmp;
               _videoEncoderDevice = devices[i];
-              DevicesInUse.Instance.Add(_videoEncoderDevice);
               //              success = true;
               this.LogDebug("analog: AddTvEncoderFilter succeeded");
               finished = true;
@@ -1317,6 +1331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         Release.ComObject("Encoder input pin 2", ref pin2);
         if (tmp != null)
         {
+          DevicesInUse.Instance.Remove(devices[i]);
           _graphBuilder.RemoveFilter(tmp);
           Release.ComObject("Encoder filter", ref tmp);
         }

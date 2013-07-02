@@ -1841,66 +1841,55 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
 
-        DevicesInUse.Instance.Add(_tunerDevice);
-        try
+        // Create, add and initialise the B2C2 source filter.
+        this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
+        _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
+        if (_filterB2c2Adapter == null)
         {
-          // Create, add and initialise the B2C2 source filter.
-          this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
-          _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
-          if (_filterB2c2Adapter == null)
-          {
-            this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
-            return;
-          }
-          this.LogDebug("TvCardDvbSs2: add source filter to graph");
-          int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
-          if (hr != 0)
-          {
-            this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return;
-          }
-          this.LogDebug("TvCardDvbSs2: get device interface handles");
-          _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
-          _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
-          if (_tunerInterface == null || _dataInterface == null)
-          {
-            this.LogError("TvCardDvbSs2: failed to get device interface handles");
-            return;
-          }
-          this.LogDebug("TvCardDvbSs2: initialise tuner interface");
-          hr = _tunerInterface.Initialize();
-          if (hr != 0)
-          {
-            this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            return;
-          }
-          // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
-          // in leaving it...
-          _tunerInterface.CheckLock();
-
-          // The source filter has multiple output pins, and connecting to the right one is critical.
-          // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
-          // filter and any plugin filters.
-          IBaseFilter lastFilter = _filterB2c2Adapter;
-          AddInfiniteTeeToGraph(ref lastFilter);
-
-          // Load and open plugins.
-          LoadPlugins(_filterB2c2Adapter, ref lastFilter);
-          // This class implements the plugin interface and should be considered as the main plugin.
-          _customDeviceInterfaces.Add(this);
-
-          // Complete the graph.
-          AddTsWriterFilterToGraph();
-          ConnectTsWriterIntoGraph(lastFilter);
-          _isDeviceInitialised = true;
+          this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
+          return;
         }
-        finally
+        this.LogDebug("TvCardDvbSs2: add source filter to graph");
+        int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
+        if (hr != 0)
         {
-          if (!_isDeviceInitialised)
-          {
-            DevicesInUse.Instance.Remove(_tunerDevice);
-          }
+          this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return;
         }
+        this.LogDebug("TvCardDvbSs2: get device interface handles");
+        _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
+        _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
+        if (_tunerInterface == null || _dataInterface == null)
+        {
+          this.LogError("TvCardDvbSs2: failed to get device interface handles");
+          return;
+        }
+        this.LogDebug("TvCardDvbSs2: initialise tuner interface");
+        hr = _tunerInterface.Initialize();
+        if (hr != 0)
+        {
+          this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          return;
+        }
+        // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
+        // in leaving it...
+        _tunerInterface.CheckLock();
+
+        // The source filter has multiple output pins, and connecting to the right one is critical.
+        // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
+        // filter and any plugin filters.
+        IBaseFilter lastFilter = _filterB2c2Adapter;
+        AddInfiniteTeeToGraph(ref lastFilter);
+
+        // Load and open plugins.
+        LoadPlugins(_filterB2c2Adapter, ref lastFilter);
+        // This class implements the plugin interface and should be considered as the main plugin.
+        _customDeviceInterfaces.Add(this);
+
+        // Complete the graph.
+        AddTsWriterFilterToGraph();
+        ConnectTsWriterIntoGraph(lastFilter);
+        _isDeviceInitialised = true;
 
         OpenPlugins();
         SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);

@@ -687,6 +687,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       this.LogDebug("dvb:AddAndConnectBDABoardFilters");
       _rotEntry = new DsROTEntry(_graphBuilder);
       this.LogDebug("dvb: find bda tuner");
+      _filterTuner = null;
       // Enumerate BDA Source filters category and found one that can connect to the network provider
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       for (int i = 0; i < devices.Length; i++)
@@ -694,40 +695,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         IBaseFilter tmp;
         if (device.DevicePath != devices[i].DevicePath)
           continue;
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
         {
           this.LogInfo("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
           continue;
         }
-        int hr;
         try
         {
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          continue;
-        }
-        if (hr != 0)
-        {
-          if (tmp != null)
+          int hr;
+          try
           {
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
+          catch (Exception)
+          {
+            continue;
+          }
+          if (hr != 0)
+          {
+            if (tmp != null)
+            {
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
+            }
+            continue;
+          }
+          //render [Network provider]->[Tuner]
+          hr = _capBuilder.RenderStream(null, null, _filterNetworkProvider, null, tmp);
+          if (hr == 0)
+          {
+            // Got it !
+            _filterTuner = tmp;
+            this.LogDebug("dvb:  using [Tuner]: {0}", devices[i].Name);
+            _tunerDevice = devices[i];
+            this.LogDebug("dvb:  Render [Network provider]->[Tuner] OK");
+            break;
+          }
         }
-        //render [Network provider]->[Tuner]
-        hr = _capBuilder.RenderStream(null, null, _filterNetworkProvider, null, tmp);
-        if (hr == 0)
+        finally
         {
-          // Got it !
-          _filterTuner = tmp;
-          this.LogDebug("dvb:  using [Tuner]: {0}", devices[i].Name);
-          _tunerDevice = devices[i];
-          DevicesInUse.Instance.Add(devices[i]);
-          this.LogDebug("dvb:  Render [Network provider]->[Tuner] OK");
-          break;
+          if (_filterTuner == null)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
         // Try another...
         _graphBuilder.RemoveFilter(tmp);
@@ -898,40 +908,52 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             continue;
           }
         }
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
+        {
           continue;
+        }
         int hr;
         try
         {
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          continue;
-        }
-        if (hr != 0)
-        {
-          if (tmp != null)
+          try
           {
-            this.LogError("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
+          catch (Exception)
+          {
+            continue;
+          }
+          if (hr != 0)
+          {
+            if (tmp != null)
+            {
+              this.LogError("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
+            }
+            continue;
+          }
+          //render [Tuner]->[Capture]
+          hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
+          if (hr == 0)
+          {
+            this.LogDebug("dvb:  Render [Tuner]->[Capture] AOK");
+            // render [Capture]->[Inf Tee]
+            _filterCapture = tmp;
+            _captureDevice = devices[i];
+            this.LogDebug("dvb:  Setting lastFilter to Capture device");
+            currentLastFilter = _filterCapture;
+            break;
+          }
         }
-        //render [Tuner]->[Capture]
-        hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
-        if (hr == 0)
+        finally
         {
-          this.LogDebug("dvb:  Render [Tuner]->[Capture] AOK");
-          // render [Capture]->[Inf Tee]
-          _filterCapture = tmp;
-          _captureDevice = devices[i];
-          DevicesInUse.Instance.Add(devices[i]);
-          this.LogDebug("dvb:  Setting lastFilter to Capture device");
-          currentLastFilter = _filterCapture;
-          break;
+          if (_filterCapture == null)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
+
         // Try another...
         this.LogDebug("dvb:  Looking for another bda receiver...");
         _graphBuilder.RemoveFilter(tmp);

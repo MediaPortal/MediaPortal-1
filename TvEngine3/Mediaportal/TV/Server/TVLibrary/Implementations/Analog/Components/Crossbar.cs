@@ -245,69 +245,81 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         IBaseFilter tmp;
         //if crossbar is already in use then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
+        {
           continue;
-        if (!deviceName.Equals(devices[i].Name))
-          continue;
-        this.LogDebug("analog: AddCrossBarFilter use:{0} {1}", devices[i].Name, i);
-        int hr;
+        }
+        IPin tunerOut = null;
         try
         {
-          //add the crossbar to the graph
-          hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("analog: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //failed. try next crossbar
-          if (tmp != null)
+          if (!deviceName.Equals(devices[i].Name))
+            continue;
+          this.LogDebug("analog: AddCrossBarFilter use:{0} {1}", devices[i].Name, i);
+          int hr;
+          try
           {
+            //add the crossbar to the graph
+            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+          }
+          catch (Exception)
+          {
+            this.LogDebug("analog: cannot add filter to graph");
+            continue;
+          }
+          if (hr != 0)
+          {
+            //failed. try next crossbar
+            if (tmp != null)
+            {
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Crossbar filter candidate", ref tmp);
+            }
+            continue;
+          }
+          _crossBarFilter = (IAMCrossbar)tmp;
+          _videoPinMap = graph.Crossbar.VideoPinMap;
+          _audioPinMap = graph.Crossbar.AudioPinMap;
+          _videoPinRelatedAudioMap = graph.Crossbar.VideoPinRelatedAudioMap;
+          _videoOutPinIndex = graph.Crossbar.VideoOut;
+          _audioOutPinIndex = graph.Crossbar.AudioOut;
+          if (_videoOutPinIndex == -1)
+          {
+            this.LogDebug("analog: AddCrossbarFilter no video output found");
             graphBuilder.RemoveFilter(tmp);
             Release.ComObject("Crossbar filter candidate", ref tmp);
+            _crossBarFilter = null;
+            continue;
           }
-          continue;
-        }
-        _crossBarFilter = (IAMCrossbar)tmp;
-        _videoPinMap = graph.Crossbar.VideoPinMap;
-        _audioPinMap = graph.Crossbar.AudioPinMap;
-        _videoPinRelatedAudioMap = graph.Crossbar.VideoPinRelatedAudioMap;
-        _videoOutPinIndex = graph.Crossbar.VideoOut;
-        _audioOutPinIndex = graph.Crossbar.AudioOut;
-        if (_videoOutPinIndex == -1)
-        {
-          this.LogDebug("analog: AddCrossbarFilter no video output found");
-          graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("Crossbar filter candidate", ref tmp);
-          _crossBarFilter = null;
-          continue;
-        }
-        //connect tv tuner->crossbar
-        IPin tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
-                                              graph.Tuner.VideoPin);
-        if (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
-            FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
-        {
-          // Got it, we're done
-          _filterCrossBar = tmp;
-          _crossBarDevice = devices[i];
-          DevicesInUse.Instance.Add(_crossBarDevice);
-          if (_audioTunerIn == null)
+          //connect tv tuner->crossbar
+          tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
+                                                graph.Tuner.VideoPin);
+          if (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
+              FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
           {
-            _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
-                                                  _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
+            // Got it, we're done
+            _filterCrossBar = tmp;
+            _crossBarDevice = devices[i];
+            if (_audioTunerIn == null)
+            {
+              _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
+                                                    _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
+            }
+            Release.ComObject("Crossbar tuner filter output pin", ref tunerOut);
+            _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
+            if (_audioOutPinIndex != -1)
+            {
+              _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
+            }
+            this.LogDebug("analog: AddCrossBarFilter succeeded");
+            break;
           }
-          Release.ComObject("Crossbar tuner filter output pin", ref tunerOut);
-          _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
-          if (_audioOutPinIndex != -1)
+        }
+        finally
+        {
+          if (_filterCrossBar == null)
           {
-            _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
+            DevicesInUse.Instance.Remove(devices[i]);
           }
-          this.LogDebug("analog: AddCrossBarFilter succeeded");
-          break;
         }
         // cannot connect tv tuner to crossbar, try next crossbar device
         if (tmp != null)
@@ -330,6 +342,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     private bool CreateAutomaticFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Tuner tuner)
     {
       _audioTunerIn = null;
+      _filterCrossBar = null;
       DsDevice[] devices;
       //get list of all crossbar devices installed on this system
       try
@@ -353,87 +366,99 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         this.LogDebug("analog: AddCrossBarFilter try:{0} {1}", devices[i].Name, i);
         //if crossbar is already in use then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
+        {
           continue;
-        int hr;
+        }
+        IPin pinIn = null;
         try
         {
-          //add the crossbar to the graph
-          hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("analog: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //failed. try next crossbar
-          if (tmp != null)
+          int hr;
+          try
           {
-            graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Crossbar filter candidate", ref tmp);
+            //add the crossbar to the graph
+            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
-        }
-        _crossBarFilter = (IAMCrossbar)tmp;
-        CheckCapabilities();
-        if (_videoOutPinIndex == -1)
-        {
-          this.LogDebug("analog: AddCrossbarFilter no video output found");
-          graphBuilder.RemoveFilter(tmp);
-          _crossBarFilter = null;
-          Release.ComObject("Crossbar filter candidate", ref tmp);
-          continue;
-        }
-
-        // Check that the crossbar has a tuner video input pin.
-        IPin pinIn = null;
-        if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
-        {
-          pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
-        }
-        if (pinIn == null)
-        {
-          // no pin found, continue with next crossbar
-          this.LogDebug("analog: AddCrossBarFilter no video tuner input pin detected");
-          if (tmp != null)
+          catch (Exception)
           {
+            this.LogDebug("analog: cannot add filter to graph");
+            continue;
+          }
+          if (hr != 0)
+          {
+            //failed. try next crossbar
+            if (tmp != null)
+            {
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Crossbar filter candidate", ref tmp);
+            }
+            continue;
+          }
+          _crossBarFilter = (IAMCrossbar)tmp;
+          CheckCapabilities();
+          if (_videoOutPinIndex == -1)
+          {
+            this.LogDebug("analog: AddCrossbarFilter no video output found");
             graphBuilder.RemoveFilter(tmp);
             _crossBarFilter = null;
             Release.ComObject("Crossbar filter candidate", ref tmp);
+            continue;
           }
-          continue;
+
+          // Check that the crossbar has a tuner video input pin.
+          if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
+          {
+            pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
+          }
+          if (pinIn == null)
+          {
+            // no pin found, continue with next crossbar
+            this.LogDebug("analog: AddCrossBarFilter no video tuner input pin detected");
+            if (tmp != null)
+            {
+              graphBuilder.RemoveFilter(tmp);
+              _crossBarFilter = null;
+              Release.ComObject("Crossbar filter candidate", ref tmp);
+            }
+            continue;
+          }
+          //connect tv tuner->crossbar
+          int tempVideoPinIndex;
+          if (FilterGraphTools.ConnectFilter(graphBuilder, tuner.Filter, pinIn, out tempVideoPinIndex))
+          {
+            // Got it, we're done
+            _filterCrossBar = tmp;
+            _crossBarDevice = devices[i];
+            if (_audioTunerIn == null)
+            {
+              _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
+                                                    _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
+            }
+            Release.ComObject("Crossbar tuner input pin", ref pinIn);
+            _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
+            if (_audioOutPinIndex != -1)
+            {
+              _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
+            }
+            this.LogDebug("analog: AddCrossBarFilter succeeded");
+            graph.Crossbar.AudioOut = _audioOutPinIndex;
+            graph.Crossbar.AudioPinMap = _audioPinMap;
+            graph.Crossbar.Name = _crossBarDevice.Name;
+            graph.Crossbar.VideoOut = _videoOutPinIndex;
+            graph.Crossbar.VideoPinMap = _videoPinMap;
+            graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
+            graph.Tuner.VideoPin = tempVideoPinIndex;
+            break;
+          }
         }
-        //connect tv tuner->crossbar
-        int tempVideoPinIndex;
-        if (FilterGraphTools.ConnectFilter(graphBuilder, tuner.Filter, pinIn, out tempVideoPinIndex))
+        finally
         {
-          // Got it, we're done
-          _filterCrossBar = tmp;
-          _crossBarDevice = devices[i];
-          DevicesInUse.Instance.Add(_crossBarDevice);
-          if (_audioTunerIn == null)
+          if (_filterCrossBar == null)
           {
-            _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
-                                                  _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
+            DevicesInUse.Instance.Remove(devices[i]);
           }
-          Release.ComObject("Crossbar tuner input pin", ref pinIn);
-          _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
-          if (_audioOutPinIndex != -1)
-          {
-            _audioOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _audioOutPinIndex);
-          }
-          this.LogDebug("analog: AddCrossBarFilter succeeded");
-          graph.Crossbar.AudioOut = _audioOutPinIndex;
-          graph.Crossbar.AudioPinMap = _audioPinMap;
-          graph.Crossbar.Name = _crossBarDevice.Name;
-          graph.Crossbar.VideoOut = _videoOutPinIndex;
-          graph.Crossbar.VideoPinMap = _videoPinMap;
-          graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
-          graph.Tuner.VideoPin = tempVideoPinIndex;
-          break;
         }
+
         // cannot connect tv tuner to crossbar, try next crossbar device
         graphBuilder.RemoveFilter(tmp);
         Release.ComObject("Crossbar tuner input pin", ref pinIn);

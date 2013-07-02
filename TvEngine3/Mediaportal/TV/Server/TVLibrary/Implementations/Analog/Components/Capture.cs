@@ -367,69 +367,71 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         this.LogDebug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
         {
           this.LogDebug("analog: Device: {0} in use?", devices[i].Name);
           continue;
         }
-        if (!videoDeviceName.Equals(devices[i].Name) &&
-            (audioDeviceName == null || !audioDeviceName.Equals(devices[i].Name)))
-          continue;
-        int hr;
         try
         {
-          // add video capture filter to graph
-          hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("analog: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //cannot add video capture filter to graph, try next one
-          if (tmp != null)
+          if (!videoDeviceName.Equals(devices[i].Name) &&
+              (audioDeviceName == null || !audioDeviceName.Equals(devices[i].Name)))
+            continue;
+          int hr;
+          try
           {
-            this.LogDebug("analog: cannot add filter: {0} to graph", devices[i].Name);
-            graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Capture filter candidate", ref tmp);
+            // add video capture filter to graph
+            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
-        }
-        // connect crossbar->video capture filter
-        if (videoDeviceName.Equals(devices[i].Name) &&
-            FilterGraphTools.ConnectPin(graphBuilder, crossbar.VideoOut, tmp, graph.Capture.VideoIn))
-        {
-          _filterVideoCapture = tmp;
-          _videoCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          catch (Exception)
           {
-            DevicesInUse.Instance.Add(_videoCaptureDevice);
+            this.LogDebug("analog: cannot add filter to graph");
+            continue;
           }
-          this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
-          videoConnected = true;
-          filterUsed = true;
-        }
-        // crossbar->audio capture filter
-        // Many video capture are also the audio capture filter, so we can always try it again
-        if (audioDeviceName.Equals(devices[i].Name) &&
-            FilterGraphTools.ConnectPin(graphBuilder, crossbar.AudioOut, tmp, graph.Capture.AudioIn))
-        {
-          _filterAudioCapture = tmp;
-          _audioCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          if (hr != 0)
           {
-            DevicesInUse.Instance.Add(_audioCaptureDevice);
+            //cannot add video capture filter to graph, try next one
+            if (tmp != null)
+            {
+              this.LogDebug("analog: cannot add filter: {0} to graph", devices[i].Name);
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Capture filter candidate", ref tmp);
+            }
+            continue;
           }
-          this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
-          audioConnected = true;
-          filterUsed = true;
-        }
+          // connect crossbar->video capture filter
+          if (videoDeviceName.Equals(devices[i].Name) &&
+              FilterGraphTools.ConnectPin(graphBuilder, crossbar.VideoOut, tmp, graph.Capture.VideoIn))
+          {
+            _filterVideoCapture = tmp;
+            _videoCaptureDevice = devices[i];
+            this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
+            videoConnected = true;
+            filterUsed = true;
+          }
+          // crossbar->audio capture filter
+          // Many video capture are also the audio capture filter, so we can always try it again
+          if (audioDeviceName.Equals(devices[i].Name) &&
+              FilterGraphTools.ConnectPin(graphBuilder, crossbar.AudioOut, tmp, graph.Capture.AudioIn))
+          {
+            _filterAudioCapture = tmp;
+            _audioCaptureDevice = devices[i];
+            this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+            audioConnected = true;
+            filterUsed = true;
+          }
           // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
-        else
+          else
+          {
+            _audioCaptureDevice = devices[i];
+          }
+        }
+        finally
         {
-          _audioCaptureDevice = devices[i];
+          if (!filterUsed)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
 
         if (!filterUsed)
@@ -522,67 +524,71 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         this.LogDebug("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
+        {
           continue;
-        int hr;
+        }
         try
         {
-          // add video capture filter to graph
-          hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("analog: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //cannot add video capture filter to graph, try next one
-          if (tmp != null)
+          int hr;
+          try
           {
-            graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Capture filter candidate", ref tmp);
+            // add video capture filter to graph
+            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
-        }
+          catch (Exception)
+          {
+            this.LogDebug("analog: cannot add filter to graph");
+            continue;
+          }
+          if (hr != 0)
+          {
+            //cannot add video capture filter to graph, try next one
+            if (tmp != null)
+            {
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Capture filter candidate", ref tmp);
+            }
+            continue;
+          }
 
-        int destinationIndex;
-        // connect crossbar->video capture filter
-        if (!videoConnected &&
-            FilterGraphTools.ConnectFilter(graphBuilder, crossbar.VideoOut, tmp, out destinationIndex))
-        {
-          _filterVideoCapture = tmp;
-          _videoCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          int destinationIndex;
+          // connect crossbar->video capture filter
+          if (!videoConnected &&
+              FilterGraphTools.ConnectFilter(graphBuilder, crossbar.VideoOut, tmp, out destinationIndex))
           {
-            DevicesInUse.Instance.Add(_videoCaptureDevice);
+            _filterVideoCapture = tmp;
+            _videoCaptureDevice = devices[i];
+            this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
+            graph.Capture.Name = _videoCaptureDevice.Name;
+            graph.Capture.VideoIn = destinationIndex;
+            videoConnected = true;
+            filterUsed = true;
           }
-          this.LogDebug("analog: AddTvCaptureFilter connected video to crossbar successfully");
-          graph.Capture.Name = _videoCaptureDevice.Name;
-          graph.Capture.VideoIn = destinationIndex;
-          videoConnected = true;
-          filterUsed = true;
-        }
-        // crossbar->audio capture filter
-        // Many video capture are also the audio capture filter, so we can always try it again
-        if (videoConnected && FilterGraphTools.ConnectFilter(graphBuilder, crossbar.AudioOut, tmp, out destinationIndex))
-        {
-          _filterAudioCapture = tmp;
-          _audioCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          // crossbar->audio capture filter
+          // Many video capture are also the audio capture filter, so we can always try it again
+          if (videoConnected && FilterGraphTools.ConnectFilter(graphBuilder, crossbar.AudioOut, tmp, out destinationIndex))
           {
-            DevicesInUse.Instance.Add(_audioCaptureDevice);
+            _filterAudioCapture = tmp;
+            _audioCaptureDevice = devices[i];
+            this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+            graph.Capture.AudioCaptureName = devices[i].Name;
+            graph.Capture.AudioIn = destinationIndex;
+            audioConnected = true;
+            filterUsed = true;
           }
-          this.LogDebug("analog: AddTvCaptureFilter connected audio to crossbar successfully");
-          graph.Capture.AudioCaptureName = devices[i].Name;
-          graph.Capture.AudioIn = destinationIndex;
-          audioConnected = true;
-          filterUsed = true;
-        }
           // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
-        else
+          else
+          {
+            _audioCaptureDevice = devices[i];
+          }
+        }
+        finally
         {
-          _audioCaptureDevice = devices[i];
+          if (!filterUsed)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
 
         if (!filterUsed)

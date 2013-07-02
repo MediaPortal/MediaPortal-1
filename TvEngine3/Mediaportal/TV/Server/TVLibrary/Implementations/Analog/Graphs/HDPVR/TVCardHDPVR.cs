@@ -373,6 +373,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       DsDevice[] devices;
       this.LogDebug("HDPVR: Add Capture Filter");
+      _filterCapture = null;
       //get a list of all video capture devices
       try
       {
@@ -398,7 +399,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
         this.LogDebug("HDPVR: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
         {
           continue;
         }
@@ -406,37 +407,47 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         int hr;
         try
         {
-          // add video capture filter to graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("HDPVR: cannot add filter to graph");
-          continue;
-        }
-        if (hr != 0)
-        {
-          //cannot add video capture filter to graph, try next one
-          if (tmp != null)
+          try
           {
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Capture device capture filter candidate", ref tmp);
+            // add video capture filter to graph
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
+          catch (Exception)
+          {
+            this.LogDebug("HDPVR: cannot add filter to graph");
+            continue;
+          }
+          if (hr != 0)
+          {
+            //cannot add video capture filter to graph, try next one
+            if (tmp != null)
+            {
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Capture device capture filter candidate", ref tmp);
+            }
+            continue;
+          }
+          // connect crossbar->video capture filter
+          hr = _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
+          if (hr == 0)
+          {
+            // That worked. Since most crossbar devices require 2 connections from
+            // crossbar->video capture filter, we do it again to connect the 2nd pin
+            _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
+            _filterCapture = tmp;
+            _captureDevice = devices[i];
+            this.LogDebug("HDPVR: AddTvCaptureFilter connected to crossbar successfully");
+            break;
+          }
         }
-        // connect crossbar->video capture filter
-        hr = _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
-        if (hr == 0)
+        finally
         {
-          // That worked. Since most crossbar devices require 2 connections from
-          // crossbar->video capture filter, we do it again to connect the 2nd pin
-          _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
-          _filterCapture = tmp;
-          _captureDevice = devices[i];
-          DevicesInUse.Instance.Add(_captureDevice);
-          this.LogDebug("HDPVR: AddTvCaptureFilter connected to crossbar successfully");
-          break;
+          if (_filterCapture == null)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
+
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
         this.LogDebug("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
@@ -454,6 +465,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       DsDevice[] devices;
       this.LogDebug("HDPVR: AddEncoderFilter");
+      _filterEncoder = null;
       // first get all encoder filters available on this system
       try
       {
@@ -488,7 +500,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
 
         //if encoder is in use, we can skip it
-        if (DevicesInUse.Instance.IsUsed(devices[i]))
+        if (!DevicesInUse.Instance.Add(devices[i]))
         {
           this.LogDebug("HDPVR:  skip :{0} (inuse)", devices[i].Name);
           continue;
@@ -499,40 +511,49 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         int hr;
         try
         {
-          //add encoder filter to graph
-          hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        }
-        catch (Exception)
-        {
-          this.LogDebug("HDPVR: cannot add filter {0} to graph", devices[i].Name);
-          continue;
-        }
-        if (hr != 0)
-        {
-          //failed to add filter to graph, continue with the next one
-          if (tmp != null)
+          try
           {
-            _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Capture device encoder filter candidate", ref tmp);
+            //add encoder filter to graph
+            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
-          continue;
+          catch (Exception)
+          {
+            this.LogDebug("HDPVR: cannot add filter {0} to graph", devices[i].Name);
+            continue;
+          }
+          if (hr != 0)
+          {
+            //failed to add filter to graph, continue with the next one
+            if (tmp != null)
+            {
+              _graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("Capture device encoder filter candidate", ref tmp);
+            }
+            continue;
+          }
+          if (tmp == null)
+          {
+            continue;
+          }
+          hr = _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
+          if (hr == 0)
+          {
+            // That worked. Since most crossbar devices require 2 connections from
+            // crossbar->video capture filter, we do it again to connect the 2nd pin
+            _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
+            _filterEncoder = tmp;
+            _encoderDevice = devices[i];
+            this.LogDebug("HDPVR: AddTvEncoderFilter connected to catpure successfully");
+            //and we're done
+            return;
+          }
         }
-        if (tmp == null)
+        finally
         {
-          continue;
-        }
-        hr = _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
-        if (hr == 0)
-        {
-          // That worked. Since most crossbar devices require 2 connections from
-          // crossbar->video capture filter, we do it again to connect the 2nd pin
-          _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
-          _filterEncoder = tmp;
-          _encoderDevice = devices[i];
-          DevicesInUse.Instance.Add(_encoderDevice);
-          this.LogDebug("HDPVR: AddTvEncoderFilter connected to catpure successfully");
-          //and we're done
-          return;
+          if (_filterEncoder == null)
+          {
+            DevicesInUse.Instance.Remove(devices[i]);
+          }
         }
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter

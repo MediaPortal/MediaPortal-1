@@ -193,6 +193,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         return true;
       }
+      _filterTvAudioTuner = null;
       string deviceName = graph.TvAudio.Name;
       //get all tv audio tuner devices on this system
       DsDevice[] devices = null;
@@ -212,63 +213,74 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           IBaseFilter tmp;
           //if tv audio tuner is currently in use we can skip it
-          if (DevicesInUse.Instance.IsUsed(devices[i]))
+          if (!DevicesInUse.Instance.Add(devices[i]))
+          {
             continue;
-          if (!deviceName.Equals(devices[i].Name))
-            continue;
-          this.LogDebug("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
-          int hr;
+          }
           try
           {
-            //add tv audio tuner to graph
-            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          }
-          catch (Exception)
-          {
-            this.LogDebug("analog: cannot add filter to graph");
-            continue;
-          }
-          if (hr != 0)
-          {
-            //failed to add tv audio tuner to graph, continue with the next one
-            if (tmp != null)
+            if (!deviceName.Equals(devices[i].Name))
+              continue;
+            this.LogDebug("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
+            int hr;
+            try
             {
-              graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("TV audio filter candidate", ref tmp);
+              //add tv audio tuner to graph
+              hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
             }
-            continue;
-          }
-          // try connecting the tv tuner-> tv audio tuner
-          if (FilterGraphTools.ConnectPin(graphBuilder, tuner.AudioPin, tmp, 0))
-          {
-            // Got it !
-            // Connect tv audio tuner to the crossbar
-            IPin pin = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
-            hr = graphBuilder.Connect(pin, crossbar.AudioTunerIn);
-            if (hr < 0)
+            catch (Exception)
             {
-              //failed
-              graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("TV audio filter candidate input pin", ref pin);
-              Release.ComObject("TV audio filter candidate", ref tmp);
+              this.LogDebug("analog: cannot add filter to graph");
+              continue;
+            }
+            if (hr != 0)
+            {
+              //failed to add tv audio tuner to graph, continue with the next one
+              if (tmp != null)
+              {
+                graphBuilder.RemoveFilter(tmp);
+                Release.ComObject("TV audio filter candidate", ref tmp);
+              }
+              continue;
+            }
+            // try connecting the tv tuner-> tv audio tuner
+            if (FilterGraphTools.ConnectPin(graphBuilder, tuner.AudioPin, tmp, 0))
+            {
+              // Got it !
+              // Connect tv audio tuner to the crossbar
+              IPin pin = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
+              hr = graphBuilder.Connect(pin, crossbar.AudioTunerIn);
+              if (hr < 0)
+              {
+                //failed
+                graphBuilder.RemoveFilter(tmp);
+                Release.ComObject("TV audio filter candidate input pin", ref pin);
+                Release.ComObject("TV audio filter candidate", ref tmp);
+              }
+              else
+              {
+                //succeeded. we're done
+                this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+                Release.ComObject("TV audio filter candidate input pin", ref pin);
+                _filterTvAudioTuner = tmp;
+                _audioDevice = devices[i];
+                _tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
+                break;
+              }
             }
             else
             {
-              //succeeded. we're done
-              this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
-              Release.ComObject("TV audio filter candidate input pin", ref pin);
-              _filterTvAudioTuner = tmp;
-              _audioDevice = devices[i];
-              DevicesInUse.Instance.Add(_audioDevice);
-              _tvAudioTunerInterface = _filterTvAudioTuner as IAMTVAudio;
-              break;
+              // cannot connect tv tuner-> tv audio tuner, try next one...
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
           }
-          else
+          finally
           {
-            // cannot connect tv tuner-> tv audio tuner, try next one...
-            graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TV audio filter candidate", ref tmp);
+            if (_filterTvAudioTuner == null)
+            {
+              DevicesInUse.Instance.Remove(devices[i]);
+            }
           }
         }
       }
@@ -292,6 +304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     private bool CreateAutomaticFilterInstance(Graph graph, Tuner tuner, Crossbar crossbar, IFilterGraph2 graphBuilder)
     {
       //get all tv audio tuner devices on this system
+      _filterTvAudioTuner = null;
       DsDevice[] devices = null;
       try
       {
@@ -310,60 +323,71 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           IBaseFilter tmp;
           this.LogDebug("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
           //if tv audio tuner is currently in use we can skip it
-          if (DevicesInUse.Instance.IsUsed(devices[i]))
+          if (!DevicesInUse.Instance.Add(devices[i]))
+          {
             continue;
-          int hr;
+          }
           try
           {
-            //add tv audio tuner to graph
-            hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          }
-          catch (Exception)
-          {
-            this.LogDebug("analog: cannot add filter to graph");
-            continue;
-          }
-          if (hr != 0)
-          {
-            //failed to add tv audio tuner to graph, continue with the next one
-            if (tmp != null)
+            int hr;
+            try
             {
-              graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("TV audio filter candidate", ref tmp);
+              //add tv audio tuner to graph
+              hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
             }
-            continue;
-          }
-          // try connecting the tv tuner-> tv audio tuner
-          if (FilterGraphTools.ConnectPin(graphBuilder, tuner.AudioPin, tmp, 0))
-          {
-            // Got it !
-            // Connect tv audio tuner to the crossbar
-            IPin pin = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
-            hr = graphBuilder.Connect(pin, crossbar.AudioTunerIn);
-            if (hr < 0)
+            catch (Exception)
             {
-              //failed
-              graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("TV audio filter candidate input pin", ref pin);
-              Release.ComObject("TV audio filter candidate", ref tmp);
+              this.LogDebug("analog: cannot add filter to graph");
+              continue;
+            }
+            if (hr != 0)
+            {
+              //failed to add tv audio tuner to graph, continue with the next one
+              if (tmp != null)
+              {
+                graphBuilder.RemoveFilter(tmp);
+                Release.ComObject("TV audio filter candidate", ref tmp);
+              }
+              continue;
+            }
+            // try connecting the tv tuner-> tv audio tuner
+            if (FilterGraphTools.ConnectPin(graphBuilder, tuner.AudioPin, tmp, 0))
+            {
+              // Got it !
+              // Connect tv audio tuner to the crossbar
+              IPin pin = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
+              hr = graphBuilder.Connect(pin, crossbar.AudioTunerIn);
+              if (hr < 0)
+              {
+                //failed
+                graphBuilder.RemoveFilter(tmp);
+                Release.ComObject("TV audio filter candidate input pin", ref pin);
+                Release.ComObject("TV audio filter candidate", ref tmp);
+              }
+              else
+              {
+                //succeeded. we're done
+                this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+                Release.ComObject("TV audio filter candidate input pin", ref pin);
+                _filterTvAudioTuner = tmp;
+                _audioDevice = devices[i];
+                _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
+                break;
+              }
             }
             else
             {
-              //succeeded. we're done
-              this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
-              Release.ComObject("TV audio filter candidate input pin", ref pin);
-              _filterTvAudioTuner = tmp;
-              _audioDevice = devices[i];
-              DevicesInUse.Instance.Add(_audioDevice);
-              _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
-              break;
+              // cannot connect tv tuner-> tv audio tuner, try next one...
+              graphBuilder.RemoveFilter(tmp);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
           }
-          else
+          finally
           {
-            // cannot connect tv tuner-> tv audio tuner, try next one...
-            graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TV audio filter candidate", ref tmp);
+            if (_filterTvAudioTuner == null)
+            {
+              DevicesInUse.Instance.Remove(devices[i]);
+            }
           }
         }
       }

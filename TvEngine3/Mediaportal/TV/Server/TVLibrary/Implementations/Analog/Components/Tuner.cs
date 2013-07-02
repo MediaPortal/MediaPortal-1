@@ -266,8 +266,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder)
     {
       this.LogDebug("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
-      if (DevicesInUse.Instance.IsUsed(_tunerDevice))
+      if (!DevicesInUse.Instance.Add(_tunerDevice))
+      {
         return false;
+      }
       IBaseFilter tmp;
       int hr;
       try
@@ -276,16 +278,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
+        DevicesInUse.Instance.Remove(_tunerDevice);
         this.LogDebug("analog: cannot add filter to graph");
         return false;
       }
       if (hr != 0)
       {
+        DevicesInUse.Instance.Remove(_tunerDevice);
         this.LogError("analog: AddTvTunerFilter failed:0x{0:X}", hr);
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
-      DevicesInUse.Instance.Add(_tunerDevice);
       _tuner = _filterTvTuner as IAMTVTuner;
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
         graph.Tuner.Name))

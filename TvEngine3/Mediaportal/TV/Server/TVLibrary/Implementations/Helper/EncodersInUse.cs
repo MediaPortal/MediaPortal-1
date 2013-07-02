@@ -28,34 +28,34 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
-  /// This is a class which is used to remember which
-  /// software encoders are currently in use and how many
-  /// instances of each have been instantiated.
+  /// This is a class which is used to remember which software encoders are
+  /// currently in use and how many instances of each have been instantiated.
   /// </summary>
   public class EncodersInUse
   {
- 
-
     private static EncodersInUse _instance;
     private readonly Dictionary<DsDevice, int> _encodersInUse;
 
     /// <summary>
-    /// static method to access this class
+    /// A static method to access the singleton instance of this class.
     /// </summary>
     public static EncodersInUse Instance
     {
       get
       {
-        if (_instance == null)
+        lock (_instance)
         {
-          _instance = new EncodersInUse();
+          if (_instance == null)
+          {
+            _instance = new EncodersInUse();
+          }
         }
         return _instance;
       }
     }
 
     /// <summary>
-    /// ctor - private since this is a singleton class
+    /// Constructor, private since this is a singleton class.
     /// </summary>
     private EncodersInUse()
     {
@@ -63,11 +63,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// call this function before using an encoder to check
-    /// whether it is possible to use it
+    /// Call this function before using an encoder to check whether it is
+    /// possible to use it.
     /// </summary>
-    /// <param name="device">the encoder device</param>
-    /// <param name="dbEncoder">the preferences for dealing with the encoder</param>
+    /// <param name="device">The encoder device to check.</param>
+    /// <param name="dbEncoder">The preferences for dealing with the encoder.</param>
     /// <returns><c>true</c> if the encoder can be used, otherwise <c>false</c></returns>
     public bool Add(DsDevice device, SoftwareEncoder dbEncoder)
     {
@@ -79,12 +79,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       int reuseLimit = SettingsManagement.GetValue("softwareEncoderReuseLimit", 0);
       lock (_encodersInUse)
       {
+        this.LogDebug("Encoders-in-use: add {0}...", device.Name);
         DsDevice key = null;
         foreach (DsDevice dev in _encodersInUse.Keys)
         {
-          if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
+          if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
           {
-            this.LogDebug("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
+            this.LogDebug("Encoders-in-use: in use, check reuse limit");
             key = dev;
             break;
           }
@@ -93,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          this.LogDebug("analog:  compressor {0} is usable", device.Name);
+          this.LogDebug("Encoders-in-use: not yet in use, usable");
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -101,43 +102,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          this.LogDebug("analog:  unrecognised compressor, assuming usable");
+          this.LogDebug("Encoders-in-use: unrecognised, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
 
-        // If the encoder is reusable then check
-        // the existing usage against the cap.
+        // If the encoder is reusable then check the existing usage against the
+        // cap.
         if (dbEncoder.Reusable)
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
-            this.LogDebug("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
-                              _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             _encodersInUse[key]++;
+            this.LogDebug("Encoders-in-use: usable, usage = {0}, limit = {1}",
+                              _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             return true;
           }
           else
           {
-            this.LogDebug("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
-                              _encodersInUse[key], reuseLimit);
+            this.LogDebug("Encoders-in-use: at reuse limit {0}", reuseLimit);
             return false;
           }
         }
       }
 
-      // If we get to here then the encoder isn't reusable
-      // and it is in use, which means the limit has already
-      // been reached. The encoder wouldn't be in _encodersInUse
-      // if it wasn't in use...
-      this.LogDebug("analog:  non-reusable compressor, already used");
+      // If we get to here then the encoder isn't reusable and it is in use,
+      // which means the limit has already been reached. The encoder wouldn't
+      // be in _encodersInUse if it wasn't in use...
+      this.LogDebug("Encoders-in-use: not reusable");
       return false;
     }
 
     /// <summary>
-    /// use this method to indicate that the device specified no longer in use
+    /// Call this function when an encoder is no longer required.
     /// </summary>
-    /// <param name="device">device</param>
+    /// <param name="device">The encoder device.</param>
     public void Remove(DsDevice device)
     {
       if (device == null)
@@ -147,15 +146,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       lock (_encodersInUse)
       {
+        this.LogDebug("Encoders-in-use: remove {0}...", device.Name);
         foreach (DsDevice dev in _encodersInUse.Keys)
         {
-          if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
+          if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
           {
-            this.LogDebug("analog: removing instance of compressor {0} from use", dev.Name);
             _encodersInUse[dev]--;
+            this.LogDebug("Encoders-in-use: usage = {0}", _encodersInUse[dev]);
             if (_encodersInUse[dev] == 0)
             {
-              this.LogDebug("analog: compressor is no longer in use");
               _encodersInUse.Remove(dev);
             }
             break;

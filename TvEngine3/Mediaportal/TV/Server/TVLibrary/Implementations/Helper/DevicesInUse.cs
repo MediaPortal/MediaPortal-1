@@ -25,32 +25,34 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
-  /// class which is used to remember which devices are currently in use
+  /// This is a class which is used to remember which devices are currently in
+  /// use.
   /// </summary>
   public class DevicesInUse
   {
-
-
     private static DevicesInUse _instance;
     private readonly List<DsDevice> _devicesInUse;
 
     /// <summary>
-    /// static method to access this class
+    /// A static method to access the singleton instance of this class.
     /// </summary>
     public static DevicesInUse Instance
     {
       get
       {
-        if (_instance == null)
+        lock (_instance)
         {
-          _instance = new DevicesInUse();
+          if (_instance == null)
+          {
+            _instance = new DevicesInUse();
+          }
         }
         return _instance;
       }
     }
 
     /// <summary>
-    /// ctor - private since this is a singleton class
+    /// Constructor, private since this is a singleton class.
     /// </summary>
     private DevicesInUse()
     {
@@ -58,51 +60,60 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// use this method to indicate that the device specified is in use
+    /// Call this function before using a device to check whether it is
+    /// possible to use it.
     /// </summary>
-    /// <param name="device">device</param>
-    public void Add(DsDevice device)
+    /// <param name="device">The device to check.</param>
+    /// <returns><c>true</c> if the device can be used, otherwise <c>false</c></returns>
+    public bool Add(DsDevice device)
     {
-      _devicesInUse.Add(device);
+      if (device == null)
+      {
+        return false;
+      }
+
+      lock (_devicesInUse)
+      {
+        this.LogDebug("Devices-in-use: add {0}...", device.Name);
+        foreach (DsDevice dev in _devicesInUse)
+        {
+          if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
+          {
+            this.LogDebug("Devices-in-use: in use, can't be used");
+            return false;
+          }
+        }
+        this.LogDebug("Devices-in-use: not yet in use, usable");
+        _devicesInUse.Add(device);
+      }
+      return true;
     }
 
 
     /// <summary>
-    /// use this method to indicate that the device specified no longer in use
+    /// Call this function when a device is no longer required.
     /// </summary>
-    /// <param name="device">device</param>
+    /// <param name="device">The device.</param>
     public void Remove(DsDevice device)
     {
-      for (int i = 0; i < _devicesInUse.Count; ++i)
+      if (device == null)
       {
-        if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name)
-        {
-          _devicesInUse.RemoveAt(i);
-          return;
-        }
+        return;
       }
-    }
 
-    /// <summary>
-    /// returns true when the device specified is in use otherwise false
-    /// </summary>
-    /// <param name="device">device to check</param>
-    /// <returns></returns>
-    public bool IsUsed(DsDevice device)
-    {
-      for (int i = 0; i < _devicesInUse.Count; ++i)
+      lock (_devicesInUse)
       {
-        if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name &&
-            _devicesInUse[i].DevicePath == device.DevicePath)
+        this.LogDebug("Devices-in-use: remove {0}...", device.Name);
+        for (int i = 0; i < _devicesInUse.Count; ++i)
         {
-          this.LogDebug("device in use", device.Name);
-          this.LogDebug("  moniker   :{0} ", device.Mon);
-          this.LogDebug("  name      :{0} ", device.Name);
-          this.LogDebug("  devicepath:{0} ", device.DevicePath);
-          return true;
+          DsDevice dev = _devicesInUse[i];
+          if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
+          {
+            _devicesInUse.RemoveAt(i);
+            return;
+          }
         }
       }
-      return false;
     }
   }
 }
