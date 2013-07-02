@@ -277,8 +277,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxTheme
       // 
-      this.groupBoxTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTheme.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTheme.Controls.Add(this.panelFitImage);
       this.groupBoxTheme.Controls.Add(this.listViewAvailableThemes);
       this.groupBoxTheme.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -312,9 +312,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listViewAvailableThemes
       // 
-      this.listViewAvailableThemes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewAvailableThemes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewAvailableThemes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colName,
             this.colVersion});
@@ -352,9 +352,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControlTvGuideSettings
       // 
-      this.tabControlTvGuideSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlTvGuideSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlTvGuideSettings.Controls.Add(this.tabPageTvGuideGeneral);
       this.tabControlTvGuideSettings.Controls.Add(this.tabPageTvGuideColors);
       this.tabControlTvGuideSettings.HotTrack = true;
@@ -435,9 +435,9 @@ namespace MediaPortal.Configuration.Sections
       this.cbGenreColoring.AutoSize = true;
       this.cbGenreColoring.Location = new System.Drawing.Point(22, 44);
       this.cbGenreColoring.Name = "cbGenreColoring";
-      this.cbGenreColoring.Size = new System.Drawing.Size(297, 17);
+      this.cbGenreColoring.Size = new System.Drawing.Size(170, 17);
       this.cbGenreColoring.TabIndex = 0;
-      this.cbGenreColoring.Text = "Enable program genre coloring (forces border highlighting)";
+      this.cbGenreColoring.Text = "Enable program genre coloring";
       this.cbGenreColoring.UseVisualStyleBackColor = true;
       this.cbGenreColoring.CheckedChanged += new System.EventHandler(this.cbGenreColoring_CheckedChanged);
       // 
@@ -456,9 +456,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupGenreColors
       // 
-      this.groupGenreColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupGenreColors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupGenreColors.Controls.Add(this.labelNoConnectionToServer);
       this.groupGenreColors.Controls.Add(this.listViewGuideGenres);
       this.groupGenreColors.Controls.Add(this.mpButtonOnLaterColor);
@@ -484,8 +484,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.listViewGuideGenres.AllowDrop = true;
       this.listViewGuideGenres.AllowRowReorder = true;
-      this.listViewGuideGenres.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewGuideGenres.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
       this.listViewGuideGenres.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader9,
             this.columnHeader1,
@@ -785,8 +785,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(9, 527);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(488, 2);
@@ -795,8 +795,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -837,6 +837,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbGenreSettings.PerformLayout();
       this.tabPageTvGuideColors.ResumeLayout(false);
       this.groupGenreColors.ResumeLayout(false);
+      this.groupGenreColors.PerformLayout();
       this.groupGroupColor.ResumeLayout(false);
       this.groupGroupColor.PerformLayout();
       this.groupChannelColors.ResumeLayout(false);
