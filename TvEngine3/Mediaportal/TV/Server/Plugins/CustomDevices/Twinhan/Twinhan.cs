@@ -1630,11 +1630,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       if (_propertySet == null)
       {
         this.LogDebug("Twinhan: pin is not a property set");
-        if (pin != null)
-        {
-          DsUtils.ReleaseComObject(pin);
-          pin = null;
-        }
+        Release.ComObject("Twinhan tuner filter input pin", ref pin);
         return false;
       }
 
@@ -1653,18 +1649,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
       FilterInfo tunerFilterInfo;
       hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      if (tunerFilterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
-        tunerFilterInfo.pGraph = null;
-      }
-      if (hr != 0 || tunerFilterInfo.achName == null)
+      _tunerFilterName = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+
+      if (hr != 0 || _tunerFilterName == null)
       {
         this.LogDebug("Twinhan: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        _tunerFilterName = string.Empty;
       }
       else
       {
-        _tunerFilterName = tunerFilterInfo.achName;
         if (_tunerFilterName.ToLowerInvariant().Contains("terratec") || _tunerFilterName.ToLowerInvariant().Contains("cinergy"))
         {
           this.LogDebug("Twinhan: this device is using a TerraTec driver");
@@ -2636,11 +2630,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
       }
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Twinhan property set", ref _propertySet);
       _isTwinhan = false;
     }
 

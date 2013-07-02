@@ -725,11 +725,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       if (_propertySet == null)
       {
         this.LogDebug("NetUP: pin is not a property set");
-        if (pin != null)
-        {
-          DsUtils.ReleaseComObject(pin);
-          pin = null;
-        }
+        Release.ComObject("NetUP tuner filter input pin", ref _propertySet);
         return false;
       }
 
@@ -816,15 +812,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         finally
         {
           pin.Disconnect();
-          if (infTeeInputPin != null)
-          {
-            DsUtils.ReleaseComObject(infTeeInputPin);
-            infTeeInputPin = null;
-          }
+          Release.ComObject("NetUP infinite tee input pin", ref infTeeInputPin);
           graph.RemoveFilter(infTee);
-          DsUtils.ReleaseComObject(infTee);
-          infTee = null;
-          DsUtils.ReleaseComObject(graph);
+          Release.ComObject("NetUP infinite tee", ref infTee);
+          Release.FilterInfo(ref filterInfo);
           graph = null;
         }
       }
@@ -832,8 +823,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       {
         if (!_isNetUp)
         {
-          DsUtils.ReleaseComObject(pin);
-          pin = null;
+          Release.ComObject("NetUP tuner filter output pin", ref pin);
         }
       }
     }
@@ -1331,11 +1321,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
       }
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("NetUP property set", ref _propertySet);
       _isNetUp = false;
     }
 

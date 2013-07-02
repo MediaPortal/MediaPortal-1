@@ -235,15 +235,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         _tunerDevice.Dispose();
       }      
       _tuner = null;
-      if (_audioPin != null)
-      {
-        Release.ComObject("_audioPin", _audioPin);        
-      }
-      if (_filterTvTuner != null)
-      {
-        while (Release.ComObject(_filterTvTuner) > 0) { }
-        _filterTvTuner = null;        
-      }     
+      Release.ComObject("Tuner component audio output pin", ref _audioPin);
+      Release.ComObjectAllRefs("Tuner component filter", ref _filterTvTuner);
     }    
 
     /// <summary>

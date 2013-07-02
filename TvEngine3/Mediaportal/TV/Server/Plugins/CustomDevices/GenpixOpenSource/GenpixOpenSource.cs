@@ -266,11 +266,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     /// </summary>
     public override void Dispose()
     {
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Genpix open source property set", ref _propertySet);
       if (_diseqcBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_diseqcBuffer);

@@ -112,7 +112,6 @@
     <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Helper\FilterLoader.cs" />
-    <Compile Include="Implementations\Helper\Release.cs" />
     <Compile Include="Implementations\Hybrid\HybridCardGroup.cs" />
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />

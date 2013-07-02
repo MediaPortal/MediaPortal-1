@@ -1577,8 +1577,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         return false;
       }
       int hr = tunerOutputPin.ConnectedTo(out captureInputPin);
-      DsUtils.ReleaseComObject(tunerOutputPin);
-      tunerOutputPin = null;
+      Release.ComObject("Anysee tuner filter output pin", ref tunerOutputPin);
       if (hr != 0 || captureInputPin == null)
       {
         this.LogDebug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1587,8 +1586,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       PinInfo captureInfo;
       hr = captureInputPin.QueryPinInfo(out captureInfo);
-      DsUtils.ReleaseComObject(captureInputPin);
-      captureInputPin = null;
+      Release.ComObject("Anysee capture filter input pin", ref captureInputPin);
       if (hr != 0)
       {
         this.LogDebug("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1600,6 +1598,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       if (_propertySet == null)
       {
         this.LogDebug("Anysee: capture filter is not a property set");
+        Release.PinInfo(ref captureInfo);
         return false;
       }
 
@@ -1608,8 +1607,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       if (hr != 0 || support == 0)
       {
         this.LogDebug("Anysee: device does not support the Anysee property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(captureInfo.filter);
-        captureInfo.filter = null;
+        Release.PinInfo(ref captureInfo);
         _propertySet = null;
         return false;
       }
@@ -2134,11 +2132,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     public override void Dispose()
     {
       CloseInterface();
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Anysee property set", ref _propertySet);
       if (_generalBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_generalBuffer);

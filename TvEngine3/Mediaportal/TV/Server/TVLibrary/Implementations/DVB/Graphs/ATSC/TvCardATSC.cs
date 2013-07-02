@@ -106,15 +106,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
             tuner.put_TuningSpace(_tuningSpace);
             _tuningSpace.CreateTuneRequest(out request);
             _tuneRequest = (IATSCChannelTuneRequest)request;
-            Release.ComObject("TuningSpaceContainer", container);
+            Release.ComObject("ATSC tuner tuning space container", ref container);
             return;
           }
-          Release.ComObject("ITuningSpace", spaces[0]);
+          Release.ComObject("ATSC tuner tuning space", ref spaces[0]);
         }
       }
       finally
       {
-        Release.ComObject("IEnumTuningSpaces", enumTuning);
+        Release.ComObject("ATSC tuner tuning space enumerator", ref enumTuning);
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
@@ -147,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 
       object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      Release.ComObject("TuningSpaceContainer", container);
+      Release.ComObject("ATSC tuner tuning space container", ref container);
 
       tuner.put_TuningSpace(_tuningSpace);
       _tuningSpace.CreateTuneRequest(out request);

@@ -496,7 +496,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
     private IBaseFilter _tunerFilter = null;
     private IBaseFilter _captureFilter = null;
-    private IGraphBuilder _graphBuilder = null;
+    private IGraphBuilder _graph = null;
 
     private KncCiCallbacks _callbacks;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
@@ -873,8 +873,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           IPin tunerOutputPin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
           IPin captureInputPin;
           hr = tunerOutputPin.ConnectedTo(out captureInputPin);
-          DsUtils.ReleaseComObject(tunerOutputPin);
-          tunerOutputPin = null;
+          Release.ComObject("KNC tuner filter output pin", ref tunerOutputPin);
           if (hr != 0 || captureInputPin == null)
           {
             this.LogDebug("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -883,8 +882,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
           PinInfo captureInfo;
           hr = captureInputPin.QueryPinInfo(out captureInfo);
-          DsUtils.ReleaseComObject(captureInputPin);
-          captureInputPin = null;
+          Release.ComObject("KNC capture filter input pin", ref captureInputPin);
           if (hr != 0 || captureInfo.filter == null)
           {
             this.LogDebug("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -901,18 +899,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       if (!_isKnc)
       {
         this.LogDebug("KNC: device not supported");
-        if (tunerInfo.pGraph != null)
-        {
-          DsUtils.ReleaseComObject(tunerInfo.pGraph);
-          tunerInfo.pGraph = null;
-        }
+        Release.FilterInfo(ref tunerInfo);
         return false;
       }
 
       this.LogDebug("KNC: supported device detected");
       _diseqcBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_COMMAND_LENGTH);
       _tunerFilter = tunerFilter;
-      _graphBuilder = (IFilterGraph2)tunerInfo.pGraph;
+      _graph = (IFilterGraph2)tunerInfo.pGraph;
 
       // Prepare the hardware interface for use. This seems to always succeed...
       if (!KNCBDA_HW_Enable(_deviceIndex, _isPcie ? _captureFilter : _tunerFilter))
@@ -1027,7 +1021,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       bool result = false;
       if (_isPcie)
       {
-        result = KNCBDA_CI_Enable(_deviceIndex, _graphBuilder, _captureFilter, _callbackBuffer);
+        result = KNCBDA_CI_Enable(_deviceIndex, _graph, _captureFilter, _callbackBuffer);
       }
       else
       {
@@ -1378,16 +1372,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
         Marshal.FreeCoTaskMem(_callbackBuffer);
         _callbackBuffer = IntPtr.Zero;
       }
-      if (_graphBuilder != null)
-      {
-        DsUtils.ReleaseComObject(_graphBuilder);
-        _graphBuilder = null;
-      }
-      if (_captureFilter != null)
-      {
-        DsUtils.ReleaseComObject(_captureFilter);
-        _captureFilter = null;
-      }
+      Release.ComObject("KNC graph", ref _graph);
+      Release.ComObject("KNC capture filter", ref _captureFilter);
       _tunerFilter = null;
       _isKnc = false;
     }

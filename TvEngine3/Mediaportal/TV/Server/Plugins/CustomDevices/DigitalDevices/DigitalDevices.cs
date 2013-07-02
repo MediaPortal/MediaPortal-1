@@ -126,16 +126,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         // Get the filter name and use it as the default CAM menu title.
         FilterInfo filterInfo;
         int hr = filter.QueryFilterInfo(out filterInfo);
-        if (filterInfo.pGraph != null)
-        {
-          DsUtils.ReleaseComObject(filterInfo.pGraph);
-          filterInfo.pGraph = null;
-        }
-        if (hr == 0 && filterInfo.achName != null)
-        {
-          FilterName = filterInfo.achName;
-        }
-        else
+        FilterName = filterInfo.achName;
+        Release.FilterInfo(ref filterInfo);
+        if (hr != 0 || FilterName == null)
         {
           FilterName = String.Empty;
         }
@@ -224,8 +217,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       if (ps == null)
       {
         this.LogDebug("Digital Devices: input pin is not a property set");
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
+        Release.ComObject("Digital Devices DiSEqC filter input pin", ref pin);
         return null;
       }
 
@@ -234,7 +226,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Digital Devices: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(pin);
+        Release.ComObject("Digital Devices DiSEqC property set", ref ps);
         pin = null;
         return null;
       }
@@ -490,12 +482,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       // Read the tuner filter name.
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      if (tunerFilterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
-        tunerFilterInfo.pGraph = null;
-      }
-      if (hr != 0 || String.IsNullOrEmpty(tunerFilterInfo.achName))
+      string tunerFilterName = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+      if (hr != 0 || String.IsNullOrEmpty(tunerFilterName))
       {
         this.LogDebug("Digital Devices: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -503,9 +492,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       {
         foreach (String prefix in VALID_DEVICE_NAME_PREFIXES)
         {
-          if (tunerFilterInfo.achName.StartsWith(prefix))
+          if (tunerFilterName.StartsWith(prefix))
           {
-            this.LogDebug("Digital Devices: \"{0}\", {1} variant", tunerFilterInfo.achName, prefix);
+            this.LogDebug("Digital Devices: \"{0}\", {1} variant", tunerFilterName, prefix);
             _name = prefix;
             break;
           }
@@ -587,6 +576,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       if (_graph == null)
       {
         this.LogDebug("Digital Devices: failed to get graph reference");
+        Release.FilterInfo(ref filterInfo);
         return false;
       }
 
@@ -679,25 +669,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             }
             finally
             {
-              if (tmpFilterInputPin != null)
-              {
-                DsUtils.ReleaseComObject(tmpFilterInputPin);
-                tmpFilterInputPin = null;
-              }
+              Release.ComObject("Digital Devices CI filter input pin", ref tmpFilterInputPin);
               if (hr != 0)
               {
-                if (tmpFilterOutputPin != null)
-                {
-                  DsUtils.ReleaseComObject(tmpFilterOutputPin);
-                  tmpFilterOutputPin = null;
-                }
+                Release.ComObject("Digital Devices CI filter output pin", ref tmpFilterOutputPin);
                 _graph.RemoveFilter(tmpCiFilter);
-                DsUtils.ReleaseComObject(tmpCiFilter);
-                tmpCiFilter = null;
+                Release.ComObject("Digital Devices CI filter", ref tmpCiFilter);
               }
             }
 
-            DsUtils.ReleaseComObject(lastFilterOutputPin);
+            Release.ComObject("Digital Devices upstream filter output pin", ref lastFilterOutputPin);
             lastFilterOutputPin = tmpFilterOutputPin;
 
             // Excellent - CI filter successfully added!
@@ -716,20 +697,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           }
         }
 
-        DsUtils.ReleaseComObject(lastFilterOutputPin);
-        lastFilterOutputPin = null;
+        Release.ComObject("Digital Devices last filter output pin", ref lastFilterOutputPin);
       }
       finally
       {
         // Clean up the demuxer. Anything else is handled in Dispose().
-        if (demuxInputPin != null)
-        {
-          DsUtils.ReleaseComObject(demuxInputPin);
-          demuxInputPin = null;
-        }
+        Release.ComObject("Digital Devices demultiplexer input pin", ref demuxInputPin);
         _graph.RemoveFilter(tmpDemux);
-        DsUtils.ReleaseComObject(tmpDemux);
-        tmpDemux = null;
+        Release.ComObject("Digital Devices demultiplexer", ref tmpDemux);
       }
 
       return _isCiSlotPresent;
@@ -1563,16 +1538,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             {
               _graph.RemoveFilter(context.Filter as IBaseFilter);
             }
-            DsUtils.ReleaseComObject(context.Filter);
-            context.Filter = null;
+            Release.ComObject("Digital Devices CI filter", ref context.Filter);
           }
         }
       }
-      if (_graph != null)
-      {
-        DsUtils.ReleaseComObject(_graph);
-        _graph = null;
-      }
+      Release.ComObject("Digital Devices graph", ref _graph);
       if (_instanceBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_instanceBuffer);
@@ -1583,11 +1553,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         Marshal.FreeCoTaskMem(_diseqcBuffer);
         _diseqcBuffer = IntPtr.Zero;
       }
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Digital Devices property set", ref _propertySet);
       _deviceControl = null;
       _isDigitalDevices = false;
     }

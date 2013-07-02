@@ -1047,47 +1047,44 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       // Get the tuner filter name.
       FilterInfo filterInfo;
       int hr = tunerFilter.QueryFilterInfo(out filterInfo);
-      if (filterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(filterInfo.pGraph);
-        filterInfo.pGraph = null;
-      }
-      if (hr != 0 || String.IsNullOrEmpty(filterInfo.achName))
+      string filterName = filterInfo.achName;
+      Release.FilterInfo(ref filterInfo);
+      if (hr != 0 || String.IsNullOrEmpty(filterName))
       {
         return TtDeviceCategory.Unknown;
       }
 
       foreach (String name in VALID_BUDGET2_DEVICE_NAMES)
       {
-        if (filterInfo.achName.Equals(name))
+        if (filterName.Equals(name))
         {
           return TtDeviceCategory.Budget2;
         }
       }
       foreach (String name in VALID_BUDGET3_DEVICE_NAMES)
       {
-        if (filterInfo.achName.Equals(name))
+        if (filterName.Equals(name))
         {
           return TtDeviceCategory.Budget3;
         }
       }
       foreach (String name in VALID_USB2_DEVICE_NAMES)
       {
-        if (filterInfo.achName.Equals(name))
+        if (filterName.Equals(name))
         {
           return TtDeviceCategory.Usb2;
         }
       }
       foreach (String name in VALID_PINNACLE_DEVICE_NAMES)
       {
-        if (filterInfo.achName.Equals(name))
+        if (filterName.Equals(name))
         {
           return TtDeviceCategory.Usb2Pinnacle;
         }
       }
       foreach (String name in VALID_DSS_DEVICE_NAMES)
       {
-        if (filterInfo.achName.Equals(name))
+        if (filterName.Equals(name))
         {
           return TtDeviceCategory.Usb2Dss;
         }
@@ -1110,42 +1107,43 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         return deviceId;
       }
 
-      // Request the raw medium data.
-      IntPtr raw;
-      int hr = pin.KsQueryMediums(out raw);
-      if (hr != 0 || raw == IntPtr.Zero)
-      {
-        if (raw != IntPtr.Zero)
-        {
-          Marshal.FreeCoTaskMem(raw);
-          raw = IntPtr.Zero;
-        }
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
-        return deviceId;
-      }
-
       try
       {
-        // Read the number of mediums.
-        int countMediums = Marshal.ReadInt32(raw, 4);
-        if (countMediums == 0)
+        // Request the raw medium data.
+        IntPtr raw;
+        int hr = pin.KsQueryMediums(out raw);
+        try
         {
-          return deviceId;
-        }
+          if (hr != 0 || raw == IntPtr.Zero)
+          {
+            return deviceId;
+          }
 
-        // Calculate the address of the first medium.
-        IntPtr addr = IntPtr.Add(raw, 8);
-        // Marshal the data into an RPM structure.
-        RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
-        return rpm.dw1;
+          // Read the number of mediums.
+          int countMediums = Marshal.ReadInt32(raw, 4);
+          if (countMediums == 0)
+          {
+            return deviceId;
+          }
+
+          // Calculate the address of the first medium.
+          IntPtr addr = IntPtr.Add(raw, 8);
+          // Marshal the data into an RPM structure.
+          RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
+          return rpm.dw1;
+        }
+        finally
+        {
+          if (raw != IntPtr.Zero)
+          {
+            Marshal.FreeCoTaskMem(raw);
+            raw = IntPtr.Zero;
+          }
+        }
       }
       finally
       {
-        Marshal.FreeCoTaskMem(raw);
-        raw = IntPtr.Zero;
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
+        Release.ComObject("TechnoTrend tuner filter input pin", ref pin);
       }
     }
 

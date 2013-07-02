@@ -611,12 +611,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
         _mmiInterface = null;
       }
       _pmtInterface = null;
-      if (_ciApi != null)
-      {
-        DsUtils.ReleaseComObject(_ciApi);
-        _ciApi = null;
-        _mmiInterface = null;
-      }
+      Release.ComObject("AVerMedia CI API", ref _ciApi);
+      _mmiInterface = null;
 
       _ciStateChangeDelegate = null;
       _ciStateChangeCallbackPtr = IntPtr.Zero;

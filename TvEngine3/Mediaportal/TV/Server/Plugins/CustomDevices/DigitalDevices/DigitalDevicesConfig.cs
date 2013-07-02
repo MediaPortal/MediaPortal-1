@@ -99,10 +99,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           {
             slot.CamRootMenuTitle = menuTitle;
           }
-          DsUtils.ReleaseComObject(ciFilter);
           ciFilter = null;
-          obj = null;
         }
+        Release.ComObject("Digital Devices config device object", ref obj);
         this.LogDebug("  CAM name/title = {0}", slot.CamRootMenuTitle);
 
         _ciSlots.Add(slot);

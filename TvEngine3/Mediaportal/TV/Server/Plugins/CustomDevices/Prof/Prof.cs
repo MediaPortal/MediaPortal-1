@@ -559,11 +559,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
         Marshal.FreeCoTaskMem(_generalBuffer);
         _generalBuffer = IntPtr.Zero;
       }
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Prof property set", ref _propertySet);
       _isProf = false;
     }
 

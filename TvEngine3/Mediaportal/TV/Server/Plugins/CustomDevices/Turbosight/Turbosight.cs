@@ -984,18 +984,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       // use the same GUIDs which makes things a little tricky.
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      if (tunerFilterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
-        tunerFilterInfo.pGraph = null;
-      }
-      if (hr != 0 || tunerFilterInfo.achName == null)
+      _tunerFilterName = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+      if (hr != 0 || _tunerFilterName == null)
       {
         this.LogDebug("Turbosight: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
-      _tunerFilterName = tunerFilterInfo.achName;
-      if (_tunerFilterName == null || (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX")))
+      if (!_tunerFilterName.StartsWith("TBS") && !_tunerFilterName.StartsWith("QBOX"))
       {
         this.LogDebug("Turbosight: tuner filter name does not match");
         return false;
@@ -1037,10 +1033,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
             _tbsAccessProperty = (int)BdaExtensionProperty.TbsAccess;
           }
         }
-        if (pin != null && !_isTurbosight)
+        if (!_isTurbosight)
         {
-          DsUtils.ReleaseComObject(pin);
-          pin = null;
+          Release.ComObject("Turbosight tuner filter input pin", ref pin);
         }
       }
 
@@ -1811,8 +1806,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       }
       if (_isUsb)
       {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
+        Release.ComObject("Turbosight property set", ref _propertySet);
       }
       _tunerFilter = null;
       _isTurbosight = false;

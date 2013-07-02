@@ -106,8 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
       if (ps == null)
       {
         this.LogDebug("Microsoft: input pin is not a property set");
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
+        Release.ComObject("Microsoft DiSEqC filter input pin", ref pin);
         return null;
       }
 
@@ -116,7 +115,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Microsoft: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(pin);
+        Release.ComObject("Microsoft DiSEqC property set", ref ps);
         pin = null;
         return null;
       }
@@ -153,11 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
       }
 
       this.LogDebug("Microsoft: failed to get the control interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      if (controlNode != null)
-      {
-        DsUtils.ReleaseComObject(controlNode);
-        controlNode = null;
-      }
+      Release.ComObject("Microsoft DiSEqC control node", ref controlNode);
       return null;
     }
 
@@ -185,8 +180,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
       if (ps == null)
       {
         this.LogDebug("Microsoft: output pin is not a property set");
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
+        Release.ComObject("Microsoft QAM filter output pin", ref pin);
         return null;
       }
       // Note: the below code could be problematic for single tuner/capture filter implementations. Some drivers
@@ -198,8 +192,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
       if (hr != 0 || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Microsoft: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        DsUtils.ReleaseComObject(pin);
-        pin = null;
+        Release.ComObject("Microsoft QAM property set", ref pin);
         return null;
       }
 
@@ -771,22 +764,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
     /// </summary>
     public override void Dispose()
     {
-      if (_diseqcPropertySet != null)
-      {
-        DsUtils.ReleaseComObject(_diseqcPropertySet);
-        _diseqcPropertySet = null;
-      }
-      if (_oldDiseqcInterface != null)
-      {
-        DsUtils.ReleaseComObject(_oldDiseqcInterface);
-        _oldDiseqcInterface = null;
-      }
+      Release.ComObject("Microsoft DiSEqC property set", ref _diseqcPropertySet);
+      Release.ComObject("Microsoft old DiSEqC interface", ref _oldDiseqcInterface);
       _deviceControl = null;
-      if (_qamPropertySet != null)
-      {
-        DsUtils.ReleaseComObject(_qamPropertySet);
-        _qamPropertySet = null;
-      }
+      Release.ComObject("Microsoft QAM property set", ref _qamPropertySet);
       if (_instanceBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_instanceBuffer);

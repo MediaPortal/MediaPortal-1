@@ -247,21 +247,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
 
       // get rid of unmanaged resources
-      if (_pinVBI != null)
-      {
-        Release.ComObject("vbipin filter", _pinVBI);
-        _pinVBI = null;
-      }
+      Release.ComObject("Capture VBI pin", ref _pinVBI);
       if (_filterAudioCapture != null && _filterVideoCapture != _filterAudioCapture)
       {
-        Release.ComObject("audio capture filter", _filterAudioCapture);        
+        Release.ComObject("Capture audio capture filter", ref _filterAudioCapture);
       }
-      if (_filterVideoCapture != null)
-      {
-        Release.ComObject("video capture filter", _filterVideoCapture);
-        _filterVideoCapture = null;
-        _analogVideoDecoder = null;
-      }
+      Release.ComObject("Capture video capture filter", ref _filterVideoCapture);
+      _analogVideoDecoder = null;
       _filterAudioCapture = null;
     }
 
@@ -401,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             this.LogDebug("analog: cannot add filter: {0} to graph", devices[i].Name);
             graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TvCaptureFilter", tmp);
+            Release.ComObject("Capture filter candidate", ref tmp);
           }
           continue;
         }
@@ -446,7 +438,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           // cand continue with the next vieo capture filter
           this.LogDebug("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("capture filter", tmp);
+          Release.ComObject("Capture filter candidate", ref tmp);
         }
         else
         {
@@ -549,7 +541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (tmp != null)
           {
             graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TvCaptureFilter", tmp);
+            Release.ComObject("Capture filter candidate", ref tmp);
           }
           continue;
         }
@@ -599,7 +591,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           // cand continue with the next vieo capture filter
           this.LogDebug("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("capture filter", tmp);
+          Release.ComObject("Capture filter candidate", ref tmp);
         }
         else
         {
@@ -634,7 +626,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         if (pinVBI != null)
         {
           this.LogDebug("analog: VideoPortVBI pin found");
-          Release.ComObject(pinVBI);
+          Release.ComObject("Capture video port VBI pin", ref pinVBI);
           return;
         }
         pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0,

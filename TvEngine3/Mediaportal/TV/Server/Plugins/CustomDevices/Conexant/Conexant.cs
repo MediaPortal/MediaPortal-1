@@ -373,11 +373,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// </summary>
     public override void Dispose()
     {
-      if (_propertySet != null)
-      {
-        DsUtils.ReleaseComObject(_propertySet);
-        _propertySet = null;
-      }
+      Release.ComObject("Conexant property set", ref _propertySet);
       if (_instanceBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_instanceBuffer);

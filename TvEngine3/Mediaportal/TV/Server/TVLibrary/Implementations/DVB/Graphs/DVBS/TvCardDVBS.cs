@@ -169,15 +169,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
             _tuningSpace.put_HighOscillator(hiOsc);
             _tuningSpace.put_LNBSwitch(switchFrequency);
             tuner.put_TuningSpace(_tuningSpace);
-            Release.ComObject("TuningSpaceContainer", container);
+            Release.ComObject("DVB-S tuner tuning space container", ref container);
             return;
           }
-          Release.ComObject("ITuningSpace", spaces[0]);
+          Release.ComObject("DVB-S tuner tuning space", ref spaces[0]);
         }
       }
       finally
       {
-        Release.ComObject("IEnumTuningSpaces", enumTuning);
+        Release.ComObject("DVB-S tuner tuning space enumerator", ref enumTuning);
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
@@ -204,7 +204,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
 
       object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      Release.ComObject("TuningSpaceContainer", container);
+      Release.ComObject("DVB-S tuner tuning space container", ref container);
 
       tuner.put_TuningSpace(_tuningSpace);
     }

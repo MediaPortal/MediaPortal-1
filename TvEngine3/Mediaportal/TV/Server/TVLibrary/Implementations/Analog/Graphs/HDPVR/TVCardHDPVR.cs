@@ -250,29 +250,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       this.LogDebug("HDPVR:  All filters removed");
-      if (_filterCrossBar != null)
+      Release.ComObjectAllRefs("Capture device crossbar filter", ref _filterCrossBar);
+      Release.ComObjectAllRefs("Capture device capture filter", ref _filterCapture);
+      Release.ComObjectAllRefs("Capture device encoder filter", ref _filterEncoder);
+      Release.ComObjectAllRefs("Capture device TsWriter", ref _filterTsWriter);
+      if (_rotEntry != null)
       {
-        while (Release.ComObject(_filterCrossBar) > 0) { }
-        _filterCrossBar = null;
+        _rotEntry.Dispose();
+        _rotEntry = null;
       }
-      if (_filterCapture != null)
-      {
-        while (Release.ComObject(_filterCapture) > 0) { }
-        _filterCapture = null;
-      }
-      if (_filterEncoder != null)
-      {
-        while (Release.ComObject(_filterEncoder) > 0) { }
-        _filterEncoder = null;
-      }
-      if (_filterTsWriter != null)
-      {
-        while (Release.ComObject(_filterTsWriter) > 0) { }
-        _filterTsWriter = null;
-      }
-      _rotEntry.Dispose();
-      Release.ComObject("Graphbuilder", _graphBuilder);
-      _graphBuilder = null;
+      Release.ComObject("Capture device graph", ref _graphBuilder);
       DevicesInUse.Instance.Remove(_tunerDevice);
       if (_crossBarDevice != null)
       {
@@ -433,7 +420,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TvCaptureFilter", tmp);
+            Release.ComObject("Capture device capture filter candidate", ref tmp);
           }
           continue;
         }
@@ -454,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         // cand continue with the next vieo capture filter
         this.LogDebug("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
         _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("capture filter", tmp);
+        Release.ComObject("Capture device capture filter candidate", ref tmp);
       }
       if (_filterCapture == null)
       {
@@ -526,7 +513,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TvEncoderFilter", tmp);
+            Release.ComObject("Capture device encoder filter candidate", ref tmp);
           }
           continue;
         }
@@ -551,7 +538,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         // cand continue with the next vieo capture filter
         this.LogDebug("HDPVR: AddTvEncoderFilter failed to connect to capture");
         _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("capture filter", tmp);
+        Release.ComObject("Capture device encoder filter candidate", ref tmp);
       }
       this.LogDebug("HDPVR: AddTvEncoderFilter no encoder found");
     }
@@ -582,8 +569,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
         //Log.this.LogInfo("HDPVR: Render [Encoder]->[TsWriter]");
         hr = _graphBuilder.Connect(pinOut, pinIn);
-        Release.ComObject("pinTsWriterIn", pinIn);
-        Release.ComObject("pinEncoderOut", pinOut);
+        Release.ComObject("Capture device TsWriter input pin", ref pinIn);
+        Release.ComObject("Capture device encoder output pin", ref pinOut);
         if (hr != 0)
         {
           this.LogError("HDPVR:  Unable to connect encoder to ts analyzer filter :0x{0:X}", hr);

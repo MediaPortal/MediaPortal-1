@@ -628,7 +628,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("bda tuner", tmp);
+            Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
           }
           continue;
         }
@@ -646,7 +646,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         // Try another...
         _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("bda tuner", tmp);
+        Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
       }
       // Assume we found a tuner filter...
       if (_filterTuner == null)
@@ -733,10 +733,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               DsUtils.FreeAMMediaType(mediaTypes[i]);
             }
           }
-          Release.ComObject("tuner filter output pin media types enum", enumMedia);
+          Release.ComObject("Base DVB tuner tuner filter output pin media type enumerator", ref enumMedia);
         }
       }
-      Release.ComObject("tuner filter output pin", pinOut);
+      Release.ComObject("Base DVB tuner tuner filter output pin", ref pinOut);
       if (!useCaptureFilter)
       {
         return false;
@@ -830,7 +830,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           {
             this.LogError("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("bda receiver", tmp);
+            Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
           }
           continue;
         }
@@ -850,7 +850,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         // Try another...
         this.LogDebug("dvb:  Looking for another bda receiver...");
         _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("bda receiver", tmp);
+        Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
       }
     }
 
@@ -879,8 +879,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
       IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
       int hr = _graphBuilder.Connect(infTeeOut, demuxPinIn);
-      Release.ComObject("Infinite tee output pin", infTeeOut);
-      Release.ComObject("MPEG 2 demux input pin", demuxPinIn);
+      Release.ComObject("Base DVB tuner infinite tee output pin", ref infTeeOut);
+      Release.ComObject("Base DVB tuner MPEG 2 demultiplexer input pin", ref demuxPinIn);
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to connect MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1011,65 +1011,77 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           return;
         }
         int pinNr = 0;
-        while (true)
+        try
         {
-          pinNr++;
-          PinDirection pinDir;
-          AMMediaType[] mediaTypes = new AMMediaType[2];
-          IPin[] pins = new IPin[2];
-          int fetched;
-          enumPins.Next(1, pins, out fetched);
-          if (fetched != 1 || pins[0] == null)
+          while (true)
           {
-            break;
-          }
-          pins[0].QueryDirection(out pinDir);
-          if (pinDir == PinDirection.Input)
-          {
-            Release.ComObject("MPEG 2 demux input pin " + pinNr, pins[0]);
-            continue;
-          }
-          IEnumMediaTypes enumMedia;
-          pins[0].EnumMediaTypes(out enumMedia);
-          if (enumMedia != null)
-          {
-            enumMedia.Next(1, mediaTypes, out fetched);
-            Release.ComObject("MPEG 2 demux output pin media type enum", enumMedia);
-            if (fetched == 1 && mediaTypes[0] != null)
+            pinNr++;
+            PinDirection pinDir;
+            AMMediaType[] mediaTypes = new AMMediaType[2];
+            IPin[] pins = new IPin[2];
+            int fetched;
+            enumPins.Next(1, pins, out fetched);
+            if (fetched != 1 || pins[0] == null)
             {
-              if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
-              {
-                // We're not interested in audio or video pins.
-                DsUtils.FreeAMMediaType(mediaTypes[0]);
-                Release.ComObject("MPEG 2 demux output pin " + pinNr, pins[0]);
-                continue;
-              }
-            }
-            DsUtils.FreeAMMediaType(mediaTypes[0]);
-          }
-          try
-          {
-            hr = _graphBuilder.Connect(pins[0], pinInTif);
-            if (hr == 0)
-            {
-              tifConnected = true;
               break;
             }
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "TvCardDvbBase: exception on connect attempt");
-          }
-          finally
-          {
-            Release.ComObject("MPEG 2 demux output pin " + pinNr, pins[0]);
+            try
+            {
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == PinDirection.Input)
+              {
+                continue;
+              }
+              IEnumMediaTypes enumMedia;
+              pins[0].EnumMediaTypes(out enumMedia);
+              if (enumMedia != null)
+              {
+                enumMedia.Next(1, mediaTypes, out fetched);
+                Release.ComObject("Base DVB tuner MPEG 2 demultiplexer output pin media type enumerator", ref enumMedia);
+                if (fetched == 1 && mediaTypes[0] != null)
+                {
+                  try
+                  {
+                    if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
+                    {
+                      // We're not interested in audio or video pins.
+                      continue;
+                    }
+                  }
+                  finally
+                  {
+                    DsUtils.FreeAMMediaType(mediaTypes[0]);
+                  }
+                }
+              }
+              try
+              {
+                hr = _graphBuilder.Connect(pins[0], pinInTif);
+                if (hr == 0)
+                {
+                  tifConnected = true;
+                  break;
+                }
+              }
+              catch (Exception ex)
+              {
+                this.LogError(ex, "TvCardDvbBase: exception on connect attempt");
+              }
+            }
+            finally
+            {
+              Release.ComObject("Base DVB tuner MPEG 2 demultiplexer output pin " + pinNr, ref pins[0]);
+            }
           }
         }
-        Release.ComObject("MPEG 2 demux pin enum", enumPins);
+        finally
+        {
+          Release.ComObject("Base DVB tuner MPEG 2 demultiplexer pin enumerator", ref enumPins);
+        }
       }
       finally
       {
-        Release.ComObject("TIF input pin", pinInTif);
+        Release.ComObject("Base DVB tuner TIF input pin", ref pinInTif);
       }
       this.LogDebug("TvCardDvbBase: result = {0}", tifConnected);
     }
@@ -1134,65 +1146,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
       _previousChannel = null;
-      if (_filterMpeg2DemuxTif != null)
-      {
-        Release.ComObject("_filterMpeg2DemuxTif filter", _filterMpeg2DemuxTif);
-        _filterMpeg2DemuxTif = null;
-      }
-      if (_filterNetworkProvider != null)
-      {
-        Release.ComObject("_filterNetworkProvider filter", _filterNetworkProvider);
-        _filterNetworkProvider = null;
-      }
-      if (_infTee != null)
-      {
-        Release.ComObject("main inftee filter", _infTee);
-        _infTee = null;
-      }
-      if (_filterTuner != null)
-      {
-        while (Release.ComObject(_filterTuner) > 0)
-          ;
-        _filterTuner = null;
-      }
-      if (_filterCapture != null)
-      {
-        while (Release.ComObject(_filterCapture) > 0)
-          ;
-        _filterCapture = null;
-      }
-      if (_filterTIF != null)
-      {
-        Release.ComObject("TIF filter", _filterTIF);
-        _filterTIF = null;
-      }
+
+      Release.ComObject("Base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2DemuxTif);
+      Release.ComObject("Base DVB tuner network provider", ref _filterNetworkProvider);
+      Release.ComObject("Base DVB tuner infinite tee", ref _infTee);
+      Release.ComObjectAllRefs("Base DVB tuner tuner filter", ref _filterTuner);
+      Release.ComObjectAllRefs("Base DVB tuner capture filter", ref _filterCapture);
+      Release.ComObject("Base DVB tuner transport information filter", ref _filterTIF);
       this.LogDebug("  free pins...");
-      if (_filterTsWriter as IBaseFilter != null)
-      {
-        Release.ComObject("TSWriter filter", _filterTsWriter);
-        _filterTsWriter = null;
-      }
-      else
-      {
-        this.LogDebug("!!! Error releasing TSWriter filter (_filterTsWriter as IBaseFilter was null!)");
-        _filterTsWriter = null;
-      }
+      Release.ComObject("Base DVB tuner TsWriter", ref _filterTsWriter);
+      _interfaceChannelLinkageScanner = null;
+      _interfaceChannelScan = null;
+      _interfaceEpgGrabber = null;
       this.LogDebug("  free graph...");
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
         _rotEntry = null;
       }
-      if (_capBuilder != null)
-      {
-        Release.ComObject("capture builder", _capBuilder);
-        _capBuilder = null;
-      }
+      Release.ComObject("Base DVB tuner graph builder", ref _capBuilder);
       if (_graphBuilder != null)
       {
         FilterGraphTools.RemoveAllFilters(_graphBuilder);
-        Release.ComObject("graph builder", _graphBuilder);
-        _graphBuilder = null;
+        Release.ComObject("Base DVB tuner graph", ref _graphBuilder);
       }
       this.LogDebug("  free devices...");
       if (_tunerDevice != null)
@@ -1210,8 +1186,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          while (Release.ComObject(stat) > 0)
-            ;
+          Release.ComObjectAllRefs("Base DVB tuner signal statistic", ref stat);
         }
         _tunerStatistics.Clear();
       }

@@ -318,15 +318,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         _teletext.Dispose();
         _teletext = null;
       }
-      if (_tsFileSink != null)
-      {
-        Release.ComObject("tsFileSink filter", _tsFileSink);
-        _tsFileSink = null;
-      }
+      Release.ComObject("Analog tuner MpFileWriter", ref _tsFileSink);
       _rotEntry.Dispose();
       _rotEntry = null;
-      Release.ComObject("Graphbuilder", _graphBuilder);
-      _graphBuilder = null;
+      Release.ComObject("Analog tuner graph", ref _graphBuilder);
       _isDeviceInitialised = false;
       this.LogDebug("analog: dispose completed");
     }
@@ -483,7 +478,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         this.LogDebug("analog:unable to connect muxer->tsfilesink");
         throw new TvException("Unable to connect pins");
       }
-      Release.ComObject("mpegmux pinin", pin);
+      Release.ComObject("Analog tuner multiplexer output pin", ref pin);
       if (_capture.SupportsTeletext)
       {
         this.LogDebug("analog:connect wst/vbi codec->tsfilesink");

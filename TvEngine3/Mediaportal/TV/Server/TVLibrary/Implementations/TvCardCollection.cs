@@ -345,7 +345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                   if (connected)
                   {
                     graphBuilder.RemoveFilter(tmp);
-                    Release.ComObject("tmp filter", tmp);
+                    Release.ComObject("TV card collection device filter", ref tmp);
                     break; // already found one, no need to continue
                   }
                   else if (n == (pulcNetworkTypes - 1))
@@ -360,7 +360,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 connected = false;
               }
               graphBuilder.RemoveFilter(networkDVB);
-              Release.ComObject("ms provider", networkDVB);
+              Release.ComObject("TV card collection MS network provider", ref networkDVB);
             }
             if (!genericNP || !connected)
             {
@@ -389,16 +389,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 _cards.Add(dvbsCard);
               }
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("tmp filter", tmp);
+              Release.ComObject("TV card collection device filter", ref tmp);
             }
           }
           FilterGraphTools.RemoveAllFilters(graphBuilder);
-          Release.ComObject("dvbc provider", networkDVBC);
-          Release.ComObject("atsc provider", networkATSC);
-          Release.ComObject("dvbs provider", networkDVBS);
-          Release.ComObject("dvbt provider", networkDVBT);
+          Release.ComObject("TV card collection DVB-C network provider", ref networkDVBC);
+          Release.ComObject("TV card collection ATSC network provider", ref networkATSC);
+          Release.ComObject("TV card collection DVB-S network provider", ref networkDVBS);
+          Release.ComObject("TV card collection DVB-T network provider", ref networkDVBT);
           rotEntry.Dispose();
-          Release.ComObject("graph builder", graphBuilder);
+          Release.ComObject("TV card collection graph", ref graphBuilder);
         }
       }
       //Analogue TV devices
@@ -471,13 +471,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
         }
         graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("tmp filter", tmp);
+        Release.ComObject("TV card collection device filter", ref tmp);
         graphBuilder.RemoveFilter(networkDVB);
-        Release.ComObject("ms provider", networkDVB);
+        Release.ComObject("TV card collection MS network provider", ref networkDVB);
       }
       FilterGraphTools.RemoveAllFilters(graphBuilder);
       rotEntry.Dispose();
-      Release.ComObject("graph builder", graphBuilder);
+      Release.ComObject("TV card collection graph", ref graphBuilder);
     }
 
     /// <summary>

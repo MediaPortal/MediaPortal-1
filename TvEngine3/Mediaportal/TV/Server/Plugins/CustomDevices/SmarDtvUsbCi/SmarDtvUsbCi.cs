@@ -406,16 +406,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         // Connect the filter into the graph.
         IPin tmpOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
         IPin tmpInputPin = DsFindPin.ByDirection(_ciFilter, PinDirection.Input, 0);
-        if (tmpInputPin == null || tmpOutputPin == null)
+        try
         {
-          this.LogDebug("SmarDTV USB CI: failed to locate required pins");
-          return false;
+          if (tmpInputPin == null || tmpOutputPin == null)
+          {
+            this.LogDebug("SmarDTV USB CI: failed to locate required pins");
+            return false;
+          }
+          hr = _graph.Connect(tmpOutputPin, tmpInputPin);
         }
-        hr = _graph.Connect(tmpOutputPin, tmpInputPin);
-        DsUtils.ReleaseComObject(tmpOutputPin);
-        tmpOutputPin = null;
-        DsUtils.ReleaseComObject(tmpInputPin);
-        tmpInputPin = null;
+        finally
+        {
+          Release.ComObject("SmarDTV upstream filter output pin", ref tmpOutputPin);
+          Release.ComObject("SmarDTV CI filter input pin", ref tmpInputPin);
+        }
         if (hr != 0)
         {
           this.LogDebug("SmarDTV USB CI: failed to connect the CI filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -433,8 +437,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
           if (_ciFilter != null)
           {
             _graph.RemoveFilter(_ciFilter);
-            DsUtils.ReleaseComObject(_ciFilter);
-            _ciFilter = null;
+            Release.ComObject("SmarDTV CI filter", ref _ciFilter);
           }
         }
       }
@@ -892,8 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         {
           _graph.RemoveFilter(_ciFilter);
         }
-        DsUtils.ReleaseComObject(_ciFilter);
-        _ciFilter = null;
+        Release.ComObject("SmarDTV CI filter", ref _ciFilter);
       }
       if (_ciDevice != null)
       {
@@ -903,7 +905,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         }
         _ciDevice = null;
       }
-      _graph = null;
+      Release.ComObject("SmarDTV graph", ref _graph);
       _isSmarDtvUsbCi = false;
     }
 

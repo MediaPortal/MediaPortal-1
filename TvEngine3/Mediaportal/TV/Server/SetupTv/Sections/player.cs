@@ -38,8 +38,6 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
     protected IFilterGraph2 _graphBuilder;
     protected DsROTEntry _rotEntry;
     protected IBaseFilter _tsReader;
-    protected IPin _pinVideo;
-    protected IPin _pinAudio;
     private IMediaControl _mediaCtrl;
     protected IVideoWindow _videoWin;
     protected Form _form;
@@ -80,22 +78,34 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       this.LogInfo("TSReaderPlayer:render TsReader outputs");
       IEnumPins enumPins;
       _tsReader.EnumPins(out enumPins);
-      IPin[] pins = new IPin[2];
-      int fetched;
-      while (enumPins.Next(1, pins, out fetched) == 0)
+      try
       {
-        if (fetched != 1) break;
-        PinDirection direction;
-        pins[0].QueryDirection(out direction);
-        if (direction == PinDirection.Input)
+        IPin[] pins = new IPin[2];
+        int fetched;
+        while (enumPins.Next(1, pins, out fetched) == 0)
         {
-          Release.ComObject(pins[0]);
-          continue;
+          if (fetched != 1)
+            break;
+          try
+          {
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Input)
+            {
+              continue;
+            }
+            _graphBuilder.Render(pins[0]);
+          }
+          finally
+          {
+            Release.ComObject("Player TsReader pin", ref pins[0]);
+          }
         }
-        _graphBuilder.Render(pins[0]);
-        Release.ComObject(pins[0]);
       }
-      Release.ComObject(enumPins);
+      finally
+      {
+        Release.ComObject("Player TsReader pin enumerator", ref enumPins);
+      }
 
       #endregion
 
@@ -130,32 +140,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _mediaCtrl.Stop();
       }
-      if (_pinAudio != null)
-      {
-        Release.ComObject(_pinAudio);
-        _pinAudio = null;
-      }
-      if (_pinVideo != null)
-      {
-        Release.ComObject(_pinVideo);
-        _pinVideo = null;
-      }
-      if (_tsReader != null)
-      {
-        Release.ComObject(_tsReader);
-        _tsReader = null;
-      }
+      Release.ComObject("Player TsReader", ref _tsReader);
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
         _rotEntry = null;
       }
 
-      if (_graphBuilder != null)
-      {
-        Release.ComObject(_graphBuilder);
-        _graphBuilder = null;
-      }
+      Release.ComObject("Player graph", ref _graphBuilder);
     }
 
     public void ResizeToParent()

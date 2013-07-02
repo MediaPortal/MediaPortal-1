@@ -417,9 +417,7 @@ namespace DirectShowLib
 
   #region DsUtils.cs
 
-  // 1. The definition for DsUtils.ReleaseComObject() was added.
-  // 2. References to Marshal.ReleaseComObject() were replaced with ReleaseComObject().
-  // 3. The while loops in DsFindPin methods have been modified as follows:
+  // The while loops in DsFindPin methods have been modified as follows:
   //
   //  ...
   //  int lFetched;
@@ -817,6 +815,88 @@ namespace DirectShowLib
   }
 
   #endregion
+
+  /// <summary>
+  /// Helper class for releasing COM objects.
+  /// </summary>
+  public class Release
+  {
+    /// <summary>
+    /// Release a PinInfo instance.
+    /// </summary>
+    /// <param name="pi">The instance to release.</param>
+    /// <returns>the number of remaining references to the instance</returns>
+    public static int PinInfo(ref PinInfo pi)
+    {
+      int refCount = 0;
+      if (pi.filter != null)
+      {
+        refCount = Marshal.ReleaseComObject(pi.filter);
+        pi.filter = null;
+      }
+      return refCount;
+    }
+
+    /// <summary>
+    /// Release a FilterInfo instance.
+    /// </summary>
+    /// <param name="fi">The instance to release.</param>
+    /// <returns>the number of remaining references to the instance</returns>
+    public static int FilterInfo(ref FilterInfo fi)
+    {
+      int refCount = 0;
+      if (fi.pGraph != null)
+      {
+        refCount = Marshal.ReleaseComObject(fi.pGraph);
+        fi.pGraph = null;
+      }
+      return refCount;
+    }
+
+    /// <summary>
+    /// Release a COM object.
+    /// </summary>
+    /// <param name="line">A description of the object that can be used for debugging.</param>
+    /// <param name="o">The object to release.</param>
+    /// <returns>the number of remaining references to the object</returns>
+    public static int ComObject<E>(string line, ref E o)
+    {
+      int refCount = 0;
+      if (o != null)
+      {
+        //LogDebug("Release: releasing \"{0}\"...", line);
+        refCount = Marshal.ReleaseComObject(o);
+        //LogDebug("  ref count = {0}", refCount);
+        o = default(E);
+      }
+      /*else
+      {
+        LogWarn("Release: asked to release null COM object with description \"{0}\"", line);
+      }*/
+      return refCount;
+    }
+
+    /// <summary>
+    /// Release a COM object repeatedly until the reference count is zero.
+    /// </summary>
+    /// <param name="line">A description of the object that can be used for debugging.</param>
+    /// <param name="o">The object to release.</param>
+    public static void ComObjectAllRefs<E>(string line, ref E o)
+    {
+      if (o != null)
+      {
+        //LogDebug("Release: releasing all references to \"{0}\"...", line);
+        while (Marshal.ReleaseComObject(o) > 0)
+        {
+        }
+        o = default(E);
+      }
+      /*else
+      {
+        LogWarn("Release: asked to release null COM object with description \"{0}\"", line);
+      }*/
+    }
+  }
 }
 
 namespace DirectShowLib.BDA

@@ -1975,8 +1975,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       IPin infTeeIn = DsFindPin.ByDirection(_infTee, PinDirection.Input, 0);
       IPin sourceOut = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 2); // Note: pin number is important!
       hr = _graphBuilder.Connect(sourceOut, infTeeIn);
-      Release.ComObject("Infinite tee input pin", infTeeIn);
-      Release.ComObject("MPEG 2 demux input pin", sourceOut);
+      Release.ComObject("B2C2 infinite tee input pin", ref infTeeIn);
+      Release.ComObject("B2C2 MPEG 2 demux input pin", ref sourceOut);
       if (hr != 0)
       {
         this.LogError("TvCardDvbSs2: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -2023,11 +2023,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         _generalBuffer = IntPtr.Zero;
       }
 
-      if (_filterB2c2Adapter != null)
-      {
-        Release.ComObject("B2C2 source filter", _filterB2c2Adapter);
-        _filterB2c2Adapter = null;
-      }
+      Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);
     }
 
     /// <summary>
@@ -2066,7 +2062,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       if (dataInterface == null)
       {
         Log.Debug("TvCardDvbSs2: failed to get B2C2 data interface handle");
-        Release.ComObject("B2C2 Source Filter", b2c2Source);
+        Release.ComObject("B2C2 source filter", ref b2c2Source);
         return contexts;
       }
 
@@ -2110,7 +2106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 
       // Clean up...
       Marshal.FreeCoTaskMem(structurePtr);
-      Release.ComObject("B2C2 Source Filter", b2c2Source);
+      Release.ComObject("B2C2 source filter", ref b2c2Source);
 
       return contexts;
     }

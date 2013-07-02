@@ -95,11 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       // get rid of unmanaged resources
       if (_variant == TvAudioVariant.Normal)
       {
-        if (_filterTvAudioTuner != null)
-        {
-          while (Release.ComObject(_filterTvAudioTuner) > 0) { }
-          _filterTvAudioTuner = null;          
-        }
+        Release.ComObjectAllRefs("TV Audio filter", ref _filterTvAudioTuner);
       }
     }
 
@@ -238,7 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (tmp != null)
             {
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("tvAudioFilter filter", tmp);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
             continue;
           }
@@ -253,14 +249,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             {
               //failed
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("audiotuner pinin", pin);
-              Release.ComObject("audiotuner filter", tmp);
+              Release.ComObject("TV audio filter candidate input pin", ref pin);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
             else
             {
               //succeeded. we're done
               this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
-              Release.ComObject("audiotuner pinin", pin);
+              Release.ComObject("TV audio filter candidate input pin", ref pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
               DevicesInUse.Instance.Add(_audioDevice);
@@ -272,7 +268,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             // cannot connect tv tuner-> tv audio tuner, try next one...
             graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("audiotuner filter", tmp);
+            Release.ComObject("TV audio filter candidate", ref tmp);
           }
         }
       }
@@ -333,7 +329,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (tmp != null)
             {
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("tvAudioFilter filter", tmp);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
             continue;
           }
@@ -348,14 +344,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             {
               //failed
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("audiotuner pinin", pin);
-              Release.ComObject("audiotuner filter", tmp);
+              Release.ComObject("TV audio filter candidate input pin", ref pin);
+              Release.ComObject("TV audio filter candidate", ref tmp);
             }
             else
             {
               //succeeded. we're done
               this.LogDebug("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
-              Release.ComObject("audiotuner pinin", pin);
+              Release.ComObject("TV audio filter candidate input pin", ref pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
               DevicesInUse.Instance.Add(_audioDevice);
@@ -367,7 +363,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             // cannot connect tv tuner-> tv audio tuner, try next one...
             graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("audiotuner filter", tmp);
+            Release.ComObject("TV audio filter candidate", ref tmp);
           }
         }
       }

@@ -183,76 +183,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 
     public void Dispose()
     {
-      if (_filterVideoEncoder != null)
-      {
-        while (Release.ComObject(_filterVideoEncoder) > 0) {}
-        _filterVideoEncoder = null;
-      }
-      if (_filterAudioEncoder != null)
-      {
-        while (Release.ComObject(_filterAudioEncoder) > 0) {}
-        _filterAudioEncoder = null;
-      }
-      if (_filterMpeg2Demux != null)
-      {
-        Release.ComObject("mpeg2 demux filter", _filterMpeg2Demux);
-        _filterMpeg2Demux = null;
-      }
-      if (_filterAnalogMpegMuxer != null)
-      {
-        Release.ComObject("MPEG2 analog mux filter", _filterAnalogMpegMuxer);
-        _filterAnalogMpegMuxer = null;
-      }
-      if (_filterMpegMuxer != null)
-      {
-        Release.ComObject("MPEG2 mux filter", _filterMpegMuxer);
-        _filterMpegMuxer = null;
-      }
-      if (_filterMultiplexer != null)
-      {
-        Release.ComObject("multiplexer filter", _filterMultiplexer);
-        _filterMultiplexer = null;
-      }
-      if (_filterAudioCompressor != null)
-      {
-        Release.ComObject("_filterAudioCompressor", _filterAudioCompressor);
-        _filterAudioCompressor = null;
-      }
-      if (_filterVideoCompressor != null)
-      {
-        Release.ComObject("_filterVideoCompressor", _filterVideoCompressor);
-        _filterVideoCompressor = null;
-      }
-      if (_pinCapture != null)
-      {
-        Release.ComObject("capturepin filter", _pinCapture);
-        _pinCapture = null;
-      }
-      if (_pinAnalogAudio != null)
-      {
-        Release.ComObject("_pinAnalogAudio", _pinAnalogAudio);
-        _pinAnalogAudio = null;
-      }
-      if (_pinAnalogVideo != null)
-      {
-        Release.ComObject("_pinAnalogVideo", _pinAnalogVideo);
-        _pinAnalogVideo = null;
-      }
-      if (_pinVideo != null)
-      {
-        Release.ComObject("videopin filter", _pinVideo);
-        _pinVideo = null;
-      }
-      if (_pinAudio != null)
-      {
-        Release.ComObject("audiopin filter", _pinAudio);
-        _pinAudio = null;
-      }
-      if (_pinLPCM != null)
-      {
-        Release.ComObject("lpcmpin filter", _pinLPCM);
-        _pinLPCM = null;
-      }
+      Release.ComObjectAllRefs("Encoder video filter", ref _filterVideoEncoder);
+      Release.ComObjectAllRefs("Encoder audio filter", ref _filterAudioEncoder);
+      Release.ComObject("Encoder MPEG 2 demultiplexer filter", ref _filterMpeg2Demux);
+      Release.ComObject("Encoder analog MPEG 2 multiplexer filter", ref _filterAnalogMpegMuxer);
+      Release.ComObject("Encoder MPEG 2 multiplexer filter", ref _filterMpegMuxer);
+      Release.ComObject("Encoder multiplexer filter", ref _filterMultiplexer);
+      Release.ComObject("Encoder audio compressor filter", ref _filterAudioCompressor);
+      Release.ComObject("Encoder video compressor filter", ref _filterVideoCompressor);
+      Release.ComObject("Encoder capture pin", ref _pinCapture);
+      Release.ComObject("Encoder analog audio pin", ref _pinAnalogAudio);
+      Release.ComObject("Encoder analog video pin", ref _pinAnalogVideo);
+      Release.ComObject("Encoder audio pin", ref _pinAudio);
+      Release.ComObject("Encoder video pin", ref _pinVideo);
+      Release.ComObject("Encoder LPCM audio pin", ref _pinLPCM);
       if (_videoEncoderDevice != null)
       {
         DevicesInUse.Instance.Remove(_videoEncoderDevice);
@@ -490,7 +434,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           DsUtils.FreeAMMediaType(media[0]);
         }
-        Release.ComObject("capture pin", pins[0]);
+        Release.ComObject("Encoder capture pin candidate", ref pins[0]);
       }
     }
 
@@ -593,16 +537,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
       finally
       {
-        if (enumPins != null)
-          Release.ComObject("ienumpins", enumPins);
-        if (pinInput1 != null)
-          Release.ComObject("encoder pin0", pinInput1);
-        if (pinInput2 != null)
-          Release.ComObject("encoder pin1", pinInput2);
+        Release.ComObject("Encoder pin enumerator", ref enumPins);
+        Release.ComObject("Encoder input pin 1", ref pinInput1);
+        Release.ComObject("Encoder input pin 2", ref pinInput2);
         for (int i = 0; i < pinsAvailable; ++i)
         {
-          if (pins[i] != null)
-            Release.ComObject("capture pin" + i, pins[i]);
+          Release.ComObject("Encoder capture pin " + i, ref pins[i]);
         }
       }
       Log.Debug("analog: ConnectEncoderFilter failed (matchPinNames:{0})", matchPinNames);
@@ -724,12 +664,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           finally
           {
-            if (enumPins != null)
-              Release.ComObject("ienumpins", enumPins);
+            Release.ComObject("Encoder pin enumerator", ref enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null)
-                Release.ComObject("capture pin" + i, pins[i]);
+              Release.ComObject("Encoder capture pin " + i, ref pins[i]);
             }
           }
         }
@@ -815,12 +753,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           finally
           {
-            if (enumPins != null)
-              Release.ComObject("ienumpins", enumPins);
+            Release.ComObject("Encoder pin enumerator", ref enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null)
-                Release.ComObject("encoder pin" + i, pins[i]);
+              Release.ComObject("Encoder capture pin " + i, ref pins[i]);
             }
           }
         }
@@ -978,22 +914,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           finally
           {
-            if (enumPins != null)
-              Release.ComObject("ienumpins", enumPins);
+            Release.ComObject("Encoder audio encoder pin enumerator", ref enumPins);
             for (int i = 0; i < pinsAvailable; ++i)
             {
-              if (pins[i] != null)
-                Release.ComObject("audio encoder pin" + i, pins[i]);
+              Release.ComObject("Encoder audio encoder pin " + i, ref pins[i]);
             }
           }
         }
       }
       finally
       {
-        if (pinInput1 != null)
-          Release.ComObject("multiplexer pin0", pinInput1);
-        if (pinInput2 != null)
-          Release.ComObject("multiplexer pin1", pinInput2);
+        Release.ComObject("Encoder multiplexer pin 1", ref pinInput1);
+        Release.ComObject("Encoder multiplexer pin 2", ref pinInput2);
       }
       this.LogError("analog: ConnectMultiplexer failed");
       return false;
@@ -1096,7 +1028,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("multiplexer filter", tmp);
+            Release.ComObject("Encoder multiplexer filter candidate", ref tmp);
           }
           continue;
         }
@@ -1112,7 +1044,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         // unable to connect it, remove the filter and continue with the next one
         _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("multiplexer filter", tmp);
+        Release.ComObject("Encoder multiplexer filter candidate", ref tmp);
       }
       if (_filterMultiplexer == null)
       {
@@ -1221,7 +1153,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("TvEncoderFilter", tmp);
+            Release.ComObject("Encoder encoder filter candidate", ref tmp);
           }
           continue;
         }
@@ -1273,7 +1205,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               }
             }
           }
-          Release.ComObject("pinout", pinOut);
+          Release.ComObject("Encoder encoder filter candidate output pin", ref pinOut);
         }
         //if encoder has mpeg-2 ts output pin, then we skip it and continue with the next one
         if (isTsFilter)
@@ -1281,7 +1213,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           this.LogDebug("analog:  filter {0} does not have mpeg-2 ps output or is a mpeg-2 ts filters",
                             devices[i].Name);
           _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("TvEncoderFilter", tmp);
+          Release.ComObject("Encoder encoder filter candidate", ref tmp);
           continue;
         }
         // get the input pins of the encoder (can be 1 or 2 inputs)
@@ -1381,14 +1313,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           this.LogDebug("analog: AddTvEncoderFilter no pin1");
         }
-        if (pin1 != null)
-          Release.ComObject("encoder pin0", pin1);
-        if (pin2 != null)
-          Release.ComObject("encoder pin1", pin2);
+        Release.ComObject("Encoder input pin 1", ref pin1);
+        Release.ComObject("Encoder input pin 2", ref pin2);
         if (tmp != null)
         {
           _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("encoder filter", tmp);
+          Release.ComObject("Encoder filter", ref tmp);
         }
         if (finished)
         {
@@ -1455,7 +1385,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           }
           DsUtils.FreeAMMediaType(media[0]);
         }
-        Release.ComObject("capture pin", pins[0]);
+        Release.ComObject("Encoder find-media-pin pin", ref pins[0]);
       }
       return null;
     }
@@ -1572,7 +1502,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("audiocompressor", tmp);
+            Release.ComObject("Encoder audio compressor", ref tmp);
           }
           EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
@@ -1590,7 +1520,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           this.LogDebug("analog: cannot find audio pin on compressor");
           _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("audiocompressor", tmp);
+          Release.ComObject("Encoder audio compressor", ref tmp);
           EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
@@ -1601,7 +1531,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           this.LogDebug("analog: failed to connect audio pin->audio compressor:{0:X}", hr);
           //unable to connec the pin, remove it and continue with next compressor
           _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("audiocompressor", tmp);
+          Release.ComObject("Encoder audio compressor", ref tmp);
           EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
@@ -1681,7 +1611,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           if (tmp != null)
           {
             _graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("videocompressor", tmp);
+            Release.ComObject("Encoder video compressor candidate", ref tmp);
           }
           EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
@@ -1702,7 +1632,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           this.LogDebug("analog: failed to connect video pin->video compressor");
           //unable to connec the pin, remove it and continue with next compressor
           _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("videocompressor", tmp);
+          Release.ComObject("Encoder video compressor candidate", ref tmp);
           EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
         }

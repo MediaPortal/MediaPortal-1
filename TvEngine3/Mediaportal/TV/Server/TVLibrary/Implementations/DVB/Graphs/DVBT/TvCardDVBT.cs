@@ -105,15 +105,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
             tuner.put_TuningSpace(_tuningSpace);
             _tuningSpace.CreateTuneRequest(out request);
             _tuneRequest = (IDVBTuneRequest)request;
-            Release.ComObject("TuningSpaceContainer", container);
+            Release.ComObject("DVB-T tuner tuning space container", ref container);
             return;
           }
-          Release.ComObject("ITuningSpace", spaces[0]);
+          Release.ComObject("DVB-T tuner tuning space", ref spaces[0]);
         }
       }
       finally
       {
-        Release.ComObject("IEnumTuningSpaces", enumTuning);
+        Release.ComObject("DVB-T tuner tuning space enumerator", ref enumTuning);
       }
 
       // We didn't find our tuning space registered in the system, so create a new one.
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
 
       object newIndex;
       container.Add(_tuningSpace, out newIndex);
-      Release.ComObject("TuningSpaceContainer", container);
+      Release.ComObject("DVB-T tuner tuning space container", ref container);
 
       tuner.put_TuningSpace(_tuningSpace);
       _tuningSpace.CreateTuneRequest(out request);

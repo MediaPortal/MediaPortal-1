@@ -855,16 +855,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       // Get the tuner filter name. We use it as a prefix for the device configuration folder.
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
-      if (tunerFilterInfo.pGraph != null)
-      {
-        DsUtils.ReleaseComObject(tunerFilterInfo.pGraph);
-        tunerFilterInfo.pGraph = null;
-      }
-      if (hr != 0 || tunerFilterInfo.achName == null)
+      _configurationFolderPrefix = tunerFilterInfo.achName;
+      Release.FilterInfo(ref tunerFilterInfo);
+      if (hr != 0 || _configurationFolderPrefix == null)
       {
         this.LogDebug("MD Plugin: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return false;
       }
-      _configurationFolderPrefix = tunerFilterInfo.achName;
 
       try
       {
@@ -1055,10 +1052,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
       IPin outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
       IPin inputPin = DsFindPin.ByDirection(_infTee, PinDirection.Input, 0);
       hr = _graph.Connect(outputPin, inputPin);
-      DsUtils.ReleaseComObject(outputPin);
-      outputPin = null;
-      DsUtils.ReleaseComObject(inputPin);
-      inputPin = null;
+      Release.ComObject("MD plugin upstream filter output pin", ref outputPin);
+      Release.ComObject("MD plugin infinite tee input pin", ref inputPin);
       if (hr != 0)
       {
         this.LogDebug("MD Plugin: failed to connect the inf tee into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -1086,10 +1081,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         outputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
         inputPin = DsFindPin.ByDirection(slot.Filter, PinDirection.Input, 0);
         hr = _graph.Connect(outputPin, inputPin);
-        DsUtils.ReleaseComObject(outputPin);
-        outputPin = null;
-        DsUtils.ReleaseComObject(inputPin);
-        inputPin = null;
+        Release.ComObject("MD plugin source filter output pin", ref outputPin);
+        Release.ComObject("MD plugin MDAPI filter input pin", ref inputPin);
         if (hr != 0)
         {
           this.LogDebug("MD Plugin: failed to connect MD plugin filter {0} into the graph, hr = 0x{1:x} ({2})", i + 1, hr, HResult.GetDXErrorString(hr));
@@ -1451,8 +1444,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         if (_infTee != null)
         {
           _graph.RemoveFilter(_infTee);
-          DsUtils.ReleaseComObject(_infTee);
-          _infTee = null;
+          Release.ComObject("MD plugin infinite tee", ref _infTee);
         }
 
         foreach (DecodeSlot slot in _slots)
@@ -1460,12 +1452,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
           if (slot.Filter != null)
           {
             _graph.RemoveFilter(slot.Filter);
-            DsUtils.ReleaseComObject(slot.Filter);
-            slot.Filter = null;
+            Release.ComObject("MD plugin MDAPI filter", ref slot.Filter);
           }
         }
+
+        Release.ComObject("MD plugin graph", ref _graph);
         _slots = null;
-        _graph = null;
       }
 
       _isMdPlugin = false;
