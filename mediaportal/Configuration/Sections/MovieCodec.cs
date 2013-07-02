@@ -175,6 +175,15 @@ namespace MediaPortal.Configuration.Sections
       aacAudioCodecComboBox.Enabled = !autoDecoderSettings.Checked;
       SplitterComboBox.Enabled = !autoDecoderSettings.Checked && ForceSourceSplitter.Checked;
       SplitterFileComboBox.Enabled = !autoDecoderSettings.Checked && ForceSourceSplitter.Checked;
+      if (autoDecoderSettings.Checked)
+      {
+        ForceSourceSplitter.Enabled = false;
+        ForceSourceSplitter.Checked = false;
+      }
+      else if (!ForceSourceSplitter.Checked)
+      {
+        ForceSourceSplitter.Enabled = true;
+      }
     }
 
     /// <summary>
@@ -379,6 +388,10 @@ namespace MediaPortal.Configuration.Sections
     {
       UpdateDecoderSettings();
       Startup._automaticMovieCodec = autoDecoderSettings.Checked;
+      if (!ForceSourceSplitter.Checked)
+      {
+        ForceSourceSplitter.Checked = true;
+      }
     }
 
     /// <summary>
@@ -388,6 +401,14 @@ namespace MediaPortal.Configuration.Sections
     {
       UpdateDecoderSettings();
       Startup._automaticMovieFilter = ForceSourceSplitter.Checked;
+      if ((SplitterComboBox.Text == "File Source (Async.)" || SplitterComboBox.Text == "File Source (URL)") && ForceSourceSplitter.Checked)
+      {
+        SplitterFileComboBox.Enabled = true;
+      }
+      else
+      {
+        SplitterFileComboBox.Enabled = false;
+      }
     }
 
     private void RegMPtoConfig(string subkeysource)
@@ -549,7 +570,22 @@ namespace MediaPortal.Configuration.Sections
 
     private void configSplitterSync_Click(object sender, EventArgs e)
     {
-      ConfigCodecSection(sender, e, SplitterFileComboBox.Text);
+      if (SplitterFileComboBox.Enabled)
+      {
+        ConfigCodecSection(sender, e, SplitterFileComboBox.Text);
+      }
+    }
+
+    private void SplitterComboBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if ((SplitterComboBox.Text == "File Source (Async.)" || SplitterComboBox.Text == "File Source (URL)") && ForceSourceSplitter.Checked)
+      {
+        SplitterFileComboBox.Enabled = true;
+      }
+      else
+      {
+        SplitterFileComboBox.Enabled = false;
+      }
     }
   }
 }
