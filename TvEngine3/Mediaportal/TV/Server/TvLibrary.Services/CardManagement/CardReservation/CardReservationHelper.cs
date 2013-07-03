@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation
     {
       lock (tvcard.Tuner.CardReservationsLock)
       {
-        if (tvcard.Card.SubChannels.Length > 0)
+        if (tvcard.Card.CurrentTuningDetail != null)
         {
           tvcard.Tuner.CardTuneState = CardTuneState.Tuned;          
         }

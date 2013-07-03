@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
 
       DateTime timeStart = DateTime.Now;
 
-      if (_cardHandler.Card.SubChannels.Length <= 0)
+      if (_cardHandler.Card.CurrentTuningDetail == null)
         return false;
 
       IChannel channel = _subchannel.CurrentChannel;

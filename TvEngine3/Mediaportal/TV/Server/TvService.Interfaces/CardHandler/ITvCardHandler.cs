@@ -63,6 +63,5 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 
     void StopCard();
     void Dispose();
-    long CurrentMux();
   }
 }

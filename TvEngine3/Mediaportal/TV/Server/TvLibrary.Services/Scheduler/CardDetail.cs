@@ -55,8 +55,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     private readonly int _priority;
     private bool _sameTransponder;
     private int _numberOfOtherUsers;
-    private long? _channelTimeshiftingOnOtherMux;
-    private readonly long _frequency = -1;
 
     /// <summary>
     /// ctor
@@ -66,9 +64,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
     /// <param name="detail">tuning detail</param>
     /// <param name="sameTransponder">indicates whether it is the same transponder</param>
     /// <param name="numberOfOtherUsers"></param>
-    /// <param name="isChannelTimeshiftingOnOtherMux"> </param>
     /// <param name="isParked"> </param>
-    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers, long? channelTimeshiftingOnOtherMux)
+    public CardDetail(int id, Card card, IChannel detail, bool sameTransponder, int numberOfOtherUsers)
     {
       _sameTransponder = sameTransponder;
       _cardId = id;
@@ -76,21 +73,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       _detail = detail;
       _priority = _card.Priority;
       _numberOfOtherUsers = numberOfOtherUsers;
-      _channelTimeshiftingOnOtherMux = channelTimeshiftingOnOtherMux;
-
-      var dvbTuningDetail = detail as DVBBaseChannel;
-      if (dvbTuningDetail != null)
-      {
-        _frequency = dvbTuningDetail.Frequency;
-      }
-      else
-      {
-        var analogTuningDetail = detail as AnalogChannel;
-        if (analogTuningDetail != null)
-        {
-          _frequency = analogTuningDetail.Frequency;
-        }
-      }
     }
 
     /// <summary>
@@ -144,17 +126,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       set { _numberOfOtherUsers = value; }
     }
 
-    public long? ChannelTimeshiftingOnOtherMux
-    {
-      get { return _channelTimeshiftingOnOtherMux; }
-      set { _channelTimeshiftingOnOtherMux = value; }
-    }
-
-    public long Frequency
-    {
-      get { return _frequency; }
-    }
-
     #region IComparable<CardInfo> Members
 
     // higher priority means that this one should be more to the front of the list
@@ -180,11 +151,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
           return -1;
         }
         if (Priority < other.Priority)
-        {
-          return 1;
-        }
-
-        if (ChannelTimeshiftingOnOtherMux.HasValue && !other.ChannelTimeshiftingOnOtherMux.HasValue)
         {
           return 1;
         }

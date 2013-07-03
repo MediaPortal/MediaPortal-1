@@ -118,6 +118,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Get the tuning parameters that have been applied to the hardware.
+    /// This property returns null when the device is not in use.
+    /// </summary>
+    public IChannel CurrentTuningDetail
+    {
+      get
+      {
+        return _cards[_currentCardIndex].CurrentTuningDetail;
+      }
+    }
+
+    /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
     public void StartLinkageScanner(BaseChannelLinkageScanner callback)
@@ -286,16 +298,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _cards[_currentCardIndex].GetSubChannel(id);
-    }
-
-    /// <summary>
-    /// Gets the first sub channel.
-    /// </summary>
-    /// <param name="id">The id.</param>
-    /// <returns></returns>
-    public ITvSubChannel GetFirstSubChannel()
-    {
-      return _cards[_currentCardIndex].GetFirstSubChannel();
     }
 
     /// <summary>

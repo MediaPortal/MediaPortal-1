@@ -516,33 +516,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _card.Parameters = Settings;
     }
 
-
-
-    public long CurrentMux()
-    {
-      ITvSubChannel subchannel = _card.GetFirstSubChannel();
-      long frequency = -1;
-
-      IChannel tuningDetail = subchannel.CurrentChannel;
-
-      var dvbTuningDetail = tuningDetail as DVBBaseChannel;
-      if (dvbTuningDetail != null)
-      {
-        frequency = dvbTuningDetail.Frequency;
-      }
-      else
-      {
-        var analogTuningDetail = tuningDetail as AnalogChannel;
-        if (analogTuningDetail != null)
-        {
-          frequency = analogTuningDetail.Frequency; 
-        }        
-      }
-
-      return frequency;      
-    }
-
-
     /// <summary>
     /// Gets the current channel.
     /// </summary>
@@ -742,12 +715,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
       
         this.LogInfo("Stopcard");
-
-        //remove all subchannels, except for this user...
-        FreeAllSubChannels();        
-
-        
-        
         _userManagement.Clear();
         
         _card.Stop();
@@ -760,16 +727,5 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         this.LogError(ex);
       }
     }
-
-    private void FreeAllSubChannels()
-    {
-      ITvSubChannel[] channels = _card.SubChannels;
-      foreach (ITvSubChannel tvSubChannel in channels)
-      {
-        _card.FreeSubChannel(tvSubChannel.SubChannelId);
-      }
-
-    }
-  
   }
 }

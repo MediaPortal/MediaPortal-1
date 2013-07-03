@@ -157,18 +157,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>a handle for the subchannel</returns>
-    protected override int CreateNewSubChannel(IChannel channel)
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      int id = _subChannelId++;
-      this.LogInfo("TvCardAnalog: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
-      AnalogSubChannel subChannel = new AnalogSubChannel(id, this, _tvAudio, _capture.SupportsTeletext, _tsFileSink);
-      subChannel.Parameters = Parameters;
-      subChannel.CurrentChannel = channel;
-      _mapSubChannels[id] = subChannel;
-      FireNewSubChannelEvent(id);
-      return id;
+      return new AnalogSubChannel(id, this, _tvAudio, _capture.SupportsTeletext, _tsFileSink);
     }
 
     #endregion

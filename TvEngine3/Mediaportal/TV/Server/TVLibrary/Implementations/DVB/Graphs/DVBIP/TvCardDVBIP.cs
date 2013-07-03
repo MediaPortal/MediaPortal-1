@@ -350,8 +350,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
         }
       }
       if (!GraphRunning() ||
-        CurrentChannel == null ||
-        _filterStreamSource == null)
+        CurrentTuningDetail == null)
       {
         _tunerLocked = false;
         _signalLevel = 0;

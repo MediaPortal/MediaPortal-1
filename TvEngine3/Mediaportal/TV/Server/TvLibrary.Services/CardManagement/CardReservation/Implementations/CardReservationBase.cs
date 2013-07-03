@@ -219,9 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
            // no point here, as we dont check the bool return value ???
             CheckTransponder(tvcard, tuningDetail, user);
           }*/
-          long? channelTimeshiftingOnOtherMux;
           var cardAllocation = new AdvancedCardAllocation();
-          cardAllocation.IsChannelTimeshiftingOnOtherMux(tvcard, idChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
           ISubChannel ownerSubchannel = null;
           int numberOfUsersOnSameCurrentChannel = 0;
           int numberOfOtherUsersOnSameChannel = 0;
@@ -348,8 +346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
               numberOfUsersOnSameCurrentChannel,
               isCamAlreadyDecodingChannel,
               hasUserHighestPriority,
-              hasUserEqualOrHigherPriority,
-              channelTimeshiftingOnOtherMux);
+              hasUserEqualOrHigherPriority);
           tvcard.Tuner.ActiveCardTuneReservationTicket = cardTuneReservationTicket;
           tvcard.Tuner.ReservationsForTune.Add(cardTuneReservationTicket);          
         }        

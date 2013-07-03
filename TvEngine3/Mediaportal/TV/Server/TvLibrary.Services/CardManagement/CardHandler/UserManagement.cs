@@ -113,11 +113,10 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         {
           if (subchannel.IdChannel == idChannel)
           {
-            this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1} of {2}, card: {3}", user.Name, subchannel.Id,
-                      _cardHandler.Card.SubChannels.Length, _cardHandler.DataBaseCard.IdCard);
+            this.LogDebug("usermanagement.RemoveUser: {0}, subch: {1}, card: {2}", user.Name, subchannel.Id, _cardHandler.DataBaseCard.IdCard);
             if (!ContainsUsersForSubchannel(subchannel.Id))
             {
-              subchannelsId.Add(subchannel.Id);              
+              subchannelsId.Add(subchannel.Id);
             }
             break;
           }
@@ -127,12 +126,12 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       foreach (int subchannelId in subchannelsId)
       {
         //only remove subchannel if it exists.
-        if (_cardHandler.Card.GetSubChannel(subchannelId) != null)
+        ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(subchannelId);
+        if (subChannel != null)
         {
           //_cardHandler.ParkedUserManagement.CancelAllParkedChannelsForUser(user.Name);//once
           int usedSubChannel = subchannelId;
           // Before we remove the subchannel we have to stop it
-          ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(subchannelId);
           if (subChannel.IsTimeShifting)
           {
             subChannel.StopTimeShifting();

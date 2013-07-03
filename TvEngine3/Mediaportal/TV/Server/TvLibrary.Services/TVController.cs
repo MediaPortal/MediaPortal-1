@@ -3461,16 +3461,16 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     private void AdjustCardReservations(IUser user, IDictionary<CardDetail, ICardTuneReservationTicket> tickets, int idChannel, ICardReservation cardResImpl)
     {
-      long otherMux = -1;
+      IChannel otherMux = null;
       IList<CardDetail> removeList = new List<CardDetail>();
 
       foreach (KeyValuePair<CardDetail, ICardTuneReservationTicket> cardResKVP in tickets)
       {
         ICardTuneReservationTicket ticket = cardResKVP.Value;
         CardDetail cardDetail = cardResKVP.Key;
-        if (ticket != null && ticket.ChannelTimeshiftingOnOtherMux.HasValue)
+        if (ticket != null)
         {
-          otherMux = ticket.ChannelTimeshiftingOnOtherMux.GetValueOrDefault();
+          otherMux = ticket.TuningDetail;
           ITvCardHandler cardHandler = _cards[ticket.CardId];
           CardReservationHelper.CancelCardReservation(cardHandler, ticket);
           removeList.Add(cardDetail);          
@@ -3490,7 +3490,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           CardDetail cardDetail = cardResKVP.Key;
           if (ticket == null)
           {
-            if (cardDetail.Frequency.Equals(otherMux))
+            if (!cardDetail.TuningDetail.IsDifferentTransponder(otherMux))
             {
               ticket = CardReservationHelper.RequestCardReservation(user, cardDetail, cardResImpl, idChannel);
               tickets[cardDetail] = ticket;

@@ -262,10 +262,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
               this.LogInfo("Controller:    card:{0} type:{1} can tune to channel", cardId, cardHandler.Type);
             }
             int nrOfOtherUsers = NumberOfOtherUsersOnCurrentCard(cardHandler, user);
-            long? channelTimeshiftingOnOtherMux;
-            IsChannelTimeshiftingOnOtherMux(cardHandler, dbChannel.IdChannel, tuningDetail, out channelTimeshiftingOnOtherMux);
             var cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
-                                                 nrOfOtherUsers, channelTimeshiftingOnOtherMux);
+                                                 nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }
         }
@@ -290,38 +288,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         stopwatch.Stop();
         this.LogInfo("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
-    }
-
-    public virtual bool IsChannelTimeshiftingOnOtherMux(ITvCardHandler card, int idChannel, IChannel tuningDetail, out long? otherFrequency)
-    {
-      otherFrequency = null;
-      bool isChannelTimeshiftingOnOtherMux = false;
-
-      bool isAnyUserLockedOnChannel = card.UserManagement.IsAnyUserLockedOnChannel(idChannel);
-      if (isAnyUserLockedOnChannel)
-      {
-        var dvbTuningDetail = tuningDetail as DVBBaseChannel;
-        long frequency = -1;
-        if (dvbTuningDetail != null)
-        {
-          frequency = dvbTuningDetail.Frequency;
-        }
-        else
-        {
-          var analogTuningDetail = tuningDetail as AnalogChannel;
-          if (analogTuningDetail != null)
-          {
-            frequency = analogTuningDetail.Frequency;
-          }
-        }
-        if (card.CurrentMux() != frequency)
-        {
-          otherFrequency = card.CurrentMux();
-          isChannelTimeshiftingOnOtherMux = true;
-        }
-      }
-
-      return isChannelTimeshiftingOnOtherMux;
     }
 
     private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)

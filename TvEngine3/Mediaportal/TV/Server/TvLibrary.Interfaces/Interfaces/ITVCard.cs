@@ -311,7 +311,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <param name="id">The id.</param>
     /// <returns></returns>
     ITvSubChannel GetSubChannel(int id);
-    ITvSubChannel GetFirstSubChannel();
 
     /// <summary>
     /// Frees the sub channel.
@@ -326,5 +325,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     ITvSubChannel[] SubChannels { get; }
 
     #endregion
+
+    /// <summary>
+    /// Get the tuning parameters that have been applied to the hardware.
+    /// This property returns null when the device is not in use.
+    /// </summary>
+    IChannel CurrentTuningDetail
+    {
+      get;
+    }
   }
 }

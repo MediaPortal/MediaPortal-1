@@ -250,6 +250,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Get the tuning parameters that have been applied to the hardware.
+    /// This property returns null when the device is not in use.
+    /// </summary>
+    public IChannel CurrentTuningDetail
+    {
+      get
+      {
+        return _group.CurrentTuningDetail;
+      }
+    }
+
+    /// <summary>
     /// returns the min. channel number for analog cards
     /// </summary>
     /// <value></value>
@@ -472,15 +484,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     public ITvSubChannel GetSubChannel(int id)
     {
       return _group.GetSubChannel(id);
-    }
-
-    /// <summary>
-    /// Gets the first sub channel.
-    /// </summary>    
-    /// <returns></returns>
-    public ITvSubChannel GetFirstSubChannel()
-    {
-      return _group.GetFirstSubChannel();
     }
 
     /// <summary>

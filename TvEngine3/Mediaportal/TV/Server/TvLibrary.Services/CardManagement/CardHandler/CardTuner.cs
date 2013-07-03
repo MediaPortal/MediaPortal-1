@@ -427,47 +427,44 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
 
       //check if transponder differs
-      if (_cardHandler.Card.SubChannels.Length > 0)
-      {
-        if (!IsTunedToTransponder(channel))
-        {          
-          if (_cardHandler.UserManagement.HasUserHighestPriority(user) || _cardHandler.UserManagement.IsOwner(user.Name) && _cardHandler.UserManagement.HasUserEqualOrHigherPriority(user))
+      if (!IsTunedToTransponder(channel))
+      {          
+        if (_cardHandler.UserManagement.HasUserHighestPriority(user) || _cardHandler.UserManagement.IsOwner(user.Name) && _cardHandler.UserManagement.HasUserEqualOrHigherPriority(user))
+        {
+          this.LogDebug("card: to different transponder");
+
+          //remove all subchannels, except for this user...
+          int i = 0;
+          IEnumerable<IUser> usersRec = _cardHandler.UserManagement.GetUsersCopy(UserType.Scheduler);
+
+          foreach (IUser recUser in usersRec)
           {
-            this.LogDebug("card: to different transponder");
-
-            //remove all subchannels, except for this user...
-            int i = 0;
-            IEnumerable<IUser> usersRec = _cardHandler.UserManagement.GetUsersCopy(UserType.Scheduler);
-
-            foreach (IUser recUser in usersRec)
+            if (recUser.Name != user.Name)
             {
-              if (recUser.Name != user.Name)
-              {
-                this.LogDebug("  stop subchannel: {0} user: {1}", i, recUser.Name);
-                //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
+              this.LogDebug("  stop subchannel: {0} user: {1}", i, recUser.Name);
+              //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
                 
-                // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.                
-                this.LogDebug("user is scheduler: {0}", recUser.Name);
-                int recScheduleId = ServiceManager.Instance.InternalControllerService.GetRecordingSchedule(recUser.CardId, recUser.Name);
+              // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.                
+              this.LogDebug("user is scheduler: {0}", recUser.Name);
+              int recScheduleId = ServiceManager.Instance.InternalControllerService.GetRecordingSchedule(recUser.CardId, recUser.Name);
 
-                if (recScheduleId > 0)
-                {
-                  Schedule schedule = ScheduleManagement.GetSchedule(recScheduleId);
-                  this.LogInfo("removing schedule with id: {0}", schedule.IdSchedule);
-                  ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.IdSchedule);
-                  ScheduleManagement.DeleteSchedule(schedule.IdSchedule);
-                }
-                i++;
+              if (recScheduleId > 0)
+              {
+                Schedule schedule = ScheduleManagement.GetSchedule(recScheduleId);
+                this.LogInfo("removing schedule with id: {0}", schedule.IdSchedule);
+                ServiceManager.Instance.InternalControllerService.StopRecordingSchedule(schedule.IdSchedule);
+                ScheduleManagement.DeleteSchedule(schedule.IdSchedule);
               }
+              i++;
             }
-            //iterate all timesh. subchannels, and remove those.                            
-            FreeAllTimeshiftingSubChannels(ref user);              
           }
+          //iterate all timesh. subchannels, and remove those.                            
+          FreeAllTimeshiftingSubChannels(ref user);              
         }
-        else // same transponder, free previous subchannel before tuning..
-        {          
-          FreeAllTimeshiftingSubChannels(ref user);
-        }
+      }
+      else // same transponder, free previous subchannel before tuning..
+      {          
+        FreeAllTimeshiftingSubChannels(ref user);
       }
 
       if (OnBeforeTuneEvent != null)
@@ -565,15 +562,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// 	<c>true</c> if card is tuned to the transponder; otherwise, <c>false</c>.
     /// </returns>
     public bool IsTunedToTransponder(IChannel transponder)
-    {     
-      ITvSubChannel[] subchannels = _cardHandler.Card.SubChannels;
-      if (subchannels == null)
-        return false;
-      if (subchannels.Length == 0)
-        return false;
-      if (subchannels[0].CurrentChannel == null)
-        return false;
-      return (false == subchannels[0].CurrentChannel.IsDifferentTransponder(transponder));
+    {
+      IChannel cardCurrentTuningDetail = _cardHandler.Card.CurrentTuningDetail;
+      return (cardCurrentTuningDetail != null && !cardCurrentTuningDetail.IsDifferentTransponder(transponder));
     }
 
 

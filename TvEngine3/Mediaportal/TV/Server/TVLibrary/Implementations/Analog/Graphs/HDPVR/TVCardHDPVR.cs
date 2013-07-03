@@ -144,18 +144,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>a handle for the subchannel</returns>
-    protected override int CreateNewSubChannel(IChannel channel)
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      int id = _subChannelId++;
-      this.LogInfo("TvCardHdPvr: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
-      HDPVRChannel subChannel = new HDPVRChannel(id, this, _filterTsWriter);
-      subChannel.Parameters = Parameters;
-      subChannel.CurrentChannel = channel;
-      _mapSubChannels[id] = subChannel;
-      FireNewSubChannelEvent(id);
-      return id;
+      return new HDPVRChannel(id, this, _filterTsWriter);
     }
 
     #endregion
@@ -616,8 +609,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       {
         throw new NullReferenceException();
       }
-      AnalogChannel previousChannel = _previousChannel as AnalogChannel;
-      if (_previousChannel != null && previousChannel == null)
+      AnalogChannel currentChannel = _currentTuningDetail as AnalogChannel;
+      if (_currentTuningDetail != null && currentChannel == null)
       {
         throw new NullReferenceException();
       }
@@ -625,7 +618,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       // Set up the crossbar.
       IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
 
-      if (_previousChannel == null || previousChannel.VideoSource != analogChannel.VideoSource)
+      if (_currentTuningDetail == null || currentChannel.VideoSource != analogChannel.VideoSource)
       {
         // Video
         if (_videoPinMap.ContainsKey(analogChannel.VideoSource))
@@ -646,7 +639,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
 
       // Audio
-      if ((_previousChannel == null || previousChannel.AudioSource != analogChannel.AudioSource) &&
+      if ((_currentTuningDetail == null || currentChannel.AudioSource != analogChannel.AudioSource) &&
         analogChannel.AudioSource != AnalogChannel.AudioInputType.Automatic &&
         _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
@@ -654,8 +647,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[analogChannel.AudioSource]);
       }
 
-      _previousChannel = analogChannel;
-      this.LogDebug("HDPVR: Tuned to channel {0}", channel.Name);
+       this.LogDebug("HDPVR: Tuned to channel {0}", channel.Name);
     }
 
     /// <summary>

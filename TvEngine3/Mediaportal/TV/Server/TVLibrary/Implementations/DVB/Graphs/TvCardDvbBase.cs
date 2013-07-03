@@ -393,18 +393,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>a handle for the subchannel</returns>
-    protected override int CreateNewSubChannel(IChannel channel)
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      int id = _subChannelId++;
-      this.LogInfo("TvCardDvbBase: new subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
-      TvDvbChannel subChannel = new TvDvbChannel(id, this, _filterTsWriter, _filterTIF);
-      subChannel.Parameters = Parameters;
-      subChannel.CurrentChannel = channel;
-      _mapSubChannels[id] = subChannel;
-      FireNewSubChannelEvent(id);
-      return id;
+      return new TvDvbChannel(id, this, _filterTsWriter, _filterTIF);
     }
 
     #endregion
@@ -1251,7 +1244,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       this.LogDebug("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
-      _previousChannel = null;
 
       Release.ComObject("Base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2DemuxTif);
       Release.ComObject("Base DVB tuner network provider", ref _filterNetworkProvider);
@@ -1388,7 +1380,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       try
       {
         if (!GraphRunning() ||
-          CurrentChannel == null ||
+          CurrentTuningDetail == null ||
           _tunerStatistics == null ||
           _tunerStatistics.Count == 0)
         {
@@ -1961,7 +1953,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         IChannel channel = ChannelManagement.GetTuningChannel(detail);
         if (CanTune(channel))
         {
-          return CurrentChannel.IsDifferentTransponder(channel);
+          return CurrentTuningDetail.IsDifferentTransponder(channel);
         }
       }
       return false;

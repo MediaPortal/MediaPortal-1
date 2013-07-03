@@ -298,10 +298,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected PidFilterMode _pidFilterMode = PidFilterMode.Auto;
 
     /// <summary>
-    /// The previous channel that the device was tuned to. This variable is reset each time the device
-    /// is stopped, paused or reset.
+    /// The current tuning detail that the device is tuned to. Null if the device is currently not tuned.
     /// </summary>
-    protected IChannel _previousChannel = null;
+    protected IChannel _currentTuningDetail = null;
 
     /// <summary>
     /// Enable or disable the use of custom device interfaces for tuning.
@@ -724,6 +723,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       set
       {
         _isScanning = value;
+      }
+    }
+
+    /// <summary>
+    /// Get the tuning parameters that have been applied to the hardware.
+    /// This property returns null when the device is not in use.
+    /// </summary>
+    public IChannel CurrentTuningDetail
+    {
+      get
+      {
+        return _currentTuningDetail;
       }
     }
 
@@ -1187,56 +1198,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
     }
 
-    #region HelperMethods
-
-    /// <summary>
-    /// Gets the first subchannel being used.
-    /// </summary>
-    /// <value>The current channel.</value>
-    private int firstSubchannel
-    {
-      get
-      {
-        foreach (int i in _mapSubChannels.Keys)
-        {
-          if (_mapSubChannels.ContainsKey(i))
-          {
-            return i;
-          }
-        }
-        return 0;
-      }
-    }
-
-    /// <summary>
-    /// Gets or sets the current channel.
-    /// </summary>
-    /// <remarks>
-    /// This property should *never* be used or thought of at a service level. Rather, it is only useful for
-    /// transponder/multiplex tuning details such as frequency and modulation that are common to all subchannels.
-    /// </remarks>
-    /// <value>The current channel.</value>
-    public IChannel CurrentChannel
-    {
-      get
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          return _mapSubChannels[firstSubchannel].CurrentChannel;
-        }
-        return null;
-      }
-      set
-      {
-        if (_mapSubChannels.Count > 0)
-        {
-          _mapSubChannels[firstSubchannel].CurrentChannel = value;
-        }
-      }
-    }
-
-    #endregion
-
     #region abstract and virtual methods
 
     /// <summary>
@@ -1361,10 +1322,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       finally
       {
-        // One potential reason for getting here is that signal could not be locked, and the reason for
-        // that may be that tuning failed. We always want to force a full retune on the next tune request
-        // in this situation.
-        _previousChannel = null;
+        // We always want to force a full retune on the next tune request in this situation.
+        // TODO: consider the implications for pausing the graph. Do we really want to do this?
+        _currentTuningDetail = null;
       }
     }
 
@@ -1496,6 +1456,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       this.LogDebug("TvCardBase: tune channel, {0}", channel);
+      ITvSubChannel subChannel = null;
       try
       {
         // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
@@ -1506,14 +1467,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         // Get a subchannel for the service.
-        if (!_mapSubChannels.ContainsKey(subChannelId))
+        string description;
+        if (!_mapSubChannels.TryGetValue(subChannelId, out subChannel))
         {
-          this.LogDebug("TvCardBase: creating new subchannel");
-          subChannelId = CreateNewSubChannel(channel);
+          description = "creating new subchannel";
+          subChannel = CreateNewSubChannel(subChannelId);
+          subChannel.Parameters = Parameters;
+          _mapSubChannels[subChannelId] = subChannel;
+          FireNewSubChannelEvent(subChannelId);
         }
         else
         {
-          this.LogDebug("TvCardBase: using existing subchannel");
+          description = "using existing subchannel";
           // If reusing a subchannel and our multi-channel decrypt mode is "changes", tell the plugin to stop
           // decrypting the previous service before we lose access to the PMT and CAT.
           if (_multiChannelDecryptMode == MultiChannelDecryptMode.Changes)
@@ -1521,14 +1486,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             UpdateDecryptList(subChannelId, CaPmtListManagementAction.Last);
           }
         }
-        this.LogInfo("TvCardBase: subchannel ID = {0}, subchannel count = {1}", subChannelId, _mapSubChannels.Count);
-        _mapSubChannels[subChannelId].CurrentChannel = channel;
+        this.LogInfo("TvCardBase: {0}, ID = {1}, count = {2}", description, subChannelId, _mapSubChannels.Count);
+        subChannel.CurrentChannel = channel;
 
         // Subchannel OnBeforeTune().
-        _mapSubChannels[subChannelId].OnBeforeTune();
+        subChannel.OnBeforeTune();
 
         // Do we need to tune?
-        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel))
+        if (_currentTuningDetail == null || _currentTuningDetail.IsDifferentTransponder(channel))
         {
           // Stop the EPG grabber. We're going to move to a different channel so any EPG data that has been
           // grabbed for the previous channel should be stored.
@@ -1544,7 +1509,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
           {
             DeviceAction pluginAction;
-            deviceInterface.OnBeforeTune(this, _previousChannel, ref tuneChannel, out pluginAction);
+            deviceInterface.OnBeforeTune(this, _currentTuningDetail, ref tuneChannel, out pluginAction);
             if (pluginAction != DeviceAction.Unload && pluginAction != DeviceAction.Default)
             {
               // Valid action requested...
@@ -1586,9 +1551,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         // Subchannel OnAfterTune().
         _lastSignalUpdate = DateTime.MinValue;
-        _mapSubChannels[subChannelId].OnAfterTune();
+        subChannel.OnAfterTune();
 
-        _previousChannel = channel;
+        _currentTuningDetail = channel;
 
         // Start the DirectShow/BDA graph if it is not already running.
         ThrowExceptionIfTuneCancelled();
@@ -1603,15 +1568,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Plugin OnRunning().
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          deviceInterface.OnRunning(this, _mapSubChannels[subChannelId].CurrentChannel);
+          deviceInterface.OnRunning(this, channel);
         }
 
         LockInOnSignal();
 
         // Subchannel OnGraphRunning().
-        _mapSubChannels[subChannelId].AfterTuneEvent -= FireAfterTuneEvent;
-        _mapSubChannels[subChannelId].AfterTuneEvent += FireAfterTuneEvent;
-        _mapSubChannels[subChannelId].OnGraphRunning();
+        subChannel.AfterTuneEvent -= FireAfterTuneEvent;
+        subChannel.AfterTuneEvent += FireAfterTuneEvent;
+        subChannel.OnGraphRunning();
 
         // At this point we should know which data/streams form the service(s) that are being accessed. We need to
         // ensure those streams will pass through the device's PID filter.
@@ -1632,8 +1597,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // One potential reason for getting here is that signal could not be locked, and the reason for
         // that may be that tuning failed. We always want to force a retune on the next tune request in
         // this situation.
-        _previousChannel = null;
-        if (_mapSubChannels[subChannelId] != null)
+        _currentTuningDetail = null;
+        if (subChannel != null)
         {
           FreeSubChannel(subChannelId);
         }
@@ -1644,7 +1609,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _cancelTune = false;
       }
 
-      return _mapSubChannels[subChannelId];
+      return subChannel;
     }
 
     /// <summary>
@@ -1823,9 +1788,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>the ID of the new subchannel</returns>
-    protected abstract int CreateNewSubChannel(IChannel channel);
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected abstract ITvSubChannel CreateNewSubChannel(int id);
 
     /// <summary>
     /// Free a subchannel.
@@ -1904,20 +1869,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return _mapSubChannels[id];
       }
       return null;
-    }
-
-    /// <summary>
-    /// Gets the first sub channel.
-    /// </summary>
-    /// <returns></returns>
-    public ITvSubChannel GetFirstSubChannel()
-    {
-      ITvSubChannel subChannel = null;
-      if (_mapSubChannels.Count > 0)
-      {
-        subChannel = _mapSubChannels.FirstOrDefault().Value;
-      }
-      return subChannel;
     }
 
     /// <summary>

@@ -1467,7 +1467,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         }
       }
       if (!GraphRunning() ||
-        CurrentChannel == null ||
+        CurrentTuningDetail == null ||
         _tunerInterface == null)
       {
         _tunerLocked = false;

@@ -110,11 +110,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Allocate a new subchannel instance.
     /// </summary>
-    /// <param name="channel">The service or channel to associate with the subchannel.</param>
-    /// <returns>a handle for the subchannel</returns>
-    protected override int CreateNewSubChannel(IChannel channel)
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return -1;
+      return null;
     }
 
     #endregion

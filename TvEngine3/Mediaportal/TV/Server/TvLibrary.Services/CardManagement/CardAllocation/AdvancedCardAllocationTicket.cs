@@ -76,7 +76,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
         {                   
           cardDetail.SameTransponder = ticket.IsSameTransponder;
           cardDetail.NumberOfOtherUsers = ticket.NumberOfOtherUsersOnCurrentCard;
-          cardDetail.ChannelTimeshiftingOnOtherMux = ticket.ChannelTimeshiftingOnOtherMux;
           LogNumberOfOtherUsersFound(cardDetail);
           IDictionary<int, ITvCardHandler> cards = ServiceManager.Instance.InternalControllerService.CardCollection;
           IChannel tuningDetail = cardDetail.TuningDetail;
