@@ -81,7 +81,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     public TvCardAnalog(DsDevice device)
       : base(device)
     {
-      _supportsSubChannels = true;
       _minChannel = 0;
       _maxChannel = 128;
       _tunerType = CardType.Analog;

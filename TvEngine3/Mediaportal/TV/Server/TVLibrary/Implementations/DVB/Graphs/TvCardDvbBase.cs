@@ -155,7 +155,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       : base(device)
     {
       _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(epgEvents, (ITVCard)this);
-      _supportsSubChannels = true;
       Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
       _useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId);
     }

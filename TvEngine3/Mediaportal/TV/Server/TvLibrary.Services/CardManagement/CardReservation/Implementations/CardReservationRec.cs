@@ -56,28 +56,16 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardReservation.Impleme
     
     protected override bool OnStartTune(ITvCardHandler tvcard, IUser user, int idChannel)
     {
-      bool startRecordingOnDisc = true;
-      if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(_cardInfo.Card.IdCard) == false)
-      {        
-        this.LogDebug("Scheduler : record, now start timeshift");
-        string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", _cardInfo.Card.TimeshiftingFolder, _cardInfo.Id,
-                                                 tvcard.UserManagement.GetSubChannelIdByChannelId(user.Name, idChannel));
-        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartTimeShifting(ref user, ref timeshiftFileName, idChannel));
-      }
+      _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
+      _recDetail.CardInfo = _cardInfo;
+      this.LogDebug("Scheduler : record to {0}", _recDetail.FileName);
+      string fileName = _recDetail.FileName;
+      bool startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
 
       if (startRecordingOnDisc)
       {
-        _recDetail.MakeFileName(_cardInfo.Card.RecordingFolder);
-        _recDetail.CardInfo = _cardInfo;
-        this.LogDebug("Scheduler : record to {0}", _recDetail.FileName);
-        string fileName = _recDetail.FileName;
-        startRecordingOnDisc = (TvResult.Succeeded == ServiceManager.Instance.InternalControllerService.StartRecording(user.Name, user.CardId, out user, ref fileName));
-
-        if (startRecordingOnDisc)
-        {
-          _recDetail.FileName = fileName;
-          _recDetail.RecordingStartDateTime = DateTime.Now;
-        }
+        _recDetail.FileName = fileName;
+        _recDetail.RecordingStartDateTime = DateTime.Now;
       }
       if (!startRecordingOnDisc && ServiceManager.Instance.InternalControllerService.AllCardsIdle)
       {

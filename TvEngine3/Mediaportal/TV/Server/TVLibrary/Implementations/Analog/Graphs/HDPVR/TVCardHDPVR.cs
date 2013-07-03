@@ -116,7 +116,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
       }
 
-      _supportsSubChannels = true;
       _tunerType = CardType.Analog;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
       Configuration.writeConfiguration(_configuration);

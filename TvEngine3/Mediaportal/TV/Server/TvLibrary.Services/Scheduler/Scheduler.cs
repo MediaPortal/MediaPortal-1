@@ -1292,12 +1292,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       try
       {
         IUser user = recording.User;
-
-        if (recording.CardInfo != null && ServiceManager.Instance.InternalControllerService.SupportsSubChannels(recording.CardInfo.Id) == false)
-        {
-          ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);          
-        }
-
         this.LogDebug("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.Entity.ProgramName);
@@ -1591,12 +1585,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Scheduler
       try
       {
         IUser user = recording.User;
-
-        if (ServiceManager.Instance.InternalControllerService.SupportsSubChannels(recording.CardInfo.Id) == false)
-        {
-          ServiceManager.Instance.InternalControllerService.StopTimeShifting(user.Name, out user);
-        }
-
         this.LogDebug("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.Entity.ProgramName);

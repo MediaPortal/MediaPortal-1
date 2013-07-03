@@ -181,18 +181,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     }
 
     /// <summary>
-    /// Gets a value indicating whether this card supports sub channels.
-    /// </summary>
-    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
-    public bool SupportsSubChannels
-    {
-      get
-      {       
-        return _card.SupportsSubChannels;
-      }
-    }
-
-    /// <summary>
     /// Gets or sets the reference the Card database record 
     /// </summary>
     /// <value>The card record from the database.</value>

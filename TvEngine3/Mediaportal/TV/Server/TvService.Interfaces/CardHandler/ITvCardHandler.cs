@@ -48,9 +48,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     string CardDevice();
     int NumberOfChannelsDecrypting { get; }
     
-
-    bool SupportsSubChannels { get; }
-
     void UpdateSignalSate();
     bool TunerLocked { get; }
     int SignalQuality { get; }

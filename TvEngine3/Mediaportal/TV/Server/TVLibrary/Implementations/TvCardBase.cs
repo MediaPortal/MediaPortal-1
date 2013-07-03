@@ -177,11 +177,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected IFilterGraph2 _graphBuilder;
 
     /// <summary>
-    /// Indicates, if the card sub channels
-    /// </summary>
-    protected bool _supportsSubChannels;
-
-    /// <summary>
     /// The tuner type (eg. DVB-S, DVB-T... etc.).
     /// </summary>
     protected CardType _tunerType;
@@ -388,15 +383,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     public bool PreloadCard
     {
       get { return _preloadCard; }
-    }
-
-    /// <summary>
-    /// Gets a value indicating whether card supports subchannels
-    /// </summary>
-    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
-    public bool SupportsSubChannels
-    {
-      get { return _supportsSubChannels; }
     }
 
     /// <summary>

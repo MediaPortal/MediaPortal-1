@@ -109,7 +109,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <returns></returns>
     List<EpgChannel> Epg(int cardId);
 
-    bool SupportsSubChannels(int cardId);
     TvResult StartTimeShifting(ref IUser user, ref string timeshiftFileName, int idChannel);
 
     /// <summary>

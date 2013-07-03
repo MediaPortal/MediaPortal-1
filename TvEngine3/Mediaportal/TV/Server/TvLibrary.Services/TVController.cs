@@ -5070,16 +5070,6 @@ namespace Mediaportal.TV.Server.TVLibrary
       }     
     }
 
-    public bool SupportsSubChannels(int cardId)
-    {
-      bool supportsSubChannels = false;
-      if (ValidateTvControllerParams(cardId))
-      {
-        supportsSubChannels = _cards[cardId].SupportsSubChannels; 
-      }
-      return supportsSubChannels;
-    }
-
     /// <summary>
     /// Tune the card to the specified channel
     /// </summary>

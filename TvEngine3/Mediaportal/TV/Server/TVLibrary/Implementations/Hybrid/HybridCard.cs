@@ -183,15 +183,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     #region ITVCard Members
 
     /// <summary>
-    /// Gets a value indicating whether card supports subchannels
-    /// </summary>
-    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
-    public bool SupportsSubChannels
-    {
-      get { return _internalCard.SupportsSubChannels; }
-    }
-
-    /// <summary>
     /// Returns if the tuner belongs to a hybrid card
     /// </summary>
     public bool IsHybrid

@@ -53,7 +53,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     {
       _name = "RadioWebStream Card (builtin)";
       _devicePath = "(builtin)";
-      _supportsSubChannels = true;
       _isHybrid = false;
       _isScanning = false;
       _epgGrabbing = false;

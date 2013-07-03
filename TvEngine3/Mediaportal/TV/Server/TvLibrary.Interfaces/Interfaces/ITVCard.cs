@@ -45,9 +45,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   /// </summary>
   public interface ITVCard
   {
-
-
-
     #region events
     // Note: events are handled as set-only properties to enable clean hybrid tuner handling.
 
@@ -64,12 +61,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     #endregion
 
     #region properties
-
-    /// <summary>
-    /// Gets a value indicating whether card supports subchannels
-    /// </summary>
-    /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
-    bool SupportsSubChannels { get; }
 
     /// <summary>
     /// Gets or sets the timeout parameters.

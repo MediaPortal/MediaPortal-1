@@ -239,8 +239,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardAllocation
 
     protected virtual bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
     {
-      return tvcard.Tuner.IsTunedToTransponder(tuningDetail) &&
-             tvcard.SupportsSubChannels;
+      return tvcard.Tuner.IsTunedToTransponder(tuningDetail);
     }
 
     #endregion
