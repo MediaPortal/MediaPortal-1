@@ -127,7 +127,7 @@ namespace MediaPortal.TagReader
         {
           musictag.Genre = String.Join(";", genre).Trim(trimChars);
         }
-        string lyrics = tag.Tag.Lyrics == null ? "" : tag.Tag.Lyrics.Trim(trimChars);
+        musictag.Lyrics = tag.Tag.Lyrics == null ? "" : tag.Tag.Lyrics.Trim(trimChars);
         musictag.Title = tag.Tag.Title == null ? "" : tag.Tag.Title.Trim(trimChars);
         // Prevent Null Ref execption, when Title is not set
         musictag.Track = (int)tag.Tag.Track;
