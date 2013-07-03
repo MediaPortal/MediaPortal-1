@@ -482,10 +482,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
                 TimeOutPMT = SettingsManagement.GetValue("timeoutPMT", 10),
                 TimeOutSDT = SettingsManagement.GetValue("timeoutSDT", 20),
                 TimeOutAnalog = SettingsManagement.GetValue("timeoutAnalog", 20),
-                UseDefaultLnbFrequencies = SettingsManagement.GetValue("lnbDefault", true),
-                LnbLowFrequency = SettingsManagement.GetValue("LnbLowFrequency", 0),
-                LnbHighFrequency = SettingsManagement.GetValue("LnbHighFrequency", 0),
-                LnbSwitchFrequency = SettingsManagement.GetValue("LnbSwitchFrequency", 0),
                 MinimumFiles = SettingsManagement.GetValue("timeshiftMinFiles", 6),
                 MaximumFiles = SettingsManagement.GetValue("timeshiftMaxFiles", 20),
                 MaximumFileSize = (uint) SettingsManagement.GetValue("timeshiftMaxFileSize", 256)
