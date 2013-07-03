@@ -112,11 +112,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region variables
 
     /// <summary>
-    /// Indicates if the card should be preloaded.
-    /// </summary>
-    protected bool _preloadCard;
-
-    /// <summary>
     /// Scanning Paramters
     /// </summary>
     protected ScanParameters _parameters;
@@ -348,7 +343,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           _cardId = c.IdCard;
           _name = c.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
-          _preloadCard = c.PreloadCard;
           _idleMode = (DeviceIdleMode)c.IdleMode;
           _pidFilterMode = (PidFilterMode)c.PidFilterMode;
           _useCustomTuning = c.UseCustomTuning;
@@ -358,6 +352,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _camType = (CamType)c.CamType;
           _decryptLimit = c.DecryptLimit;
           _multiChannelDecryptMode = (MultiChannelDecryptMode)c.MultiChannelDecryptMode;
+
+          // Preload the device if configured to do so.
+          if (c.Enabled && c.PreloadCard)
+          {
+            this.LogInfo("TvCardBase: preloading device {0}", _name);
+            BuildGraph();
+          }
         }
       }
     }
@@ -375,14 +376,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       set { _cardId = value; }
     }
 
-
-    /// <summary>
-    /// returns true if card should be preloaded
-    /// </summary>
-    public bool PreloadCard
-    {
-      get { return _preloadCard; }
-    }
 
     /// <summary>
     /// Gets or sets the parameters.

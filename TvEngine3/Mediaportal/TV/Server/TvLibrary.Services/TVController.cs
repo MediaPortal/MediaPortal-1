@@ -561,45 +561,6 @@ namespace Mediaportal.TV.Server.TVLibrary
             {
               if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
               {
-                Card cardDB = TVDatabase.TVBusinessLayer.CardManagement.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath, CardIncludeRelationEnum.None);
-
-                bool cardEnabled = cardDB.Enabled;
-                bool cardPresent = _localCardCollection.Cards[cardNumber].CardPresent;
-
-                if (cardEnabled && cardPresent)
-                {
-                  ITVCard unknownCard = _localCardCollection.Cards[cardNumber];
-
-                  if (unknownCard is TvCardBase)
-                  {
-                    TvCardBase card = (TvCardBase)unknownCard;
-                    if (card.PreloadCard)
-                    {
-                      try
-                      {
-                        this.LogInfo("Controller: preloading card :{0}", card.Name);
-                        card.BuildGraph();
-                        if (unknownCard is TvCardAnalog)
-                        {
-                          ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
-                        }
-                      }
-                      catch (Exception ex)
-                      {
-                        this.LogError("failed to preload card '{0}', ex = {1}", card.Name, ex);
-                      }
-                    }
-                    else
-                    {
-                      this.LogInfo("Controller: NOT preloading card :{0}", card.Name);
-                    }
-                  }
-                  else
-                  {
-                    this.LogInfo("Controller: NOT preloading card :{0}", unknownCard.Name);
-                  }
-                }
-
                 found = true;
                 break;
               }
