@@ -45,7 +45,6 @@
       // chkTitan
       // 
       this.chkTitan.AutoSize = true;
-      this.chkTitan.Checked = true;
       this.chkTitan.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chkTitan.ForeColor = System.Drawing.Color.White;
       this.chkTitan.Location = new System.Drawing.Point(15, 19);
@@ -60,11 +59,14 @@
       this.gtpTitan.Controls.Add(this.linkTitan);
       this.gtpTitan.Controls.Add(this.lblTitan);
       this.gtpTitan.Controls.Add(this.chkTitan);
-      this.gtpTitan.Location = new System.Drawing.Point(53, 59);
+      this.gtpTitan.Location = new System.Drawing.Point(53, 149);
       this.gtpTitan.Name = "gtpTitan";
       this.gtpTitan.Size = new System.Drawing.Size(513, 70);
       this.gtpTitan.TabIndex = 11;
       this.gtpTitan.TabStop = false;
+      // Enable or Disable Titan Extended related by displaying or not the groupbox.
+      this.gtpTitan.Visible = true;
+      this.chkTitan.Checked = this.gtpTitan.Visible;
       // 
       // linkTitan
       // 
@@ -84,7 +86,7 @@
       this.lblTitan.ForeColor = System.Drawing.Color.White;
       this.lblTitan.Location = new System.Drawing.Point(36, 39);
       this.lblTitan.Name = "lblTitan";
-      this.lblTitan.Size = new System.Drawing.Size(300, 13);
+      this.lblTitan.Size = new System.Drawing.Size(305, 13);
       this.lblTitan.TabIndex = 10;
       this.lblTitan.Text = "Install extension that adds support for popular third party plugins";
       // 
@@ -93,7 +95,7 @@
       this.grpLAV.Controls.Add(this.linkLAV);
       this.grpLAV.Controls.Add(this.lblLAV);
       this.grpLAV.Controls.Add(this.chkLAV);
-      this.grpLAV.Location = new System.Drawing.Point(53, 135);
+      this.grpLAV.Location = new System.Drawing.Point(53, 59);
       this.grpLAV.Name = "grpLAV";
       this.grpLAV.Size = new System.Drawing.Size(513, 70);
       this.grpLAV.TabIndex = 12;

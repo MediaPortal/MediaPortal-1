@@ -378,6 +378,13 @@ namespace MediaPortal
       // disable event handlers
       GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
 
+      // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dialogMenu != null)
+      {
+        dialogMenu.Dispose();
+      }
+
       // reset device if necessary
       Windowed = !Windowed;
       RecreateSwapChain();
@@ -774,9 +781,22 @@ namespace MediaPortal
         return;
       }
 
+      // Reset DialogMenu to avoid freeze on minimize
+      var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dialogMenu != null)
+      {
+        dialogMenu.Dispose();
+      }
+
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
       if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
       {
+        if (dialogMenu != null)
+        {
+          dialogMenu.Reset();
+          dialogMenu.Dispose();
+        }
+
         Log.Info("D3D: Minimizing to tray");
         IsVisible = false;
         AppActive = false;
