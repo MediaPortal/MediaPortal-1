@@ -426,7 +426,7 @@ namespace MediaPortal.GUI.Library
       //render commercial markers
       fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      calculateMarkerSizeAndPosition(xPos, yPos, fWidth);
+      calculateMarkerSizeAndPosition(xPos-xoff, yPos, fWidth);
       for (int i=0; i < _markerYPositions.Count || i < _markerXPositions.Count || i < _markerWidths.Count; i++)
       {
         _imageFillMarker.Width = _markerWidths[i];
