@@ -89,11 +89,85 @@ namespace ProcessPlugins.ViewModeSwitcher
     private void cbAutoCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
       //cmbViewMode.Enabled = cbAutoCropEnabled.Checked;
+      if (cbAutoCropEnabled.Checked)
+      {
+        cb_EnableLBDetection.Checked = true; //Tick this box as well
+      }
     }
+    
+    private void cb_EnableLBDetection_CheckedChanged(object sender, EventArgs e)
+    {
+      //cmbViewMode.Enabled = cbAutoCropEnabled.Checked;
+      if (!cb_EnableLBDetection.Checked)
+      {
+        cbAutoCropEnabled.Checked = false;
+      }
+    }
+    
 
     private void cbMaxCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
       // txbOverScan.Enabled = cbMaxCropEnabled.Checked;
+    }
+
+    private void label9_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void txbOverScan_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label12_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void txbMinHeight_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label4_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label5_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void txbMaxWidth_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void txbMinWidth_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void txbMaxHeight_TextChanged(object sender, EventArgs e)
+    {
+
     }
   }
 }

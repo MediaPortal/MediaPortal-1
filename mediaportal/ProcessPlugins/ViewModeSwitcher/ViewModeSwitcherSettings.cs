@@ -47,6 +47,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     public decimal LBSymLimitPercent = 10;
     public int LBdetectInterval = 4;
     public decimal LBMaxCropLimitPercent = 12;
+    public decimal DetectWidthPercent = 40;
+    public decimal DetectHeightPercent = 40;
   
     // parameter names
     public static string ViewModeSwitcherSectionName = "ViewModeSwitcher";
@@ -64,8 +66,9 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmDisableLBForVideo = "parmdisableLBforvideo";    
     private const string ParmSymLimitPercent = "parmsymlimitpercent";
     private const string ParmLBdetectInterval = "parmLBdetectinterval";
-    private const string ParmMaxCropLimitPercent = "parmmaxcroplimitpercent";    
-    
+    private const string ParmMaxCropLimitPercent = "parmmaxcroplimitpercent";        
+    private const string ParmDetectWidthPercent = "parmdetectwidthpercent";    
+    private const string ParmDetectHeightPercent = "parmdetectheightpercent";    
     
     //Settings file name
     private const string SettingsFileName = "ViewModeSwitcher2.xml";
@@ -156,22 +159,26 @@ namespace ProcessPlugins.ViewModeSwitcher
         disableLBForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBForVideo, false);                
         LBSymLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmSymLimitPercent, 10), 5), 50);        
         LBdetectInterval = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmLBdetectInterval, 4), 2), 40);
-        LBMaxCropLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmMaxCropLimitPercent, 12), 0), 50);        
+        LBMaxCropLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmMaxCropLimitPercent, 12), 0), 50);          
+        DetectWidthPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmDetectWidthPercent, 40), 10), 90);  
+        DetectHeightPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmDetectHeightPercent, 40), 10), 90);                
 
         if (verboseLog)
         {                   
-          Log.Debug("ViewModeSwitcher: Global Rule, ShowSwitchMsg:       " + ShowSwitchMsg);
-          Log.Debug("ViewModeSwitcher: Global Rule, UseFallbackRule:     " + UseFallbackRule);
-          Log.Debug("ViewModeSwitcher: Global Rule, FallBackViewMode:    " + FallBackViewMode);
-          Log.Debug("ViewModeSwitcher: Global Rule, FallbackOverscan:    " + fboverScan);
-          Log.Debug("ViewModeSwitcher: Global Rule, DisableBBDetect:     " + DisableLBGlobaly);
-          Log.Debug("ViewModeSwitcher: Global Rule, BBMaxBlackLevel:     " + LBMaxBlackLevel);
-          Log.Debug("ViewModeSwitcher: Global Rule, BBMinBlackLevel:     " + LBMinBlackLevel);
-          Log.Debug("ViewModeSwitcher: Global Rule, BBSymLimitPercent:   " + LBSymLimitPercent);
-          Log.Debug("ViewModeSwitcher: Global Rule, BBdetectInterval:    " + LBdetectInterval);
-          Log.Debug("ViewModeSwitcher: Global Rule, BBMaxCropLimPercent: " + LBMaxCropLimitPercent);          
-          Log.Debug("ViewModeSwitcher: Global Rule, disableForVideo:     " + disableForVideo);
-          Log.Debug("ViewModeSwitcher: Global Rule, disableBBForVideo:   " + disableLBForVideo);
+          Log.Debug("ViewModeSwitcher: Global Rule, ShowSwitchMsg:         " + ShowSwitchMsg);
+          Log.Debug("ViewModeSwitcher: Global Rule, UseFallbackRule:       " + UseFallbackRule);
+          Log.Debug("ViewModeSwitcher: Global Rule, FallBackViewMode:      " + FallBackViewMode);
+          Log.Debug("ViewModeSwitcher: Global Rule, FallbackOverscan:      " + fboverScan);
+          Log.Debug("ViewModeSwitcher: Global Rule, DisableBBDetect:       " + DisableLBGlobaly);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBMaxBlackLevel:       " + LBMaxBlackLevel);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBMinBlackLevel:       " + LBMinBlackLevel);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBSymLimitPercent:     " + LBSymLimitPercent);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBdetectInterval:      " + LBdetectInterval);
+          Log.Debug("ViewModeSwitcher: Global Rule, BBMaxCropLimPercent:   " + LBMaxCropLimitPercent);          
+          Log.Debug("ViewModeSwitcher: Global Rule, BBDetectWidthPercent:  " + DetectWidthPercent);          
+          Log.Debug("ViewModeSwitcher: Global Rule, BBDetectHeightPercent: " + DetectHeightPercent);          
+          Log.Debug("ViewModeSwitcher: Global Rule, disableForVideo:       " + disableForVideo);
+          Log.Debug("ViewModeSwitcher: Global Rule, disableBBForVideo:     " + disableLBForVideo);
         }
 
         bool tmpReturn = false;
@@ -408,6 +415,8 @@ namespace ProcessPlugins.ViewModeSwitcher
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmSymLimitPercent, LBSymLimitPercent.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmLBdetectInterval, LBdetectInterval.ToString());
         xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmMaxCropLimitPercent, LBMaxCropLimitPercent.ToString());
+        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmDetectWidthPercent, DetectWidthPercent.ToString());
+        xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmDetectHeightPercent, DetectHeightPercent.ToString());
 
         for (int i = 1; i <= ViewModeRules.Count; i++)
         {

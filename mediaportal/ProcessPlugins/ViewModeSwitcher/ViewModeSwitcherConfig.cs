@@ -50,8 +50,14 @@ namespace ProcessPlugins.ViewModeSwitcher
       cbUseFallbackRule.Checked = currentSettings.UseFallbackRule;
       cbDisableLBGlobaly.Checked = currentSettings.DisableLBGlobaly;
       numBlackLevel.Value = currentSettings.LBMaxBlackLevel;
+      numBlackLevAve.Value = currentSettings.LBMinBlackLevel;
       fbosUpDown.Value = currentSettings.fboverScan;
-
+      numBBdetWidth.Value = currentSettings.DetectWidthPercent;
+      numBBdetHeight.Value = currentSettings.DetectHeightPercent;      
+      cbDisableForVideo.Checked   = currentSettings.disableForVideo; 
+      cbDisableLBForVideo.Checked = currentSettings.disableLBForVideo;     
+      numMaxCropLimit.Value = currentSettings.LBMaxCropLimitPercent;
+      
       ReBuildDataGrid();
     }
 
@@ -69,7 +75,16 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentSettings.FallBackViewMode = ViewModeswitcherSettings.StringToViewMode(cmbFBViewMode.Text);
       currentSettings.DisableLBGlobaly = cbDisableLBGlobaly.Checked;
       currentSettings.LBMaxBlackLevel = numBlackLevel.Value;
+      currentSettings.LBMinBlackLevel = numBlackLevAve.Value;
+
       currentSettings.fboverScan = (int)fbosUpDown.Value;
+      currentSettings.DetectWidthPercent = numBBdetWidth.Value;
+      currentSettings.DetectHeightPercent = numBBdetHeight.Value;
+      currentSettings.LBMaxCropLimitPercent = numMaxCropLimit.Value;
+
+      currentSettings.disableForVideo = cbDisableForVideo.Checked;
+      currentSettings.disableLBForVideo = cbDisableLBForVideo.Checked;
+
       currentSettings.SaveSettings();
     }
 
@@ -89,11 +104,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       dg_RuleSets.Rows.Clear();
       foreach (Rule tmpRule in currentSettings.ViewModeRules)
       {
-//        dg_RuleSets.Rows.Add(tmpRule.Enabled, tmpRule.Name, tmpRule.ARFrom.ToString(), tmpRule.ARTo.ToString(),
-//                             tmpRule.MinWidth.ToString(), tmpRule.MaxWidth.ToString(), tmpRule.MinHeight.ToString(),
-//                             tmpRule.MaxHeight.ToString(), tmpRule.AutoCrop, tmpRule.ViewMode.ToString(),
-//                             tmpRule.MaxCrop, tmpRule.OverScan.ToString(), tmpRule.EnableLBDetection);
-
         dg_RuleSets.Rows.Add(tmpRule.Enabled, 
                              tmpRule.Name, 
                              tmpRule.ARFrom.ToString(), 
@@ -183,8 +193,14 @@ namespace ProcessPlugins.ViewModeSwitcher
     private void cbUseFallbackRule_CheckedChanged(object sender, EventArgs e)
     {
       cmbFBViewMode.Enabled = cbUseFallbackRule.Checked;
+      fbosUpDown.Enabled = cbUseFallbackRule.Checked;
     }
 
+    private void cbDisableForVideo_CheckedChanged(object sender, EventArgs e)
+    {
+      cbDisableLBForVideo.Checked = cbDisableForVideo.Checked;
+    }
+    
     private void bExport_Click(object sender, EventArgs e)
     {
       saveFileDialog.AddExtension = true;

@@ -62,7 +62,21 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private Bitmap frame = null;
 
-    public FrameAnalyzer() {}
+    public FrameAnalyzer() 
+    {
+      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMaxBlackLevel;
+      minBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMinBlackLevel;
+      
+      topScanStartFraction    = (double)(100-ViewModeSwitcher.currentSettings.DetectWidthPercent)/200.0;
+      topScanEndFraction      = 1.0 - topScanStartFraction;
+      bottomScanStartFraction = topScanStartFraction;
+      bottomScanEndFraction   = topScanEndFraction;
+      
+      leftScanStartFraction   = (double)(100-ViewModeSwitcher.currentSettings.DetectHeightPercent)/200.0;
+      leftScanEndFraction     = 1.0 - topScanStartFraction;                                             
+      rightScanStartFraction  = leftScanStartFraction;
+      rightScanEndFraction    = leftScanEndFraction;
+    }
 
     /// <summary>
     /// Find top and bottom bounds of a given bitmap. Performs a top down and bottom down scan
@@ -79,8 +93,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       this.frame = frame;
 
-      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMaxBlackLevel;
-      minBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMinBlackLevel;
 
       int topLine = 0;
       int bottomLine = frame.Height - 1;
