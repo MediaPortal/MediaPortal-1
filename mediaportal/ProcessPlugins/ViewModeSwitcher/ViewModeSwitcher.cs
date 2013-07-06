@@ -220,32 +220,40 @@ namespace ProcessPlugins.ViewModeSwitcher
     public override void Start()
     {
       Log.Debug("ViewModeSwitcher: Start()");
-
-      if (!currentSettings.LoadSettings())
-      {
-        Log.Info("ViewModeSwitcher: No enabled rule found. Process stopped!");
-        return;
-      }
-      instance = this;
-      analyzer = new FrameAnalyzer();
-      GUIGraphicsContext.autoCropper = this;
-      GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
-      g_Player.PlayBackEnded += OnVideoEnded;
-      g_Player.PlayBackStopped += OnVideoStopped;
-      g_Player.PlayBackStarted += OnVideoStarted;
-      g_Player.TVChannelChanged += OnTVChannelChanged;
-
-      SymLimLow  = 1.0 - ((double)currentSettings.LBSymLimitPercent/100.0); //Black bar symmetry check low limit
-      SymLimHigh = 1.0 + ((double)currentSettings.LBSymLimitPercent/100.0); //Black bar symmetry check high limit
       
-      MaxCropLim = ((double)currentSettings.LBMaxCropLimitPercent/200.0); //Limit for maximum black-bar 'picture' cropping (per side)
-            
-      // start the thread that will execute the actual cropping
-      Thread t = new Thread(new ThreadStart(instance.Worker));
-      t.IsBackground = true;
-      t.Priority = ThreadPriority.BelowNormal;
-      t.Name = "ViewModeSwitcher";
-      t.Start();
+      try
+      {
+        if (!currentSettings.LoadSettings())
+        {
+          Log.Info("ViewModeSwitcher: No enabled rule found. Process stopped!");
+          return;
+        }
+        instance = this;
+        analyzer = new FrameAnalyzer();
+        GUIGraphicsContext.autoCropper = this;
+        GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
+        g_Player.PlayBackEnded += OnVideoEnded;
+        g_Player.PlayBackStopped += OnVideoStopped;
+        g_Player.PlayBackStarted += OnVideoStarted;
+        g_Player.TVChannelChanged += OnTVChannelChanged;
+  
+        SymLimLow = Math.Max((1.0 - ((double)currentSettings.LBSymLimitPercent/100.0)), 0.1); //Black bar symmetry check low limit
+        SymLimHigh = 1.0 / SymLimLow; //Black bar symmetry check high limit
+        
+        MaxCropLim = ((double)currentSettings.LBMaxCropLimitPercent/200.0); //Limit for maximum black-bar 'picture' cropping (per side)
+              
+        // start the thread that will execute the actual cropping
+        Thread t = new Thread(new ThreadStart(instance.Worker));
+        t.IsBackground = true;
+        t.Priority = ThreadPriority.BelowNormal;
+        t.Name = "ViewModeSwitcher";
+        t.Start();
+      }
+      catch (Exception)
+      {
+        Log.Error("ViewModeSwitcher: Exception in Start() !!!");
+        stopWorkerThread = true;
+      }
     }
 
     /// <summary>

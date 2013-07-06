@@ -157,7 +157,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);      
         disableForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, false);  
         disableLBForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBForVideo, false);                
-        LBSymLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmSymLimitPercent, 10), 5), 50);        
+        LBSymLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmSymLimitPercent, 10), 5), 90);        
         LBdetectInterval = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmLBdetectInterval, 4), 2), 40);
         LBMaxCropLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmMaxCropLimitPercent, 12), 0), 50);          
         DetectWidthPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmDetectWidthPercent, 40), 10), 90);  

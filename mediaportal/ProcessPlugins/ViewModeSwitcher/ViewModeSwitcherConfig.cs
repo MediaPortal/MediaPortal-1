@@ -57,6 +57,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       cbDisableForVideo.Checked   = currentSettings.disableForVideo; 
       cbDisableLBForVideo.Checked = currentSettings.disableLBForVideo;     
       numMaxCropLimit.Value = currentSettings.LBMaxCropLimitPercent;
+      numSymLimit.Value = currentSettings.LBSymLimitPercent;
       
       ReBuildDataGrid();
     }
@@ -81,6 +82,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentSettings.DetectWidthPercent = numBBdetWidth.Value;
       currentSettings.DetectHeightPercent = numBBdetHeight.Value;
       currentSettings.LBMaxCropLimitPercent = numMaxCropLimit.Value;
+      currentSettings.LBSymLimitPercent = numSymLimit.Value;
 
       currentSettings.disableForVideo = cbDisableForVideo.Checked;
       currentSettings.disableLBForVideo = cbDisableLBForVideo.Checked;
@@ -200,6 +202,31 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       cbDisableLBForVideo.Checked = cbDisableForVideo.Checked;
     }
+
+    private void cbEnableAdvanced_CheckedChanged(object sender, EventArgs e)
+    {
+      cbDisableLBForVideo.Visible = cbEnableAdvanced.Checked;
+      cbDisableForVideo.Visible   = cbEnableAdvanced.Checked;
+      cbVerboseLog.Visible        = cbEnableAdvanced.Checked;
+      label12.Visible             = cbEnableAdvanced.Checked;
+      numMaxCropLimit.Visible     = cbEnableAdvanced.Checked;
+      label11.Visible             = cbEnableAdvanced.Checked;
+      label10.Visible             = cbEnableAdvanced.Checked;
+      label9.Visible              = cbEnableAdvanced.Checked;
+      numBlackLevAve.Visible      = cbEnableAdvanced.Checked;
+      label8.Visible              = cbEnableAdvanced.Checked;
+      label7.Visible              = cbEnableAdvanced.Checked;
+      numBBdetHeight.Visible      = cbEnableAdvanced.Checked;
+      numBBdetWidth.Visible       = cbEnableAdvanced.Checked;
+      label1.Visible              = cbEnableAdvanced.Checked;
+      numBlackLevel.Visible       = cbEnableAdvanced.Checked;
+      label18.Visible             = cbEnableAdvanced.Checked;
+      label13.Visible             = cbEnableAdvanced.Checked;
+      numSymLimit.Visible         = cbEnableAdvanced.Checked;
+      label14.Visible             = cbEnableAdvanced.Checked;
+      label15.Visible             = cbEnableAdvanced.Checked;
+    }
+
     
     private void bExport_Click(object sender, EventArgs e)
     {

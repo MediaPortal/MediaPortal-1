@@ -63,6 +63,19 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.bModify = new System.Windows.Forms.Button();
             this.cbShowSwitchMsg = new System.Windows.Forms.CheckBox();
             this.dg_RuleSets = new System.Windows.Forms.DataGridView();
+            this.ColEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColRuleName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColARFrom = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColARTo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColMinWidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColMaxWidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColMinHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColMaxHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColViewMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColOverscan = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColEnableLBDetect = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColAutoCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColMaxCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bCancel = new System.Windows.Forms.Button();
             this.linkLabelForum = new System.Windows.Forms.LinkLabel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -87,19 +100,11 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.ColEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ColRuleName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColARFrom = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColARTo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColMinWidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColMaxWidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColMinHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColMaxHeight = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColViewMode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColOverscan = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColEnableLBDetect = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColAutoCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ColMaxCrop = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cbEnableAdvanced = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.numSymLimit = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fbosUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dg_RuleSets)).BeginInit();
@@ -109,6 +114,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetHeight)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlackLevel)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSymLimit)).BeginInit();
             this.SuspendLayout();
             // 
             // bOK
@@ -153,6 +159,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.cbDisableLBForVideo.Size = new System.Drawing.Size(164, 17);
             this.cbDisableLBForVideo.TabIndex = 14;
             this.cbDisableLBForVideo.Text = "Disable BB detect for non-TV";
+            this.cbDisableLBForVideo.Visible = false;
             // 
             // cbDisableForVideo
             // 
@@ -162,6 +169,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.cbDisableForVideo.Size = new System.Drawing.Size(114, 17);
             this.cbDisableForVideo.TabIndex = 13;
             this.cbDisableForVideo.Text = "Disable for non-TV";
+            this.cbDisableForVideo.Visible = false;
             this.cbDisableForVideo.CheckedChanged += new System.EventHandler(this.cbDisableForVideo_CheckedChanged);
             // 
             // label3
@@ -231,6 +239,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.cbVerboseLog.Size = new System.Drawing.Size(137, 17);
             this.cbVerboseLog.TabIndex = 0;
             this.cbVerboseLog.Text = "Enable verbose logging";
+            this.cbVerboseLog.Visible = false;
             // 
             // bDelete
             // 
@@ -291,299 +300,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.dg_RuleSets.RowHeadersVisible = false;
             this.dg_RuleSets.Size = new System.Drawing.Size(758, 193);
             this.dg_RuleSets.TabIndex = 0;
-            // 
-            // bCancel
-            // 
-            this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bCancel.Location = new System.Drawing.Point(682, 461);
-            this.bCancel.Name = "bCancel";
-            this.bCancel.Size = new System.Drawing.Size(50, 23);
-            this.bCancel.TabIndex = 0;
-            this.bCancel.Text = "Cancel";
-            this.bCancel.UseVisualStyleBackColor = true;
-            this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
-            // 
-            // linkLabelForum
-            // 
-            this.linkLabelForum.AutoSize = true;
-            this.linkLabelForum.Location = new System.Drawing.Point(12, 466);
-            this.linkLabelForum.Name = "linkLabelForum";
-            this.linkLabelForum.Size = new System.Drawing.Size(282, 13);
-            this.linkLabelForum.TabIndex = 7;
-            this.linkLabelForum.TabStop = true;
-            this.linkLabelForum.Text = "Click here to jump to the related MediaPortal forums thread";
-            this.linkLabelForum.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelForum_LinkClicked);
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Controls.Add(this.numMaxCropLimit);
-            this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.label10);
-            this.groupBox2.Controls.Add(this.label9);
-            this.groupBox2.Controls.Add(this.numBlackLevAve);
-            this.groupBox2.Controls.Add(this.label8);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.numBBdetHeight);
-            this.groupBox2.Controls.Add(this.numBBdetWidth);
-            this.groupBox2.Controls.Add(this.label1);
-            this.groupBox2.Controls.Add(this.numBlackLevel);
-            this.groupBox2.Controls.Add(this.label18);
-            this.groupBox2.Controls.Add(this.cbDisableLBGlobaly);
-            this.groupBox2.Location = new System.Drawing.Point(12, 313);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(770, 81);
-            this.groupBox2.TabIndex = 8;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Black Bar (BB) detection options";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(208, 19);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(86, 13);
-            this.label12.TabIndex = 45;
-            this.label12.Text = "MaxCrop limit (%)";
-            // 
-            // numMaxCropLimit
-            // 
-            this.numMaxCropLimit.Location = new System.Drawing.Point(302, 17);
-            this.numMaxCropLimit.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.numMaxCropLimit.Name = "numMaxCropLimit";
-            this.numMaxCropLimit.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.numMaxCropLimit.Size = new System.Drawing.Size(43, 20);
-            this.numMaxCropLimit.TabIndex = 44;
-            this.numMaxCropLimit.Value = new decimal(new int[] {
-            12,
-            0,
-            0,
-            0});
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(413, 57);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(86, 13);
-            this.label11.TabIndex = 43;
-            this.label11.Text = "For 25% of pixels";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(150, 57);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(81, 13);
-            this.label10.TabIndex = 42;
-            this.label10.Text = "For single pixels";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(555, 57);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(99, 13);
-            this.label9.TabIndex = 41;
-            this.label9.Text = "(4 - 255, default 16)";
-            // 
-            // numBlackLevAve
-            // 
-            this.numBlackLevAve.Location = new System.Drawing.Point(506, 55);
-            this.numBlackLevAve.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numBlackLevAve.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.numBlackLevAve.Name = "numBlackLevAve";
-            this.numBlackLevAve.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.numBlackLevAve.Size = new System.Drawing.Size(43, 20);
-            this.numBlackLevAve.TabIndex = 40;
-            this.numBlackLevAve.Value = new decimal(new int[] {
-            16,
-            0,
-            0,
-            0});
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(377, 19);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(132, 13);
-            this.label8.TabIndex = 39;
-            this.label8.Text = "Left/right detect height (%)";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(564, 20);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(144, 13);
-            this.label7.TabIndex = 38;
-            this.label7.Text = "Top/bottom detect width (%) ";
-            // 
-            // numBBdetHeight
-            // 
-            this.numBBdetHeight.Location = new System.Drawing.Point(515, 16);
-            this.numBBdetHeight.Maximum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            this.numBBdetHeight.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numBBdetHeight.Name = "numBBdetHeight";
-            this.numBBdetHeight.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.numBBdetHeight.Size = new System.Drawing.Size(43, 20);
-            this.numBBdetHeight.TabIndex = 37;
-            this.numBBdetHeight.Value = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            // 
-            // numBBdetWidth
-            // 
-            this.numBBdetWidth.Location = new System.Drawing.Point(713, 16);
-            this.numBBdetWidth.Maximum = new decimal(new int[] {
-            90,
-            0,
-            0,
-            0});
-            this.numBBdetWidth.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numBBdetWidth.Name = "numBBdetWidth";
-            this.numBBdetWidth.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.numBBdetWidth.Size = new System.Drawing.Size(43, 20);
-            this.numBBdetWidth.TabIndex = 36;
-            this.numBBdetWidth.Value = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(287, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 13);
-            this.label1.TabIndex = 35;
-            this.label1.Text = "(4 - 255, default 32)\r\n";
-            // 
-            // numBlackLevel
-            // 
-            this.numBlackLevel.Location = new System.Drawing.Point(238, 55);
-            this.numBlackLevel.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numBlackLevel.Minimum = new decimal(new int[] {
-            4,
-            0,
-            0,
-            0});
-            this.numBlackLevel.Name = "numBlackLevel";
-            this.numBlackLevel.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.numBlackLevel.Size = new System.Drawing.Size(43, 20);
-            this.numBlackLevel.TabIndex = 34;
-            this.numBlackLevel.Value = new decimal(new int[] {
-            32,
-            0,
-            0,
-            0});
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 57);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(128, 13);
-            this.label18.TabIndex = 33;
-            this.label18.Text = "Black level thresholds ->>";
-            // 
-            // cbDisableLBGlobaly
-            // 
-            this.cbDisableLBGlobaly.AutoSize = true;
-            this.cbDisableLBGlobaly.Location = new System.Drawing.Point(6, 19);
-            this.cbDisableLBGlobaly.Name = "cbDisableLBGlobaly";
-            this.cbDisableLBGlobaly.Size = new System.Drawing.Size(170, 17);
-            this.cbDisableLBGlobaly.TabIndex = 0;
-            this.cbDisableLBGlobaly.Text = "Disable all Black Bar detection";
-            this.cbDisableLBGlobaly.UseVisualStyleBackColor = true;
-            // 
-            // bImport
-            // 
-            this.bImport.Location = new System.Drawing.Point(543, 461);
-            this.bImport.Name = "bImport";
-            this.bImport.Size = new System.Drawing.Size(88, 23);
-            this.bImport.TabIndex = 35;
-            this.bImport.Text = "Import Settings";
-            this.bImport.UseVisualStyleBackColor = true;
-            this.bImport.Click += new System.EventHandler(this.bImport_Click);
-            // 
-            // bExport
-            // 
-            this.bExport.Location = new System.Drawing.Point(444, 461);
-            this.bExport.Name = "bExport";
-            this.bExport.Size = new System.Drawing.Size(93, 23);
-            this.bExport.TabIndex = 36;
-            this.bExport.Text = "Export Settings";
-            this.bExport.UseVisualStyleBackColor = true;
-            this.bExport.Click += new System.EventHandler(this.bExport_Click);
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.FileName = "openFileDialog1";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 421);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(402, 13);
-            this.label4.TabIndex = 37;
-            this.label4.Text = "Rules are checked from top to bottom, and checking stops at the first matching ru" +
-    "le.";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(15, 397);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 15);
-            this.label5.TabIndex = 38;
-            this.label5.Text = "Notes";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 434);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(548, 13);
-            this.label6.TabIndex = 39;
-            this.label6.Text = "Rules with negative AR values are only used for letterbox/pillarbox video detecti" +
-    "on (when BB detection is enabled).";
             // 
             // ColEnabled
             // 
@@ -701,11 +417,393 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.ColMaxCrop.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.ColMaxCrop.Width = 55;
             // 
+            // bCancel
+            // 
+            this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bCancel.Location = new System.Drawing.Point(682, 461);
+            this.bCancel.Name = "bCancel";
+            this.bCancel.Size = new System.Drawing.Size(50, 23);
+            this.bCancel.TabIndex = 0;
+            this.bCancel.Text = "Cancel";
+            this.bCancel.UseVisualStyleBackColor = true;
+            this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
+            // 
+            // linkLabelForum
+            // 
+            this.linkLabelForum.AutoSize = true;
+            this.linkLabelForum.Location = new System.Drawing.Point(12, 466);
+            this.linkLabelForum.Name = "linkLabelForum";
+            this.linkLabelForum.Size = new System.Drawing.Size(282, 13);
+            this.linkLabelForum.TabIndex = 7;
+            this.linkLabelForum.TabStop = true;
+            this.linkLabelForum.Text = "Click here to jump to the related MediaPortal forums thread";
+            this.linkLabelForum.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelForum_LinkClicked);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label15);
+            this.groupBox2.Controls.Add(this.label14);
+            this.groupBox2.Controls.Add(this.label13);
+            this.groupBox2.Controls.Add(this.label12);
+            this.groupBox2.Controls.Add(this.numSymLimit);
+            this.groupBox2.Controls.Add(this.numMaxCropLimit);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.numBlackLevAve);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.numBlackLevel);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.numBBdetHeight);
+            this.groupBox2.Controls.Add(this.label18);
+            this.groupBox2.Controls.Add(this.cbDisableLBGlobaly);
+            this.groupBox2.Controls.Add(this.numBBdetWidth);
+            this.groupBox2.Location = new System.Drawing.Point(12, 313);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(770, 81);
+            this.groupBox2.TabIndex = 8;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Black Bar (BB) detection options";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(186, 35);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(86, 13);
+            this.label12.TabIndex = 45;
+            this.label12.Text = "MaxCrop limit (%)";
+            this.label12.Visible = false;
+            // 
+            // numMaxCropLimit
+            // 
+            this.numMaxCropLimit.Location = new System.Drawing.Point(280, 31);
+            this.numMaxCropLimit.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.numMaxCropLimit.Name = "numMaxCropLimit";
+            this.numMaxCropLimit.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numMaxCropLimit.Size = new System.Drawing.Size(43, 20);
+            this.numMaxCropLimit.TabIndex = 44;
+            this.numMaxCropLimit.Value = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.numMaxCropLimit.Visible = false;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(519, 61);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(86, 13);
+            this.label11.TabIndex = 43;
+            this.label11.Text = "For 25% of pixels";
+            this.label11.Visible = false;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(524, 35);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(81, 13);
+            this.label10.TabIndex = 42;
+            this.label10.Text = "For single pixels";
+            this.label10.Visible = false;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(661, 61);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(99, 13);
+            this.label9.TabIndex = 41;
+            this.label9.Text = "(4 - 255, default 16)";
+            this.label9.Visible = false;
+            // 
+            // numBlackLevAve
+            // 
+            this.numBlackLevAve.Location = new System.Drawing.Point(612, 57);
+            this.numBlackLevAve.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numBlackLevAve.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numBlackLevAve.Name = "numBlackLevAve";
+            this.numBlackLevAve.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numBlackLevAve.Size = new System.Drawing.Size(43, 20);
+            this.numBlackLevAve.TabIndex = 40;
+            this.numBlackLevAve.Value = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numBlackLevAve.Visible = false;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(357, 35);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(99, 13);
+            this.label8.TabIndex = 39;
+            this.label8.Text = "Left/right height (%)";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label8.Visible = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(345, 61);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(111, 13);
+            this.label7.TabIndex = 38;
+            this.label7.Text = "Top/bottom width (%) ";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label7.Visible = false;
+            // 
+            // numBBdetHeight
+            // 
+            this.numBBdetHeight.Location = new System.Drawing.Point(461, 31);
+            this.numBBdetHeight.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.numBBdetHeight.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numBBdetHeight.Name = "numBBdetHeight";
+            this.numBBdetHeight.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numBBdetHeight.Size = new System.Drawing.Size(43, 20);
+            this.numBBdetHeight.TabIndex = 37;
+            this.numBBdetHeight.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.numBBdetHeight.Visible = false;
+            // 
+            // numBBdetWidth
+            // 
+            this.numBBdetWidth.Location = new System.Drawing.Point(461, 57);
+            this.numBBdetWidth.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.numBBdetWidth.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numBBdetWidth.Name = "numBBdetWidth";
+            this.numBBdetWidth.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numBBdetWidth.Size = new System.Drawing.Size(43, 20);
+            this.numBBdetWidth.TabIndex = 36;
+            this.numBBdetWidth.Value = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.numBBdetWidth.Visible = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(661, 35);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(99, 13);
+            this.label1.TabIndex = 35;
+            this.label1.Text = "(4 - 255, default 32)\r\n";
+            this.label1.Visible = false;
+            // 
+            // numBlackLevel
+            // 
+            this.numBlackLevel.Location = new System.Drawing.Point(612, 31);
+            this.numBlackLevel.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.numBlackLevel.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numBlackLevel.Name = "numBlackLevel";
+            this.numBlackLevel.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numBlackLevel.Size = new System.Drawing.Size(43, 20);
+            this.numBlackLevel.TabIndex = 34;
+            this.numBlackLevel.Value = new decimal(new int[] {
+            32,
+            0,
+            0,
+            0});
+            this.numBlackLevel.Visible = false;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(578, 11);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(110, 13);
+            this.label18.TabIndex = 33;
+            this.label18.Text = "Black level thresholds";
+            this.label18.Visible = false;
+            // 
+            // cbDisableLBGlobaly
+            // 
+            this.cbDisableLBGlobaly.AutoSize = true;
+            this.cbDisableLBGlobaly.Location = new System.Drawing.Point(6, 19);
+            this.cbDisableLBGlobaly.Name = "cbDisableLBGlobaly";
+            this.cbDisableLBGlobaly.Size = new System.Drawing.Size(170, 17);
+            this.cbDisableLBGlobaly.TabIndex = 0;
+            this.cbDisableLBGlobaly.Text = "Disable all Black Bar detection";
+            this.cbDisableLBGlobaly.UseVisualStyleBackColor = true;
+            // 
+            // bImport
+            // 
+            this.bImport.Location = new System.Drawing.Point(543, 461);
+            this.bImport.Name = "bImport";
+            this.bImport.Size = new System.Drawing.Size(88, 23);
+            this.bImport.TabIndex = 35;
+            this.bImport.Text = "Import Settings";
+            this.bImport.UseVisualStyleBackColor = true;
+            this.bImport.Click += new System.EventHandler(this.bImport_Click);
+            // 
+            // bExport
+            // 
+            this.bExport.Location = new System.Drawing.Point(444, 461);
+            this.bExport.Name = "bExport";
+            this.bExport.Size = new System.Drawing.Size(93, 23);
+            this.bExport.TabIndex = 36;
+            this.bExport.Text = "Export Settings";
+            this.bExport.UseVisualStyleBackColor = true;
+            this.bExport.Click += new System.EventHandler(this.bExport_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 421);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(402, 13);
+            this.label4.TabIndex = 37;
+            this.label4.Text = "Rules are checked from top to bottom, and checking stops at the first matching ru" +
+    "le.";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(15, 397);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(44, 15);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "Notes";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(18, 434);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(548, 13);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "Rules with negative AR values are only used for letterbox/pillarbox video detecti" +
+    "on (when BB detection is enabled).";
+            // 
+            // cbEnableAdvanced
+            // 
+            this.cbEnableAdvanced.AutoSize = true;
+            this.cbEnableAdvanced.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbEnableAdvanced.Location = new System.Drawing.Point(586, 403);
+            this.cbEnableAdvanced.Name = "cbEnableAdvanced";
+            this.cbEnableAdvanced.Size = new System.Drawing.Size(182, 19);
+            this.cbEnableAdvanced.TabIndex = 40;
+            this.cbEnableAdvanced.Text = "Show Advanced Settings";
+            this.cbEnableAdvanced.UseVisualStyleBackColor = true;
+            this.cbEnableAdvanced.CheckedChanged += new System.EventHandler(this.cbEnableAdvanced_CheckedChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(148, 61);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(122, 13);
+            this.label13.TabIndex = 47;
+            this.label13.Text = "Symmetry check limit (%)";
+            this.label13.Visible = false;
+            // 
+            // numSymLimit
+            // 
+            this.numSymLimit.Location = new System.Drawing.Point(280, 57);
+            this.numSymLimit.Maximum = new decimal(new int[] {
+            90,
+            0,
+            0,
+            0});
+            this.numSymLimit.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numSymLimit.Name = "numSymLimit";
+            this.numSymLimit.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numSymLimit.Size = new System.Drawing.Size(43, 20);
+            this.numSymLimit.TabIndex = 46;
+            this.numSymLimit.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numSymLimit.Visible = false;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(355, 11);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(149, 13);
+            this.label14.TabIndex = 48;
+            this.label14.Text = "Search areas (% of frame size)";
+            this.label14.Visible = false;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(243, 11);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(59, 13);
+            this.label15.TabIndex = 49;
+            this.label15.Text = "Processing";
+            this.label15.Visible = false;
+            // 
             // ViewModeSwitcherConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(794, 496);
+            this.Controls.Add(this.cbEnableAdvanced);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -731,6 +829,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetHeight)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlackLevel)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numSymLimit)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -790,5 +889,10 @@ namespace ProcessPlugins.ViewModeSwitcher
     private System.Windows.Forms.DataGridViewTextBoxColumn ColEnableLBDetect;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColAutoCrop;
     private System.Windows.Forms.DataGridViewTextBoxColumn ColMaxCrop;
+    private System.Windows.Forms.CheckBox cbEnableAdvanced;
+    private System.Windows.Forms.Label label13;
+    private System.Windows.Forms.NumericUpDown numSymLimit;
+    private System.Windows.Forms.Label label14;
+    private System.Windows.Forms.Label label15;
   }
 }
