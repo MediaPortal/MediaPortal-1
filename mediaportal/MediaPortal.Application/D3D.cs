@@ -782,12 +782,8 @@ namespace MediaPortal
         return;
       }
 
-      // Reset DialogMenu to avoid freeze on minimize
+      // Init for resetting DialogMenu to avoid freeze on minimize
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dialogMenu != null && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU)
-      {
-        dialogMenu.Dispose();
-      }
 
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
       if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
