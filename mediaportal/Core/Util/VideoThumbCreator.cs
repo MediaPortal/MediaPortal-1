@@ -207,10 +207,6 @@ namespace MediaPortal.Util
 
         if (aCacheThumb && Success)
         {
-          if (!Util.Utils.FileExistsInCache(ShareThumb))
-          {
-            return false;
-          }
           if (Picture.CreateThumbnailVideo(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
                                       0, false))
           {
