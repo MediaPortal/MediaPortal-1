@@ -105,6 +105,9 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.numSymLimit = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.numDetectInterval = new System.Windows.Forms.NumericUpDown();
+            this.bLoadDefaults = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fbosUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dg_RuleSets)).BeginInit();
@@ -115,6 +118,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlackLevel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSymLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDetectInterval)).BeginInit();
             this.SuspendLayout();
             // 
             // bOK
@@ -431,7 +435,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             // linkLabelForum
             // 
             this.linkLabelForum.AutoSize = true;
-            this.linkLabelForum.Location = new System.Drawing.Point(12, 466);
+            this.linkLabelForum.Location = new System.Drawing.Point(128, 466);
             this.linkLabelForum.Name = "linkLabelForum";
             this.linkLabelForum.Size = new System.Drawing.Size(282, 13);
             this.linkLabelForum.TabIndex = 7;
@@ -443,6 +447,8 @@ namespace ProcessPlugins.ViewModeSwitcher
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.label16);
+            this.groupBox2.Controls.Add(this.numDetectInterval);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.label14);
             this.groupBox2.Controls.Add(this.label13);
@@ -782,9 +788,9 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.Location = new System.Drawing.Point(355, 11);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(149, 13);
+            this.label14.Size = new System.Drawing.Size(145, 13);
             this.label14.TabIndex = 48;
-            this.label14.Text = "Search areas (% of frame size)";
+            this.label14.Text = "Search limits (% of frame size)";
             this.label14.Visible = false;
             // 
             // label15
@@ -798,11 +804,57 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label15.Text = "Processing";
             this.label15.Visible = false;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(6, 39);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(150, 13);
+            this.label16.TabIndex = 51;
+            this.label16.Text = "Detection interval (0.25s units)";
+            this.label16.Visible = false;
+            // 
+            // numDetectInterval
+            // 
+            this.numDetectInterval.Location = new System.Drawing.Point(44, 57);
+            this.numDetectInterval.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+            this.numDetectInterval.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numDetectInterval.Name = "numDetectInterval";
+            this.numDetectInterval.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.numDetectInterval.Size = new System.Drawing.Size(43, 20);
+            this.numDetectInterval.TabIndex = 50;
+            this.numDetectInterval.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+            this.numDetectInterval.Visible = false;
+            // 
+            // bLoadDefaults
+            // 
+            this.bLoadDefaults.Location = new System.Drawing.Point(14, 461);
+            this.bLoadDefaults.Name = "bLoadDefaults";
+            this.bLoadDefaults.Size = new System.Drawing.Size(88, 23);
+            this.bLoadDefaults.TabIndex = 41;
+            this.bLoadDefaults.Text = "Load Defaults";
+            this.bLoadDefaults.UseVisualStyleBackColor = true;
+            this.bLoadDefaults.Click += new System.EventHandler(this.bLoadDefaults_Click);
+            // 
             // ViewModeSwitcherConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(794, 496);
+            this.Controls.Add(this.bLoadDefaults);
             this.Controls.Add(this.cbEnableAdvanced);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -830,6 +882,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             ((System.ComponentModel.ISupportInitialize)(this.numBBdetWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numBlackLevel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSymLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDetectInterval)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -894,5 +947,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     private System.Windows.Forms.NumericUpDown numSymLimit;
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label15;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.NumericUpDown numDetectInterval;
+    private System.Windows.Forms.Button bLoadDefaults;
   }
 }

@@ -72,6 +72,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     
     //Settings file name
     private const string SettingsFileName = "ViewModeSwitcher2.xml";
+    private const string DefaultSettingsFileName = "ViewModeSwitcherDefault.xml";  //Dummy filename
     
 
     public static Geometry.Type StringToViewMode(string strViewmode)
@@ -128,6 +129,12 @@ namespace ProcessPlugins.ViewModeSwitcher
       return LoadSettings(string.Empty);
     }
 
+    public bool LoadDefaultSettings()
+    {
+      string tmpConfigFileName = Config.GetFile(Config.Dir.Config, DefaultSettingsFileName);
+      return LoadSettings(tmpConfigFileName);
+    }
+
     /// <summary>
     /// load settings from configuration
     /// </summary>
@@ -158,7 +165,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         disableForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableForVideo, false);  
         disableLBForVideo = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmDisableLBForVideo, false);                
         LBSymLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmSymLimitPercent, 10), 5), 90);        
-        LBdetectInterval = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmLBdetectInterval, 4), 2), 40);
+        LBdetectInterval = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmLBdetectInterval, 4), 2), 120);
         LBMaxCropLimitPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmMaxCropLimitPercent, 12), 0), 50);          
         DetectWidthPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmDetectWidthPercent, 40), 10), 90);  
         DetectHeightPercent = Math.Min(Math.Max(reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmDetectHeightPercent, 40), 10), 90);                

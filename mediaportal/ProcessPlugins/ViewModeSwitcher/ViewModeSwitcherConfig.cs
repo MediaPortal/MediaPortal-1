@@ -58,6 +58,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       cbDisableLBForVideo.Checked = currentSettings.disableLBForVideo;     
       numMaxCropLimit.Value = currentSettings.LBMaxCropLimitPercent;
       numSymLimit.Value = currentSettings.LBSymLimitPercent;
+      numDetectInterval.Value = currentSettings.LBdetectInterval;
       
       ReBuildDataGrid();
     }
@@ -83,6 +84,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       currentSettings.DetectHeightPercent = numBBdetHeight.Value;
       currentSettings.LBMaxCropLimitPercent = numMaxCropLimit.Value;
       currentSettings.LBSymLimitPercent = numSymLimit.Value;
+      currentSettings.LBdetectInterval = (int)numDetectInterval.Value;
 
       currentSettings.disableForVideo = cbDisableForVideo.Checked;
       currentSettings.disableLBForVideo = cbDisableLBForVideo.Checked;
@@ -225,6 +227,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       numSymLimit.Visible         = cbEnableAdvanced.Checked;
       label14.Visible             = cbEnableAdvanced.Checked;
       label15.Visible             = cbEnableAdvanced.Checked;
+      label16.Visible             = cbEnableAdvanced.Checked;
+      numDetectInterval.Visible   = cbEnableAdvanced.Checked;
     }
 
     
@@ -260,5 +264,18 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
       }
     }
+
+    private void bLoadDefaults_Click(object sender, EventArgs e)
+    {
+      if (!currentSettings.LoadDefaultSettings())
+      {
+        MessageBox.Show("Import Error!");
+      }
+      else
+      {
+        RefreshFormComponents(); // refresh the form
+      }
+    }   
+    
   }
 }
