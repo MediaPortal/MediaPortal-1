@@ -1466,9 +1466,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           return;
         }
       }
-      if (!GraphRunning() ||
-        CurrentTuningDetail == null ||
-        _tunerInterface == null)
+      if (_currentTuningDetail == null || _state != DeviceState.Started || _tunerInterface == null)
       {
         _tunerLocked = false;
         _signalPresent = false;
@@ -1818,131 +1816,75 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     #region graph building
 
     /// <summary>
-    /// Build the DirectShow filter graph.
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
-      try
+      this.LogDebug("TvCardDvbSs2: build graph");
+      if (_tunerType == CardType.Unknown || !_cardPresent)
       {
-        this.LogDebug("TvCardDvbSs2: build graph");
-        if (_isDeviceInitialised)
-        {
-          this.LogError("TvCardDvbSs2: the graph is already built");
-          throw new TvException("The graph is already built.");
-        }
-        if (_tunerType == CardType.Unknown || !_cardPresent)
-        {
-          this.LogError("TvCardDvbSs2: device is not present, driver restart required");
-          throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: device is not present, driver restart required");
-        }
-
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _rotEntry = new DsROTEntry(_graphBuilder);
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-
-        // Create, add and initialise the B2C2 source filter.
-        this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
-        _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
-        if (_filterB2c2Adapter == null)
-        {
-          this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
-          return;
-        }
-        this.LogDebug("TvCardDvbSs2: add source filter to graph");
-        int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
-        if (hr != 0)
-        {
-          this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return;
-        }
-        this.LogDebug("TvCardDvbSs2: get device interface handles");
-        _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
-        _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
-        if (_tunerInterface == null || _dataInterface == null)
-        {
-          this.LogError("TvCardDvbSs2: failed to get device interface handles");
-          return;
-        }
-        this.LogDebug("TvCardDvbSs2: initialise tuner interface");
-        hr = _tunerInterface.Initialize();
-        if (hr != 0)
-        {
-          this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return;
-        }
-        // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
-        // in leaving it...
-        _tunerInterface.CheckLock();
-
-        // The source filter has multiple output pins, and connecting to the right one is critical.
-        // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
-        // filter and any plugin filters.
-        IBaseFilter lastFilter = _filterB2c2Adapter;
-        AddInfiniteTeeToGraph(ref lastFilter);
-
-        // Load and open plugins.
-        LoadPlugins(_filterB2c2Adapter, ref lastFilter);
-        // This class implements the plugin interface and should be considered as the main plugin.
-        _customDeviceInterfaces.Add(this);
-
-        // Complete the graph.
-        AddTsWriterFilterToGraph();
-        ConnectTsWriterIntoGraph(lastFilter);
-        _isDeviceInitialised = true;
-
-        OpenPlugins();
-        SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
-        _diseqcController = new DiseqcController(this, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
-
-        // Plugins can request to pause or start the device - other actions don't make sense here. The running
-        // state is considered more compatible than the paused state, so start takes precedence.
-        DeviceAction actualAction = DeviceAction.Default;
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          DeviceAction action;
-          deviceInterface.OnInitialised(this, out action);
-          if (action == DeviceAction.Pause)
-          {
-            if (actualAction == DeviceAction.Default)
-            {
-              this.LogDebug("TvCardDvbBase: plugin \"{0}\" will cause device pause", deviceInterface.Name);
-              actualAction = DeviceAction.Pause;
-            }
-            else
-            {
-              this.LogDebug("TvCardDvbBase: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
-            }
-          }
-          else if (action == DeviceAction.Start)
-          {
-            this.LogDebug("TvCardDvbBase: plugin \"{0}\" will cause device start", deviceInterface.Name);
-            actualAction = action;
-          }
-          else if (action != DeviceAction.Default)
-          {
-            this.LogDebug("TvCardDvbBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
-          }
-        }
-        if (actualAction == DeviceAction.Start || _idleMode == DeviceIdleMode.AlwaysOn)
-        {
-          SetGraphState(FilterState.Running);
-        }
-        else if (actualAction == DeviceAction.Pause)
-        {
-          SetGraphState(FilterState.Paused);
-        }
-
-        ReadDeviceInfo();
+        this.LogError("TvCardDvbSs2: device is not present, driver restart required");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: device is not present, driver restart required");
       }
-      catch (Exception ex)
+
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _rotEntry = new DsROTEntry(_graphBuilder);
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+
+      // Create, add and initialise the B2C2 source filter.
+      this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
+      _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
+      if (_filterB2c2Adapter == null)
       {
-        const string graphBuildingFailed = "Graph building failed";
-        this.LogError(ex, graphBuildingFailed);
-        Dispose();
-        _isDeviceInitialised = false;
-        throw new TvExceptionGraphBuildingFailed(graphBuildingFailed, ex);
+        this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
+        return;
       }
+      this.LogDebug("TvCardDvbSs2: add source filter to graph");
+      int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
+      if (hr != 0)
+      {
+        this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
+      }
+      this.LogDebug("TvCardDvbSs2: get device interface handles");
+      _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
+      _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
+      if (_tunerInterface == null || _dataInterface == null)
+      {
+        this.LogError("TvCardDvbSs2: failed to get device interface handles");
+        return;
+      }
+      this.LogDebug("TvCardDvbSs2: initialise tuner interface");
+      hr = _tunerInterface.Initialize();
+      if (hr != 0)
+      {
+        this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        return;
+      }
+      // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
+      // in leaving it...
+      _tunerInterface.CheckLock();
+
+      // The source filter has multiple output pins, and connecting to the right one is critical.
+      // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
+      // filter and any plugin filters.
+      IBaseFilter lastFilter = _filterB2c2Adapter;
+      AddInfiniteTeeToGraph(ref lastFilter);
+
+      // Load and open plugins.
+      LoadPlugins(_filterB2c2Adapter, ref lastFilter);
+      // This class implements the plugin interface and should be considered as the main plugin.
+      _customDeviceInterfaces.Add(this);
+
+      // Complete the graph.
+      AddTsWriterFilterToGraph();
+      ConnectTsWriterIntoGraph(lastFilter);
+
+      SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
+      _diseqcController = new DiseqcController(this, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
+
+      ReadDeviceInfo();
     }
 
     /// <summary>
@@ -1957,7 +1899,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       if (hr != 0)
       {
         this.LogError("TvCardDvbSs2: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: failed to add infinite tee");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: failed to add infinite tee");
       }
 
       this.LogDebug("TvCardDvbSs2: connect infinite tee filter");
@@ -1969,7 +1911,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       if (hr != 0)
       {
         this.LogError("TvCardDvbSs2: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbSs2: failed to connect infinite tee");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: failed to connect infinite tee");
       }
       lastFilter = _infTee;
     }
@@ -2207,11 +2149,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when device initialisation is complete.
+    /// This callback is invoked when the device has been successfully loaded.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnInitialised(ITVCard tuner, out DeviceAction action)
+    public virtual void OnLoaded(ITVCard tuner, out DeviceAction action)
     {
       action = DeviceAction.Default;
     }
@@ -2238,12 +2180,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// This callback is invoked after a tune request is submitted, when the device is started but before
     /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public virtual void OnRunning(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
     }
 

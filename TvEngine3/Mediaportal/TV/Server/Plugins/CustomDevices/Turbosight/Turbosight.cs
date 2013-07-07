@@ -1160,12 +1160,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// This callback is invoked after a tune request is submitted, when the device is started but before
     /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public override void OnRunning(ITVCard tuner, IChannel currentChannel)
+    public override void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
       StartMmiHandlerThread();
@@ -1347,16 +1347,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool resetDevice)
     {
       this.LogDebug("Turbosight: reset conditional access interface");
 
       // TBS have confirmed that it is not currently possible to call On_Start_CI() multiple times on a
       // filter instance ***even if On_Exit_CI() is called***. The graph must be rebuilt to reset the CI.
-      rebuildGraph = true;
+      resetDevice = true;
       return CloseInterface() && OpenInterface();
     }
 

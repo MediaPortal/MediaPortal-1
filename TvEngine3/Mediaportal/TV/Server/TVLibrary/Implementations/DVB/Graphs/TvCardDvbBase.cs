@@ -163,8 +163,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
     #region tuning & scanning
 
-    protected virtual void OnAfterTune(IChannel channel) { }
-
     /// <summary>
     /// Actually tune to a channel.
     /// </summary>
@@ -405,94 +403,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     #region graph building
 
     /// <summary>
-    /// Build the BDA filter graph.
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
-      this.LogDebug("TvCardDvbBase: build graph");
-      try
+      this.LogDebug("TvCardDvbBase: load device");
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+      _rotEntry = new DsROTEntry(_graphBuilder);
+
+      AddNetworkProviderFilter();
+      AddTsWriterFilterToGraph();
+      if (!_useInternalNetworkProvider && _filterNetworkProvider != null)
       {
-        if (_isDeviceInitialised)
+        _tuningSpace = GetTuningSpace();
+        if (_tuningSpace == null)
         {
-          this.LogError("TvCardDvbBase: the graph is already built");
-          throw new TvException("The graph is already built.");
+          _tuningSpace = CreateTuningSpace();
         }
+        ITuner tuner = _filterNetworkProvider as ITuner;
+        if (tuner == null)
+        {
+          throw new TvException("Failed to get ITuner handle from network provider.");
+        }
+        int hr = tuner.put_TuningSpace(_tuningSpace);
+        HResult.ThrowException(hr, "Failed to put_TuningSpace() on ITuner.");
 
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-        _rotEntry = new DsROTEntry(_graphBuilder);
-
-        AddNetworkProviderFilter();
-        AddTsWriterFilterToGraph();
-        if (!_useInternalNetworkProvider && _filterNetworkProvider != null)
-        {
-          _tuningSpace = GetTuningSpace();
-          if (_tuningSpace == null)
-          {
-            _tuningSpace = CreateTuningSpace();
-          }
-          ITuner tuner = _filterNetworkProvider as ITuner;
-          if (tuner == null)
-          {
-            throw new TvException("Failed to get ITuner handle from network provider.");
-          }
-          int hr = tuner.put_TuningSpace(_tuningSpace);
-          HResult.ThrowException(hr, "Failed to put_TuningSpace() on ITuner.");
-
-          AddMpeg2DemuxerToGraph();
-        }
-        AddAndConnectBdaBoardFilters(_device);
-        FilterGraphTools.SaveGraphFile(_graphBuilder, _device.Name + " - " + _tunerType + " Graph.grf");
-        GetTunerSignalStatistics();
-        _isDeviceInitialised = true;
-
-        // Plugins can request to pause or start the device - other actions don't make sense here. The running
-        // state is considered more compatible than the paused state, so start takes precedence.
-        DeviceAction actualAction = DeviceAction.Default;
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          DeviceAction action;
-          deviceInterface.OnInitialised(this, out action);
-          if (action == DeviceAction.Pause)
-          {
-            if (actualAction == DeviceAction.Default)
-            {
-              this.LogDebug("TvCardDvbBase: plugin \"{0}\" will cause device pause", deviceInterface.Name);
-              actualAction = DeviceAction.Pause;
-            }
-            else
-            {
-              this.LogDebug("TvCardDvbBase: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
-            }
-          }
-          else if (action == DeviceAction.Start)
-          {
-            this.LogDebug("TvCardDvbBase: plugin \"{0}\" will cause device start", deviceInterface.Name);
-            actualAction = action;
-          }
-          else if (action != DeviceAction.Default)
-          {
-            this.LogDebug("TvCardDvbBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
-          }
-        }
-        if (actualAction == DeviceAction.Start || _idleMode == DeviceIdleMode.AlwaysOn)
-        {
-          SetGraphState(FilterState.Running);
-        }
-        else if (actualAction == DeviceAction.Pause)
-        {
-          SetGraphState(FilterState.Paused);
-        }
+        AddMpeg2DemuxerToGraph();
       }
-      catch (Exception ex)
-      {
-        const string graphBuildingFailed = "Graph building failed.";
-        this.LogError(ex, graphBuildingFailed);
-        Dispose();
-        _isDeviceInitialised = false;        
-        throw new TvExceptionGraphBuildingFailed(graphBuildingFailed, ex);
-      }
+      AddAndConnectBdaBoardFilters(_device);
+      FilterGraphTools.SaveGraphFile(_graphBuilder, _device.Name + " - " + _tunerType + " Graph.grf");
+      GetTunerSignalStatistics();
     }
 
     /// <summary>
@@ -775,10 +717,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       // Render the last filter with the tswriter
       ConnectTsWriterIntoGraph(lastFilter);
-
-      // Open any plugins we found. This is separated from loading because some plugins can't be opened
-      // until the graph has finished being built.
-      OpenPlugins();
     }
 
     /// <summary>
@@ -964,7 +902,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add MPEG 2 demultiplexer");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add MPEG 2 demultiplexer");
       }
     }
 
@@ -983,7 +921,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to connect MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to connect MPEG 2 demultiplexer");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to connect MPEG 2 demultiplexer");
       }
     }
 
@@ -999,14 +937,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add infinite tee");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add infinite tee");
       }
       this.LogDebug("TvCardDvbBase:   render...->[inf tee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTee);
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to render stream through the infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to render stream through the infinite tee");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to render stream through the infinite tee");
       }
       lastFilter = _infTee;
     }
@@ -1022,13 +960,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (_filterTsWriter == null)
       {
         this.LogError("TvCardDvbBase: failed to marshal TsWriter filter");
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to marshal TsWriter filter");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to marshal TsWriter filter");
       }
       int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal TS Analyzer");
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to add TsWriter filter");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add TsWriter filter");
       }
       _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
       _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
@@ -1047,7 +985,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to render stream into the TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbBase: failed to render stream into the TsWriter filter");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to render stream into the TsWriter filter");
       }
     }
 
@@ -1221,23 +1159,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
       FreeAllSubChannels();
       this.LogDebug("  stop");
-      // Decompose the graph
-
-      int counter = 0, hr = 0;
-      FilterState state = FilterState.Running;
-      hr = ((IMediaControl)_graphBuilder).Stop();
-      while (state != FilterState.Stopped)
-      {
-        System.Threading.Thread.Sleep(100);
-        hr = ((IMediaControl)_graphBuilder).GetState(10, out state);
-        counter++;
-        if (counter >= 30)
-        {
-          if (state != FilterState.Stopped)
-            this.LogError("dvb:graph still running");
-          break;
-        }
-      }
+      PerformDeviceAction(DeviceAction.Stop);
 
       base.Dispose();
 
@@ -1289,7 +1211,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         _tunerStatistics.Clear();
       }
       this.LogDebug("  decompose done...");
-      _isDeviceInitialised = false;
+      _state = DeviceState.NotLoaded;
     }
 
     #endregion
@@ -1379,10 +1301,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       try
       {
-        if (!GraphRunning() ||
-          CurrentTuningDetail == null ||
-          _tunerStatistics == null ||
-          _tunerStatistics.Count == 0)
+        if (_currentTuningDetail == null || _state != DeviceState.Started || _tunerStatistics == null || _tunerStatistics.Count == 0)
         {
           //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
@@ -1953,7 +1872,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         IChannel channel = ChannelManagement.GetTuningChannel(detail);
         if (CanTune(channel))
         {
-          return CurrentTuningDetail.IsDifferentTransponder(channel);
+          return _currentTuningDetail.IsDifferentTransponder(channel);
         }
       }
       return false;

@@ -215,13 +215,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// The action that will be taken when the device is no longer being actively used.
     /// </summary>
-    protected DeviceIdleMode _idleMode = DeviceIdleMode.Stop;
-
-    /// <summary>
-    /// An indicator: has the device been initialised? For most devices this indicates whether the DirectShow/BDA
-    /// filter graph has been built.
-    /// </summary>
-    protected bool _isDeviceInitialised = false;
+    protected IdleMode _idleMode = IdleMode.Stop;
 
     /// <summary>
     /// A list containing the custom device interfaces supported by this device. The list is ordered by
@@ -232,7 +226,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Enable or disable the use of conditional access interface(s).
     /// </summary>
-    protected bool _useConditionalAccessInterace = true;
+    protected bool _useConditionalAccessInterface = true;
 
     /// <summary>
     /// The type of conditional access module available to the conditional access interface.
@@ -293,7 +287,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected PidFilterMode _pidFilterMode = PidFilterMode.Auto;
 
     /// <summary>
-    /// The current tuning detail that the device is tuned to. Null if the device is currently not tuned.
+    /// The device's current tuning parameter values or null if the device is not tuned.
     /// </summary>
     protected IChannel _currentTuningDetail = null;
 
@@ -311,6 +305,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected bool _cancelTune = false;
 
+    /// <summary>
+    /// The current state of the device.
+    /// </summary>
+    protected DeviceState _state = DeviceState.NotLoaded;
+
     #endregion
 
     #region ctor
@@ -321,7 +320,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     ///<param name="device">Base DS device</param>
     protected TvCardBase(DsDevice device)
     {
-      _isDeviceInitialised = false;
       _mapSubChannels = new Dictionary<int, ITvSubChannel>();
       _lastSignalUpdate = DateTime.MinValue;
       _parameters = new ScanParameters();
@@ -343,12 +341,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           _cardId = c.IdCard;
           _name = c.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
-          _idleMode = (DeviceIdleMode)c.IdleMode;
+          _idleMode = (IdleMode)c.IdleMode;
           _pidFilterMode = (PidFilterMode)c.PidFilterMode;
           _useCustomTuning = c.UseCustomTuning;
 
           // Conditional access...
-          _useConditionalAccessInterace = c.UseConditionalAccess;
+          _useConditionalAccessInterface = c.UseConditionalAccess;
           _camType = (CamType)c.CamType;
           _decryptLimit = c.DecryptLimit;
           _multiChannelDecryptMode = (MultiChannelDecryptMode)c.MultiChannelDecryptMode;
@@ -357,7 +355,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           if (c.Enabled && c.PreloadCard)
           {
             this.LogInfo("TvCardBase: preloading device {0}", _name);
-            BuildGraph();
+            Load();
           }
         }
       }
@@ -516,9 +514,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        if (!_useConditionalAccessInterace)
+        if (!_useConditionalAccessInterface)
         {
           return false;
+        }
+        if (_state == DeviceState.NotLoaded)
+        {
+          Load();
         }
         // Return true if any interface implements IConditionalAccessProvider.
         foreach (ICustomDevice d in _customDeviceInterfaces)
@@ -541,7 +543,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       get
       {
-        if (!_useConditionalAccessInterace)
+        if (!_useConditionalAccessInterface)
         {
           return null;
         }
@@ -734,23 +736,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #endregion
 
     /// <summary>
-    /// Check if the BDA filter graph is running.
-    /// </summary>
-    /// <returns><c>true</c> if the graph is running, otherwise <c>false</c></returns>
-    protected bool GraphRunning()
-    {
-      bool graphRunning = false;
-
-      if (_graphBuilder != null)
-      {
-        FilterState state;
-        (_graphBuilder as IMediaControl).GetState(10, out state);
-        graphRunning = (state == FilterState.Running);
-      }
-      return graphRunning;
-    }
-
-    /// <summary>
     /// Load the <see cref="T:TvLibrary.Interfaces.ICustomDevice"/> plugins for this device.
     /// </summary>
     /// <remarks>
@@ -834,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected void OpenPlugins()
     {
       this.LogDebug("TvCardBase: open custom device plugins");
-      if (_useConditionalAccessInterace)
+      if (_useConditionalAccessInterface)
       {
         foreach (ICustomDevice plugin in _customDeviceInterfaces)
         {
@@ -1194,9 +1179,73 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region abstract and virtual methods
 
     /// <summary>
-    /// Builds the graph.
+    /// Load the device.
     /// </summary>
-    public virtual void BuildGraph() { }
+    public virtual void Load()
+    {
+      if (_state != DeviceState.NotLoaded)
+      {
+        this.LogError("TvCardBase: the device is already loaded");
+        return;
+      }
+
+      try
+      {
+        PerformLoading();
+
+        _state = DeviceState.Stopped;
+
+        // Open any plugins that were detected during loading. This is separated from loading because some
+        // plugins can't be opened until the device has fully loaded.
+        OpenPlugins();
+
+        // Plugins can request to pause or start the device - other actions don't make sense here. The started
+        // state is considered more compatible than the paused state, so start takes precedence.
+        DeviceAction actualAction = DeviceAction.Default;
+        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+        {
+          DeviceAction action;
+          deviceInterface.OnLoaded(this, out action);
+          if (action == DeviceAction.Pause)
+          {
+            if (actualAction == DeviceAction.Default)
+            {
+              this.LogDebug("TvCardBase: plugin \"{0}\" will cause device pause", deviceInterface.Name);
+              actualAction = DeviceAction.Pause;
+            }
+            else
+            {
+              this.LogDebug("TvCardBase: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
+            }
+          }
+          else if (action == DeviceAction.Start)
+          {
+            this.LogDebug("TvCardBase: plugin \"{0}\" will cause device start", deviceInterface.Name);
+            actualAction = action;
+          }
+          else if (action != DeviceAction.Default)
+          {
+            this.LogDebug("TvCardBase: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
+          }
+        }
+
+        if (actualAction == DeviceAction.Default && _idleMode == IdleMode.AlwaysOn)
+        {
+          this.LogDebug("TvCardBase: device is configured as always on");
+          actualAction = DeviceAction.Start;
+        }
+
+        if (actualAction != DeviceAction.Default)
+        {
+          PerformDeviceAction(actualAction);
+        }
+      }
+      catch (Exception ex)
+      {
+        Dispose();
+        throw new TvExceptionDeviceLoadFailed("Failed to load device.", ex);
+      }
+    }
 
     /// <summary>
     /// Wait for the tuner to acquire signal lock.
@@ -1274,13 +1323,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         DeviceAction action = DeviceAction.Stop;
         switch (_idleMode)
         {
-          case DeviceIdleMode.Pause:
+          case IdleMode.Pause:
             action = DeviceAction.Pause;
             break;
-          case DeviceIdleMode.Unload:
+          case IdleMode.Unload:
             action = DeviceAction.Unload;
             break;
-          case DeviceIdleMode.AlwaysOn:
+          case IdleMode.AlwaysOn:
             action = DeviceAction.Start;
             break;
         }
@@ -1316,7 +1365,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       finally
       {
         // We always want to force a full retune on the next tune request in this situation.
-        // TODO: consider the implications for pausing the graph. Do we really want to do this?
+        // TODO: consider the implications for pausing the graph (advantages of pause vs. stop may be reduced). Do we really want to do this?
         _currentTuningDetail = null;
       }
     }
@@ -1335,42 +1384,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           // TODO: this should work, but it would be better to have Dispose() as final and Decompose() or
           // some other alternative for resetting.
           Dispose();
-          BuildGraph();
+          Load();
         }
         else if (action == DeviceAction.Unload)
         {
           Dispose();
         }
+        else if (action == DeviceAction.Pause)
+        {
+          SetDeviceState(DeviceState.Paused);
+        }
+        else if (action == DeviceAction.Stop)
+        {
+          SetDeviceState(DeviceState.Stopped);
+        }
+        else if (action == DeviceAction.Start)
+        {
+          SetDeviceState(DeviceState.Started);
+        }
+        else if (action == DeviceAction.Restart)
+        {
+          SetDeviceState(DeviceState.Stopped);
+          SetDeviceState(DeviceState.Started);
+        }
         else
         {
-          if (_graphBuilder == null)
-          {
-            this.LogDebug("TvCardBase: graphbuilder is null");
-            return;
-          }
-
-          if (action == DeviceAction.Pause)
-          {
-            SetGraphState(FilterState.Paused);
-          }
-          else if (action == DeviceAction.Stop)
-          {
-            SetGraphState(FilterState.Stopped);
-          }
-          else if (action == DeviceAction.Start)
-          {
-            SetGraphState(FilterState.Running);
-          }
-          else if (action == DeviceAction.Restart)
-          {
-            SetGraphState(FilterState.Stopped);
-            SetGraphState(FilterState.Running);
-          }
-          else
-          {
-            this.LogDebug("TvCardBase: unhandled action");
-            return;
-          }
+          this.LogDebug("TvCardBase: unhandled action");
+          return;
         }
 
         this.LogDebug("TvCardBase: action succeeded");
@@ -1382,28 +1422,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Set the state of the DirectShow/BDA filter graph.
+    /// Set the state of the device.
     /// </summary>
-    /// <param name="state">The state to put the filter graph in.</param>
-    protected virtual void SetGraphState(FilterState state)
+    /// <param name="state">The state to apply to the device.</param>
+    protected virtual void SetDeviceState(DeviceState state)
     {
-      this.LogDebug("TvCardBase: set graph state, state = {0}", state);
+      this.LogDebug("TvCardBase: set device state, current state = {0}, requested state = {1}", state);
 
-      // Get current state.
-      FilterState currentState;
-      (_graphBuilder as IMediaControl).GetState(10, out currentState);
-      this.LogDebug("  current state = {0}", currentState);
-      if (state == currentState)
+      if (state == _state)
       {
-        this.LogDebug("TvCardBase: graph already in required state");
+        this.LogDebug("TvCardBase: device already in required state");
         return;
       }
+      if (_graphBuilder == null)
+      {
+        this.LogDebug("TvCardBase: graphbuilder is null");
+        return;
+      }
+
       int hr = 0;
-      if (state == FilterState.Stopped)
+      if (state == DeviceState.Stopped)
       {
         hr = (_graphBuilder as IMediaControl).Stop();
       }
-      else if (state == FilterState.Paused)
+      else if (state == DeviceState.Paused)
       {
         hr = (_graphBuilder as IMediaControl).Pause();
       }
@@ -1411,11 +1453,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         hr = (_graphBuilder as IMediaControl).Run();
       }
-      if (hr < 0 || hr > 1)
-      {
-        this.LogError("TvCardBase: failed to perform action, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvException("TvCardBase: failed to set graph state");
-      }
+      HResult.ThrowException(hr, string.Format("Failed to change device state from {0} to {1}.", _state, state));
+      _state = state;
     }
 
     #endregion
@@ -1452,10 +1491,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       ITvSubChannel subChannel = null;
       try
       {
-        // The DirectShow/BDA graph needs to be assembled before the channel can be tuned.
-        if (!_isDeviceInitialised)
+        // The device must be loaded before a channel can be tuned.
+        if (_state == DeviceState.NotLoaded)
         {
-          BuildGraph();
+          Load();
           ThrowExceptionIfTuneCancelled();
         }
 
@@ -1550,7 +1589,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
         // Start the DirectShow/BDA graph if it is not already running.
         ThrowExceptionIfTuneCancelled();
-        SetGraphState(FilterState.Running);
+        PerformDeviceAction(DeviceAction.Start);
         ThrowExceptionIfTuneCancelled();
 
         // Ensure that data/streams which are required to detect the service will pass through the device's
@@ -1561,7 +1600,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Plugin OnRunning().
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
-          deviceInterface.OnRunning(this, channel);
+          deviceInterface.OnStarted(this, channel);
         }
 
         LockInOnSignal();
@@ -1635,6 +1674,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="channel">The channel to tune to.</param>
     protected abstract void PerformTuning(IChannel channel);
+
+    /// <summary>
+    /// Actually load the device.
+    /// </summary>
+    protected abstract void PerformLoading();
 
     #endregion
 

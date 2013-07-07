@@ -53,10 +53,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <remarks>
     /// This might be necessary after an error condition is detected.
     /// </remarks>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    bool ResetInterface(out bool rebuildGraph);
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    bool ResetInterface(out bool resetDevice);
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.

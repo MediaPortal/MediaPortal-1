@@ -1343,8 +1343,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         // seems to resolve the problem.
         if (error == TtCiError.NoCaResource)
         {
-          bool rebuildGraph;
-          ResetInterface(out rebuildGraph);
+          bool resetDevice;
+          ResetInterface(out resetDevice);
         }
       }
       catch (Exception ex)
@@ -1931,12 +1931,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool resetDevice)
     {
-      rebuildGraph = false;
+      resetDevice = false;
       return CloseInterface() && OpenInterface();
     }
 

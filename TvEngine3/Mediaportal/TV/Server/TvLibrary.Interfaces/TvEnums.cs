@@ -63,34 +63,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   }
 
   /// <summary>
-  /// Device idle modes. A device's idle mode determines the action that will be taken when a device is no longer
+  /// Idle modes. An idle mode determines the action that will be taken when a device is no longer
   /// being actively used.
   /// </summary>
-  public enum DeviceIdleMode
+  public enum IdleMode
   {
     /// <summary>
-    /// For a BDA device, pause the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, pause the graph.
     /// - not supported by some devices
     /// - average power use (device dependent)
     /// - fast first (re)tune
     /// </summary>
     Pause,
     /// <summary>
-    /// For a BDA device, stop the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, stop the graph.
     /// - highly compatible
     /// - low power use (device dependent)
     /// - average/default first (re)tune speed
     /// </summary>
     Stop,
     /// <summary>
-    /// For a BDA device, dismantle the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
     /// - ultimate compatibility
     /// - minimal power use
     /// - slowest first (re)tune.
     /// </summary>
     Unload,
     /// <summary>
-    /// For a BDA device, keep the DirectShow/BDA graph running.
+    /// For a device that presents a DirectShow/BDA filter interface, keep the graph running.
     /// - reasonable compatibility
     /// - highest power use
     /// - fastest possible first (re)tune.
@@ -116,34 +116,60 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     Default,
     /// <summary>
     /// Start the device.
-    /// For a BDA device, start the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, run the graph.
     /// </summary>
     Start,
     /// <summary>
     /// Pause the device.
-    /// For a BDA device, pause the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, pause the graph.
     /// </summary>
     Pause,
     /// <summary>
     /// Stop the device.
-    /// For a BDA device, stop the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, stop the graph.
     /// </summary>
     Stop,
     /// <summary>
     /// Retart the device.
-    /// For a BDA device, stop then restart the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, stop then run the graph.
     /// </summary>
     Restart,
     /// <summary>
     /// Reset the device.
-    /// For a BDA device, rebuild the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, rebuild the graph.
     /// </summary>
     Reset,
     /// <summary>
     /// Unload the device.
-    /// For a BDA device, dismantle the DirectShow/BDA graph.
+    /// For a device that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
     /// </summary>
     Unload
+  }
+
+  /// <summary>
+  /// Device state. For a device that presents a DirectShow/BDA filter interface, this measure of
+  /// state roughly mirrors the state of the graph.
+  /// </summary>
+  public enum DeviceState
+  {
+    /// <summary>
+    /// The device is not yet loaded. It must be loaded/initialised before any interaction may occur.
+    /// </summary>
+    [Description("Not Loaded")]
+    NotLoaded,
+    /// <summary>
+    /// The device is loaded but not paused or started.
+    /// </summary>
+    Stopped,
+    /// <summary>
+    /// The device is paused.
+    /// </summary>
+    Paused,
+    /// <summary>
+    /// The device is started. Note a device may be started and idle if the device is configured to
+    /// use the always on idle mode.
+    /// </summary>
+    Started
   }
 
   /// <summary>

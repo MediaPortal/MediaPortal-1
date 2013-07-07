@@ -98,12 +98,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     #region graph building
 
     /// <summary>
-    /// Build the BDA filter graph.
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
-      this.LogDebug("TvCardDvbS: build graph");
-      base.BuildGraph();
+      this.LogDebug("TvCardDvbS: load device");
+      base.PerformLoading();
 
       // Check if one of the supported interfaces is capable of sending DiSEqC commands.
       foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)

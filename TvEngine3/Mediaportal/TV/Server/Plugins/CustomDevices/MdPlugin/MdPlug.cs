@@ -1189,15 +1189,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool resetDevice)
     {
       this.LogDebug("MD Plugin: reset conditional access interface");
 
       // We have to rebuild the graph to reset anything.
-      rebuildGraph = true;
+      resetDevice = true;
       return true;
     }
 

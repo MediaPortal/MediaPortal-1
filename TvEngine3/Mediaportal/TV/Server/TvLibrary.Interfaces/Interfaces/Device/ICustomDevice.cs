@@ -58,14 +58,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when device initialisation is complete.
+    /// This callback is invoked when the device has been successfully loaded.
     /// </summary>
     /// <remarks>
-    /// Example usage: start or reconfigure the BDA filter graph.
+    /// Example usage: start or reconfigure the device.
     /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    void OnInitialised(ITVCard tuner, out DeviceAction action);
+    void OnLoaded(ITVCard tuner, out DeviceAction action);
 
     /// <summary>
     /// This callback is invoked before a tune request is assembled.
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <remarks>
     /// Example usage: tweak tuning parameters or force the device's BDA graph into a particular state before
     /// the tune request is submitted.
-    /// Process: [this callback] -> assemble and submit tune request -> OnAfterTune() -> run device -> OnRunning() -> lock check
+    /// Process: [this callback] -> assemble and submit tune request -> OnAfterTune() -> start device -> OnRunning() -> lock check
     /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
@@ -86,29 +86,29 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </summary>
     /// <remarks>
     /// Example usage: call a function that must be called at this specific stage in the tuning process.
-    /// Process: OnBeforeTune() -> assemble and submit tune request -> [this callback] -> run device -> OnRunning() -> lock check
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> [this callback] -> start device -> OnRunning() -> lock check
     /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     void OnAfterTune(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// This callback is invoked after a tune request is submitted, when the device is started but before
     /// signal lock is checked.
     /// </summary>
     /// <remarks>
     /// Example usage: call a function that must be called at this specific stage in the tuning process.
-    /// Process: OnBeforeTune() -> assemble and submit tune request -> OnAfterTune() -> run device -> [this callback] -> lock check
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> OnAfterTune() -> start device -> [this callback] -> lock check
     /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    void OnRunning(ITVCard tuner, IChannel currentChannel);
+    void OnStarted(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
     /// This callback is invoked before the device is stopped.
     /// </summary>
     /// <remarks>
-    /// Example usage: keep the device running to ensure optimal operation.
+    /// Example usage: don't allow the device to be stopped to ensure optimal operation or compatibility.
     /// </remarks>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
@@ -174,11 +174,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when device initialisation is complete.
+    /// This callback is invoked when the device has been successfully loaded.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnInitialised(ITVCard tuner, out DeviceAction action)
+    public virtual void OnLoaded(ITVCard tuner, out DeviceAction action)
     {
       action = DeviceAction.Default;
     }
@@ -205,12 +205,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// This callback is invoked after a tune request is submitted, when the device is started but before
     /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public virtual void OnRunning(ITVCard tuner, IChannel currentChannel)
+    public virtual void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
     }
 

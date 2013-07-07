@@ -203,7 +203,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft
     /// Determine if a filter supports PID filtering.
     /// </summary>
     /// <param name="filter">The filter to check.</param>
-    /// <returns>an implementation of the IMPEG2PIDMap interace if successful, otherwise <c>null</c></returns>
+    /// <returns>an implementation of the IMPEG2PIDMap interface if successful, otherwise <c>null</c></returns>
     private IMPEG2PIDMap CheckBdaPidFilterSupport(IBaseFilter filter)
     {
       this.LogDebug("Microsoft: check for IMPEG2PIDMap PID filtering support");

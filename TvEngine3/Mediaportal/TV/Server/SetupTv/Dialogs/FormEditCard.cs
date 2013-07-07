@@ -91,7 +91,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
         numericUpDownDiseqcCommandRepeatCount.Value = _card.DiseqcCommandRepeatCount;
         mpComboBoxPidFilterMode.SelectedItem = ((PidFilterMode)_card.PidFilterMode).ToString();
       }
-      mpComboBoxIdleMode.SelectedItem = ((DeviceIdleMode)_card.IdleMode).ToString();
+      mpComboBoxIdleMode.SelectedItem = ((IdleMode)_card.IdleMode).ToString();
       setConditionalAccessFieldVisibility();
 
       // Devices can't be preloaded if they're part of a hybrid group.
@@ -140,7 +140,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _card.DecryptLimit = (int)numericUpDownDecryptLimit.Value;
       _card.AlwaysSendDiseqcCommands = checkBoxAlwaysSendDiseqcCommands.Checked;
       _card.DiseqcCommandRepeatCount = (int)numericUpDownDiseqcCommandRepeatCount.Value;
-      _card.IdleMode = (int)Enum.Parse(typeof(DeviceIdleMode), (String)mpComboBoxIdleMode.SelectedItem);
+      _card.IdleMode = (int)Enum.Parse(typeof(IdleMode), (String)mpComboBoxIdleMode.SelectedItem);
 
       // Careful here! The selected items will be null for certain device types.
       if (!_cardType.Equals("Analog"))

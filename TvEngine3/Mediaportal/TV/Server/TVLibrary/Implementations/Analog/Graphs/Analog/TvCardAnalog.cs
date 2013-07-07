@@ -107,7 +107,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       {
         if (string.IsNullOrEmpty(_configuration.Graph.Tuner.Name))
         {
-          BuildGraph();
+          Load();
         }
         return (_configuration.Graph.Tuner.RadioMode & RadioMode.FM) != 0;
       }
@@ -183,9 +183,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     {
       get
       {
-        if (!_isDeviceInitialised)
+        if (_state == DeviceState.NotLoaded)
         {
-          BuildGraph();
+          Load();
         }
         return _qualityControl != null;
       }
@@ -224,7 +224,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
         }
       }
       _lastSignalUpdate = DateTime.Now;
-      if (!GraphRunning() || _tuner == null)
+      if (_currentTuningDetail == null || _state != DeviceState.Started || _tuner == null)
       {
         _tunerLocked = false;
         _signalPresent = false;
@@ -262,18 +262,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     /// </summary>
     public override void Dispose()
     {
-      if (_graphBuilder == null)
-        return;
       this.LogDebug("analog:Dispose()");
 
       FreeAllSubChannels();
-      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
-      if (mediaCtl == null)
-      {
-        throw new TvException("Can not convert graphBuilder to IMediaControl");
-      }
-      // Decompose the graph
-      mediaCtl.Stop();
+      PerformDeviceAction(DeviceAction.Stop);
 
       base.Dispose();
 
@@ -314,7 +306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       _rotEntry.Dispose();
       _rotEntry = null;
       Release.ComObject("Analog tuner graph", ref _graphBuilder);
-      _isDeviceInitialised = false;
+      _state = DeviceState.NotLoaded;
       this.LogDebug("analog: dispose completed");
     }
 
@@ -323,9 +315,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     #region graph handling
 
     /// <summary>
-    /// Builds the directshow graph for this analog tvcard
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
       if (_cardId == 0)
       {
@@ -334,117 +326,89 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       }
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
-      this.LogDebug("analog: build graph");
-      try
-      {
-        if (_isDeviceInitialised)
-        {
-          this.LogDebug("analog: Graph already build");
-          throw new TvException("Graph already build");
-        }
-        //create a new filter graph
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _rotEntry = new DsROTEntry(_graphBuilder);
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-        Graph graph = _configuration.Graph;
-        _tuner = new Components.Tuner(_device);
-        if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
-        {
-          this.LogError("analog: unable to add tv tuner filter");
-          throw new TvException("Analog: unable to add tv tuner filter");
-        }
-        _minChannel = _tuner.MinChannel;
-        _maxChannel = _tuner.MaxChannel;
-        //add the wdm crossbar device and connect tvtuner->crossbar
-        _crossbar = new Components.Crossbar();
-        if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
-        {
-          this.LogError("analog: unable to add tv crossbar filter");
-          throw new TvException("Analog: unable to add tv crossbar filter");
-        }
-        //add the tv audio tuner device and connect it to the crossbar
-        _tvAudio = new TvAudio();
-        if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
-        {
-          this.LogError("analog: unable to add tv audio tuner filter");
-          throw new TvException("Analog: unable to add tv audio tuner filter");
-        }
-        //add the tv capture device and connect it to the crossbar
-        _capture = new Capture();
-        if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
-        {
-          this.LogError("analog: unable to add capture filter");
-          throw new TvException("Analog: unable to add capture filter");
-        }
-        Configuration.writeConfiguration(_configuration);
-        _teletext = new TeletextComponent();
-        if (_capture.SupportsTeletext)
-        {
-          if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
-          {
-            this.LogError("analog: unable to setup teletext filters");
-            throw new TvException("Analog: unable to setup teletext filters");
-          }
-        }
-        Configuration.writeConfiguration(_configuration);
-        _encoder = new Encoder();
-        if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
-        {
-          this.LogError("analog: unable to add encoding filter");
-          throw new TvException("Analog: unable to add capture filter");
-        }
-        this.LogDebug("analog: Check quality control");
-        _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
-                                                                     _capture.VideoFilter, _encoder.MultiplexerFilter,
-                                                                     _encoder.VideoCompressorFilter);
-        if (_qualityControl == null)
-        {
-          this.LogDebug("analog: No quality control support found");
-          //If a hauppauge analog card, set bitrate to default
-          //As the graph is stopped, we don't need to pass in the deviceID
-          //However, if we wish to change quality for a live graph, the deviceID must be passed in
-          if (_tunerDevice != null && _capture.VideoFilter != null)
-          {
-            if (_capture.VideoCaptureName.Contains("Hauppauge"))
-            {
-              Hauppauge _hauppauge = new Hauppauge(_capture.VideoFilter, string.Empty);
-              _hauppauge.SetStream(103);
-              _hauppauge.SetAudioBitRate(384);
-              _hauppauge.SetVideoBitRate(6000, 8000, true);
-              int min, max;
-              bool vbr;
-              _hauppauge.GetVideoBitRate(out min, out max, out vbr);
-              this.LogDebug("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
-              _hauppauge.Dispose();
-              _hauppauge = null;
-            }
-          }
-        }
+      this.LogDebug("analog: load device");
 
-        if (!AddTsFileSink())
+      //create a new filter graph
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _rotEntry = new DsROTEntry(_graphBuilder);
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+      Graph graph = _configuration.Graph;
+      _tuner = new Components.Tuner(_device);
+      if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
+      {
+        throw new TvException("Analog: unable to add tv tuner filter");
+      }
+      _minChannel = _tuner.MinChannel;
+      _maxChannel = _tuner.MaxChannel;
+      //add the wdm crossbar device and connect tvtuner->crossbar
+      _crossbar = new Components.Crossbar();
+      if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
+      {
+        throw new TvException("Analog: unable to add tv crossbar filter");
+      }
+      //add the tv audio tuner device and connect it to the crossbar
+      _tvAudio = new TvAudio();
+      if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
+      {
+        throw new TvException("Analog: unable to add tv audio tuner filter");
+      }
+      //add the tv capture device and connect it to the crossbar
+      _capture = new Capture();
+      if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
+      {
+        throw new TvException("Analog: unable to add capture filter");
+      }
+      Configuration.writeConfiguration(_configuration);
+      _teletext = new TeletextComponent();
+      if (_capture.SupportsTeletext)
+      {
+        if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
         {
-          throw new TvException("Analog: unable to add mpfilewriter");
+          throw new TvException("Analog: unable to setup teletext filters");
         }
-        this.LogDebug("analog: Graph is built");
-        FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
-        ReloadCardConfiguration();
-        _isDeviceInitialised = true;
       }
-      catch (TvExceptionSWEncoderMissing ex)
+      Configuration.writeConfiguration(_configuration);
+      _encoder = new Encoder();
+      if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
       {
-        this.LogError(ex);
-        Dispose();
-        _isDeviceInitialised = false;
-        throw;
+        throw new TvException("Analog: unable to add capture filter");
       }
-      catch (Exception ex)
+      this.LogDebug("analog: Check quality control");
+      _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
+                                                                    _capture.VideoFilter, _encoder.MultiplexerFilter,
+                                                                    _encoder.VideoCompressorFilter);
+      if (_qualityControl == null)
       {
-        this.LogError(ex);
-        Dispose();
-        _isDeviceInitialised = false;
-        throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
+        this.LogDebug("analog: No quality control support found");
+        //If a hauppauge analog card, set bitrate to default
+        //As the graph is stopped, we don't need to pass in the deviceID
+        //However, if we wish to change quality for a live graph, the deviceID must be passed in
+        if (_tunerDevice != null && _capture.VideoFilter != null)
+        {
+          if (_capture.VideoCaptureName.Contains("Hauppauge"))
+          {
+            Hauppauge _hauppauge = new Hauppauge(_capture.VideoFilter, string.Empty);
+            _hauppauge.SetStream(103);
+            _hauppauge.SetAudioBitRate(384);
+            _hauppauge.SetVideoBitRate(6000, 8000, true);
+            int min, max;
+            bool vbr;
+            _hauppauge.GetVideoBitRate(out min, out max, out vbr);
+            this.LogDebug("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+            _hauppauge.Dispose();
+            _hauppauge = null;
+          }
+        }
       }
+
+      if (!AddTsFileSink())
+      {
+        throw new TvException("Analog: unable to add mpfilewriter");
+      }
+      this.LogDebug("analog: Graph is built");
+      FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
+      ReloadCardConfiguration();
     }
 
     #region demuxer, muxer and mpfilewriter graph building

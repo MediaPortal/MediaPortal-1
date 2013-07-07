@@ -76,9 +76,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
       // Pause graph not supported.
-      if (_idleMode == DeviceIdleMode.Pause)
+      if (_idleMode == IdleMode.Pause)
       {
-        _idleMode = DeviceIdleMode.Stop;
+        _idleMode = IdleMode.Stop;
       }
 
       _sequenceNumber = sequenceNumber;
@@ -91,106 +91,45 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     #region graphbuilding
 
     /// <summary>
-    /// Build the BDA filter graph.
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
-      this.LogDebug("TvCardDvbIp: build graph");
-      try
+      this.LogDebug("TvCardDvbIp: load device");
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+      _rotEntry = new DsROTEntry(_graphBuilder);
+
+      AddTsWriterFilterToGraph();
+      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
+                                                        "DVB-IP Source Filter");
+      IBaseFilter lastFilter = _filterStreamSource;
+
+      // Check for and load plugins, adding any additional device filters to the graph.
+      LoadPlugins(_filterStreamSource, ref lastFilter);
+
+      // Complete the graph.
+      AddInfiniteTeeToGraph(ref lastFilter);
+      ConnectTsWriterIntoGraph(lastFilter);
+
+      // Now that the graph is complete, find the input pin of the first filter connected
+      // downstream from the source filter. This is usually an infinite tee.
+      this.LogDebug("TvCardDvbIp: finding first downstream filter input pin");
+      IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
+      if (sourceOutputPin == null)
       {
-        if (_isDeviceInitialised)
-        {
-          this.LogError("TvCardDvbIp: the graph is already built");
-          throw new TvException("The graph is already built.");
-        }
-
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-        _rotEntry = new DsROTEntry(_graphBuilder);
-
-        AddTsWriterFilterToGraph();
-        _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                          "DVB-IP Source Filter");
-        IBaseFilter lastFilter = _filterStreamSource;
-
-        // Check for and load plugins, adding any additional device filters to the graph.
-        LoadPlugins(_filterStreamSource, ref lastFilter);
-
-        // Complete the graph.
-        AddInfiniteTeeToGraph(ref lastFilter);
-        ConnectTsWriterIntoGraph(lastFilter);
-
-        // Now that the graph is complete, find the input pin of the first filter connected
-        // downstream from the source filter. This is usually an infinite tee.
-        this.LogDebug("TvCardDvbIp: finding first downstream filter input pin");
-        IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
-        if (sourceOutputPin == null)
-        {
-          this.LogError("TvCardDvbIp: failed to find source filter output pin");
-          throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find source filter output pin");
-        }
-        int hr = sourceOutputPin.ConnectedTo(out _firstFilterInputPin);
-        Release.ComObject("DVB-IP source filter output pin", ref sourceOutputPin);
-        if (hr != 0 || _firstFilterInputPin == null)
-        {
-          this.LogError("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to find find first filter input pin");
-        }
-        this.LogDebug("TvCardDvbIp: result = success");
-
-        // Open any plugins we found. This is separated from loading because some plugins can't be opened
-        // until the graph has finished being built.
-        OpenPlugins();
-
-        _isDeviceInitialised = true;
-
-        // Plugins can request to pause or start the device - other actions don't make sense here. The running
-        // state is considered more compatible than the paused state, so start takes precedence.
-        DeviceAction actualAction = DeviceAction.Default;
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          DeviceAction action;
-          deviceInterface.OnInitialised(this, out action);
-          if (action == DeviceAction.Pause)
-          {
-            if (actualAction == DeviceAction.Default)
-            {
-              this.LogDebug("TvCardDvbIp: plugin \"{0}\" will cause device pause", deviceInterface.Name);
-              actualAction = DeviceAction.Pause;
-            }
-            else
-            {
-              this.LogDebug("TvCardDvbIp: plugin \"{0}\" wants to pause the device, overriden", deviceInterface.Name);
-            }
-          }
-          else if (action == DeviceAction.Start)
-          {
-            this.LogDebug("TvCardDvbIp: plugin \"{0}\" will cause device start", deviceInterface.Name);
-            actualAction = action;
-          }
-          else if (action != DeviceAction.Default)
-          {
-            this.LogDebug("TvCardDvbIp: plugin \"{0}\" wants unsupported action {1}", deviceInterface.Name, action);
-          }
-        }
-        if (actualAction == DeviceAction.Start || _idleMode == DeviceIdleMode.AlwaysOn)
-        {
-          SetGraphState(FilterState.Running);
-        }
-        else if (actualAction == DeviceAction.Pause)
-        {
-          SetGraphState(FilterState.Paused);
-        }
+        this.LogError("TvCardDvbIp: failed to find source filter output pin");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to find source filter output pin");
       }
-      catch (Exception ex)
+      int hr = sourceOutputPin.ConnectedTo(out _firstFilterInputPin);
+      Release.ComObject("DVB-IP source filter output pin", ref sourceOutputPin);
+      if (hr != 0 || _firstFilterInputPin == null)
       {
-        const string tvcarddvbipGraphBuildingFailed = "TvCardDvbIp: graph building failed";
-        this.LogError(ex, tvcarddvbipGraphBuildingFailed);
-        Dispose();
-        _isDeviceInitialised = false;          
-        throw new TvExceptionGraphBuildingFailed(tvcarddvbipGraphBuildingFailed, ex);
+        this.LogError("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to find find first filter input pin");
       }
+      this.LogDebug("TvCardDvbIp: result = success");
     }
 
     /// <summary>
@@ -226,7 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       if (hr != 0)
       {
         this.LogError("TvCardDvbIp: failed to connect source filter into graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionGraphBuildingFailed("TvCardDvbIp: failed to connect source filter into graph");
+        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to connect source filter into graph");
       }
       this.LogDebug("TvCardDvbIp: result = success");
     }
@@ -284,7 +223,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       // graph, then replace the stream source filter with a new filter that is configured to stream from
       // the appropriate URL.
       this.LogDebug("TvCardDvbIp: using default tuning");
-      SetGraphState(FilterState.Stopped);
+      PerformDeviceAction(DeviceAction.Stop);
       RemoveStreamSourceFilter();
       AddStreamSourceFilter(dvbipChannel.Url);
     }
@@ -328,7 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     {
       base.Stop();
       // TODO: fix me. This logic should be checked (removing and adding filters in stop?) (morpheus_xx)
-      if (_isDeviceInitialised)
+      if (_state != DeviceState.NotLoaded)
       {
         RemoveStreamSourceFilter();
         AddStreamSourceFilter(_defaultUrl);
@@ -349,19 +288,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
           return;
         }
       }
-      if (!GraphRunning() ||
-        CurrentTuningDetail == null)
+      if (_currentTuningDetail == null || _state != DeviceState.Started)
       {
         _tunerLocked = false;
         _signalLevel = 0;
         _signalPresent = false;
         _signalQuality = 0;
-        return;
       }
-      _tunerLocked = true;
-      _signalLevel = 100;
-      _signalPresent = true;
-      _signalQuality = 100;
+      else
+      {
+        _tunerLocked = true;
+        _signalLevel = 100;
+        _signalPresent = true;
+        _signalQuality = 100;
+      }
     }
 
     protected override DVBBaseChannel CreateChannel()

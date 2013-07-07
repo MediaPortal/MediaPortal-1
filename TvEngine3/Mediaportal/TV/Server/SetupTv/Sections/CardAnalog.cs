@@ -1009,7 +1009,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-      catch (TvExceptionGraphBuildingFailed)
+      catch (TvExceptionDeviceLoadFailed)
       {
         this.LogError("analog: DoTvScan error (missing software encoder)");
         MessageBox.Show(

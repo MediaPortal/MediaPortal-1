@@ -170,9 +170,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       get
       {
-        if (!_isDeviceInitialised)
+        if (_state == DeviceState.NotLoaded)
         {
-          BuildGraph();
+          Load();
         }
         return _qualityControl != null;
       }
@@ -201,15 +201,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// <param name="force"><c>True</c> to force the status to be updated (status information may be cached).</param>
     protected override void UpdateSignalStatus(bool force)
     {
-      if (!_isDeviceInitialised)
+      if (_currentTuningDetail == null || _state != DeviceState.Started)
       {
         _tunerLocked = false;
+        _signalPresent = true;
         _signalLevel = 0;
         _signalQuality = 0;
       }
       else
       {
         _tunerLocked = true;
+        _signalPresent = true;
         _signalLevel = 100;
         _signalQuality = 100;
       }
@@ -229,14 +231,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       this.LogDebug("HDPVR:  Dispose()");
 
       FreeAllSubChannels();
-      // Decompose the graph
-      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
-      if (mediaCtl == null)
-      {
-        throw new TvException("Can not convert graphBuilder to IMediaControl");
-      }
-      // Decompose the graph
-      mediaCtl.Stop();
+      PerformDeviceAction(DeviceAction.Stop);
 
       base.Dispose();
 
@@ -268,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         DevicesInUse.Instance.Remove(_encoderDevice);
         _encoderDevice = null;
       }
-      _isDeviceInitialised = false;
+      _state = DeviceState.NotLoaded;
       this.LogDebug("HDPVR:  dispose completed");
     }
 
@@ -277,9 +272,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     #region graph handling
 
     /// <summary>
-    /// Builds the directshow graph for this analog tvcard
+    /// Actually load the device.
     /// </summary>
-    public override void BuildGraph()
+    protected override void PerformLoading()
     {
       if (_cardId == 0)
       {
@@ -290,48 +285,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       this.LogDebug("HDPVR: build graph");
-      try
+      _graphBuilder = (IFilterGraph2)new FilterGraph();
+      _rotEntry = new DsROTEntry(_graphBuilder);
+      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      _capBuilder.SetFiltergraph(_graphBuilder);
+      AddCrossBarFilter();
+      AddCaptureFilter();
+      AddEncoderFilter();
+      AddTsWriterFilterToGraph();
+      _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterEncoder, _filterCapture,
+                                                                    null, null);
+      if (_qualityControl == null)
       {
-        if (_isDeviceInitialised)
-        {
-          this.LogDebug("HDPVR: graph already built!");
-          throw new TvException("Graph already built");
-        }
-        _graphBuilder = (IFilterGraph2)new FilterGraph();
-        _rotEntry = new DsROTEntry(_graphBuilder);
-        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-        _capBuilder.SetFiltergraph(_graphBuilder);
-        AddCrossBarFilter();
-        AddCaptureFilter();
-        AddEncoderFilter();
-        AddTsWriterFilterToGraph();
-        _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterEncoder, _filterCapture,
-                                                                     null, null);
-        if (_qualityControl == null)
-        {
-          this.LogDebug("HDPVR: No quality control support found");
-        }
+        this.LogDebug("HDPVR: No quality control support found");
+      }
 
-        _isDeviceInitialised = true;
-        _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
-        _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
-        _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
-        _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
-        _configuration.Graph.Crossbar.VideoOut = _videoOutPinIndex;
-        _configuration.Graph.Crossbar.AudioOut = _audioOutPinIndex;
-        _configuration.Graph.Capture.Name = _captureDevice.Name;
-        _configuration.Graph.Capture.FrameRate = -1d;
-        _configuration.Graph.Capture.ImageHeight = -1;
-        _configuration.Graph.Capture.ImageWidth = -1;
-        Configuration.writeConfiguration(_configuration);
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex);
-        Dispose();
-        _isDeviceInitialised = false;
-        throw;
-      }
+      _state = DeviceState.Stopped;
+      _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
+      _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
+      _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
+      _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
+      _configuration.Graph.Crossbar.VideoOut = _videoOutPinIndex;
+      _configuration.Graph.Crossbar.AudioOut = _audioOutPinIndex;
+      _configuration.Graph.Capture.Name = _captureDevice.Name;
+      _configuration.Graph.Capture.FrameRate = -1d;
+      _configuration.Graph.Capture.ImageHeight = -1;
+      _configuration.Graph.Capture.ImageWidth = -1;
+      Configuration.writeConfiguration(_configuration);
     }
 
     private void AddCrossBarFilter()

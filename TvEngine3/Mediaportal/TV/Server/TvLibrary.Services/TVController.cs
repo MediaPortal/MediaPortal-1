@@ -132,30 +132,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId, false))
         {
-          // Note: this is *far* from ideal. We have no way to actually tell whether the tuner supports
-          // conditional access unless the tuner graph is initialised. We also have no way to tell if the
-          // tuner graph is initialised. If we try to initialise the graph and it is already initialised
-          // then we'll get an exception. We do the best that we can, but we can't guarantee that this
-          // will work for hybrid tuners - we don't want to interrupt timeshifting and recording.
           ITVCard card = _cards[cardId].Card;
-          if (card.IsConditionalAccessSupported)
-          {
-            return true;
-          }
-          TvCardBase baseCard = card as TvCardBase;
-          if (baseCard == null)
-          {
-            // Non-initialised HybridCard instances exit here.
-            return false;
-          }
-          try
-          {
-            baseCard.BuildGraph();
-          }
-          catch (Exception)
-          {
-            // If we get here, we assume the graph is already built - not a problem.
-          }
           initConditionalAccess = card.IsConditionalAccessSupported;
         }
         else
@@ -541,7 +518,7 @@ namespace Mediaportal.TV.Server.TVLibrary
               NetProvider = (int)DbNetworkProvider.Generic,              
               MultiChannelDecryptMode = (int)MultiChannelDecryptMode.Disabled,
               PidFilterMode = (int)PidFilterMode.Auto,
-              IdleMode = (int)DeviceIdleMode.Stop
+              IdleMode = (int)IdleMode.Stop
             };
             oneOrMoreCardsFound = true;
             TVDatabase.TVBusinessLayer.CardManagement.SaveCard(newCard);

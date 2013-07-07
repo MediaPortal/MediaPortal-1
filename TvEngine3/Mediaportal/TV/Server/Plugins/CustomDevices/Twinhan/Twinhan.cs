@@ -1679,11 +1679,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     #region device state change callbacks
 
     /// <summary>
-    /// This callback is invoked when device initialisation is complete.
+    /// This callback is invoked when the device has been successfully loaded.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnInitialised(ITVCard tuner, out DeviceAction action)
+    public override void OnLoaded(ITVCard tuner, out DeviceAction action)
     {
       // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
       // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
@@ -1736,12 +1736,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is running but before
+    /// This callback is invoked after a tune request is submitted, when the device is started but before
     /// signal lock is checked.
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
-    public override void OnRunning(ITVCard tuner, IChannel currentChannel)
+    public override void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
       // Ensure the MMI handler thread is always running when the graph is running.
       StartMmiHandlerThread();
@@ -2231,13 +2231,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool resetDevice)
     {
       this.LogDebug("Twinhan: reset conditional access interface");
-      rebuildGraph = false;
+      resetDevice = false;
 
       if (!_isTwinhan || _propertySet == null)
       {
@@ -2257,7 +2257,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       if (hr != 0)
       {
         this.LogDebug("Twinhan: reset property failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        rebuildGraph = true;
+        resetDevice = true;
         return true;
       }
 

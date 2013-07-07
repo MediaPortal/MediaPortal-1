@@ -34,9 +34,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
   /// </summary>
   public class RadioWebStreamCard : TvCardBase
   {
-
-
-
     #region variables
 
     private DateTime _dateRecordingStarted = DateTime.MinValue;
@@ -57,7 +54,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
       _isScanning = false;
       _epgGrabbing = false;
       _tunerType = CardType.RadioWebStream;
-      _idleMode = DeviceIdleMode.Stop;
+      _idleMode = IdleMode.Stop;
     }
 
     #endregion
@@ -119,6 +116,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
 
     #endregion
 
+    /// <summary>
+    /// Actually load the device.
+    /// </summary>
+    protected override void PerformLoading()
+    {
+    }
+
     #region properties
 
     /// <summary>
@@ -136,6 +140,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     protected override void UpdateSignalStatus(bool force)
     {
       _tunerLocked = true;
+      _signalPresent = true;
       _signalLevel = 100;
       _signalQuality = 100;
     }

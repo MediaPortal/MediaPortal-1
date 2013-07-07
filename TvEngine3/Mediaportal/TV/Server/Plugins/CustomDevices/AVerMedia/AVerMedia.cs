@@ -649,12 +649,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="rebuildGraph">This parameter will be set to <c>true</c> if the BDA graph must be rebuilt
+    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
     ///   for the interface to be completely and successfully reset.</param>
-    /// <returns><c>true</c> if the interface is successfully reopened, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool rebuildGraph)
+    /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
+    public bool ResetInterface(out bool resetDevice)
     {
-      rebuildGraph = false;
+      resetDevice = false;
       return CloseInterface() && OpenInterface();
     }
 
