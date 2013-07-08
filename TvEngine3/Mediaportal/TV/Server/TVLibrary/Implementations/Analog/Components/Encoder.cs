@@ -427,12 +427,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               //Log.this.LogDebug("analog: FindCapturePin pin:{0}", FilterGraphTools.LogPinInfo(pins[0]));
               //Log.this.LogDebug("analog: FindCapturePin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
               this.LogDebug("analog: FindCapturePin succeeded.");
-              DsUtils.FreeAMMediaType(media[0]);
+              Release.AmMediaType(ref media[0]);
               return;
             }
             //Log.this.LogDebug("analog: FindCapturePin subtype:{0}", media[0].subType);
           }
-          DsUtils.FreeAMMediaType(media[0]);
+          Release.AmMediaType(ref media[0]);
         }
         Release.ComObject("encoder capture pin candidate", ref pins[0]);
       }
@@ -1305,7 +1305,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 tmp = null;
               }
             }
-            DsUtils.FreeAMMediaType(media[0]);
+            Release.AmMediaType(ref media[0]);
           }
           else
           {
@@ -1394,11 +1394,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               Log.Debug("analog: FindMediaPin pin:#{0} {1}", pinNr, FilterGraphTools.LogPinInfo(pins[0]));
               Log.Debug("analog: FindMediaPin   major:{0} sub:{1}", media[0].majorType, media[0].subType);
               Log.Debug("analog: FindMediaPin succeeded");
-              DsUtils.FreeAMMediaType(media[0]);
+              Release.AmMediaType(ref media[0]);
               return pins[0];
             }
           }
-          DsUtils.FreeAMMediaType(media[0]);
+          Release.AmMediaType(ref media[0]);
         }
         Release.ComObject("encoder find-media-pin pin", ref pins[0]);
       }

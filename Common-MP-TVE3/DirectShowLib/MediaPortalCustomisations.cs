@@ -853,6 +853,19 @@ namespace DirectShowLib
       return refCount;
     }
 
+    public static void AmMediaType(ref AMMediaType mediaType)
+    {
+      if (mediaType != null)
+      {
+        DsUtils.FreeAMMediaType(mediaType);
+        mediaType = null;
+      }
+      /*else
+      {
+        LogWarn("Release: asked to release null AM media type");
+      }*/
+    }
+
     /// <summary>
     /// Release a COM object.
     /// </summary>

@@ -542,11 +542,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
             {
-              DsUtils.FreeAMMediaType(media[0]);
+              Release.AmMediaType(ref media[0]);
               return pins[0];
             }
           }
-          DsUtils.FreeAMMediaType(media[0]);
+          Release.AmMediaType(ref media[0]);
         }
         Release.ComObject("filter graph tools find-media-pin pin", ref pins[0]);
       }
