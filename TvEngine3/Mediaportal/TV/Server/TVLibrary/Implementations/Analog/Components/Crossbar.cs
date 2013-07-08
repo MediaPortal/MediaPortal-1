@@ -159,10 +159,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
 
       // get rid of unmanaged resources
-      Release.ComObject("Crossbar tuner audio input pin", ref _audioTunerIn);
-      Release.ComObject("Crossbar video output pin", ref _videoOut);
-      Release.ComObject("Crossbar audio output pin", ref _audioOut);
-      Release.ComObject("Crossbar filter", ref _filterCrossBar);
+      Release.ComObject("crossbar tuner audio input pin", ref _audioTunerIn);
+      Release.ComObject("crossbar video output pin", ref _videoOut);
+      Release.ComObject("crossbar audio output pin", ref _audioOut);
+      Release.ComObject("crossbar filter", ref _filterCrossBar);
     }
 
 
@@ -272,7 +272,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (tmp != null)
             {
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Crossbar filter candidate", ref tmp);
+              Release.ComObject("crossbar filter candidate", ref tmp);
             }
             continue;
           }
@@ -286,7 +286,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             this.LogDebug("analog: AddCrossbarFilter no video output found");
             graphBuilder.RemoveFilter(tmp);
-            Release.ComObject("Crossbar filter candidate", ref tmp);
+            Release.ComObject("crossbar filter candidate", ref tmp);
             _crossBarFilter = null;
             continue;
           }
@@ -304,7 +304,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
                                                     _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
             }
-            Release.ComObject("Crossbar tuner filter output pin", ref tunerOut);
+            Release.ComObject("crossbar tuner filter output pin", ref tunerOut);
             _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
             if (_audioOutPinIndex != -1)
             {
@@ -325,9 +325,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         if (tmp != null)
         {
           graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("Crossbar filter candidate", ref tmp);
+          Release.ComObject("crossbar filter candidate", ref tmp);
         }
-        Release.ComObject("Crossbar tuner filter output pin", ref tunerOut);
+        Release.ComObject("crossbar tuner filter output pin", ref tunerOut);
       }
       return _filterCrossBar != null;
     }
@@ -390,7 +390,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             if (tmp != null)
             {
               graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Crossbar filter candidate", ref tmp);
+              Release.ComObject("crossbar filter candidate", ref tmp);
             }
             continue;
           }
@@ -401,7 +401,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: AddCrossbarFilter no video output found");
             graphBuilder.RemoveFilter(tmp);
             _crossBarFilter = null;
-            Release.ComObject("Crossbar filter candidate", ref tmp);
+            Release.ComObject("crossbar filter candidate", ref tmp);
             continue;
           }
 
@@ -418,7 +418,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             {
               graphBuilder.RemoveFilter(tmp);
               _crossBarFilter = null;
-              Release.ComObject("Crossbar filter candidate", ref tmp);
+              Release.ComObject("crossbar filter candidate", ref tmp);
             }
             continue;
           }
@@ -434,7 +434,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
                                                     _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
             }
-            Release.ComObject("Crossbar tuner input pin", ref pinIn);
+            Release.ComObject("crossbar tuner input pin", ref pinIn);
             _videoOut = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Output, _videoOutPinIndex);
             if (_audioOutPinIndex != -1)
             {
@@ -461,8 +461,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
 
         // cannot connect tv tuner to crossbar, try next crossbar device
         graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("Crossbar tuner input pin", ref pinIn);
-        Release.ComObject("Crossbar filter candidate", ref tmp);
+        Release.ComObject("crossbar tuner input pin", ref pinIn);
+        Release.ComObject("crossbar filter candidate", ref tmp);
       }
       return _filterCrossBar != null;
     }

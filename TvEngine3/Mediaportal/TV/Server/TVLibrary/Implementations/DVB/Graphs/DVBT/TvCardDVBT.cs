@@ -98,13 +98,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
       }
       catch (Exception)
       {
-        Release.ComObject("Terrestrial tuner tuning space", ref tuningSpace);
-        Release.ComObject("Terrestrial tuner locator", ref locator);
+        Release.ComObject("terrestrial tuner tuning space", ref tuningSpace);
+        Release.ComObject("terrestrial tuner locator", ref locator);
         throw;
       }
       finally
       {
-        Release.ComObject("Terrestrial tuner tuning space container", ref systemTuningSpaces);
+        Release.ComObject("terrestrial tuner tuning space container", ref systemTuningSpaces);
       }
     }
 
@@ -174,13 +174,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
         }
         catch (Exception)
         {
-          Release.ComObject("Terrestrial tuner tune request", ref tuneRequest);
+          Release.ComObject("terrestrial tuner tune request", ref tuneRequest);
           throw;
         }
       }
       finally
       {
-        Release.ComObject("Terrestrial tuner locator", ref locator);
+        Release.ComObject("terrestrial tuner locator", ref locator);
       }
     }
 

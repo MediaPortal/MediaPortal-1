@@ -35,8 +35,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
   /// </summary>
   internal class Tuner : IDisposable
   {
-
-
     #region variables
 
     /// <summary>
@@ -235,8 +233,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         _tunerDevice.Dispose();
       }      
       _tuner = null;
-      Release.ComObject("Tuner component audio output pin", ref _audioPin);
-      Release.ComObjectAllRefs("Tuner component filter", ref _filterTvTuner);
+      Release.ComObject("tuner component audio output pin", ref _audioPin);
+      Release.ComObjectAllRefs("tuner component filter", ref _filterTvTuner);
     }    
 
     /// <summary>

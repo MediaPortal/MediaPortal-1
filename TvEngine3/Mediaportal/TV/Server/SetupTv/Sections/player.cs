@@ -98,13 +98,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           }
           finally
           {
-            Release.ComObject("Player TsReader pin", ref pins[0]);
+            Release.ComObject("player TsReader pin", ref pins[0]);
           }
         }
       }
       finally
       {
-        Release.ComObject("Player TsReader pin enumerator", ref enumPins);
+        Release.ComObject("player TsReader pin enumerator", ref enumPins);
       }
 
       #endregion
@@ -140,14 +140,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         _mediaCtrl.Stop();
       }
-      Release.ComObject("Player TsReader", ref _tsReader);
+      Release.ComObject("player TsReader", ref _tsReader);
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
         _rotEntry = null;
       }
 
-      Release.ComObject("Player graph", ref _graphBuilder);
+      Release.ComObject("player graph", ref _graphBuilder);
     }
 
     public void ResizeToParent()

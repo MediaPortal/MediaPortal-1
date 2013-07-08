@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       // get rid of unmanaged resources
       if (_variant == TvAudioVariant.Normal)
       {
-        Release.ComObjectAllRefs("TV Audio filter", ref _filterTvAudioTuner);
+        Release.ComObjectAllRefs("TV audio filter", ref _filterTvAudioTuner);
       }
     }
 

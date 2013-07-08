@@ -276,7 +276,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       catch
       {
-        Release.ComObject("Filter graph tools add-filter-from-CLSID filter", ref filter);
+        Release.ComObject("filter graph tools add-filter-from-CLSID filter", ref filter);
       }
 
       return filter;
@@ -368,8 +368,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools add-filter-by-device-path bind context", ref bindCtx);
-        Release.ComObject("Filter graph tools add-filter-by-device-path moniker", ref moniker);
+        Release.ComObject("filter graph tools add-filter-by-device-path bind context", ref bindCtx);
+        Release.ComObject("filter graph tools add-filter-by-device-path moniker", ref moniker);
       }
 
       return filter;
@@ -406,7 +406,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
             break;
           }
         }
-        Release.ComObject("Filter graph tools find-filter-by-name filter enumerator", ref enumFilters);
+        Release.ComObject("filter graph tools find-filter-by-name filter enumerator", ref enumFilters);
       }
 
       return filter;
@@ -447,9 +447,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
             break;
           }
 
-          Release.ComObject("Filter graph tools find-filter-by-CLSID filter", ref filters[0]);
+          Release.ComObject("filter graph tools find-filter-by-CLSID filter", ref filters[0]);
         }
-        Release.ComObject("Filter graph tools find-filter-by-CLSID filter enumerator", ref enumFilters);
+        Release.ComObject("filter graph tools find-filter-by-CLSID filter enumerator", ref enumFilters);
       }
 
       return filter;
@@ -489,7 +489,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       if (pin != null)
       {
         int hr = graphBuilder.Render(pin);
-        Release.ComObject("Filter graph tools render-pin pin", ref pin);
+        Release.ComObject("filter graph tools render-pin pin", ref pin);
 
         return (hr >= 0);
       }
@@ -548,7 +548,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           DsUtils.FreeAMMediaType(media[0]);
         }
-        Release.ComObject("Filter graph tools find-media-pin pin", ref pins[0]);
+        Release.ComObject("filter graph tools find-media-pin pin", ref pins[0]);
       }
       return null;
     }
@@ -606,7 +606,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
                   break;
                 }
               }
-              Release.ComObject("Filter graph tools get-pin-by-name pin", ref pPins[0]);
+              Release.ComObject("filter graph tools get-pin-by-name pin", ref pPins[0]);
             }
             finally
             {
@@ -615,14 +615,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           catch (Exception)
           {
-            Release.ComObject("Filter graph tools get-pin-by-name pin", ref pPins[0]);
+            Release.ComObject("filter graph tools get-pin-by-name pin", ref pPins[0]);
             throw;
           }
         }
       }
       finally
       {
-        Release.ComObject("Filter graph tools get-pin-by-name pin enumerator", ref ppEnum);
+        Release.ComObject("filter graph tools get-pin-by-name pin enumerator", ref ppEnum);
       }
 
       return pRet;
@@ -679,12 +679,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
               iIndex--;
             }
           }
-          Release.ComObject("Filter graph tools get-pin-by-category-and-direction pin", ref pPins[0]);
+          Release.ComObject("filter graph tools get-pin-by-category-and-direction pin", ref pPins[0]);
         }
       }
       finally
       {
-        Release.ComObject("Filter graph tools get-pin-by-category-and-direction pin enumerator", ref ppEnum);
+        Release.ComObject("filter graph tools get-pin-by-category-and-direction pin enumerator", ref ppEnum);
       }
 
       return pRet;
@@ -720,13 +720,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           finally
           {
-            Release.ComObject("Filter graph tools disconnect-pins pin", ref pins[0]);
+            Release.ComObject("filter graph tools disconnect-pins pin", ref pins[0]);
           }
         }
       }
       finally
       {
-        Release.ComObject("Filter graph tools disconnect-pins pin", ref enumPins);
+        Release.ComObject("filter graph tools disconnect-pins pin", ref enumPins);
       }
     }
 
@@ -763,12 +763,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             Log.Debug("Error while disconnecting all pins: ", ex);
           }
-          Release.ComObject("Filter graph tools disconnect-all-pins filter", ref filters[0]);
+          Release.ComObject("filter graph tools disconnect-all-pins filter", ref filters[0]);
         }
       }
       finally
       {
-        Release.ComObject("Filter graph tools disconnect-all-pins filter enumerator", ref enumFilters);
+        Release.ComObject("filter graph tools disconnect-all-pins filter enumerator", ref enumFilters);
       }
     }
 
@@ -800,7 +800,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           string filterName = GetFilterName(filters[0]);
           Log.Debug("Remove filter from graph: {0}", filterName);
           graphBuilder.RemoveFilter(filters[0]);
-          Release.ComObjectAllRefs("Filter graph tools remove-all-filters filter", ref filters[0]);
+          Release.ComObjectAllRefs("filter graph tools remove-all-filters filter", ref filters[0]);
         }
       }
       catch (Exception)
@@ -809,7 +809,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools remove-all-filters filter enumerator", ref enumFilters);
+        Release.ComObject("filter graph tools remove-all-filters filter enumerator", ref enumFilters);
       }
     }
 
@@ -864,8 +864,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools save-graph-file stream", ref stream);
-        Release.ComObject("Filter graph tools save-graph-file storage", ref storage);
+        Release.ComObject("filter graph tools save-graph-file stream", ref stream);
+        Release.ComObject("filter graph tools save-graph-file storage", ref storage);
       }
     }
 
@@ -922,8 +922,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools load-graph-file stream", ref stream);
-        Release.ComObject("Filter graph tools load-graph-file storage", ref storage);
+        Release.ComObject("filter graph tools load-graph-file stream", ref stream);
+        Release.ComObject("filter graph tools load-graph-file storage", ref storage);
       }
     }
 
@@ -1028,7 +1028,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         Type type = Type.GetTypeFromCLSID(clsid);
         object o = Activator.CreateInstance(type);
         retval = true;
-        Release.ComObject("Filter graph tools is-this-com-object-installed instance", ref o);
+        Release.ComObject("filter graph tools is-this-com-object-installed instance", ref o);
       }
       catch { }
       return retval;
@@ -1104,8 +1104,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools connect-filters source pin", ref sourcePin);
-        Release.ComObject("Filter graph tools connect-filters destination pin", ref destPin);
+        Release.ComObject("filter graph tools connect-filters source pin", ref sourcePin);
+        Release.ComObject("filter graph tools connect-filters destination pin", ref destPin);
       }
     }
 
@@ -1162,7 +1162,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       pinSource.ConnectedTo(out pin);
       if (pin != null)
       {
-        Release.ComObject("Filter graph tools connect-pin source pin connected pin", ref pin);
+        Release.ComObject("filter graph tools connect-pin source pin connected pin", ref pin);
         return false;
       }
       IPin pinDest = DsFindPin.ByDirection(filterDest, PinDirection.Input, destPinIndex);
@@ -1178,7 +1178,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       }
       finally
       {
-        Release.ComObject("Filter graph tools connect-pin destination pin", ref pinDest);
+        Release.ComObject("filter graph tools connect-pin destination pin", ref pinDest);
       }
     }
 
@@ -1216,12 +1216,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           else
           {
-            Release.ComObject("Filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
+            Release.ComObject("filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
           }
         }
         finally
         {
-          Release.ComObject("Filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
+          Release.ComObject("filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
         }
       }
       return false;
@@ -1266,12 +1266,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           else
           {
-            Release.ComObject("Filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
+            Release.ComObject("filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
           }
         }
         finally
         {
-          Release.ComObject("Filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
+          Release.ComObject("filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
         }
       }
       return false;
@@ -1306,7 +1306,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         }
         finally
         {
-          Release.ComObject("Filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
+          Release.ComObject("filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
         }
       }
       return false;
@@ -1345,7 +1345,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         }
         finally
         {
-          Release.ComObject("Filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
+          Release.ComObject("filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
         }
       }
       return false;
@@ -1380,13 +1380,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           }
           finally
           {
-            Release.ComObject("Filter graph tools connect-filter source filter output pin", ref pinOut);
+            Release.ComObject("filter graph tools connect-filter source filter output pin", ref pinOut);
           }
         }
       }
       finally
       {
-        Release.ComObject("Filter graph tools connect-filter destination filter input pin", ref pinIn);
+        Release.ComObject("filter graph tools connect-filter destination filter input pin", ref pinIn);
       }
       return false;
     }
@@ -1426,7 +1426,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       if (filter == null)
         return -1;
       object o = incRefCountCOM(filter);
-      int refcount = Release.ComObject("Filter graph tools get-ref-count-COM instance", ref o);
+      int refcount = Release.ComObject("filter graph tools get-ref-count-COM instance", ref o);
       return refcount;
     }
 
@@ -1447,7 +1447,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       bool connected = connectedToPin != null;
       if (connected)
       {
-        Release.ComObject("Filter graph tools log-pin-info connected pin", ref connectedToPin);
+        Release.ComObject("filter graph tools log-pin-info connected pin", ref connectedToPin);
       }
 
       int hr = pin.QueryPinInfo(out pinInfo);

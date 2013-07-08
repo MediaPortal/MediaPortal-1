@@ -73,9 +73,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     /// </summary>
     public void Dispose()
     {
-      Release.ComObject("Teletext WST decoder filter", ref _filterWstDecoder);
-      Release.ComObject("Teletext tee sink filter", ref _teeSink);
-      Release.ComObject("Teletext WST VBI pin", ref _pinWST_VBI);
+      Release.ComObject("teletext WST decoder filter", ref _filterWstDecoder);
+      Release.ComObject("teletext tee sink filter", ref _teeSink);
+      Release.ComObject("teletext WST VBI pin", ref _pinWST_VBI);
     }
 
     #endregion
@@ -107,13 +107,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       //connect capture filter -> tee sink filter
       IPin pin = DsFindPin.ByDirection(_teeSink, PinDirection.Input, 0);
       hr = graphBuilder.Connect(capture.VBIPin, pin);
-      Release.ComObject("Teletext tee sink input pin", ref pin);
+      Release.ComObject("teletext tee sink input pin", ref pin);
       if (hr != 0)
       {
         //failed...
         this.LogError("analog: unable  to connect capture->tee/sink");
         graphBuilder.RemoveFilter(_teeSink);
-        Release.ComObject("Teletext tee sink", ref _teeSink);
+        Release.ComObject("teletext tee sink", ref _teeSink);
         return false;
       }
       if (!string.IsNullOrEmpty(graph.Teletext.Name))
@@ -160,7 +160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               //failed...
               this.LogError("analog:Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_teeSink);
-              Release.ComObject("Teletext tee sink", ref _teeSink);
+              Release.ComObject("teletext tee sink", ref _teeSink);
               return false;
             }
             graph.Teletext.Name = device.Name;
@@ -185,7 +185,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 //failed...
                 this.LogError("analog:Unable to add VBI Codec filter");
                 graphBuilder.RemoveFilter(_teeSink);
-                Release.ComObject("Teletext tee sink", ref _teeSink);
+                Release.ComObject("teletext tee sink", ref _teeSink);
                 return false;
               }
               graph.Teletext.Name = device.Name;
@@ -198,23 +198,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         this.LogError("analog: unable to find WST Codec or VBI Codec filter");
         graphBuilder.RemoveFilter(_teeSink);
-        Release.ComObject("Teletext tee sink", ref _teeSink);
+        Release.ComObject("teletext tee sink", ref _teeSink);
         return false;
       }
       //connect tee sink filter-> wst codec filter
       IPin pinOut = DsFindPin.ByDirection(_teeSink, PinDirection.Output, 0);
       pin = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Input, 0);
       hr = graphBuilder.Connect(pinOut, pin);
-      Release.ComObject("Teletext tee sink output pin", ref pinOut);
-      Release.ComObject("Teletext WST decoder input pin", ref pin);
+      Release.ComObject("teletext tee sink output pin", ref pinOut);
+      Release.ComObject("teletext WST decoder input pin", ref pin);
       if (hr != 0)
       {
         //failed
         this.LogError("analog: unable  to tee/sink->wst codec");
         graphBuilder.RemoveFilter(_filterWstDecoder);
         graphBuilder.RemoveFilter(_teeSink);
-        Release.ComObject("Teletext WST decoder filter", ref _filterWstDecoder);
-        Release.ComObject("Teletext tee sink", ref _teeSink);
+        Release.ComObject("teletext WST decoder filter", ref _filterWstDecoder);
+        Release.ComObject("teletext tee sink", ref _teeSink);
         graph.Teletext.Name = null;
         graph.Teletext.Category = new Guid();
         return false;
