@@ -1530,6 +1530,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   {
     #region constants
 
+    /// <summary>
+    /// The maximum size of an ISO/IEC 13818-1 CAT section, in bytes.
+    /// </summary>
     public const int MAX_SIZE = 4096;
 
     #endregion
@@ -1805,6 +1808,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   {
     #region constants
 
+    /// <summary>
+    /// The maximum size of an ISO/IEC 13818-1 PMT section, in bytes.
+    /// </summary>
     public const int MAX_SIZE = 1024;
 
     #endregion
