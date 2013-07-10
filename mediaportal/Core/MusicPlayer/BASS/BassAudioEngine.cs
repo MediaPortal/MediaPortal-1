@@ -475,7 +475,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public bool CrossFadingEnabled
     {
-      get { return Config.CrossFadeIntervalMs > 0; }
+      get { return true; }  // We always indicate that we're crossfading. We don't want g_player to stop playback
     }
 
     /// <summary>
@@ -569,7 +569,7 @@ namespace MediaPortal.MusicPlayer.BASS
                 break;
 
               case (int)PlayBackType.GAPLESS:
-                Config.CrossFadeIntervalMs = 200;
+                Config.CrossFadeIntervalMs = 0;
                 type = "Gapless";
                 break;
 
@@ -615,9 +615,6 @@ namespace MediaPortal.MusicPlayer.BASS
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
 
-          BassMix.BASS_Mixer_ChannelRemove(musicStream.BassStream);
-          musicStream.Dispose();
-
           // Check, if PlaylistPlayer has to offer more files)
           if (Playlists.PlayListPlayer.SingletonPlayer.GetNext() == string.Empty)
           {
@@ -628,6 +625,8 @@ namespace MediaPortal.MusicPlayer.BASS
               Stop();
             }
           }
+          BassMix.BASS_Mixer_ChannelRemove(musicStream.BassStream);
+          musicStream.Dispose();
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
@@ -1827,21 +1826,25 @@ namespace MediaPortal.MusicPlayer.BASS
                          Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
                          if (Config.SoftStop && !stream.IsDisposed && !stream.IsCrossFading)
                          {
-                           Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
-                           Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
-                                                           Config.CrossFadeIntervalMs);
-
-                           // Wait until the slide is done
-                           // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
-                           DateTime start = DateTime.Now;
-                           while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
+                           if (Config.CrossFadeIntervalMs > 0)
                            {
-                             System.Threading.Thread.Sleep(20);
-                             if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
+                             Log.Debug("BASS: Performing Softstop of {0}", stream.FilePath);
+                             Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0,
+                                                             Config.CrossFadeIntervalMs);
+
+                             // Wait until the slide is done
+                             // Sometimes the slide is causing troubles, so we wait a maximum of CrossfadeIntervals + 100 ms
+                             DateTime start = DateTime.Now;
+                             while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
                              {
-                               break;
+                               System.Threading.Thread.Sleep(20);
+                               if ((DateTime.Now - start).TotalMilliseconds > Config.CrossFadeIntervalMs + 100)
+                               {
+                                 break;
+                               }
                              }
                            }
+
                          }
                          BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
                          stream.Dispose();
@@ -2375,7 +2378,7 @@ namespace MediaPortal.MusicPlayer.BASS
                  Enum.GetName(typeof(PlayBackType), (int)PlayBackType.GAPLESS));
 
         _playBackType = (int)PlayBackType.GAPLESS;
-        Config.CrossFadeIntervalMs = 200;
+        Config.CrossFadeIntervalMs = 0;
       }
     }
 
@@ -2396,7 +2399,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else if (_savedPlayBackType == 1)
         {
-          Config.CrossFadeIntervalMs = 200;
+          Config.CrossFadeIntervalMs = 0;
         }
         else
         {

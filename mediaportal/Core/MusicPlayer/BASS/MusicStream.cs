@@ -611,16 +611,17 @@ namespace MediaPortal.MusicPlayer.BASS
 
                      if (Config.CrossFadeIntervalMs > 0)
                      {
-                       crossFadeSeconds = crossFadeSeconds / 1000.0;
-                     }
+                       crossFadeSeconds = crossFadeSeconds/1000.0;
 
-                     if ((TotalStreamSeconds - (StreamElapsedTime + crossFadeSeconds) > -1))
-                     {
-                       Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, -1,
-                                                       Config.CrossFadeIntervalMs);
-                       while (Bass.BASS_ChannelIsSliding(_stream, BASSAttribute.BASS_ATTRIB_VOL))
+
+                       if ((TotalStreamSeconds - (StreamElapsedTime + crossFadeSeconds) > -1))
                        {
-                         Thread.Sleep(20);
+                         Bass.BASS_ChannelSlideAttribute(_stream, BASSAttribute.BASS_ATTRIB_VOL, -1,
+                                                         Config.CrossFadeIntervalMs);
+                         while (Bass.BASS_ChannelIsSliding(_stream, BASSAttribute.BASS_ATTRIB_VOL))
+                         {
+                           Thread.Sleep(20);
+                         }
                        }
                      }
                      else
@@ -699,10 +700,7 @@ namespace MediaPortal.MusicPlayer.BASS
       int syncHandle = 0;
       long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
       double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
-      double fadeOutSeconds = 0;
-
-      if (Config.CrossFadeIntervalMs > 0)
-        fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
+      double fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
 
       long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
 
@@ -844,7 +842,6 @@ namespace MediaPortal.MusicPlayer.BASS
                      // file.
                      if (Config.CrossFadeIntervalMs == 0)
                      {
-                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
                        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
                        GUIWindowManager.SendThreadMessage(msg);
                      }
