@@ -541,7 +541,10 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         LONGLONG pos = 0;
         HRESULT hr = m_pMediaSeeking->GetCurrentPosition(&pos);
         if (SUCCEEDED(hr))
-          lib.SetScr(CONVERT_DS_90KHz(pos));
+        {
+          pos = CONVERT_DS_90KHz(m_rtCurrentTime);
+          lib.SetScr(pos, m_demultiplexer.m_rtOffset);
+        }
       }
       else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
