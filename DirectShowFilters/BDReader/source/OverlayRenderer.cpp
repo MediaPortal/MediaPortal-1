@@ -24,88 +24,329 @@
 #include <D3d9.h>
 #include "LibBlurayWrapper.h"
 
+// TODO move to utils.h (utils.cpp)
+#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * 111 + x / 9)
+#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / 100 - x / 1000)
+
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define LOG_OVERLAY_COMMANDS
+#define LOG_DRAWING
 
 extern void LogDebug(const char *fmt, ...);
 
 COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   m_pLib(pLib),
-  m_pD3DDevice(NULL)
+  m_pD3DDevice(NULL),
+  m_bOverlayScheduled(false)
 {
   m_pPlanes[BD_OVERLAY_PG] = NULL;
   m_pPlanes[BD_OVERLAY_IG] = NULL;
   
   m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
   m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
+
+  m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
+  m_hNewOverlayAvailable = CreateEvent(0, TRUE, FALSE, 0);
+
+  m_hThread = CreateThread(0, 0, COverlayRenderer::ScheduleThreadEntryPoint, (LPVOID)this, 0, NULL);
+
+  m_hOverlayTimer= CreateWaitableTimer(NULL, false, NULL);
 }
 
 COverlayRenderer::~COverlayRenderer()
 {
+  if (CancelWaitableTimer(m_hOverlayTimer) == 0)
+  {
+    DWORD error = GetLastError();
+    LogDebug("COverlayRenderer::~COverlayRenderer - CancelWaitableTimer failed: %d", error);
+  }
+
+  if (m_hOverlayTimer)
+  {
+    CloseHandle(m_hOverlayTimer);
+    m_hOverlayTimer = NULL;
+  }
+
+  FreeOverlayQueue();
+
+  if (m_hThread)
+  {
+    CloseHandle(m_hThread);
+    m_hThread = NULL;
+    ResetEvent(m_hStopThreadEvent);
+  }
+
+  if (m_hStopThreadEvent)
+    CloseHandle(m_hStopThreadEvent);
+
+  if (m_hNewOverlayAvailable)
+    CloseHandle(m_hNewOverlayAvailable);
+
   CloseOverlay(BD_OVERLAY_PG);
   CloseOverlay(BD_OVERLAY_IG);
 }
 
+DWORD WINAPI COverlayRenderer::ScheduleThreadEntryPoint(LPVOID lpParameter)
+{
+  return ((COverlayRenderer *)lpParameter)->ScheduleThread();
+}
+
+DWORD COverlayRenderer::ScheduleThread()
+{
+  HANDLE handles[2];
+  handles[0] = m_hStopThreadEvent;
+  handles[1] = m_hOverlayTimer;
+  handles[2] = m_hNewOverlayAvailable;
+
+  DWORD stopThread = WAIT_OBJECT_0;
+  DWORD processOverlay = WAIT_OBJECT_0 + 1;
+  DWORD newOverlayAvailable = WAIT_OBJECT_0 + 2;
+
+  while (true)
+  {
+    ScheduleOverlay();
+
+    DWORD result = WaitForMultipleObjects(3, handles, false, INFINITE);
+
+    if (result == WAIT_FAILED)
+      return 0;
+    else if (result == stopThread)
+      return 0;
+    else if(result == newOverlayAvailable)
+    {
+      CAutoLock queueLock(&m_csOverlayQueue);
+      ResetEvent(m_hNewOverlayAvailable);
+#ifdef LOG_DRAWING
+      LogDebug("newOverlayAvailable");
+#endif
+    }
+    else if (result == processOverlay)
+    {
+      CAutoLock queueLock(&m_csOverlayQueue);
+
+      if (!m_overlayQueue.empty())
+      {
+        ivecOverlayQueue it = m_overlayQueue.begin();
+
+        if ((*it))
+        {
+#ifdef LOG_DRAWING
+          LogDebug("RENDERING PTS: %6.3f", (CONVERT_90KHz_DS((*it)->pts) + m_rtOffset) / 10000000.0);
+#endif
+
+          // close frees all overlays
+          bool freeOverlay = (*it)->cmd != BD_OVERLAY_CLOSE;
+
+          ProcessOverlay((*it));
+          m_bOverlayScheduled = false;
+
+          if (freeOverlay)
+            FreeOverlay(it);
+        }
+        else
+          FreeOverlay(it);
+      }
+    }
+  }
+  
+  return 0;
+}
+
+ivecOverlayQueue COverlayRenderer::FreeOverlay(ivecOverlayQueue overlay)
+{
+  ASSERT((*overlay));
+
+  if ((*overlay)->img)
+    m_pLib->DecreaseRefCount((*overlay)->img);
+      
+  if ((*overlay)->palette)
+    delete (*overlay)->palette;
+
+  delete (*overlay);
+  (*overlay) = NULL;
+
+  return m_overlayQueue.erase(overlay);
+}
+
+void COverlayRenderer::FreeOverlayQueue()
+{
+  CAutoLock queueLock(&m_csOverlayQueue);
+  ivecOverlayQueue it = m_overlayQueue.begin();
+  while (it != m_overlayQueue.end())
+  {
+    it = FreeOverlay(it);
+  }
+}
+
+ bool COverlayRenderer::NextScheduleTime(REFERENCE_TIME& rtPts)
+{
+  ivecOverlayQueue it;
+
+  CAutoLock queueLock(&m_csOverlayQueue);
+  if (!m_overlayQueue.empty())
+  {
+    it = m_overlayQueue.begin();
+    const BD_OVERLAY* overlay = *it;
+
+    if (overlay->pts <= 0)
+    {
+      rtPts = 0;
+#ifdef LOG_DRAWING
+      LogDebug("INSTANT HANDLING");
+#endif
+    }
+    else
+    {
+      REFERENCE_TIME pts = CONVERT_90KHz_DS(overlay->pts);
+      rtPts = pts - m_rtPlaybackPosition + m_rtOffset;
+
+      //ASSERT(rtPts > 0);
+      if (rtPts < 0)
+      {
+        rtPts = 0;
+        LogDebug("SCHEDULING --- was negative -> 0");
+      }
+
+#ifdef LOG_DRAWING      
+      LogDebug("SCHEDULING PTS: %6.3f wait: %6.3f", pts / 10000000.0, rtPts / 10000000.0);
+#endif
+    }
+
+    return true;
+  }
+
+  rtPts = -1;
+  return false;
+}
+
+void COverlayRenderer::ScheduleOverlay()
+{
+  REFERENCE_TIME rtDue = 0;
+  if (NextScheduleTime(rtDue))
+  {
+    LARGE_INTEGER liDueTime;
+    liDueTime.QuadPart = -rtDue;
+
+    LogDebug("           liDueTime: %6.3f", liDueTime.QuadPart / 10000000.0);
+
+    if (!m_bOverlayScheduled && SetWaitableTimer(m_hOverlayTimer, &liDueTime, 0, NULL, NULL, 0) == 0)
+    {
+#ifdef LOG_DRAWING      
+      DWORD error = GetLastError();
+      LogDebug("COverlayRenderer::ScheduleOverlay - SetWaitableTimer failed: %d", error);
+#endif
+      
+      m_bOverlayScheduled = false;
+    }
+    else
+      m_bOverlayScheduled = true;
+  }
+}
+
 void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
 {
+  CAutoLock lock(&m_csRenderLock);
   m_pD3DDevice = device;
+}
+
+void COverlayRenderer::SetScr(INT64 pts, INT64 offset)
+{
+  m_rtPlaybackPosition = CONVERT_90KHz_DS(pts);
+  m_rtOffset = CONVERT_90KHz_DS(offset);
 }
 
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 {
   if (!ov)
+    return;
+  
+  BD_OVERLAY *copy = (BD_OVERLAY*)malloc(sizeof(*ov));
+  memcpy(copy, ov, sizeof(*ov));
+
+  if (ov->palette) 
+  {
+    copy->palette = (BD_PG_PALETTE_ENTRY*)malloc(PALETTE_SIZE * sizeof(BD_PG_PALETTE_ENTRY));
+    memcpy((void*)copy->palette, ov->palette, PALETTE_SIZE * sizeof(BD_PG_PALETTE_ENTRY));
+  }
+
+  if (copy->img)
+    m_pLib->IncreaseRefCount(copy->img);
+
+  {
+#ifdef LOG_DRAWING
+    LogDebug("new arriva PTS: %6.3f wait: %6.3f", (CONVERT_90KHz_DS(copy->pts)) / 10000000.0);
+#endif
+
+    CAutoLock queueLock(&m_csOverlayQueue);
+    m_overlayQueue.push_back(copy);
+    SetEvent(m_hNewOverlayAvailable);
+  }
+}
+
+void COverlayRenderer::ProcessOverlay(const BD_OVERLAY* pOv)
+{
+  if (!pOv)
   {
     CloseOverlay(BD_OVERLAY_IG);
+    FreeOverlayQueue();
     return;
   }
-  else if (ov->plane > BD_OVERLAY_IG)
+  else if (pOv->plane > BD_OVERLAY_IG)
     return;
 
-  LogCommand(ov);
+  LogCommand(pOv);
 
-  switch (ov->cmd) 
+  switch (pOv->cmd)
   {
     case BD_OVERLAY_INIT:
-      OpenOverlay(ov);
+      OpenOverlay(pOv);
       return;
     case BD_OVERLAY_CLOSE:
-      CloseOverlay(ov->plane);
+      CloseOverlay(pOv->plane);
+      FreeOverlayQueue();
       return;
   }
 
-  OSDTexture* plane = m_pPlanesBackbuffer[ov->plane];
+  CAutoLock lock(&m_csRenderLock);
+  
+  if (!m_pD3DDevice)
+    return;
+
+  OSDTexture* plane = m_pPlanesBackbuffer[pOv->plane];
 
   // Workaround for some BDs that wont issue BD_OVERLAY_INIT after BD_OVERLAY_CLOSE
   if (!plane) 
   {
-    OpenOverlay(ov);
-    plane = m_pPlanesBackbuffer[ov->plane];
+    OpenOverlay(pOv);
+    plane = m_pPlanesBackbuffer[pOv->plane];
 
     if (!plane)
       return;
   }
 
-  switch (ov->cmd) 
+  switch (pOv->cmd) 
   {
     case BD_OVERLAY_DRAW:
-      DrawBitmap(plane, ov);
+      DrawBitmap(plane, pOv);
       break;
 
     case BD_OVERLAY_WIPE:
-      ClearArea(plane, ov);
+      ClearArea(plane, pOv);
       break;
 
     case BD_OVERLAY_CLEAR:
-      ClearOverlay(ov->plane);
+      ClearOverlay(pOv->plane);
+      break;
+
+    case BD_OVERLAY_HIDE: // TODO
       break;
 
     case BD_OVERLAY_FLUSH:
     {
-      CopyToFrontBuffer(ov->plane);
+      CopyToFrontBuffer(pOv->plane);
       
-      OSDTexture* plane = m_pPlanes[ov->plane];
+      OSDTexture* plane = m_pPlanes[pOv->plane];
       m_pLib->HandleOSDUpdate(*plane);
       break;
     }
@@ -549,7 +790,7 @@ void COverlayRenderer::AdjustDirtyRect(const uint8_t plane, uint16_t x, uint16_t
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 {
-#ifdef LOG_OVERLAY_COMMANDS
+#ifdef LOG_DRAWING
   LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
     ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
 #endif 
@@ -557,7 +798,7 @@ void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 
 void COverlayRenderer::LogARGBCommand(const BD_ARGB_OVERLAY* ov)
 {
-#ifdef LOG_OVERLAY_COMMANDS
+#ifdef LOG_DRAWING
   LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d stride: %4d plane: %i pts: %i", ARGBCommandAsString(ov->cmd),
     ov->x, ov->y, ov->w, ov->h, ov->stride, ov->plane, ov->pts);
 #endif 
@@ -579,6 +820,8 @@ char* COverlayRenderer::CommandAsString(int cmd)
       return "BD_OVERLAY_CLEAR";
     case BD_OVERLAY_FLUSH:
       return "BD_OVERLAY_FLUSH";
+    case BD_OVERLAY_HIDE:
+     return "BD_OVERLAY_HIDE";
     default:
       return "UNKNOWN         ";
   }

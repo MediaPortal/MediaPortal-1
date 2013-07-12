@@ -131,6 +131,8 @@ public:
 
   CCritSec m_sectionRead;
 
+    REFERENCE_TIME m_rtOffset;
+
 private:
   void PacketDelivery(CAutoPtr<Packet> p);
 
@@ -237,7 +239,6 @@ private:
   
   bool m_bUpdateSubtitleOffset;
 
-  REFERENCE_TIME m_rtOffset;
   REFERENCE_TIME m_rtTitleDuration;
   REFERENCE_TIME m_nMPEG2LastTitleDuration;
 

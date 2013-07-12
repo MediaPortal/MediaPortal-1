@@ -93,6 +93,10 @@ typedef struct meta_dl* (*API_bd_get_meta)(BLURAY *);
 typedef int (*API_bd_get_clip_infos)(BLURAY *, int, uint64_t *, uint64_t *, uint64_t *, uint64_t *);
 typedef int (*API_bd_register_argb_overlay_proc)(BLURAY *, void *, bd_argb_overlay_proc_f, struct bd_argb_buffer_s *);
 
+// overlay.h
+typedef void (*API_bd_refcnt_inc)(const void *);
+typedef void (*API_bd_refcnt_dec)(const void *);
+
 class CLibBlurayWrapper
 {
 public:
@@ -121,7 +125,7 @@ public:
   bool CurrentPosition(UINT64& pPosition, UINT64& pTotal);
   BLURAY_CLIP_INFO* CurrentClipInfo();
   bool GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* pStreamStartTime, UINT64* pBytePos, UINT64* pDuration);
-  bool SetScr(INT64 pPts);
+  bool SetScr(INT64 pts, INT64 offset);
   bool ProvideUserInput(INT64 pPts, UINT32 pKey);
   bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
@@ -132,6 +136,9 @@ public:
 
   static void __cdecl StaticOverlayProc(void* this_gen, const BD_OVERLAY* const ov);
   static void __cdecl StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVERLAY* const ov);
+
+  void IncreaseRefCount(const void* obj);
+  void DecreaseRefCount(const void* obj);
 
   void LogAction(int pKey);
   void LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent);
@@ -226,4 +233,7 @@ private:
   API_bd_get_meta _bd_get_meta;
   API_bd_get_clip_infos _bd_get_clip_infos;
   API_bd_register_argb_overlay_proc _bd_register_argb_overlay_proc;
+
+  API_bd_refcnt_inc _bd_refcnt_inc;
+  API_bd_refcnt_dec _bd_refcnt_dec;
 };

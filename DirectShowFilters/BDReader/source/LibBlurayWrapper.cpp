@@ -89,7 +89,9 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_mouse_select(NULL),
   _bd_get_meta(NULL),
   _bd_get_clip_infos(NULL),
-  _bd_register_argb_overlay_proc(NULL)
+  _bd_register_argb_overlay_proc(NULL),
+  _bd_refcnt_inc(NULL),
+  _bd_refcnt_dec(NULL)
 {
   m_pOverlayRenderer = new COverlayRenderer(this);
   ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
@@ -201,6 +203,8 @@ bool CLibBlurayWrapper::Initialize()
   _bd_mouse_select = (API_bd_mouse_select)GetProcAddress(m_hDLL, "bd_mouse_select");
   _bd_get_meta = (API_bd_get_meta)GetProcAddress(m_hDLL, "bd_get_meta");
   _bd_register_argb_overlay_proc = (API_bd_register_argb_overlay_proc)GetProcAddress(m_hDLL, "bd_register_argb_overlay_proc");
+  _bd_refcnt_inc = (API_bd_refcnt_inc)GetProcAddress(m_hDLL, "bd_refcnt_inc");
+  _bd_refcnt_dec = (API_bd_refcnt_dec)GetProcAddress(m_hDLL, "bd_refcnt_dec");
 
   // This method is not available in the vanilla libbluray 
   _bd_get_clip_infos = (API_bd_get_clip_infos)GetProcAddress(m_hDLL, "bd_get_clip_infos");
@@ -244,7 +248,9 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_mouse_select ||
       !_bd_get_meta ||
       !_bd_get_clip_infos ||
-      !_bd_register_argb_overlay_proc)
+      !_bd_register_argb_overlay_proc ||
+      !_bd_refcnt_inc ||
+      !_bd_refcnt_dec)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
     m_bLibInitialized = false;
@@ -752,12 +758,15 @@ bool CLibBlurayWrapper::GetClipInfo(int pClip, UINT64* pClipStartTime, UINT64* p
 }
 
 
-bool CLibBlurayWrapper::SetScr(INT64 pPts)
+bool CLibBlurayWrapper::SetScr(INT64 pts, INT64 offset)
 {
   CAutoLock cLibLock(&m_csLibLock);
-  
+
+  if (m_pOverlayRenderer)
+    m_pOverlayRenderer->SetScr(pts, offset);
+
   if (m_pBd)
-    return _bd_set_scr(m_pBd, pPts) == 1 ? true : false;
+    return _bd_set_scr(m_pBd, pts) == 1 ? true : false;
 
   return false;
 }
@@ -822,6 +831,16 @@ bool CLibBlurayWrapper::ForceTitleBasedPlayback()
 void CLibBlurayWrapper::SetD3DDevice(IDirect3DDevice9* device)
 {
   m_pOverlayRenderer->SetD3DDevice(device);
+}
+
+void CLibBlurayWrapper::IncreaseRefCount(const void* obj)
+{
+  _bd_refcnt_inc(obj);
+}
+
+void CLibBlurayWrapper::DecreaseRefCount(const void* obj)
+{
+  _bd_refcnt_inc(obj);
 }
 
 void CLibBlurayWrapper::LogAction(int pKey)
