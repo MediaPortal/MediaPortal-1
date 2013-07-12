@@ -22,6 +22,7 @@
 #pragma once
 
 #include "StdAfx.h"
+#include <vector>
 #include <bluray.h>
 #include <overlay.h>
 #include <streams.h>
@@ -31,7 +32,11 @@
 #define PALETTE_SIZE 256
 #define NUM_OF_PLANES 2
 
+using namespace std;
+
 class CLibBlurayWrapper;
+
+typedef vector<const BD_OVERLAY*>::iterator ivecOverlayQueue;
 
 class COverlayRenderer
 {
@@ -44,11 +49,15 @@ public:
 
   void SetD3DDevice(IDirect3DDevice9* device);
 
+  void SetScr(INT64 pts, INT64 offset);
+
 private:
 
   void OpenOverlay(const BD_OVERLAY* pOv);
   void OpenOverlay(const BD_ARGB_OVERLAY* pOv);
   void CloseOverlay(const uint8_t plane);
+
+  void ProcessOverlay(const BD_OVERLAY* pOv);
 
   void CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 
@@ -71,6 +80,14 @@ private:
   char* CommandAsString(int cmd);
   char* ARGBCommandAsString(int cmd);
 
+  static DWORD WINAPI ScheduleThreadEntryPoint(LPVOID lpParameter);
+  DWORD ScheduleThread();
+  bool NextScheduleTime(REFERENCE_TIME& rtPts);
+  void ScheduleOverlay();
+
+  ivecOverlayQueue FreeOverlay(ivecOverlayQueue overlay);
+  void FreeOverlayQueue();
+
   uint32_t m_palette[PALETTE_SIZE];
 
   CLibBlurayWrapper* m_pLib;
@@ -80,4 +97,19 @@ private:
   OSDTexture* m_pPlanesBackbuffer[NUM_OF_PLANES];
 
   RECT m_dirtyRect[NUM_OF_PLANES];
+
+  CCritSec m_csOverlayQueue;
+  vector<const BD_OVERLAY*> m_overlayQueue;
+
+  HANDLE m_hThread;
+  HANDLE m_hStopThreadEvent;
+
+  HANDLE m_hOverlayTimer;
+  HANDLE m_hNewOverlayAvailable;
+  bool m_bOverlayScheduled;
+
+  REFERENCE_TIME m_rtPlaybackPosition;
+  REFERENCE_TIME m_rtOffset;
+
+  CCritSec m_csRenderLock;
 };
