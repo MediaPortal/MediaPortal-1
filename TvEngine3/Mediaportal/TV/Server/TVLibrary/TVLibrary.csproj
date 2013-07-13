@@ -93,6 +93,7 @@
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\CustomDeviceLoader.cs" />
     <Compile Include="Implementations\DVB\DiseqcController.cs" />
+    <Compile Include="Implementations\DVB\Graphs\DeviceDirectShow.cs" />
     <Compile Include="Implementations\Helper\COMHelper.cs" />
     <Compile Include="Implementations\DVB\Graphs\DvbBaseScanning.cs" />
     <Compile Include="Implementations\DVB\Graphs\DVBIP\DVBIPScanning.cs" />

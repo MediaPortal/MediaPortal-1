@@ -22,6 +22,7 @@ using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
@@ -30,26 +31,26 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles MediaPortal DVB-IP sources.
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the MediaPortal DVB-IP/IPTV source filter.
   /// </summary>
-  public class TvCardDVBIP : TvCardDvbBase, ITVCard
+  public class TvCardDVBIP : DeviceDirectShow
   {
     #region variables
 
     /// <summary>
-    /// The DVB-IP source filter.
+    /// The source filter.
     /// </summary>
     private IBaseFilter _filterStreamSource = null;
 
     /// <summary>
-    /// The instance number of this DVB-IP tuner.
+    /// The instance number of this device/tuner.
     /// </summary>
     private int _sequenceNumber = -1;
 
     /// <summary>
-    /// The input pin for the first filter connected to the source filter.
+    /// A media type describing the source stream format. 
     /// </summary>
-    private IPin _firstFilterInputPin = null;
+    private AMMediaType _sourceMediaType = null;
 
     /// <summary>
     /// The source filter's default URL.
@@ -70,25 +71,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     /// <param name="device">The device.</param>
     /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
     public TvCardDVBIP(IEpgEvents epgEvents, DsDevice device, int sequenceNumber)
-      : base(epgEvents, device)
+      : base(device)
     {
       _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterGuid = new Guid(0xd3dd4c59, 0xd3a7, 0x4b82, 0x97, 0x27, 0x7b, 0x92, 0x03, 0xeb, 0x67, 0xc0);
-      // Pause graph not supported.
-      if (_idleMode == IdleMode.Pause)
-      {
-        _idleMode = IdleMode.Stop;
-      }
 
       _sequenceNumber = sequenceNumber;
       if (_sequenceNumber > 0)
       {
         _name += "_" + _sequenceNumber;
       }
+
+      _sourceMediaType = new AMMediaType();
+      _sourceMediaType.majorType = MediaType.Stream;
+      _sourceMediaType.subType = MediaSubType.Mpeg2Transport;
+      _sourceMediaType.unkPtr = IntPtr.Zero;
+      _sourceMediaType.sampleSize = 0;
+      _sourceMediaType.temporalCompression = false;
+      _sourceMediaType.fixedSizeSamples = true;
+      _sourceMediaType.formatType = FormatType.None;
+      _sourceMediaType.formatSize = 0;
+      _sourceMediaType.formatPtr = IntPtr.Zero;
     }
 
-    #region graphbuilding
+    #region graph building
 
     /// <summary>
     /// Actually load the device.
@@ -96,94 +103,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     protected override void PerformLoading()
     {
       this.LogDebug("TvCardDvbIp: load device");
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
-      _rotEntry = new DsROTEntry(_graphBuilder);
+      InitialiseGraph();
 
-      AddTsWriterFilterToGraph();
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                        "DVB-IP Source Filter");
-      IBaseFilter lastFilter = _filterStreamSource;
+      // Start with the source filter.
+      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graph, _sourceFilterGuid, "MediaPortal Network Source Filter");
 
       // Check for and load plugins, adding any additional device filters to the graph.
+      IBaseFilter lastFilter = _filterStreamSource;
       LoadPlugins(_filterStreamSource, ref lastFilter);
 
       // Complete the graph.
-      AddInfiniteTeeToGraph(ref lastFilter);
-      ConnectTsWriterIntoGraph(lastFilter);
-
-      // Now that the graph is complete, find the input pin of the first filter connected
-      // downstream from the source filter. This is usually an infinite tee.
-      this.LogDebug("TvCardDvbIp: finding first downstream filter input pin");
-      IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
-      if (sourceOutputPin == null)
-      {
-        this.LogError("TvCardDvbIp: failed to find source filter output pin");
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to find source filter output pin");
-      }
-      int hr = sourceOutputPin.ConnectedTo(out _firstFilterInputPin);
-      Release.ComObject("DVB-IP source filter output pin", ref sourceOutputPin);
-      if (hr != 0 || _firstFilterInputPin == null)
-      {
-        this.LogError("TvCardDvbIp: failed to find first filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to find find first filter input pin");
-      }
-      this.LogDebug("TvCardDvbIp: result = success");
-    }
-
-    /// <summary>
-    /// Add the DVB-IP stream source filter to the BDA graph.
-    /// </summary>
-    /// <param name="url">The URL to </param>
-    protected virtual void AddStreamSourceFilter(string url)
-    {
-      this.LogDebug("TvCardDvbIp: add source filter");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, _sourceFilterGuid,
-                                                                  "DVB-IP Source Filter");
-      AMMediaType mpeg2ProgramStream = new AMMediaType();
-      mpeg2ProgramStream.majorType = MediaType.Stream;
-      mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;
-      mpeg2ProgramStream.unkPtr = IntPtr.Zero;
-      mpeg2ProgramStream.sampleSize = 0;
-      mpeg2ProgramStream.temporalCompression = false;
-      mpeg2ProgramStream.fixedSizeSamples = true;
-      mpeg2ProgramStream.formatType = FormatType.None;
-      mpeg2ProgramStream.formatSize = 0;
-      mpeg2ProgramStream.formatPtr = IntPtr.Zero;
-      ((IFileSourceFilter)_filterStreamSource).Load(url, mpeg2ProgramStream);
-
-      // (Re)connect the source filter to the first filter in the chain.
-      IPin sourceOutputPin = DsFindPin.ByDirection(_filterStreamSource, PinDirection.Output, 0);
-      if (sourceOutputPin == null)
-      {
-        this.LogError("TvCardDvbIp: failed to find source filter output pin");
-        throw new TvException("TvCardDvbIp: failed to find source filter output pin");
-      }
-      int hr = _graphBuilder.Connect(sourceOutputPin, _firstFilterInputPin);
-      Release.ComObject("DVB-IP source filter output pin", ref sourceOutputPin);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbIp: failed to connect source filter into graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbIp: failed to connect source filter into graph");
-      }
-      this.LogDebug("TvCardDvbIp: result = success");
-    }
-
-    /// <summary>
-    /// Remove the DVB-IP stream source filter from the BDA graph.
-    /// </summary>
-    protected virtual void RemoveStreamSourceFilter()
-    {
-      this.LogDebug("TvCardDvbIp: remove source filter");
-      if (_filterStreamSource != null)
-      {
-        if (_graphBuilder != null)
-        {
-          _graphBuilder.RemoveFilter(_filterStreamSource);
-        }
-        Release.ComObject("DVB-IP source filter", ref _filterStreamSource);
-      }
+      AddTsWriterToGraph(lastFilter);
     }
 
     #endregion
@@ -196,12 +126,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
-      if (dvbipChannel == null)
-      {
-        throw new TvException("TvCardDvbIp: channel is not a DVB-IP channel!!! " + channel.GetType().ToString());
-      }
-
       if (_useCustomTuning)
       {
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
@@ -210,22 +134,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
           if (customTuner != null && customTuner.CanTuneChannel(channel))
           {
             this.LogDebug("TvCardDvbIp: using custom tuning");
-            if (!customTuner.Tune(channel))
+            if (customTuner.Tune(channel))
             {
-              throw new TvException("TvCardDvbIp: failed to tune to channel");
+              return;
             }
-            break;
+            this.LogWarn("TvCardDvbIp: custom tuning failed, falling back to default tuning");
           }
         }
       }
 
-      // DVB-IP "tuning" (if there is such a thing) occurs during this stage of the process. We stop the
-      // graph, then replace the stream source filter with a new filter that is configured to stream from
-      // the appropriate URL.
       this.LogDebug("TvCardDvbIp: using default tuning");
-      PerformDeviceAction(DeviceAction.Stop);
-      RemoveStreamSourceFilter();
-      AddStreamSourceFilter(dvbipChannel.Url);
+      DVBIPChannel dvbipChannel = channel as DVBIPChannel;
+      if (dvbipChannel == null)
+      {
+        throw new TvException("Received request to tune incompatible channel.");
+      }
+      int hr = (_filterStreamSource as IFileSourceFilter).Load(dvbipChannel.Url, _sourceMediaType);
+      HResult.ThrowException(hr, "Failed to tune channel.");
     }
 
     /// <summary>
@@ -245,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     {
       get
       {
-        return new DVBIPScanning(this);
+        return new DVBIPScanning(this, _filterTsWriter as ITsChannelScan);
       }
     }
 
@@ -257,21 +182,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     public override void Dispose()
     {
       base.Dispose();
-      RemoveStreamSourceFilter();
-    }
 
-    /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration.
-    /// </summary>
-    public override void Stop()
-    {
-      base.Stop();
-      // TODO: fix me. This logic should be checked (removing and adding filters in stop?) (morpheus_xx)
-      if (_state != DeviceState.NotLoaded)
-      {
-        RemoveStreamSourceFilter();
-        AddStreamSourceFilter(_defaultUrl);
-      }
+      Release.ComObject("DVB-IP stream source filter", ref _filterStreamSource);
+      Release.AmMediaType(ref _sourceMediaType);
     }
 
     /// <summary>
@@ -304,11 +217,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       }
     }
 
-    protected override DVBBaseChannel CreateChannel()
-    {
-      return new DVBIPChannel();
-    }
-
     /// <summary>
     /// return the DevicePath
     /// </summary>
@@ -322,6 +230,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
         }
         return base.DevicePath + "(" + _sequenceNumber + ")";
       }
+    }
+
+    /// <summary>
+    /// Allocate a new subchannel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return new TvDvbChannel(id, this, _filterTsWriter, null);
     }
   }
 }

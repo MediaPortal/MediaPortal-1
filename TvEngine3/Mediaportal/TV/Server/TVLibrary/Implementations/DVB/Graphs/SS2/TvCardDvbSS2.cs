@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
@@ -37,9 +38,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles B2C2 based TechniSat tuners.
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles TechniSat tuners with B2C2 chipsets and WDM drivers.
   /// </summary>
-  public class TvCardDvbSS2 : TvCardDvbBase, ICustomDevice, IPidFilterController, IDiseqcDevice
+  public class TvCardDvbSS2 : DeviceDirectShow, ICustomDevice, IPidFilterController, IDiseqcDevice
   {
     #region enums
 
@@ -1361,6 +1362,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     private IB2C2MPEG2DataCtrl6 _dataInterface = null;
     private IB2C2MPEG2TunerCtrl4 _tunerInterface = null;
 
+    private IBaseFilter _infiniteTee = null;
+
     private DeviceInfo _deviceContext;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
@@ -1409,7 +1412,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     /// <param name="device">The device.</param>
     /// <param name="context">The B2C2-specific device context (DeviceInfo) associated with this device.</param>
     public TvCardDvbSS2(IEpgEvents epgEvents, DsDevice device, object context)
-      : base(epgEvents, device)
+      : base(device)
     {
       _deviceContext = (DeviceInfo)context;
       switch (_deviceContext.TunerType)
@@ -1500,12 +1503,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       _lastSignalUpdate = DateTime.Now;
     }
 
-    protected override DVBBaseChannel CreateChannel()
+    /// <summary>
+    /// Allocate a new subchannel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      if (_tunerType == CardType.DvbC) return new DVBCChannel();
-      if (_tunerType == CardType.DvbS) return new DVBSChannel();
-      if (_tunerType == CardType.DvbT) return new DVBTChannel();
-      return new ATSCChannel();
+      return new TvDvbChannel(id, this, _filterTsWriter, null);
     }
 
     #region tuning & scanning
@@ -1543,58 +1548,46 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     protected override void PerformTuning(IChannel channel)
     {
       this.LogDebug("TvCardDvbSs2: set tuning parameters");
-      bool result = false;
-      switch (_tunerType)
+      try
       {
-        case CardType.DvbS:
-          result = PerformTuneDvbS(channel);
-          break;
-        case CardType.DvbT:
-          result = PerformTuneDvbT(channel);
-          break;
-        case CardType.DvbC:
-          result = PerformTuneDvbC(channel);
-          break;
-        case CardType.Atsc:
-          result = PerformTuneAtsc(channel);
-          break;
+        switch (_tunerType)
+        {
+          case CardType.DvbS:
+            PerformTuneSatellite(channel);
+            break;
+          case CardType.DvbT:
+            PerformTuneTerrestrial(channel);
+            break;
+          case CardType.DvbC:
+            PerformTuneCable(channel);
+            break;
+          case CardType.Atsc:
+            PerformTuneAtsc(channel);
+            break;
+        }
       }
-
-      if (!result)
+      catch (Exception ex)
       {
-        throw new TvException("TvCardDvbSs2: failed to set tuning parameters");
+        throw new TvException("Failed to set tuning parameters.", ex);
       }
 
       this.LogDebug("TvCardDvbSs2: apply tuning parameters");
-      int hr = _tunerInterface.SetTunerStatus();
-      if (hr != 0)
-      {
-        throw new TvException("TvCardDvbSs2: failed to apply tuning parameters");
-      }
+      HResult.ThrowException(_tunerInterface.SetTunerStatus(), "Failed to apply tuning parameters.");
     }
 
-    private bool PerformTuneDvbS(IChannel channel)
+    private void PerformTuneSatellite(IChannel channel)
     {
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        this.LogDebug("TvCardDvbSs2: channel is not a DVB-S channel!!! {0}", channel.GetType().ToString());
-        return false;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
       int hr = _tunerInterface.SetFrequency((Int32)dvbsChannel.Frequency / 1000);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set frequency.");
 
       hr = _tunerInterface.SetSymbolRate(dvbsChannel.SymbolRate);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set symbol rate.");
 
       B2c2FecRate fec = B2c2FecRate.Auto;
       switch (dvbsChannel.InnerFecRate)
@@ -1616,11 +1609,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           break;
       }
       hr = _tunerInterface.SetFec(fec);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set FEC rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set FEC rate.");
 
       B2c2Polarisation b2c2Polarisation = B2c2Polarisation.Horizontal;
       if (dvbsChannel.Polarisation == Polarisation.LinearV || dvbsChannel.Polarisation == Polarisation.CircularR)
@@ -1628,11 +1617,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         b2c2Polarisation = B2c2Polarisation.Vertical;
       }
       hr = _tunerInterface.SetPolarity(b2c2Polarisation);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set polarisation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set polarisation.");
 
       _diseqcController.SwitchToChannel(dvbsChannel);
 
@@ -1644,72 +1629,42 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       {
         hr = _tunerInterface.SetLnbFrequency(dvbsChannel.LnbType.LowBandFrequency / 1000);
       }
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set LNB LOF frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      return true;
+      HResult.ThrowException(hr, "Failed to set LNB LOF frequency.");
     }
 
-    private bool PerformTuneDvbT(IChannel channel)
+    private void PerformTuneTerrestrial(IChannel channel)
     {
       DVBTChannel dvbtChannel = channel as DVBTChannel;
       if (dvbtChannel == null)
       {
-        this.LogDebug("TvCardDvbSs2: channel is not a DVB-T channel!!! {0}", channel.GetType().ToString());
-        return false;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
       int hr = _tunerInterface.SetFrequency((Int32)dvbtChannel.Frequency / 1000);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set frequency.");
 
       hr = _tunerInterface.SetBandwidth(dvbtChannel.Bandwidth / 1000);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set bandwidth, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set bandwidth.");
 
       // Note: it is not guaranteed that guard interval auto detection is supported, but if it isn't
       // then we can't tune - we have no idea what the actual value should be.
       hr = _tunerInterface.SetGuardInterval(B2c2GuardInterval.Auto);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to use automatic guard interval detection, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      return true;
+      HResult.ThrowException(hr, "Failed to use automatic guard interval detection.");
     }
 
-    private bool PerformTuneDvbC(IChannel channel)
+    private void PerformTuneCable(IChannel channel)
     {
       DVBCChannel dvbcChannel = channel as DVBCChannel;
       if (dvbcChannel == null)
       {
-        this.LogDebug("TvCardDvbSs2: channel is not a DVB-C channel!!! {0}", channel.GetType().ToString());
-        return false;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
       int hr = _tunerInterface.SetFrequency((Int32)dvbcChannel.Frequency / 1000);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set frequency.");
 
       hr = _tunerInterface.SetSymbolRate(dvbcChannel.SymbolRate);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set symbol rate, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set symbol rate.");
 
       B2c2Modulation modulation = B2c2Modulation.Qam64;
       switch (dvbcChannel.ModulationType)
@@ -1728,22 +1683,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
           break;
       }
       hr = _tunerInterface.SetModulation(modulation);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      return true;
+      HResult.ThrowException(hr, "Failed to set modulation.");
     }
 
-    private bool PerformTuneAtsc(IChannel channel)
+    private void PerformTuneAtsc(IChannel channel)
     {
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
       {
-        this.LogDebug("TvCardDvbSs2: channel is not an ATSC channel!!! {0}", channel.GetType().ToString());
-        return false;
+        throw new TvException("Received request to tune incompatible channel.");
       }
 
       // If the channel modulation scheme is 8 VSB then it is an over-the-air ATSC channel, otherwise
@@ -1780,20 +1728,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       }
 
       int hr = _tunerInterface.SetFrequency(frequency);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to set frequency, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
+      HResult.ThrowException(hr, "Failed to set frequency.");
 
       hr = _tunerInterface.SetModulation(modulation);
-      if (hr != 0)
-      {
-        this.LogDebug("TvCardDvbSs2: failed to set modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-
-      return true;
+      HResult.ThrowException(hr, "Failed to set modulation.");
     }
 
     /// <summary>
@@ -1803,11 +1741,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     {
       get
       {
+        ITsChannelScan channelScanner = _filterTsWriter as ITsChannelScan;
         if (_tunerType == CardType.Atsc)
         {
-          return new ATSCScanning(this);
+          return new ATSCScanning(this, channelScanner);
         }
-        return new DvbBaseScanning(this);
+        return new DvbBaseScanning(this, channelScanner);
       }
     }
 
@@ -1820,48 +1759,32 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     /// </summary>
     protected override void PerformLoading()
     {
-      this.LogDebug("TvCardDvbSs2: build graph");
+      this.LogDebug("TvCardDvbSs2: load device");
       if (_tunerType == CardType.Unknown || !_cardPresent)
       {
-        this.LogError("TvCardDvbSs2: device is not present, driver restart required");
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: device is not present, driver restart required");
+        throw new TvException("Device is not present, driver restart required.");
       }
 
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _rotEntry = new DsROTEntry(_graphBuilder);
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
+      InitialiseGraph();
 
       // Create, add and initialise the B2C2 source filter.
-      this.LogDebug("TvCardDvbSs2: create B2C2 source filter");
       _filterB2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(B2C2_ADAPTER_CLSID, false));
       if (_filterB2c2Adapter == null)
       {
-        this.LogError("TvCardDvbSs2: failed to create B2C2 source filter");
-        return;
+        throw new TvException("Failed to create B2C2 source filter.");
       }
-      this.LogDebug("TvCardDvbSs2: add source filter to graph");
-      int hr = _graphBuilder.AddFilter(_filterB2c2Adapter, "B2C2-Source");
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to add source filter to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
-      this.LogDebug("TvCardDvbSs2: get device interface handles");
+      int hr = _graph.AddFilter(_filterB2c2Adapter, "B2C2 Source");
+      HResult.ThrowException(hr, "Failed to add B2C2 source filter to graph.");
+
       _dataInterface = _filterB2c2Adapter as IB2C2MPEG2DataCtrl6;
       _tunerInterface = _filterB2c2Adapter as IB2C2MPEG2TunerCtrl4;
       if (_tunerInterface == null || _dataInterface == null)
       {
-        this.LogError("TvCardDvbSs2: failed to get device interface handles");
-        return;
+        throw new TvException("Failed to get device interface handles.");
       }
-      this.LogDebug("TvCardDvbSs2: initialise tuner interface");
       hr = _tunerInterface.Initialize();
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to initialise tuner interface, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return;
-      }
+      HResult.ThrowException(hr, "Failed to initialise tuner interface.");
+
       // This line is a remnant from old code. I don't know if/why it is necessary, but no harm
       // in leaving it...
       _tunerInterface.CheckLock();
@@ -1869,51 +1792,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       // The source filter has multiple output pins, and connecting to the right one is critical.
       // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
       // filter and any plugin filters.
-      IBaseFilter lastFilter = _filterB2c2Adapter;
-      AddInfiniteTeeToGraph(ref lastFilter);
+      _infiniteTee = (IBaseFilter)new InfTee();
+      FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _infiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
 
       // Load and open plugins.
+      IBaseFilter lastFilter = _infiniteTee;
       LoadPlugins(_filterB2c2Adapter, ref lastFilter);
+
       // This class implements the plugin interface and should be considered as the main plugin.
       _customDeviceInterfaces.Add(this);
 
       // Complete the graph.
-      AddTsWriterFilterToGraph();
-      ConnectTsWriterIntoGraph(lastFilter);
+      AddTsWriterToGraph(lastFilter);
 
       SetFilterPids(new HashSet<UInt16>(), ModulationType.ModNotSet, false);
       _diseqcController = new DiseqcController(this, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
 
       ReadDeviceInfo();
-    }
-
-    /// <summary>
-    /// Add and connect an infinite tee into the BDA filter graph.
-    /// </summary>
-    /// <param name="lastFilter">The filter in the filter chain that the infinite tee should be connected to.</param>
-    protected override void AddInfiniteTeeToGraph(ref IBaseFilter lastFilter)
-    {
-      this.LogDebug("TvCardDvbSs2: add infinite tee filter");
-      _infTee = (IBaseFilter)new InfTee();
-      int hr = _graphBuilder.AddFilter(_infTee, "Infinite Tee");
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: failed to add infinite tee");
-      }
-
-      this.LogDebug("TvCardDvbSs2: connect infinite tee filter");
-      IPin infTeeIn = DsFindPin.ByDirection(_infTee, PinDirection.Input, 0);
-      IPin sourceOut = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 2); // Note: pin number is important!
-      hr = _graphBuilder.Connect(sourceOut, infTeeIn);
-      Release.ComObject("B2C2 infinite tee input pin", ref infTeeIn);
-      Release.ComObject("B2C2 MPEG 2 demux input pin", ref sourceOut);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbSs2: failed to connect infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbSs2: failed to connect infinite tee");
-      }
-      lastFilter = _infTee;
     }
 
     #endregion
@@ -1937,11 +1832,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     /// </summary>
     public override void Dispose()
     {
-      if (_graphBuilder == null)
-      {
-        return;
-      }
-
       this.LogDebug("TvCardDvbSs2: dispose");
 
       base.Dispose();
@@ -1954,6 +1844,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         _generalBuffer = IntPtr.Zero;
       }
 
+      Release.ComObject("B2C2 infinite tee", ref _infiniteTee);
       Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);
     }
 
@@ -1965,7 +1856,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
     /// DiSEqC commands</value>
     public override IDiseqcController DiseqcController
     {
-      get { return _diseqcController; }
+      get
+      {
+        return _diseqcController;
+      }
     }
 
     /// <summary>
@@ -1988,56 +1882,68 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
       catch (Exception ex)
       {
         Log.Error(ex, "TvCardDvbSs2: failed to instanciate source filter");
-      }
-      IB2C2MPEG2DataCtrl6 dataInterface = b2c2Source as IB2C2MPEG2DataCtrl6;
-      if (dataInterface == null)
-      {
-        Log.Debug("TvCardDvbSs2: failed to get B2C2 data interface handle");
-        Release.ComObject("B2C2 source filter", ref b2c2Source);
         return contexts;
       }
 
-      // Get device details...
-      int size = DEVICE_INFO_SIZE * MAX_DEVICE_COUNT;
-      int deviceCount = MAX_DEVICE_COUNT;
-      IntPtr structurePtr = Marshal.AllocCoTaskMem(size);
-      for (int i = 0; i < size; i++)
+      try
       {
-        Marshal.WriteByte(structurePtr, i, 0);
-      }
-      int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
-      if (hr != 0)
-      {
-        Log.Debug("TvCardDvbSs2: failed to get device list, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      }
-      else
-      {
-        //DVB_MMI.DumpBinary(tempBuffer, 0, size);
-        Log.Debug("TvCardDvbSs2: device count = {0}", deviceCount);
-        contexts = new object[deviceCount];
-        for (int i = 0; i < deviceCount; i++)
+        IB2C2MPEG2DataCtrl6 dataInterface = b2c2Source as IB2C2MPEG2DataCtrl6;
+        if (dataInterface == null)
         {
-          Log.Debug("TvCardDvbSs2: device {0}", i + 1);
-          DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
-          Log.Debug("  device ID           = {0}", d.DeviceId);
-          Log.Debug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
-          Log.Debug("  tuner type          = {0}", d.TunerType);
-          Log.Debug("  bus interface       = {0}", d.BusInterface);
-          Log.Debug("  is in use?          = {0}", d.IsInUse);
-          Log.Debug("  product ID          = {0}", d.ProductId);
-          Log.Debug("  product name        = {0}", d.ProductName);
-          Log.Debug("  product description = {0}", d.ProductDescription);
-          Log.Debug("  product revision    = {0}", d.ProductRevision);
-          Log.Debug("  product front end   = {0}", d.ProductFrontEnd);
-          structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
-          contexts[i] = d;
+          Log.Debug("TvCardDvbSs2: failed to get B2C2 data interface handle");
+          Release.ComObject("B2C2 source filter", ref b2c2Source);
+          return contexts;
         }
-        Log.Debug("TvCardDvbSs2: result = success");
-      }
 
-      // Clean up...
-      Marshal.FreeCoTaskMem(structurePtr);
-      Release.ComObject("B2C2 source filter", ref b2c2Source);
+        // Get device details...
+        int size = DEVICE_INFO_SIZE * MAX_DEVICE_COUNT;
+        int deviceCount = MAX_DEVICE_COUNT;
+        IntPtr structurePtr = Marshal.AllocCoTaskMem(size);
+        try
+        {
+          for (int i = 0; i < size; i++)
+          {
+            Marshal.WriteByte(structurePtr, i, 0);
+          }
+          int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
+          if (hr != 0)
+          {
+            Log.Debug("TvCardDvbSs2: failed to get device list, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          }
+          else
+          {
+            //DVB_MMI.DumpBinary(tempBuffer, 0, size);
+            Log.Debug("TvCardDvbSs2: device count = {0}", deviceCount);
+            contexts = new object[deviceCount];
+            for (int i = 0; i < deviceCount; i++)
+            {
+              Log.Debug("TvCardDvbSs2: device {0}", i + 1);
+              DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
+              Log.Debug("  device ID           = {0}", d.DeviceId);
+              Log.Debug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
+              Log.Debug("  tuner type          = {0}", d.TunerType);
+              Log.Debug("  bus interface       = {0}", d.BusInterface);
+              Log.Debug("  is in use?          = {0}", d.IsInUse);
+              Log.Debug("  product ID          = {0}", d.ProductId);
+              Log.Debug("  product name        = {0}", d.ProductName);
+              Log.Debug("  product description = {0}", d.ProductDescription);
+              Log.Debug("  product revision    = {0}", d.ProductRevision);
+              Log.Debug("  product front end   = {0}", d.ProductFrontEnd);
+              structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
+              contexts[i] = d;
+            }
+            Log.Debug("TvCardDvbSs2: result = success");
+          }
+        }
+        finally
+        {
+          Marshal.FreeCoTaskMem(structurePtr);
+        }
+      }
+      finally
+      {
+        Release.ComObject("B2C2 source filter", ref b2c2Source);
+      }
 
       return contexts;
     }
@@ -2082,7 +1988,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.SS2
         this.LogDebug("  max symbol rate           = {0} baud", capabilities.MaxSymbolRate);
         this.LogDebug("  performance monitoring    = {0}", capabilities.PerformanceMonitoringCapabilities.ToString());
         this.LogDebug("  lock time                 = {0} ms", capabilities.LockTime);
-        this.LogDebug("  max symbol rate           = {0} ms", capabilities.KernelLockTime);
+        this.LogDebug("  kernel lock time          = {0} ms", capabilities.KernelLockTime);
         this.LogDebug("  acquisition capabilities  = {0}", capabilities.AcquisitionCapabilities);
         _isRawDiseqcSupported = (capabilities.AcquisitionCapabilities & B2c2AcquisionCapability.RawDiseqc) != 0;
       }

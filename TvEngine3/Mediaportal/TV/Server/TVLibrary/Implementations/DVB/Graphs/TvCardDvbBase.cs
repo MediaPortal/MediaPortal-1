@@ -41,31 +41,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
   /// <summary>
   /// base class for DVB cards
   /// </summary>
-  public abstract class TvCardDvbBase : TvCardBase, IDisposable, ITVCard
+  public abstract class TvCardDvbBase : DeviceDirectShow, IDisposable, ITVCard
   {
-    #region constants
-
-    [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer { }
-
-    #endregion
-
     #region variables
 
     /// <summary>
     /// A pre-configured tuning space, used to speed up the tuning process. 
     /// </summary>
     private ITuningSpace _tuningSpace = null;
-
-    /// <summary>
-    /// Capture graph builder
-    /// </summary>
-    protected ICaptureGraphBuilder2 _capBuilder;
-
-    /// <summary>
-    /// ROT entry
-    /// </summary>
-    protected DsROTEntry _rotEntry;
 
     /// <summary>
     /// Network provider filter
@@ -113,21 +96,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected List<IBDA_SignalStatistics> _tunerStatistics = new List<IBDA_SignalStatistics>();
 
     /// <summary>
-    /// TsWriter filter
-    /// </summary>
-    protected IBaseFilter _filterTsWriter;
-
-    /// <summary>
-    /// EPG Grabber interface
-    /// </summary>
-    protected ITsEpgScanner _interfaceEpgGrabber;
-
-    /// <summary>
-    /// Channel scan interface
-    /// </summary>
-    protected ITsChannelScan _interfaceChannelScan;
-
-    /// <summary>
     /// Internal Network provider instance
     /// </summary>
     protected IDvbNetworkProvider _interfaceNetworkProvider;
@@ -136,11 +104,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// Indicates if the internal network provider is used
     /// </summary>
     protected bool _useInternalNetworkProvider;
-
-    /// <summary>
-    /// Channel linkage scanner interface
-    /// </summary>
-    protected ITsChannelLinkageScanner _interfaceChannelLinkageScanner;
 
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
 
@@ -184,11 +147,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           if (customTuner != null && customTuner.CanTuneChannel(channel))
           {
             this.LogDebug("TvCardDvbBase: using custom tuning");
-            if (!customTuner.Tune(channel))
+            if (customTuner.Tune(channel))
             {
-              throw new TvException("TvCardDvbBase: failed to tune to channel");
+              return;
             }
-            return;
+            this.LogWarn("TvCardDvbBase: custom tuning failed, falling back to BDA tuning");
           }
         }
       }
@@ -196,15 +159,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       this.LogDebug("TvCardDvbBase: using BDA tuning");
       ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
       this.LogDebug("TvCardDvbBase: calling put_TuneRequest");
-      int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
+      int hr = (_filterNetworkProvider as ITuner).put_TuneRequest(tuneRequest);
       this.LogDebug("TvCardDvbBase: put_TuneRequest returned, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-      Release.ComObject("Base DVB tuner tune request", ref tuneRequest);
+      Release.ComObject("base DVB tuner tune request", ref tuneRequest);
 
       // TerraTec tuners return a positive HRESULT value when already tuned with the required
       // parameters. See mantis 3469 for more details.
       if (hr < 0)
       {
-        throw new TvException("TvCardDvbBase: failed to tune to channel");
+        HResult.ThrowException(hr, "Failed to tune channel.");
       }
     }
 
@@ -214,11 +177,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <param name="tuningSpace">The device's tuning space.</param>
     /// <param name="channel">The channel to translate into a tune request.</param>
     /// <returns>a tune request instance</returns>
-    protected virtual ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel)
-    {
-      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
-      return null;
-    }
+    protected abstract ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel);
 
     /// <summary>
     /// Performs a tuning using the internal network provider
@@ -380,7 +339,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       get
       {
-        return new DvbBaseScanning(this);
+        return new DvbBaseScanning(this, _filterTsWriter as ITsChannelScan);
       }
     }
 
@@ -408,13 +367,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected override void PerformLoading()
     {
       this.LogDebug("TvCardDvbBase: load device");
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
-      _rotEntry = new DsROTEntry(_graphBuilder);
-
+      InitialiseGraph();
       AddNetworkProviderFilter();
-      AddTsWriterFilterToGraph();
       if (!_useInternalNetworkProvider && _filterNetworkProvider != null)
       {
         _tuningSpace = GetTuningSpace();
@@ -433,20 +387,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         AddMpeg2DemuxerToGraph();
       }
       AddAndConnectBdaBoardFilters(_device);
-      FilterGraphTools.SaveGraphFile(_graphBuilder, _device.Name + " - " + _tunerType + " Graph.grf");
+      FilterGraphTools.SaveGraphFile(_graph, _device.Name + " - " + _tunerType + " Graph.grf");
       GetTunerSignalStatistics();
     }
 
     /// <summary>
     /// The registered name of BDA tuning space for the device.
     /// </summary>
-    protected virtual string TuningSpaceName
+    protected abstract string TuningSpaceName
     {
-      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
-      get
-      {
-        return string.Empty;
-      }
+      get;
     }
 
     /// <summary>
@@ -491,12 +441,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               }
               else
               {
-                Release.ComObject("Base DVB tuner tuning space", ref spaces[0]);
+                Release.ComObject("base DVB tuner tuning space", ref spaces[0]);
               }
             }
             catch (Exception)
             {
-              Release.ComObject("Base DVB tuner tuning space", ref spaces[0]);
+              Release.ComObject("base DVB tuner tuning space", ref spaces[0]);
               throw;
             }
           }
@@ -504,12 +454,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         }
         finally
         {
-          Release.ComObject("Base DVB tuner tuning space enumerator", ref enumTuningSpaces);
+          Release.ComObject("base DVB tuner tuning space enumerator", ref enumTuningSpaces);
         }
       }
       finally
       {
-        Release.ComObject("Base DVB tuner tuning space container", ref systemTuningSpaces);
+        Release.ComObject("base DVB tuner tuning space container", ref systemTuningSpaces);
       }
     }
 
@@ -517,11 +467,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// Create and register the BDA tuning space for the device.
     /// </summary>
     /// <returns>the tuning space that was created</returns>
-    protected virtual ITuningSpace CreateTuningSpace()
-    {
-      // TODO: make this abstract and fix inherritence of TvCardDVBIP and TvCardDvbSs2
-      return null;
-    }
+    protected abstract ITuningSpace CreateTuningSpace();
 
     /// <summary>
     /// Add the appropriate BDA network provider filter to the graph.
@@ -536,7 +482,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         networkProviderName = "MediaPortal Network Provider";
         Guid internalNetworkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
         this.LogDebug("TvCardDvbBase:   add {0}", networkProviderName);
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, internalNetworkProviderClsId,
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graph, internalNetworkProviderClsId,
                                                                      networkProviderName);
         _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
         string hash = TvCardCollection.GetHash(DevicePath);
@@ -604,7 +550,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           throw new TvException("TvCardDvbBase: unrecognised tuner network provider setting");
       }
       this.LogDebug("TvCardDvbBase:   add {0}", networkProviderName);
-      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId,
+      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graph, networkProviderClsId,
                                                                    networkProviderName);
     }
 
@@ -619,8 +565,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected void AddAndConnectBdaBoardFilters(DsDevice device)
     {
       this.LogDebug("dvb:AddAndConnectBDABoardFilters");
-      _rotEntry = new DsROTEntry(_graphBuilder);
-      this.LogDebug("dvb: find bda tuner");
       _filterTuner = null;
       // Enumerate BDA Source filters category and found one that can connect to the network provider
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
@@ -639,7 +583,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           int hr;
           try
           {
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
           catch (Exception)
           {
@@ -649,19 +593,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           {
             if (tmp != null)
             {
-              _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
+              _graph.RemoveFilter(tmp);
+              Release.ComObject("base DVB tuner tuner filter candidate", ref tmp);
             }
             continue;
           }
           //render [Network provider]->[Tuner]
-          hr = _capBuilder.RenderStream(null, null, _filterNetworkProvider, null, tmp);
+          hr = _captureGraphBuilder.RenderStream(null, null, _filterNetworkProvider, null, tmp);
           if (hr == 0)
           {
             // Got it !
             _filterTuner = tmp;
             this.LogDebug("dvb:  using [Tuner]: {0}", devices[i].Name);
-            _tunerDevice = devices[i];
             this.LogDebug("dvb:  Render [Network provider]->[Tuner] OK");
             break;
           }
@@ -674,8 +617,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           }
         }
         // Try another...
-        _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("Base DVB tuner tuner filter candidate", ref tmp);
+        _graph.RemoveFilter(tmp);
+        Release.ComObject("base DVB tuner tuner filter candidate", ref tmp);
       }
       // Assume we found a tuner filter...
       if (_filterTuner == null)
@@ -716,7 +659,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         AddTransportInformationFilterToGraph();
       }
       // Render the last filter with the tswriter
-      ConnectTsWriterIntoGraph(lastFilter);
+      AddTsWriterToGraph(lastFilter);
     }
 
     /// <summary>
@@ -755,13 +698,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                 this.LogDebug("dvb:  tuner filter has capture filter output");
                 useCaptureFilter = false;
               }
-              DsUtils.FreeAMMediaType(mediaTypes[i]);
+              Release.AmMediaType(ref mediaTypes[i]);
             }
           }
-          Release.ComObject("Base DVB tuner tuner filter output pin media type enumerator", ref enumMedia);
+          Release.ComObject("base DVB tuner tuner filter output pin media type enumerator", ref enumMedia);
         }
       }
-      Release.ComObject("Base DVB tuner tuner filter output pin", ref pinOut);
+      Release.ComObject("base DVB tuner tuner filter output pin", ref pinOut);
       if (!useCaptureFilter)
       {
         return false;
@@ -790,7 +733,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       // Finally: if the tuner is a Silicondust HDHomeRun then a capture
       // filter is not required. Neither of the other two detection methods
       // work as of 2011-02-11 (mm1352000).
-      if (_tunerDevice.Name.Contains("Silicondust HDHomeRun Tuner"))
+      if (_device.Name.Contains("Silicondust HDHomeRun Tuner"))
       {
         return false;
       }
@@ -847,7 +790,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           try
           {
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
           catch (Exception)
           {
@@ -858,13 +801,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             if (tmp != null)
             {
               this.LogError("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
-              _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
+              _graph.RemoveFilter(tmp);
+              Release.ComObject("base DVB tuner capture filter candidate", ref tmp);
             }
             continue;
           }
           //render [Tuner]->[Capture]
-          hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
+          hr = _captureGraphBuilder.RenderStream(null, null, _filterTuner, null, tmp);
           if (hr == 0)
           {
             this.LogDebug("dvb:  Render [Tuner]->[Capture] AOK");
@@ -886,8 +829,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
         // Try another...
         this.LogDebug("dvb:  Looking for another bda receiver...");
-        _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("Base DVB tuner capture filter candidate", ref tmp);
+        _graph.RemoveFilter(tmp);
+        Release.ComObject("base DVB tuner capture filter candidate", ref tmp);
       }
     }
 
@@ -898,7 +841,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       this.LogDebug("TvCardDvbBase: add MPEG 2 demultiplexer filter");
       _filterMpeg2DemuxTif = (IBaseFilter)new MPEG2Demultiplexer();
-      int hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "MPEG 2 Demultiplexer");
+      int hr = _graph.AddFilter(_filterMpeg2DemuxTif, "MPEG 2 Demultiplexer");
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -915,9 +858,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       this.LogDebug("TvCardDvbBase: connect MPEG 2 demultiplexer filter");
       IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
       IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-      int hr = _graphBuilder.Connect(infTeeOut, demuxPinIn);
-      Release.ComObject("Base DVB tuner infinite tee output pin", ref infTeeOut);
-      Release.ComObject("Base DVB tuner MPEG 2 demultiplexer input pin", ref demuxPinIn);
+      int hr = _graph.Connect(infTeeOut, demuxPinIn);
+      Release.ComObject("base DVB tuner infinite tee output pin", ref infTeeOut);
+      Release.ComObject("base DVB tuner MPEG 2 demultiplexer input pin", ref demuxPinIn);
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to connect MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
@@ -933,60 +876,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       this.LogDebug("TvCardDvbBase: add infinite tee filter");
       _infTee = (IBaseFilter)new InfTee();
-      int hr = _graphBuilder.AddFilter(_infTee, "Infinite Tee");
+      int hr = _graph.AddFilter(_infTee, "Infinite Tee");
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add infinite tee");
       }
       this.LogDebug("TvCardDvbBase:   render...->[inf tee]");
-      hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTee);
+      hr = _captureGraphBuilder.RenderStream(null, null, lastFilter, null, _infTee);
       if (hr != 0)
       {
         this.LogError("TvCardDvbBase: failed to render stream through the infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to render stream through the infinite tee");
       }
       lastFilter = _infTee;
-    }
-
-    /// <summary>
-    /// Add the MediaPortal TS writer/analyser filter to the BDA filter graph.
-    /// </summary>
-    protected void AddTsWriterFilterToGraph()
-    {
-      this.LogDebug("TvCardDvbBase: add Mediaportal TsWriter filter");
-
-      _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MpTsAnalyzer).GUID, true);
-      if (_filterTsWriter == null)
-      {
-        this.LogError("TvCardDvbBase: failed to marshal TsWriter filter");
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to marshal TsWriter filter");
-      }
-      int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal TS Analyzer");
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to add TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add TsWriter filter");
-      }
-      _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
-      _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
-      _interfaceChannelLinkageScanner = (ITsChannelLinkageScanner)_filterTsWriter;
-    }
-
-    /// <summary>
-    /// Connect the MediaPortal TS writer/analyser filter into the BDA filter graph, completing the graph.
-    /// </summary>
-    /// <param name="lastFilter">The filter in the filter chain that the TsWriter filter should be connected to.</param>
-    protected void ConnectTsWriterIntoGraph(IBaseFilter lastFilter)
-    {
-      this.LogDebug("TvCardDvbBase: connect Mediaportal TsWriter filter");
-      this.LogDebug("TvCardDvbBase:   render...->[TsWriter]");
-      int hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to render stream into the TsWriter filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to render stream into the TsWriter filter");
-      }
     }
 
     /// <summary>
@@ -1011,7 +914,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           try
           {
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
+            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
             if (hr == 0)
             {
               break;  // Success!
@@ -1074,7 +977,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               if (enumMedia != null)
               {
                 enumMedia.Next(1, mediaTypes, out fetched);
-                Release.ComObject("Base DVB tuner MPEG 2 demultiplexer output pin media type enumerator", ref enumMedia);
+                Release.ComObject("base DVB tuner MPEG 2 demultiplexer output pin media type enumerator", ref enumMedia);
                 if (fetched == 1 && mediaTypes[0] != null)
                 {
                   try
@@ -1087,13 +990,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                   }
                   finally
                   {
-                    DsUtils.FreeAMMediaType(mediaTypes[0]);
+                    Release.AmMediaType(ref mediaTypes[0]);
                   }
                 }
               }
               try
               {
-                hr = _graphBuilder.Connect(pins[0], pinInTif);
+                hr = _graph.Connect(pins[0], pinInTif);
                 if (hr == 0)
                 {
                   tifConnected = true;
@@ -1107,18 +1010,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             }
             finally
             {
-              Release.ComObject("Base DVB tuner MPEG 2 demultiplexer output pin " + pinNr, ref pins[0]);
+              Release.ComObject("base DVB tuner MPEG 2 demultiplexer output pin " + pinNr, ref pins[0]);
             }
           }
         }
         finally
         {
-          Release.ComObject("Base DVB tuner MPEG 2 demultiplexer pin enumerator", ref enumPins);
+          Release.ComObject("base DVB tuner MPEG 2 demultiplexer pin enumerator", ref enumPins);
         }
       }
       finally
       {
-        Release.ComObject("Base DVB tuner TIF input pin", ref pinInTif);
+        Release.ComObject("base DVB tuner TIF input pin", ref pinInTif);
       }
       this.LogDebug("TvCardDvbBase: result = {0}", tifConnected);
     }
@@ -1140,10 +1043,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     protected void Decompose()
     {
-      if (_graphBuilder == null)
-        return;
-
-      
       this.LogDebug("dvb:Decompose");
       _timeshiftingEPGGrabber.Dispose();
 
@@ -1157,45 +1056,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         _epgGrabbing = false;
       }
 
-      FreeAllSubChannels();
-      this.LogDebug("  stop");
-      PerformDeviceAction(DeviceAction.Stop);
-
       base.Dispose();
 
       this.LogDebug("  free...");
-      _interfaceChannelScan = null;
-      _interfaceEpgGrabber = null;
+      Release.ComObject("base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2DemuxTif);
+      Release.ComObject("base DVB tuner network provider", ref _filterNetworkProvider);
+      Release.ComObject("base DVB tuner infinite tee", ref _infTee);
+      Release.ComObjectAllRefs("base DVB tuner tuner filter", ref _filterTuner);
+      Release.ComObjectAllRefs("base DVB tuner capture filter", ref _filterCapture);
+      Release.ComObject("base DVB tuner transport information filter", ref _filterTIF);
 
-      Release.ComObject("Base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2DemuxTif);
-      Release.ComObject("Base DVB tuner network provider", ref _filterNetworkProvider);
-      Release.ComObject("Base DVB tuner infinite tee", ref _infTee);
-      Release.ComObjectAllRefs("Base DVB tuner tuner filter", ref _filterTuner);
-      Release.ComObjectAllRefs("Base DVB tuner capture filter", ref _filterCapture);
-      Release.ComObject("Base DVB tuner transport information filter", ref _filterTIF);
-      this.LogDebug("  free pins...");
-      Release.ComObject("Base DVB tuner TsWriter", ref _filterTsWriter);
-      _interfaceChannelLinkageScanner = null;
-      _interfaceChannelScan = null;
-      _interfaceEpgGrabber = null;
-      this.LogDebug("  free graph...");
-      if (_rotEntry != null)
-      {
-        _rotEntry.Dispose();
-        _rotEntry = null;
-      }
-      Release.ComObject("Base DVB tuner graph builder", ref _capBuilder);
-      if (_graphBuilder != null)
-      {
-        FilterGraphTools.RemoveAllFilters(_graphBuilder);
-        Release.ComObject("Base DVB tuner graph", ref _graphBuilder);
-      }
       this.LogDebug("  free devices...");
-      if (_tunerDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        _tunerDevice = null;
-      }
       if (_captureDevice != null)
       {
         DevicesInUse.Instance.Remove(_captureDevice);
@@ -1206,12 +1077,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          Release.ComObjectAllRefs("Base DVB tuner signal statistic", ref stat);
+          Release.ComObjectAllRefs("base DVB tuner signal statistic", ref stat);
         }
         _tunerStatistics.Clear();
       }
       this.LogDebug("  decompose done...");
-      _state = DeviceState.NotLoaded;
     }
 
     #endregion
@@ -1392,18 +1262,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
     #endregion
 
-    #region properties
-
-    /// <summary>
-    /// returns the ITsChannelScan interface for the graph
-    /// </summary>
-    public ITsChannelScan StreamAnalyzer
-    {
-      get { return _interfaceChannelScan; }
-    }
-
-    #endregion
-
     #region Channel linkage handling
 
     private static bool SameAsPortalChannel(PortalChannel pChannel, LinkedChannel lChannel)
@@ -1432,8 +1290,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void StartLinkageScanner(BaseChannelLinkageScanner callback)
     {
-      _interfaceChannelLinkageScanner.SetCallBack(callback);
-      _interfaceChannelLinkageScanner.Start();
+      ITsChannelLinkageScanner linkageScanner = _filterTsWriter as ITsChannelLinkageScanner;
+      linkageScanner.SetCallBack(callback);
+      linkageScanner.Start();
     }
 
     /// <summary>
@@ -1441,7 +1300,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void ResetLinkageScanner()
     {
-      _interfaceChannelLinkageScanner.Reset();
+      (_filterTsWriter as ITsChannelLinkageScanner).Reset();
     }
 
     /// <summary>
@@ -1451,11 +1310,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       get
       {
+        ITsChannelLinkageScanner linkageScanner = _filterTsWriter as ITsChannelLinkageScanner;
         try
         {
           uint channelCount;
           List<PortalChannel> portalChannels = new List<PortalChannel>();
-          _interfaceChannelLinkageScanner.GetChannelCount(out channelCount);
+          linkageScanner.GetChannelCount(out channelCount);
           if (channelCount == 0)
             return portalChannels;
           for (uint i = 0; i < channelCount; i++)
@@ -1463,13 +1323,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             ushort network_id = 0;
             ushort transport_id = 0;
             ushort service_id = 0;
-            _interfaceChannelLinkageScanner.GetChannel(i, ref network_id, ref transport_id, ref service_id);
+            linkageScanner.GetChannel(i, ref network_id, ref transport_id, ref service_id);
             PortalChannel pChannel = new PortalChannel();
             pChannel.NetworkId = network_id;
             pChannel.TransportId = transport_id;
             pChannel.ServiceId = service_id;
             uint linkCount;
-            _interfaceChannelLinkageScanner.GetLinkedChannelsCount(i, out linkCount);
+            linkageScanner.GetLinkedChannelsCount(i, out linkCount);
             if (linkCount > 0)
             {
               for (uint j = 0; j < linkCount; j++)
@@ -1478,7 +1338,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                 ushort tid = 0;
                 ushort sid = 0;
                 IntPtr ptrName;
-                _interfaceChannelLinkageScanner.GetLinkedChannel(i, j, ref nid, ref tid, ref sid, out ptrName);
+                linkageScanner.GetLinkedChannel(i, j, ref nid, ref tid, ref sid, out ptrName);
                 LinkedChannel lChannel = new LinkedChannel();
                 lChannel.NetworkId = nid;
                 lChannel.TransportId = tid;
@@ -1491,7 +1351,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             if (pChannel.LinkedChannels.Count > 0)
               portalChannels.Add(pChannel);
           }
-          _interfaceChannelLinkageScanner.Reset();
+          linkageScanner.Reset();
           return portalChannels;
         }
         catch (Exception ex)
@@ -1513,11 +1373,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       _epgGrabberCallback = callback;
       this.LogDebug("dvb:grab epg...");
-      if (_interfaceEpgGrabber == null)
+      ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
+      if (epgGrabber == null)
+      {
         return;
-      _interfaceEpgGrabber.SetCallBack(callback);
-      _interfaceEpgGrabber.GrabEPG();
-      _interfaceEpgGrabber.GrabMHW();
+      }
+      epgGrabber.SetCallBack(callback);
+      epgGrabber.GrabEPG();
+      epgGrabber.GrabMHW();
       _epgGrabbing = true;
     }
 
@@ -1542,7 +1405,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           _epgGrabberCallback.OnEpgCancelled();
         }
-        _interfaceEpgGrabber.Reset();
+        (_filterTsWriter as ITsEpgScanner).Reset();
       }
       _epgGrabbing = value;
     }
@@ -1567,10 +1430,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     public override void AbortGrabbing()
     {
       this.LogDebug("dvb:abort grabbing epg");
-      if (_interfaceEpgGrabber != null)
-        _interfaceEpgGrabber.AbortGrabbing();
+      ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
+      if (epgGrabber != null)
+      {
+        epgGrabber.AbortGrabbing();
+      }
       if (_timeshiftingEPGGrabber != null)
+      {
         _timeshiftingEPGGrabber.OnEpgCancelled();
+      }
     }
 
     /// <summary>
@@ -1582,23 +1450,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       {
         try
         {
+          ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
           bool dvbReady, mhwReady;
-          _interfaceEpgGrabber.IsEPGReady(out dvbReady);
-          _interfaceEpgGrabber.IsMHWReady(out mhwReady);
+          epgGrabber.IsEPGReady(out dvbReady);
+          epgGrabber.IsMHWReady(out mhwReady);
           if (dvbReady == false || mhwReady == false)
             return null;
           uint titleCount;
           uint channelCount;
-          _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
+          epgGrabber.GetMHWTitleCount(out titleCount);
           mhwReady = titleCount > 10;
-          _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
+          epgGrabber.GetEPGChannelCount(out channelCount);
           dvbReady = channelCount > 0;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
           this.LogInfo("dvb:mhw ready MHW {0} titles found", titleCount);
           this.LogInfo("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
-            _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
+            epgGrabber.GetMHWTitleCount(out titleCount);
             for (int i = 0; i < titleCount; ++i)
             {
               uint id = 0;
@@ -1609,13 +1478,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               uint tmp1 = 0, tmp2 = 0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid,
+              epgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid,
                                                ref themeid, ref PPV, ref summaries, ref duration, ref datestart,
                                                ref timestart, out ptrTitle, out ptrProgramName);
-              _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid,
+              epgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid,
                                                  out ptrChannelName);
-              _interfaceEpgGrabber.GetMHWSummary(programid, out ptrSummary);
-              _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
+              epgGrabber.GetMHWSummary(programid, out ptrSummary);
+              epgGrabber.GetMHWTheme(themeid, out ptrTheme);
               string channelName = DvbTextConverter.Convert(ptrChannelName, "");
               string title = DvbTextConverter.Convert(ptrTitle, "");
               string summary = DvbTextConverter.Convert(ptrSummary, "");
@@ -1680,7 +1549,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               epgChannels[i].Sort();
             }
             // free the epg infos in TsWriter so that the mem used gets released 
-            _interfaceEpgGrabber.Reset();
+            epgGrabber.Reset();
             return epgChannels;
           }
 
@@ -1691,7 +1560,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             ushort serviceid = 0;
             for (uint x = 0; x < channelCount; ++x)
             {
-              _interfaceEpgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
+              epgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
               // We need to use a matching channel type per card, because tuning details will be looked up with cardtype as filter.
               DVBBaseChannel channel = CreateChannel();
               channel.NetworkId = networkid;
@@ -1699,7 +1568,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
               channel.ServiceId = serviceid;
               EpgChannel epgChannel = new EpgChannel { Channel = channel };
               uint eventCount;
-              _interfaceEpgGrabber.GetEPGEventCount(x, out eventCount);
+              epgGrabber.GetEPGEventCount(x, out eventCount);
               for (uint i = 0; i < eventCount; ++i)
               {
                 uint start_time_MJD, start_time_UTC, duration, languageCount;
@@ -1708,7 +1577,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                 int starRating;
                 IntPtr ptrClassification;
 
-                _interfaceEpgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC,
+                epgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC,
                                                  out duration, out ptrGenre, out starRating, out ptrClassification);
                 string genre = DvbTextConverter.Convert(ptrGenre, "");
                 string classification = DvbTextConverter.Convert(ptrClassification, "");
@@ -1768,7 +1637,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
                     IntPtr ptrTitle;
                     IntPtr ptrDesc;
                     int parentalRating;
-                    _interfaceEpgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
+                    epgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
                                                         out parentalRating);
                     //title = DvbTextConverter.Convert(ptrTitle,"");
                     //description = DvbTextConverter.Convert(ptrDesc,"");
@@ -1825,7 +1694,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             } //for (uint x = 0; x < channelCount; ++x)
           }
           // free the epg infos in TsWriter so that the mem used gets released 
-          _interfaceEpgGrabber.Reset();
+          epgGrabber.Reset();
           return epgChannels;
         }
         catch (Exception ex)

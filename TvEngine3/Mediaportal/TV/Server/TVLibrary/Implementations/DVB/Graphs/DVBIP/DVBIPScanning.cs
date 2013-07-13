@@ -18,6 +18,7 @@
 
 #endregion
 
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
@@ -32,7 +33,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     /// Initialise a new instance of the <see cref="DVBIPScanning"/> class.
     /// </summary>
     /// <param name="tuner">The tuner associated with this scanner.</param>
-    public DVBIPScanning(TvCardDVBIP tuner) : base(tuner) {}
+    /// <param name="analyzer">The stream analyzer instance to use for scanning.</param>
+    public DVBIPScanning(TvCardDVBIP tuner, ITsChannelScan analyzer)
+      : base(tuner, analyzer)
+    {
+    }
 
     /// <summary>
     /// Set the name for services which do not supply a name.

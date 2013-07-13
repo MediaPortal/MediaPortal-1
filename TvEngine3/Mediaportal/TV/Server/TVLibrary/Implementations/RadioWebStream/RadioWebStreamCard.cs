@@ -46,10 +46,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// Initializes a new instance of the <see cref="RadioWebStreamCard"/> class.
     /// </summary>
     public RadioWebStreamCard()
-      : base(null)
+      : base("RadioWebStream Card (builtin)", "(builtin)")
     {
-      _name = "RadioWebStream Card (builtin)";
-      _devicePath = "(builtin)";
       _isHybrid = false;
       _isScanning = false;
       _epgGrabbing = false;
@@ -120,6 +118,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     /// Actually load the device.
     /// </summary>
     protected override void PerformLoading()
+    {
+    }
+
+    /// <summary>
+    /// Set the state of the device.
+    /// </summary>
+    /// <param name="state">The state to apply to the device.</param>
+    protected override void SetDeviceState(DeviceState state)
     {
     }
 

@@ -1660,6 +1660,82 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       mediaTS.formatPtr = IntPtr.Zero;
       return mediaTS;
     }
+
+    /// <summary>
+    /// Add and connect a filter into a DirectShow graph.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="newFilter">The filter to add and connect.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
+    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
+    /// <param name="upstreamFilterOutputPinIndex">The zero based index of the upstream filter output pin to connect to the new filter.</param>
+    /// <param name="newFilterInputPinIndex">The zero based index of the new filter input pin to connect to the upstream filter.</param>
+    public static void AddAndConnectFilterIntoGraph(IFilterGraph2 graph, IBaseFilter newFilter, string filterName, IBaseFilter upstreamFilter, int upstreamFilterOutputPinIndex, int newFilterInputPinIndex)
+    {
+      if (upstreamFilter == null || newFilter == null)
+      {
+        throw new TvException("Failed to add and connect filter, upstream or new filter are null.");
+      }
+      if (upstreamFilterOutputPinIndex < 0 || newFilterInputPinIndex < 0)
+      {
+        throw new TvException("Failed to add and connect filter, one or both pin indicies are invalid.");
+      }
+
+      int hr = graph.AddFilter(newFilter, filterName);
+      HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+
+      IPin upstreamOutputPin = DsFindPin.ByDirection(upstreamFilter, PinDirection.Output, upstreamFilterOutputPinIndex);
+      try
+      {
+        IPin newFilterInputPin = DsFindPin.ByDirection(newFilter, PinDirection.Input, newFilterInputPinIndex);
+        try
+        {
+          hr = graph.ConnectDirect(upstreamOutputPin, newFilterInputPin, null);
+          HResult.ThrowException(hr, "Failed to connect the new filter into the graph.");
+        }
+        finally
+        {
+          Release.ComObject("filter graph tools add-and-connect-filter-into-graph new filter input pin", ref newFilterInputPin);
+        }
+      }
+      catch
+      {
+        graph.RemoveFilter(newFilter);
+      }
+      finally
+      {
+        Release.ComObject("filter graph tools add-and-connect-filter-into-graph upstream filter output pin", ref upstreamOutputPin);
+      }
+    }
+
+    /// <summary>
+    /// Add and connect a filter into a DirectShow graph.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="newFilter">The filter to add and connect.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
+    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
+    /// <param name="graphBuilder">The graph builder, used to render-connect the filters.</param>
+    public static void AddAndConnectFilterIntoGraph(IFilterGraph2 graph, IBaseFilter newFilter, string filterName, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder)
+    {
+      if (upstreamFilter == null || newFilter == null)
+      {
+        throw new TvException("Failed to add and connect filter, upstream or new filter are null.");
+      }
+
+      int hr = graph.AddFilter(newFilter, filterName);
+      HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+
+      try
+      {
+        hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
+        HResult.ThrowException(hr, "Failed to render the stream into the new filter.");
+      }
+      catch
+      {
+        graph.RemoveFilter(newFilter);
+      }
+    }
   }
 
   #region Unmanaged Code declarations

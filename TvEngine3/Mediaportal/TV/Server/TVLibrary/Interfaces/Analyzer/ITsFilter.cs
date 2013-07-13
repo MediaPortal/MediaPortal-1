@@ -24,6 +24,14 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
+  /// The MediaPortal TS writer/analyser filter class.
+  /// </summary>
+  [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
+  public class MediaPortalTsWriter
+  {
+  }
+
+  /// <summary>
   /// The main TsWriter interface
   /// </summary>
   [ComVisible(true), ComImport,

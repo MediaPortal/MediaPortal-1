@@ -19,13 +19,14 @@
 #endregion
 
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
 {
   /// <summary>
-  /// A class which implements TV and radio service scanning for ATSC and annex-C (North American cable)
+  /// A class which implements TV and radio service scanning for ATSC and annex-B (North American cable)
   /// tuners with BDA drivers.
   /// </summary>
   public class ATSCScanning : DvbBaseScanning
@@ -34,8 +35,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     /// Initialise a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
     /// <param name="tuner">The tuner associated with this scanner.</param>
-    public ATSCScanning(TvCardDvbBase tuner)
-      : base(tuner)
+    /// <param name="analyzer">The stream analyzer instance to use for scanning.</param>
+    public ATSCScanning(ITVCard tuner, ITsChannelScan analyzer)
+      : base(tuner, analyzer)
     {
     }
 

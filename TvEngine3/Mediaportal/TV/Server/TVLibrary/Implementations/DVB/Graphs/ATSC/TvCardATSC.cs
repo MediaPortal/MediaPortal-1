@@ -23,6 +23,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -57,7 +58,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("TvCardAtsc: CreateTuningSpace()");
+      this.LogDebug("TvCardAtsc: create tuning space");
 
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IATSCTuningSpace tuningSpace = null;
@@ -201,7 +202,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.ATSC
     {
       get
       {
-        return new ATSCScanning(this);
+        return new ATSCScanning(this, _filterTsWriter as ITsChannelScan);
       }
     }
 

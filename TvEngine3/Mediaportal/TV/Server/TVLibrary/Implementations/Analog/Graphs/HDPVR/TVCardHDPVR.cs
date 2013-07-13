@@ -37,10 +37,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
   /// <summary>
   /// Class for handling supported capture cards, including the Hauppauge HD PVR and Colossus.
   /// </summary>
-  public class TvCardHDPVR : TvCardBase, ITVCard
+  public class TvCardHDPVR : DeviceDirectShow
   {
-
-
     #region constants
 
     // Assume the capture card is a Hauppauge HD PVR by default.
@@ -51,24 +49,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
     #endregion
 
-    #region imports
-
-    [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer { }
-
-    #endregion
-
     #region variables
 
-    private DsROTEntry _rotEntry;
-    private ICaptureGraphBuilder2 _capBuilder;
-    private DsDevice _crossBarDevice;
     private DsDevice _captureDevice;
     private DsDevice _encoderDevice;
-    private IBaseFilter _filterCrossBar;
     private IBaseFilter _filterCapture;
     private IBaseFilter _filterEncoder;
-    private IBaseFilter _filterTsWriter;
     private Configuration _configuration;
     private IQuality _qualityControl;
 
@@ -226,33 +212,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// </summary>
     public override void Dispose()
     {
-      if (_graphBuilder == null)
-        return;
       this.LogDebug("HDPVR:  Dispose()");
-
-      FreeAllSubChannels();
-      PerformDeviceAction(DeviceAction.Stop);
-
       base.Dispose();
 
-      FilterGraphTools.RemoveAllFilters(_graphBuilder);
-      this.LogDebug("HDPVR:  All filters removed");
-      Release.ComObjectAllRefs("Capture device crossbar filter", ref _filterCrossBar);
-      Release.ComObjectAllRefs("Capture device capture filter", ref _filterCapture);
-      Release.ComObjectAllRefs("Capture device encoder filter", ref _filterEncoder);
-      Release.ComObjectAllRefs("Capture device TsWriter", ref _filterTsWriter);
-      if (_rotEntry != null)
-      {
-        _rotEntry.Dispose();
-        _rotEntry = null;
-      }
-      Release.ComObject("Capture device graph", ref _graphBuilder);
-      DevicesInUse.Instance.Remove(_tunerDevice);
-      if (_crossBarDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_crossBarDevice);
-        _crossBarDevice = null;
-      }
+      Release.ComObjectAllRefs("capture device capture filter", ref _filterCapture);
+      Release.ComObjectAllRefs("capture device encoder filter", ref _filterEncoder);
+
       if (_captureDevice != null)
       {
         DevicesInUse.Instance.Remove(_captureDevice);
@@ -263,7 +228,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         DevicesInUse.Instance.Remove(_encoderDevice);
         _encoderDevice = null;
       }
-      _state = DeviceState.NotLoaded;
       this.LogDebug("HDPVR:  dispose completed");
     }
 
@@ -284,15 +248,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
-      this.LogDebug("HDPVR: build graph");
-      _graphBuilder = (IFilterGraph2)new FilterGraph();
-      _rotEntry = new DsROTEntry(_graphBuilder);
-      _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
-      _capBuilder.SetFiltergraph(_graphBuilder);
-      AddCrossBarFilter();
+      this.LogDebug("HDPVR: load device");
+      InitialiseGraph();
+      AddMainDeviceFilterToGraph();
+      CheckCapabilities();
       AddCaptureFilter();
       AddEncoderFilter();
-      AddTsWriterFilterToGraph();
+      AddTsWriterToGraph(_filterEncoder);
       _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterEncoder, _filterCapture,
                                                                     null, null);
       if (_qualityControl == null)
@@ -301,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
 
       _state = DeviceState.Stopped;
-      _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
+      _configuration.Graph.Crossbar.Name = _device.Name;
       _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
       _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
       _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
@@ -314,33 +276,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       Configuration.writeConfiguration(_configuration);
     }
 
-    private void AddCrossBarFilter()
-    {
-      this.LogDebug("HDPVR: Add Crossbar Filter");
-      //get list of all crossbar devices installed on this system
-      _crossBarDevice = _tunerDevice;
-      IBaseFilter tmp;
-      int hr;
-      try
-      {
-        //add the crossbar to the graph
-        hr = _graphBuilder.AddSourceFilterForMoniker(_crossBarDevice.Mon, null, _crossBarDevice.Name, out tmp);
-      }
-      catch (Exception)
-      {
-        this.LogDebug("HDPVR: cannot add filter to graph");
-        throw new TvException("Unable to add crossbar to graph");
-      }
-      if (hr == 0)
-      {
-        _filterCrossBar = tmp;
-        CheckCapabilities();
-        return;
-      }
-      this.LogDebug("HDPVR: cannot add filter to graph");
-      throw new TvException("Unable to add crossbar to graph");
-    }
-
     private void AddCaptureFilter()
     {
       DsDevice[] devices;
@@ -350,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       try
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-        devices = DeviceSorter.Sort(devices, _tunerDevice, _filterCrossBar, _captureDevice, _filterEncoder);
+        devices = DeviceSorter.Sort(devices, _device, _captureDevice, _filterEncoder);
       }
       catch (Exception)
       {
@@ -382,7 +317,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           try
           {
             // add video capture filter to graph
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
           catch (Exception)
           {
@@ -394,18 +329,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
             //cannot add video capture filter to graph, try next one
             if (tmp != null)
             {
-              _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Capture device capture filter candidate", ref tmp);
+              _graph.RemoveFilter(tmp);
+              Release.ComObject("capture device capture filter candidate", ref tmp);
             }
             continue;
           }
           // connect crossbar->video capture filter
-          hr = _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
+          hr = _captureGraphBuilder.RenderStream(null, null, _filterDevice, null, tmp);
           if (hr == 0)
           {
             // That worked. Since most crossbar devices require 2 connections from
             // crossbar->video capture filter, we do it again to connect the 2nd pin
-            _capBuilder.RenderStream(null, null, _filterCrossBar, null, tmp);
+            _captureGraphBuilder.RenderStream(null, null, _filterDevice, null, tmp);
             _filterCapture = tmp;
             _captureDevice = devices[i];
             this.LogDebug("HDPVR: AddTvCaptureFilter connected to crossbar successfully");
@@ -423,8 +358,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
         this.LogDebug("HDPVR: AddTvCaptureFilter failed to connect to crossbar");
-        _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("Capture device capture filter candidate", ref tmp);
+        _graph.RemoveFilter(tmp);
+        Release.ComObject("capture device capture filter candidate", ref tmp);
       }
       if (_filterCapture == null)
       {
@@ -442,7 +377,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       try
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.WDMStreamingEncoderDevices);
-        devices = DeviceSorter.Sort(devices, _tunerDevice, _filterCrossBar, _captureDevice, _filterEncoder);
+        devices = DeviceSorter.Sort(devices, _device, _captureDevice, _filterEncoder);
       }
       catch (Exception)
       {
@@ -486,7 +421,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           try
           {
             //add encoder filter to graph
-            hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
           }
           catch (Exception)
           {
@@ -498,8 +433,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
             //failed to add filter to graph, continue with the next one
             if (tmp != null)
             {
-              _graphBuilder.RemoveFilter(tmp);
-              Release.ComObject("Capture device encoder filter candidate", ref tmp);
+              _graph.RemoveFilter(tmp);
+              Release.ComObject("capture device encoder filter candidate", ref tmp);
             }
             continue;
           }
@@ -507,12 +442,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           {
             continue;
           }
-          hr = _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
+          hr = _captureGraphBuilder.RenderStream(null, null, _filterCapture, null, tmp);
           if (hr == 0)
           {
             // That worked. Since most crossbar devices require 2 connections from
             // crossbar->video capture filter, we do it again to connect the 2nd pin
-            _capBuilder.RenderStream(null, null, _filterCapture, null, tmp);
+            _captureGraphBuilder.RenderStream(null, null, _filterCapture, null, tmp);
             _filterEncoder = tmp;
             _encoderDevice = devices[i];
             this.LogDebug("HDPVR: AddTvEncoderFilter connected to catpure successfully");
@@ -530,47 +465,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         // cannot connect crossbar->video capture filter, remove filter from graph
         // cand continue with the next vieo capture filter
         this.LogDebug("HDPVR: AddTvEncoderFilter failed to connect to capture");
-        _graphBuilder.RemoveFilter(tmp);
-        Release.ComObject("Capture device encoder filter candidate", ref tmp);
+        _graph.RemoveFilter(tmp);
+        Release.ComObject("capture device encoder filter candidate", ref tmp);
       }
       this.LogDebug("HDPVR: AddTvEncoderFilter no encoder found");
-    }
-
-    private void AddTsWriterFilterToGraph()
-    {
-      if (_filterTsWriter == null)
-      {
-        this.LogDebug("HDPVR: Add Mediaportal TsWriter filter");
-        _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
-        int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
-        if (hr != 0)
-        {
-          this.LogError("HDPVR:  Add main Ts Analyzer returns:0x{0:X}", hr);
-          throw new TvException("Unable to add Ts Analyzer filter");
-        }
-        IPin pinOut = DsFindPin.ByDirection(_filterEncoder, PinDirection.Output, 0);
-        if (pinOut == null)
-        {
-          this.LogError("HDPVR:  Unable to find output pin on the encoder filter");
-          throw new TvException("unable to find output pin on the encoder filter");
-        }
-        IPin pinIn = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
-        if (pinIn == null)
-        {
-          this.LogError("HDPVR:  Unable to find the input pin on ts analyzer filter");
-          throw new TvException("Unable to find the input pin on ts analyzer filter");
-        }
-        //Log.this.LogInfo("HDPVR: Render [Encoder]->[TsWriter]");
-        hr = _graphBuilder.Connect(pinOut, pinIn);
-        Release.ComObject("Capture device TsWriter input pin", ref pinIn);
-        Release.ComObject("Capture device encoder output pin", ref pinOut);
-        if (hr != 0)
-        {
-          this.LogError("HDPVR:  Unable to connect encoder to ts analyzer filter :0x{0:X}", hr);
-          throw new TvException("unable to connect encoder to ts analyzer filter");
-        }
-        this.LogDebug("HDPVR: AddTsWriterFilterToGraph connected to encoder successfully");
-      }
     }
 
     #endregion
@@ -596,7 +494,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
 
       // Set up the crossbar.
-      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+      IAMCrossbar crossBarFilter = _filterDevice as IAMCrossbar;
 
       if (_currentTuningDetail == null || currentChannel.VideoSource != analogChannel.VideoSource)
       {
@@ -635,7 +533,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// </summary>
     private void CheckCapabilities()
     {
-      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+      IAMCrossbar crossBarFilter = _filterDevice as IAMCrossbar;
       if (crossBarFilter != null)
       {
         int outputs, inputs;

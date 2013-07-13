@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
   /// <summary>
   /// Base class for all devices.
   /// </summary>
-  public abstract class TvCardBase : ITVCard
+  public abstract class TvCardBase : ITVCard, IDisposable
   {
     #region events
 
@@ -167,11 +167,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected bool _isScanning;
 
     /// <summary>
-    /// The graph builder
-    /// </summary>
-    protected IFilterGraph2 _graphBuilder;
-
-    /// <summary>
     /// The tuner type (eg. DVB-S, DVB-T... etc.).
     /// </summary>
     protected CardType _tunerType;
@@ -180,11 +175,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Date and time of the last signal update
     /// </summary>
     protected DateTime _lastSignalUpdate;
-
-    /// <summary>
-    /// Last subchannel id
-    /// </summary>
-    protected int _subChannelId;
 
     /// <summary>
     /// Indicates, if the signal is present
@@ -197,20 +187,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     protected bool _cardPresent = true;
 
     /// <summary>
-    /// The tuner device
-    /// </summary>
-    protected DsDevice _tunerDevice;
-
-    /// <summary>
-    /// Main device of the card
-    /// </summary>
-    protected DsDevice _device;
-
-    /// <summary>
     /// The db card id
     /// </summary>
     protected int _cardId;
-
 
     /// <summary>
     /// The action that will be taken when the device is no longer being actively used.
@@ -314,25 +293,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #region ctor
 
-    ///<summary>
+    /// <summary>
     /// Base constructor
-    ///</summary>
-    ///<param name="device">Base DS device</param>
-    protected TvCardBase(DsDevice device)
+    /// </summary>
+    /// <param name="name">The device name.</param>
+    /// <param name="externalId">An identifier for the device. Useful for distinguishing this instance from other devices of the same type.</param>
+    protected TvCardBase(string name, string externalId)
     {
       _mapSubChannels = new Dictionary<int, ITvSubChannel>();
       _lastSignalUpdate = DateTime.MinValue;
       _parameters = new ScanParameters();
       _epgGrabbing = false;   // EPG grabbing not supported by default.
       _customDeviceInterfaces = new List<ICustomDevice>();
-
-      _device = device;
-      _tunerDevice = device;
-      if (device != null)
-      {
-        _name = device.Name;
-        _devicePath = device.DevicePath;
-      }
+      _name = name;
+      _devicePath = externalId;
 
       if (_devicePath != null)
       {
@@ -1185,10 +1159,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       if (_state != DeviceState.NotLoaded)
       {
-        this.LogError("TvCardBase: the device is already loaded");
+        this.LogWarn("TvCardBase: the device is already loaded");
         return;
       }
 
+      this.LogDebug("TvCardBase: load device");
       try
       {
         PerformLoading();
@@ -1425,37 +1400,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Set the state of the device.
     /// </summary>
     /// <param name="state">The state to apply to the device.</param>
-    protected virtual void SetDeviceState(DeviceState state)
-    {
-      this.LogDebug("TvCardBase: set device state, current state = {0}, requested state = {1}", state);
-
-      if (state == _state)
-      {
-        this.LogDebug("TvCardBase: device already in required state");
-        return;
-      }
-      if (_graphBuilder == null)
-      {
-        this.LogDebug("TvCardBase: graphbuilder is null");
-        return;
-      }
-
-      int hr = 0;
-      if (state == DeviceState.Stopped)
-      {
-        hr = (_graphBuilder as IMediaControl).Stop();
-      }
-      else if (state == DeviceState.Paused)
-      {
-        hr = (_graphBuilder as IMediaControl).Pause();
-      }
-      else
-      {
-        hr = (_graphBuilder as IMediaControl).Run();
-      }
-      HResult.ThrowException(hr, string.Format("Failed to change device state from {0} to {1}.", _state, state));
-      _state = state;
-    }
+    protected abstract void SetDeviceState(DeviceState state);
 
     #endregion
 
@@ -1803,6 +1748,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void Dispose()
     {
+      _state = DeviceState.NotLoaded;
+      FreeAllSubChannels();
+      PerformDeviceAction(DeviceAction.Stop);
+
       // Dispose plugins.
       if (_customDeviceInterfaces != null)
       {
@@ -1869,7 +1818,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (_mapSubChannels.Count == 0)
       {
-        _subChannelId = 0;
         this.LogDebug("TvCardBase: no subchannels present, stopping device");
         Stop();
       }
@@ -1891,7 +1839,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         en.Current.Value.Decompose();
       }
       _mapSubChannels.Clear();
-      _subChannelId = 0;
     }
 
     /// <summary>

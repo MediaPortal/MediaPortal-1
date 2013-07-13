@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     #region variables
 
     private ITsChannelScan _analyzer;
-    private readonly TvCardDvbBase _card;
+    private readonly ITVCard _card;
     private ManualResetEvent _event;
 
     #endregion
@@ -56,9 +56,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// Initialise a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
     /// <param name="tuner">The tuner associated with this scanner.</param>
-    public DvbBaseScanning(TvCardDvbBase tuner)
+    /// <param name="analyzer">The stream analyzer instance to use for scanning.</param>
+    public DvbBaseScanning(ITVCard tuner, ITsChannelScan analyzer)
     {
       _card = tuner;
+      _analyzer = analyzer;
     }
 
     #endregion
@@ -101,7 +103,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         this.LogDebug("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
 
-        _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
           this.LogDebug("Scan: no analyzer interface available");
@@ -314,7 +315,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         // An exception is thrown here if signal is not locked.
         _card.Scan(0, channel);
 
-        _analyzer = _card.StreamAnalyzer;
         if (_analyzer == null)
         {
           this.LogDebug("Scan: no analyzer interface available");
