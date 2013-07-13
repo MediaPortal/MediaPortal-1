@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBT
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("TvCardDvbT: CreateTuningSpace()");
+      this.LogDebug("TvCardDvbT: create tuning space");
 
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IDVBTuningSpace tuningSpace = null;

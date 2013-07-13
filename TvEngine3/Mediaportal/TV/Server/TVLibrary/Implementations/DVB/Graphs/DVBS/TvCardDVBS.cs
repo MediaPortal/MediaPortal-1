@@ -124,7 +124,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
     {
-      this.LogDebug("TvCardDvbS: CreateTuningSpace()");
+      this.LogDebug("TvCardDvbS: create tuning space");
 
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       IDVBSTuningSpace tuningSpace = null;
@@ -169,13 +169,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
       }
       catch (Exception)
       {
-        Release.ComObject("Satellite tuner tuning space", ref tuningSpace);
-        Release.ComObject("Satellite tuner locator", ref locator);
+        Release.ComObject("satellite tuner tuning space", ref tuningSpace);
+        Release.ComObject("satellite tuner locator", ref locator);
         throw;
       }
       finally
       {
-        Release.ComObject("Satellite tuner tuning space container", ref systemTuningSpaces);
+        Release.ComObject("satellite tuner tuning space container", ref systemTuningSpaces);
       }
     }
 
@@ -272,13 +272,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
         }
         catch (Exception)
         {
-          Release.ComObject("Satellite tuner tune request", ref tuneRequest);
+          Release.ComObject("satellite tuner tune request", ref tuneRequest);
           throw;
         }
       }
       finally
       {
-        Release.ComObject("Satellite tuner locator", ref locator);
+        Release.ComObject("satellite tuner locator", ref locator);
       }
     }
 

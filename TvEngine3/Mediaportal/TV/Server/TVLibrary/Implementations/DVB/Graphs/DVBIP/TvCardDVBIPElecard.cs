@@ -26,7 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
-  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles Elecard DVB-IP sources.
+  /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the Elecard IPTV source filter.
   /// </summary>
   public class TvCardDVBIPElecard : TvCardDVBIP
   {
