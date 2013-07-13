@@ -2804,13 +2804,13 @@ namespace MediaPortal.GUI.Video
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
               {
-                item.Label2 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                item.Label3 = string.Empty;
+                item.Label3 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                item.Label2 = string.Empty;
               }
               else
               {
-                item.Label2 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                item.Label3 = string.Empty;
+                item.Label3 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                item.Label2 = string.Empty;
               }
             }
             else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -2927,13 +2927,13 @@ namespace MediaPortal.GUI.Video
                 {
                   if (selectDvdHandler.IsDvdDirectory(item.Path))
                   {
-                    item.Label2 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                    item.Label3 = string.Empty;
+                    item.Label3 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                    item.Label2 = string.Empty;
                   }
                   else
                   {
-                    item.Label2 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                    item.Label3 = string.Empty;
+                    item.Label3 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                    item.Label2 = string.Empty;
                   }
                 }
                 else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
