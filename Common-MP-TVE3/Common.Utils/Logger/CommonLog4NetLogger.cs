@@ -69,6 +69,7 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("    <appender name=\"DefaultLogAppender\" type=\"log4net.Appender.RollingFileAppender\">");
       tw.WriteLine("      <file value=\"[Name].log\" />");
       tw.WriteLine("      <appendToFile value=\"true\" />");
+      tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
       tw.WriteLine("      <rollingStyle value=\"Once\" />");
       tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
       tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
@@ -82,6 +83,7 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("    <appender name=\"ErrorLogAppender\" type=\"log4net.Appender.RollingFileAppender\">");
       tw.WriteLine("      <file value=\"[Name]-Error.log\" />");
       tw.WriteLine("      <appendToFile value=\"true\" />");
+      tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
       tw.WriteLine("      <rollingStyle value=\"Once\" />");
       tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
       tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
@@ -98,11 +100,13 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("      <evaluator type=\"log4net.Core.LevelEvaluator\">");
       tw.WriteLine("      <threshold value=\"ERROR\" />");
       tw.WriteLine("      </evaluator>");
+      tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
       tw.WriteLine("      <appender-ref ref=\"ErrorLogAppender\" />");
       tw.WriteLine("    </appender>");
       tw.WriteLine(" ");
       tw.WriteLine("    <appender name=\"ConsoleAppender\" type=\"log4net.Appender.ConsoleAppender\">");
       tw.WriteLine("      <layout type=\"log4net.Layout.PatternLayout\">");
+      tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
       tw.WriteLine("        <conversionPattern value=\"[%date] [%-7logger] [%-9thread] [%-5level] - %message%newline\" />");
       tw.WriteLine("      </layout>");
       tw.WriteLine("    </appender>");
