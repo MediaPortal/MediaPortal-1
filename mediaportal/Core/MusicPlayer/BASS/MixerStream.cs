@@ -268,7 +268,7 @@ namespace MediaPortal.MusicPlayer.BASS
           }
 
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
-                                      initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
+                                      initFlags | BASSWASAPIInit.BASS_WASAPI_BUFFER, 0f, 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
 

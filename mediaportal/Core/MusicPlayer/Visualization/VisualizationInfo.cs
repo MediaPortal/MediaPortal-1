@@ -33,6 +33,7 @@ namespace MediaPortal.Visualization
       SoftSkies,
       Winamp,
       Sonique,
+      Bassbox,
       WMP,
     } ;
 
@@ -279,6 +280,10 @@ namespace MediaPortal.Visualization
 
         case PluginType.Winamp:
           sVizType = " (Winamp)";
+          break;
+
+        case PluginType.Bassbox:
+          sVizType = " (Bassbox)";
           break;
 
         case PluginType.WMP:

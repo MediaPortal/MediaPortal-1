@@ -1942,9 +1942,23 @@ namespace MediaPortal.Visualization
 
                   if (Viz.IsWinampVis())
                   {
+                    // Do not remove or all FPS will lost
+                    Invalidate();
                     continue;
                   }
 
+                  if (Viz.IsSoniqueVis())
+                  {
+                    //this work without Focus and Invalidate
+                    //because is drawn directly on the hdc
+                    continue;
+                  }
+
+                  if (Viz.IsBassboxVis())
+                  {
+                    continue;
+                  }
+                
                   // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
                   if (IsSoundSpectrumViz)
                   {
@@ -2025,7 +2039,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis() && !Viz.IsSoniqueVis())
         {
           if (DialogWindowIsActive)
           {

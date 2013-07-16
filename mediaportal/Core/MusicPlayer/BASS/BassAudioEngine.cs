@@ -1352,7 +1352,7 @@ namespace MediaPortal.MusicPlayer.BASS
     internal int GetCurrentVizStream()
     {
       // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      return _streamcopy.Stream;
+      return _streamcopy.ChannelHandle;
     }
 
     /// <summary>
