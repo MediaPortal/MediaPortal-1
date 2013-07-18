@@ -132,10 +132,10 @@ bool CLibBlurayWrapper::Initialize()
 {
   USES_CONVERSION;
 
-  if (!SetEnvironmentVariable(_T("JAVA_HOME"), NULL))
+  if (_tputenv(_T("JAVA_HOME=")) != 0)
   {
     DWORD error = GetLastError();
-    LogDebug("Failed to load set the JAVA_HOME environment variable: %d", (int)error);
+    LogDebug("Failed to load remove the JAVA_HOME environment variable: %d", (int)error);
 
     return false;
   }
