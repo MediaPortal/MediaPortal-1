@@ -125,10 +125,13 @@ void LogRotate()
 }
 
 CCritSec m_qLock;
+CCritSec m_threadLock;
+
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
 CAMEvent m_eLog;
+CAMEvent m_eStop;
 
 string GetLogLine()
 {
@@ -148,13 +151,16 @@ UINT CALLBACK LogThread(void* param)
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, _T("log"));
 
-  HANDLE handles[2];
+  HANDLE handles[3];
   handles[0] = m_eLog;
   handles[1] = m_hLogger;
+  handles[2] = m_eStop;
 
-  while (m_bLoggerRunning)
+  while (true)
   {
-    if (m_logQueue.size() > 0)
+    DWORD result = WaitForMultipleObjects(3, handles, false, INFINITE);
+    
+    if (result == WAIT_OBJECT_0)
     {
       FILE* pFile = _tfopen(fileName, _T("a+"));
       if (pFile)
@@ -170,9 +176,7 @@ UINT CALLBACK LogThread(void* param)
         fclose(pFile);
       }
     }
-    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
-
-    if (result == WAIT_FAILED)
+    else if (result == WAIT_FAILED)
     {
       DWORD error = GetLastError();
       FILE* pFile = _tfopen(fileName, _T("a+"));
@@ -182,6 +186,8 @@ UINT CALLBACK LogThread(void* param)
         fclose(pFile);
       }
     }
+    else if (result == WAIT_OBJECT_0 + 2 || result == WAIT_OBJECT_0 + 1)
+      return 0;
   }
 
   return 0;
@@ -189,17 +195,21 @@ UINT CALLBACK LogThread(void* param)
 
 void StartLogger()
 {
-  UINT id;
+  CAutoLock lock(&m_threadLock);
+  UINT id = 0;
   m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
   SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
 }
 
 void StopLogger()
 {
+  CAutoLock lock(&m_threadLock);
+
   if (m_hLogger)
   {
-    m_bLoggerRunning = FALSE;
+    m_eStop.Set();
     WaitForSingleObject(m_hLogger, INFINITE);
+    m_bLoggerRunning = FALSE;
     m_hLogger = NULL;
   }
 }
@@ -211,11 +221,13 @@ void Log(const char *fmt, ...)
   va_start(ap, fmt);
 
   CAutoLock logLock(&lock);
-  if (!m_hLogger) 
+  if (!m_hLogger)
   {
+    CAutoLock lock(&m_qLock);
     m_bLoggerRunning = true;
     StartLogger();
   }
+
   char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
   int ret;
   va_start(ap, fmt);
