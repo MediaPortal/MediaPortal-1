@@ -122,6 +122,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
+    /// Actually unload the device.
+    /// </summary>
+    protected override void PerformUnloading()
+    {
+    }
+
+    /// <summary>
     /// Set the state of the device.
     /// </summary>
     /// <param name="state">The state to apply to the device.</param>
@@ -130,14 +137,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
     }
 
     #region properties
-
-    /// <summary>
-    /// Stops the current graph
-    /// </summary>
-    /// <returns></returns>
-    public override void Stop()
-    {
-    }
 
     /// <summary>
     /// Update the tuner signal status statistics.
@@ -149,18 +148,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.RadioWebStream
       _signalPresent = true;
       _signalLevel = 100;
       _signalQuality = 100;
-    }
-
-    #endregion
-
-    #region IDisposable Members
-
-    /// <summary>
-    /// Disposes this instance.
-    /// </summary>
-    public override void Dispose()
-    {
-      this.LogDebug("RadioWebStream:Dispose()");
     }
 
     #endregion

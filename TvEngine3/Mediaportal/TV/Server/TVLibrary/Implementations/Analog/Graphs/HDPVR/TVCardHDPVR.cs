@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       }
 
       _tunerType = CardType.Analog;
-      _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+      _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
       Configuration.writeConfiguration(_configuration);
     }
 
@@ -171,7 +171,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       if (_qualityControl != null)
       {
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
         Configuration.writeConfiguration(_configuration);
         _qualityControl.SetConfiguration(_configuration);
       }
@@ -205,12 +205,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
     #endregion
 
-    #region Disposable
-
     /// <summary>
-    /// Disposes this instance.
+    /// Actually unload the device.
     /// </summary>
-    public override void Dispose()
+    protected override void PerformUnloading()
     {
       this.LogDebug("HDPVR:  Dispose()");
       base.Dispose();
@@ -231,8 +229,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       this.LogDebug("HDPVR:  dispose completed");
     }
 
-    #endregion
-
     #region graph handling
 
     /// <summary>
@@ -242,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     {
       if (_cardId == 0)
       {
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
         Configuration.writeConfiguration(_configuration);
       }
 
@@ -254,7 +250,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
       CheckCapabilities();
       AddCaptureFilter();
       AddEncoderFilter();
-      AddTsWriterToGraph(_filterEncoder);
+      AddAndConnectTsWriterIntoGraph(_filterEncoder);
       _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterEncoder, _filterCapture,
                                                                     null, null);
       if (_qualityControl == null)
@@ -324,7 +320,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
             this.LogDebug("HDPVR: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //cannot add video capture filter to graph, try next one
             if (tmp != null)
@@ -336,7 +332,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           }
           // connect crossbar->video capture filter
           hr = _captureGraphBuilder.RenderStream(null, null, _filterDevice, null, tmp);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             // That worked. Since most crossbar devices require 2 connections from
             // crossbar->video capture filter, we do it again to connect the 2nd pin
@@ -428,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
             this.LogDebug("HDPVR: cannot add filter {0} to graph", devices[i].Name);
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //failed to add filter to graph, continue with the next one
             if (tmp != null)
@@ -443,7 +439,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
             continue;
           }
           hr = _captureGraphBuilder.RenderStream(null, null, _filterCapture, null, tmp);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             // That worked. Since most crossbar devices require 2 connections from
             // crossbar->video capture filter, we do it again to connect the 2nd pin

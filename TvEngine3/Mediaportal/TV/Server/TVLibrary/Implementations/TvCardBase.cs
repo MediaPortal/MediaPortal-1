@@ -308,25 +308,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _name = name;
       _devicePath = externalId;
 
-      if (_devicePath != null)
+      if (DevicePath != null)
       {
-        Card c = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);
-        if (c != null)
+        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
+        if (d != null)
         {
-          _cardId = c.IdCard;
-          _name = c.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
-          _idleMode = (IdleMode)c.IdleMode;
-          _pidFilterMode = (PidFilterMode)c.PidFilterMode;
-          _useCustomTuning = c.UseCustomTuning;
+          _cardId = d.IdCard;
+          _name = d.Name;   // We prefer to use the name that can be set in TV Server configuration for more readable logs...
+          _idleMode = (IdleMode)d.IdleMode;
+          _pidFilterMode = (PidFilterMode)d.PidFilterMode;
+          _useCustomTuning = d.UseCustomTuning;
 
           // Conditional access...
-          _useConditionalAccessInterface = c.UseConditionalAccess;
-          _camType = (CamType)c.CamType;
-          _decryptLimit = c.DecryptLimit;
-          _multiChannelDecryptMode = (MultiChannelDecryptMode)c.MultiChannelDecryptMode;
+          _useConditionalAccessInterface = d.UseConditionalAccess;
+          _camType = (CamType)d.CamType;
+          _decryptLimit = d.DecryptLimit;
+          _multiChannelDecryptMode = (MultiChannelDecryptMode)d.MultiChannelDecryptMode;
 
           // Preload the device if configured to do so.
-          if (c.Enabled && c.PreloadCard)
+          if (d.Enabled && d.PreloadCard)
           {
             this.LogInfo("TvCardBase: preloading device {0}", _name);
             Load();
@@ -739,7 +739,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _customDeviceInterfaces = new List<ICustomDevice>();      
       foreach (ICustomDevice d in plugins)
       {
-        if (!d.Initialise(mainFilter, _tunerType, _devicePath))
+        if (!d.Initialise(mainFilter, _tunerType, DevicePath))
         {
           d.Dispose();
           continue;
@@ -1163,7 +1163,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return;
       }
 
-      this.LogDebug("TvCardBase: load device");
+      this.LogDebug("TvCardBase: load device {0}", _name);
       try
       {
         PerformLoading();
@@ -1516,7 +1516,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           // Apply tuning parameters to the device.
           ThrowExceptionIfTuneCancelled();
-          PerformTuning(tuneChannel);
+          if (_useCustomTuning)
+          {
+            foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+            {
+              ICustomTuner customTuner = deviceInterface as ICustomTuner;
+              if (customTuner != null && customTuner.CanTuneChannel(channel))
+              {
+                this.LogDebug("TvCardBase: using custom tuning");
+                if (!customTuner.Tune(tuneChannel))
+                {
+                  ThrowExceptionIfTuneCancelled();
+                  this.LogWarn("TvCardBase: custom tuning failed, falling back to default tuning");
+                  PerformTuning(tuneChannel);
+                }
+              }
+            }
+          }
+          else
+          {
+            PerformTuning(tuneChannel);
+          }
           ThrowExceptionIfTuneCancelled();
 
           // Plugin OnAfterTune().
@@ -1624,6 +1644,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Actually load the device.
     /// </summary>
     protected abstract void PerformLoading();
+
+    /// <summary>
+    /// Actually unload the device.
+    /// </summary>
+    protected abstract void PerformUnloading();
 
     #endregion
 
@@ -1748,7 +1773,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public virtual void Dispose()
     {
-      _state = DeviceState.NotLoaded;
+      if (_state == DeviceState.NotLoaded)
+      {
+        this.LogWarn("TvCardBase: the device is already unloaded");
+        return;
+      }
+
+      this.LogDebug("TvCardBase: unload device");
       FreeAllSubChannels();
       PerformDeviceAction(DeviceAction.Stop);
 
@@ -1758,13 +1789,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
         {
           // Avoid recursive loop for ITVCard implementations that also implement ICustomDevice... like TvCardDvbSs2.
-          if (!(deviceInterface is TvCardBase))
+          if (!(deviceInterface is ITVCard))
           {
             deviceInterface.Dispose();
           }
         }
       }
       _customDeviceInterfaces = new List<ICustomDevice>();
+
+      try
+      {
+        PerformUnloading();
+      }
+      catch (Exception ex)
+      {
+        this.LogWarn(ex, "TvCardBase: failed to completely unload the device");
+      }
+
+      _state = DeviceState.NotLoaded;
     }
 
     #endregion

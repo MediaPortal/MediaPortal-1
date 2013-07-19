@@ -232,14 +232,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     #endregion
 
     /// <summary>
-    /// Add a filter to a DirectShow Graph using its CLSID
+    /// Add a filter to a DirectShow Graph using its CLSID.
     /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="clsid">a valid CLSID. This object must implement IBaseFilter</param>
-    /// <param name="name">the name used in the graph (may be null)</param>
-    /// <returns>an instance of the filter if the method successfully created it, null if not</returns>
+    /// <param name="graph">The graph.</param>
+    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
+    /// <returns>an instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     /// <remarks>
-    /// You can use <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> to check is the CLSID is valid before calling this method
+    /// You can use <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> to check if the CLSID is valid before calling this method.
     /// </remarks>
     /// <example>This sample shows how to programmatically add a NVIDIA Video decoder filter to a graph
     /// <code>
@@ -247,7 +247,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// 
     /// if (FilterGraphTools.IsThisComObjectInstalled(nvidiaVideoDecClsid))
     /// {
-    ///   filter = FilterGraphTools.AddFilterFromClsid(graphBuilder, nvidiaVideoDecClsid, "NVIDIA Video Decoder");
+    ///   filter = FilterGraphTools.AddFilterByClsid(graphBuilder, nvidiaVideoDecClsid, "NVIDIA Video Decoder");
     /// }
     /// else
     /// {
@@ -256,27 +256,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </code>
     /// </example>
     /// <seealso cref="IsThisComObjectInstalled"/>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter AddFilterFromClsid(IGraphBuilder graphBuilder, Guid clsid, string name)
+    public static IBaseFilter AddFilterByClsid(IFilterGraph2 graph, Guid clsid, string filterName)
     {
+      if (graph == null)
+      {
+        throw new ArgumentNullException("graph");
+      }
+
       IBaseFilter filter = null;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
       try
       {
         Type type = Type.GetTypeFromCLSID(clsid);
         filter = (IBaseFilter)Activator.CreateInstance(type);
 
-        int hr = graphBuilder.AddFilter(filter, name);
-        DsError.ThrowExceptionForHR(hr);
+        int hr = graph.AddFilter(filter, filterName);
+        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
       }
       catch
       {
-        Release.ComObject("filter graph tools add-filter-from-CLSID filter", ref filter);
+        Release.ComObject("filter graph tools add-filter-by-CLSID filter", ref filter);
+        throw;
       }
 
       return filter;
@@ -393,7 +393,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         throw new ArgumentNullException("graphBuilder");
 
       int hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
@@ -430,7 +430,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         throw new ArgumentNullException("graphBuilder");
 
       int hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
           hr = filters[0].GetClassID(out clsid);
 
-          if ((hr == 0) && (clsid == filterClsid))
+          if ((hr == (int)HResult.Severity.Success) && (clsid == filterClsid))
           {
             filter = filters[0];
             break;
@@ -691,121 +691,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// Disconnect all pins on a given filter
+    /// Remove all filters from a DirectShow graph.
     /// </summary>
-    /// <param name="filter">the filter on which to disconnect all the pins</param>
-    /// <exception cref="System.ArgumentNullException">Thrown if filter is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occured during the disconnection process</exception>
-    /// <remarks>Both input and output pins are disconnected</remarks>
+    /// <param name="graph">The graph.</param>
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void DisconnectPins(IBaseFilter filter)
+    public static void RemoveAllFilters(IFilterGraph2 graph)
     {
-      if (filter == null)
-        throw new ArgumentNullException("filter");
-
-      IEnumPins enumPins;
-      IPin[] pins = new IPin[1];
-      int hr = filter.EnumPins(out enumPins);
-      DsError.ThrowExceptionForHR(hr);
-
-      try
+      if (graph == null)
       {
-        int fetched;
-        while (enumPins.Next(pins.Length, pins, out fetched) == 0)
-        {
-          try
-          {
-            hr = pins[0].Disconnect();
-            DsError.ThrowExceptionForHR(hr);
-          }
-          finally
-          {
-            Release.ComObject("filter graph tools disconnect-pins pin", ref pins[0]);
-          }
-        }
+        throw new ArgumentNullException("graph");
       }
-      finally
-      {
-        Release.ComObject("filter graph tools disconnect-pins pin", ref enumPins);
-      }
-    }
-
-    /// <summary>
-    /// Disconnect pins of all the filters in a DirectShow Graph
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if the method can't enumerate its filters</exception>
-    /// <remarks>This method doesn't throw an exception if an error occurs during pin disconnections</remarks>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void DisconnectAllPins(IGraphBuilder graphBuilder)
-    {
-      IEnumFilters enumFilters;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      int hr = graphBuilder.EnumFilters(out enumFilters);
-      DsError.ThrowExceptionForHR(hr);
-
-      try
-      {
-        IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
-
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
-        {
-          try
-          {
-            DisconnectPins(filters[0]);
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("Error while disconnecting all pins: ", ex);
-          }
-          Release.ComObject("filter graph tools disconnect-all-pins filter", ref filters[0]);
-        }
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools disconnect-all-pins filter enumerator", ref enumFilters);
-      }
-    }
-
-    /// <summary>
-    /// Remove and release all filters from a DirectShow Graph
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if the method can't enumerate its filters</exception>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void RemoveAllFilters(IGraphBuilder graphBuilder)
-    {
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
 
       IEnumFilters enumFilters = null;
-      System.Collections.ArrayList filtersArray = new System.Collections.ArrayList();
-
       try
       {
-        int hr = graphBuilder.EnumFilters(out enumFilters);
-        DsError.ThrowExceptionForHR(hr);
+        int hr = graph.EnumFilters(out enumFilters);
+        HResult.ThrowException(hr, "Failed to EnumFilters() on IFilterGraph2.");
 
         IBaseFilter[] filters = new IBaseFilter[1];
         int fetched;
-
         while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
         {
           string filterName = GetFilterName(filters[0]);
           Log.Debug("Remove filter from graph: {0}", filterName);
-          graphBuilder.RemoveFilter(filters[0]);
-          Release.ComObjectAllRefs("filter graph tools remove-all-filters filter", ref filters[0]);
+          graph.RemoveFilter(filters[0]);
         }
-      }
-      catch (Exception)
-      {
-        Log.Debug("Remove filter error!");
       }
       finally
       {
@@ -1174,7 +1084,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       try
       {
         int hr = graphBuilder.Connect(pinSource, pinDest);
-        return hr == 0;
+        return hr == (int)HResult.Severity.Success;
       }
       finally
       {
@@ -1208,7 +1118,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             Log.Debug("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
             int hr = graphBuilder.Connect(pinSource, pinIn);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               Log.Debug("analog:  pins connected");
               return true;
@@ -1258,7 +1168,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             Log.Debug("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
             int hr = graphBuilder.Connect(pinSource, pinIn);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               Log.Debug("analog:  pins connected");
               return true;
@@ -1298,7 +1208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
           int hr = graphBuilder.Connect(pinOut, pinDestination);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             Log.Debug("analog:  pins connected");
             return true;
@@ -1336,7 +1246,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         {
           Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
           int hr = graphBuilder.Connect(pinOut, pinDestination);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             Log.Debug("analog:  pins connected");
             sourcePinIndex = i;
@@ -1372,7 +1282,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           {
             Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
             int hr = graphBuilder.Connect(pinOut, pinIn);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               Log.Debug("analog:  pins connected");
               return true;
@@ -1478,7 +1388,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       FilterInfo filterInfo;
       int hr = filter.QueryFilterInfo(out filterInfo);
       string filterName = null;
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         filterName = filterInfo.achName;
         Release.FilterInfo(ref filterInfo);
@@ -1735,6 +1645,39 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       {
         graph.RemoveFilter(newFilter);
       }
+    }
+
+    /// <summary>
+    /// Add and connect a filter into a DirectShow graph.
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="device">A DsDevice instance that wraps an IMoniker instance. The filter to add and connect will be instantiated from the IMoniker.</param>
+    /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
+    /// <param name="graphBuilder">The graph builder, used to render-connect the filters.</param>
+    /// <remarks>the filter that was instanciated, added to, and connected into the graph</remarks>
+    public static IBaseFilter AddAndConnectFilterIntoGraph(IFilterGraph2 graph, DsDevice device, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder)
+    {
+      if (upstreamFilter == null || device == null || device.Mon == null)
+      {
+        throw new TvException("Failed to add and connect filter, upstream filter or moniker are null.");
+      }
+
+      IBaseFilter newFilter = null;
+      int hr = graph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out newFilter);
+      HResult.ThrowException(hr, "Failed to add the filter for the device to the graph.");
+
+      try
+      {
+        hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
+        HResult.ThrowException(hr, "Failed to render the stream into the new filter.");
+      }
+      catch
+      {
+        graph.RemoveFilter(newFilter);
+        Release.ComObject("filter graph tools add-and-connect-filter-into-graph new filter", ref newFilter);
+        throw;
+      }
+      return newFilter;
     }
   }
 

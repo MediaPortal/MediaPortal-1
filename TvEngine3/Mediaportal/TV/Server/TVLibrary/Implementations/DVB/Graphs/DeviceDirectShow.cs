@@ -64,16 +64,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    ///<summary>
+    /// <summary>
     /// Initialise a new instance of the <see cref="DeviceDirectShow"/> class.
-    ///</summary>
-    ///<param name="device">The DsDevice interface for the device.</param>
+    /// </summary>
+    /// <param name="device">The DsDevice interface for the device.</param>
     protected DeviceDirectShow(DsDevice device)
       : base(device.Name, device.DevicePath)
     {
       _device = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
     }
 
     /// <summary>
@@ -85,6 +83,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
       _captureGraphBuilder.SetFiltergraph(_graph);
       _runningObjectTableEntry = new DsROTEntry(_graph);
+    }
+
+    /// <summary>
+    /// Complete the DirectShow graph.
+    /// </summary>
+    protected void CompleteGraph()
+    {
+      FilterGraphTools.SaveGraphFile(_graph, _name + " - " + _tunerType + " Graph.grf");
     }
 
     /// <summary>
@@ -115,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// ...[upstream filter]->[TS writer/analyser]
     /// </summary>
     /// <param name="upstreamFilter">The filter to connect to the TS writer.</param>
-    protected void AddTsWriterToGraph(IBaseFilter upstreamFilter)
+    protected void AddAndConnectTsWriterIntoGraph(IBaseFilter upstreamFilter)
     {
       this.LogDebug("DeviceDirectShow: add TS writer/analyser filter");
       _filterTsWriter = FilterLoader.LoadFilterFromDll("TsWriter.ax", typeof(MediaPortalTsWriter).GUID, true);
@@ -161,15 +167,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _state = state;
     }
 
-    #region IDisposable member
-
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Remove and release DirectShow main device and graph components.
     /// </summary>
-    public override void Dispose()
+    protected void CleanUpGraph()
     {
-      base.Dispose();
-
+      this.LogDebug("DeviceDirectShow: clean up graph");
       if (_runningObjectTableEntry != null)
       {
         _runningObjectTableEntry.Dispose();
@@ -177,7 +180,44 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (_graph != null)
       {
-        FilterGraphTools.RemoveAllFilters(_graph);
+        // First remove the filters that we inserted.
+        if (_filterTsWriter != null)
+        {
+          _graph.RemoveFilter(_filterTsWriter);
+        }
+        if (_filterDevice != null)
+        {
+          _graph.RemoveFilter(_filterDevice);
+        }
+
+        // Now check if there are any filters remaining in the graph.
+        // Presence of such filters indicate there are badly behaved
+        // classes or plugins present.
+        IEnumFilters enumFilters = null;
+        int hr = _graph.EnumFilters(out enumFilters);
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogWarn("DeviceDirectShow: failed to enumerate remaining filters in graph");
+        }
+        else
+        {
+          try
+          {
+            IBaseFilter[] filters = new IBaseFilter[1];
+            int fetched;
+            while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+            {
+              string filterName = FilterGraphTools.GetFilterName(filters[0]);
+              this.LogWarn("DeviceDirectShow: removing and releasing orphaned filter {0}", filterName);
+              _graph.RemoveFilter(filters[0]);
+              Release.ComObjectAllRefs("DirectShow device orphaned filter", ref filters[0]);
+            }
+          }
+          finally
+          {
+            Release.ComObject("DirectShow device filter enumerator", ref enumFilters);
+          }
+        }
         Release.ComObject("DirectShow device graph", ref _graph);
       }
       Release.ComObject("DirectShow device graph builder", ref _captureGraphBuilder);
@@ -188,7 +228,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         DevicesInUse.Instance.Remove(_device);
       }
     }
-
-    #endregion
   }
 }

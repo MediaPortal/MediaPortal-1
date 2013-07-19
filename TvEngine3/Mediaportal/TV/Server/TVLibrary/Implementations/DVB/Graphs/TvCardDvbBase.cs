@@ -39,11 +39,51 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 {
   /// <summary>
-  /// base class for DVB cards
+  /// A base implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> for tuners with BDA drivers.
   /// </summary>
   public abstract class TvCardDvbBase : DeviceDirectShow, IDisposable, ITVCard
   {
     #region variables
+
+    /// <summary>
+    /// The network provider filter.
+    /// </summary>
+    private IBaseFilter _filterNetworkProvider = null;
+
+    /// <summary>
+    /// The [optional] BDA capture/receiver filter.
+    /// </summary>
+    private IBaseFilter _filterCapture = null;
+
+    /// <summary>
+    /// The DsDevice interface for the BDA capture/receiver component.
+    /// </summary>
+    private DsDevice _deviceCapture = null;
+
+    #region compatibility filters
+
+    /// <summary>
+    /// Enable or disable use of the MPEG 2 demultiplexer and BDA TIF. Compatibility with some tuners
+    /// requires these filters to be connected into the graph.
+    /// </summary>
+    private bool _addCompatibilityFilters = false;
+
+    /// <summary>
+    /// An infinite tee filter, used to fork the stream to the demultiplexer and TS writer/analyser.
+    /// </summary>
+    private IBaseFilter _filterInfiniteTee = null;
+
+    /// <summary>
+    /// The Microsoft MPEG 2 demultiplexer filter.
+    /// </summary>
+    private IBaseFilter _filterMpeg2Demultiplexer = null;
+
+    /// <summary>
+    /// The Microsoft transport information filter.
+    /// </summary>
+    private IBaseFilter _filterTransportInformation = null;
+
+    #endregion
 
     /// <summary>
     /// A pre-configured tuning space, used to speed up the tuning process. 
@@ -51,75 +91,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     private ITuningSpace _tuningSpace = null;
 
     /// <summary>
-    /// Network provider filter
+    /// Tuner and demodulator signal statistic interfaces.
     /// </summary>
-    protected IBaseFilter _filterNetworkProvider;
+    private IList<IBDA_SignalStatistics> _signalStatistics = new List<IBDA_SignalStatistics>();
 
     /// <summary>
-    /// MPEG2 Demux filter
+    /// Enable or disable the use of the internal network provider.
     /// </summary>
-    protected IBaseFilter _filterMpeg2DemuxTif;
+    private bool _useInternalNetworkProvider = false;
 
-    /// <summary>
-    /// Main inf tee
-    /// </summary>
-    protected IBaseFilter _infTee;
-
-    /// <summary>
-    /// Tuner filter
-    /// </summary>
-    protected IBaseFilter _filterTuner;
-
-    /// <summary>
-    /// Capture filter
-    /// </summary>
-    protected IBaseFilter _filterCapture;
-
-    /// <summary>
-    /// TIF filter
-    /// </summary>
-    protected IBaseFilter _filterTIF;
-
-    /// <summary>
-    /// Capture device
-    /// </summary>
-    protected DsDevice _captureDevice;
-
-    /// <summary>
-    /// EPG Grabber callback
-    /// </summary>
-    protected BaseEpgGrabber _epgGrabberCallback;
-
-    /// <summary>
-    /// Tuner statistics
-    /// </summary>
-    protected List<IBDA_SignalStatistics> _tunerStatistics = new List<IBDA_SignalStatistics>();
-
-    /// <summary>
-    /// Internal Network provider instance
-    /// </summary>
-    protected IDvbNetworkProvider _interfaceNetworkProvider;
-
-    /// <summary>
-    /// Indicates if the internal network provider is used
-    /// </summary>
-    protected bool _useInternalNetworkProvider;
-
-    private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
+    // EPG grabbing - TODO refactor
+    private IEpgEvents _epgEventsCallback = null;
+    private BaseEpgGrabber _epgGrabberCallback = null;
+    private TimeShiftingEPGGrabber _timeshiftingEpgGrabber = null;
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
+    /// Initialise a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
+    /// <param name="epgEvents">The EPG events interface for the instance to use.</param>
+    /// <param name="device">The <see cref="DsDevice"/> instance that the instance will encapsulate.</param>
     public TvCardDvbBase(IEpgEvents epgEvents, DsDevice device)
       : base(device)
     {
-      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(epgEvents, (ITVCard)this);
-      Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
-      _useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId);
+      _epgEventsCallback = epgEvents;
+      _useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(InternalNetworkProvider.CLSID);
     }
 
     #endregion
@@ -139,23 +138,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         return;
       }
 
-      if (_useCustomTuning)
-      {
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          ICustomTuner customTuner = deviceInterface as ICustomTuner;
-          if (customTuner != null && customTuner.CanTuneChannel(channel))
-          {
-            this.LogDebug("TvCardDvbBase: using custom tuning");
-            if (customTuner.Tune(channel))
-            {
-              return;
-            }
-            this.LogWarn("TvCardDvbBase: custom tuning failed, falling back to BDA tuning");
-          }
-        }
-      }
-
       this.LogDebug("TvCardDvbBase: using BDA tuning");
       ITuneRequest tuneRequest = AssembleTuneRequest(_tuningSpace, channel);
       this.LogDebug("TvCardDvbBase: calling put_TuneRequest");
@@ -165,7 +147,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
 
       // TerraTec tuners return a positive HRESULT value when already tuned with the required
       // parameters. See mantis 3469 for more details.
-      if (hr < 0)
+      if (hr < (int)HResult.Severity.Success)
       {
         HResult.ThrowException(hr, "Failed to tune channel.");
       }
@@ -180,14 +162,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     protected abstract ITuneRequest AssembleTuneRequest(ITuningSpace tuningSpace, IChannel channel);
 
     /// <summary>
-    /// Performs a tuning using the internal network provider
+    /// Tune using the internal network provider.
     /// </summary>
-    /// <param name="channel">Channel to tune</param>
+    /// <param name="channel">The channel to tune to.</param>
     private void PerformInternalNetworkProviderTuning(IChannel channel)
     {
       this.LogDebug("dvb:Submit tunerequest calling put_TuneRequest");
       int hr = 0;
       int undefinedValue = -1;
+      IDvbNetworkProvider internalNpInterface = (IDvbNetworkProvider)_filterNetworkProvider;
       if (channel is DVBTChannel)
       {
         DVBTChannel dvbtChannel = channel as DVBTChannel;
@@ -199,7 +182,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           Polarity = Polarisation.NotSet,
           Range = (uint)undefinedValue
         };
-        hr = _interfaceNetworkProvider.TuneDVBT(fSettings);
+        hr = internalNpInterface.TuneDVBT(fSettings);
       }
       if (channel is DVBSChannel)
       {
@@ -242,7 +225,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           Diseq11Selection = DiseqC11Switches.Switch_NOT_SET,
           Enabled = 0
         };
-        hr = _interfaceNetworkProvider.TuneDVBS(fSettings, dSettings, lSettings, sSettings);
+        hr = internalNpInterface.TuneDVBS(fSettings, dSettings, lSettings, sSettings);
       }
       if (channel is DVBCChannel)
       {
@@ -266,7 +249,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           SymbolRate = (uint)dvbcChannel.SymbolRate
         };
 
-        hr = _interfaceNetworkProvider.TuneDVBC(fSettings, dSettings);
+        hr = internalNpInterface.TuneDVBC(fSettings, dSettings);
       }
       if (channel is ATSCChannel)
       {
@@ -292,7 +275,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             SymbolRate = (uint)undefinedValue
           };
 
-          hr = _interfaceNetworkProvider.TuneATSC((uint)undefinedValue, fSettings, dSettings);
+          hr = internalNpInterface.TuneATSC((uint)undefinedValue, fSettings, dSettings);
         }
         else
         {
@@ -315,7 +298,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
             SymbolRate = (uint)undefinedValue
           };
 
-          hr = _interfaceNetworkProvider.TuneATSC((uint)undefinedValue, fSettings, dSettings);
+          hr = internalNpInterface.TuneATSC((uint)undefinedValue, fSettings, dSettings);
         }
       }
       this.LogDebug("dvb:Submit tunerequest done calling put_TuneRequest");
@@ -354,7 +337,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// <returns>the new subchannel instance</returns>
     protected override ITvSubChannel CreateNewSubChannel(int id)
     {
-      return new TvDvbChannel(id, this, _filterTsWriter, _filterTIF);
+      return new TvDvbChannel(id, this, _filterTsWriter, _filterTransportInformation);
     }
 
     #endregion
@@ -368,9 +351,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     {
       this.LogDebug("TvCardDvbBase: load device");
       InitialiseGraph();
-      AddNetworkProviderFilter();
-      if (!_useInternalNetworkProvider && _filterNetworkProvider != null)
+      AddNetworkProviderFilterToGraph();
+
+      int hr = 0;
+      if (!_useInternalNetworkProvider)
       {
+        // Some Microsoft network providers won't connect to the tuner filter
+        // unless you set a tuning space.
         _tuningSpace = GetTuningSpace();
         if (_tuningSpace == null)
         {
@@ -381,18 +368,133 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         {
           throw new TvException("Failed to get ITuner handle from network provider.");
         }
-        int hr = tuner.put_TuningSpace(_tuningSpace);
+        hr = tuner.put_TuningSpace(_tuningSpace);
         HResult.ThrowException(hr, "Failed to put_TuningSpace() on ITuner.");
-
-        AddMpeg2DemuxerToGraph();
       }
-      AddAndConnectBdaBoardFilters(_device);
-      FilterGraphTools.SaveGraphFile(_graph, _device.Name + " - " + _tunerType + " Graph.grf");
-      GetTunerSignalStatistics();
+
+      AddMainDeviceFilterToGraph();
+      hr = _captureGraphBuilder.RenderStream(null, null, _filterNetworkProvider, null, _filterDevice);
+      HResult.ThrowException(hr, "Failed to RenderStream() into the tuner filter.");
+
+      // If we can't connect an infinite tee to the tuner filter then we need a capture filter.
+      IBaseFilter lastFilter = _filterDevice;
+      IBaseFilter tempInfiniteTee = (IBaseFilter)new InfTee();
+      bool needCaptureFilter = false;
+      try
+      {
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, tempInfiniteTee, "Temp Infinite Tee", _filterDevice, _captureGraphBuilder);
+        _graph.RemoveFilter(tempInfiniteTee);
+      }
+      catch
+      {
+        needCaptureFilter = true;
+      }
+      finally
+      {
+        Release.ComObject("base DVB tuner capture filter test infinite tee", ref tempInfiniteTee);
+      }
+
+      if (needCaptureFilter)
+      {
+        AddAndConnectCaptureFilterIntoGraph();
+        lastFilter = _filterCapture;
+      }
+
+      // Check for and load plugins, adding any additional device filters to the graph.
+      LoadPlugins(_filterDevice, ref lastFilter);
+
+      // If using a Microsoft network provider and configured to do so, add an infinite
+      // tee, MPEG 2 demultiplexer and transport information filter.
+      if (!_useInternalNetworkProvider && _addCompatibilityFilters)
+      {
+        _filterInfiniteTee = (IBaseFilter)new InfTee();
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter, _captureGraphBuilder);
+        lastFilter = _filterInfiniteTee;
+        _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterMpeg2Demultiplexer, "MPEG 2 Demultiplexer", _filterInfiniteTee, _captureGraphBuilder);
+        AddAndConnectTransportInformationFilterIntoGraph();
+      }
+
+      // Complete the graph.
+      AddAndConnectTsWriterIntoGraph(lastFilter);
+      CompleteGraph();
+
+      _signalStatistics = GetTunerSignalStatistics();
+      _timeshiftingEpgGrabber = new TimeShiftingEPGGrabber(_epgEventsCallback, this);
     }
 
     /// <summary>
-    /// The registered name of BDA tuning space for the device.
+    /// Add the appropriate BDA network provider filter to the graph.
+    /// </summary>
+    private void AddNetworkProviderFilterToGraph()
+    {
+      this.LogDebug("TvCardDvbBase: add network provider filter");
+
+      string filterName = string.Empty;
+      Guid npClsid = Guid.Empty;
+      if (_useInternalNetworkProvider)
+      {
+        filterName = "MediaPortal Network Provider";
+        npClsid = InternalNetworkProvider.CLSID;
+      }
+      else
+      {
+        DbNetworkProvider npSetting = DbNetworkProvider.Generic;
+        switch (_tunerType)
+        {
+          case CardType.DvbT:
+            filterName = "DVB-T Network Provider";
+            npClsid = typeof(DVBTNetworkProvider).GUID;
+            npSetting = DbNetworkProvider.DvbT;
+            break;
+          case CardType.DvbS:
+            filterName = "DVB-S Network Provider";
+            npClsid = typeof(DVBSNetworkProvider).GUID;
+            npSetting = DbNetworkProvider.DvbS;
+            break;
+          case CardType.DvbC:
+            filterName = "DVB-C Network Provider";
+            npClsid = typeof(DVBCNetworkProvider).GUID;
+            npSetting = DbNetworkProvider.DvbC;
+            break;
+          case CardType.Atsc:
+            filterName = "ATSC Network Provider";
+            npClsid = typeof(ATSCNetworkProvider).GUID;
+            npSetting = DbNetworkProvider.ATSC;
+            break;
+        }
+        // If the generic network provider is preferred for this tuner then check if it is installed. The
+        // generic NP is set as default, however it is only available on MCE 2005 Update Rollup 2 and newer.
+        // We gracefully fall back to using one of the specific network providers if necessary.      
+        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
+        if (d.NetProvider == (int)DbNetworkProvider.Generic)
+        {
+          if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+          {
+            // The generic network provider is not installed. Amend configuration and fall back...
+            d.NetProvider = (int)npSetting;
+            CardManagement.SaveCard(d);
+          }
+          else
+          {
+            filterName = "Generic Network Provider";
+            npClsid = typeof(NetworkProvider).GUID;
+          }
+        }
+      }
+
+      this.LogDebug("TvCardDvbBase: using {0}", filterName);
+      _filterNetworkProvider = FilterGraphTools.AddFilterByClsid(_graph, npClsid, filterName);
+
+      if (_useInternalNetworkProvider)
+      {
+        IDvbNetworkProvider internalNpInterface = _filterNetworkProvider as IDvbNetworkProvider;
+        internalNpInterface.ConfigureLogging(InternalNetworkProvider.GetFileName(DevicePath), InternalNetworkProvider.GetHash(DevicePath), LogLevelOption.Debug);
+      }
+    }
+
+    /// <summary>
+    /// The registered name of the BDA tuning space for the device type.
     /// </summary>
     protected abstract string TuningSpaceName
     {
@@ -400,7 +502,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     }
 
     /// <summary>
-    /// Get the registered BDA tuning space for the device if it exists.
+    /// Get the registered BDA tuning space for the device type if it exists.
     /// </summary>
     /// <returns>the registed tuning space</returns>
     private ITuningSpace GetTuningSpace()
@@ -464,696 +566,209 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     }
 
     /// <summary>
-    /// Create and register the BDA tuning space for the device.
+    /// Create and register a BDA tuning space for the device type.
     /// </summary>
     /// <returns>the tuning space that was created</returns>
     protected abstract ITuningSpace CreateTuningSpace();
 
     /// <summary>
-    /// Add the appropriate BDA network provider filter to the graph.
+    /// Extract the device identifier section from a device path.
     /// </summary>
-    private void AddNetworkProviderFilter()
+    /// <remarks>
+    /// For example...
+    /// device path = @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
+    /// device identifier = 4&1215b326&0&0018
+    /// </remarks>
+    /// <param name="devicePath">The device path to analyse.</param>
+    /// <returns>the device identifier if successful, otherwise <c>null</c></returns>
+    private string ExtractDeviceIdentifier(string devicePath)
     {
-      this.LogDebug("TvCardDvbBase: add network provider");
-
-      string networkProviderName = string.Empty;
-      if (_useInternalNetworkProvider)
+      if (devicePath == null)
       {
-        networkProviderName = "MediaPortal Network Provider";
-        Guid internalNetworkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
-        this.LogDebug("TvCardDvbBase:   add {0}", networkProviderName);
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graph, internalNetworkProviderClsId,
-                                                                     networkProviderName);
-        _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
-        string hash = TvCardCollection.GetHash(DevicePath);
-        _interfaceNetworkProvider.ConfigureLogging(TvCardCollection.GetFileName(DevicePath), hash,
-                                                   LogLevelOption.Debug);
-        return;
+        return null;
       }
-
-      // If the generic network provider is preferred for this tuner then check if it is installed. The
-      // generic NP is set as default, however it is only available on MCE 2005 Update Rollup 2 and newer.
-      // We gracefully fall back to using one of the specific network providers if necessary.      
-      Card c = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
-      if (((DbNetworkProvider)c.NetProvider) == DbNetworkProvider.Generic)
+      string[] sections = devicePath.Split('#');
+      if (sections.Length != 4)
       {
-        if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
-        {
-          // The generic network provider is not installed. Fall back...
-          if (_tunerType == CardType.DvbT)
-          {
-            c.NetProvider = (int)DbNetworkProvider.DvbT;
-          }
-          else if (_tunerType == CardType.DvbS)
-          {
-            c.NetProvider = (int)DbNetworkProvider.DvbS;
-          }
-          else if (_tunerType == CardType.Atsc)
-          {
-            c.NetProvider = (int)DbNetworkProvider.ATSC;
-          }
-          else if (_tunerType == CardType.DvbC)
-          {
-            c.NetProvider = (int)DbNetworkProvider.DvbC;
-          }
-          CardManagement.SaveCard(c);
-        }
+        return null;
       }
-
-      // Final selecion for Network provider based on user selection.
-      Guid networkProviderClsId;
-      switch ((DbNetworkProvider)c.NetProvider)
-      {
-        case DbNetworkProvider.DvbT:
-          networkProviderName = "DVBT Network Provider";
-          networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
-          break;
-        case DbNetworkProvider.DvbS:
-          networkProviderName = "DVBS Network Provider";
-          networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
-          break;
-        case DbNetworkProvider.DvbC:
-          networkProviderName = "DVBC Network Provider";
-          networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
-          break;
-        case DbNetworkProvider.ATSC:
-          networkProviderName = "ATSC Network Provider";
-          networkProviderClsId = typeof(ATSCNetworkProvider).GUID;
-          break;
-        case DbNetworkProvider.Generic:
-          networkProviderName = "Generic Network Provider";
-          networkProviderClsId = typeof(NetworkProvider).GUID;
-          break;
-        default:
-          // Tuning Space can also describe Analog TV but this application don't support them
-          this.LogError("TvCardDvbBase: unrecognised tuner network provider setting {0}", c.NetProvider);
-          throw new TvException("TvCardDvbBase: unrecognised tuner network provider setting");
-      }
-      this.LogDebug("TvCardDvbBase:   add {0}", networkProviderName);
-      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graph, networkProviderClsId,
-                                                                   networkProviderName);
+      return sections[2];
     }
 
     /// <summary>
-    /// Finds the correct bda tuner/capture filters and adds them to the graph
-    /// Creates a graph like
-    /// [NetworkProvider]->[Tuner]->[Capture]->[...device filters...]->[TsWriter]
-    /// or if no capture filter is present:
-    /// [NetworkProvider]->[Tuner]->[...device filters...]->[TsWriter]
+    /// Add and connect the appropriate BDA capture/receiver filter into the graph.
     /// </summary>
-    /// <param name="device">Tuner device</param>
-    protected void AddAndConnectBdaBoardFilters(DsDevice device)
+    private void AddAndConnectCaptureFilterIntoGraph()
     {
-      this.LogDebug("dvb:AddAndConnectBDABoardFilters");
-      _filterTuner = null;
-      // Enumerate BDA Source filters category and found one that can connect to the network provider
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
-      for (int i = 0; i < devices.Length; i++)
+      this.LogDebug("TvCardDvbBase: add capture filter");
+      bool matchDeviceIdentifier = true;
+      string tunerDeviceIdentifier = ExtractDeviceIdentifier(DevicePath);
+      while (true)
       {
-        IBaseFilter tmp;
-        if (device.DevicePath != devices[i].DevicePath)
-          continue;
-        if (!DevicesInUse.Instance.Add(devices[i]))
+        DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
+        for (int i = 0; i < devices.Length; i++)
         {
-          this.LogInfo("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
-          continue;
-        }
-        try
-        {
-          int hr;
+          DsDevice device = devices[i];
+          if (device == null)
+          {
+            continue;
+          }
+          string devicePath = device.DevicePath;
+          if (devicePath == null ||
+            devicePath.Contains("root#system#") ||
+            (matchDeviceIdentifier && !tunerDeviceIdentifier.Equals(ExtractDeviceIdentifier(devicePath))) ||
+            !DevicesInUse.Instance.Add(device)
+          )
+          {
+            continue;
+          }
+          this.LogDebug("TvCardDvbBase: try {0} {1}", device.Name, devicePath);
           try
           {
-            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
+            _filterCapture = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterDevice, _captureGraphBuilder);
+            _deviceCapture = device;
+            return;
           }
-          catch (Exception)
+          catch
           {
-            continue;
-          }
-          if (hr != 0)
-          {
-            if (tmp != null)
-            {
-              _graph.RemoveFilter(tmp);
-              Release.ComObject("base DVB tuner tuner filter candidate", ref tmp);
-            }
-            continue;
-          }
-          //render [Network provider]->[Tuner]
-          hr = _captureGraphBuilder.RenderStream(null, null, _filterNetworkProvider, null, tmp);
-          if (hr == 0)
-          {
-            // Got it !
-            _filterTuner = tmp;
-            this.LogDebug("dvb:  using [Tuner]: {0}", devices[i].Name);
-            this.LogDebug("dvb:  Render [Network provider]->[Tuner] OK");
-            break;
+            DevicesInUse.Instance.Remove(device);
           }
         }
-        finally
+        if (!matchDeviceIdentifier)
         {
-          if (_filterTuner == null)
-          {
-            DevicesInUse.Instance.Remove(devices[i]);
-          }
+          this.LogWarn("TvCardDvbBase: failed to add and connect capture filter, assuming plugin required to complete graph");
+          break;
         }
-        // Try another...
-        _graph.RemoveFilter(tmp);
-        Release.ComObject("base DVB tuner tuner filter candidate", ref tmp);
-      }
-      // Assume we found a tuner filter...
-      if (_filterTuner == null)
-      {
-        this.LogInfo(
-          "dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
-        this.LogError("dvb:  No TVTuner installed");
-        throw new TvException("No TVTuner installed");
-      }
-
-      this.LogDebug("dvb:  Setting lastFilter to Tuner filter");
-      IBaseFilter lastFilter = _filterTuner;
-
-      // Attempt to connect [Tuner]->[Capture]
-      if (UseCaptureFilter())
-      {
-        this.LogDebug("dvb:  Find BDA receiver");
-        this.LogDebug("dvb:  match Capture by Tuner device path");
-        AddBDARendererToGraph(device, ref lastFilter, true);
-        if (_filterCapture == null)
-        {
-          this.LogDebug("dvb:  Match by device path failed - trying alternative method");
-          this.LogDebug("dvb:  match Capture filter by Tuner device connection");
-          AddBDARendererToGraph(device, ref lastFilter, false);
-        }
-      }
-
-      // Check for and load plugins, adding any additional device filters to the graph.
-      LoadPlugins(_filterTuner, ref lastFilter);
-
-      // Now connect the required filters if not using the internal network provider
-      if (!_useInternalNetworkProvider)
-      {
-        // Connect the inf tee and demux to the last filter (saves one inf tee)
-        AddInfiniteTeeToGraph(ref lastFilter);
-        ConnectMpeg2DemuxerIntoGraph(ref lastFilter);
-        // Connect and add the filters to the demux
-        AddTransportInformationFilterToGraph();
-      }
-      // Render the last filter with the tswriter
-      AddTsWriterToGraph(lastFilter);
-    }
-
-    /// <summary>
-    /// Determine whether the tuner filter needs to connect to a capture filter,
-    /// or whether it can be directly connected to an inf tee.
-    /// </summary>
-    /// <returns><c>true</c> if the tuner filter must be connected to a capture filter, otherwise <c>false</c></returns>
-    private bool UseCaptureFilter()
-    {
-      // First: check the media types and formats on the tuner output
-      // pin. The WDK specifies (http://msdn.microsoft.com/en-us/library/ff557729%28v=vs.85%29.aspx)
-      // a set of formats that the tuner and capture filter output pins should set
-      // to allow the tuner filter to connect to the capture filter, and the capture
-      // filter to connect to the MPEG 2 Demultiplexor filter (see http://msdn.microsoft.com/en-us/library/dd390716%28v=vs.85%29.aspx).
-      // Most tuners support the MEDIASUBTYPE_MPEG2_TRANSPORT media sub-type on their
-      // output pin, while most capture filters use either MEDIASUBTYPE_MPEG2_TRANSPORT
-      // or STATIC_KSDATAFORMAT_SUBTYPE_BDA_MPEG2_TRANSPORT (also known as MEDIASUBTYPE_BDA_MPEG2_TRANSPORT).
-      bool useCaptureFilter = true;
-      IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
-      if (pinOut != null)
-      {
-        IEnumMediaTypes enumMedia;
-        pinOut.EnumMediaTypes(out enumMedia);
-        if (enumMedia != null)
-        {
-          int fetched;
-          AMMediaType[] mediaTypes = new AMMediaType[21];
-          enumMedia.Next(20, mediaTypes, out fetched);
-          if (fetched > 0)
-          {
-            for (int i = 0; i < fetched; ++i)
-            {
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MpMediaSubType.BdaMpeg2Transport &&
-                  mediaTypes[i].formatType == FormatType.None)
-              {
-                this.LogDebug("dvb:  tuner filter has capture filter output");
-                useCaptureFilter = false;
-              }
-              Release.AmMediaType(ref mediaTypes[i]);
-            }
-          }
-          Release.ComObject("base DVB tuner tuner filter output pin media type enumerator", ref enumMedia);
-        }
-      }
-      Release.ComObject("base DVB tuner tuner filter output pin", ref pinOut);
-      if (!useCaptureFilter)
-      {
-        return false;
-      }
-
-      // Second: check whether the tuner filter implements the
-      // capture/receiver filter interface (KSCATEGORY_BDA_RECEIVER_COMPONENT).
-      // NOTE: not all filters expose this information.
-      IKsTopologyInfo topologyInfo = _filterTuner as IKsTopologyInfo;
-      if (topologyInfo != null)
-      {
-        int categoryCount;
-        topologyInfo.get_NumCategories(out categoryCount);
-        for (int i = 0; i < categoryCount; i++)
-        {
-          Guid guid;
-          topologyInfo.get_Category(i, out guid);
-          if (guid == FilterCategory.BDAReceiverComponentsCategory)
-          {
-            this.LogDebug("dvb:  tuner filter is also capture filter");
-            return false;
-          }
-        }
-      }
-
-      // Finally: if the tuner is a Silicondust HDHomeRun then a capture
-      // filter is not required. Neither of the other two detection methods
-      // work as of 2011-02-11 (mm1352000).
-      if (_device.Name.Contains("Silicondust HDHomeRun Tuner"))
-      {
-        return false;
-      }
-
-      // Default: capture filter is required.
-      return true;
-    }
-
-    /// <summary>
-    /// adds the BDA renderer filter to the graph by elimination
-    /// then tries to match tuner &amp; render filters if successful then connects them.
-    /// </summary>
-    /// <param name="device">Tuner device</param>
-    /// <param name="currentLastFilter">The current last filter if we add multiple captures</param>
-    /// <param name="matchDevicePath">If <c>true</c> only attempt to use renderer filters on the same physical device as the tuner device.</param>
-    protected void AddBDARendererToGraph(DsDevice device, ref IBaseFilter currentLastFilter, bool matchDevicePath)
-    {
-      if (_filterCapture != null)
-        return;
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
-      const string guidBdaMPEFilter = @"\{8e60217d-a2ee-47f8-b0c5-0f44c55f66dc}";
-      const string guidBdaSlipDeframerFilter = @"\{03884cb6-e89a-4deb-b69e-8dc621686e6a}";
-      for (int i = 0; i < devices.Length; i++)
-      {
-        if (devices[i].DevicePath.ToUpperInvariant().IndexOf(guidBdaMPEFilter.ToUpperInvariant()) >= 0)
-          continue;
-        if (devices[i].DevicePath.ToUpperInvariant().IndexOf(guidBdaSlipDeframerFilter.ToUpperInvariant()) >= 0)
-          continue;
-        IBaseFilter tmp;
-        const string deviceIdDelimter = @"#{";
-        this.LogDebug("dvb:  -{0}", devices[i].Name);
-        //Make sure the BDA Receiver Component is on the same physical device as the BDA Source Filter.
-        //This is done by checking the DeviceId and DeviceInstance part of the DevicePath.
-        if (matchDevicePath)
-        {
-          int indx1 = device.DevicePath.IndexOf(deviceIdDelimter);
-          int indx2 = devices[i].DevicePath.IndexOf(deviceIdDelimter);
-          if (indx1 < 0 || indx2 < 0)
-          {
-            continue;
-          }
-
-          if (device.DevicePath.Remove(indx1) != devices[i].DevicePath.Remove(indx2))
-          {
-            continue;
-          }
-        }
-        if (!DevicesInUse.Instance.Add(devices[i]))
-        {
-          continue;
-        }
-        int hr;
-        try
-        {
-          try
-          {
-            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          }
-          catch (Exception)
-          {
-            continue;
-          }
-          if (hr != 0)
-          {
-            if (tmp != null)
-            {
-              this.LogError("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
-              _graph.RemoveFilter(tmp);
-              Release.ComObject("base DVB tuner capture filter candidate", ref tmp);
-            }
-            continue;
-          }
-          //render [Tuner]->[Capture]
-          hr = _captureGraphBuilder.RenderStream(null, null, _filterTuner, null, tmp);
-          if (hr == 0)
-          {
-            this.LogDebug("dvb:  Render [Tuner]->[Capture] AOK");
-            // render [Capture]->[Inf Tee]
-            _filterCapture = tmp;
-            _captureDevice = devices[i];
-            this.LogDebug("dvb:  Setting lastFilter to Capture device");
-            currentLastFilter = _filterCapture;
-            break;
-          }
-        }
-        finally
-        {
-          if (_filterCapture == null)
-          {
-            DevicesInUse.Instance.Remove(devices[i]);
-          }
-        }
-
-        // Try another...
-        this.LogDebug("dvb:  Looking for another bda receiver...");
-        _graph.RemoveFilter(tmp);
-        Release.ComObject("base DVB tuner capture filter candidate", ref tmp);
+        matchDeviceIdentifier = false;
+        this.LogDebug("TvCardDvbBase: allow non-matching capture devices");
       }
     }
 
     /// <summary>
-    /// Add an MPEG 2 demultiplexer filter to the BDA filter graph.
+    /// Add and connect a transport information filter into the graph.
     /// </summary>
-    protected void AddMpeg2DemuxerToGraph()
+    private void AddAndConnectTransportInformationFilterIntoGraph()
     {
-      this.LogDebug("TvCardDvbBase: add MPEG 2 demultiplexer filter");
-      _filterMpeg2DemuxTif = (IBaseFilter)new MPEG2Demultiplexer();
-      int hr = _graph.AddFilter(_filterMpeg2DemuxTif, "MPEG 2 Demultiplexer");
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to add MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add MPEG 2 demultiplexer");
-      }
-    }
-
-    /// <summary>
-    /// Connect the MPEG 2 demultiplexer into the BDA filter graph.
-    /// </summary>
-    /// <param name="lastFilter">The filter in the filter chain that the demultiplexer should be connected to.</param>
-    protected void ConnectMpeg2DemuxerIntoGraph(ref IBaseFilter lastFilter)
-    {
-      this.LogDebug("TvCardDvbBase: connect MPEG 2 demultiplexer filter");
-      IPin infTeeOut = DsFindPin.ByDirection(_infTee, PinDirection.Output, 0);
-      IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-      int hr = _graph.Connect(infTeeOut, demuxPinIn);
-      Release.ComObject("base DVB tuner infinite tee output pin", ref infTeeOut);
-      Release.ComObject("base DVB tuner MPEG 2 demultiplexer input pin", ref demuxPinIn);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to connect MPEG 2 demultiplexer, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to connect MPEG 2 demultiplexer");
-      }
-    }
-
-    /// <summary>
-    /// Add and connect an infinite tee into the BDA filter graph.
-    /// </summary>
-    /// <param name="lastFilter">The filter in the filter chain that the infinite tee should be connected to.</param>
-    protected virtual void AddInfiniteTeeToGraph(ref IBaseFilter lastFilter)
-    {
-      this.LogDebug("TvCardDvbBase: add infinite tee filter");
-      _infTee = (IBaseFilter)new InfTee();
-      int hr = _graph.AddFilter(_infTee, "Infinite Tee");
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to add infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to add infinite tee");
-      }
-      this.LogDebug("TvCardDvbBase:   render...->[inf tee]");
-      hr = _captureGraphBuilder.RenderStream(null, null, lastFilter, null, _infTee);
-      if (hr != 0)
-      {
-        this.LogError("TvCardDvbBase: failed to render stream through the infinite tee, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        throw new TvExceptionDeviceLoadFailed("TvCardDvbBase: failed to render stream through the infinite tee");
-      }
-      lastFilter = _infTee;
-    }
-
-    /// <summary>
-    /// Add and connect a transport information filter into the BDA filter graph.
-    /// </summary>
-    protected void AddTransportInformationFilterToGraph()
-    {
-      this.LogDebug("TvCardDvbBase: add transport information filter");
-      // No point bothering with anything if the demuxer is not present to connect to.
-      if (_filterMpeg2DemuxTif == null)
-      {
-        this.LogError("TvCardDvbBase: MPEG 2 demultiplexer is null");
-        return;
-      }
-
-      // Add the filter to the graph.
-      int hr = 1;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
       for (int i = 0; i < devices.Length; i++)
       {
-        if (String.Compare(devices[i].Name, "BDA MPEG2 Transport Information Filter", true) == 0)
+        DsDevice device = devices[i];
+        if (device == null || device.Name == null || !device.Name.Equals("BDA MPEG2 Transport Information Filter"))
         {
-          try
-          {
-            hr = _graph.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
-            if (hr == 0)
-            {
-              break;  // Success!
-            }
-          }
-          catch (Exception)
-          {
-          }
-          this.LogError("TvCardDvbBase: failed to add transport information filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          return; // Not a critical error...
+          continue;
         }
-      }
-      if (_filterTIF == null)
-      {
-        this.LogError("TvCardDvbBase: transport information filter not found");
+        FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMpeg2Demultiplexer, _captureGraphBuilder);
         return;
       }
-
-      // Connect the filter into the graph.
-      IPin pinInTif = DsFindPin.ByDirection(_filterTIF, PinDirection.Input, 0);
-      if (pinInTif == null)
-      {
-        this.LogError("TvCardDvbBase: failed to find transport information filter input pin");
-        return;
-      }
-      bool tifConnected = false;
-      try
-      {
-        IEnumPins enumPins;
-        _filterMpeg2DemuxTif.EnumPins(out enumPins);
-        if (enumPins == null)
-        {
-          this.LogError("TvCardDvbBase: MPEG 2 demultiplexer has not sprouted pins");
-          return;
-        }
-        int pinNr = 0;
-        try
-        {
-          while (true)
-          {
-            pinNr++;
-            PinDirection pinDir;
-            AMMediaType[] mediaTypes = new AMMediaType[2];
-            IPin[] pins = new IPin[2];
-            int fetched;
-            enumPins.Next(1, pins, out fetched);
-            if (fetched != 1 || pins[0] == null)
-            {
-              break;
-            }
-            try
-            {
-              pins[0].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Input)
-              {
-                continue;
-              }
-              IEnumMediaTypes enumMedia;
-              pins[0].EnumMediaTypes(out enumMedia);
-              if (enumMedia != null)
-              {
-                enumMedia.Next(1, mediaTypes, out fetched);
-                Release.ComObject("base DVB tuner MPEG 2 demultiplexer output pin media type enumerator", ref enumMedia);
-                if (fetched == 1 && mediaTypes[0] != null)
-                {
-                  try
-                  {
-                    if (mediaTypes[0].majorType == MediaType.Audio || mediaTypes[0].majorType == MediaType.Video)
-                    {
-                      // We're not interested in audio or video pins.
-                      continue;
-                    }
-                  }
-                  finally
-                  {
-                    Release.AmMediaType(ref mediaTypes[0]);
-                  }
-                }
-              }
-              try
-              {
-                hr = _graph.Connect(pins[0], pinInTif);
-                if (hr == 0)
-                {
-                  tifConnected = true;
-                  break;
-                }
-              }
-              catch (Exception ex)
-              {
-                this.LogError(ex, "TvCardDvbBase: exception on connect attempt");
-              }
-            }
-            finally
-            {
-              Release.ComObject("base DVB tuner MPEG 2 demultiplexer output pin " + pinNr, ref pins[0]);
-            }
-          }
-        }
-        finally
-        {
-          Release.ComObject("base DVB tuner MPEG 2 demultiplexer pin enumerator", ref enumPins);
-        }
-      }
-      finally
-      {
-        Release.ComObject("base DVB tuner TIF input pin", ref pinInTif);
-      }
-      this.LogDebug("TvCardDvbBase: result = {0}", tifConnected);
-    }
-
-    #endregion
-
-    #region IDisposable
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public override void Dispose()
-    {
-      Decompose();
+      this.LogWarn("TvCardDvbBase: transport information filter not found");
     }
 
     /// <summary>
-    /// destroys the graph and cleans up any resources
+    /// Get the signal statistic interfaces from the device.
     /// </summary>
-    protected void Decompose()
+    /// <returns>the signal statistic interfaces</returns>
+    private IList<IBDA_SignalStatistics> GetTunerSignalStatistics()
     {
-      this.LogDebug("dvb:Decompose");
-      _timeshiftingEPGGrabber.Dispose();
+      this.LogDebug("TvCardDvbBase: get tuner signal statistics");
 
+      IBDA_Topology topology = _filterDevice as IBDA_Topology;
+      if (topology == null)
+      {
+        throw new TvException("Failed to get IBDA_Topology handle from tuner.");
+      }
+
+      int nodeTypeCount;
+      int[] nodeTypes = new int[33];
+      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
+      HResult.ThrowException(hr, "Failed to GetNodeTypes() on IBDA_Topology.");
+
+      IList<IBDA_SignalStatistics> statistics = new List<IBDA_SignalStatistics>();
+      Guid[] guidInterfaces = new Guid[33];
+      for (int i = 0; i < nodeTypeCount; ++i)
+      {
+        object controlNode;
+        hr = topology.GetControlNode(0, 1, nodeTypes[i], out controlNode);
+        HResult.ThrowException(hr, "Failed to GetControlNode() on IBDA_Topology.");
+
+        IBDA_SignalStatistics s = controlNode as IBDA_SignalStatistics;
+        if (s != null)
+        {
+          statistics.Add(s);
+        }
+      }
+      if (statistics.Count == 0)
+      {
+        throw new TvException("Failed to locate signal statistic interfaces.");
+      }
+      return statistics;
+    }
+
+    /// <summary>
+    /// Actually unload the device.
+    /// </summary>
+    protected override void PerformUnloading()
+    {
       if (_epgGrabbing)
       {
-        if (_epgGrabberCallback != null && _epgGrabbing)
+        if (_epgGrabberCallback != null)
         {
-          this.LogInfo("dvb:cancel epg->decompose");
           _epgGrabberCallback.OnEpgCancelled();
         }
         _epgGrabbing = false;
       }
+      _timeshiftingEpgGrabber.Dispose();
 
-      base.Dispose();
-
-      this.LogDebug("  free...");
-      Release.ComObject("base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2DemuxTif);
-      Release.ComObject("base DVB tuner network provider", ref _filterNetworkProvider);
-      Release.ComObject("base DVB tuner infinite tee", ref _infTee);
-      Release.ComObjectAllRefs("base DVB tuner tuner filter", ref _filterTuner);
-      Release.ComObjectAllRefs("base DVB tuner capture filter", ref _filterCapture);
-      Release.ComObject("base DVB tuner transport information filter", ref _filterTIF);
-
-      this.LogDebug("  free devices...");
-      if (_captureDevice != null)
+      if (_graph != null)
       {
-        DevicesInUse.Instance.Remove(_captureDevice);
-        _captureDevice = null;
-      }
-      if (_tunerStatistics != null)
-      {
-        for (int i = 0; i < _tunerStatistics.Count; i++)
+        if (_filterNetworkProvider != null)
         {
-          IBDA_SignalStatistics stat = _tunerStatistics[i];
-          Release.ComObjectAllRefs("base DVB tuner signal statistic", ref stat);
+          _graph.RemoveFilter(_filterNetworkProvider);
         }
-        _tunerStatistics.Clear();
+        if (_filterCapture != null)
+        {
+          _graph.RemoveFilter(_filterCapture);
+        }
+        if (_filterInfiniteTee != null)
+        {
+          _graph.RemoveFilter(_filterInfiniteTee);
+        }
+        if (_filterMpeg2Demultiplexer != null)
+        {
+          _graph.RemoveFilter(_filterMpeg2Demultiplexer);
+        }
+        if (_filterTransportInformation != null)
+        {
+          _graph.RemoveFilter(_filterTransportInformation);
+        }
       }
-      this.LogDebug("  decompose done...");
+      Release.ComObject("base DVB tuner network provider", ref _filterNetworkProvider);
+      Release.ComObject("base DVB tuner capture filter", ref _filterCapture);
+      Release.ComObject("base DVB tuner infinite tee", ref _filterInfiniteTee);
+      Release.ComObject("base DVB tuner MPEG 2 demultiplexer", ref _filterMpeg2Demultiplexer);
+      Release.ComObject("base DVB tuner transport information filter", ref _filterTransportInformation);
+      Release.ComObject("base DVB tuner tuning space", ref _tuningSpace);
+
+      if (_deviceCapture != null)
+      {
+        DevicesInUse.Instance.Remove(_deviceCapture);
+        _deviceCapture = null;
+      }
+      if (_signalStatistics != null)
+      {
+        for (int i = 0; i < _signalStatistics.Count; i++)
+        {
+          IBDA_SignalStatistics s = _signalStatistics[i];
+          Release.ComObject("base DVB tuner signal statistic", ref s);
+        }
+        _signalStatistics.Clear();
+      }
+
+      CleanUpGraph();
     }
 
     #endregion
 
     #region signal quality, level etc
-
-    /// <summary>
-    /// this method gets the signal statistics interfaces from the bda tuner device
-    /// and stores them in _tunerStatistics
-    /// </summary>
-    protected void GetTunerSignalStatistics()
-    {
-      this.LogDebug("dvb: GetTunerSignalStatistics()");
-      //no tuner filter? then return;
-      _tunerStatistics = new List<IBDA_SignalStatistics>();
-      if (_filterTuner == null)
-      {
-        this.LogError("dvb: could not get IBDA_Topology since no tuner device");
-        return;
-      }
-      //get the IBDA_Topology from the tuner device
-      //Log.this.LogDebug("dvb: get IBDA_Topology");
-      IBDA_Topology topology = _filterTuner as IBDA_Topology;
-      if (topology == null)
-      {
-        this.LogError("dvb: could not get IBDA_Topology from tuner");
-        return;
-      }
-      //get the NodeTypes from the topology
-      //Log.this.LogDebug("dvb: GetNodeTypes");
-      int nodeTypeCount;
-      int[] nodeTypes = new int[33];
-      Guid[] guidInterfaces = new Guid[33];
-      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
-      if (hr != 0)
-      {
-        this.LogError("dvb: FAILED could not get node types from tuner:0x{0:X}", hr);
-        return;
-      }
-      if (nodeTypeCount == 0)
-      {
-        this.LogError("dvb: FAILED could not get any node types");
-      }
-      Guid GuidIBDA_SignalStatistic = new Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338");
-      //for each node type
-      //Log.this.LogDebug("dvb: got {0} node types", nodeTypeCount);
-      for (int i = 0; i < nodeTypeCount; ++i)
-      {
-        object objectNode;
-        int numberOfInterfaces;
-        hr = topology.GetNodeInterfaces(nodeTypes[i], out numberOfInterfaces, 32, guidInterfaces);
-        if (hr != 0)
-        {
-          this.LogError("dvb: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
-        }
-        hr = topology.GetControlNode(0, 1, nodeTypes[i], out objectNode);
-        if (hr != 0)
-        {
-          this.LogError("dvb: FAILED could not GetControlNode for node:{0} 0x:{1:X}", i, hr);
-          return;
-        }
-        //and get the final IBDA_SignalStatistics
-        for (int iface = 0; iface < numberOfInterfaces; iface++)
-        {
-          if (guidInterfaces[iface] == GuidIBDA_SignalStatistic)
-          {
-            //this.LogDebug(" got IBDA_SignalStatistics on node:{0} interface:{1}", i, iface);
-            _tunerStatistics.Add((IBDA_SignalStatistics)objectNode);
-          }
-        }
-      }
-    }
 
     /// <summary>
     /// Update the tuner signal status statistics.
@@ -1171,7 +786,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       }
       try
       {
-        if (_currentTuningDetail == null || _state != DeviceState.Started || _tunerStatistics == null || _tunerStatistics.Count == 0)
+        if (_currentTuningDetail == null || _state != DeviceState.Started || _signalStatistics == null || _signalStatistics.Count == 0)
         {
           //System.Diagnostics.Debugger.Launch();
           _tunerLocked = false;
@@ -1186,9 +801,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         long signalStrength = 0;
 
         //       Log.this.LogDebug("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
-        for (int i = 0; i < _tunerStatistics.Count; i++)
+        for (int i = 0; i < _signalStatistics.Count; i++)
         {
-          IBDA_SignalStatistics stat = _tunerStatistics[i];
+          IBDA_SignalStatistics stat = _signalStatistics[i];
           //          Log.this.LogDebug("   dvb:  #{0} get locked",i );
           try
           {
@@ -1245,10 +860,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
           }
           //Log.this.LogDebug("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);          
         }
-        if (_tunerStatistics.Count > 0)
+        if (_signalStatistics.Count > 0)
         {
-          _signalQuality = (int)signalQuality / _tunerStatistics.Count;
-          _signalLevel = (int)signalStrength / _tunerStatistics.Count;
+          _signalQuality = (int)signalQuality / _signalStatistics.Count;
+          _signalLevel = (int)signalStrength / _signalStatistics.Count;
         }
         _tunerLocked = isTunerLocked;
 
@@ -1389,8 +1004,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
     /// </summary>
     public override void GrabEpg()
     {
-      if (_timeshiftingEPGGrabber.StartGrab())
-        GrabEpg(_timeshiftingEPGGrabber);
+      if (_timeshiftingEpgGrabber.StartGrab())
+        GrabEpg(_timeshiftingEpgGrabber);
     }
 
     /// <summary>
@@ -1435,9 +1050,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       {
         epgGrabber.AbortGrabbing();
       }
-      if (_timeshiftingEPGGrabber != null)
+      if (_timeshiftingEpgGrabber != null)
       {
-        _timeshiftingEPGGrabber.OnEpgCancelled();
+        _timeshiftingEpgGrabber.OnEpgCancelled();
       }
     }
 

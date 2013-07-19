@@ -19,11 +19,51 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
+  public class InternalNetworkProvider
+  {
+    /// <summary>
+    /// The network provider class identifier.
+    /// </summary>
+    public static readonly Guid CLSID = new Guid(0xd7d42e5c, 0xeb36, 0x4aad, 0x93, 0x3b, 0xb4, 0xc4, 0x19, 0x42, 0x9c, 0x98);
+
+    /// <summary>
+    /// Generates the file and pathname of the log file
+    /// </summary>
+    /// <param name="devicePath">Device Path of the card</param>
+    /// <returns>Complete filename of the configuration file</returns>
+    public static String GetFileName(string devicePath)
+    {
+      string hash = GetHash(devicePath);
+      String pathName = PathManager.GetDataPath;
+      String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
+      Log.Debug("NetworkProvider logfilename: " + fileName);
+      Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+      return fileName;
+    }
+
+    public static string GetHash(string value)
+    {
+      byte[] data = Encoding.ASCII.GetBytes(value);
+      byte[] hashData = new SHA1Managed().ComputeHash(data);
+
+      string hash = string.Empty;
+      foreach (byte b in hashData)
+      {
+        hash += b.ToString("X2");
+      }
+      return hash;
+    }
+  }
+
   /// <summary>
   /// Tuning types enumeration
   /// </summary>

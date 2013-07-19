@@ -65,10 +65,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardDVBIP"/> class.
+    /// Initialise a new instance of the <see cref="TvCardDVBIP"/> class.
     /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
-    /// <param name="device">The device.</param>
+    /// <param name="epgEvents">The EPG events interface for the instance to use.</param>
+    /// <param name="device">The <see cref="DsDevice"/> instance that the instance will encapsulate.</param>
     /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
     public TvCardDVBIP(IEpgEvents epgEvents, DsDevice device, int sequenceNumber)
       : base(device)
@@ -106,14 +106,30 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
       InitialiseGraph();
 
       // Start with the source filter.
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graph, _sourceFilterGuid, "MediaPortal Network Source Filter");
+      _filterStreamSource = FilterGraphTools.AddFilterByClsid(_graph, _sourceFilterGuid, "MediaPortal Network Source Filter");
 
       // Check for and load plugins, adding any additional device filters to the graph.
       IBaseFilter lastFilter = _filterStreamSource;
       LoadPlugins(_filterStreamSource, ref lastFilter);
 
       // Complete the graph.
-      AddTsWriterToGraph(lastFilter);
+      AddAndConnectTsWriterIntoGraph(lastFilter);
+      CompleteGraph();
+    }
+
+    /// <summary>
+    /// Actually unload the device.
+    /// </summary>
+    protected override void PerformUnloading()
+    {
+      if (_graph != null && _filterStreamSource != null)
+      {
+        _graph.RemoveFilter(_filterStreamSource);
+      }
+      Release.ComObject("DVB-IP stream source filter", ref _filterStreamSource);
+      Release.AmMediaType(ref _sourceMediaType);
+
+      CleanUpGraph();
     }
 
     #endregion
@@ -126,24 +142,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      if (_useCustomTuning)
-      {
-        foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
-        {
-          ICustomTuner customTuner = deviceInterface as ICustomTuner;
-          if (customTuner != null && customTuner.CanTuneChannel(channel))
-          {
-            this.LogDebug("TvCardDvbIp: using custom tuning");
-            if (customTuner.Tune(channel))
-            {
-              return;
-            }
-            this.LogWarn("TvCardDvbIp: custom tuning failed, falling back to default tuning");
-          }
-        }
-      }
-
-      this.LogDebug("TvCardDvbIp: using default tuning");
       DVBIPChannel dvbipChannel = channel as DVBIPChannel;
       if (dvbipChannel == null)
       {
@@ -176,16 +174,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
 
     #endregion
 
-    /// <summary>
-    /// Dispose resources
-    /// </summary>
-    public override void Dispose()
-    {
-      base.Dispose();
+    #region subchannel management
 
-      Release.ComObject("DVB-IP stream source filter", ref _filterStreamSource);
-      Release.AmMediaType(ref _sourceMediaType);
+    /// <summary>
+    /// Allocate a new subchannel instance.
+    /// </summary>
+    /// <param name="id">The identifier for the subchannel.</param>
+    /// <returns>the new subchannel instance</returns>
+    protected override ITvSubChannel CreateNewSubChannel(int id)
+    {
+      return new TvDvbChannel(id, this, _filterTsWriter, null);
     }
+
+    #endregion
 
     /// <summary>
     /// Update the tuner signal status statistics.
@@ -230,16 +231,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBIP
         }
         return base.DevicePath + "(" + _sequenceNumber + ")";
       }
-    }
-
-    /// <summary>
-    /// Allocate a new subchannel instance.
-    /// </summary>
-    /// <param name="id">The identifier for the subchannel.</param>
-    /// <returns>the new subchannel instance</returns>
-    protected override ITvSubChannel CreateNewSubChannel(int id)
-    {
-      return new TvDvbChannel(id, this, _filterTsWriter, null);
     }
   }
 }

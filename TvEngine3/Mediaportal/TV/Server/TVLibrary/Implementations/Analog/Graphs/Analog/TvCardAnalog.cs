@@ -80,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       _minChannel = 0;
       _maxChannel = 128;
       _tunerType = CardType.Analog;
-      _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+      _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
       Configuration.writeConfiguration(_configuration);
     }
 
@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     {
       if (_qualityControl != null)
       {
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
         Configuration.writeConfiguration(_configuration);
         _qualityControl.SetConfiguration(_configuration);
         _capture.SetCaptureConfiguration(_configuration.Graph);
@@ -244,19 +244,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       set
       {
         _cardId = value;
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
         Configuration.writeConfiguration(_configuration);
       }
     }
 
     #endregion
 
-    #region Disposable
-
     /// <summary>
-    /// Disposes this instance.
+    /// Actually unload the device.
     /// </summary>
-    public override void Dispose()
+    protected override void PerformUnloading()
     {
       this.LogDebug("analog:Dispose()");
 
@@ -298,8 +296,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       this.LogDebug("analog: dispose completed");
     }
 
-    #endregion
-
     #region graph handling
 
     /// <summary>
@@ -309,7 +305,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     {
       if (_cardId == 0)
       {
-        _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
+        _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
         Configuration.writeConfiguration(_configuration);
       }
       _lastSignalUpdate = DateTime.MinValue;
@@ -406,7 +402,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       this.LogDebug("analog:AddTsFileSink");
       _tsFileSink = (IBaseFilter)new MpFileWriter();
       int hr = _graph.AddFilter(_tsFileSink, "TsFileSink");
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:AddTsFileSink returns:0x{0:X}", hr);
         throw new TvException("Unable to add TsFileSink");

@@ -84,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       IPin pinOut = DsFindPin.ByDirection(networkFilter, PinDirection.Output, 0);
       IPin pinIn = DsFindPin.ByDirection(tunerFilter, PinDirection.Input, 0);
       int hr = graphBuilder.Connect(pinOut, pinIn);
-      return (hr == 0);
+      return (hr == (int)HResult.Severity.Success);
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         IFilterGraph2 graphBuilder = (IFilterGraph2)new FilterGraph();
         DsROTEntry rotEntry = new DsROTEntry(graphBuilder);
 
-        Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
+        Guid networkProviderClsId = InternalNetworkProvider.CLSID;
         if (FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId))
         {
           handleInternalNetworkProviderFilter(devices, graphBuilder, networkProviderClsId, rotEntry);
@@ -174,7 +174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           try
           {
             networkProviderClsId = typeof(DVBTNetworkProvider).GUID;
-            networkDVBT = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+            networkDVBT = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                               "DVBT Network Provider");
             tuningSpace = (ITuningSpace)new DVBTuningSpace();
             tuningSpace.put_UniqueName("DVBT TuningSpace");
@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           //DVBS
           networkProviderClsId = typeof(DVBSNetworkProvider).GUID;
-          IBaseFilter networkDVBS = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+          IBaseFilter networkDVBS = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                                         "DVBS Network Provider");
           tuningSpace = (ITuningSpace)new DVBSTuningSpace();
           tuningSpace.put_UniqueName("DVBS TuningSpace");
@@ -219,7 +219,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           //ATSC
           networkProviderClsId = typeof(ATSCNetworkProvider).GUID;
-          IBaseFilter networkATSC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+          IBaseFilter networkATSC = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                                         "ATSC Network Provider");
           tuningSpace = (ITuningSpace)new ATSCTuningSpace();
           tuningSpace.put_UniqueName("ATSC TuningSpace");
@@ -246,7 +246,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           //DVBC
           networkProviderClsId = typeof(DVBCNetworkProvider).GUID;
-          IBaseFilter networkDVBC = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+          IBaseFilter networkDVBC = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                                         "DVBC Network Provider");
           tuningSpace = (ITuningSpace)new DVBTuningSpace();
           tuningSpace.put_UniqueName("DVBC TuningSpace");
@@ -298,7 +298,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             //Use the Microsoft Network Provider method first but only if available
             if (genericNP)
             {
-              IBaseFilter networkDVB = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+              IBaseFilter networkDVB = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                                            "Microsoft Network Provider");
               if (ConnectFilter(graphBuilder, networkDVB, tmp))
               {
@@ -434,11 +434,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         IBaseFilter tmp;
         graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
         //Use the Microsoft Network Provider method first but only if available
-        IBaseFilter networkDVB = FilterGraphTools.AddFilterFromClsid(graphBuilder, networkProviderClsId,
+        IBaseFilter networkDVB = FilterGraphTools.AddFilterByClsid(graphBuilder, networkProviderClsId,
                                                                      "MediaPortal Network Provider");
         interfaceNetworkProvider = (IDvbNetworkProvider)networkDVB;
-        string hash = GetHash(devices[i].DevicePath);
-        interfaceNetworkProvider.ConfigureLogging(GetFileName(devices[i].DevicePath), hash, LogLevelOption.Debug);
+        string hash = InternalNetworkProvider.GetHash(devices[i].DevicePath);
+        interfaceNetworkProvider.ConfigureLogging(InternalNetworkProvider.GetFileName(devices[i].DevicePath), hash, LogLevelOption.Debug);
         if (ConnectFilter(graphBuilder, networkDVB, tmp))
         {
           this.LogDebug("Detected DVB card:{0}- Hash: {1}", name, hash);
@@ -478,35 +478,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       FilterGraphTools.RemoveAllFilters(graphBuilder);
       rotEntry.Dispose();
       Release.ComObject("TV card collection graph", ref graphBuilder);
-    }
-
-    /// <summary>
-    /// Generates the file and pathname of the log file
-    /// </summary>
-    /// <param name="devicePath">Device Path of the card</param>
-    /// <returns>Complete filename of the configuration file</returns>
-    public static String GetFileName(string devicePath)
-    {
-      string hash = GetHash(devicePath);
-      String pathName = PathManager.GetDataPath;
-      String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
-      Log.Debug("NetworkProvider logfilename: " + fileName);
-      Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-      return fileName;
-    }
-
-    public static string GetHash(string value)
-    {
-      byte[] data = Encoding.ASCII.GetBytes(value);
-      byte[] hashData = new SHA1Managed().ComputeHash(data);
-
-      string hash = string.Empty;
-
-      foreach (byte b in hashData)
-      {
-        hash += b.ToString("X2");
-      }
-      return hash;
     }
 
     /// <summary>
