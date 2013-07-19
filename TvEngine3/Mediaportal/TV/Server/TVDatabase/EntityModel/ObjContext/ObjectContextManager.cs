@@ -63,7 +63,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       }
     }
 
-    private static void CreateIndexes(Model model)
+    private static void CreateIndexes(TvModel model)
     {
       TryCreateIndex(model, "CardGroupMaps", "IdCard");
       TryCreateIndex(model, "CardGroupMaps", "IdCardGroup");
@@ -101,7 +101,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       TryCreateIndex(model, "TvMovieMappings", "IdChannel");
     }
 
-    private static void DropConstraints(Model model)
+    private static void DropConstraints(TvModel model)
     {
       TryDropConstraint(model, "Recordings", "ChannelRecording");
       TryDropConstraint(model, "Recordings", "RecordingProgramCategory");
@@ -112,11 +112,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// Creates a <see cref="Model"/> instance, which can use the _externalDbCreator.
     /// </summary>
     /// <returns></returns>
-    private static Model GetModel()
+    private static TvModel GetModel()
     {
-      Model model = _externalDbCreator != null
-        ? new Model(BuildEFConnection(_externalDbCreator()))
-        : new Model();
+      TvModel model = _externalDbCreator != null
+        ? new TvModel(BuildEFConnection(_externalDbCreator()))
+        : new TvModel();
       return model;
     }
 
@@ -155,7 +155,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     #endregion
 
-    public static void SetupStaticValues(Model ctx)
+    public static void SetupStaticValues(TvModel ctx)
     {
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 1, Name = "Universal", LowBandFrequency = 9750000, HighBandFrequency = 10600000, SwitchFrequency = 11700000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 2, Name = "C-Band", LowBandFrequency = 5150000, HighBandFrequency = 5650000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     private static object _createDbContextLock = new object();
 
-    public static Model CreateDbContext()
+    public static TvModel CreateDbContext()
     {
       lock (_createDbContextLock)
       {
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <param name="model">Model</param>
     /// <param name="tableName">Table name</param>
     /// <param name="constraintName">Constraint name</param>
-    private static void TryDropConstraint(Model model, string tableName, string constraintName)
+    private static void TryDropConstraint(TvModel model, string tableName, string constraintName)
     {
       bool isMySql = ((EntityConnection) model.Connection).StoreConnection.GetType().ToString().Contains("MySqlConnection");
       try
@@ -251,7 +251,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <param name="model">Model</param>
     /// <param name="tableName">Table name</param>
     /// <param name="indexedColumn">Column name</param>
-    private static void TryCreateIndex(Model model, string tableName, string indexedColumn)
+    private static void TryCreateIndex(TvModel model, string tableName, string indexedColumn)
     {
       TryCreateIndex(model, tableName, new List<string> { indexedColumn });
     }
@@ -262,7 +262,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <param name="model">Model</param>
     /// <param name="tableName">Table name</param>
     /// <param name="indexedColumns">Column names</param>
-    private static void TryCreateIndex(Model model, string tableName, IList<string> indexedColumns)
+    private static void TryCreateIndex(TvModel model, string tableName, IList<string> indexedColumns)
     {
       try
       {
