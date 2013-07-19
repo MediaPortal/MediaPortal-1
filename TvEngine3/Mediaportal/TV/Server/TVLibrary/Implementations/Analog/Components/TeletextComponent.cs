@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -99,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       devices[0].Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
       _teeSink = (IBaseFilter)obj;
       int hr = graphBuilder.AddFilter(_teeSink, devices[0].Name);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogError("analog:SinkGraphEx.SetupTeletext(): Unable to add tee/sink filter");
         return false;
@@ -108,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       IPin pin = DsFindPin.ByDirection(_teeSink, PinDirection.Input, 0);
       hr = graphBuilder.Connect(capture.VBIPin, pin);
       Release.ComObject("teletext tee sink input pin", ref pin);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         //failed...
         this.LogError("analog: unable  to connect capture->tee/sink");
@@ -129,7 +130,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               //failed...
               this.LogError("analog:SinkGraphEx.SetupTeletext(): Unable to add WST Codec filter");
@@ -155,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               //failed...
               this.LogError("analog:Unable to add WST Codec filter");
@@ -180,7 +181,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
               _filterWstDecoder = (IBaseFilter)obj;
               hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
-              if (hr != 0)
+              if (hr != (int)HResult.Severity.Success)
               {
                 //failed...
                 this.LogError("analog:Unable to add VBI Codec filter");
@@ -207,7 +208,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       hr = graphBuilder.Connect(pinOut, pin);
       Release.ComObject("teletext tee sink output pin", ref pinOut);
       Release.ComObject("teletext WST decoder input pin", ref pin);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         //failed
         this.LogError("analog: unable  to tee/sink->wst codec");

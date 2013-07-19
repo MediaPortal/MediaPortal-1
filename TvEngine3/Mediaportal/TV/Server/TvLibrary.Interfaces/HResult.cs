@@ -454,42 +454,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// throw an exception for any non-zero HRESULT, and we use DXGetErrorString().
     /// </remarks>
     /// <param name="hr">The HRESULT code.</param>
-    public static void ThrowException(int hr)
-    {
-      if (hr == 0)
-      {
-        return;
-      }
-
-      string errorString = GetDXErrorString(hr);
-      string errorDescription = DsError.GetErrorText(hr);
-      if (errorString != null)
-      {
-        errorString = string.Format("0x{0:X} ({1})", hr, errorString);
-        if (errorDescription != null)
-        {
-          errorString += " - " + errorDescription;
-        }
-        throw new TvException(errorString);
-      }
-      else
-      {
-        Marshal.ThrowExceptionForHR(hr);
-      }
-    }
-
-    /// <summary>
-    /// Throw an exception for an HRESULT code.
-    /// </summary>
-    /// <remarks>
-    /// See <see cref="DsError.ThrowExceptionForHR()"/>. The difference here is that we
-    /// throw an exception for any non-zero HRESULT, and we use DXGetErrorString().
-    /// </remarks>
-    /// <param name="hr">The HRESULT code.</param>
     /// <param name="description">A description that gives error context.</param>
     public static void ThrowException(int hr, string description)
     {
-      if (hr == 0)
+      if (hr == (int)Severity.Success)
       {
         return;
       }

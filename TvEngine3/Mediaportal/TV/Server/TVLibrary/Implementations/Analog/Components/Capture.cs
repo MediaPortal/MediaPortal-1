@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -388,7 +389,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //cannot add video capture filter to graph, try next one
             if (tmp != null)
@@ -541,7 +542,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //cannot add video capture filter to graph, try next one
             if (tmp != null)
@@ -720,7 +721,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         int hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Brightness, out min, out max, out steppingDelta,
                                         out defaultValue,
                                         out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -728,7 +729,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Contrast, out min, out max, out steppingDelta, out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -736,7 +737,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Hue, out min, out max, out steppingDelta, out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -745,7 +746,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Saturation, out min, out max, out steppingDelta,
                                     out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -754,7 +755,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Sharpness, out min, out max, out steppingDelta,
                                     out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -762,7 +763,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Gamma, out min, out max, out steppingDelta, out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -771,7 +772,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.ColorEnable, out min, out max, out steppingDelta,
                                     out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -780,7 +781,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.WhiteBalance, out min, out max, out steppingDelta,
                                     out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -789,7 +790,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.BacklightCompensation, out min, out max, out steppingDelta,
                                     out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -797,7 +798,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Gain, out min, out max, out steppingDelta, out defaultValue,
                                     out flags);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
                                        defaultValue);
@@ -818,7 +819,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       Guid iid = typeof (IAMStreamConfig).GUID;
       object o;
       int hr = capBuilder.FindInterface(cat, null, _filterVideoCapture, iid, out o);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         _streamConfig = o as IAMStreamConfig;
         if (_streamConfig == null)
@@ -846,7 +847,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       if (_analogVideoDecoder != null && (newVideoFormat != AnalogVideoStandard.None))
       {
         int hr = _analogVideoDecoder.put_TVFormat(newVideoFormat);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           _currentVideoFormat = newVideoFormat;
           this.LogInfo("Set new video format to: {0}", _currentVideoFormat);
@@ -916,7 +917,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           // Get the current format info
           int hr = _streamConfig.GetFormat(out mediaType);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogInfo("SetFrameRate: Failed to get the video format - {0}", hr);
             return false;
@@ -966,7 +967,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           Marshal.StructureToPtr(formatStruct, mediaType.formatPtr, false);
           // Save the changes
           hr = _streamConfig.SetFormat(mediaType);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogInfo("SetFrameRate:  FAILED to set:{0}", hr);
             return false;
@@ -1000,7 +1001,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         {
           // Get the current format info
           int hr = _streamConfig.GetFormat(out mediaType);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogInfo("SetFrameSize: Failed to get the video format - {0}", hr);
             return false;
@@ -1050,7 +1051,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           Marshal.StructureToPtr(formatStruct, mediaType.formatPtr, false);
           // Save the changes
           hr = _streamConfig.SetFormat(mediaType);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogInfo("SetFrameSize:  FAILED to set:{0}", hr);
             return false;
@@ -1085,7 +1086,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           // Get the current format info
           mediaType.formatType = FormatType.VideoInfo2;
           int hr = _streamConfig.GetFormat(out mediaType);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogInfo("GetFrameSize: FAILED to get format - {0}", hr);
             Marshal.ThrowExceptionForHR(hr);

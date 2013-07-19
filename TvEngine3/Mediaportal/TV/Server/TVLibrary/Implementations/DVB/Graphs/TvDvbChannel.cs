@@ -388,7 +388,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
       if (_tsFilterInterface != null)
       {
         int hr = _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelIndex, fileName);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
         }
@@ -399,7 +399,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs
         _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
 
         hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
         }

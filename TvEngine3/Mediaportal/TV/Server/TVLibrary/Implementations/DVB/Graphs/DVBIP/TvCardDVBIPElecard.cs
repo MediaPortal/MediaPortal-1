@@ -31,10 +31,10 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardDVBIPElecard : TvCardDVBIP
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvCardDVBIPElecard"/> class.
+    /// Initialise a new instance of the <see cref="TvCardDVBIPElecard"/> class.
     /// </summary>
-    /// <param name="epgEvents">The EPG events interface.</param>
-    /// <param name="device">The device.</param>
+    /// <param name="epgEvents">The EPG events interface for the instance to use.</param>
+    /// <param name="device">The <see cref="DsDevice"/> instance that the instance will encapsulate.</param>
     /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
     public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequenceNumber)
       : base(epgEvents, device, sequenceNumber)

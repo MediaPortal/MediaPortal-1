@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -237,7 +238,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           object newBitRateModeO = newMode;
           Marshal.WriteInt32(newBitRateModeO, 0, newMode);
           int hr = SetValue(PropSetID.ENCAPIPARAM_BitRateMode, ref newBitRateModeO);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             this.LogInfo("analog: Encoder mode set to {0}", _bitRateMode);
           }
@@ -265,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           this.LogInfo("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           int hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             int valMin = Marshal.ReadInt32(valueMin, 0);
             int valMax = Marshal.ReadInt32(valueMax, 0);
@@ -309,7 +310,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
             object newQualityO = valueMin;
             Marshal.WriteInt32(newQualityO, 0, newBitrate);
             hr = SetValue(PropSetID.ENCAPIPARAM_BitRate, ref newQualityO);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               this.LogInfo("analog: Encoder BitRate set to {0:D}", newQualityO);
             }
@@ -326,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
           if (_bitRateMode == VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak && _supported_PeakBitRate)
           {
             hr = GetParameterRange(PropSetID.ENCAPIPARAM_PeakBitRate, out valueMin, out valueMax, out steppingDelta);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               int valMin = Marshal.ReadInt32(valueMin, 0);
               int valMax = Marshal.ReadInt32(valueMax, 0);
@@ -370,7 +371,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
               object newQualityO = valueMin;
               Marshal.WriteInt32(newQualityO, 0, newBitrate);
               hr = SetValue(PropSetID.ENCAPIPARAM_PeakBitRate, ref newQualityO);
-              if (hr == 0)
+              if (hr == (int)HResult.Severity.Success)
               {
                 this.LogInfo("analog: Encoder BitRatePeak setTo {0:D}", newQualityO);
               }
@@ -406,21 +407,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.QualityControl
         // Can we set the encoding mode?
         //ENCAPIPARAM_BITRATE_MODE 	Specifies the bit-rate mode, as a VIDEOENCODER_BITRATE_MODE enumeration value (32-bit signed long).
         int hr = IsSupported(PropSetID.ENCAPIPARAM_BitRateMode);
-        _supported_BitRateMode = hr == 0;
+        _supported_BitRateMode = hr == (int)HResult.Severity.Success;
         if (_supported_BitRateMode)
           this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRateMode");
 
         // Can we specify the bitrate?
         //ENCAPIPARAM_BITRATE 	Specifies the bit rate, in bits per second. In constant bit rate (CBR) mode, the value gives the constant bitrate. In either variable bit rate mode, it gives the average bit rate. The value is a 32-bit unsigned long.
         hr = IsSupported(PropSetID.ENCAPIPARAM_BitRate);
-        _supported_BitRate = hr == 0;
+        _supported_BitRate = hr == (int)HResult.Severity.Success;
         if (_supported_BitRate)
           this.LogDebug("analog: Encoder supports ENCAPIPARAM_BitRate");
 
         // Can we specify the peak bitrate for variable bit rate peak
         //ENCAPIPARAM_PEAK_BITRATE 	Secifies the peak bit rate. This parameter is relevant only when ENCAPIPARAM_BITRATE_MODE has been set to VariableBitRatePeak.
         hr = IsSupported(PropSetID.ENCAPIPARAM_PeakBitRate);
-        _supported_PeakBitRate = hr == 0;
+        _supported_PeakBitRate = hr == (int)HResult.Severity.Success;
         if (_supported_PeakBitRate)
           this.LogDebug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
       }

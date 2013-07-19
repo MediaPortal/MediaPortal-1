@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
     #region graph building
 
     /// <summary>
-    /// Create and register the BDA tuning space for the device.
+    /// Create and register a BDA tuning space for the device type.
     /// </summary>
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
         hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
 
         hr |= tuningSpace.put_DefaultLocator(locator);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogWarn("TvCardDvbC: potential error in CreateTuningSpace(), hr = 0x{0:X}", hr);
         }
@@ -109,7 +109,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
     }
 
     /// <summary>
-    /// The registered name of BDA tuning space for the device.
+    /// The registered name of the BDA tuning space for the device type.
     /// </summary>
     protected override string TuningSpaceName
     {
@@ -166,7 +166,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBC
           hr |= dvbTuneRequest.put_SID(dvbcChannel.ServiceId);
           hr |= dvbTuneRequest.put_Locator(locator);
 
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogWarn("TvCardDvbC: potential error in AssembleTuneRequest(), hr = 0x{0:X}", hr);
           }

@@ -496,7 +496,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             //try to connect the output pin of the capture filter to the first input pin of the encoder
             hr = _graphBuilder.Connect(pins[i], pinInput1);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               //succeeded!
               Log.Debug("analog:  connected pin:{0} {1} with pin0", i, pinName);
@@ -518,7 +518,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           {
             //try to connect the output pin of the capture filter to the 2nd input pin of the encoder
             hr = _graphBuilder.Connect(pins[i], pinInput2);
-            if (hr == 0)
+            if (hr == (int)HResult.Severity.Success)
             {
               //succeeded!
               Log.Debug("analog:  connected pin:{0} {1} with pin1", i, pinName);
@@ -614,7 +614,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               {
                 //try to connect the output pin of the capture filter to the 1st input pin of the multiplexer
                 hr = _graphBuilder.Connect(pins[i], pinInput1);
-                if (hr == 0)
+                if (hr == (int)HResult.Severity.Success)
                 {
                   //succeeded
                   this.LogDebug("analog:  connected pin:{0} {1} to pin1:{2}", i,
@@ -633,7 +633,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 {
                   //try to connect the output pin of the capture filter to the 2nd input pin of the multiplexer
                   hr = _graphBuilder.Connect(pins[i], pinInput2);
-                  if (hr == 0)
+                  if (hr == (int)HResult.Severity.Success)
                   {
                     //succeeded
                     this.LogDebug("analog:  connected pin:{0} {1} to pin2:{2}", i,
@@ -705,7 +705,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               {
                 //try to connect the output pin of the video encoder filter to the 1st input pin of the multiplexer filter
                 hr = _graphBuilder.Connect(pins[i], pinInput1);
-                if (hr == 0)
+                if (hr == (int)HResult.Severity.Success)
                 {
                   //succeeded
                   this.LogDebug("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]),
@@ -724,7 +724,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 {
                   //try to connect the output pin of the video encoder filter to the 1st input pin of the multiplexer filter
                   hr = _graphBuilder.Connect(pins[i], pinInput2);
-                  if (hr == 0)
+                  if (hr == (int)HResult.Severity.Success)
                   {
                     //succeeded
                     this.LogDebug("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]),
@@ -797,7 +797,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               {
                 //try to connect the output pin of the video encoder filter to the 1st input pin of the multiplexer filter
                 hr = _graphBuilder.Connect(pins[i], pinInput1);
-                if (hr == 0)
+                if (hr == (int)HResult.Severity.Success)
                 {
                   //succeeded
                   this.LogDebug("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]),
@@ -822,7 +822,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 {
                   //try to connect the output pin of the video encoder filter to the 2nd input pin of the multiplexer filter
                   hr = _graphBuilder.Connect(pins[i], pinInput2);
-                  if (hr == 0)
+                  if (hr == (int)HResult.Severity.Success)
                   {
                     //succeeded
                     this.LogDebug("analog:  connected pin:{0} {1} to {2}", i, FilterGraphTools.LogPinInfo(pins[i]),
@@ -877,7 +877,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                 {
                   //try to connect the output pin of the audio encoder filter to the 1st input pin of the multiplexer filter
                   hr = _graphBuilder.Connect(pins[i], pinInput1);
-                  if (hr == 0)
+                  if (hr == (int)HResult.Severity.Success)
                   {
                     //succeeded
                     this.LogDebug("analog:  connected pin:{0}", i);
@@ -895,7 +895,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
                   {
                     //try to connect the output pin of the audio encoder filter to the 2nd input pin of the multiplexer filter
                     hr = _graphBuilder.Connect(pins[i], pinInput2);
-                    if (hr == 0)
+                    if (hr == (int)HResult.Severity.Success)
                     {
                       //succeeded
                       this.LogDebug("analog:  connected pin:{0}", i);
@@ -1027,7 +1027,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //failed to add it to graph, continue with the next multiplexer
             if (tmp != null)
@@ -1160,7 +1160,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           DevicesInUse.Instance.Remove(devices[i]);
           continue;
         }
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           //failed to add filter to graph, continue with the next one
           if (tmp != null)
@@ -1511,7 +1511,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           EncodersInUse.Instance.Remove(audioDevices[i]);
           continue;
         }
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           //failed to add filter to graph, continue with the next one
           if (tmp != null)
@@ -1541,7 +1541,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         }
         // we found a nice compressor, lets try to connect the analog audio pin to the compressor
         hr = _graphBuilder.Connect(_pinAnalogAudio, pinAudio);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("analog: failed to connect audio pin->audio compressor:{0:X}", hr);
           //unable to connec the pin, remove it and continue with next compressor
@@ -1620,7 +1620,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           EncodersInUse.Instance.Remove(videoDevices[i]);
           continue;
         }
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           //failed to add filter to graph, continue with the next one
           if (tmp != null)
@@ -1642,7 +1642,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         IPin pinVideo = DsFindPin.ByDirection(tmp, PinDirection.Input, 0);
         // we found a nice compressor, lets try to connect the analog video pin to the compressor
         hr = _graphBuilder.Connect(_pinAnalogVideo, pinVideo);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("analog: failed to connect video pin->video compressor");
           //unable to connec the pin, remove it and continue with next compressor
@@ -1672,7 +1672,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
       _filterAnalogMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
       int hr = _graphBuilder.AddFilter(_filterAnalogMpegMuxer, "Analog MPEG Muxer");
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:AddAnalogMuxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add AddAnalogMuxer");
@@ -1691,7 +1691,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         throw new TvException("no input pin found on muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:unable to connect audio compressor->muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add unable to connect audio compressor->muxer");
@@ -1711,7 +1711,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         throw new TvException("no input pin found on muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:unable to connect video compressor->muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add unable to connect video compressor->muxer");
@@ -1744,7 +1744,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{317DDB63-870E-11D3-9C32-00104B3801F7}";
       _filterAnalogMpegMuxer = Marshal.BindToMoniker(monikerInterVideoMuxer) as IBaseFilter;
       int hr = _graphBuilder.AddFilter(_filterAnalogMpegMuxer, "InterVideo MPEG Muxer");
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:  add intervideo muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add InterVideo Muxer");
@@ -1773,7 +1773,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         throw new TvException("no input pin found on intervideo muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:  unable to connect {0}-> intervideo muxer returns:0x{1:X}", muxVideoIn, hr);
         throw new TvException("Unable to add unable to connect to video in on intervideo muxer");
@@ -1793,7 +1793,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         throw new TvException("no input pin found on intervideo muxer");
       }
       hr = _graphBuilder.Connect(pinOut, pinIn);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog:unable to connect audio compressor->intervideo muxer returns:0x{0:X}", hr);
         throw new TvException("Unable to add unable to connect audio compressor->intervideo muxer");
@@ -1824,7 +1824,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         return;
       _filterMpeg2Demux = (IBaseFilter)new MPEG2Demultiplexer();
       int hr = _graphBuilder.AddFilter(_filterMpeg2Demux, "MPEG2 Demultiplexer");
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog: AddMPEG2DemuxFilter returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer");
@@ -1832,7 +1832,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       this.LogDebug("analog: connect capture->mpeg2 demux");
       IPin pin = DsFindPin.ByDirection(_filterMpeg2Demux, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(_pinCapture, pin);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("analog: ConnectFilters returns:0x{0:X}", hr);
         throw new TvException("Unable to connect capture-> MPEG2 demultiplexer");
@@ -1868,15 +1868,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
           @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{370E9701-9DC5-42C8-BE29-4E75F0629EED}";
         _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDirectorMuxer) as IBaseFilter;
         int hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
           hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             _filterMpegMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer2) as IBaseFilter;
             hr = _graphBuilder.AddFilter(_filterMpegMuxer, "CyberLink MPEG Muxer");
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               this.LogDebug("analog:AddMpegMuxer returns:0x{0:X}", hr);
               //throw new TvException("Unable to add Cyberlink MPEG Muxer");

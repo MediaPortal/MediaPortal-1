@@ -76,13 +76,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
       : base(epgEvents, device)
     {
       _tunerType = CardType.DvbS;
-      if (_devicePath != null)
+      if (DevicePath != null)
       {
-        Card c = CardManagement.GetCardByDevicePath(_devicePath, CardIncludeRelationEnum.None);        
-        if (c != null)
+        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);        
+        if (d != null)
         {
-          _alwaysSendDiseqcCommands = c.AlwaysSendDiseqcCommands;
-          _diseqcCommandRepeatCount = (ushort)c.DiseqcCommandRepeatCount;
+          _alwaysSendDiseqcCommands = d.AlwaysSendDiseqcCommands;
+          _diseqcCommandRepeatCount = (ushort)d.DiseqcCommandRepeatCount;
           if (_diseqcCommandRepeatCount > 5)
           {
             // It would be rare that commands would need to be repeated more than twice. Five times
@@ -119,7 +119,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     }
 
     /// <summary>
-    /// Create and register the BDA tuning space for the device.
+    /// Create and register a BDA tuning space for the device type.
     /// </summary>
     /// <returns>the tuning space that was created</returns>
     protected override ITuningSpace CreateTuningSpace()
@@ -157,7 +157,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
         hr |= locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
 
         hr |= tuningSpace.put_DefaultLocator(locator);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogWarn("TvCardDvbS: potential error in CreateTuningSpace(), hr = 0x{0:X}", hr);
         }
@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
     }
 
     /// <summary>
-    /// The registered name of BDA tuning space for the device.
+    /// The registered name of the BDA tuning space for the device type.
     /// </summary>
     protected override string TuningSpaceName
     {
@@ -263,7 +263,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs.DVBS
           hr |= dvbTuneRequest.put_SID(dvbsChannel.ServiceId);
           hr |= dvbTuneRequest.put_Locator(locator);
 
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogWarn("TvCardDvbS: potential error in AssembleTuneRequest(), hr = 0x{0:X}", hr);
           }

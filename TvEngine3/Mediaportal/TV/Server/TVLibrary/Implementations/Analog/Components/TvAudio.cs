@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
@@ -172,7 +173,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         this.LogDebug("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           return false;
@@ -233,7 +234,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               this.LogDebug("analog: cannot add filter to graph");
               continue;
             }
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               //failed to add tv audio tuner to graph, continue with the next one
               if (tmp != null)
@@ -250,7 +251,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               // Connect tv audio tuner to the crossbar
               IPin pin = DsFindPin.ByDirection(tmp, PinDirection.Output, 0);
               hr = graphBuilder.Connect(pin, crossbar.AudioTunerIn);
-              if (hr < 0)
+              if (hr < (int)HResult.Severity.Success)
               {
                 //failed
                 graphBuilder.RemoveFilter(tmp);
@@ -340,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
               this.LogDebug("analog: cannot add filter to graph");
               continue;
             }
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               //failed to add tv audio tuner to graph, continue with the next one
               if (tmp != null)
@@ -395,7 +396,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       {
         this.LogDebug("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogError("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           _variant = TvAudioVariant.Unavailable;

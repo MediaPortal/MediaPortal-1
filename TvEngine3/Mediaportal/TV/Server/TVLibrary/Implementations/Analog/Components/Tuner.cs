@@ -280,7 +280,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         this.LogDebug("analog: cannot add filter to graph");
         return false;
       }
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         DevicesInUse.Instance.Remove(_tunerDevice);
         this.LogError("analog: AddTvTunerFilter failed:0x{0:X}", hr);

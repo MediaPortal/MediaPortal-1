@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.GraphComponents;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -266,7 +267,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //failed. try next crossbar
             if (tmp != null)
@@ -384,7 +385,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
             this.LogDebug("analog: cannot add filter to graph");
             continue;
           }
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             //failed. try next crossbar
             if (tmp != null)
