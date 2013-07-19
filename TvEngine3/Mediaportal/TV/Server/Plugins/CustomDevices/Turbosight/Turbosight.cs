@@ -391,7 +391,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
       string resourcesFolder = PathManager.BuildAssemblyRelativePath("Resources"); // It's called already inside plugins\CustomDevices !
       string sourceFilename = Path.Combine(resourcesFolder, "tbsCIapi.dll");
       string targetFilename = Path.Combine(resourcesFolder, "tbsCIapi" + _apiIndex + ".dll");
-      if (!File.Exists(sourceFilename))
+      if (!File.Exists(targetFilename))
       {
         try
         {
@@ -404,7 +404,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Turbosight
         }
       }
       _libHandle = NativeMethods.LoadLibrary(targetFilename);
-      if (_libHandle == IntPtr.Zero || _libHandle == null)
+      if (_libHandle == IntPtr.Zero)
       {
         this.LogDebug("Turbosight: failed to load the DLL");
         return false;

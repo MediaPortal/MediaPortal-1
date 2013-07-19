@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# Castle binaries
+!define EXTBIN "${git_TVServer}\ExternalBinaries"
 
 # additional path definitions
 !ifdef GIT_BUILD
@@ -482,6 +484,16 @@ Section "MediaPortal core files (required)" SecCore
   ; TvLibrary for Genre
   File "${git_TVServer}\Server\TvLibrary.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TvLibrary.Interfaces.dll"
   ; MediaPortal.exe
+  File "${EXTBIN}\Castle.Core.dll"
+  File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
+  File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
+  File "${EXTBIN}\Castle.Facilities.Logging.dll"
+  File "${EXTBIN}\Castle.Facilities.Remoting.dll"
+  File "${EXTBIN}\Castle.Facilities.Synchronize.dll"
+  File "${EXTBIN}\Castle.Facilities.WcfIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.Log4netIntegration.dll"
+  File "${EXTBIN}\Castle.Services.Logging.NLogIntegration.dll"
+  File "${EXTBIN}\Castle.Windsor.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -623,6 +635,17 @@ SectionEnd
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"
   Delete "$MPdir.Base\MediaFoundation.dll"
+  ; Castle binaries
+  Delete "$MPdir.Base\Castle.Core.dll"
+  Delete "$MPdir.Base\Castle.Facilities.EventWiring.dll"
+  Delete "$MPdir.Base\Castle.Facilities.FactorySupport.dll"
+  Delete "$MPdir.Base\Castle.Facilities.Logging.dll"
+  Delete "$MPdir.Base\Castle.Facilities.Remoting.dll"
+  Delete "$MPdir.Base\Castle.Facilities.Synchronize.dll"
+  Delete "$MPdir.Base\Castle.Facilities.WcfIntegration.dll"
+  Delete "$MPdir.Base\Castle.Services.Logging.Log4netIntegration.dll"
+  Delete "$MPdir.Base\Castle.Services.Logging.NLogIntegration.dll"
+  Delete "$MPdir.Base\Castle.Windsor.dll"
   ; MP Tray
   Delete "$MPdir.Base\MPTray.exe"
   ; TvLibrary for Genre

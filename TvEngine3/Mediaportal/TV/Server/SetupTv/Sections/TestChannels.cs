@@ -90,7 +90,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       ServiceAgents.Instance.ControllerServiceAgent.EpgGrabberEnabled = true;
 
       comboBoxGroups.Items.Clear();
-      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups();
+      IList<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroups(ChannelGroupIncludeRelationEnum.None);
       foreach (ChannelGroup group in groups)
         comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
       if (comboBoxGroups.Items.Count == 0)
@@ -103,7 +103,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       _repeat = chkRepeatTest.Checked;
 
       _channelNames = new Dictionary<int, string>();
-      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels();
+      IList<Channel> channels = ServiceAgents.Instance.ChannelServiceAgent.ListAllChannels(ChannelIncludeRelationEnum.None);
       foreach (Channel ch in channels)
       {
         _channelNames.Add(ch.IdChannel, ch.DisplayName);

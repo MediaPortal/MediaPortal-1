@@ -1105,7 +1105,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin
         try
         {
           temp.SetPluginsDirectory(_configurationFolderPrefix + i);
-          this.LogDebug("MD Plugin: plugins directory is \"{0}{1}\"", _configurationFolderPrefix + i);
+          this.LogDebug("MD Plugin: plugins directory is \"{0}{1}\"", _configurationFolderPrefix, i);
         }
         catch (Exception ex)
         {

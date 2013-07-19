@@ -8,7 +8,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
     /// gets a value from the database table "Setting"
     /// </summary>
     /// <returns>A Setting object with the stored value, if it doesnt exist the given default string will be the value</returns>
-    void SaveSetting(string tagName, string value);
+    Setting  SaveSetting(string tagName, string value);
 
     Setting GetOrSaveSetting(string tagName, string defaultValue);
 

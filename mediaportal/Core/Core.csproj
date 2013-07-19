@@ -279,9 +279,6 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\Common-MP-TVE3\Common.Utils\OsInfo\OSInfo.cs">
-      <Link>OSInfo.cs</Link>
-    </Compile>
     <Compile Include="App.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -1972,6 +1969,10 @@
     <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TvEngine3\Mediaportal\TV\Server\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
+      <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
+      <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>

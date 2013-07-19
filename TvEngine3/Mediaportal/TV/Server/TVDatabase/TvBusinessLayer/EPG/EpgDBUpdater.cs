@@ -22,9 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlTypes;
-using System.Threading;
-using MediaPortal.Common.Utils;
-using Mediaportal.Common.Utils;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.Entities.Factories;
@@ -37,9 +34,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 {
-  public class EpgDBUpdater : IDisposable
+  public class EpgDBUpdater
   {
-   
     #region Variables
 
     private readonly IEpgEvents _epgEvents;
@@ -53,10 +49,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     private int _epgReGrabAfter = 240; //4 hours
     private bool _alwaysFillHoles;
     private bool _alwaysReplace;
-    private readonly ManualResetEvent _evt = new ManualResetEvent(false);
-    bool _disposed;
-    
-    
+
     #endregion
 
     #region ctor
@@ -66,14 +59,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       _epgEvents = epgEvents;
       _grabberName = grabberName;
       _checkForLastUpdate = checkForLastUpdate;
-      ReloadConfig();      
+      ReloadConfig();
     }
 
     private string TitleTemplate
     {
       get
       {
-        _evt.WaitOne();
         return _titleTemplate;
       }
       set { _titleTemplate = value; }
@@ -83,7 +75,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _descriptionTemplate;
       }
       set { _descriptionTemplate = value; }
@@ -93,7 +84,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _epgLanguages;
       }
       set { _epgLanguages = value; }
@@ -103,7 +93,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _storeOnlySelectedChannels;
       }
       set { _storeOnlySelectedChannels = value; }
@@ -113,7 +102,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _storeOnlySelectedChannelsRadio;
       }
       set { _storeOnlySelectedChannelsRadio = value; }
@@ -123,7 +111,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _epgReGrabAfter;
       }
       set { _epgReGrabAfter = value; }
@@ -133,7 +120,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _alwaysFillHoles;
       }
       set { _alwaysFillHoles = value; }
@@ -143,7 +129,6 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
     {
       get
       {
-        _evt.WaitOne();
         return _alwaysReplace;
       }
       set { _alwaysReplace = value; }
@@ -155,42 +140,19 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     public void ReloadConfig()
     {
-      ThreadPool.QueueUserWorkItem(delegate
-                                     {
-                                       try
-                                       {
-                                         ThreadHelper.ParallelInvoke(
-                                           () =>
-                                           TitleTemplate = SettingsManagement.GetValue("epgTitleTemplate", "%TITLE%"),
-                                           () =>
-                                           DescriptionTemplate =
-                                           SettingsManagement.GetValue("epgDescriptionTemplate", "%DESCRIPTION%"),
-                                           () =>
-                                           EpgLanguages = SettingsManagement.GetValue("epgLanguages", string.Empty),
-                                           () =>
-                                           StoreOnlySelectedChannels =
-                                           SettingsManagement.GetValue("epgStoreOnlySelected", false),
-                                           () =>
-                                           StoreOnlySelectedChannelsRadio =
-                                           SettingsManagement.GetValue("epgRadioStoreOnlySelected", false),
-                                           () => EpgReGrabAfter = SettingsManagement.GetValue("timeoutEPGRefresh", 240),
-                                           () =>
-                                           AlwaysFillHoles =
-                                           SettingsManagement.GetValue("generalEPGAlwaysFillHoles", false),
-                                           () =>
-                                           AlwaysReplace = SettingsManagement.GetValue("generalEPGAlwaysReplace", false)
-                                           );
+      TitleTemplate = SettingsManagement.GetValue("epgTitleTemplate", "%TITLE%");
+      DescriptionTemplate = SettingsManagement.GetValue("epgDescriptionTemplate", "%DESCRIPTION%");
+      EpgLanguages = SettingsManagement.GetValue("epgLanguages", string.Empty);
+      StoreOnlySelectedChannels = SettingsManagement.GetValue("epgStoreOnlySelected", false);
+      StoreOnlySelectedChannelsRadio = SettingsManagement.GetValue("epgRadioStoreOnlySelected", false);
+      EpgReGrabAfter = SettingsManagement.GetValue("timeoutEPGRefresh", 240);
+      AlwaysFillHoles = SettingsManagement.GetValue("generalEPGAlwaysFillHoles", false);
+      AlwaysReplace = SettingsManagement.GetValue("generalEPGAlwaysReplace", false);
 
-                                         if (_alwaysReplace)
-                                         {
-                                           _checkForLastUpdate = false;
-                                         }
-                                       }
-                                       finally
-                                       {
-                                         _evt.Set();
-                                       }
-                                     });          
+      if (_alwaysReplace)
+      {
+        _checkForLastUpdate = false;
+      }
     }
 
     public void UpdateEpgForChannel(EpgChannel epgChannel)
@@ -218,7 +180,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       EpgHoleCollection holes = new EpgHoleCollection();
       if ((dbChannel.EpgHasGaps || AlwaysFillHoles) && !AlwaysReplace)
       {
-          this.LogDebug("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
+        this.LogDebug("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
 
         IList<Program> infos = ProgramManagement.GetPrograms(dbChannel.IdChannel, DateTime.Now);
         if (infos.Count > 1)
@@ -238,8 +200,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
       DateTime dbLastProgram = ProgramManagement.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
-      IList<Program> programs = new List<Program>();      
-      
+      IList<Program> programs = new List<Program>();
+
       for (int i = 0; i < epgPrograms.Count; i++)
       {
         EpgProgram epgProgram = epgPrograms[i];
@@ -288,10 +250,9 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
               for (int idx = 1; idx < epgs.Count; idx++)
               {
                 try
-                {                  
+                {
                   ProgramManagement.DeleteProgram(epgs[idx].IdProgram);
-                  this.LogDebug("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
-                          epgs[idx].EndTime);
+                  this.LogDebug("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime, epgs[idx].EndTime);
                 }
                 catch (Exception ex)
                 {
@@ -310,11 +271,11 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         lastProgram = epgProgram;
       }
 
-      PersistPrograms(programs);      
+      PersistPrograms(programs);
 
       dbChannel.LastGrabTime = DateTime.Now;
       dbChannel.EpgHasGaps = hasGaps;
-      ChannelManagement.SaveChannel(dbChannel);      
+      ChannelManagement.SaveChannel(dbChannel);
 
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
@@ -322,7 +283,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       this.LogDebug("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
 
-    
+
 
     #endregion
 
@@ -330,7 +291,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
 
     private Channel IsInsertAllowed(EpgChannel epgChannel)
     {
-      DVBBaseChannel dvbChannel = (DVBBaseChannel)epgChannel.Channel;
+      DVBBaseChannel dvbChannel = (DVBBaseChannel) epgChannel.Channel;
       //are there any epg infos for this channel?
       if (epgChannel.Programs.Count == 0)
       {
@@ -340,7 +301,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
       }
       //do we know a channel with these tuning details?
       Channel dbChannel = null;
-      TuningDetail tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel);      
+      TuningDetail tuningDetail = ChannelManagement.GetTuningDetail(dvbChannel);
       if (tuningDetail != null)
       {
         dbChannel = tuningDetail.Channel;
@@ -450,8 +411,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
             offset = i;
             break;
           }
-          if (EpgLanguages.Length == 0 ||
-              EpgLanguages.ToLowerInvariant().IndexOf(texts[i].Language.ToLowerInvariant()) >= 0)
+          if (EpgLanguages.Length == 0 || EpgLanguages.ToLowerInvariant().IndexOf(texts[i].Language.ToLowerInvariant()) >= 0)
           {
             offset = i;
             break;
@@ -494,15 +454,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         classification = "";
       }
     }
-    
+
 
     private void PersistPrograms(IEnumerable<Program> programs)
     {
-      ProgramManagement.SavePrograms(programs);      
+      ProgramManagement.SavePrograms(programs);
     }
 
     private void AddProgramAndApplyTemplates(Channel dbChannel, EpgProgram ep, Program dbProg, IList<Program> programs)
-    {      
+    {
       string title;
       string description;
       string genre;
@@ -524,13 +484,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
                      };
       title = EvalTemplate(TitleTemplate, values);
       description = EvalTemplate(DescriptionTemplate, values);
-      
+
 
       ProgramCategory programCategory = GetProgramCategoryByName(genre);
 
       if (programCategory == null && !string.IsNullOrWhiteSpace(genre))
       {
-        programCategory = new ProgramCategory {Category = genre};
+        programCategory = new ProgramCategory { Category = genre };
         programCategory = ProgramCategoryManagement.SaveProgramCategory(programCategory);
         EntityCacheHelper.Instance.ProgramCategoryCache.AddOrUpdateCache(programCategory.Category, programCategory);
       }
@@ -543,7 +503,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
                                               SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty,
                                               string.Empty,
                                               starRating, classification,
-                                              parentRating);        
+                                              parentRating);
         programs.Add(dbProg);
       }
       else
@@ -571,51 +531,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.EPG
         prgBLL.Entity.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
         prgBLL.ClearRecordPendingState();
         programs.Add(prgBLL.Entity);
-      }      
+      }
     }
 
     private static ProgramCategory GetProgramCategoryByName(string genre)
     {
-      return EntityCacheHelper.Instance.ProgramCategoryCache.GetFromCache(genre);            
+      return EntityCacheHelper.Instance.ProgramCategoryCache.GetFromCache(genre);
     }
 
     #endregion
 
     #endregion
-
-     #region IDisposable Members    
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        // get rid of managed resources        
-        if (!_disposed)
-        {
-          if (_evt != null && _evt.SafeWaitHandle.IsClosed)
-          {
-            _evt.Dispose();
-          }  
-          _disposed = true;
-        }
-      }
-
-      // get rid of unmanaged resources
-    }
-
-
-   
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
-
-    ~EpgDBUpdater()
-    {
-      Dispose(false);
-    }
-
-    #endregion  
   }
 }

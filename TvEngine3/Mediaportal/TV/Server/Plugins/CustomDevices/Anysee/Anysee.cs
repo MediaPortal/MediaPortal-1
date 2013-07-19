@@ -750,7 +750,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           }
         }
         _libHandle = NativeMethods.LoadLibrary(targetFilename);
-        if (_libHandle == IntPtr.Zero || _libHandle == null)
+        if (_libHandle == IntPtr.Zero)
         {
           this.LogDebug("Anysee: failed to load the DLL");
           return;

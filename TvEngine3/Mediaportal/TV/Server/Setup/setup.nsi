@@ -121,10 +121,10 @@ Var frominstall
 !include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 !include "${git_InstallScripts}\include\ProcessMacros.nsh"
 !include "${git_InstallScripts}\include\WinVerEx.nsh"
+!AddPluginDir "${git_InstallScripts}\ExecDos-plugin\Plugins"
 
 !include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !include "${git_InstallScripts}\pages\UninstallModePage.nsh"
-
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
@@ -370,7 +370,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ReadRegStr $InstallPath HKLM "${REG_UNINSTALL}" InstallPath
   ${If} $InstallPath != ""
     ${LOG_TEXT} "INFO" "Uninstalling TVService"
-    ExecWait '"$InstallPath\TVService.exe" /uninstall'
+    ExecDos::exec '"$InstallPath\TVService.exe" /uninstall'
     ${LOG_TEXT} "INFO" "Finished uninstalling TVService"
   ${EndIf}
 
@@ -431,12 +431,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; 3rd party assemblies
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
-  File "${TVSERVER.BASE}\hauppauge.dll"
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\dxerr9.dll"
   
   ; CustomDevice plugin 3rd party resource assemblies
   SetOutPath "$INSTDIR\Plugins\CustomDevices\Resources"
+  File "${TVSERVER.BASE}\Ionic.Zip.dll"
+  File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\CIAPI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
   File "${TVSERVER.BASE}\TbsCIapi.dll"
@@ -515,10 +516,13 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\log4net.dll"
   File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
+  
+  ; Integration Directory
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -541,7 +545,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   # SERVICE INSTALLATION
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "Installing TVService"
-  ExecWait '"$INSTDIR\TVService.exe" /install'
+  ExecDos::exec '"$INSTDIR\TVService.exe" /install'
   ${LOG_TEXT} "INFO" "Finished Installing TVService"
 
   SetOutPath "${SETUP_TV_FOLDER}"
@@ -584,7 +588,7 @@ ${MementoSectionEnd}
   # SERVICE UNINSTALLATION
   #---------------------------------------------------------------------------
   ${LOG_TEXT} "INFO" "DeInstalling TVService"
-  ExecWait '"$INSTDIR\TVService.exe" /uninstall'
+  ExecDos::exec '"$INSTDIR\TVService.exe" /uninstall'
   ;ExecWait '"msiexec" /qn /x "$INSTDIR\EF_JUNE_2011_CTP.msi" /msicl ACCEPTEFJUNE2011CTPEULA=1'
   ${LOG_TEXT} "INFO" "Finished DeInstalling TVService"
 
@@ -785,7 +789,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
-  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.dll"
   Delete "${SETUP_TV_FOLDER}\log4net.config"
@@ -904,6 +908,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Utils.dll"
   File "${git_TVServer}\Server\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
   File "${git_TVServer}\Server\TVDatabase\Presentation\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
+  File "${git_TVServer}\Server\TvLibrary.IntegrationProvider.Interfaces\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
   File "${EXTBIN}\Castle.Core.dll"
   File "${EXTBIN}\Castle.Facilities.EventWiring.dll"
   File "${EXTBIN}\Castle.Facilities.FactorySupport.dll"
@@ -918,9 +923,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${EXTBIN}\EntityFramework.xml"
   File "${EXTBIN}\log4net.dll"
   File "${git_TVServer}\Server\SetupTv\bin\${BUILD_TYPE}\log4net.config"
-  
+
   ; The Plugin Directory
   SetOutPath "${SETUP_TV_FOLDER}\Plugins"
+  File "${git_TVServer}\Server\Plugins\PluginBase\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.Base.dll"  
   File "${git_TVServer}\Server\Plugins\ComSkipLauncher\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ComSkipLauncher.dll"
   File "${git_TVServer}\Server\Plugins\ConflictsManager\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.ConflictsManager.dll"
   File "${git_TVServer}\Server\Plugins\PowerScheduler\bin\${BUILD_TYPE}\Mediaportal.TV.Server.Plugins.PowerScheduler.dll"
@@ -966,6 +972,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\ttBdaDrvApi_Dll.dll"
   File "${TVSERVER.BASE}\ttdvbacc.dll"
+
+  ; Integration plugin
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
@@ -1079,7 +1089,7 @@ ${MementoSectionEnd}
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.SetupControls.dll"
   Delete "${SETUP_TV_FOLDER}\Interop.SHDocVw.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVDatabase.Presentation.dll"
-  Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+  Delete "${SETUP_TV_FOLDER}\Integration\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
   Delete "${SETUP_TV_FOLDER}\Mediaportal.TV.Server.TVLibrary.IntegrationProvider.Interfaces.dll"
 
   ; remove Start Menu shortcuts
@@ -1172,20 +1182,17 @@ Section -Post
   
   !insertmacro RestoreTVServiceConfig
   
-  
-  ;if TV Server was installed exec SetupTv with correct parameters    
+  #---------------------------------------------------------------------------
+  # SERVICE STARTING
+  #---------------------------------------------------------------------------
+  ;if TV Server was installed start TVService
   ${If} $noServer == 0
-	  ${If} $DeploySql != ""
-	  ${AndIf} $DeployPwd != ""
-	            StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd"
-	  ${Else}
-	            StrCpy $R0 "--DeployMode"
-	  ${EndIf}
-	
-	  ${LOG_TEXT} "INFO" "Starting SetupTv.exe $R0..."
-	  ExecWait '"${SETUP_TV_FOLDER}\SetupTV.exe" $R0'
+      ${AndIf} ${FileExists} "$INSTDIR\TVService.exe"
+      ${LOG_TEXT} "INFO" "Starting TVService"
+      ExecDos::exec '"$INSTDIR\TVService.exe" /start'
+      ${LOG_TEXT} "INFO" "Finished Starting TVService"
   ${EndIf}
-      
+
 SectionEnd
 
 #---------------------------------------------------------------------------

@@ -23,8 +23,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using MediaPortal.Configuration;
+using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
@@ -39,6 +41,8 @@ namespace Mediaportal.TV.TvPlugin.Radio
     private bool _rememberLastGroup = true;
     private string _rootGroup = "(none)";
     private bool _autoTurnOnRadio = false;
+    private string _hostName = "";
+    private bool _SingleSeat;
 
     #endregion
 
@@ -52,6 +56,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
+        _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
     }
 
@@ -63,6 +68,7 @@ namespace Mediaportal.TV.TvPlugin.Radio
         xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
         xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
         xmlreader.SetValueAsBool ("myradio", "autoturnonradio",_autoTurnOnRadio);
+        xmlreader.SetValue("tvservice", "hostname", _hostName);
       }
     }
 
@@ -77,9 +83,9 @@ namespace Mediaportal.TV.TvPlugin.Radio
     {
       LoadSettings();
 
-      string gentle = String.Format(@"{0}\gentle.config", Config.GetFolder(Config.Dir.Config));
-      NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", gentle);
+      //string gentle = String.Format(@"{0}\gentle.config", Config.GetFolder(Config.Dir.Config));
+      //NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      //appSettings.Set("GentleConfigFile", gentle);
 
       cbTurnOnRadio.Checked = _autoTurnOnRadio;
       cbShowAllChannelsGroup.Checked = _showAllChannelsGroup;
@@ -87,16 +93,30 @@ namespace Mediaportal.TV.TvPlugin.Radio
       comboBoxGroups.Items.Clear();
       comboBoxGroups.Items.Add("(none)");
       int selectedIdx = 0;
-      IEnumerable<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
-      foreach (ChannelGroup group in groups)
+
+      try
       {
-        int idx = comboBoxGroups.Items.Add(group.GroupName);
-        if (group.GroupName == _rootGroup)
+        // Load TVServer Hostname
+        _SingleSeat = Network.IsSingleSeat();
+        if (!_SingleSeat)
+          ServiceAgents.Instance.Hostname = _hostName;
+
+        IEnumerable<ChannelGroup> groups = ServiceAgents.Instance.ChannelGroupServiceAgent.ListAllChannelGroupsByMediaType(MediaTypeEnum.Radio);
+        foreach (ChannelGroup group in groups)
         {
-          selectedIdx = idx;
+          int idx = comboBoxGroups.Items.Add(group.GroupName);
+          if (group.GroupName == _rootGroup)
+          {
+            selectedIdx = idx;
+          }
         }
+        comboBoxGroups.SelectedIndex = selectedIdx;
       }
-      comboBoxGroups.SelectedIndex = selectedIdx;
+      catch (Exception)
+      {
+        MessageBox.Show("Cannot load radio channel groups from TV Server", "Warning",
+          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+      }
     }
 
     private void cbShowAllChannelsGroup_Click(object sender, EventArgs e)
