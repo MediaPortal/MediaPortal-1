@@ -7,7 +7,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class ProgramCategoryRepository : GenericRepository<Model>, IProgramCategoryRepository
+  public class ProgramCategoryRepository : GenericRepository<TvModel>, IProgramCategoryRepository
   {
 
     public ProgramCategoryRepository()
@@ -20,7 +20,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     }
 
 
-    public ProgramCategoryRepository(Model context)
+    public ProgramCategoryRepository(TvModel context)
       : base(context)
     {
 

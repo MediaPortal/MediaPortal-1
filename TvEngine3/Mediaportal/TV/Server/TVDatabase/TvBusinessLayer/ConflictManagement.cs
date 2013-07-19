@@ -10,7 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<Conflict> ListAllConflicts()
     {
-      using (var conflictRepository = new GenericRepository<Model>())
+      using (var conflictRepository = new GenericRepository<TvModel>())
       {
         var listAllConflicts = conflictRepository.GetAll<Conflict>();
         return listAllConflicts.ToList();
@@ -19,7 +19,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static Conflict SaveConflict(Conflict conflict)
     {
-      using (var conflictRepository = new GenericRepository<Model>())
+      using (var conflictRepository = new GenericRepository<TvModel>())
       {
         conflictRepository.AttachEntityIfChangeTrackingDisabled(conflictRepository.ObjectContext.Conflicts, conflict);
         conflictRepository.ApplyChanges(conflictRepository.ObjectContext.Conflicts, conflict);
@@ -31,7 +31,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static Conflict GetConflict(int idConflict)
     {
-      using (var conflictRepository = new GenericRepository<Model>())
+      using (var conflictRepository = new GenericRepository<TvModel>())
       {
         return conflictRepository.Single<Conflict>(s => s.IdConflict == idConflict);
       }
@@ -39,7 +39,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void DeleteConflict(int idConflict)
     {
-      using (var conflictRepository = new GenericRepository<Model>(true))
+      using (var conflictRepository = new GenericRepository<TvModel>(true))
       {
         conflictRepository.Delete<Conflict>(p => p.IdConflict == idConflict);
         conflictRepository.UnitOfWork.SaveChanges();

@@ -12,7 +12,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<SoftwareEncoder> GetSofwareEncodersVideo()
     {
-      using (IRepository<Model> channelRepository = new GenericRepository<Model>())
+      using (IRepository<TvModel> channelRepository = new GenericRepository<TvModel>())
       {
         List<SoftwareEncoder> sofwareEncodersVideo = channelRepository.GetQuery<SoftwareEncoder>(s => s.Type == 0).OrderBy(s => s.Priority).ToList();
         return sofwareEncodersVideo;
@@ -21,7 +21,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<SoftwareEncoder> GetSofwareEncodersAudio()
     {
-      using (IRepository<Model> channelRepository = new GenericRepository<Model>())
+      using (IRepository<TvModel> channelRepository = new GenericRepository<TvModel>())
       {
         List<SoftwareEncoder> sofwareEncodersAudio = channelRepository.GetQuery<SoftwareEncoder>(s => s.Type == 1).OrderBy(s => s.Priority).ToList();
         return sofwareEncodersAudio;

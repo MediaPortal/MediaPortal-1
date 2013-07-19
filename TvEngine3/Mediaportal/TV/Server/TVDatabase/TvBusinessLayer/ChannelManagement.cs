@@ -263,27 +263,71 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       return GetTuningDetail(dvbChannel, tuningDetailSearchEnum);
     }
 
-    public static TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum)
+    private static IQueryable<TuningDetail> CreateQueryBasedOnChannelType(IChannelRepository channelRepository, DVBBaseChannel dvbChannel, out Type entityType)
     {
       int channelType = GetChannelType(dvbChannel);
+
+      IQueryable<TuningDetail> query = null;
+      switch (channelType)
+      {
+        case 1:
+          query = channelRepository.GetQuery<TuningDetail>().OfType<TuningDetailAtsc>();
+          entityType = typeof (TuningDetailAtsc);
+          break;
+        case 2:
+          query = channelRepository.GetQuery<TuningDetail>().OfType<TuningDetailDvbC>();
+          entityType = typeof(TuningDetailDvbC);
+          break;
+        case 3:
+          query = channelRepository.GetQuery<TuningDetail>().OfType<TuningDetailDvbS>();
+          entityType = typeof(TuningDetailDvbS);
+          break;
+        case 4:
+          query = channelRepository.GetQuery<TuningDetail>().OfType<TuningDetailDvbT>();
+          entityType = typeof(TuningDetailDvbT);
+          break;
+        case 7:
+          query = channelRepository.GetQuery<TuningDetail>().OfType<TuningDetailInternet>();
+          entityType = typeof(TuningDetailInternet);
+          break;
+
+        default:
+          throw new InvalidOperationException("could not map specific instance to an entity");
+      }
+      
+      
+      return query;
+    }
+
+    public static TuningDetail GetTuningDetail(DVBBaseChannel dvbChannel, TuningDetailSearchEnum tuningDetailSearchEnum) //where T: TuningDetail
+    {
+      
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<TuningDetail>(t => t.ChannelType == channelType);
+        Type entityType;
+        IQueryable<TuningDetail> query = CreateQueryBasedOnChannelType(channelRepository, dvbChannel, out entityType);
+
+        
+
+
 
         if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.NetworkId)))
         {
-          query = query.Where(t => t.NetworkId == dvbChannel.NetworkId);
+          query = query.Where(t => t.OriginalNetworkId == dvbChannel.NetworkId);
         }
 
-        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
+        if (entityType is TuningDetailMpeg2)
         {
-          query = query.Where(t => t.ServiceId == dvbChannel.ServiceId);
-        }
+          if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.ServiceId)))
+          {
+            query = query.Where(t => (t as TuningDetailMpeg2).ServiceId == dvbChannel.ServiceId);
+          }
 
-        if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
-        {
-          query = query.Where(t => t.TransportId == dvbChannel.TransportId);
-        }
+          if ((tuningDetailSearchEnum.HasFlag(TuningDetailSearchEnum.TransportId)))
+          {
+            query = query.Where(t => (t as TuningDetailMpeg2).TransportStreamId == dvbChannel.TransportId);
+          }
+        }        
 
         query = channelRepository.IncludeAllRelations(query);
         return query.FirstOrDefault();
@@ -552,7 +596,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        var query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuning == idTuning && t.IdChannel == idChannel);
+        var query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuningDetail == idTuning && t.IdChannel == idChannel);
         TuningDetail tuningDetail = query.FirstOrDefault();
 
         TuningDetail detail = UpdateTuningDetailWithChannelData(idChannel, channel, tuningDetail);
@@ -767,7 +811,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
       using (IChannelRepository channelRepository = new ChannelRepository(true))
       {
-        channelRepository.Delete<TuningDetail>(p => p.IdTuning == idTuning);
+        channelRepository.Delete<TuningDetail>(p => p.IdTuningDetail == idTuning);
         channelRepository.UnitOfWork.SaveChanges();
       }
     }
@@ -891,7 +935,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IChannelRepository channelRepository = new ChannelRepository())
       {
-        IQueryable<TuningDetail> query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuning == tuningDetailId);
+        IQueryable<TuningDetail> query = channelRepository.GetQuery<TuningDetail>(t => t.IdTuningDetail == tuningDetailId);
         return channelRepository.IncludeAllRelations(query).FirstOrDefault();
       }
     }

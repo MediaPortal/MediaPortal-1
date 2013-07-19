@@ -10,6 +10,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
       return DisplayName;
     }
 
+    //todo: rework for new tuningdetail structure
+    /*
     public bool IsWebstream()
     {
       IList<TuningDetail> details = TuningDetails;
@@ -18,6 +20,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         return false;
       }
       return details.Any(detail => detail.ChannelType == 5);
-    }
+    }*/
   }
 }

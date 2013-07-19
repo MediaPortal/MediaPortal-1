@@ -1,7 +1,7 @@
 ﻿namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
 
-  /*public class LnbTypeRepository : GenericRepository<Model>, ILnbTypeRepository
+  /*public class LnbTypeRepository : GenericRepository<TvModel>, ILnbTypeRepository
   {    
     public LnbTypeRepository()    
     {
@@ -12,7 +12,7 @@
     {      
     }
 
-    public LnbTypeRepository(Model context)
+    public LnbTypeRepository(TvModel context)
       : base(context)
     {
     }    

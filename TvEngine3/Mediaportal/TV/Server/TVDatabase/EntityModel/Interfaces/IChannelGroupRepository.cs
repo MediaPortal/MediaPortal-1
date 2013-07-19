@@ -4,7 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
-  public interface ICardRepository : IRepository<Model>
+  public interface ICardRepository : IRepository<TvModel>
   {
     IQueryable<Card> IncludeAllRelations(IQueryable<Card> query);
     IQueryable<Card> IncludeAllRelations(IQueryable<Card> query, CardIncludeRelationEnum includeRelations);

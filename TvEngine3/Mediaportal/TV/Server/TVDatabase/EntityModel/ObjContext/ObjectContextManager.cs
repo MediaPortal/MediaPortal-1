@@ -64,11 +64,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// Creates a <see cref="Model"/> instance, which can use the _externalDbCreator.
     /// </summary>
     /// <returns></returns>
-    private static Model GetModel()
+    private static TvModel GetModel()
     {
-      Model model = _externalDbCreator != null
-        ? new Model(BuildEFConnection(_externalDbCreator()))
-        : new Model();
+      TvModel model = _externalDbCreator != null
+        ? new TvModel(BuildEFConnection(_externalDbCreator()))
+        : new TvModel();
       return model;
     }
 
@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     #endregion
 
-    public static void SetupStaticValues(Model ctx)
+    public static void SetupStaticValues(TvModel ctx)
     {
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 1, Name = "Universal", LowBandFrequency = 9750000, HighBandFrequency = 10600000, SwitchFrequency = 11700000, IsBandStacked = false, IsToroidal = false });
       ctx.LnbTypes.AddObject(new LnbType { IdLnbType = 2, Name = "C-Band", LowBandFrequency = 5150000, HighBandFrequency = 5650000, SwitchFrequency = 18000000, IsBandStacked = false, IsToroidal = false });
@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       ctx.SaveChanges();
     }
 
-    public static Model CreateDbContext()
+    public static TvModel CreateDbContext()
     {
       // seems a new instance per WCF is the way to go, since a shared context will end up in EF errors.
       Initialize();
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       return model;
     }
 
-    private static void DropConstraint(Model model, string tablename, string constraintname)
+    private static void DropConstraint(TvModel model, string tablename, string constraintname)
     {
       try
       {

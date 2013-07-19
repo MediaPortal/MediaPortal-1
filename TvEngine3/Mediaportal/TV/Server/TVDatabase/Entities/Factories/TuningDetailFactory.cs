@@ -4,7 +4,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
 {
   public static class TuningDetailFactory
   {
-
+    //todo: rework for new tuningdetail structure
+    /*
     public static TuningDetail CreateTuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency, int countryId, MediaTypeEnum mediaType, int networkId, int transportId, int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc, int bandwidth, int majorChannel, int minorChannel, int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       var tuningDetail = new TuningDetail
@@ -43,8 +44,8 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
 
       };
       return tuningDetail;
-    }
-    /**/
+    }*/
+
    
 
 

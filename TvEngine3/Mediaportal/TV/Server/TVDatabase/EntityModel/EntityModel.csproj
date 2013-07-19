@@ -52,6 +52,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\..\..\ExternalBinaries\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -67,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntitySQLDebug.cs" />
-    <Compile Include="DBaseContext\DbContextBuilder.cs" />
     <Compile Include="DBaseContext\DbContextInitializer.cs" />
     <Compile Include="DBaseContext\DbContextManager.cs" />
     <Compile Include="Interfaces\ICardRepository.cs" />
@@ -81,7 +83,6 @@
     </Compile>
     <Compile Include="ObjContext\EntityFrameworkExtension.cs" />
     <Compile Include="ObjContext\IObjectContextStorage.cs" />
-    <Compile Include="ObjContext\ObjectContextBuilder.cs" />
     <Compile Include="ObjContext\ObjectContextInitializer.cs" />
     <Compile Include="ObjContext\ObjectContextManager.cs" />
     <Compile Include="ObjContext\SimpleObjectContextStorage.cs" />
@@ -116,9 +117,6 @@
     <Compile Include="Specification\Specification.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config">
-      <SubType>Designer</SubType>
-    </None>
     <EntityDeploy Include="Model.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>Model.Designer.cs</LastGenOutput>
@@ -130,6 +128,8 @@
     <EmbeddedResource Include="Model.MSSQLCE.ssdl">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="App.Config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

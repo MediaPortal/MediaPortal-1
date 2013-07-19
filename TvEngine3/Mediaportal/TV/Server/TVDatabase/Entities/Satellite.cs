@@ -19,6 +19,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
     [KnownType(typeof(DisEqcMotor))]
+    [KnownType(typeof(TuningDetailSatellite))]
     public partial class Satellite: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
@@ -121,6 +122,41 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
         private TrackableCollection<DisEqcMotor> _disEqcMotors;
+    
+        [DataMember]
+        public TrackableCollection<TuningDetailSatellite> TuningDetailSatellites
+        {
+            get
+            {
+                if (_tuningDetailSatellites == null)
+                {
+                    _tuningDetailSatellites = new TrackableCollection<TuningDetailSatellite>();
+                    _tuningDetailSatellites.CollectionChanged += FixupTuningDetailSatellites;
+                }
+                return _tuningDetailSatellites;
+            }
+            set
+            {
+                if (!ReferenceEquals(_tuningDetailSatellites, value))
+                {
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_tuningDetailSatellites != null)
+                    {
+                        _tuningDetailSatellites.CollectionChanged -= FixupTuningDetailSatellites;
+                    }
+                    _tuningDetailSatellites = value;
+                    if (_tuningDetailSatellites != null)
+                    {
+                        _tuningDetailSatellites.CollectionChanged += FixupTuningDetailSatellites;
+                    }
+                    OnNavigationPropertyChanged("TuningDetailSatellites");
+                }
+            }
+        }
+        private TrackableCollection<TuningDetailSatellite> _tuningDetailSatellites;
 
         #endregion
         #region ChangeTracking
@@ -201,6 +237,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         protected virtual void ClearNavigationProperties()
         {
             DisEqcMotors.Clear();
+            TuningDetailSatellites.Clear();
         }
 
         #endregion
@@ -247,6 +284,45 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
                     // This is the principal end in an association that performs cascade deletes.
                     // Remove the previous dependent from the event listener.
                     ChangeTracker.ObjectStateChanging -= item.HandleCascadeDelete;
+                }
+            }
+        }
+    
+        private void FixupTuningDetailSatellites(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (IsDeserializing)
+            {
+                return;
+            }
+    
+            if (e.NewItems != null)
+            {
+                foreach (TuningDetailSatellite item in e.NewItems)
+                {
+                    item.Satellite = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("TuningDetailSatellites", item);
+                    }
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (TuningDetailSatellite item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Satellite, this))
+                    {
+                        item.Satellite = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("TuningDetailSatellites", item);
+                    }
                 }
             }
         }

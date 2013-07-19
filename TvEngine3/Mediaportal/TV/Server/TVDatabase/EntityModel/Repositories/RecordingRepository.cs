@@ -7,7 +7,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class RecordingRepository : GenericRepository<Model>, IRecordingRepository, IDisposable
+  public class RecordingRepository : GenericRepository<TvModel>, IRecordingRepository, IDisposable
   {
     public RecordingRepository()    
     {
@@ -18,7 +18,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {      
     }
 
-    public RecordingRepository(Model context)
+    public RecordingRepository(TvModel context)
       : base(context)
     {
     }    

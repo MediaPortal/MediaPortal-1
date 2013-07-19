@@ -3,13 +3,13 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class SettingsRepository : GenericRepository<Model>, ISettingsRepository
+  public class SettingsRepository : GenericRepository<TvModel>, ISettingsRepository
   {
     public SettingsRepository()    
     {
     }
 
-    public SettingsRepository(Model context)
+    public SettingsRepository(TvModel context)
       : base(context)
     {
     }

@@ -7,7 +7,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
 
-  public class ChannelRepository : GenericRepository<Model>, IChannelRepository
+  public class ChannelRepository : GenericRepository<TvModel>, IChannelRepository
   {    
     public ChannelRepository()    
     {
@@ -18,7 +18,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {      
     }
 
-    public ChannelRepository(Model context)
+    public ChannelRepository(TvModel context)
       : base(context)
     {
     }
@@ -37,12 +37,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
    
 
-    public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
+    public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query) //where T: TuningDetail
     {
+      
       IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).
         Include(c => c.Channel.GroupMaps);
       return includeRelations;
-    }    
+    }   
 
     public IQueryable<Channel> IncludeAllRelations(IQueryable<Channel> query, ChannelIncludeRelationEnum includeRelations)
     {      
@@ -57,8 +58,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       if (tuningDetails)
       {
         query = query.Include(c => c.TuningDetails);
-        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
-        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
+        //todo: rework for new tuningdetail structure
+        //
+        /*query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));
+        query = query.Include(c => c.TuningDetails.Select(l => l.LnbType));*/
       }
 
       if (channelLinkMapsChannelLink)
@@ -95,8 +98,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       IQueryable<Channel> includeRelations =
         query.          
           Include(c => c.TuningDetails).
-          Include(c => c.TuningDetails.Select(l => l.LnbType)).
-          Include(c => c.TuningDetails.Select(l=>l.LnbType)).
+        //todo: rework for new tuningdetail structure
+          //Include(c => c.TuningDetails.Select(l => l.LnbType)).
+          //Include(c => c.TuningDetails.Select(l=>l.LnbType)).
           Include(c => c.ChannelMaps).
           Include(c => c.ChannelMaps.Select(card => card.Card)).
           Include(c => c.GroupMaps).

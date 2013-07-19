@@ -10,7 +10,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
   {
     public static LnbType GetLnbType(int idLnbType)
     {
-      using (IRepository<Model> lnbTypeRepository = new GenericRepository<Model>())
+      using (IRepository<TvModel> lnbTypeRepository = new GenericRepository<TvModel>())
       {
         LnbType query = lnbTypeRepository.Single<LnbType>(l => l.IdLnbType == idLnbType);
         return query;
@@ -19,7 +19,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<LnbType> ListAllLnbTypes()
     {
-      using (IRepository<Model> lnbTypeRepository = new GenericRepository<Model>())
+      using (IRepository<TvModel> lnbTypeRepository = new GenericRepository<TvModel>())
       {
         return lnbTypeRepository.GetAll<LnbType>().ToList();
       }

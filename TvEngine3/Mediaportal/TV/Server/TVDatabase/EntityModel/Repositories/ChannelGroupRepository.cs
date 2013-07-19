@@ -6,7 +6,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class ChannelGroupRepository : GenericRepository<Model>, IChannelGroupRepository
+  public class ChannelGroupRepository : GenericRepository<TvModel>, IChannelGroupRepository
   {
     public ChannelGroupRepository()    
     {
@@ -17,7 +17,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {      
     }
 
-    public ChannelGroupRepository(Model context)
+    public ChannelGroupRepository(TvModel context)
       : base(context)
     {
     }
@@ -26,7 +26,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     public IQueryable<ChannelGroup> IncludeAllRelations(IQueryable<ChannelGroup> query)
     {
       var includeRelations = query.
-        Include(r => r.GroupMaps.Select(c => c.Channel.TuningDetails)).
+        Include(r => r.GroupMaps.Select(c => c.Channel.ServiceDetails)).
+        Include(r => r.GroupMaps.Select(c => c.Channel.ServiceDetails.Select(s=>s.TuningDetail))).
         Include(r => r.GroupMaps).
         Include(r => r.KeywordMap).
         Include(r => r.GroupMaps.Select(c => c.Channel));        

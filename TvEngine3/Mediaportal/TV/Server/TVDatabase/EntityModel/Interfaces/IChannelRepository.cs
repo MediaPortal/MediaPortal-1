@@ -4,7 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
-  public interface IChannelRepository : IRepository<Model>
+  public interface IChannelRepository : IRepository<TvModel>
   {
     IQueryable<Channel> GetAllChannelsByGroupIdAndMediaType(int groupId, MediaTypeEnum mediaType);
     IQueryable<Channel> GetAllChannelsByGroupId(int groupId);

@@ -6,7 +6,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class CardRepository : GenericRepository<Model>, ICardRepository
+  public class CardRepository : GenericRepository<TvModel>, ICardRepository
   {    
     public CardRepository ()
     {
@@ -18,7 +18,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {      
     }
 
-    public CardRepository(Model context)
+    public CardRepository(TvModel context)
       : base(context)
     {
     }
@@ -27,7 +27,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
       IQueryable<Card> includeRelations =
         query.
-          Include(c => c.ChannelMaps.Select(m => m.Channel).Select(ch =>ch.TuningDetails)).
+          Include(c => c.ChannelMaps.Select(m => m.Channel).Select(ch =>ch.ServiceDetails)).
+          Include(c => c.ChannelMaps.Select(m => m.Channel).Select(ch => ch.ServiceDetails.Select(s=>s.TuningDetail))).
           Include(c => c.ChannelMaps).
           Include(c => c.CardGroupMaps).
           Include(c => c.DisEqcMotors);

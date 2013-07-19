@@ -22,26 +22,26 @@ using System.Linq;
 
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
-    public partial class Model : ObjectContext
+    public partial class TvModel : ObjectContext
     {
-        public const string ConnectionString = "name=Model";
-        public const string ContainerName = "Model";
+        public const string ConnectionString = "name=TvModel";
+        public const string ContainerName = "TvModel";
     
         #region Constructors
     
-        public Model()
+        public TvModel()
             : base(ConnectionString, ContainerName)
         {
             Initialize();
         }
     
-        public Model(string connectionString)
+        public TvModel(string connectionString)
             : base(connectionString, ContainerName)
         {
             Initialize();
         }
     
-        public Model(EntityConnection connection)
+        public TvModel(EntityConnection connection)
             : base(connection, ContainerName)
         {
             Initialize();
@@ -250,6 +250,12 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             get { return _tuningDetails  ?? (_tuningDetails = CreateObjectSet<TuningDetail>("TuningDetails")); }
         }
         private ObjectSet<TuningDetail> _tuningDetails;
+    
+        public ObjectSet<ServiceDetail> ServiceDetails
+        {
+            get { return _serviceDetails  ?? (_serviceDetails = CreateObjectSet<ServiceDetail>("ServiceDetails")); }
+        }
+        private ObjectSet<ServiceDetail> _serviceDetails;
     
         public ObjectSet<TvMovieMapping> TvMovieMappings
         {

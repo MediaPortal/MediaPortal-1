@@ -18,563 +18,106 @@ using System.Runtime.Serialization;
 namespace Mediaportal.TV.Server.TVDatabase.Entities
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(Channel))]
-    [KnownType(typeof(LnbType))]
-    public partial class TuningDetail: IObjectWithChangeTracker, INotifyPropertyChanged
+    [KnownType(typeof(TuningDetailSatellite))]
+    [KnownType(typeof(TuningDetailAnalog))]
+    [KnownType(typeof(TuningDetailCapture))]
+    [KnownType(typeof(TuningDetailDvbS2))]
+    [KnownType(typeof(TuningDetailStream))]
+    [KnownType(typeof(TuningDetailCable))]
+    [KnownType(typeof(TuningDetailAtsc))]
+    [KnownType(typeof(TuningDetailTerrestrial))]
+    [KnownType(typeof(TuningDetailDvbT2))]
+    [KnownType(typeof(ServiceDetail))]
+    public abstract partial class TuningDetail: IObjectWithChangeTracker, INotifyPropertyChanged
     {
         #region Primitive Properties
     
         [DataMember]
-        public int IdTuning
+        public Nullable<bool> GrabEPG
         {
-            get { return _idTuning; }
+            get { return _grabEPG; }
             set
             {
-                if (_idTuning != value)
+                if (_grabEPG != value)
+                {
+                    _grabEPG = value;
+                    OnPropertyChanged("GrabEPG");
+                }
+            }
+        }
+        private Nullable<bool> _grabEPG;
+    
+        [DataMember]
+        public Nullable<System.DateTime> LastGrabTime
+        {
+            get { return _lastGrabTime; }
+            set
+            {
+                if (_lastGrabTime != value)
+                {
+                    _lastGrabTime = value;
+                    OnPropertyChanged("LastGrabTime");
+                }
+            }
+        }
+        private Nullable<System.DateTime> _lastGrabTime;
+    
+        [DataMember]
+        public int IdTuningDetail
+        {
+            get { return _idTuningDetail; }
+            set
+            {
+                if (_idTuningDetail != value)
                 {
                     if (ChangeTracker.ChangeTrackingEnabled && ChangeTracker.State != ObjectState.Added)
                     {
-                        throw new InvalidOperationException("The property 'IdTuning' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
+                        throw new InvalidOperationException("The property 'IdTuningDetail' is part of the object's key and cannot be changed. Changes to key properties can only be made when the object is not being tracked or is in the Added state.");
                     }
-                    _idTuning = value;
-                    OnPropertyChanged("IdTuning");
+                    _idTuningDetail = value;
+                    OnPropertyChanged("IdTuningDetail");
                 }
             }
         }
-        private int _idTuning;
-    
-        [DataMember]
-        public int IdChannel
-        {
-            get { return _idChannel; }
-            set
-            {
-                if (_idChannel != value)
-                {
-                    ChangeTracker.RecordOriginalValue("IdChannel", _idChannel);
-                    if (!IsDeserializing)
-                    {
-                        if (Channel != null && Channel.IdChannel != value)
-                        {
-                            Channel = null;
-                        }
-                    }
-                    _idChannel = value;
-                    OnPropertyChanged("IdChannel");
-                }
-            }
-        }
-        private int _idChannel;
-    
-        [DataMember]
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (_name != value)
-                {
-                    _name = value;
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
-        private string _name;
-    
-        [DataMember]
-        public string Provider
-        {
-            get { return _provider; }
-            set
-            {
-                if (_provider != value)
-                {
-                    _provider = value;
-                    OnPropertyChanged("Provider");
-                }
-            }
-        }
-        private string _provider;
-    
-        [DataMember]
-        public int ChannelType
-        {
-            get { return _channelType; }
-            set
-            {
-                if (_channelType != value)
-                {
-                    _channelType = value;
-                    OnPropertyChanged("ChannelType");
-                }
-            }
-        }
-        private int _channelType;
-    
-        [DataMember]
-        public int ChannelNumber
-        {
-            get { return _channelNumber; }
-            set
-            {
-                if (_channelNumber != value)
-                {
-                    _channelNumber = value;
-                    OnPropertyChanged("ChannelNumber");
-                }
-            }
-        }
-        private int _channelNumber;
-    
-        [DataMember]
-        public int Frequency
-        {
-            get { return _frequency; }
-            set
-            {
-                if (_frequency != value)
-                {
-                    _frequency = value;
-                    OnPropertyChanged("Frequency");
-                }
-            }
-        }
-        private int _frequency;
-    
-        [DataMember]
-        public int CountryId
-        {
-            get { return _countryId; }
-            set
-            {
-                if (_countryId != value)
-                {
-                    _countryId = value;
-                    OnPropertyChanged("CountryId");
-                }
-            }
-        }
-        private int _countryId;
-    
-        [DataMember]
-        public int NetworkId
-        {
-            get { return _networkId; }
-            set
-            {
-                if (_networkId != value)
-                {
-                    _networkId = value;
-                    OnPropertyChanged("NetworkId");
-                }
-            }
-        }
-        private int _networkId;
-    
-        [DataMember]
-        public int TransportId
-        {
-            get { return _transportId; }
-            set
-            {
-                if (_transportId != value)
-                {
-                    _transportId = value;
-                    OnPropertyChanged("TransportId");
-                }
-            }
-        }
-        private int _transportId;
-    
-        [DataMember]
-        public int ServiceId
-        {
-            get { return _serviceId; }
-            set
-            {
-                if (_serviceId != value)
-                {
-                    _serviceId = value;
-                    OnPropertyChanged("ServiceId");
-                }
-            }
-        }
-        private int _serviceId;
-    
-        [DataMember]
-        public int PmtPid
-        {
-            get { return _pmtPid; }
-            set
-            {
-                if (_pmtPid != value)
-                {
-                    _pmtPid = value;
-                    OnPropertyChanged("PmtPid");
-                }
-            }
-        }
-        private int _pmtPid;
-    
-        [DataMember]
-        public bool FreeToAir
-        {
-            get { return _freeToAir; }
-            set
-            {
-                if (_freeToAir != value)
-                {
-                    _freeToAir = value;
-                    OnPropertyChanged("FreeToAir");
-                }
-            }
-        }
-        private bool _freeToAir;
-    
-        [DataMember]
-        public int Modulation
-        {
-            get { return _modulation; }
-            set
-            {
-                if (_modulation != value)
-                {
-                    _modulation = value;
-                    OnPropertyChanged("Modulation");
-                }
-            }
-        }
-        private int _modulation;
-    
-        [DataMember]
-        public int Polarisation
-        {
-            get { return _polarisation; }
-            set
-            {
-                if (_polarisation != value)
-                {
-                    _polarisation = value;
-                    OnPropertyChanged("Polarisation");
-                }
-            }
-        }
-        private int _polarisation;
-    
-        [DataMember]
-        public int Symbolrate
-        {
-            get { return _symbolrate; }
-            set
-            {
-                if (_symbolrate != value)
-                {
-                    _symbolrate = value;
-                    OnPropertyChanged("Symbolrate");
-                }
-            }
-        }
-        private int _symbolrate;
-    
-        [DataMember]
-        public int DiSEqC
-        {
-            get { return _diSEqC; }
-            set
-            {
-                if (_diSEqC != value)
-                {
-                    _diSEqC = value;
-                    OnPropertyChanged("DiSEqC");
-                }
-            }
-        }
-        private int _diSEqC;
-    
-        [DataMember]
-        public int Bandwidth
-        {
-            get { return _bandwidth; }
-            set
-            {
-                if (_bandwidth != value)
-                {
-                    _bandwidth = value;
-                    OnPropertyChanged("Bandwidth");
-                }
-            }
-        }
-        private int _bandwidth;
-    
-        [DataMember]
-        public int MajorChannel
-        {
-            get { return _majorChannel; }
-            set
-            {
-                if (_majorChannel != value)
-                {
-                    _majorChannel = value;
-                    OnPropertyChanged("MajorChannel");
-                }
-            }
-        }
-        private int _majorChannel;
-    
-        [DataMember]
-        public int MinorChannel
-        {
-            get { return _minorChannel; }
-            set
-            {
-                if (_minorChannel != value)
-                {
-                    _minorChannel = value;
-                    OnPropertyChanged("MinorChannel");
-                }
-            }
-        }
-        private int _minorChannel;
-    
-        [DataMember]
-        public int VideoSource
-        {
-            get { return _videoSource; }
-            set
-            {
-                if (_videoSource != value)
-                {
-                    _videoSource = value;
-                    OnPropertyChanged("VideoSource");
-                }
-            }
-        }
-        private int _videoSource;
-    
-        [DataMember]
-        public int TuningSource
-        {
-            get { return _tuningSource; }
-            set
-            {
-                if (_tuningSource != value)
-                {
-                    _tuningSource = value;
-                    OnPropertyChanged("TuningSource");
-                }
-            }
-        }
-        private int _tuningSource;
-    
-        [DataMember]
-        public int Band
-        {
-            get { return _band; }
-            set
-            {
-                if (_band != value)
-                {
-                    _band = value;
-                    OnPropertyChanged("Band");
-                }
-            }
-        }
-        private int _band;
-    
-        [DataMember]
-        public int SatIndex
-        {
-            get { return _satIndex; }
-            set
-            {
-                if (_satIndex != value)
-                {
-                    _satIndex = value;
-                    OnPropertyChanged("SatIndex");
-                }
-            }
-        }
-        private int _satIndex;
-    
-        [DataMember]
-        public int InnerFecRate
-        {
-            get { return _innerFecRate; }
-            set
-            {
-                if (_innerFecRate != value)
-                {
-                    _innerFecRate = value;
-                    OnPropertyChanged("InnerFecRate");
-                }
-            }
-        }
-        private int _innerFecRate;
-    
-        [DataMember]
-        public int Pilot
-        {
-            get { return _pilot; }
-            set
-            {
-                if (_pilot != value)
-                {
-                    _pilot = value;
-                    OnPropertyChanged("Pilot");
-                }
-            }
-        }
-        private int _pilot;
-    
-        [DataMember]
-        public int RollOff
-        {
-            get { return _rollOff; }
-            set
-            {
-                if (_rollOff != value)
-                {
-                    _rollOff = value;
-                    OnPropertyChanged("RollOff");
-                }
-            }
-        }
-        private int _rollOff;
-    
-        [DataMember]
-        public string Url
-        {
-            get { return _url; }
-            set
-            {
-                if (_url != value)
-                {
-                    _url = value;
-                    OnPropertyChanged("Url");
-                }
-            }
-        }
-        private string _url;
-    
-        [DataMember]
-        public int Bitrate
-        {
-            get { return _bitrate; }
-            set
-            {
-                if (_bitrate != value)
-                {
-                    _bitrate = value;
-                    OnPropertyChanged("Bitrate");
-                }
-            }
-        }
-        private int _bitrate;
-    
-        [DataMember]
-        public int AudioSource
-        {
-            get { return _audioSource; }
-            set
-            {
-                if (_audioSource != value)
-                {
-                    _audioSource = value;
-                    OnPropertyChanged("AudioSource");
-                }
-            }
-        }
-        private int _audioSource;
-    
-        [DataMember]
-        public bool IsVCRSignal
-        {
-            get { return _isVCRSignal; }
-            set
-            {
-                if (_isVCRSignal != value)
-                {
-                    _isVCRSignal = value;
-                    OnPropertyChanged("IsVCRSignal");
-                }
-            }
-        }
-        private bool _isVCRSignal;
-    
-        [DataMember]
-        public int MediaType
-        {
-            get { return _mediaType; }
-            set
-            {
-                if (_mediaType != value)
-                {
-                    _mediaType = value;
-                    OnPropertyChanged("MediaType");
-                }
-            }
-        }
-        private int _mediaType;
-    
-        [DataMember]
-        public Nullable<int> IdLnbType
-        {
-            get { return _idLnbType; }
-            set
-            {
-                if (_idLnbType != value)
-                {
-                    ChangeTracker.RecordOriginalValue("IdLnbType", _idLnbType);
-                    if (!IsDeserializing)
-                    {
-                        if (LnbType != null && LnbType.IdLnbType != value)
-                        {
-                            LnbType = null;
-                        }
-                    }
-                    _idLnbType = value;
-                    OnPropertyChanged("IdLnbType");
-                }
-            }
-        }
-        private Nullable<int> _idLnbType;
+        private int _idTuningDetail;
 
         #endregion
         #region Navigation Properties
     
         [DataMember]
-        public Channel Channel
+        public TrackableCollection<ServiceDetail> ServiceDetails
         {
-            get { return _channel; }
+            get
+            {
+                if (_serviceDetails == null)
+                {
+                    _serviceDetails = new TrackableCollection<ServiceDetail>();
+                    _serviceDetails.CollectionChanged += FixupServiceDetails;
+                }
+                return _serviceDetails;
+            }
             set
             {
-                if (!ReferenceEquals(_channel, value))
+                if (!ReferenceEquals(_serviceDetails, value))
                 {
-                    var previousValue = _channel;
-                    _channel = value;
-                    FixupChannel(previousValue);
-                    OnNavigationPropertyChanged("Channel");
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        throw new InvalidOperationException("Cannot set the FixupChangeTrackingCollection when ChangeTracking is enabled");
+                    }
+                    if (_serviceDetails != null)
+                    {
+                        _serviceDetails.CollectionChanged -= FixupServiceDetails;
+                    }
+                    _serviceDetails = value;
+                    if (_serviceDetails != null)
+                    {
+                        _serviceDetails.CollectionChanged += FixupServiceDetails;
+                    }
+                    OnNavigationPropertyChanged("ServiceDetails");
                 }
             }
         }
-        private Channel _channel;
-    
-        [DataMember]
-        public LnbType LnbType
-        {
-            get { return _lnbType; }
-            set
-            {
-                if (!ReferenceEquals(_lnbType, value))
-                {
-                    var previousValue = _lnbType;
-                    _lnbType = value;
-                    FixupLnbType(previousValue);
-                    OnNavigationPropertyChanged("LnbType");
-                }
-            }
-        }
-        private LnbType _lnbType;
+        private TrackableCollection<ServiceDetail> _serviceDetails;
 
         #endregion
         #region ChangeTracking
@@ -637,16 +180,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
             }
         }
     
-        // This entity type is the dependent end in at least one association that performs cascade deletes.
-        // This event handler will process notifications that occur when the principal end is deleted.
-        internal void HandleCascadeDelete(object sender, ObjectStateChangingEventArgs e)
-        {
-            if (e.NewState == ObjectState.Deleted)
-            {
-                this.MarkAsDeleted();
-            }
-        }
-    
         protected bool IsDeserializing { get; private set; }
     
         [OnDeserializing]
@@ -664,92 +197,47 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
     
         protected virtual void ClearNavigationProperties()
         {
-            Channel = null;
-            LnbType = null;
+            ServiceDetails.Clear();
         }
 
         #endregion
         #region Association Fixup
     
-        private void FixupChannel(Channel previousValue)
+        private void FixupServiceDetails(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (IsDeserializing)
             {
                 return;
             }
     
-            if (previousValue != null && previousValue.TuningDetails.Contains(this))
+            if (e.NewItems != null)
             {
-                previousValue.TuningDetails.Remove(this);
-            }
-    
-            if (Channel != null)
-            {
-                if (!Channel.TuningDetails.Contains(this))
+                foreach (ServiceDetail item in e.NewItems)
                 {
-                    Channel.TuningDetails.Add(this);
-                }
-    
-                IdChannel = Channel.IdChannel;
-            }
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("Channel")
-                    && (ChangeTracker.OriginalValues["Channel"] == Channel))
-                {
-                    ChangeTracker.OriginalValues.Remove("Channel");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("Channel", previousValue);
-                }
-                if (Channel != null && !Channel.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    Channel.StartTracking();
+                    item.TuningDetail = this;
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        if (!item.ChangeTracker.ChangeTrackingEnabled)
+                        {
+                            item.StartTracking();
+                        }
+                        ChangeTracker.RecordAdditionToCollectionProperties("ServiceDetails", item);
+                    }
                 }
             }
-        }
     
-        private void FixupLnbType(LnbType previousValue, bool skipKeys = false)
-        {
-            if (IsDeserializing)
+            if (e.OldItems != null)
             {
-                return;
-            }
-    
-            if (previousValue != null && previousValue.TuningDetails.Contains(this))
-            {
-                previousValue.TuningDetails.Remove(this);
-            }
-    
-            if (LnbType != null)
-            {
-                if (!LnbType.TuningDetails.Contains(this))
+                foreach (ServiceDetail item in e.OldItems)
                 {
-                    LnbType.TuningDetails.Add(this);
-                }
-    
-                IdLnbType = LnbType.IdLnbType;
-            }
-            else if (!skipKeys)
-            {
-                IdLnbType = null;
-            }
-    
-            if (ChangeTracker.ChangeTrackingEnabled)
-            {
-                if (ChangeTracker.OriginalValues.ContainsKey("LnbType")
-                    && (ChangeTracker.OriginalValues["LnbType"] == LnbType))
-                {
-                    ChangeTracker.OriginalValues.Remove("LnbType");
-                }
-                else
-                {
-                    ChangeTracker.RecordOriginalValue("LnbType", previousValue);
-                }
-                if (LnbType != null && !LnbType.ChangeTracker.ChangeTrackingEnabled)
-                {
-                    LnbType.StartTracking();
+                    if (ReferenceEquals(item.TuningDetail, this))
+                    {
+                        item.TuningDetail = null;
+                    }
+                    if (ChangeTracker.ChangeTrackingEnabled)
+                    {
+                        ChangeTracker.RecordRemovalFromCollectionProperties("ServiceDetails", item);
+                    }
                 }
             }
         }

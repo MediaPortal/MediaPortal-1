@@ -13,6 +13,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Specification;
+using EntityState = System.Data.EntityState;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {

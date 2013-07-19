@@ -6,7 +6,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
-  public class ScheduleRepository : GenericRepository<Model>, IScheduleRepository
+  public class ScheduleRepository : GenericRepository<TvModel>, IScheduleRepository
   {
     public ScheduleRepository()    
     {
@@ -17,14 +17,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {      
     }
 
-    public ScheduleRepository(Model context)
+    public ScheduleRepository(TvModel context)
       : base(context)
     {
     }
     public IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query)
     {
       IQueryable<Schedule> includeRelations = query.Include(s => s.Channel)
-        .Include(s => s.Channel.TuningDetails)
+        .Include(s => s.Channel.ServiceDetails)    
+        .Include(s => s.Channel.ServiceDetails.Select(t => t.TuningDetail))
         .Include(s => s.Recordings)
         .Include(s => s.Schedules)
         .Include(s => s.ConflictingSchedules)

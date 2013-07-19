@@ -91,36 +91,6 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities
         private int _priority;
     
         [DataMember]
-        public bool GrabEPG
-        {
-            get { return _grabEPG; }
-            set
-            {
-                if (_grabEPG != value)
-                {
-                    _grabEPG = value;
-                    OnPropertyChanged("GrabEPG");
-                }
-            }
-        }
-        private bool _grabEPG;
-    
-        [DataMember]
-        public Nullable<System.DateTime> LastEpgGrab
-        {
-            get { return _lastEpgGrab; }
-            set
-            {
-                if (_lastEpgGrab != value)
-                {
-                    _lastEpgGrab = value;
-                    OnPropertyChanged("LastEpgGrab");
-                }
-            }
-        }
-        private Nullable<System.DateTime> _lastEpgGrab;
-    
-        [DataMember]
         public string RecordingFolder
         {
             get { return _recordingFolder; }

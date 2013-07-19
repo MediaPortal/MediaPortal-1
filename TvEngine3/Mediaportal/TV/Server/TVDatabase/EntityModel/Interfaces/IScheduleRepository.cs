@@ -4,7 +4,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
-  public interface IScheduleRepository : IRepository<Model>
+  public interface IScheduleRepository : IRepository<TvModel>
   {
     IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query);
     IQueryable<Schedule> IncludeAllRelations(IQueryable<Schedule> query, ScheduleIncludeRelationEnum includeRelations);

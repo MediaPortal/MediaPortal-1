@@ -136,32 +136,12 @@
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
-    <Compile Include="LnbTypePartial.cs" />
     <Compile Include="DisEqcMotor.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
     </Compile>
-    <Compile Include="EntityExtensions.cs" />
-    <Compile Include="Enums\CardIncludeRelationEnum.cs" />
-    <Compile Include="Enums\ChannelGroupIncludeRelationEnum.cs" />
-    <Compile Include="Enums\ChannelIncludeRelationEnum.cs" />
-    <Compile Include="Enums\DbNetworkProvider.cs" />
-    <Compile Include="Enums\DeleteBeforeImportOption.cs" />
-    <Compile Include="Enums\KeepMethodType.cs" />
-    <Compile Include="Enums\MediaType.cs" />
-    <Compile Include="Enums\ProgramState.cs" />
-    <Compile Include="Enums\ScheduleRecordingType.cs" />
-    <Compile Include="Enums\StringComparisonEnum.cs" />
-    <Compile Include="Enums\TuningDetailSearchEnum.cs" />
-    <Compile Include="Factories\ChannelFactory.cs" />
-    <Compile Include="Factories\CloneHelper.cs" />
-    <Compile Include="Factories\CanceledScheduleFactory.cs" />
-    <Compile Include="Factories\TuningDetailFactory.cs" />
-    <Compile Include="Factories\RecordingFactory.cs" />
-    <Compile Include="Factories\ProgramFactory.cs" />
-    <Compile Include="Factories\ScheduleFactory.cs" />
+    <Compile Include="Enums\ScheduleIncludeRelationEnum.cs" />
     <Compile Include="Favorite.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -192,6 +172,26 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="LnbTypePartial.cs" />
+    <Compile Include="EntityExtensions.cs" />
+    <Compile Include="Enums\CardIncludeRelationEnum.cs" />
+    <Compile Include="Enums\ChannelGroupIncludeRelationEnum.cs" />
+    <Compile Include="Enums\ChannelIncludeRelationEnum.cs" />
+    <Compile Include="Enums\DbNetworkProvider.cs" />
+    <Compile Include="Enums\DeleteBeforeImportOption.cs" />
+    <Compile Include="Enums\KeepMethodType.cs" />
+    <Compile Include="Enums\MediaType.cs" />
+    <Compile Include="Enums\ProgramState.cs" />
+    <Compile Include="Enums\ScheduleRecordingType.cs" />
+    <Compile Include="Enums\StringComparisonEnum.cs" />
+    <Compile Include="Enums\TuningDetailSearchEnum.cs" />
+    <Compile Include="Factories\ChannelFactory.cs" />
+    <Compile Include="Factories\CloneHelper.cs" />
+    <Compile Include="Factories\CanceledScheduleFactory.cs" />
+    <Compile Include="Factories\TuningDetailFactory.cs" />
+    <Compile Include="Factories\RecordingFactory.cs" />
+    <Compile Include="Factories\ProgramFactory.cs" />
+    <Compile Include="Factories\ScheduleFactory.cs" />
     <Compile Include="Model.Context.cs">
       <DependentUpon>Model.Context.tt</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -283,6 +283,26 @@
       <SubType>
       </SubType>
     </Compile>
+    <Compile Include="ServiceAtsc.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="ServiceDetail.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="ServiceDvb.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="ServiceMpeg2.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
     <Compile Include="Setting.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
@@ -299,6 +319,51 @@
       </SubType>
     </Compile>
     <Compile Include="TuningDetail.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailAnalog.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailAtsc.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailCable.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailCapture.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailDvbS2.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailDvbT2.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailSatellite.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailStream.cs">
+      <DependentUpon>Model.tt</DependentUpon>
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="TuningDetailTerrestrial.cs">
       <DependentUpon>Model.tt</DependentUpon>
       <SubType>
       </SubType>
@@ -323,6 +388,12 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Model.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model.Context.cs</LastGenOutput>
@@ -330,15 +401,7 @@
     <None Include="Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model.cs</LastGenOutput>
-      <SubType>
-      </SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
-      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
-      <Name>Common.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

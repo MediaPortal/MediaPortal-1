@@ -2,7 +2,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
-  public interface ISettingsRepository : IRepository<Model>
+  public interface ISettingsRepository : IRepository<TvModel>
   {
     /// <summary>
     /// gets a value from the database table "Setting"

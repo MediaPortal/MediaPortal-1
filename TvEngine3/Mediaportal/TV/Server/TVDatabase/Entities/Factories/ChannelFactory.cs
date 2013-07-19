@@ -10,23 +10,21 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
       return CloneHelper.DeepCopy<Channel>(source);      
     }
       
-    public static Channel CreateChannel (MediaTypeEnum mediaType, int timesWatched, DateTime totalTimeWatched, bool grabEpg,
-                   DateTime lastGrabTime, int sortOrder, bool visibleInGuide, string externalId,
+    public static Channel CreateChannel (MediaTypeEnum mediaType, int timesWatched, DateTime totalTimeWatched, 
+                   int sortOrder, bool visibleInGuide, string externalId,
                    string displayName)
     {
       var channel = new Channel
                           {
                             MediaType = (int)mediaType,
                             TimesWatched = timesWatched,
-                            TotalTimeWatched = totalTimeWatched,
-                            GrabEpg = grabEpg,
-                            LastGrabTime = lastGrabTime,
+                            TotalTimeWatched = totalTimeWatched,                            
                             SortOrder = sortOrder,
                             VisibleInGuide = visibleInGuide,
                             ExternalId = externalId,
                             DisplayName = displayName
                           };         
-      return channel;
+      return channel;                
     }
 
 

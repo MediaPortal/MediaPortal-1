@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static TvGuideCategory AddTvGuideCategory(TvGuideCategory tvGuideCategorycategory)
     {
-      using (var programCategoryRepository = new GenericRepository<Model>())
+      using (var programCategoryRepository = new GenericRepository<TvModel>())
       {
         programCategoryRepository.Add<TvGuideCategory>(tvGuideCategorycategory);
         programCategoryRepository.UnitOfWork.SaveChanges();
