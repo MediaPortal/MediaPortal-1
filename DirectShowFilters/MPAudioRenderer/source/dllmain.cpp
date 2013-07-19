@@ -128,7 +128,6 @@ CCritSec m_qLock;
 CCritSec m_threadLock;
 
 std::queue<std::string> m_logQueue;
-BOOL m_bLoggerRunning;
 HANDLE m_hLogger = NULL;
 CAMEvent m_eLog;
 CAMEvent m_eStop;
@@ -165,8 +164,6 @@ UINT CALLBACK LogThread(void* param)
       FILE* pFile = _tfopen(fileName, _T("a+"));
       if (pFile)
       {
-        SYSTEMTIME systemTime;
-        GetLocalTime(&systemTime);
         string line = GetLogLine();
         while (!line.empty())
         {
@@ -209,7 +206,6 @@ void StopLogger()
   {
     m_eStop.Set();
     WaitForSingleObject(m_hLogger, INFINITE);
-    m_bLoggerRunning = FALSE;
     m_hLogger = NULL;
   }
 }
@@ -222,11 +218,7 @@ void Log(const char *fmt, ...)
 
   CAutoLock logLock(&lock);
   if (!m_hLogger)
-  {
-    CAutoLock lock(&m_qLock);
-    m_bLoggerRunning = true;
-    StartLogger();
-  }
+    return;
 
   char buffer[MAX_LOG_LINE_LENGHT - LOG_LINE_RESERVED]; 
   int ret;
