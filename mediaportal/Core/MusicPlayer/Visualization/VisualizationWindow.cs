@@ -1933,6 +1933,9 @@ namespace MediaPortal.Visualization
               {
                 using (Graphics g = Graphics.FromHwnd(Handle))
                 {
+                  // Fixed High CPU mistake
+                  Thread.Sleep(1);
+
                   int sleepMS = RenderVisualization(g);
 
                   if (sleepMS < 0)
@@ -1958,7 +1961,7 @@ namespace MediaPortal.Visualization
                   {
                     continue;
                   }
-                
+
                   // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
                   if (IsSoundSpectrumViz)
                   {

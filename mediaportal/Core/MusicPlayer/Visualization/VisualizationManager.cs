@@ -282,8 +282,8 @@ namespace MediaPortal.Visualization
         string[] soniqueVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_SONIQUE, skinFolderPath, true);
 
         // Search for Bassbox Plugins
-        string bbFolderPath = Path.Combine(Application.StartupPath, @"BBPlugin\");
-        string[] bassboxVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_BASSBOX, bbFolderPath, true);
+        skinFolderPath = Path.Combine(Application.StartupPath, @"BBPlugin");
+        string[] bassboxVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_BASSBOX, skinFolderPath, true);
 
         // Note: Recursive Searches for Winamp Plugins are not supported
         // Winamp plugins expect itself to be stored in a folder named Plugins in the root of the executable. This is where we will search
