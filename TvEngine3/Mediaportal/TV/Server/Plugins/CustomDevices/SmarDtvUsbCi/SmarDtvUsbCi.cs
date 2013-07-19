@@ -905,7 +905,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
         }
         _ciDevice = null;
       }
-      Release.ComObject("SmarDTV graph", ref _graph);
+      Release.ComObject("SmarDTV CI graph", ref _graph);
       _isSmarDtvUsbCi = false;
     }
 
