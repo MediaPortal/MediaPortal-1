@@ -26,10 +26,12 @@
 // This structure is used to transfer the OSD graphics to the MediaPortal (C#) side
 struct OSDTexture
 {
+  UINT8 plane;
+
   UINT32 width;
   UINT32 height;
   UINT32 x;
   UINT32 y;
-  
+ 
   IDirect3DTexture9* texture;
 };

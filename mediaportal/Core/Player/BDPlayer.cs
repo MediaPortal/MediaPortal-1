@@ -139,6 +139,7 @@ namespace MediaPortal.Player
   [StructLayout(LayoutKind.Sequential)]
   public struct OSDTexture
   {
+    public byte plane;
     public int width;
     public int height;
     public int x;
