@@ -97,7 +97,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct CaInfo   // TYP_SLOT_INFO
+    private struct CaInfo   // NETUP_CAM_INFO
     {
       public UInt32 NumberOfCaSystemIds;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CA_SYSTEM_IDS)]
@@ -158,7 +158,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       #region variables
 
-      private static int _operatingSystemIntSize = 0;
+      private static int _operatingSystemPointerSize = 0;
       private UInt32 _controlCode;
       private IntPtr _inBuffer;
       private Int32 _inBufferSize;
@@ -177,66 +177,6 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       }
 
       /// <summary>
-      /// This function determines whether the operating system is a 64 bit operating system.
-      /// </summary>
-      /// <returns><c>true</c> if the operating system is a 64 bit operating system, otherwise <c>false</c></returns>
-      private bool Is64BitOperatingSystem()
-      {
-        this.LogDebug("NetUP: check is 64 bit operating system");
-
-        if (IntPtr.Size == 8)
-        {
-          this.LogDebug("NetUP: 64 bit process under 64 bit operating system");
-          return true;
-        }
-
-        // This isn't a 64 bit process, but it could be a 32 bit process under a 64 bit operating system.
-        // If the IsWow64Process() function isn't present in kernel32.dll then the OS doesn't have 64 bit
-        // support.
-        IntPtr moduleHandle = NativeMethods.GetModuleHandle("kernel32.dll");
-        if (moduleHandle == IntPtr.Zero)
-        {
-          this.LogDebug("NetUP: failed to get kernel32 module handle");
-          return false;
-        }
-        IntPtr functionHandle = NativeMethods.GetProcAddress(moduleHandle, "IsWow64Process");
-        moduleHandle = IntPtr.Zero;
-        if (functionHandle == IntPtr.Zero)
-        {
-          this.LogDebug("NetUP: failed to get IsWow64Process function handle");
-          return false;
-        }
-        functionHandle = IntPtr.Zero;
-
-        bool is64bitOs = false;
-        try
-        {
-          if (NativeMethods.IsWow64Process(Process.GetCurrentProcess().Handle, out is64bitOs))
-          {
-            if (is64bitOs)
-            {
-              this.LogDebug("NetUP: 32 bit process under 64 bit operating system");
-            }
-            else
-            {
-              this.LogDebug("NetUP: 32 bit process under 32 bit operating system");
-            }
-            return is64bitOs;
-          }
-          else
-          {
-            this.LogDebug("NetUP: failed to get IsWow64Process function handle");
-            return false;
-          }
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "NetUP: invoking IsWow64Process caused an exception");
-          return false;
-        }
-      }
-
-      /// <summary>
       /// Execute a set operation on a property set.
       /// </summary>
       /// <param name="psGuid">The property set GUID.</param>
@@ -252,16 +192,27 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           return hr;
         }
 
-        // Right now NetUP's drivers require 4 byte integers on 32 bit systems and 8 byte integers on
-        // 64 bit systems. This is somewhat inconvenient. I have reported the issue to NetUP but there
-        // has been no response.
-        // mm1352000, 01-04-2012
-        if (_operatingSystemIntSize == 0)
+        // Originally NetUP's drivers required 32 bit pointers on 32 bit
+        // operating systems and 64 bit pointers on 64 bit operating systems.
+        // This was somewhat inconvenient as detecting whether you're running
+        // under WOW64 can be awkward. I contacted NetUP and asked whether it
+        // would be possible to expose a consistent interface. They kindly
+        // obliged and padded the command struct pointers in their driver for
+        // 32 bit operating systems. At the same time they also changed all
+        // DWORDs in structs to DWORD64, which was unnecessary.
+        // ...then I found out DVBSky use the same API but have modified it to
+        // use 32 bit pointers even under 64 bit operating systems. <doh!!!>
+        // I really don't want to maintain two similar versions of this API.
+        // Since NetUP's driver is open source we can patch and compile it as
+        // required.
+        // https://github.com/netup/netup-dvb-s2-ci-dual/
+        // mm1352000, 2013-07-20
+        if (_operatingSystemPointerSize == 0)
         {
-          _operatingSystemIntSize = 4;
-          if (Is64BitOperatingSystem())
+          _operatingSystemPointerSize = 4;
+          if (OSInfo.OSInfo.Is64BitOs() && psGuid == NETUP_BDA_EXTENSION_PROPERTY_SET)
           {
-            _operatingSystemIntSize = 8;
+            _operatingSystemPointerSize = 8;
           }
         }
 
@@ -278,7 +229,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           }
           Marshal.WriteInt32(returnedByteCountBuffer, 0);
 
-          if (_operatingSystemIntSize == 8)
+          if (_operatingSystemPointerSize == 8)
           {
             Marshal.WriteInt64(commandBuffer, 0, _controlCode);
             Marshal.WriteInt64(commandBuffer, 8, _inBuffer.ToInt64());
