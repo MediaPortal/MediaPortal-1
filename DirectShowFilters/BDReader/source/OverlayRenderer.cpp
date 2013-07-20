@@ -456,6 +456,7 @@ void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint
     osdTexture->width = w;
     osdTexture->x = x;
     osdTexture->y = y;
+    osdTexture->plane = plane;
     osdTexture->texture = NULL;
 
     HRESULT hr = m_pD3DDevice->CreateTexture(osdTexture->width, osdTexture->height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, 
@@ -484,6 +485,7 @@ void COverlayRenderer::CloseOverlay(const uint8_t plane)
     CopyToFrontBuffer(plane);
 
     OSDTexture nullTexture = {0};
+    nullTexture.plane = plane;
     m_pLib->HandleOSDUpdate(nullTexture);
 
     // C# side will release the front buffer
