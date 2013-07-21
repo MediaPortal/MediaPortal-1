@@ -326,9 +326,6 @@ namespace MediaPortal.Visualization
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
         }
 
-        // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
-        Win32API.SetForegroundWindow(GUIGraphicsContext.form.Handle);
-
         firstRun = false;
       }
       catch (Exception ex)

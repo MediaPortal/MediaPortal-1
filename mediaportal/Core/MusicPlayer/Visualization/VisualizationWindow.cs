@@ -1933,7 +1933,7 @@ namespace MediaPortal.Visualization
               {
                 using (Graphics g = Graphics.FromHwnd(Handle))
                 {
-                  // Fixed High CPU mistake
+                  // Fixed High CPU Usage
                   Thread.Sleep(1);
 
                   int sleepMS = RenderVisualization(g);
@@ -1945,15 +1945,11 @@ namespace MediaPortal.Visualization
 
                   if (Viz.IsWinampVis())
                   {
-                    // Do not remove or all FPS will lost
-                    Invalidate();
                     continue;
                   }
 
                   if (Viz.IsSoniqueVis())
                   {
-                    //this work without Focus and Invalidate
-                    //because is drawn directly on the hdc
                     continue;
                   }
 

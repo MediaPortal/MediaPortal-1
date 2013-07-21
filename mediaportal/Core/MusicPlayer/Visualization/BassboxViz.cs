@@ -193,7 +193,6 @@ namespace MediaPortal.Visualization
         int nReturn = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.IsPlaying);
         if (nReturn == Convert.ToInt32(BASSVIS_PLAYSTATE.Play) && (_visParam.VisHandle != 0))
         {
-          // Do not Render without playing
           if (stream != 0)
           {
             // Do not Render without playing
@@ -344,8 +343,6 @@ namespace MediaPortal.Visualization
                                      VisualizationWindow.Width,
                                      VisualizationWindow.Height);
 
-          // The Bassbox Plugin has stolen focus on the MP window. Bring it back to froeground
-          Win32API.SetForegroundWindow(GUIGraphicsContext.form.Handle);
         }
         firstRun = false;
       }
