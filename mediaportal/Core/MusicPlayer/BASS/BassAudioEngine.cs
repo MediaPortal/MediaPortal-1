@@ -2280,19 +2280,19 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Debug("BASS: Fullscreen");
 
-        _VideoPositionX = GUIGraphicsContext.OverScanLeft + GUIGraphicsContext.OffsetX;
-        _VideoPositionY = GUIGraphicsContext.OverScanTop + GUIGraphicsContext.OffsetY;
+        //_VideoPositionX = GUIGraphicsContext.OverScanLeft + GUIGraphicsContext.OffsetX;
+        //_VideoPositionY = GUIGraphicsContext.OverScanTop + GUIGraphicsContext.OffsetY;
 
-        _VideoWidth =
-          (int)Math.Round((float)GUIGraphicsContext.OverScanWidth * (float)GUIGraphicsContext.ZoomHorizontal);
-        _VideoHeight =
-          (int)Math.Round((float)GUIGraphicsContext.OverScanHeight * (float)GUIGraphicsContext.ZoomVertical);
+        _VideoWidth = GUIGraphicsContext.form.ClientRectangle.Width;
+        //  (int)Math.Round((float)GUIGraphicsContext.OverScanWidth * (float)GUIGraphicsContext.ZoomHorizontal);
+        _VideoHeight = GUIGraphicsContext.form.ClientRectangle.Height;
+        //  (int)Math.Round((float)GUIGraphicsContext.OverScanHeight * (float)GUIGraphicsContext.ZoomVertical);
 
-        VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
+        //VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
         //VizWindow.Visible = false;
 
-        _videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, _VideoWidth, _VideoHeight);
-        _sourceRectangle = _videoRectangle;
+        //_videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, _VideoWidth, _VideoHeight);
+        //_sourceRectangle = _videoRectangle;
 
         VizWindow.Size = new Size(_VideoWidth, _VideoHeight);
         VizWindow.Visible = true;

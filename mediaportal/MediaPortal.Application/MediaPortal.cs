@@ -51,6 +51,7 @@ using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.Util;
 using MediaPortal.Services;
+using MediaPortal.Visualization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -1921,6 +1922,9 @@ public class MediaPortalApp : D3D, IRender
       Log.Debug("Main: Cannot resize beyond maximum aspect ratio safe size (Reqested Size:{0}x{1})", rc.right - rc.left, rc.bottom, rc.top);
       rc = LastRect;
     }
+    // send new resolution to VisualizationWindow so the Winproc can work with it 
+    VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+    VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
 
     // only redraw if rectangle size changed
     if (((rc.right - rc.left) != (LastRect.right - LastRect.left)) || ((rc.bottom - rc.top) != (LastRect.bottom - LastRect.top)))
@@ -2004,6 +2008,9 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
+          // send new resolution to VisualizationWindow so the Winproc can work with it 
+          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
         }
         else
         {
