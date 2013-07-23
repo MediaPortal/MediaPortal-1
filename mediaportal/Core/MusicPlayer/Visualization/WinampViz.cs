@@ -378,7 +378,7 @@ namespace MediaPortal.Visualization
           // Set CallBack for PlayState
           _visCallback = BASSVIS_StateCallback;
           BassVis.BASSVIS_WINAMPSetStateCallback(_visCallback);
-          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 72); //1152*2 sample enough for Winamp
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 128); //Reactivated 4096 samples show better
         }
 
         firstRun = false;
