@@ -2030,6 +2030,8 @@ public class MediaPortalApp : D3D, IRender
       
       case SIZE_MAXIMIZED:
         Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
+        VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+        VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
         break;
       
       case SIZE_MAXSHOW:
