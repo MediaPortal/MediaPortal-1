@@ -40,9 +40,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
 
     public IQueryable<TuningDetail> IncludeAllRelations(IQueryable<TuningDetail> query)
-    {
-      IQueryable<TuningDetail> includeRelations = query.Include(c => c.Channel).
-        Include(c => c.Channel.GroupMaps);
+    {      
+      IQueryable<TuningDetail> includeRelations = query.Include(c => c.ServiceDetails).
+      Include(c => c.ServiceDetails.Select(l => l.Channel)).
+      Include(c => c.ServiceDetails.Select(l => l.Channel.GroupMaps));                
+
       return includeRelations;
     }
 
@@ -94,8 +96,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       //}
 
       if (tuningDetails)
-      {
-        query = query.Include(c => c.TuningDetails);
+      {        
+        query = query.Include(c => c.ServiceDetails.Select(s=>s.TuningDetail));
       }
 
       return query;

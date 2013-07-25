@@ -57,8 +57,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       }
 
       if (groupMapsTuningDetails)
-      {
-        query = query.Include(r => r.GroupMaps.Select(c => c.Channel.TuningDetails));
+      {        
+        query = query.Include(r => r.GroupMaps.Select(c => c.Channel.ServiceDetails.Select(s=>s.TuningDetail)));
       }
 
       return query;
