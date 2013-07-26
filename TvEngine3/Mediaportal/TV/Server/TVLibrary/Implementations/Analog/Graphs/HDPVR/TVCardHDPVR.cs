@@ -651,8 +651,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
                   _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(CaptureVideoSource.Composite3, i);
-                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Composite3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Svideo3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo3, relatedPinIndex);
                   break;
               }
               break;
@@ -669,8 +669,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
                   _videoPinRelatedAudioMap.Add(CaptureVideoSource.Rgb2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(CaptureVideoSource.Svideo3, i);
-                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Rgb3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Rgb3, relatedPinIndex);
                   break;
               }
               break;
