@@ -557,4 +557,158 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// </summary>
     TerrestrialMask = 0x0044703c
   }
+
+  /// <summary>
+  /// Capture video sources.
+  /// </summary>
+  public enum CaptureVideoSource
+  {
+    /// <summary>
+    /// No video.
+    /// </summary>
+    None = -1,
+    /// <summary>
+    /// Tuner.
+    /// </summary>
+    Tuner,
+    /// <summary>
+    /// Composite (CVBS) input #1.
+    /// </summary>
+    [Description("Composite #1")]
+    Composite1,
+    /// <summary>
+    /// Composite (CVBS) input #2.
+    /// </summary>
+    [Description("Composite #2")]
+    Composite2,
+    /// <summary>
+    /// Composite (CVBS) input #3.
+    /// </summary>
+    [Description("Composite #3")]
+    Composite3,
+    /// <summary>
+    /// S-video input #1.
+    /// </summary>
+    [Description("S-video #1")]
+    Svideo1,
+    /// <summary>
+    /// S-video input #2.
+    /// </summary>
+    [Description("S-video #2")]
+    Svideo2,
+    /// <summary>
+    /// S-video input #3.
+    /// </summary>
+    [Description("S-video #3")]
+    Svideo3,
+    /// <summary>
+    /// RGB input #1.
+    /// </summary>
+    [Description("RGB #1")]
+    Rgb1,
+    /// <summary>
+    /// RGB input #2.
+    /// </summary>
+    [Description("RGB #2")]
+    Rgb2,
+    /// <summary>
+    /// RGB input #3.
+    /// </summary>
+    [Description("RGB #3")]
+    Rgb3,
+    /// <summary>
+    /// YrYbY input #1.
+    /// </summary>
+    [Description("YrYbY #1")]
+    Yryby1,
+    /// <summary>
+    /// YrYbY input #2.
+    /// </summary>
+    [Description("YrYbY #2")]
+    Yryby2,
+    /// <summary>
+    /// YrYbY input #3.
+    /// </summary>
+    [Description("YrYbY #3")]
+    Yryby3,
+    /// <summary>
+    /// HDMI input #1.
+    /// </summary>
+    [Description("HDMI #1")]
+    Hdmi1,
+    /// <summary>
+    /// HDMI input #2.
+    /// </summary>
+    [Description("HDMI #2")]
+    Hdmi2,
+    /// <summary>
+    /// HDMI input #3.
+    /// </summary>
+    [Description("HDMI #3")]
+    Hdmi3
+  }
+
+  /// <summary>
+  /// Audio input type.
+  /// </summary>
+  public enum CaptureAudioSource
+  {
+    /// <summary>
+    /// No audio.
+    /// </summary>
+    None = -1,
+    /// <summary>
+    /// Automatic (detection based on related pin index reported by the driver).
+    /// </summary>
+    Automatic,
+    /// <summary>
+    /// Tuner.
+    /// </summary>
+    Tuner,
+    /// <summary>
+    /// Auxiliary input #1.
+    /// </summary>
+    [Description("Auxiliary #1")]
+    Auxiliary1,
+    /// <summary>
+    /// Auxiliary input #2.
+    /// </summary>
+    [Description("Auxiliary #2")]
+    Auxiliary2,
+    /// <summary>
+    /// Auxiliary input #3.
+    /// </summary>
+    [Description("Auxiliary #3")]
+    Auxiliary3,
+    /// <summary>
+    /// Line input #1.
+    /// </summary>
+    [Description("Line #1")]
+    Line1,
+    /// <summary>
+    /// Line input #2.
+    /// </summary>
+    [Description("Line #2")]
+    Line2,
+    /// <summary>
+    /// Line input #3.
+    /// </summary>
+    [Description("Line #3")]
+    Line3,
+    /// <summary>
+    /// S/PDIF input #1.
+    /// </summary>
+    [Description("S/PDIF #1")]
+    Spdif1,
+    /// <summary>
+    /// S/PDIF input #2.
+    /// </summary>
+    [Description("S/PDIF #2")]
+    Spdif2,
+    /// <summary>
+    /// S/PDIF input #3.
+    /// </summary>
+    [Description("S/PDIF #3")]
+    Spdif3
+  }
 }

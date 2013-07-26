@@ -138,7 +138,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
           {
             case 0:
               channelType = "Analog";
-              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              if (detail.VideoSource == (int)CaptureVideoSource.Tuner)
               {
                 frequency = detail.Frequency;
                 frequency /= 1000000.0f;

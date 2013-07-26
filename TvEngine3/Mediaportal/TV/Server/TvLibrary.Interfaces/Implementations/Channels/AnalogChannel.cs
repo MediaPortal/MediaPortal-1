@@ -33,132 +33,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
   [DataContract]
   public class AnalogChannel : IChannel
   {
-    #region enums
-
-    /// <summary>
-    /// Video input type.
-    /// </summary>
-    public enum VideoInputType
-    {
-      /// <summary>
-      /// Tuner input
-      /// </summary>
-      Tuner,
-      /// <summary>
-      /// CVBS input #1
-      /// </summary>
-      VideoInput1,
-      /// <summary>
-      /// CVBS input #2
-      /// </summary>
-      VideoInput2,
-      /// <summary>
-      /// CVBS input #3
-      /// </summary>
-      VideoInput3,
-      /// <summary>
-      /// SVHS input #1
-      /// </summary>
-      SvhsInput1,
-      /// <summary>
-      /// SVHS input #2
-      /// </summary>
-      SvhsInput2,
-      /// <summary>
-      /// SVHS input #3
-      /// </summary>
-      SvhsInput3,
-      /// <summary>
-      /// RGB input #1
-      /// </summary>
-      RgbInput1,
-      /// <summary>
-      /// RGB input #2
-      /// </summary>
-      RgbInput2,
-      /// <summary>
-      /// RGB input #3
-      /// </summary>
-      RgbInput3,
-      /// <summary>
-      /// RGB input #1
-      /// </summary>
-      YRYBYInput1,
-      /// <summary>
-      /// RGB input #2
-      /// </summary>
-      YRYBYInput2,
-      /// <summary>
-      /// RGB input #3
-      /// </summary>
-      YRYBYInput3,
-      /// <summary>
-      /// HDMI input #1
-      /// </summary>
-      HdmiInput1,
-      /// <summary>
-      /// HDMI input #2
-      /// </summary>
-      HdmiInput2,
-      /// <summary>
-      /// HDMI input #3
-      /// </summary>
-      HdmiInput3
-    }
-
-    /// <summary>
-    /// Audio input type.
-    /// </summary>
-    public enum AudioInputType
-    {
-      /// <summary>
-      /// Automatic detection based on related pin index
-      /// </summary>
-      Automatic,
-      /// <summary>
-      /// Tuner input
-      /// </summary>
-      Tuner,
-      /// <summary>
-      /// AUX input #1
-      /// </summary>
-      AUXInput1,
-      /// <summary>
-      /// AUX input #2
-      /// </summary>
-      AUXInput2,
-      /// <summary>
-      /// AUX input #3
-      /// </summary>
-      AUXInput3,
-      /// <summary>
-      /// Line input #1
-      /// </summary>
-      LineInput1,
-      /// <summary>
-      /// Line input #2
-      /// </summary>
-      LineInput2,
-      /// <summary>
-      /// Line input #3
-      /// </summary>
-      LineInput3,
-      /// <summary>
-      /// SPDIF input #1
-      /// </summary>
-      SPDIFInput1,
-      /// <summary>
-      /// SPDIF input #2
-      /// </summary>
-      SPDIFInput2,
-      /// <summary>
-      /// SPDIF input #3
-      /// </summary>
-      SPDIFInput3
-    }
-
-    #endregion
-
     #region variables
 
     [DataMember]
@@ -177,10 +51,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     private TunerInputType _tunerSource = TunerInputType.Cable;
 
     [DataMember]
-    private VideoInputType _videoInputType = VideoInputType.Tuner;
+    private CaptureVideoSource _videoInputType = CaptureVideoSource.Tuner;
 
     [DataMember]
-    private AudioInputType _audioInputType = AudioInputType.Tuner;
+    private CaptureAudioSource _audioInputType = CaptureAudioSource.Tuner;
 
     [DataMember]
     private bool _isVcrSignal;
@@ -206,8 +80,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       CountryCollection collection = new CountryCollection();
       _country = collection.GetTunerCountryFromID(31);  // The Netherlands.
       _tunerSource = TunerInputType.Cable;
-      _videoInputType = VideoInputType.Tuner;
-      _audioInputType = AudioInputType.Tuner;
+      _videoInputType = CaptureVideoSource.Tuner;
+      _audioInputType = CaptureAudioSource.Tuner;
       _isVcrSignal = false;
       _mediaType = MediaTypeEnum.TV;
       _freeToAir = true;
@@ -287,7 +161,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set the channel video input or source.
     /// </summary>
-    public VideoInputType VideoSource
+    public CaptureVideoSource VideoSource
     {
       get { return _videoInputType; }
       set { _videoInputType = value; }
@@ -296,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set the channel audio input or source.
     /// </summary>
-    public AudioInputType AudioSource
+    public CaptureAudioSource AudioSource
     {
       get { return _audioInputType; }
       set { _audioInputType = value; }

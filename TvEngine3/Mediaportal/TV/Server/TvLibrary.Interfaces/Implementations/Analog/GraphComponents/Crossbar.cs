@@ -50,17 +50,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
     /// <summary>
     /// Mapping of the available video sources and their pin index
     /// </summary>
-    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinMap;
+    private Dictionary<CaptureVideoSource, int> _videoPinMap;
 
     /// <summary>
     /// Mapping of the available video source to the related audio pin index
     /// </summary>
-    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinRelatedAudioMap;
+    private Dictionary<CaptureVideoSource, int> _videoPinRelatedAudioMap;
 
     /// <summary>
     /// Mapping of the available audio source and their pin index
     /// </summary>
-    private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
+    private Dictionary<CaptureAudioSource, int> _audioPinMap;
 
     #endregion
 
@@ -83,10 +83,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
     public static Crossbar CreateInstance(XmlNode xmlNode)
     {
       Crossbar crossbar = new Crossbar();
-      Dictionary<AnalogChannel.VideoInputType, int> videoPinMap = new Dictionary<AnalogChannel.VideoInputType, int>();
-      Dictionary<AnalogChannel.VideoInputType, int> videoPinRelatedAudioMap =
-        new Dictionary<AnalogChannel.VideoInputType, int>();
-      Dictionary<AnalogChannel.AudioInputType, int> audioPinMap = new Dictionary<AnalogChannel.AudioInputType, int>();
+      Dictionary<CaptureVideoSource, int> videoPinMap = new Dictionary<CaptureVideoSource, int>();
+      Dictionary<CaptureVideoSource, int> videoPinRelatedAudioMap =
+        new Dictionary<CaptureVideoSource, int>();
+      Dictionary<CaptureAudioSource, int> audioPinMap = new Dictionary<CaptureAudioSource, int>();
       crossbar.AudioPinMap = audioPinMap;
       crossbar.VideoPinMap = videoPinMap;
       crossbar.VideoPinRelatedAudioMap = videoPinRelatedAudioMap;
@@ -106,8 +106,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
           {
             foreach (XmlNode pin in videoPinList)
             {
-              AnalogChannel.VideoInputType type =
-                (AnalogChannel.VideoInputType)Int32.Parse(pin.Attributes["type"].Value);
+              CaptureVideoSource type =
+                (CaptureVideoSource)Int32.Parse(pin.Attributes["type"].Value);
               int index = Int32.Parse(pin.Attributes["index"].Value);
               int related = Int32.Parse(pin.Attributes["related"].Value);
               videoPinMap.Add(type, index);
@@ -118,8 +118,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
           {
             foreach (XmlNode pin in audioPinList)
             {
-              AnalogChannel.AudioInputType type =
-                (AnalogChannel.AudioInputType)Int32.Parse(pin.Attributes["type"].Value);
+              CaptureAudioSource type =
+                (CaptureAudioSource)Int32.Parse(pin.Attributes["type"].Value);
               int index = Int32.Parse(pin.Attributes["index"].Value);
               audioPinMap.Add(type, index);
             }
@@ -148,7 +148,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
       writer.WriteElementString("name", _name ?? "");
       writer.WriteElementString("videoOut", _videoOut.ToString());
       writer.WriteElementString("audioOut", _audioOut.ToString());
-      foreach (AnalogChannel.VideoInputType type in _videoPinMap.Keys)
+      foreach (CaptureVideoSource type in _videoPinMap.Keys)
       {
         writer.WriteStartElement("videoPin"); //<videoPin>
         writer.WriteAttributeString("type", ((Int32)type).ToString());
@@ -156,7 +156,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
         writer.WriteAttributeString("related", _videoPinRelatedAudioMap[type].ToString());
         writer.WriteEndElement(); //<</videoPin>
       }
-      foreach (AnalogChannel.AudioInputType type in _audioPinMap.Keys)
+      foreach (CaptureAudioSource type in _audioPinMap.Keys)
       {
         writer.WriteStartElement("audioPin"); //<audioPin>
         writer.WriteAttributeString("type", ((Int32)type).ToString());
@@ -200,7 +200,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
     /// <summary>
     /// Map of the available video input pins
     /// </summary>
-    public Dictionary<AnalogChannel.VideoInputType, int> VideoPinMap
+    public Dictionary<CaptureVideoSource, int> VideoPinMap
     {
       get { return _videoPinMap; }
       set { _videoPinMap = value; }
@@ -209,7 +209,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
     /// <summary>
     /// Map of the related audio pins for the available video input pins
     /// </summary>
-    public Dictionary<AnalogChannel.VideoInputType, int> VideoPinRelatedAudioMap
+    public Dictionary<CaptureVideoSource, int> VideoPinRelatedAudioMap
     {
       get { return _videoPinRelatedAudioMap; }
       set { _videoPinRelatedAudioMap = value; }
@@ -218,7 +218,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog.Grap
     /// <summary>
     /// Map of the available audio input pins
     /// </summary>
-    public Dictionary<AnalogChannel.AudioInputType, int> AudioPinMap
+    public Dictionary<CaptureAudioSource, int> AudioPinMap
     {
       get { return _audioPinMap; }
       set { _audioPinMap = value; }

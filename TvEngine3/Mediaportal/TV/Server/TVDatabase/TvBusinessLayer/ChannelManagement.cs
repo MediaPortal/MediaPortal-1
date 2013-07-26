@@ -357,8 +357,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           analogChannel.MediaType = (MediaTypeEnum)detail.MediaType;
           analogChannel.Name = detail.Name;
           analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
-          analogChannel.VideoSource = (AnalogChannel.VideoInputType)detail.VideoSource;
-          analogChannel.AudioSource = (AnalogChannel.AudioInputType)detail.AudioSource;
+          analogChannel.VideoSource = (CaptureVideoSource)detail.VideoSource;
+          analogChannel.AudioSource = (CaptureAudioSource)detail.AudioSource;
           return analogChannel;
         case 1: //ATSCChannel
           ATSCChannel atscChannel = new ATSCChannel();

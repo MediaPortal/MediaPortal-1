@@ -61,17 +61,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
     /// <summary>
     /// The mapping of the video input sources to their pin index
     /// </summary>
-    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinMap;
+    private Dictionary<CaptureVideoSource, int> _videoPinMap;
 
     /// <summary>
     /// The mapping of the video input sources to their related audio pin index
     /// </summary>
-    private Dictionary<AnalogChannel.VideoInputType, int> _videoPinRelatedAudioMap;
+    private Dictionary<CaptureVideoSource, int> _videoPinRelatedAudioMap;
 
     /// <summary>
     /// The mapping of the audio input sources to their pin index
     /// </summary>
-    private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
+    private Dictionary<CaptureAudioSource, int> _audioPinMap;
 
     private int _videoOutPinIndex;
     private int _audioOutPinIndex;
@@ -502,7 +502,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         }
 
         // Automatic Audio
-        if (analogChannel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+        if (analogChannel.AudioSource == CaptureAudioSource.Automatic)
         {
           if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
           {
@@ -514,7 +514,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
 
       // Audio
       if ((_currentTuningDetail == null || currentChannel.AudioSource != analogChannel.AudioSource) &&
-        analogChannel.AudioSource != AnalogChannel.AudioInputType.Automatic &&
+        analogChannel.AudioSource != CaptureAudioSource.Automatic &&
         _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
         this.LogDebug("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
@@ -536,9 +536,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
         crossBarFilter.get_PinCounts(out outputs, out inputs);
         _videoOutPinIndex = -1;
         _audioOutPinIndex = -1;
-        _videoPinMap = new Dictionary<AnalogChannel.VideoInputType, int>();
-        _audioPinMap = new Dictionary<AnalogChannel.AudioInputType, int>();
-        _videoPinRelatedAudioMap = new Dictionary<AnalogChannel.VideoInputType, int>();
+        _videoPinMap = new Dictionary<CaptureVideoSource, int>();
+        _audioPinMap = new Dictionary<CaptureAudioSource, int>();
+        _videoPinRelatedAudioMap = new Dictionary<CaptureVideoSource, int>();
         int relatedPinIndex;
         PhysicalConnectorType connectorType;
         for (int i = 0; i < outputs; ++i)
@@ -569,24 +569,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
           switch (connectorType)
           {
             case PhysicalConnectorType.Audio_Tuner:
-              _audioPinMap.Add(AnalogChannel.AudioInputType.Tuner, i);
+              _audioPinMap.Add(CaptureAudioSource.Tuner, i);
               break;
             case PhysicalConnectorType.Video_Tuner:
-              _videoPinMap.Add(AnalogChannel.VideoInputType.Tuner, i);
-              _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.Tuner, relatedPinIndex);
+              _videoPinMap.Add(CaptureVideoSource.Tuner, i);
+              _videoPinRelatedAudioMap.Add(CaptureVideoSource.Tuner, relatedPinIndex);
               break;
             case PhysicalConnectorType.Audio_Line:
               audioLine++;
               switch (audioLine)
               {
                 case 1:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput1, i);
+                  _audioPinMap.Add(CaptureAudioSource.Line1, i);
                   break;
                 case 2:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput2, i);
+                  _audioPinMap.Add(CaptureAudioSource.Line2, i);
                   break;
                 case 3:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.LineInput3, i);
+                  _audioPinMap.Add(CaptureAudioSource.Line3, i);
                   break;
               }
               break;
@@ -595,13 +595,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (audioSPDIF)
               {
                 case 1:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput1, i);
+                  _audioPinMap.Add(CaptureAudioSource.Spdif1, i);
                   break;
                 case 2:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput2, i);
+                  _audioPinMap.Add(CaptureAudioSource.Spdif2, i);
                   break;
                 case 3:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.SPDIFInput3, i);
+                  _audioPinMap.Add(CaptureAudioSource.Spdif3, i);
                   break;
               }
               break;
@@ -610,13 +610,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (audioAux)
               {
                 case 1:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput1, i);
+                  _audioPinMap.Add(CaptureAudioSource.Auxiliary1, i);
                   break;
                 case 2:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput2, i);
+                  _audioPinMap.Add(CaptureAudioSource.Auxiliary2, i);
                   break;
                 case 3:
-                  _audioPinMap.Add(AnalogChannel.AudioInputType.AUXInput3, i);
+                  _audioPinMap.Add(CaptureAudioSource.Auxiliary3, i);
                   break;
               }
               break;
@@ -625,16 +625,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (videoCvbsNr)
               {
                 case 1:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput1, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput1, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Composite1, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Composite1, relatedPinIndex);
                   break;
                 case 2:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput2, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput2, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Composite2, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Composite2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Composite3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Composite3, relatedPinIndex);
                   break;
               }
               break;
@@ -643,16 +643,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (videoSvhsNr)
               {
                 case 1:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput1, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput1, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Svideo1, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo1, relatedPinIndex);
                   break;
                 case 2:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput2, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput2, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Svideo2, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Composite3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Composite3, relatedPinIndex);
                   break;
               }
               break;
@@ -661,16 +661,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (videoRgbNr)
               {
                 case 1:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput1, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput1, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Rgb1, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Rgb1, relatedPinIndex);
                   break;
                 case 2:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput2, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput2, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Rgb2, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Rgb2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Svideo3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Svideo3, relatedPinIndex);
                   break;
               }
               break;
@@ -679,16 +679,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (videoYrYbYNr)
               {
                 case 1:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput1, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput1, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Yryby1, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Yryby1, relatedPinIndex);
                   break;
                 case 2:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput2, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput2, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Yryby2, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Yryby2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Yryby3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Yryby3, relatedPinIndex);
                   break;
               }
               break;
@@ -697,16 +697,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.HDPVR
               switch (videoHdmiNr)
               {
                 case 1:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput1, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput1, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Hdmi1, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Hdmi1, relatedPinIndex);
                   break;
                 case 2:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput2, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput2, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Hdmi2, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Hdmi2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput3, relatedPinIndex);
+                  _videoPinMap.Add(CaptureVideoSource.Hdmi3, i);
+                  _videoPinRelatedAudioMap.Add(CaptureVideoSource.Hdmi3, relatedPinIndex);
                   break;
               }
               break;
