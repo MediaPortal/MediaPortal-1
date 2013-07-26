@@ -910,6 +910,36 @@ namespace DirectShowLib
       }*/
     }
   }
+
+  /// <summary>
+  /// A collection of utility methods for dealing with device paths.
+  /// </summary>
+  public class DevicePathUtils
+  {
+    /// <summary>
+    /// Extract the device identifier section from a device path.
+    /// </summary>
+    /// <remarks>
+    /// For example...
+    /// device path = @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
+    /// device identifier = 4&1215b326&0&0018
+    /// </remarks>
+    /// <param name="devicePath">The device path to analyse.</param>
+    /// <returns>the device identifier if successful, otherwise <c>null</c></returns>
+    public static string ExtractDeviceIdentifier(string devicePath)
+    {
+      if (devicePath == null)
+      {
+        return null;
+      }
+      string[] sections = devicePath.Split('#');
+      if (sections.Length != 4)
+      {
+        return null;
+      }
+      return sections[2];
+    }
+  }
 }
 
 namespace DirectShowLib.BDA
