@@ -212,26 +212,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     }
 
     /// <summary>
-    /// returns the minium channel numbers for analog cards
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>minium channel number</returns>
-    public int MinChannel(int cardId)
-    {
-      return Service.MinChannel(cardId);
-    }
-
-    /// <summary>
-    /// returns the maximum channel numbers for analog cards
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>maximum channel number</returns>
-    public int MaxChannel(int cardId)
-    {
-      return Service.MaxChannel(cardId);
-    }
-
-    /// <summary>
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>

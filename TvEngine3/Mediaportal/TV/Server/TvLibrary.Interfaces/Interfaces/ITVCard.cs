@@ -95,17 +95,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     void Stop();
 
     /// <summary>
-    /// returns the min. channel number for analog cards
-    /// </summary>
-    int MinChannel { get; }
-
-    /// <summary>
-    /// returns the max. channel number for analog cards
-    /// </summary>
-    /// <value>The max channel.</value>
-    int MaxChannel { get; }
-
-    /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>

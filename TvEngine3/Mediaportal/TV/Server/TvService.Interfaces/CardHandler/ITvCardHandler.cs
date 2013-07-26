@@ -52,8 +52,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     bool TunerLocked { get; }
     int SignalQuality { get; }
     int SignalLevel { get; }
-    int MinChannel { get; }
-    int MaxChannel { get; }
 
     IChannel CurrentChannel(string userName, int idChannel);
     int CurrentDbChannel(string userName);

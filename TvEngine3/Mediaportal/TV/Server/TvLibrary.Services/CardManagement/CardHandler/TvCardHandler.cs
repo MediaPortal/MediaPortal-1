@@ -409,63 +409,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
       }
     }
 
-
-    /// <summary>
-    /// returns the min/max channel numbers for analog cards
-    /// </summary>
-    public int MinChannel
-    {
-      get
-      {
-        try
-        {
-          if (_dbsCard.Enabled == false)
-          {
-            return 0;
-          }
-          
-          return _card.MinChannel;
-        }
-        catch (ThreadAbortException)
-        {
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return 0;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Gets the max channel to which we can tune.
-    /// </summary>
-    /// <value>The max channel.</value>
-    public int MaxChannel
-    {
-      get
-      {
-        try
-        {
-          if (_dbsCard.Enabled == false)
-          {
-            return 0;
-          }
-          return _card.MaxChannel;
-        }
-        catch (ThreadAbortException)
-        {
-          return 0;
-        }
-        catch (Exception ex)
-        {
-          this.LogError(ex);
-          return 0;
-        }
-      }
-    }
-
     private static ScanParameters Settings
     {
       get

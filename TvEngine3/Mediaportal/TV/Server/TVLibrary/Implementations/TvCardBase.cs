@@ -413,42 +413,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       return _name;
     }
 
-    #region tuning range properties
-
-    /// <summary>
-    /// Get the minimum channel number that the device is capable of tuning (only applicable for analog
-    /// tuners - should be removed if possible).
-    /// </summary>
-    /// <value>
-    /// <c>-1</c> if the property is not applicable, otherwise the minimum channel number that the device
-    /// is capable of tuning
-    /// </value>
-    public int MinChannel
-    {
-      get
-      {
-        return -1;
-      }
-    }
-
-    /// <summary>
-    /// Get the maximum channel number that the device is capable of tuning (only applicable for analog
-    /// tuners - should be removed if possible).
-    /// </summary>
-    /// <value>
-    /// <c>-1</c> if the property is not applicable, otherwise the maximum channel number that the device
-    /// is capable of tuning
-    /// </value>
-    public int MaxChannel
-    {
-      get
-      {
-        return -1;
-      }
-    }
-
-    #endregion
-
     #region conditional access properties
 
     /// <summary>

@@ -262,24 +262,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// returns the min. channel number for analog cards
-    /// </summary>
-    /// <value></value>
-    public int MinChannel
-    {
-      get { return _internalCard.MinChannel; }
-    }
-
-    /// <summary>
-    /// returns the max. channel number for analog cards
-    /// </summary>
-    /// <value>The max channel.</value>
-    public int MaxChannel
-    {
-      get { return _internalCard.MaxChannel; }
-    }
-
-    /// <summary>
     /// Gets or sets the type of the cam.
     /// </summary>
     /// <value>The type of the cam.</value>

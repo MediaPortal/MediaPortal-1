@@ -883,8 +883,10 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);
           ReCheckSettings();
         }
-        int minChannel = ServiceAgents.Instance.ControllerServiceAgent.MinChannel(_cardNumber);
-        int maxChannel = ServiceAgents.Instance.ControllerServiceAgent.MaxChannel(_cardNumber);
+
+        // TODO these are meant to be the channel range associated with each country.
+        int minChannel = 1;
+        int maxChannel = 150;
         if (maxChannel <= 0)
         {
           maxChannel = mpComboBoxSource.SelectedIndex == 0 ? 69 : 125;

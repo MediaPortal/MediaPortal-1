@@ -48,16 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     private IBaseFilter _filterTvTuner;
 
     /// <summary>
-    /// The current minimum channel number
-    /// </summary>
-    private int _minChannel;
-
-    /// <summary>
-    /// The current maximum channel number
-    /// </summary>
-    private int _maxChannel;
-
-    /// <summary>
     /// Indicates if the tuner supports FM radio
     /// </summary>
     private bool _supportsFMRadio;
@@ -189,22 +179,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
     public bool SupportsFMRadio
     {
       get { return _supportsFMRadio; }
-    }
-
-    /// <summary>
-    /// Gets the current maximum channel number
-    /// </summary>
-    public int MaxChannel
-    {
-      get { return _maxChannel; }
-    }
-
-    /// <summary>
-    /// Gets the current minimum channel number
-    /// </summary>
-    public int MinChannel
-    {
-      get { return _minChannel; }
     }
 
     #endregion
@@ -371,7 +345,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
         this.LogDebug("");
         return false;
       }
-      UpdateMinMaxChannel();
 
       AMTunerModeType tunerModes;
       _tuner.GetAvailableModes(out tunerModes);
@@ -391,22 +364,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       }
 
       return true;
-    }
-
-    /// <summary>
-    /// Updates the min and max channels
-    /// </summary>
-    private void UpdateMinMaxChannel()
-    {
-      if (_tuner != null)
-      {
-        _tuner.ChannelMinMax(out _minChannel, out _maxChannel);
-      }
-      else
-      {
-        _minChannel = 0;
-        _maxChannel = 128;
-      }
     }
 
     #endregion
@@ -550,7 +507,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Components
       _tunerLocked = false;
       _currentChannel = analogChannel;
       UpdateSignalQuality();
-      UpdateMinMaxChannel();
       this.LogDebug("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
                         _videoFrequency, _audioFrequency, _tunerLocked);
     }

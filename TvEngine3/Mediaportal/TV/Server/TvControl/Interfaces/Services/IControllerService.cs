@@ -184,22 +184,6 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     IChannel[] ScanNIT(int cardId, IChannel channel);
 
     /// <summary>
-    /// returns the minium channel numbers for analog cards
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>minium channel number</returns>
-    [OperationContract]
-    int MinChannel(int cardId);
-
-    /// <summary>
-    /// returns the maximum channel numbers for analog cards
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>maximum channel number</returns>
-    [OperationContract]
-    int MaxChannel(int cardId);
-
-    /// <summary>
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>

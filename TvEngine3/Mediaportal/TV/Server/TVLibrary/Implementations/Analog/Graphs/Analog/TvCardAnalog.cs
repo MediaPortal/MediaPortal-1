@@ -62,9 +62,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     private IBaseFilter _tsFileSink;
     private IQuality _qualityControl;
     private Configuration _configuration;
-    // Maximum and minimum channel numbers that the tuner is physically capable of tuning to.
-    private int _minChannel = -1;
-    private int _maxChannel = -1;
 
     #endregion
 
@@ -77,8 +74,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     public TvCardAnalog(DsDevice device)
       : base(device)
     {
-      _minChannel = 0;
-      _maxChannel = 128;
       _tunerType = CardType.Analog;
       _configuration = Configuration.readConfiguration(_cardId, _name, DevicePath);
       Configuration.writeConfiguration(_configuration);
@@ -319,8 +314,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
       {
         throw new TvException("Analog: unable to add tv tuner filter");
       }
-      _minChannel = _tuner.MinChannel;
-      _maxChannel = _tuner.MaxChannel;
       //add the wdm crossbar device and connect tvtuner->crossbar
       _crossbar = new Components.Crossbar();
       if (!_crossbar.CreateFilterInstance(graph, _graph, _tuner))
@@ -441,8 +434,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog
     {
       AnalogChannel analogChannel = channel as AnalogChannel;
       _tuner.PerformTune(analogChannel);
-      _minChannel = _tuner.MinChannel;
-      _maxChannel = _tuner.MaxChannel;
       _crossbar.PerformTune(analogChannel);
       _capture.PerformTune(analogChannel);
     }

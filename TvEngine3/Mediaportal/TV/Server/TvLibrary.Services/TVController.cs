@@ -1752,44 +1752,6 @@ namespace Mediaportal.TV.Server.TVLibrary
     }
 
     /// <summary>
-    /// returns the min/max channel numbers for analog cards
-    /// </summary>
-    public int MinChannel(int cardId)
-    {
-      int minChannel = 0;
-      try
-      {
-        if (ValidateTvControllerParams(cardId))
-        {
-          minChannel = _cards[cardId].MinChannel; 
-        }        
-      }
-      catch (Exception e)
-      {
-        HandleControllerException(e);
-      }
-      return minChannel;
-    }
-
-    public int MaxChannel(int cardId)
-    {
-      int maxChannel = 0;
-      try
-      {
-        if (ValidateTvControllerParams(cardId))
-        {
-          maxChannel = _cards[cardId].MaxChannel; 
-        }        
-      }
-      catch (Exception e)
-      {
-        HandleControllerException(e);
-      }      
-      return maxChannel;        
-    }
-
-
-    /// <summary>
     /// Gets the number of channels decrypting.
     /// </summary>
     /// <param name="cardId">The card id.</param>
