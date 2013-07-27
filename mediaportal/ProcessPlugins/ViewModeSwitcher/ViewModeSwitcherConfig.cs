@@ -124,7 +124,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
     }
 
-
     private void bOK_Click(object sender, EventArgs e)
     {
       SaveSettings();
@@ -186,7 +185,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       try
       {
-        Process.Start("http://forum.team-mediaportal.com/threads/viewmodeswitcher-for-1-4-0.119781/", "");
+        Process.Start("http://wiki.team-mediaportal.com/1_MEDIAPORTAL_1/141_Configuration/MediaPortal_Configuration/95_Plugins/ViewModeSwitcher", "");
       }
       catch (Exception ex)
       {
@@ -274,6 +273,16 @@ namespace ProcessPlugins.ViewModeSwitcher
       else
       {
         RefreshFormComponents(); // refresh the form
+      }
+    }
+
+    private void dg_RuleSets_CellContentClick(object sender, DataGridViewCellEventArgs e)
+    {
+      if (e.ColumnIndex == 0 && e.RowIndex >= 0)
+      {
+        bool isChecked = currentSettings.ViewModeRules[e.RowIndex].Enabled;         
+        currentSettings.ViewModeRules[e.RowIndex].Enabled = !isChecked;
+        dg_RuleSets[0, e.RowIndex].Value = !isChecked;
       }
     }   
     

@@ -50,6 +50,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
             this.cbEnabled = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -79,8 +81,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.cbMaxCropEnabled = new System.Windows.Forms.CheckBox();
             this.bOK = new System.Windows.Forms.Button();
             this.bCancel = new System.Windows.Forms.Button();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -133,6 +133,24 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.groupBox1.Size = new System.Drawing.Size(390, 260);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(341, 136);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(33, 13);
+            this.label16.TabIndex = 30;
+            this.label16.Text = "pixels";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(341, 110);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(33, 13);
+            this.label15.TabIndex = 29;
+            this.label15.Text = "pixels";
             // 
             // label14
             // 
@@ -388,7 +406,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             // 
             this.bOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bOK.Location = new System.Drawing.Point(370, 278);
+            this.bOK.Location = new System.Drawing.Point(309, 278);
             this.bOK.Name = "bOK";
             this.bOK.Size = new System.Drawing.Size(36, 23);
             this.bOK.TabIndex = 1;
@@ -400,7 +418,7 @@ namespace ProcessPlugins.ViewModeSwitcher
             // 
             this.bCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bCancel.Location = new System.Drawing.Point(316, 278);
+            this.bCancel.Location = new System.Drawing.Point(353, 278);
             this.bCancel.Name = "bCancel";
             this.bCancel.Size = new System.Drawing.Size(48, 23);
             this.bCancel.TabIndex = 0;
@@ -408,28 +426,11 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.bCancel.UseVisualStyleBackColor = true;
             this.bCancel.Click += new System.EventHandler(this.bCancel_Click);
             // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(341, 110);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(33, 13);
-            this.label15.TabIndex = 29;
-            this.label15.Text = "pixels";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(341, 136);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(33, 13);
-            this.label16.TabIndex = 30;
-            this.label16.Text = "pixels";
-            // 
             // ViewModeSwitcherRuleDetail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.bCancel;
             this.ClientSize = new System.Drawing.Size(418, 307);
             this.Controls.Add(this.bCancel);
             this.Controls.Add(this.bOK);
