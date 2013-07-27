@@ -1089,6 +1089,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.form = this;
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
+    GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -2871,27 +2872,71 @@ public class MediaPortalApp : D3D, IRender
       {
         _isRendering = true;
         Frames++;
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-        GUIGraphicsContext.DX9Device.BeginScene();
-        CreateStateBlock();
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        GUILayerManager.Render(timePassed);
-        RenderStats();
-        GUIGraphicsContext.DX9Device.EndScene();
+        lock (GUIGraphicsContext.RenderModeSwitch)
+        {
+            if (GUIGraphicsContext.BlankScreen || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
+            {
+                // clear the surface
+                GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+                GUIGraphicsContext.DX9Device.BeginScene();
+                CreateStateBlock();
+                GUIGraphicsContext.SetScalingResolution(0, 0, false);
+                // ask the layer manager to render all layers
+                GUILayerManager.Render(timePassed);
+                RenderStats();
+                GUIFontManager.Present();
+                GUIGraphicsContext.DX9Device.EndScene();
+                //d3ErrInvalidCallCounter = 0;
+                try
+                {
+                    // Show the frame on the primary surface.
+                    GUIGraphicsContext.DX9Device.Present(); //SLOW
+                }
+                catch (DeviceLostException ex)
+                {
+                    Log.Error("Main: Device lost - {0}", ex.ToString());
+                    if (!RefreshRateChanger.RefreshRateChangePending)
+                    {
+                        g_Player.Stop();
+                    }
+                    GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+                }
+            }
+            else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+            {
+                // 3D output either SBS or TAB
 
-        // show the frame on the primary surface.
-        try
-        {
-          GUIGraphicsContext.DX9Device.Present();
-        }
-        catch (DeviceLostException ex)
-        {
-          Log.Error("Main: Device lost - {0}", ex.ToString());
-          if (!RefreshRateChanger.RefreshRateChangePending)
-          {
-            g_Player.Stop();
-          }
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+                Surface old = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+                Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+                // create texture/surface for preparation for 3D output if they don't exist
+
+                if (GUIGraphicsContext.Auto3DTexture == null)
+                    GUIGraphicsContext.Auto3DTexture = new Texture(GUIGraphicsContext.DX9Device, backbuffer.Description.Width, backbuffer.Description.Height, 0, Usage.RenderTarget, backbuffer.Description.Format, Pool.Default);
+
+                if (GUIGraphicsContext.Auto3DSurface == null)
+                    GUIGraphicsContext.Auto3DSurface = GUIGraphicsContext.Auto3DTexture.GetSurfaceLevel(0);
+
+                if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+                {
+                    // left half
+                    PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft, timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface, new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+
+                    // right half
+                    PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight, timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface, new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+                }
+                else
+                {
+                    // upper half
+                    PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABTop, timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface, new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height / 2));
+
+                    // lower half
+                    PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABBottom, timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface, new Rectangle(0, backbuffer.Description.Height / 2, backbuffer.Description.Width, backbuffer.Description.Height / 2));
+                }
+
+                GUIGraphicsContext.DX9Device.Present();
+                backbuffer.Dispose();
+            }
         }
       }
       catch (DirectXException dex)
