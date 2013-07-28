@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include <map>
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #include "MultiSoundTouch.h"
 

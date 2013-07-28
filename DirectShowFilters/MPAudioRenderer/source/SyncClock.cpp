@@ -23,7 +23,7 @@
 #include "SyncClock.h"
 #include "TimeSource.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern void Log(const char* fmt, ...);
 

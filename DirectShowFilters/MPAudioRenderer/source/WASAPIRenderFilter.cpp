@@ -19,7 +19,7 @@
 #include "WASAPIRenderFilter.h"
 #include "TimeSource.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CWASAPIRenderFilter::CWASAPIRenderFilter(AudioRendererSettings* pSettings, CSyncClock* pClock) :
   m_pSettings(pSettings),

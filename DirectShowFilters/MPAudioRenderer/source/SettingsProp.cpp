@@ -17,7 +17,7 @@
 #include "SettingsProp.h"
 #include "resource.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern unsigned int gAllowedAC3bitrates[9];
 extern unsigned int gAllowedSampleRates[7];

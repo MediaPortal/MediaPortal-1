@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "ChannelMixer.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CChannelMixer::CChannelMixer(AudioRendererSettings* pSettings) :
   CBaseAudioSink(true),

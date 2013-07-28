@@ -18,7 +18,7 @@
 #include "ThreadDecouplingFilter.h"
 #include "Globals.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 HRESULT CThreadDecouplingFilter::EndOfStream()
 {

@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "SampleRateConverterFilter.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern unsigned int gAllowedSampleRates[7];
 

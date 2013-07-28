@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "QueuedAudioSink.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define END_OF_STREAM_FLUSH_TIMEOUT (5000)
 

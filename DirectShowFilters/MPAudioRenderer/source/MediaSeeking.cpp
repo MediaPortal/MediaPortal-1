@@ -20,7 +20,7 @@
 
 #include "MpAudioRenderer.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern void Log(const char* fmt, ...);
 

@@ -19,7 +19,7 @@
 
 #include <map>
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
   void CTimeStretchFilter::funcname(paramtype paramname) \

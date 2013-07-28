@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "BitDepthAdapter.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 // integer types
 typedef signed char      int8_t;

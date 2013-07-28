@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "SoundTouchEx.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 // conversion functions
 #define NOISE_COEFF   0.7f

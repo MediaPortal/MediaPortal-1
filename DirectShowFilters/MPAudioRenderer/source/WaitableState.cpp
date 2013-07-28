@@ -16,7 +16,7 @@
 
 #include "WaitableState.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CWaitableState::CWaitableState(void)
 {

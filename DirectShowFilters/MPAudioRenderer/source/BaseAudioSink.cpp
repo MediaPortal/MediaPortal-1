@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "BaseAudioSink.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease) : 
   m_bHandleSampleRelease(bHandleSampleRelease),

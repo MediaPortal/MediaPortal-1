@@ -20,7 +20,7 @@
 #include "Globals.h"
 #include "VolumeHandler.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CVolumeHandler::CVolumeHandler(LPUNKNOWN pUnk)
   : CBasicAudio(NAME("CBasicAudio"), pUnk)

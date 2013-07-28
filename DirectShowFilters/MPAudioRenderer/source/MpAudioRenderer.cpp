@@ -29,7 +29,7 @@
 #include "FilterApp.h"
 #include "TimeSource.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CFilterApp theApp;
 

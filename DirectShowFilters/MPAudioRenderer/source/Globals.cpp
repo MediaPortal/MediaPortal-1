@@ -18,7 +18,7 @@
 #include "Settings.h"
 #include "Globals.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 // List of speakers that should be handled as a pair
 SpeakerPair PairedSpeakers[] = {

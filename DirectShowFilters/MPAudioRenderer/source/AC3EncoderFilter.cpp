@@ -18,7 +18,7 @@
 #include "Globals.h"
 #include "AC3EncoderFilter.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 template<class T> inline T odd2even(T x)
 {

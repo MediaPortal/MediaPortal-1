@@ -20,7 +20,7 @@
 #include "WASAPIRenderer.h"
 #include "TimeSource.h"
 
-#include "alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 
