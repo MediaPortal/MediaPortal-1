@@ -193,7 +193,7 @@
     <None Include="source\BDReader.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\alloctracing.h" />
+    <ClInclude Include="..\shared\alloctracing.h" />
     <ClInclude Include="source\AudioPin.h" />
     <ClInclude Include="source\BDEventObserver.h" />
     <ClInclude Include="source\BDReader.h" />

@@ -21,7 +21,7 @@
 #include "StdAfx.h"
 #include "ChannelInfo.h"
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\alloctracing.h"
+#include "alloctracing.h"
 
 CChannelInfo::CChannelInfo(const CChannelInfo& info)
 {

@@ -7,7 +7,7 @@
 #include "WaitEvent.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CWaitEvent::CWaitEvent(LPSECURITY_ATTRIBUTES lpEventAttributes,BOOL bManualReset,BOOL bInitialState,LPCTSTR lpName)
 {

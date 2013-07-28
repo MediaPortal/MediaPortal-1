@@ -26,7 +26,7 @@
 using namespace std;
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)

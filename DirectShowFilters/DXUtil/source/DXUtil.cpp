@@ -22,7 +22,7 @@
 #include <strsafe.h>
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern "C" __declspec(dllexport) HRESULT __stdcall VideoSurfaceToRGBSurface(IDirect3DSurface9* source, IDirect3DSurface9* dest)
 {

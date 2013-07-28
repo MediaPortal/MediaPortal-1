@@ -7,7 +7,7 @@
 #include "MemoryBuffer.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
 

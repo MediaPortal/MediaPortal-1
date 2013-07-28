@@ -29,7 +29,7 @@
 #include "SeparableFilter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\..\alloctracing.h"
+#include "..\..\..\shared\alloctracing.h"
 
  #ifndef _MAX	/* avoid collision with common (nonconforming) macros */
   #define _MAX	(max)

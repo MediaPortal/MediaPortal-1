@@ -29,7 +29,7 @@
 #include "..\..\shared\adaptionfield.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 const double SEEKING_ACCURACY = (double)0.24; // 1/25 *6 (6 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 30;

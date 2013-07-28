@@ -35,7 +35,7 @@
 #include "h264nalu.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define NO_STREAM -1
 #define PACKET_GRANULARITY 80000

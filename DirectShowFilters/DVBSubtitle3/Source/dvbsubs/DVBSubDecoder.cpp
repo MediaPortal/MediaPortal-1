@@ -40,7 +40,7 @@
 #include "subtitle.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\..\alloctracing.h"
+#include "..\..\..\shared\alloctracing.h"
 
 page_t page;
 region_t regions[MAX_REGIONS];

@@ -26,7 +26,7 @@
 #include "mediaformats.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...);
 

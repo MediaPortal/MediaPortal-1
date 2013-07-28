@@ -35,7 +35,7 @@
 #include "..\..\shared\tsheader.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 void LogDebug(const char *fmt, ...) ;
 CPatParser::CPatParser(void)

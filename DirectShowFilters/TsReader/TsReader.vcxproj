@@ -195,7 +195,7 @@
     <None Include="source\TsReader.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\alloctracing.h" />
+    <ClInclude Include="..\shared\alloctracing.h" />
     <ClInclude Include="source\AudioPin.h" />
     <ClInclude Include="source\Buffer.h" />
     <ClInclude Include="source\DeMultiplexer.h" />

@@ -26,7 +26,7 @@
 #include "AEChannelInfo.h"
 #include <string.h>
 
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CAEChannelInfo::CAEChannelInfo()
 {

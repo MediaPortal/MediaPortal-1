@@ -28,7 +28,7 @@
 #include "AERemap.h"
 
 #include "..\source\Globals.h"
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 using namespace std;
 

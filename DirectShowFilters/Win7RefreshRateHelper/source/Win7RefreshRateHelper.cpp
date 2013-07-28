@@ -17,7 +17,7 @@
 #define _WIN32_WINNT 0x0601 
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #include "Win7RefreshRateHelper.h"
 

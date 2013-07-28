@@ -45,7 +45,7 @@
 #include <queue>
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 DWORD m_tGTStartTime = 0;
 

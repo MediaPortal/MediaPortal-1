@@ -24,7 +24,7 @@
 #include "H264Nalu.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 CH264Nalu::CH264Nalu()
 {

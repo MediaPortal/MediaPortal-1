@@ -24,7 +24,7 @@
 #include "version.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 
@@ -40,7 +40,7 @@ struct MYD3DVERTEX<0>
 #pragma pack(pop)
 
 // For more details for memory leak detection see the alloctracing.h header
-//#include "..\..\alloctracing.h"
+//#include "..\..\shared\alloctracing.h"
 
 
 StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* device):

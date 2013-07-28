@@ -40,7 +40,7 @@
 #include <cassert>
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+#include "..\..\shared\alloctracing.h"
 
 #define MAX_AUD_BUF_SIZE 1024
 #define MAX_VID_BUF_SIZE 640

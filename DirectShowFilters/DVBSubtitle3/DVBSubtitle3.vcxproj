@@ -194,7 +194,7 @@
     <None Include="Source\DVBSub3.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\alloctracing.h" />
+    <ClInclude Include="..\shared\alloctracing.h" />
     <ClInclude Include="source\DVBSub.h" />
     <ClInclude Include="source\dvbsubs\DVBSubDecoder.h" />
     <ClInclude Include="Source\IDVBSub.h" />

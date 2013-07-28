@@ -134,7 +134,7 @@
     <ClCompile Include="source\TimeSource.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\alloctracing.h" />
+    <ClInclude Include="..\shared\alloctracing.h" />
     <ClInclude Include="source\autoint.h" />
     <ClInclude Include="source\callback.h" />
     <ClInclude Include="source\dshowhelper.h" />
