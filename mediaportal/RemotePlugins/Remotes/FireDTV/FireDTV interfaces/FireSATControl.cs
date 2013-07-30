@@ -55,15 +55,6 @@ namespace MediaPortal.InputDevices.FireDTV
 
         // Look for Digital Everywhere's software which uses a hardcoded path
         string fullDllPath = Path.Combine(prgPath, @"FireDTV\Tools\FiresatApi.dll");
-        if (File.Exists(fullDllPath))
-        {
-          Log.Info("FireDTV: Using FiresatApi.dll located in FireDTV's install path {0}", fullDllPath);
-        }
-        else
-        {
-          Log.Info("FireDTV: FiresatApi.dll could not be found on your system!");
-          return;
-        }
 
         try
         {

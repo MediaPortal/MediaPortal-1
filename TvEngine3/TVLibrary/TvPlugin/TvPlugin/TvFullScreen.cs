@@ -1803,9 +1803,24 @@ namespace TvPlugin
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
         GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
+
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
