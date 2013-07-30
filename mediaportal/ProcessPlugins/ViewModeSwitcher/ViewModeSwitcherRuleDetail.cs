@@ -64,25 +64,27 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void bOK_Click(object sender, EventArgs e)
     {
-      currentRule.Enabled = cbEnabled.Checked;
-      currentRule.Name = txbName.Text;
-      currentRule.ARFrom = Math.Max(Math.Min(Convert.ToDouble(txbARFrom.Text), 20.0), -20.0);
-      currentRule.ARTo   = Math.Max(Math.Min(Convert.ToDouble(txbARTo.Text), 20.0), -20.0);
-      currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
-      currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
-      currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
-      currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
-
-      currentRule.AutoCrop = cbAutoCropEnabled.Checked;
-
-      String tmpViewMode = cmbViewMode.Text;
-
-      currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
-
-      currentRule.MaxCrop = cbMaxCropEnabled.Checked;
-      currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
-      currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
-
+      try {
+        currentRule.Enabled = cbEnabled.Checked;
+        currentRule.Name = txbName.Text;
+        currentRule.ARFrom = Math.Max(Math.Min(Convert.ToDouble(txbARFrom.Text), 20.0), -20.0);
+        currentRule.ARTo   = Math.Max(Math.Min(Convert.ToDouble(txbARTo.Text), 20.0), -20.0);
+        currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
+        currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
+        currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);
+        currentRule.MaxHeight = Convert.ToInt16(txbMaxHeight.Text);
+  
+        currentRule.AutoCrop = cbAutoCropEnabled.Checked;
+  
+        String tmpViewMode = cmbViewMode.Text;
+  
+        currentRule.ViewMode = ViewModeswitcherSettings.StringToViewMode(tmpViewMode);
+  
+        currentRule.MaxCrop = cbMaxCropEnabled.Checked;
+        currentRule.OverScan = Convert.ToInt16(txbOverScan.Text);
+        currentRule.EnableLBDetection = cb_EnableLBDetection.Checked;
+      } catch (Exception) {}
+  
       Close();
     }
 
@@ -100,72 +102,6 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         cbAutoCropEnabled.Checked = false;
       }
-    }
-    
-
-    private void cbMaxCropEnabled_CheckedChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label9_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txbOverScan_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label12_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label1_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label2_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txbMinHeight_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label3_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label4_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void label5_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txbMaxWidth_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txbMinWidth_TextChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txbMaxHeight_TextChanged(object sender, EventArgs e)
-    {
-
     }
   }
 }

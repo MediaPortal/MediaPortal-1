@@ -179,7 +179,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label12.Size = new System.Drawing.Size(243, 15);
             this.label12.TabIndex = 26;
             this.label12.Text = "...and it then applies these settings...";
-            this.label12.Click += new System.EventHandler(this.label12_Click);
             // 
             // label11
             // 
@@ -220,7 +219,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label9.Size = new System.Drawing.Size(33, 13);
             this.label9.TabIndex = 23;
             this.label9.Text = "pixels";
-            this.label9.Click += new System.EventHandler(this.label9_Click);
             // 
             // txbOverScan
             // 
@@ -228,7 +226,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.txbOverScan.Name = "txbOverScan";
             this.txbOverScan.Size = new System.Drawing.Size(63, 20);
             this.txbOverScan.TabIndex = 10;
-            this.txbOverScan.TextChanged += new System.EventHandler(this.txbOverScan_TextChanged);
             // 
             // cmbViewMode
             // 
@@ -286,7 +283,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.txbMaxHeight.Name = "txbMaxHeight";
             this.txbMaxHeight.Size = new System.Drawing.Size(58, 20);
             this.txbMaxHeight.TabIndex = 6;
-            this.txbMaxHeight.TextChanged += new System.EventHandler(this.txbMaxHeight_TextChanged);
             // 
             // label4
             // 
@@ -296,7 +292,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label4.Size = new System.Drawing.Size(16, 13);
             this.label4.TabIndex = 11;
             this.label4.Text = "to";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // txbMinHeight
             // 
@@ -304,7 +299,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.txbMinHeight.Name = "txbMinHeight";
             this.txbMinHeight.Size = new System.Drawing.Size(58, 20);
             this.txbMinHeight.TabIndex = 5;
-            this.txbMinHeight.TextChanged += new System.EventHandler(this.txbMinHeight_TextChanged);
             // 
             // label5
             // 
@@ -314,7 +308,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label5.Size = new System.Drawing.Size(16, 13);
             this.label5.TabIndex = 9;
             this.label5.Text = "to";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // txbMaxWidth
             // 
@@ -322,7 +315,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.txbMaxWidth.Name = "txbMaxWidth";
             this.txbMaxWidth.Size = new System.Drawing.Size(58, 20);
             this.txbMaxWidth.TabIndex = 4;
-            this.txbMaxWidth.TextChanged += new System.EventHandler(this.txbMaxWidth_TextChanged);
             // 
             // label3
             // 
@@ -332,7 +324,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label3.Size = new System.Drawing.Size(27, 13);
             this.label3.TabIndex = 7;
             this.label3.Text = "from";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // txbMinWidth
             // 
@@ -340,7 +331,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.txbMinWidth.Name = "txbMinWidth";
             this.txbMinWidth.Size = new System.Drawing.Size(58, 20);
             this.txbMinWidth.TabIndex = 3;
-            this.txbMinWidth.TextChanged += new System.EventHandler(this.txbMinWidth_TextChanged);
             // 
             // label2
             // 
@@ -350,7 +340,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label2.Size = new System.Drawing.Size(27, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "from";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -361,7 +350,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.label1.Size = new System.Drawing.Size(346, 15);
             this.label1.TabIndex = 4;
             this.label1.Text = "This rule is used if all the conditions below are met...";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // txbName
             // 
@@ -400,7 +388,6 @@ namespace ProcessPlugins.ViewModeSwitcher
             this.cbMaxCropEnabled.TabIndex = 9;
             this.cbMaxCropEnabled.Text = "Maximise BB cropping";
             this.cbMaxCropEnabled.UseVisualStyleBackColor = true;
-            this.cbMaxCropEnabled.CheckedChanged += new System.EventHandler(this.cbMaxCropEnabled_CheckedChanged);
             // 
             // bOK
             // 
