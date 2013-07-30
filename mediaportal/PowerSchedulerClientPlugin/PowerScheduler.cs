@@ -1614,10 +1614,10 @@ namespace MediaPortal.Plugins.Process
 
     private void RestoreMuteThread()
     {
-      // Try to unmute the master volume three times since some audio
+      // Try to unmute the master volume several times since some audio
       // devices need time to get reactivated after away / sleep mode
       string errorMessage = String.Empty;
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i <= 4; i++)
       {
         // Wait some seconds until next try
         if (i > 0)
@@ -1668,6 +1668,8 @@ namespace MediaPortal.Plugins.Process
           return;
         }
       }
+
+      // No success after several times trying...
       Log.Error("PS: Error in handling master volume - " + errorMessage);
     }
 

@@ -745,7 +745,7 @@ namespace PowerScheduler.Setup
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.LOCK_CONSOLE_ON_WAKE, DC, (uint)(_recommendedSettingsDC.requirePassword ? 1 : 0));
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.ALLOW_HYBRID_SLEEP, DC, (uint)(_recommendedSettingsDC.hybridSleep ? 1 : 0));
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.ALLOW_RTC_WAKE, DC, (uint)(_recommendedSettingsDC.allowWakeTimers ? 1 : 0));
-            PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.STANDBYIDLE, AC, _recommendedSettingsDC.idleTimeout * 60);
+            PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.STANDBYIDLE, DC, _recommendedSettingsDC.idleTimeout * 60);
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.HIBERNATE_AFTER, DC, _recommendedSettingsDC.hibernateAfter * 60);
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.LID_CLOSE_ACTION, DC, _recommendedSettingsDC.lidCloseAction);
             PowerManager.SetPowerSetting(PowerManager.SystemPowerSettingType.POWER_BUTTON_ACTION, DC, _recommendedSettingsDC.powerButtonAction);
