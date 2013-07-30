@@ -54,7 +54,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\mpc-hc_subs\src\dsutil;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\baseclasses;..\mpc-hc_subs\src\dsutil;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REGISTER_FILTER;WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -69,7 +69,7 @@
       <RegisterOutput>false</RegisterOutput>
       <AdditionalDependencies>strmbasd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Debug/MPAudioSwitcher.ax</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\baseclasses\debug;$(DXSDK_DIR)lib\x86;</AdditionalLibraryDirectories>
       <ManifestFile>obj\Debug\MPAudioSwitcher.intermediate.manifest</ManifestFile>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>./source/AudioSwitcher.def</ModuleDefinitionFile>
@@ -86,7 +86,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\mpc-hc_subs\src\dsutil;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\baseclasses;..\mpc-hc_subs\src\dsutil;$(DXSDK_DIR)Include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>REGISTER_FILTER;WIN32;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\obj\Release/</AssemblerListingLocation>
       <ObjectFileName>.\obj\Release/</ObjectFileName>
@@ -98,7 +98,7 @@
       <RegisterOutput>false</RegisterOutput>
       <AdditionalDependencies>strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Release/MPAudioSwitcher.ax</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\baseclasses\release;$(DXSDK_DIR)lib\x86;</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\source\AudioSwitcher.def</ModuleDefinitionFile>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <SubSystem>Windows</SubSystem>
