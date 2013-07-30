@@ -88,7 +88,6 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void cbAutoCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      //cmbViewMode.Enabled = cbAutoCropEnabled.Checked;
       if (cbAutoCropEnabled.Checked)
       {
         cb_EnableLBDetection.Checked = true; //Tick this box as well
@@ -97,7 +96,6 @@ namespace ProcessPlugins.ViewModeSwitcher
     
     private void cb_EnableLBDetection_CheckedChanged(object sender, EventArgs e)
     {
-      //cmbViewMode.Enabled = cbAutoCropEnabled.Checked;
       if (!cb_EnableLBDetection.Checked)
       {
         cbAutoCropEnabled.Checked = false;
@@ -107,7 +105,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void cbMaxCropEnabled_CheckedChanged(object sender, EventArgs e)
     {
-      // txbOverScan.Enabled = cbMaxCropEnabled.Checked;
+
     }
 
     private void label9_Click(object sender, EventArgs e)

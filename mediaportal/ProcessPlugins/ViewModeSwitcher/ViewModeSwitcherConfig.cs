@@ -278,11 +278,11 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private void dg_RuleSets_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
-      if (e.ColumnIndex == 0 && e.RowIndex >= 0)
+      if (e.ColumnIndex == 0 && e.RowIndex >= 0) //the 'Enabled' column cells
       {
         bool isChecked = currentSettings.ViewModeRules[e.RowIndex].Enabled;         
-        currentSettings.ViewModeRules[e.RowIndex].Enabled = !isChecked;
-        dg_RuleSets[0, e.RowIndex].Value = !isChecked;
+        currentSettings.ViewModeRules[e.RowIndex].Enabled = !isChecked; //flip the state
+        dg_RuleSets[0, e.RowIndex].Value = !isChecked; //refresh the cell
       }
     }   
     
