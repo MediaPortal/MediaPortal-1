@@ -798,51 +798,44 @@ public class MediaPortalApp : D3D, IRender
           {
             Log.Debug("Main: TV service found. Checking status...");
             UpdateSplashScreenMessage(GUILocalizeStrings.Get(60)); // Waiting for startup of TV service...
-            try
+            if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
             {
-              if (ctrl.Status == ServiceControllerStatus.StartPending || ctrl.Status == ServiceControllerStatus.Stopped)
+              if (ctrl.Status == ServiceControllerStatus.StartPending)
               {
-                if (ctrl.Status == ServiceControllerStatus.StartPending)
-                {
-                  Log.Info("Main: TV service start is pending. Waiting...");
-                }
-  
-                if (ctrl.Status == ServiceControllerStatus.Stopped)
-                {
-                  Log.Info("Main: TV service is stopped, so we try start it...");
-                  try
-                  {
-                    ctrl.Start();
-                  }
-                  catch (Exception)
-                  {
-                    Log.Info("TvService seems to be already starting up.");
-                  }
-                }
-  
+                Log.Info("Main: TV service start is pending. Waiting...");
+              }
+
+              if (ctrl.Status == ServiceControllerStatus.Stopped)
+              {
+                Log.Info("Main: TV service is stopped, so we try start it...");
                 try
                 {
-                  ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
+                  ctrl.Start();
                 }
-                // ReSharper disable EmptyGeneralCatchClause
-                catch (Exception) {}
-                // ReSharper restore EmptyGeneralCatchClause
-                
-                if (ctrl.Status == ServiceControllerStatus.Running)
+                catch (Exception)
                 {
-                  Log.Info("Main: The TV service has started successfully.");
-                }
-                else
-                {
-                  Log.Info("Main: Startup of the TV service failed - current status: {0}", ctrl.Status.ToString());
+                  Log.Info("TvService seems to be already starting up.");
                 }
               }
-              Log.Info("Main: TV service is in status {0} - proceeding...", ctrl.Status.ToString());
+
+              try
+              {
+                ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
+              }
+              // ReSharper disable EmptyGeneralCatchClause
+              catch (Exception) {}
+              // ReSharper restore EmptyGeneralCatchClause
+              
+              if (ctrl.Status == ServiceControllerStatus.Running)
+              {
+                Log.Info("Main: The TV service has started successfully.");
+              }
+              else
+              {
+                Log.Info("Main: Startup of the TV service failed - current status: {0}", ctrl.Status.ToString());
+              }
             }
-            catch (Exception)
-            {
-              Log.Debug("Main: TV service ServiceControllerStatus exception!!!");
-            }
+            Log.Info("Main: TV service is in status {0} - proceeding...", ctrl.Status.ToString());
             ctrl.Close();
           }
         }
