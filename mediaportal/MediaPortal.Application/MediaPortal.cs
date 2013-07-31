@@ -769,8 +769,7 @@ public class MediaPortalApp : D3D, IRender
           ServiceController ctrl;
           try
           {
-            ctrl = new ServiceController("TVService");
-            
+            ctrl = new ServiceController("TVService");            
           }
           catch (Exception)
           {
