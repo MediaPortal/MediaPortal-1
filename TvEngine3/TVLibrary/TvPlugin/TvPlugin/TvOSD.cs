@@ -1715,46 +1715,49 @@ namespace TvPlugin
         lblCurrentChannel.Label = GetChannelName();
       }
 
-      Program prog = TVHome.Navigator.Channel.CurrentProgram;
-      //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
-
-      if (prog != null && !g_Player.IsTVRecording)
+      if (TVHome.Navigator.Channel != null)
       {
-        string strTime = String.Format("{0}-{1}",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        Program prog = TVHome.Navigator.Channel.CurrentProgram;
+        //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
 
-        if (lblCurrentTime != null)
+        if (prog != null && !g_Player.IsTVRecording)
         {
-          lblCurrentTime.Label = strTime;
-        }
-        // On TV Now
-        if (tbOnTvNow != null)
-        {
-          strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
-          GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+          string strTime = String.Format("{0}-{1}",
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-          strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-          GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
-        }
-        if (tbProgramDescription != null)
-        {
-          tbProgramDescription.Label = prog.Description;
-        }
-
-        // next program
-        Channel chan = GetChannel();
-        if (chan != null)
-        {
-          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
-
-          if (prog != null)
+          if (lblCurrentTime != null)
           {
-            if (tbOnTvNext != null)
+            lblCurrentTime.Label = strTime;
+          }
+          // On TV Now
+          if (tbOnTvNow != null)
+          {
+            strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
+            GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+
+            strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
+            GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          }
+          if (tbProgramDescription != null)
+          {
+            tbProgramDescription.Label = prog.Description;
+          }
+
+          // next program
+          Channel chan = GetChannel();
+          if (chan != null)
+          {
+            prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+
+            if (prog != null)
             {
-              tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+              if (tbOnTvNext != null)
+              {
+                tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+              }
             }
           }
         }
@@ -1777,7 +1780,7 @@ namespace TvPlugin
           if (ch != null)
           {
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (string.IsNullOrEmpty(strLogo))                          
+            if (string.IsNullOrEmpty(strLogo))
             {
               strLogo = "defaultVideoBig.png";
             }

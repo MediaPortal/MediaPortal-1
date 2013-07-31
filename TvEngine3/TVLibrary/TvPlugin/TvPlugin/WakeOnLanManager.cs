@@ -285,10 +285,10 @@ namespace TvPlugin
         return true;
       }
 
+      // First, try to send WOL Packet
       if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
       {
-        Log.Debug("WOLMgr: FAILED to send wake-on-lan packet!");
-        return false;
+        Log.Debug("WOLMgr: FAILED to send the first wake-on-lan packet!");
       }
 
       while (waited < timeout * 1000)
@@ -298,10 +298,23 @@ namespace TvPlugin
         {
           return true;
         }
-        Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
+        // Send WOL Packet
+        if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+        {
+          Log.Debug("WOLMgr: Sending the wake-on-lan packet failed (local network maybe not ready)! {0}s", (waited / 1000));
+        }
+        Log.Debug("WOLMgr: System {0} still not reachable, waiting... {1}s", wakeupTarget, (waited / 1000));
         System.Threading.Thread.Sleep(1000);
-        waited += 2000;
+        waited += 1000;
       }
+
+      // Timeout was reached and WOL packet can't be send (we stop here)
+      if (!SendWakeOnLanPacket(hwAddress, IPAddress.Broadcast))
+      {
+        Log.Debug("WOLMgr: FAILED to send wake-on-lan packet after the timeout {0}, try increase the value!", timeout);
+        return false;
+      }
+
       return false;
     }
 
