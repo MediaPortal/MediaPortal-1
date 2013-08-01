@@ -21,13 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
-using TvLibrary.Channels;
-using TvLibrary.Implementations.DVB.Structures;
 using DirectShowLib;
 using DirectShowLib.BDA;
-
+using TvLibrary.Channels;
+using TvLibrary.Implementations.Dri;
+using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.Pbda;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -175,9 +176,9 @@ namespace TvLibrary.Implementations.DVB
     private ManualResetEvent _event;
 
     /// <summary>
-    /// Enable wait for VCT indicator
+    /// What standard should the analyser expect to find in the transport stream?
     /// </summary>
-    protected bool _enableWaitForVCT;
+    protected TransportStreamStandard _transportStreamStandard;
 
     #endregion
 
@@ -190,6 +191,7 @@ namespace TvLibrary.Implementations.DVB
     public DvbBaseScanning(TvCardDvbBase card)
     {
       _card = card;
+      _transportStreamStandard = TransportStreamStandard.Default;
     }
 
     #endregion
@@ -277,10 +279,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     /// <param name="settings">The settings.</param>
     /// <returns></returns>
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    public virtual List<IChannel> Scan(IChannel channel, ScanParameters settings)
     {
       try
       {
+        bool isDigitalCableScan = false;
+        if (_card is TunerPbdaCableCard)
+        {
+          isDigitalCableScan = true;
+        }
         _card.IsScanning = true;
         _card.Scan(0, channel);
         _analyzer = GetAnalyzer();
@@ -290,20 +297,24 @@ namespace TvLibrary.Implementations.DVB
           return new List<IChannel>();
         }
         ResetSignalUpdate();
-        if (_card.IsTunerLocked == false)
+
+        // Note we don't check lock for PBDA CableCARD tuners because
+        // they scan using the out of band tuner. OOB lock has already
+        // been checked.
+        if (_card.IsTunerLocked == false && !isDigitalCableScan)
         {
           Thread.Sleep(settings.TimeOutTune * 1000);
           ResetSignalUpdate();
         }
         Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
                           _card.SignalQuality);
-        if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
+        if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0 || isDigitalCableScan)
         {
           try
           {
             _event = new ManualResetEvent(false);
             _analyzer.SetCallBack(this);
-            _analyzer.Start(_enableWaitForVCT);
+            _analyzer.Start(_transportStreamStandard);
             _event.WaitOne(settings.TimeOutSDT * 1000, true);
 
             int found = 0;
@@ -316,19 +327,19 @@ namespace TvLibrary.Implementations.DVB
               int networkId;
               int transportId;
               int serviceId;
-              short majorChannel;
-              short minorChannel;
-              short frequency;
+              int majorChannel;
+              int minorChannel;
+              int frequency;
               short freeCAMode;
               short serviceType;
               short modulation;
               IntPtr providerName;
               IntPtr serviceName;
-              short pmtPid;
+              int pmtPid;
               short hasVideo;
               short hasAudio;
               short hasCaDescriptor;
-              short lcn;
+              int lcn;
               _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,

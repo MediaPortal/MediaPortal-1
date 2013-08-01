@@ -424,7 +424,12 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\TVLibrary.Utils.dll"
   ;File "${git_TVServer}\TVLibrary.Utils\bin\${BUILD_TYPE}\Interop.SHDocVw.dll"
 
-  ; 3rd party assemblys
+  ; MP2 assemblies
+  File "${TVSERVER.BASE}\HttpServer.dll"
+  File "${TVSERVER.BASE}\MediaPortal.Utilities.dll"
+  File "${TVSERVER.BASE}\UPnP.dll"
+
+  ; 3rd party assemblies
   File "${TVSERVER.BASE}\hauppauge.dll"
   File "${TVSERVER.BASE}\hcwWinTVCI.dll"
   File "${TVSERVER.BASE}\KNCBDACTRL.dll"
@@ -432,11 +437,18 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\ttdvbacc.dll"
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
-  
+
   ; thumbnail software
   File "${TVSERVER.BASE}\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
   
+
+  ; protocol implementations for MPIPTVSource.ax
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_FILE.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_HTTP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_RTP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_RTSP.dll"
+  File "${git_DirectShowFilters}\MPIPTVSource\bin\${BUILD_TYPE}\MPIPTV_UDP.dll"
 
   File "${git_DirectShowFilters}\StreamingServer\bin\${BUILD_TYPE}\StreamingServer.dll"
   
@@ -448,6 +460,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "${COMMON_APPDATA}"
   File "${git_Common_MP_TVE3}\Gentle.config"
   File "${TVSERVER.BASE}\log4net.config"
+  File "${git_DirectShowFilters}\MPIPTVSource\MPIPTVSource\MPIPTVSource.ini"
   File "${TVSERVER.BASE}\TvSetupLog.config"
   
   #---------------------------------------------------------------------------
@@ -548,6 +561,8 @@ ${MementoSectionEnd}
   RMDir /r "${COMMON_APPDATA}\WebEPG\grabbers"
   ; Remove XMLTV data dir
   Delete "${COMMON_APPDATA}\xmltv\xmltv.dtd"
+  ; Remove ini file for IPTV filter
+  Delete "${COMMON_APPDATA}\MPIPTVSource.ini"
 
   ; Remove Plugins
   Delete "$INSTDIR\Plugins\ComSkipLauncher.dll"
@@ -587,7 +602,12 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvService.exe.config"
   Delete "$INSTDIR\SetupControls.dll"
 
-  ; 3rd party assemblys
+  ; MP2 assemblies
+  Delete "$INSTDIR\HttpServer.dll"
+  Delete "$INSTDIR\MediaPortal.Utilities.dll"
+  Delete "$INSTDIR\UPnP.dll"
+
+  ; 3rd party assemblies
   Delete "$INSTDIR\dxerr9.dll"
   Delete "$INSTDIR\hauppauge.dll"
   Delete "$INSTDIR\hcwWinTVCI.dll"
@@ -600,6 +620,13 @@ ${MementoSectionEnd}
   ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
+
+  ; protocol implementations for MPIPTVSource.ax
+  Delete "$INSTDIR\MPIPTV_FILE.dll"
+  Delete "$INSTDIR\MPIPTV_HTTP.dll"
+  Delete "$INSTDIR\MPIPTV_RTP.dll"
+  Delete "$INSTDIR\MPIPTV_RTSP.dll"
+  Delete "$INSTDIR\MPIPTV_UDP.dll"  
 
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
