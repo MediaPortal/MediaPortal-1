@@ -27,12 +27,16 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using TvLibrary.Log;
+using System.Drawing.Imaging;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace TvThumbnails.VideoThumbCreator
 {
   public static class VideoThumbCreator
   {
     private static string _extractApp = "ffmpeg.exe";
+
+    private static MediaInfoWrapper.MediaInfoWrapper MediaInfo = null;
 
     private static readonly string _extractorPath = ExtractorPath();
 
@@ -50,13 +54,13 @@ namespace TvThumbnails.VideoThumbCreator
     {
       if (!File.Exists(aVideoPath))
       {
-        Log.Info("VideoThumbCreator: File {0} not found!", aVideoPath);
+        Log.Info("TvThumbnails.VideoThumbCreator: File {0} not found!", aVideoPath);
         return false;
       }
 
       if (!File.Exists(_extractorPath))
       {
-        Log.Info("VideoThumbCreator: No {0} found to generate thumbnails of your video!", _extractorPath);
+        Log.Info("TvThumbnails.VideoThumbCreator: No {0} found to generate thumbnails of your video!", _extractorPath);
         return false;
       }
 
@@ -70,36 +74,60 @@ namespace TvThumbnails.VideoThumbCreator
           return false;
         }*/
 
-      int preGapSec = 5;
-      int postGapSec = 5;
+      string ShareThumb = "";
 
-      if (aOmitCredits)
+      int TimeIntBwThumbs = 0;
+
+      int preGapSec = Thumbs.TimeOffset * 60;
+
+      Log.Debug("TvThumbnails.VideoThumbCreator: preGapSec: {0}", preGapSec);
+
+      MediaInfo = new MediaInfoWrapper.MediaInfoWrapper(aVideoPath);
+
+      int Duration = MediaInfo.VideoDuration / 1000;
+
+      if (preGapSec > Duration)
       {
-        preGapSec = 420;
-        postGapSec = 600;
+        preGapSec = Duration - 240;
       }
+
+      if (preGapSec < 0)
+      {
+        preGapSec = 4;
+      }
+
+      TimeIntBwThumbs = (Duration - preGapSec) / 4;
+
+      Log.Debug("{0} duration is {1}, TimeIntBwThumbs is {2}", aVideoPath, Duration, TimeIntBwThumbs);
 
       bool Success = false;
       string strFilenamewithoutExtension = Path.ChangeExtension(aVideoPath, null);
 
-      string ffmpegArgs =
-        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,5),") +
+/*      string ffmpegArgs =
+        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,{0}),", TimeIntBwThumbs) +
+        string.Format("yadif=0:-1:0,") +
+        string.Format("scale={0}:{1},", 600, 337) +
+        string.Format("setsar=1:1,") +
+        string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
+*/
+      string ffmpegFallbackArgs =
+        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,{0}),", 5) +
         string.Format("yadif=0:-1:0,") +
         string.Format("scale={0}:{1},", 600, 337) +
         string.Format("setsar=1:1,") +
         string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
 
-      string ExtractorArgs =
+/*      string ExtractorArgs =
         string.Format("-loglevel quiet -ss {0} ", preGapSec) +
-        string.Format("-i \"{0}\" ", aVideoPath) + 
-        string.Format("-vf {0} ", ffmpegArgs) + 
+        string.Format("-i \"{0}\" ", aVideoPath) +
+        string.Format("-vf {0} ", ffmpegArgs) +
         string.Format("-vframes 1 -vsync 0 ") +
         string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
-
+*/
       string ExtractorFallbackArgs =
         string.Format("-loglevel quiet -ss 5 ") +
         string.Format("-i \"{0}\" ", aVideoPath) +
-        string.Format("-vf {0} ", ffmpegArgs) +
+        string.Format("-vf {0} ", ffmpegFallbackArgs) +
         string.Format("-vframes 1 -vsync 0 ") +
         string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
 
@@ -107,46 +135,104 @@ namespace TvThumbnails.VideoThumbCreator
       {
         // Use this for the working dir to be on the safe side
         string TempPath = Path.GetTempPath();
-        string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
-        string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
+        string OutputThumb = string.Format("{0}{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
+        ShareThumb = OutputThumb.Replace(".jpg", ".jpg");
+        // Use Temp folder 
+        string strFilenamewithoutExtensionTemp = Path.GetTempPath() + Path.GetFileName(strFilenamewithoutExtension);
+        string ShareThumbTemp = Path.GetTempPath() + Path.GetFileName(ShareThumb);
 
         if ((Thumbs.LeaveShareThumb && !File.Exists(ShareThumb)) // No thumb in share although it should be there
             || (!Thumbs.LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
         {
-          //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
-          Success = StartProcess(_extractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
-          if (!Success)
+          List<string> pictureList = new List<string>();
+          string ffmpegArgs = null;
+          string ExtractorArgs = null;
+          int TimeOffset = 0;
+          int i;
+
+          for (i = 0; i < (Thumbs.PreviewColumns * Thumbs.PreviewRows); i++)
+          {
+            TimeOffset = preGapSec + i * TimeIntBwThumbs;
+
+            ffmpegArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",{0}),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={1}x{2}", 1, 1, 1);
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_{4}.jpg\"", TimeOffset, aVideoPath, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            Success = StartProcess(_extractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
+            Log.Debug("TvThumbnails.VideoThumbCreator: thumb creation {0}", ExtractorArgs);
+            if (!Success)
+            {
+              Log.Debug("TvThumbnails.VideoThumbCreator: failed, try to fallback {0}", strFilenamewithoutExtensionTemp);
+              break;
+            }
+            else
+            {
+              pictureList.Add(string.Format("{0}_{1}.jpg", strFilenamewithoutExtensionTemp, i));
+            }
+          }
+          // generate thumb if all sub pictures was created
+          if (i == Thumbs.PreviewColumns * Thumbs.PreviewRows)
+          {
+            if (CreateTileThumb(pictureList, string.Format("{0}.jpg", strFilenamewithoutExtensionTemp), Thumbs.PreviewColumns, Thumbs.PreviewRows))
+            {
+              Log.Debug("TvThumbnails.VideoThumbCreator: thumb creation success {0}", ShareThumbTemp);
+              File.SetAttributes(ShareThumbTemp, File.GetAttributes(ShareThumbTemp) & ~FileAttributes.Hidden);
+            }
+            else
+            {
+              Log.Debug("TvThumbnails.VideoThumbCreator: failed, try to fallback {0}", strFilenamewithoutExtensionTemp);
+            }
+          }
+          else
           {
             // Maybe the pre-gap was too large or not enough sharp & light scenes could be caught
-            Thread.Sleep(100);
-            Success = StartProcess(_extractorPath, ExtractorFallbackArgs, TempPath, 30000, true, GetMtnConditions());
-            if (!Success)
-              Log.Info("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", _extractApp,
+            Log.Debug("TvThumbnails.VideoThumbCreator: 1st trying was not success, 2nd trying in progress with ExtractorFallbackArgs: {0}", ExtractorFallbackArgs);
+            Thread.Sleep(500);
+            Success = StartProcess(_extractorPath, ExtractorFallbackArgs, TempPath, 120000, true, GetMtnConditions());
+            
+           if (!Success)
+              Log.Info("TvThumbnails.VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", _extractApp,
                        ExtractorFallbackArgs);
           }
           // give the system a few IO cycles
-          Thread.Sleep(100);
+          Thread.Sleep(500);
           // make sure there's no process hanging
           KillProcess(Path.ChangeExtension(_extractApp, null));
+
           try
           {
-            // remove the _s which mdn appends to its files
-            File.Move(OutputThumb, ShareThumb);
+            // Move Final Thumbnail from Temp folder to Thumbs folder
+            File.Move(ShareThumbTemp, aThumbPath);
+            File.SetAttributes(aThumbPath, File.GetAttributes(aThumbPath) & ~FileAttributes.Hidden);
           }
           catch (FileNotFoundException)
           {
-            Log.Info("VideoThumbCreator: {0} did not extract a thumbnail to: {1}", _extractApp, OutputThumb);
+            Log.Info("TvThumbnails.VideoThumbCreator: {0} did not extract a thumbnail to: {1}", _extractApp, ShareThumbTemp);
           }
           catch (Exception)
           {
             try
             {
               // Clean up
-              File.Delete(OutputThumb);
-              Thread.Sleep(50);
+              File.Delete(ShareThumb);
+              Thread.Sleep(100);
             }
             catch (Exception)
             {
+            }
+          }
+
+          if (Thumbs.LeaveShareThumb)
+          {
+            if (File.Exists(aThumbPath))
+            {
+              try
+              {
+                File.Copy(aThumbPath, ShareThumb);
+                File.SetAttributes(ShareThumb, File.GetAttributes(ShareThumb) & ~FileAttributes.Hidden);
+              }
+              catch (Exception)
+              {
+                Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1})", ShareThumbTemp, ShareThumb);
+              }
             }
           }
         }
@@ -159,34 +245,38 @@ namespace TvThumbnails.VideoThumbCreator
 
         Thread.Sleep(30);
 
-        if (File.Exists(ShareThumb))
+        if (File.Exists(ShareThumbTemp))
         {
           if (Success)
           {
             int width = (int)Thumbs.ThumbLargeResolution;
-            CreateThumbnail(ShareThumb, aThumbPath, width, width, 0);
+            CreateThumbnail(ShareThumbTemp, aThumbPath, width, width, 0);
             //CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
             //                        (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
           }
 
-          if (!Thumbs.LeaveShareThumb)
+          if (Thumbs.LeaveShareThumb)
           {
-            try
+            if (File.Exists(aThumbPath))
             {
-              File.Delete(ShareThumb);
-              Thread.Sleep(30);
-            }
-            catch (Exception)
-            {
+              try
+              {
+                File.Copy(aThumbPath, ShareThumb);
+                File.SetAttributes(ShareThumb, File.GetAttributes(ShareThumb) & ~FileAttributes.Hidden);
+              }
+              catch (Exception)
+              {
+                Log.Debug("TvThumbnails.VideoThumbCreator: Exception on File.Copy({0}, {1})", aThumbPath, ShareThumb);
+              }
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Error("VideoThumbCreator: Thumbnail generation failed - {0}!", ex.ToString());
+        Log.Error("TvThumbnails.VideoThumbCreator: Thumbnail generation failed - {0}!", ex.ToString());
       }
-      if (File.Exists(aThumbPath))
+      if (File.Exists(aThumbPath) || File.Exists(ShareThumb))
       {
         return true;
       }
@@ -197,10 +287,11 @@ namespace TvThumbnails.VideoThumbCreator
         //{
         //  blacklist.Add(aVideoPath);
         //}
-        //AddCachedThumbToBlacklist(aVideoPath);                
+        //AddCachedThumbToBlacklist(aVideoPath);
         return false;
       }
     }
+    
 
     /// <summary>
     /// Interface for video thumbnails blacklisting
@@ -319,6 +410,188 @@ namespace TvThumbnails.VideoThumbCreator
         Log.Error("Picture: Error saving new thumbnail {0} - {1}", aThumbTargetPath, ex.Message);
         return false;
       }
+    }
+
+    private static void AddPicture(Graphics g, string strFileName, int x, int y, int w, int h)
+    {
+      Image img = null;
+      try
+      {
+        try
+        {
+          img = Image.FromFile(strFileName);
+          if (img != null)
+            g.DrawImage(img, x, y, w, h);
+        }
+        catch (OutOfMemoryException)
+        {
+          Log.Info("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
+        }
+       }
+      finally
+      {
+        if (img != null)
+          img.Dispose();
+      }
+    }
+
+    public static bool CreateTileThumb(List<string> aPictureList, string aThumbPath, int PreviewColumns, int PreviewRows)
+    {
+      bool result = false;
+
+      if (aPictureList.Count > 0)
+      {
+        try
+        {
+          // Use first generated picture to take the ratio
+          Image imgFolder = null;
+          try
+          {
+            imgFolder = ImageFast.FromFile(aPictureList[0]);
+          }
+          catch (Exception)
+          {
+            Log.Debug("TvThumbnails: Fast loading failed {0} failed using safer fallback", aPictureList[0]);
+            imgFolder = Image.FromFile(aPictureList[0]);
+          }
+
+          if (imgFolder != null)
+          {
+            using (imgFolder)
+            {
+              int width = imgFolder.Width;
+              int height = imgFolder.Height;
+
+              int thumbnailWidth = 256;
+              int thumbnailHeight = 256;
+              // draw a fullsize thumb if only 1 pic is available
+              if (aPictureList.Count == 1)
+              {
+                thumbnailWidth = width;
+                thumbnailHeight = height;
+              }
+              else
+              {
+                thumbnailWidth = width/2;
+                thumbnailHeight = height/2;
+              }
+
+              using (Bitmap bmp = new Bitmap(width, height))
+              {
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                  g.CompositingQuality = Thumbs.Compositing;
+                  g.InterpolationMode = Thumbs.Interpolation;
+                  g.SmoothingMode = Thumbs.Smoothing;
+
+                  g.DrawImage(imgFolder, 0, 0, width, height);
+                  int x, y, w, h;
+                  x = 0;
+                  y = 0;
+                  w = thumbnailWidth;
+                  h = thumbnailHeight;
+                  Log.Debug("aPictureList.Count: {0}", aPictureList.Count);
+
+                  try
+                  {
+                    switch (aPictureList.Count)
+                    {
+                      case 1:
+                        AddPicture(g, (string) aPictureList[0], x, y, w, h);
+                        break;
+                      case 2:
+                        if (PreviewColumns == 1 && PreviewRows == 2)
+                        {
+                          AddPicture(g, (string) aPictureList[0], x, y, w*2, h);
+                          AddPicture(g, (string) aPictureList[1], x, y + thumbnailHeight, w*2, h);
+                        }
+                        else
+                        {
+                          AddPicture(g, (string) aPictureList[0], x, y, w, h*2);
+                          AddPicture(g, (string) aPictureList[1], x + thumbnailWidth, y, w, h*2);
+                        }
+                        break;
+                      case 4:
+                        AddPicture(g, (string) aPictureList[0], x, y, w, h);
+                        AddPicture(g, (string) aPictureList[1], x + thumbnailWidth, y, w, h);
+                        AddPicture(g, (string) aPictureList[2], x, y + thumbnailHeight, w, h);
+                        AddPicture(g, (string) aPictureList[3], x + thumbnailWidth, y + thumbnailHeight, w, h);
+                        break;
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Error("Utils: An exception occured creating CreateTileThumb: {0}", ex.Message);
+                  }
+                }
+
+                try
+                {
+                  string tmpFile = Path.GetTempFileName();
+                  Log.Debug("CreateTileThumb: before Saving thumb! tmpFile: {0}", tmpFile);
+
+                  bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+                  Log.Debug("CreateTileThumb: Saving thumb!");
+                  CreateThumbnail(tmpFile, aThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                  (int) Thumbs.ThumbLargeResolution, 0);
+                  Log.Debug("CreateTileThumb: after Saving thumb!");
+
+                  File.Delete(tmpFile);
+
+                  if (imgFolder != null)
+                  {
+                    imgFolder.Dispose();
+                  }
+
+                  if (aPictureList.Count > 0)
+                  {
+                    string pictureListName = string.Empty;
+                    try
+                    {
+                      for (int i = 0; i < (aPictureList.Count); i++)
+                      {
+                        pictureListName = aPictureList[i];
+                        File.Delete(aPictureList[i]);
+                      }
+                    }
+                    catch (FileNotFoundException)
+                    {
+                      Log.Debug("CreateTileThumb: {0} file not found.", pictureListName);
+                    }
+                  }
+
+                  Thread.Sleep(100);
+
+                  if (File.Exists(aThumbPath))
+                    result = true;
+                }
+                catch (Exception ex2)
+                {
+                  Log.Error("Utils: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath,
+                            ex2.Message);
+                }
+              }
+            }
+          }
+        }
+        catch (FileNotFoundException)
+        {
+          Log.Error("Utils: Your skin does not supply previewbackground.png to create CreateTileThumb!");
+        }
+        catch (Exception exm)
+        {
+          Log.Error("Utils: An error occured creating folder CreateTileThumb: {0}", exm.Message);
+        }
+      }
+      else
+      {
+        result = false;
+      }
+      return result;
     }
 
     private static bool ThumbnailCallback()

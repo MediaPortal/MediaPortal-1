@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -364,6 +365,28 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _imageWidth, ref _imageHeight);
     }
 
+    private void item_OnThumbnailRefresh(int buttonNr , bool gotFocus)
+    {
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        GUIListItem item = _listItems[buttonNr + _offset];
+        // Update current focused thumbnail
+        {
+          if (MediaPortal.Util.Utils.FileExistsInCache(item.ThumbnailImage) && (item.Selected || gotFocus))
+          {
+            string selectedThumbProperty = GUIPropertyManager.GetProperty("#selectedthumb");
+            if (selectedThumbProperty != item.ThumbnailImage)
+            {
+              item.IconImage = item.ThumbnailImage;
+              GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+              GUIPropertyManager.SetProperty("#selectedthumb", item.ThumbnailImage);
+              OnSelectionChanged();
+            }
+          }
+        }
+      }
+    }
+
     protected void OnSelectionChanged()
     {
       if (!IsVisible)
@@ -393,7 +416,14 @@ namespace MediaPortal.GUI.Library
       {
         GUIPropertyManager.SetProperty("#selecteditem", strSelected);
         GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
-        GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+        if (MediaPortal.Util.Utils.FileExistsInCache(strThumb))
+        {
+          GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
+        }
         GUIPropertyManager.SetProperty("#selectedindex", strIndex);
         GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
       }
@@ -516,6 +546,10 @@ namespace MediaPortal.GUI.Library
 
       if (pItem.HasIcon)
       {
+        if (MediaPortal.Util.Utils.FileExistsInCache(pItem.ThumbnailImage))
+        {
+          pItem.IconImage = pItem.ThumbnailImage;
+        }
         // show icon
         GUIImage pImage = pItem.Icon;
         if (null == pImage)
@@ -1114,6 +1148,7 @@ namespace MediaPortal.GUI.Library
           // render item
           bool gotFocus = _drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST;
           RenderButton(timePassed, i, _positionX, dwPosY, gotFocus);
+          item_OnThumbnailRefresh(i, gotFocus);
         }
         dwPosY += _itemHeight + _spaceBetweenItems;
       }
@@ -1158,6 +1193,8 @@ namespace MediaPortal.GUI.Library
           RenderLabel(timePassed, i, labelX, dwPosY, gotFocus);
 
           RenderPinIcon(timePassed, i, pinX, dwPosY, gotFocus);
+
+          item_OnThumbnailRefresh(i, gotFocus);
 
           dwPosY += _itemHeight + _spaceBetweenItems;
         }
@@ -2901,7 +2938,14 @@ namespace MediaPortal.GUI.Library
         GUIListItem pItem = _listItems[iItem];
         strLabel = pItem.Label;
         strLabel2 = pItem.Label2;
-        strThumb = pItem.ThumbnailImage;
+        if (pItem.ThumbnailImage != null && File.Exists(pItem.ThumbnailImage))
+        {
+          strThumb = pItem.ThumbnailImage;
+        }
+        else
+        {
+          strThumb = string.Empty;
+        }
         int index = iItem;
 
         if (_listItems[0].Label != "..")

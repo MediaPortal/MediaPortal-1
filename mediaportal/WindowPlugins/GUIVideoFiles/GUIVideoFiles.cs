@@ -1264,6 +1264,10 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1262); // Update grabber scripts
         dlg.AddLocalizedString(1307); // Update internal grabber scripts
         dlg.AddLocalizedString(1263); // Set default grabber
+        if (!item.IsFolder)
+        {
+          dlg.AddLocalizedString(1984); // Refresh thumb
+        }
       }
 
       dlg.DoModal(GetID);
@@ -1504,6 +1508,26 @@ namespace MediaPortal.GUI.Video
           break;
         case 1263: // Set deault grabber script
           SetDefaultGrabber();
+          break;
+        case 1984: // Refresh video thumb
+          Log.Debug("Thumb refresh from context menu: {0}", item.Path);
+          if (Util.Utils.FileExistsInCache(item.Path))
+          {
+            string strThumbPath = Util.Utils.GetVideosThumbPathname(item.Path);
+            Util.Utils.SetThumbnails(ref item);
+            bool success = Util.VideoThumbCreator.CreateVideoThumb(item.Path, strThumbPath, true, true);
+            if (success)
+            {
+              Log.Debug("Refresh success!");
+              if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(_currentFolder))
+              {
+                selectedIndex = facadeLayout.SelectedListItemIndex;
+                LoadDirectory(_currentFolder, false);
+                facadeLayout.SelectedListItemIndex = selectedIndex;
+              }
+            }
+          }
+
           break;
         case 1264: // Get media info (refresh mediainfo and duration)
           if (item != null)
