@@ -69,6 +69,7 @@ namespace TvPlugin
     private string rootGroup = "(none)";
     private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
+    private static bool settingsRadioLoaded = false;
 
     #endregion
     
@@ -119,6 +120,11 @@ namespace TvPlugin
 
     protected override void LoadSettings()
     {
+      if (settingsRadioLoaded)
+      {
+        return;
+      }
+
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
@@ -160,6 +166,7 @@ namespace TvPlugin
 
         _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
+      settingsRadioLoaded = true;
     }
 
     protected override void SaveSettings()
@@ -254,6 +261,34 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       Log.Info("RadioHome:OnPageLoad");
+
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
+
+      if (TVHome.Navigator == null)
+      {
+        TVHome.OnLoaded();
+      }
+      else if (TVHome.Navigator.Channel == null)
+      {
+        TVHome.m_navigator.ReLoad();
+        TVHome.LoadSettings(false);
+      }
+
+      // Create the channel navigator (it will load groups and channels)
+      if (TVHome.m_navigator == null)
+      {
+        TVHome.m_navigator = new ChannelNavigator();
+      }
+
+      // Reload ChannelGroups
+      Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+      radioLoad.OnAdded();
+
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);      
@@ -283,7 +318,11 @@ namespace TvPlugin
 
       if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
       {
-        Play(facadeLayout.SelectedListItem);
+        GUIListItem item = facadeLayout.SelectedListItem;
+        if (item != null && item.Label != ".." && !item.IsFolder)
+        {
+          Play(facadeLayout.SelectedListItem);
+        }
       }
 
       btnSortBy.SortChanged += SortChanged;       
@@ -291,6 +330,10 @@ namespace TvPlugin
 
     private static void LoadChannelGroups()
     {
+      if (!TVHome.Connected)
+      {
+        return;
+      }
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
 
