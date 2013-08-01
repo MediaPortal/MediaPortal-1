@@ -174,8 +174,8 @@ namespace MediaPortal.RedEyeIR
     public bool ReOpen()
     {
       base.Close();
-      if (InternalCommandsActive && base.IsPortAvailable(commport) == PortStatus.available)
-      {          
+      if (base.IsPortAvailable(commport) == PortStatus.available)
+      {
         return base.Open();
       }
       else
@@ -236,9 +236,7 @@ namespace MediaPortal.RedEyeIR
           CommandDelay = xmlreader.GetValueAsInt("RedEye", "delay", 300);
         }
         this.remoteCommandCallback = remoteCommandCallback;
-
-        if (InternalCommandsActive)
-            base.Open();
+        base.Open();
       }
       catch (Exception)
       {

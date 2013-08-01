@@ -193,7 +193,7 @@ namespace MediaPortal.SerialIR
     public bool ReOpen()
     {
       base.Close();
-      if (InternalCommandsActive && base.IsPortAvailable(commport) == PortStatus.available)
+      if (base.IsPortAvailable(commport) == PortStatus.available)
       {
         return base.Open();
       }
@@ -244,7 +244,7 @@ namespace MediaPortal.SerialIR
       try
       {
         using (Settings xmlreader = new MPSettings())
-        {            
+        {
           recInternalCommands = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
           commport = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");
           baudrate = xmlreader.GetValueAsInt("SerialUIR", "baudrate", 9600);
@@ -260,9 +260,7 @@ namespace MediaPortal.SerialIR
         {
           LoadValues();
         }
-        
-        if (InternalCommandsActive)
-          base.Open();
+        base.Open();
       }
       catch (Exception)
       {
