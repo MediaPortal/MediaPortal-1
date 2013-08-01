@@ -438,6 +438,9 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
+  ; MediaInfo
+  File "${TVSERVER.BASE}\MediaInfo.dll"
+
   ; thumbnail software
   File "${TVSERVER.BASE}\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
@@ -620,6 +623,7 @@ ${MementoSectionEnd}
   ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
+  Delete "$INSTDIR\MediaInfo.dll"
 
   ; protocol implementations for MPIPTVSource.ax
   Delete "$INSTDIR\MPIPTV_FILE.dll"
