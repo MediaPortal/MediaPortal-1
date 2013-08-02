@@ -1273,7 +1273,8 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
-        if (Util.Utils.IsRemovable(item.Path))
+        
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
