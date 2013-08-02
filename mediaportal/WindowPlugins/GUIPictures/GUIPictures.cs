@@ -502,12 +502,12 @@ namespace MediaPortal.GUI.Pictures
     public override void OnAdded()
     {
       base.OnAdded();
-      _virtualDirectory.AddDrives();
-      _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       currentFolder = string.Empty;
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
       LoadSettings();
+      _virtualDirectory.AddDrives();
+      _virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       if (_enableVideoPlayback)
       {
         foreach (string ext in Util.Utils.VideoExtensions)
