@@ -630,7 +630,7 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 }
 
 
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor)
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor, int monitorIdx)
 {
   HRESULT hr;
   m_RenderPrefix = _T("evr");
@@ -651,7 +651,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter
 
 #ifndef DEFAULT_PRESENTER
 
-  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7());
+  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7(), monitorIdx);
   m_pVMR9Filter = (*evrFilter);
 
   CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;

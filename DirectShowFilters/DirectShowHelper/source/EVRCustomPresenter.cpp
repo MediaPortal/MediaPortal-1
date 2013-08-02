@@ -60,7 +60,7 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter** EVRFilter, BOOL pIsWin7):
+MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter** EVRFilter, BOOL pIsWin7, int monitorIdx):
   CUnknown(NAME("MPEVRCustomPresenter"), NULL),
   m_refCount(1), 
   m_qScheduledSamples(MAX_SURFACES),
@@ -98,6 +98,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
       Log("--- v1.6.%d Unicode with DWM queue support --- instance 0x%x", DSHOWHELPER_VERSION, this);
       Log("---------- audio renderer enabled ------------- instance 0x%x", this);
     }
+    m_monitorIdx = monitorIdx;
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -3605,7 +3606,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings(int numFrames, int threadPrior
     dParams.dDetectedScanlineTime = scanLineTime / 10000.0; 
 
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
-    GetRealRefreshRate(); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
+    GetRealRefreshRate(m_monitorIdx); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
     
     if ((dParams.dEstRefreshCycle < 5.0) || (dParams.dEstRefreshCycle > 100.0)) // just in case it's gone badly wrong...
     {
@@ -4263,12 +4264,12 @@ void MPEVRCustomPresenter::VideoFpsFromSample(IMFSample* pSample)
 
 
 // get driver refresh rate
-void MPEVRCustomPresenter::GetRealRefreshRate()
+void MPEVRCustomPresenter::GetRealRefreshRate(int monitorIdx)
 {
   // Win7
   if (m_bIsWin7 && m_pW7GetRefreshRate)
   {
-    m_dD3DRefreshRate = m_pW7GetRefreshRate();
+    m_dD3DRefreshRate = m_pW7GetRefreshRate(monitorIdx);
 
     if (m_dD3DRefreshRate == -1)
     {
