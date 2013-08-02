@@ -276,13 +276,13 @@ namespace MediaPortal.GUI.Video
             {
               if (!isBluRay)
               {
-                pItem.Label3 = string.Empty;
-                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                pItem.Label2 = string.Empty;
+                pItem.Label3 = GUIVideoBaseWindow.MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
               }
               else
               {
-                pItem.Label3 = string.Empty;
-                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                pItem.Label2 = string.Empty;
+                pItem.Label3 = GUIVideoBaseWindow.MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
               }
             }
             else if (VirtualDirectory.IsImageFile(Util.Utils.GetFileExtension(pItem.Path)))
