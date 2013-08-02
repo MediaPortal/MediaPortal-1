@@ -86,7 +86,7 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
-                                              ref IBaseFilter vmr9Filter, uint monitor);
+                                              ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx);
 
     //, uint dwWindow);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -376,7 +376,14 @@ namespace MediaPortal.Player
 
       if (_useEvr)
       {
-        EvrInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter, (uint)hMonitor.ToInt32());
+        if (GUIGraphicsContext.currentMonitorIdx != -1)
+        {
+          EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(), GUIGraphicsContext.currentMonitorIdx);
+        }
+        else
+        {
+          EvrInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter, (uint)hMonitor.ToInt32(), GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+        }
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
         Log.Info("VMR9: added EVR Renderer to graph");
       }

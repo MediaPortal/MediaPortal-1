@@ -1286,7 +1286,7 @@ public class MediaPortalApp : D3D, IRender
     {
       UpdateStats();
 
-      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
+      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
       {
         if (_showStats != _showStatsPrevious)
         {
@@ -1797,6 +1797,10 @@ public class MediaPortalApp : D3D, IRender
   private void OnDisplayChange(ref Message msg)
   {
     Log.Debug("Main: WM_DISPLAYCHANGE");
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    {
+      VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
+    }
     Screen screen = Screen.FromControl(this);
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
     {

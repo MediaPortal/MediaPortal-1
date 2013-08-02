@@ -74,7 +74,7 @@ typedef HRESULT __stdcall TDwmGetCompositionTimingInfo(HWND hwnd, __out DWM_TIMI
 extern TDwmGetCompositionTimingInfo* m_pDwmGetCompositionTimingInfo;
 
 
-typedef double __stdcall TW7GetRefreshRate();
+typedef double __cdecl TW7GetRefreshRate(int monitorIdx);
 extern TW7GetRefreshRate* m_pW7GetRefreshRate;
 
 typedef HANDLE __stdcall TAvSetMmThreadCharacteristicsW(LPCWSTR TaskName, LPDWORD TaskIndex);

@@ -189,22 +189,90 @@ namespace MediaPortal.Player
     public static extern int DwmIsCompositionEnabled(ref int pfEnabled);
 
 
+    /// <summary>
+    /// Finds the monitorIndex based on current specified screen on its primary monitor
+    /// </summary>
+    /// <returns>The monitorIndex that has the specified screen on its primary monitor</returns>
+    protected static int FindMonitorIndexForScreen()
+    {
+      uint deviceNum = 0;
+      DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();
+      displayDevice.cb = (ushort)Marshal.SizeOf(displayDevice);
+      while (EnumDisplayDevices(null, deviceNum, displayDevice, 0) != 0)
+      {
+        if (displayDevice.DeviceName == GUIGraphicsContext.currentScreen.DeviceName)
+        {
+          // Set new monitorIndex
+          GUIGraphicsContext.currentMonitorIdx = (int)deviceNum;
+          Log.Debug("CycleRefreshRate: return new detected MonitorIndex : {0}", (int)deviceNum);
+          return (int)deviceNum;
+        }
+        ++deviceNum;
+      }
+      Log.Debug("CycleRefreshRate: return current default MonitorIndex, detection failed to find the new one : {0}",
+                GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
+      return GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+    }
+
     public static void Win32_SetRefreshRate(uint monitorIndex, uint refreshRate)
     {
-      Win32.DISPLAY_DEVICE displayDevice = new Win32.DISPLAY_DEVICE();
-      int result = Win32.EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
+      DISPLAY_DEVICE displayDevice = new DISPLAY_DEVICE();
+      displayDevice.cb = (ushort)Marshal.SizeOf(displayDevice);
+      DEVMODE_Display devMode = new DEVMODE_Display();
+      devMode.dmSize = (ushort)Marshal.SizeOf(devMode);
 
+      int result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
       if (result != 0)
       {
-        Win32.DEVMODE_Display devMode = new Win32.DEVMODE_Display();
-        devMode.dmFields = Win32.DEVMODE_Fields.DM_DISPLAYFREQUENCY;
-        devMode.dmDisplayFrequency = refreshRate;
-        Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode,
-                                                                             IntPtr.Zero,
-                                                                             Win32.ChangeDisplaySettings_Flags.None,
-                                                                             IntPtr.Zero);
-        Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
-        FixDwm();
+        Log.Debug("CycleRefreshRate: Current MonitorIndex : {0} and current deviceName : {1}", (int) monitorIndex,
+                  GUIGraphicsContext.currentScreen.DeviceName);
+        if (displayDevice.DeviceName != GUIGraphicsContext.currentScreen.DeviceName)
+        {
+          // Analyse monitorIndex to be sure to get on the good one (some multiscreen setup can failed otherwise)
+          monitorIndex = (uint) FindMonitorIndexForScreen();
+
+          // Try to get new displayDevice based on newest detected monitorIndex
+          result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
+          Log.Debug("CycleRefreshRate: New MonitorIndex : {0} based on current deviceName : {1}", (int) monitorIndex,
+                    GUIGraphicsContext.currentScreen.DeviceName);
+        }
+
+        if (result != 0)
+        {
+          result = EnumDisplaySettingsEx(displayDevice.DeviceName, 0, devMode, 2);
+          if (result != 0)
+          {
+            result = EnumDisplaySettingsEx(displayDevice.DeviceName, EnumDisplaySettings_EnumMode.ENUM_CURRENT_SETTINGS, devMode, 2); // EDS_RAWMODE = 2
+
+            if (result != 0)
+            {
+              // Get current Value
+              uint Width = devMode.dmPelsWidth;
+              uint Height = devMode.dmPelsHeight;
+
+              //Log.Info("CycleRefreshRate: code result {0} enum devMode", result);
+              devMode.dmFields = (DEVMODE_Fields.DM_BITSPERPEL | DEVMODE_Fields.DM_PELSWIDTH |
+                                  DEVMODE_Fields.DM_PELSHEIGHT | DEVMODE_Fields.DM_DISPLAYFREQUENCY);
+              devMode.dmBitsPerPel = 32;
+              devMode.dmPelsWidth = Width;
+              devMode.dmPelsHeight = Height;
+              devMode.dmDisplayFrequency = refreshRate;
+
+              // First set settings
+              ChangeDisplaySettings_Result r = ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode,
+                                                                                   IntPtr.Zero,
+                                                                                   (ChangeDisplaySettings_Flags
+                                                                                         .CDS_NORESET |
+                                                                                    ChangeDisplaySettings_Flags
+                                                                                         .CDS_UPDATEREGISTRY),
+                                                                                   IntPtr.Zero);
+              // Apply settings
+              r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
+              Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
+              FixDwm();
+            }
+          }
+        }
       }
       else
       {
@@ -212,25 +280,8 @@ namespace MediaPortal.Player
       }
     }
 
-
     public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
     {
-      if (OSInfo.OSInfo.Win7OrLater())
-      {
-        if (W7RefreshRateHelper.SetRefreshRate(monitorIndex, refreshRate))
-        {
-          double newRefreshRate = W7RefreshRateHelper.GetRefreshRate(monitorIndex);
-          Log.Info("CycleRefreshRate: successfully changed refresh rate to {0}Hz ({1}Hz requested)",
-                    newRefreshRate.ToString("#.###"), refreshRate);
-          FixDwm();
-        }
-        else
-        {
-          Log.Info("CycleRefreshRate: unable to change refresh rate to {0}Hz for monitor {1}", refreshRate,
-                    monitorIndex);
-        }
-      }
-      else
       {
         Win32_SetRefreshRate(monitorIndex, (uint)refreshRate);
       }
@@ -675,6 +726,7 @@ namespace MediaPortal.Player
         if (newExtCmd.Length == 0)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
+          Log.Info("RefreshRateChanger AdapterOrdinal value is {0}", (uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal);
           Win32.CycleRefreshRate((uint)GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, newRR);
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
@@ -684,7 +736,7 @@ namespace MediaPortal.Player
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
 
-        if (GUIGraphicsContext.Vmr9Active)
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: dynamic refresh rate change - notify video renderer");
           VMR9Util.g_vmr9.UpdateEVRDisplayFPS();
