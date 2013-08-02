@@ -769,7 +769,7 @@ public class MediaPortalApp : D3D, IRender
           ServiceController ctrl;
           try
           {
-            ctrl = new ServiceController("TVService");            
+            ctrl = new ServiceController("TVService");
           }
           catch (Exception)
           {
@@ -4220,6 +4220,24 @@ public class MediaPortalApp : D3D, IRender
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
           // reset idle timer for consistent timing after end 0f playback
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
+          if (!Utils.IsRemovable(message.Label))
+          {
+            VirtualDirectories.Instance.Movies.AddRemovableDrive(message.Label, message.Label2);
+            VirtualDirectories.Instance.Music.AddRemovableDrive(message.Label, message.Label2);
+            VirtualDirectories.Instance.Pictures.AddRemovableDrive(message.Label, message.Label2);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
+          if (!Utils.IsRemovable(message.Label))
+          {
+            VirtualDirectories.Instance.Movies.Remove(message.Label);
+            VirtualDirectories.Instance.Music.Remove(message.Label);
+            VirtualDirectories.Instance.Pictures.Remove(message.Label);
+          }
           break;
       }
     }
