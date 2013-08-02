@@ -38,7 +38,7 @@ void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 }
 
 
-BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
+BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {
 	g_subManager.Free();
 	HRESULT hr = S_OK;
@@ -47,7 +47,7 @@ BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGrap
 	{
 		return FALSE;
 	}
-	subManager->LoadSubtitlesForFile(fn, pGB, paths);
+	subManager->LoadSubtitlesForFile(fn, pGB, paths, lcidci);
 	g_subManager.Attach(subManager.Detach());
 	return TRUE;
 }

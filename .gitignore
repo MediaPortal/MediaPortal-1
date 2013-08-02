@@ -1,5 +1,4 @@
-Bin
-bin
+[B|b]in
 obj
 *.log
 *.suo
@@ -7,3 +6,8 @@ obj
 *.resharper
 *.user
 _ReSharper.*
+/Release
+Thumbs.db
+*.bak
+/mediaportal/Setup/uninstall.nsh
+Packages

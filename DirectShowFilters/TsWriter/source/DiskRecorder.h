@@ -53,7 +53,7 @@ enum PidType
   Other=2
 };
 
-enum ChannelType
+enum MpChannelType
 {
 	TV = 0,
 	Radio = 1,
@@ -162,7 +162,7 @@ private:
   int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
   int				m_iWriteBufferThrottle;
   BOOL				m_bThrottleAtMax;
-  ChannelType		m_eChannelType;
+  MpChannelType		m_eChannelType;
   CTsHeader       m_tsHeader;
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;

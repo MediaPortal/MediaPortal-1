@@ -1803,9 +1803,24 @@ namespace TvPlugin
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
         GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
+        videoInfo.AllocResources();
         videoInfo.Movie = movieDetails;
         GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
-        btnPlay.Visible = false;
+        if (btnPlay != null)
+        {
+          btnPlay.Visible = false;
+        }
+        GUICheckButton btnCast = (GUICheckButton)videoInfo.GetControl(4);
+        if (btnCast != null)
+        {
+          btnCast.Visible = false;
+        }
+        GUICheckButton btnWatched = (GUICheckButton)videoInfo.GetControl(6);
+        if (btnWatched != null)
+        {
+          btnWatched.Visible = false;
+        }
+
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
@@ -2462,13 +2477,16 @@ namespace TvPlugin
       // Set recorder status
       VirtualCard card;
       var server = new TvServer();
-      if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+      if (TVHome.Navigator.Channel != null)
       {
-        ShowControl(GetID, (int)Control.REC_LOGO);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.REC_LOGO);
+        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+        {
+          ShowControl(GetID, (int)Control.REC_LOGO);
+        }
+        else
+        {
+          HideControl(GetID, (int)Control.REC_LOGO);
+        }
       }
 
       int speed = g_Player.Speed;

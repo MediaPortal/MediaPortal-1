@@ -71,6 +71,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TVDatabase\references\Gentle.Provider.SQLServer.dll</HintPath>
     </Reference>
+    <Reference Include="HttpServer">
+      <HintPath>..\TVServer.Base\HttpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.Utilities">
+      <HintPath>..\TVServer.Base\MediaPortal.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -80,6 +86,9 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UPnP">
+      <HintPath>..\TVServer.Base\UPnP.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -104,11 +113,32 @@
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
     <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
+    <Compile Include="Implementations\Dri\Parser\LvctParser.cs" />
+    <Compile Include="Implementations\Dri\Parser\MgtParser.cs" />
+    <Compile Include="Implementations\Dri\Parser\NitParser.cs" />
+    <Compile Include="Implementations\Dri\Parser\NttParser.cs" />
+    <Compile Include="Implementations\Dri\Parser\BaseDriParser.cs" />
+    <Compile Include="Implementations\Dri\Parser\SvctParser.cs" />
+    <Compile Include="Implementations\Dri\ScannerDri.cs" />
+    <Compile Include="Implementations\Dri\Service\AuxService.cs" />
+    <Compile Include="Implementations\Dri\Service\AvTransportService.cs" />
+    <Compile Include="Implementations\Dri\Service\BaseService.cs" />
+    <Compile Include="Implementations\Dri\Service\CasService.cs" />
+    <Compile Include="Implementations\Dri\Service\ConnectionManagerService.cs" />
+    <Compile Include="Implementations\Dri\Service\DiagService.cs" />
+    <Compile Include="Implementations\Dri\Service\EncoderService.cs" />
+    <Compile Include="Implementations\Dri\Service\MuxService.cs" />
+    <Compile Include="Implementations\Dri\Service\SecurityService.cs" />
+    <Compile Include="Implementations\Dri\Tve3Logger.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ConditionalAccessContext.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\DigitalDevices\DigitalDevices.cs" />
     <Compile Include="Implementations\DVB\ConditionalAccess\ProfRed\ProfRed.cs" />
     <Compile Include="Implementations\DVB\DisEqC\ConexantBDA.cs" />
     <Compile Include="Implementations\DVB\DisEqC\TeVii.cs" />
+    <Compile Include="Implementations\Dri\Service\FdcService.cs" />
+    <Compile Include="Implementations\Dri\Service\TunerService.cs" />
+    <Compile Include="Implementations\Dri\TunerDri.cs" />
+    <Compile Include="Implementations\Pbda\TunerPbdaCableCard.cs" />
     <Compile Include="Implementations\DVB\QAM\GenericATSC.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenericBDAS.cs" />
     <Compile Include="Implementations\DVB\DisEqC\GenPixBDA.cs" />
@@ -160,7 +190,7 @@
     <Compile Include="Implementations\Hybrid\HybridCard.cs" />
     <Compile Include="Implementations\RadioWebStream\RadioWebStreamCard.cs" />
     <Compile Include="Implementations\TvCardBase.cs" />
-    <Compile Include="Implementations\TvCardCollection.cs" />
+    <Compile Include="Implementations\DeviceDetector.cs" />
     <Compile Include="Interfaces\Analyzer\IDVBNetworkProvider.cs" />
     <Compile Include="Interfaces\Analyzer\ITsCaGrabber.cs" />
     <Compile Include="Interfaces\Analyzer\IMPRecord.cs">
