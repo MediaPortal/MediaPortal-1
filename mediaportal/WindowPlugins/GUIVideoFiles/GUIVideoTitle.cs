@@ -913,15 +913,15 @@ namespace MediaPortal.GUI.Video
         {
           if (item.Path.ToUpperInvariant().Contains(@"\VIDEO_TS"))
           {
-            item.Label3 = MediaTypes.DVD.ToString() + " #" + movie.WatchedCount;;
+            item.Label3 = MediaTypes.DVD.ToString() + " " + movie.WatchedPercent + "% #" + movie.WatchedCount;
           }
           else if (item.Path.ToUpperInvariant().Contains(@"\BDMV"))
           {
-            item.Label3 = MediaTypes.BD.ToString() + " #" + movie.WatchedCount;
+            item.Label3 = MediaTypes.BD.ToString() + " " + movie.WatchedPercent + "% #" + movie.WatchedCount;
           }
           else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-            item.Label3 = MediaTypes.ISO.ToString() + " #" + movie.WatchedCount; ;
+            item.Label3 = MediaTypes.ISO.ToString() + " " + movie.WatchedPercent + "% #" + movie.WatchedCount;
           }
           else
           {
@@ -1108,9 +1108,55 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH:
+          try
+          {
+            currentSelectedItem = facadeLayout.SelectedListItemIndex;
+
+            if (currentSelectedItem > 0)
+            {
+              currentSelectedItem--;
+            }
+
+            LoadDirectory(currentFolder);
+
+            if (currentSelectedItem >= 0)
+            {
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEOFILE_CREATED:
+          // Is new file in scanshare??
+          if (message.Param2 > 0)
+          {
+            // To do
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_CREATED:
+          // Is new directory in scanshare??
+          if (message.Param2 > 0)
+          {
+            // To do
+          }
+          break;
+      }
+      return base.OnMessage(message);
+    }
     
     #endregion
-
+    
     private void SetLabel(GUIListItem item)
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;

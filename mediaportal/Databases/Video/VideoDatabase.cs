@@ -110,6 +110,11 @@ namespace MediaPortal.Video.Database
       _database.GetFilesForMovie(lMovieId, ref files);
     }
 
+    public static void DeleteMoviesInFolder(string strPath)
+    {
+      _database.DeleteMoviesInFolder(strPath);
+    }
+
     #endregion
 
     #region MediaInfo

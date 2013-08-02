@@ -216,6 +216,11 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
+        if (items == null)
+        {
+          return;
+        }
+
         GUIListItem pItem;
         ISelectBDHandler selectBdHandler;
         bool dedicatedMovieFolderChecked = false;
@@ -235,7 +240,64 @@ namespace MediaPortal.GUI.Video
         {
           string strThumb = string.Empty;
           pItem = (GUIListItem)items[x];
-          string file = string.Empty;
+
+          if (pItem == null)
+          {
+            continue;
+          }
+
+          //------------------------------------------------------------------------------------
+          string file = pItem.Path;
+          int percentWatched = 0;
+          int timesWatched = 0;
+          // Check db for watched status for played movie or changed status in movie info window
+          if (!pItem.IsFolder || pItem.IsBdDvdFolder)
+          {
+            bool isBluRay = false;
+            // Special folders (DVD/Blu-Ray)
+            if (pItem.IsBdDvdFolder)
+            {
+              file = GetFolderVideoFile(pItem.Path);
+
+              if (file == string.Empty)
+              {
+                file = selectBdHandler.GetFolderVideoFile(pItem.Path);
+                isBluRay = true;
+              }
+            }
+            
+            int movieId = VideoDatabase.GetMovieId(file);
+            bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+
+            pItem.IsPlayed = played;
+            
+
+            if (pItem.IsBdDvdFolder)
+            {
+              if (!isBluRay)
+              {
+                pItem.Label3 = string.Empty;
+                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+              }
+              else
+              {
+                pItem.Label3 = string.Empty;
+                pItem.Label2 = GUIVideoBaseWindow.MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+              }
+            }
+            else if (VirtualDirectory.IsImageFile(Util.Utils.GetFileExtension(pItem.Path)))
+            {
+              pItem.Label3 = GUIVideoBaseWindow.MediaTypes.ISO.ToString() + " " + percentWatched + "% #" + timesWatched;
+            }
+            else
+            {
+              pItem.Label3 = percentWatched + "% #" + timesWatched;
+            }
+          }
+          //----------------------------------------------------------------------------------------
+
+          file = string.Empty;
+          
           bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
           IMDBMovie movie = pItem.AlbumInfoTag as IMDBMovie;
 
@@ -243,6 +305,18 @@ namespace MediaPortal.GUI.Video
           {
             IMDBMovie.SetMovieData(pItem);
             movie = pItem.AlbumInfoTag as IMDBMovie;
+          }
+          else
+          {
+            movie.WatchedPercent = percentWatched;
+            movie.WatchedCount = timesWatched;
+
+            if (pItem.IsPlayed)
+            {
+              movie.Watched = 1;
+            }
+
+            pItem.AlbumInfoTag = movie;
           }
 
           // Check for everymovieinitsownfolder only once for all items (defined share is the same for all)
@@ -440,73 +514,84 @@ namespace MediaPortal.GUI.Video
 
     public string GetFolderVideoFile(string path)
     {
-      if (string.IsNullOrEmpty(path))
-        return string.Empty;
-
-      // IFind first movie file in folder
-      string strExtension = Path.GetExtension(path).ToLowerInvariant();
-      if (VirtualDirectory.IsImageFile(strExtension))
+      try
       {
-        return path;
-      }
-      else
-      {
-        if (VirtualDirectories.Instance.Movies.IsRemote(path))
-        {
+        if (string.IsNullOrEmpty(path))
           return string.Empty;
-        }
-        if (!path.EndsWith(@"\"))
+
+        // IFind first movie file in folder
+      string strExtension = Path.GetExtension(path).ToLowerInvariant();
+        if (VirtualDirectory.IsImageFile(strExtension))
         {
-          path = path + @"\";
+          return path;
         }
-        string[] strDirs = null;
-        try
+        else
         {
-          strDirs = Directory.GetDirectories(path, "video_ts");
-        }
-        catch (Exception) {}
-        if (strDirs != null)
-        {
-          if (strDirs.Length == 1)
-          {
-            Log.Debug("GUIVideoFiles: DVD folder detected - {0}", strDirs[0]);
-            return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
-          }
-          else
+          if (VirtualDirectories.Instance.Movies.IsRemote(path))
           {
             return string.Empty;
           }
-        }
-        string[] strFiles = null;
-        try
-        {
-          strFiles = Directory.GetFiles(path);
-        }
-        catch (Exception) {}
-        if (strFiles != null)
-        {
-          for (int i = 0; i < strFiles.Length; ++i)
+          if (!path.EndsWith(@"\"))
           {
-            string extensionension = Path.GetExtension(strFiles[i]);
-            if (VirtualDirectory.IsImageFile(extensionension))
+            path = path + @"\";
+          }
+          string[] strDirs = null;
+          try
+          {
+            strDirs = Directory.GetDirectories(path, "video_ts");
+          }
+          catch (Exception) {}
+          if (strDirs != null)
+          {
+            if (strDirs.Length == 1)
             {
-              if (DaemonTools.IsEnabled)
-              {
-                return strFiles[i];
-              }
-              continue;
+              Log.Debug("SelectDVDHandler: GetFolderVideoFile - DVD folder detected - {0}", strDirs[0]);
+              return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
             }
-            if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
+            else
             {
-              // Skip hidden files
-              if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              return string.Empty;
+            }
+          }
+          string[] strFiles = null;
+          try
+          {
+            strFiles = Directory.GetFiles(path);
+          }
+          catch (Exception) {}
+          if (strFiles != null)
+          {
+            for (int i = 0; i < strFiles.Length; ++i)
+            {
+              string extensionension = Path.GetExtension(strFiles[i]);
+              if (VirtualDirectory.IsImageFile(extensionension))
               {
+                if (DaemonTools.IsEnabled)
+                {
+                  return strFiles[i];
+                }
                 continue;
               }
-              return strFiles[i];
+              if (VirtualDirectory.IsValidExtension(strFiles[i], Util.Utils.VideoExtensions, false))
+              {
+                // Skip hidden files
+                if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                {
+                  continue;
+                }
+                return strFiles[i];
+              }
             }
           }
         }
+      }
+      catch (ThreadAbortException)
+      {
+        //Will be logged in main thread
+      }
+      catch (Exception ex)
+      {
+        Log.Error("SelectDVDHandler GetFolderVideoFile error: {0}", ex.Message);
       }
       return string.Empty;
     }

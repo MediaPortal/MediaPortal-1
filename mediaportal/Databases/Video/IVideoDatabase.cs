@@ -38,6 +38,7 @@ namespace MediaPortal.Video.Database
     void RemoveFilesForMovie(int lMovieId);
     int GetFileId(string strFilenameAndPath);
     void GetFilesForMovie(int lMovieId, ref ArrayList movies);
+    void DeleteMoviesInFolder(string strPath);
     
     // Genre
     int AddGenre(string strGenre1);
