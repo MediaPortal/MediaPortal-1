@@ -943,7 +943,11 @@ namespace MediaPortal.Util
             if (Picture.CreateThumbnail(thumb, strThumb, (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false))
             {
-              SetThumbnails(ref item);
+              if (Picture.CreateThumbnail(thumb, Utils.ConvertToLargeCoverArt(strThumb), (int)Thumbs.ThumbLargeResolution,
+                                        (int)Thumbs.ThumbLargeResolution, 0, false))
+              {
+                SetThumbnails(ref item);
+              }
             }
           }
         }

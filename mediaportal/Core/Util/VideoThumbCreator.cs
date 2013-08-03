@@ -292,24 +292,18 @@ namespace MediaPortal.Util
           }
         }
 
-        // Remove left over files if needed
-        // Need to revise the logic here
-        /*if (pictureList.Count > 0)
+        // delete final thumb from temp folder
+        try
         {
-          string pictureListName = string.Empty;
-          try
+          if (Utils.FileExistsInCache(ShareThumbTemp))
           {
-            for (int i = 0; i < (pictureList.Count); i++)
-            {
-              pictureListName = pictureList[i];
-              File.Delete(pictureList[i]);
-            }
+            File.Delete(ShareThumbTemp);
           }
-          catch (FileNotFoundException)
-          {
-            Log.Debug("VideoThumbCreator: {0} file not found.", pictureListName);
-          }
-        }*/
+        }
+        catch (FileNotFoundException)
+        {
+          // No need to log
+        }
       }
       catch (Exception ex)
       {

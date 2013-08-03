@@ -416,7 +416,11 @@ namespace MediaPortal.GUI.Library
       {
         GUIPropertyManager.SetProperty("#selecteditem", strSelected);
         GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
-        if (MediaPortal.Util.Utils.FileExistsInCache(strThumb))
+        if (!string.IsNullOrEmpty(strThumb) && string.IsNullOrEmpty(Path.GetPathRoot(strThumb)))
+        {
+          GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+        }
+        else if (MediaPortal.Util.Utils.FileExistsInCache(strThumb))
         {
           GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
         }
@@ -2938,14 +2942,7 @@ namespace MediaPortal.GUI.Library
         GUIListItem pItem = _listItems[iItem];
         strLabel = pItem.Label;
         strLabel2 = pItem.Label2;
-        if (pItem.ThumbnailImage != null && File.Exists(pItem.ThumbnailImage))
-        {
-          strThumb = pItem.ThumbnailImage;
-        }
-        else
-        {
-          strThumb = string.Empty;
-        }
+        strThumb = pItem.ThumbnailImage;
         int index = iItem;
 
         if (_listItems[0].Label != "..")
