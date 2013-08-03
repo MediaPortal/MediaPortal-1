@@ -200,7 +200,7 @@ namespace MediaPortal.Player
       displayDevice.cb = (ushort)Marshal.SizeOf(displayDevice);
       while (EnumDisplayDevices(null, deviceNum, displayDevice, 0) != 0)
       {
-        if (displayDevice.DeviceName == GUIGraphicsContext.currentScreen.DeviceName)
+        if (displayDevice.DeviceName == Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
         {
           // Set new monitorIndex
           GUIGraphicsContext.currentMonitorIdx = (int)deviceNum;
@@ -225,8 +225,8 @@ namespace MediaPortal.Player
       if (result != 0)
       {
         Log.Debug("CycleRefreshRate: Current MonitorIndex : {0} and current deviceName : {1}", (int) monitorIndex,
-                  GUIGraphicsContext.currentScreen.DeviceName);
-        if (displayDevice.DeviceName != GUIGraphicsContext.currentScreen.DeviceName)
+                  Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
+        if (displayDevice.DeviceName != Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName)
         {
           // Analyse monitorIndex to be sure to get on the good one (some multiscreen setup can failed otherwise)
           monitorIndex = (uint) FindMonitorIndexForScreen();
@@ -234,7 +234,7 @@ namespace MediaPortal.Player
           // Try to get new displayDevice based on newest detected monitorIndex
           result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
           Log.Debug("CycleRefreshRate: New MonitorIndex : {0} based on current deviceName : {1}", (int) monitorIndex,
-                    GUIGraphicsContext.currentScreen.DeviceName);
+                    Manager.Adapters[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Information.DeviceName);
         }
 
         if (result != 0)
