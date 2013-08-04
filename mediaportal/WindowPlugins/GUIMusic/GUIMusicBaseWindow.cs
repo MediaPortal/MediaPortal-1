@@ -1190,12 +1190,14 @@ namespace MediaPortal.GUI.Music
       var artist = new ArtistInfo();
       var artistInfo = new MusicArtistInfo();
       if (m_database.GetArtistInfo(artistName, ref artist))
-      { // we already have artist info in database so just use that
+      {
+        // we already have artist info in database so just use that
         artistInfo.Set(artist);
         errorEncountered = false;
       }
       else
-      { // lookup artist details
+      {
+        // lookup artist details
 
         if (null != pDlgOK && !Win32API.IsConnectedToInternet())
         {
@@ -1225,7 +1227,8 @@ namespace MediaPortal.GUI.Music
         {
           var selectedMatch = new AllMusicArtistMatch();
           if (artists.Count == 1)
-          { // only have single match so no need to ask user
+          {
+            // only have single match so no need to ask user
             Log.Debug("Single Artist Match Found");
             selectedMatch = artists[0];
             errorEncountered = false;
@@ -1234,18 +1237,18 @@ namespace MediaPortal.GUI.Music
           {
             // need to get user to choose which one to use
             Log.Debug("Muliple Artist Match Found ({0}) prompting user", artists.Count);
-            var pDlg = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
+            var pDlg = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
             if (null != pDlg)
             {
               pDlg.Reset();
               pDlg.SetHeading(GUILocalizeStrings.Get(1303));
               foreach (var i in artists.Select(artistMatch => new GUIListItem
-                                                                {
-                                                                  Label = artistMatch.Artist + " - " + artistMatch.Genre,
-                                                                  Label2 = artistMatch.YearsActive,
-                                                                  Path = artistMatch.ArtistUrl,
-                                                                  IconImage = artistMatch.ImageUrl
-                                                                }))
+                {
+                  Label = artistMatch.Artist + " - " + artistMatch.Genre,
+                  Label2 = artistMatch.YearsActive,
+                  Path = artistMatch.ArtistUrl,
+                  IconImage = artistMatch.ImageUrl
+                }))
               {
                 pDlg.Add(i);
               }
@@ -1272,27 +1275,23 @@ namespace MediaPortal.GUI.Music
               dlgProgress.Progress();
             }
           }
-          string strHtml;
-          if (scraper.GetArtistHtml(selectedMatch, out strHtml))
+          if (null != dlgProgress)
+          {
+            dlgProgress.SetPercentage(60);
+            dlgProgress.Progress();
+          }
+          if (artistInfo.Parse(selectedMatch.ArtistUrl))
           {
             if (null != dlgProgress)
             {
-              dlgProgress.SetPercentage(60);
+              dlgProgress.SetPercentage(80);
               dlgProgress.Progress();
             }
-            if (artistInfo.Parse(strHtml))
-            {
-              if (null != dlgProgress)
-              {
-                dlgProgress.SetPercentage(80);
-                dlgProgress.Progress();
-              }
-              // set values to actual artist to ensure they match track data
-              // rather than values that might be returned from allmusic.com
-              artistInfo.Artist = artistName;
-              m_database.AddArtistInfo(artistInfo.Get());
-              errorEncountered = false;
-            }
+            // set values to actual artist to ensure they match track data
+            // rather than values that might be returned from allmusic.com
+            artistInfo.Artist = artistName;
+            m_database.AddArtistInfo(artistInfo.Get());
+            errorEncountered = false;
           }
         }
       }
@@ -1574,15 +1573,15 @@ namespace MediaPortal.GUI.Music
             }
           }
 
-          string strAlbumHtml;
-          if (scraper.GetAlbumHtml(albumName, selectedMatch.ArtistUrl, out strAlbumHtml))
+          string strAlbumUrl;
+          if (scraper.GetAlbumUrl(albumName, selectedMatch.ArtistUrl, out strAlbumUrl))
           {
             if (null != dlgProgress)
             {
               dlgProgress.SetPercentage(60);
               dlgProgress.Progress();
             }
-            if (albumInfo.Parse(strAlbumHtml))
+            if (albumInfo.Parse(strAlbumUrl))
             {
               if (null != dlgProgress)
               {

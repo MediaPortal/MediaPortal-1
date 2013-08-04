@@ -181,6 +181,9 @@
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net20\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -218,6 +221,7 @@
     </Compile>
     <Compile Include="Folders\IFolderSettings.cs" />
     <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
+    <Compile Include="Music\InternetLookups\AllMusicAlbumMatch.cs" />
     <Compile Include="Music\InternetLookups\AllMusicArtistMatch.cs" />
     <Compile Include="Music\MusicDatabaseSettings.cs" />
     <Compile Include="Music\InternetLookups\AlbumInfo.cs">
@@ -293,6 +297,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Video\Ado\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
