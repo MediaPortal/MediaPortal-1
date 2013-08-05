@@ -765,7 +765,7 @@ public class MediaPortalApp : D3D, IRender
         
         if (_waitForTvServer)
         {
-          Log.Debug("Main: Wait for TV service requested. Checking if installed...");
+          Log.Debug("Main: Wait for TV service requested");
           ServiceController ctrl;
           try
           {
@@ -774,7 +774,23 @@ public class MediaPortalApp : D3D, IRender
           catch (Exception)
           {
             ctrl = null;
-            Log.Debug("Main: TV service not installed - proceeding...");
+            Log.Debug("Main: Create ServiceController for TV service failed - proceeding...");
+          }
+
+          if (ctrl != null)
+          {
+            //Sanity check for existance of TV service
+            ServiceControllerStatus status = ServiceControllerStatus.Stopped;
+            try
+            {
+              status = ctrl.Status;
+            }
+            catch (Exception)
+            {
+              Log.Debug("Main: Failed to retrieve TV service status");
+              ctrl.Close();
+              ctrl = null;
+            }
           }
 
           if (ctrl != null)
