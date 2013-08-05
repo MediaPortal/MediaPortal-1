@@ -648,6 +648,7 @@ namespace TvDatabase
           atscChannel.PmtPid = detail.PmtPid;
           atscChannel.Provider = detail.Provider;
           atscChannel.ServiceId = detail.ServiceId;
+          atscChannel.LogicalChannelNumber = detail.ChannelNumber;
           //atscChannel.SymbolRate = detail.Symbolrate;
           atscChannel.TransportId = detail.TransportId;
           atscChannel.ModulationType = (ModulationType)detail.Modulation;

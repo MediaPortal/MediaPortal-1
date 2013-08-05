@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.Sections;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -99,9 +100,20 @@ namespace MediaPortal.DeployTool.InstallationChecks
       //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
-      //NSIS installer doesn't want " in parameters (chefkoch)
-      //Remember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+      Process setup = null;
+
+      if (UpgradeDlg.reInstallForce)
+      {
+        setup = Process.Start(_fileName,
+                              String.Format("/S /DeployMode --DeployMode /UpdateMode"));
+      }
+      else
+      {
+        //NSIS installer doesn't want " in parameters (chefkoch)
+        //Remember that /D must be the last one         (chefkoch)
+        setup = Process.Start(_fileName,
+                                      String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+      }
       if (setup != null)
       {
         setup.WaitForExit();
@@ -186,7 +198,18 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
         if (MpPath != null && File.Exists(MpPath))
         {
-          result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
+            result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
         }
       }
       return result;
