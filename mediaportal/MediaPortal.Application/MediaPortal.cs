@@ -3570,9 +3570,16 @@ public class MediaPortalApp : D3D, IRender
 
           // Jump to Music Now Playing
           case Action.ActionType.ACTION_JUMP_MUSIC_NOW_PLAYING:
-            if (g_Player.IsMusic && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+            if (g_Player.IsMusic)
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              {
+                GUIWindowManager.ShowPreviousWindow();
+            }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              }
             }
             break;
 
