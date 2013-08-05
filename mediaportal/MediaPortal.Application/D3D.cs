@@ -1091,7 +1091,10 @@ namespace MediaPortal
         if (capabilities.DeviceCaps.SupportsPureDevice)
         {
           Log.Info("D3D: GPU supports rasterization, transformations, lighting, and shading in hardware");
-          _createFlags |= CreateFlags.PureDevice;
+          if (OSInfo.OSInfo.VistaOrLater())
+          {
+            _createFlags |= CreateFlags.PureDevice;
+          }
         }
       }
 
@@ -1127,11 +1130,6 @@ namespace MediaPortal
       else
       {
         Log.Info("D3D: Creating DirectX9 device");
-        if (!OSInfo.OSInfo.VistaOrLater())
-        {
-          // Override and do not use 'CreateFlags.PureDevice' for XP #4073
-          _createFlags = CreateFlags.HardwareVertexProcessing;
-        }
         GUIGraphicsContext.DX9Device = new Device(AdapterInfo.AdapterOrdinal,
                                                   _deviceType, 
                                                   _renderTarget,
