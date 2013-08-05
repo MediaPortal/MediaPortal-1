@@ -1417,18 +1417,14 @@ namespace MediaPortal.GUI.Pictures
       if (!item.IsFolder)
       {
         string thumbnailImage = GetThumbnail(item.Path);
+        string thumbnailLargeImage = GetLargeThumbnail(item.Path);
         if (File.Exists(thumbnailImage) || Util.Utils.FileExistsInCache(thumbnailImage))
         {
           item.IconImage = thumbnailImage;
         }
-        if (_autocreateLargeThumbs)
+        if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
         {
-          string thumbnailLargeImage = GetLargeThumbnail(item.Path);
           item.ThumbnailImage = thumbnailLargeImage;
-        }
-        else
-        {
-          item.ThumbnailImage = thumbnailImage;
         }
 
         if ((!File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage)) &&
