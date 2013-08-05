@@ -66,6 +66,7 @@ CMPIPTV_RTSP::CMPIPTV_RTSP()
   this->rtspSource = NULL;
   this->rtspUdpSink = NULL;
   this->rtspUdpGroupsock = NULL;
+  this->rtspUdpSinkMaxPayloadSize = RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT;
   this->rtspUdpPortRangeStart = RTSP_UDP_PORT_RANGE_START_DEFAULT;
   this->rtspUdpPortRangeEnd = RTSP_UDP_PORT_RANGE_END_DEFAULT;
   this->rtspTeardownRequestMaximumCount = RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT;
@@ -114,17 +115,18 @@ int CMPIPTV_RTSP::Initialize(HANDLE lockMutex, CParameterCollection *configurati
   int result = this->CMPIPTV_UDP::Initialize(lockMutex, configuration);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_RECEIVE_DATA_TIMEOUT, true, RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT);
+  this->rtspUdpSinkMaxPayloadSize = this->configurationParameters->GetValueUnsignedInt(CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE, true, RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT);
   this->rtspUdpPortRangeStart = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_START, true, RTSP_UDP_PORT_RANGE_START_DEFAULT);
   this->rtspUdpPortRangeEnd = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_UDP_PORT_RANGE_END, true, RTSP_UDP_PORT_RANGE_END_DEFAULT);
-  this->rtspUdpSinkMaxPayloadSize = this->configurationParameters->GetValueUnsignedInt(CONFIGURATION_RTSP_UDP_SINK_MAX_PAYLOAD_SIZE, true, RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT);
   this->rtspTeardownRequestMaximumCount = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT, true, RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT);
   this->rtspTeardownRequestTimeout = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_TEARDOWN_REQUEST_TIMEOUT, true, RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT);
   this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(CONFIGURATION_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
+  this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
+  this->rtspUdpSinkMaxPayloadSize = (this->rtspUdpSinkMaxPayloadSize < 0) ? RTSP_UDP_SINK_MAX_PAYLOAD_SIZE_DEFAULT : this->rtspUdpSinkMaxPayloadSize;
   this->rtspUdpPortRangeStart = (this->rtspUdpPortRangeStart <= 1024) ? RTSP_UDP_PORT_RANGE_START_DEFAULT : this->rtspUdpPortRangeStart;
   this->rtspUdpPortRangeEnd = (this->rtspUdpPortRangeEnd < this->rtspUdpPortRangeStart) ? min(65535, this->rtspUdpPortRangeStart + 1000) : min(65535, this->rtspUdpPortRangeEnd);
   this->rtspTeardownRequestMaximumCount = (this->rtspTeardownRequestMaximumCount <= 0) ? RTSP_TEARDOWN_REQUEST_MAXIMUM_COUNT_DEFAULT : this->rtspTeardownRequestMaximumCount;
-  this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
   this->rtspTeardownRequestTimeout = (this->rtspTeardownRequestTimeout < 0) ? RTSP_TEARDOWN_REQUEST_TIMEOUT_DEFAULT : this->rtspTeardownRequestTimeout;
   this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
