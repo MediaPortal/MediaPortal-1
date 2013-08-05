@@ -1081,10 +1081,10 @@ namespace MediaPortal
       //  check if GPU supports shader model 2.0
       if (capabilities.VertexShaderVersion >= new Version(2, 0) && capabilities.PixelShaderVersion >= new Version(2, 0))
       {
-        // check if GPU supports rasterization, transformation, lightning in hardware
+        // check if GPU supports rasterization, transformation, lighting in hardware
         if (capabilities.DeviceCaps.SupportsHardwareTransformAndLight)
         {
-          Log.Info("D3D: GPU supports rasterization, transformation, lightning in hardware");
+          Log.Info("D3D: GPU supports rasterization, transformation, lighting in hardware");
           _createFlags = CreateFlags.HardwareVertexProcessing;
         }
         // check if GPU supports rasterization, transformations, lighting, and shading in hardware
