@@ -97,7 +97,7 @@ namespace SetupTv.Sections
 
     #region Vars
 
-    private bool _needRestart;
+    private bool _needInformUser;
     private LogLevel _logLevelStart;
     private LogLevel _logLevel;
 
@@ -118,7 +118,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
-      _needRestart = false;
+      _needInformUser = false;
       TvBusinessLayer layer = new TvBusinessLayer();
 
       numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
@@ -229,23 +229,14 @@ namespace SetupTv.Sections
         encoder.Persist();
       }
 
-      // Test if we need restart
-      needRestart();
+      // Check if log level has change
+      checkLogStatus();
 
-      if (_needRestart)
+      if (_needInformUser)
       {
-        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-        {
-          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
-          dlgNotify.Show();
-          dlgNotify.WaitForDisplay();
-
-          RemoteControl.Instance.ClearCache();
-          RemoteControl.Instance.Restart();
-
-          dlgNotify.Close();
-        }
+        if (
+          MessageBox.Show(this, "The log level will be changed after you restart the TVService manually","Information about log level change",
+                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation) == DialogResult.OK) ;
       }
     }
 
@@ -447,11 +438,11 @@ namespace SetupTv.Sections
       }
     }
 
-    private void needRestart()
+    private void checkLogStatus()
     {
       if (_logLevelStart != _logLevel)
       {
-        _needRestart = true;
+        _needInformUser = true;
       }
     }
 
