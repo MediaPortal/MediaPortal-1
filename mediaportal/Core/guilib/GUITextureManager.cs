@@ -309,24 +309,28 @@ namespace MediaPortal.GUI.Library
       try
       {
         int width, height;
-        Texture dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, out width, out height);
-        if (dxtexture != null)
-        {
-          CachedTexture newCache = new CachedTexture();
-          newCache.Name = fileName;
-          newCache.Frames = 1;
-          newCache.Width = width;
-          newCache.Height = height;
-          newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
-          //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
-          newCache.Disposed += new EventHandler(cachedTexture_Disposed);
-          if (persistent && !_persistentTextures.ContainsKey(cacheKey))
-          {
-            _persistentTextures[cacheKey] = true;
-          }
 
-          _cacheTextures[cacheKey] = newCache;
-          return 1;
+        if (MediaPortal.Util.Utils.FileExistsInCache(fileName))
+        {
+          Texture dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, out width, out height);
+          if (dxtexture != null)
+          {
+            CachedTexture newCache = new CachedTexture();
+            newCache.Name = fileName;
+            newCache.Frames = 1;
+            newCache.Width = width;
+            newCache.Height = height;
+            newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
+            //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+            newCache.Disposed += new EventHandler(cachedTexture_Disposed);
+            if (persistent && !_persistentTextures.ContainsKey(cacheKey))
+            {
+              _persistentTextures[cacheKey] = true;
+            }
+
+            _cacheTextures[cacheKey] = newCache;
+            return 1;
+          }
         }
       }
       catch (Exception)
@@ -512,7 +516,14 @@ namespace MediaPortal.GUI.Library
       try
       {
 #if DO_RESAMPLE
-        imgSrc=Image.FromFile(fileName);   
+        try
+        {
+          imgSrc=ImageFast.FromFile(fileName);
+        }
+        catch (Exception)
+        {
+          imgSrc=Image.FromFile(fileName);
+        }
         if (imgSrc==null) return null;
 				//Direct3D prefers textures which height/width are a power of 2
 				//doing this will increases performance
@@ -712,7 +723,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        if (string.IsNullOrEmpty(fileName))
+        if (string.IsNullOrEmpty(fileName) || !MediaPortal.Util.Utils.FileExistsInCache(fileName))
         {
           return;
         }
@@ -779,7 +790,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsTemporary(string fileName)
     {
-      if (String.IsNullOrEmpty(fileName))
+      if (String.IsNullOrEmpty(fileName) || !MediaPortal.Util.Utils.FileExistsInCache(fileName))
       {
         return false;
       }

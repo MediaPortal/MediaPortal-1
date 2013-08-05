@@ -39,10 +39,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="epgEvents"></param>
     /// <param name="device"></param>
     /// <param name="sequence"></param>
-    public TvCardDVBIPElecard(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device, sequence)
+    public TvCardDVBIPElecard(DsDevice device, int sequence)
+      : base(device, sequence)
     {
       _defaultUrl = "elecard://0.0.0.0:1234:t=m2t/udp";
     }

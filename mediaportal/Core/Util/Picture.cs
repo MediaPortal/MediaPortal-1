@@ -884,8 +884,16 @@ namespace MediaPortal.Util
 
         try
         {
-          myImage = Image.FromFile(aInputFilename, true);
-          result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          try
+          {
+            myImage = ImageFast.FromFile(aInputFilename);
+            result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          }
+          catch (Exception)
+          {
+            myImage = Image.FromFile(aInputFilename, true);
+            result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          }
         }
         catch (FileNotFoundException)
         {
@@ -1161,8 +1169,16 @@ namespace MediaPortal.Util
 
           try
           {
-            myImage = Image.FromFile(thumbnailImageDest, true);
-            result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+            try
+            {
+              myImage = ImageFast.FromFile(thumbnailImageDest);
+              result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+            }
+            catch (Exception)
+            {
+              myImage = Image.FromFile(thumbnailImageDest, true);
+              result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+            }
           }
           catch (FileNotFoundException)
           {
@@ -1413,8 +1429,16 @@ namespace MediaPortal.Util
 
     public static int GetRotateByExif(string imageFile)
     {
-      Image image = Image.FromFile(imageFile);
-      return GetRotateByExif(image);
+      try
+      {
+        Image image = ImageFast.FromFile(imageFile);
+        return GetRotateByExif(image);
+      }
+      catch (Exception)
+      {
+        Image image = Image.FromFile(imageFile);
+        return GetRotateByExif(image);
+      }
     }
 
     public static int GetRotateByExif(Image image)

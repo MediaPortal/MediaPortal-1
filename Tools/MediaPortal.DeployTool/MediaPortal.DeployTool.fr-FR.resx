@@ -513,4 +513,7 @@ Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPo
   <data name="ExtensionChoice_LAV" xml:space="preserve">
     <value>Installez LAV Filtres pour permettre la lecture de nombreux formats audio vidéo</value>
   </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Réinstaller l'installation actuelle vers {0}</value>
+  </data>
 </root>

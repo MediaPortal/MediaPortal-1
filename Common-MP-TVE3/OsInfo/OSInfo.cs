@@ -200,6 +200,10 @@ namespace OSInfo
       /// Windows 8
       ///</summary>
       Windows8,
+	  ///<summary>
+      /// Windows 8
+      ///</summary>
+      Windows81,
       ///<summary>
       /// Windows 2003 Server
       ///</summary>
@@ -513,6 +517,9 @@ namespace OSInfo
                     case 2:
                       osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
                       break;
+                    case 3:
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012";
+                      break;
                   }
                   break;
                 }
@@ -551,6 +558,8 @@ namespace OSInfo
           return OSProductType == NT_WORKSTATION ? OSList.Windows7 : OSList.Windows2008R2;
         case 62:
           return OSProductType == NT_WORKSTATION ? OSList.Windows8 : OSList.Windows2012;
+        case 63:
+          return OSProductType == NT_WORKSTATION ? OSList.Windows81 : OSList.Windows2012;
       }
       return OSList.Windows2000andPrevious;
     }
@@ -589,6 +598,10 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 2, 9200, NT_WORKSTATION, 0))
       { // Windows 8 RTM
+        return OsSupport.FullySupported;
+      }
+      if (VerifyDesktopOSMinRequirement(6, 3, 9431, NT_WORKSTATION, 0))
+      { // Windows 8.1 Preview
         return OsSupport.FullySupported;
       }
       if (IsServer())

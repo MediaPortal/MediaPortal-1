@@ -54,6 +54,8 @@
     <Compile Include="ThumbProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProcessingQueue.cs" />
+    <Compile Include="VideoThumbCreator\MediaInfo.cs" />
+    <Compile Include="VideoThumbCreator\MediaInfoWrapper.cs" />
     <Compile Include="VideoThumbCreator\VideoThumbCreator.cs" />
   </ItemGroup>
   <ItemGroup>
