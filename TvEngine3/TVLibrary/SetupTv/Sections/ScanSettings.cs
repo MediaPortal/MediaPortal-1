@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using TvDatabase;
 using TvLibrary.Log;
+using TvControl;
 
 namespace SetupTv.Sections
 {
@@ -94,6 +95,14 @@ namespace SetupTv.Sections
 
     #endregion
 
+    #region Vars
+
+    private bool _needRestart;
+    private LogLevel _logLevelStart;
+    private LogLevel _logLevel;
+
+    #endregion
+
     private BindingList<DisplaySoftwareEncoder> _bindingVideoEncoders;
     private BindingList<DisplaySoftwareEncoder> _bindingAudioEncoders;
 
@@ -109,6 +118,7 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      _needRestart = false;
       TvBusinessLayer layer = new TvBusinessLayer();
 
       numericUpDownTune.Value = Convert.ToDecimal(layer.GetSetting("timeoutTune", "2").Value);
@@ -150,6 +160,7 @@ namespace SetupTv.Sections
       {
         mpComboBoxLog.SelectedIndex = Convert.ToInt32(layer.GetSetting("loglevel", "5").Value) - 2;
         //default is debug=5 but first two options in enum (none and critical) are not used so offset by 2
+        _logLevelStart = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Store logLevel value
       }
       catch (Exception)
       {
@@ -216,6 +227,25 @@ namespace SetupTv.Sections
       foreach (DisplaySoftwareEncoder encoder in _bindingAudioEncoders)
       {
         encoder.Persist();
+      }
+
+      // Test if we need restart
+      needRestart();
+
+      if (_needRestart)
+      {
+        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
+        }
       }
     }
 
@@ -417,6 +447,14 @@ namespace SetupTv.Sections
       }
     }
 
+    private void needRestart()
+    {
+      if (_logLevelStart != _logLevel)
+      {
+        _needRestart = true;
+      }
+    }
+
     private void button1_Click(object sender, EventArgs e)
     {
       MoveEncodersUp(mpListViewVideo, _bindingVideoEncoders);
@@ -439,8 +477,8 @@ namespace SetupTv.Sections
 
     private void mpComboBoxLog_SelectedIndexChanged(object sender, EventArgs e)
     {
-      var logLevel = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Legacy log levels exist and first value starts at index 2 rather than 0
-      Log.SetLogLevel(logLevel);
+      _logLevel = (LogLevel) (mpComboBoxLog.SelectedIndex + 2); // Legacy log levels exist and first value starts at index 2 rather than 0
+      Log.SetLogLevel(_logLevel);
     }
   }
 }
