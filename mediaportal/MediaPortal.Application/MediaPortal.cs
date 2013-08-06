@@ -2006,8 +2006,11 @@ public class MediaPortalApp : D3D, IRender
             ClientSize = new Size(x, height);
           }
           // send new resolution to VisualizationWindow so the Winproc can work with it 
-          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
-          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+          if (VisualizationBase.VisualizationWindow != null)
+          {
+            VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+            VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+          }
         }
         else
         {
@@ -2027,8 +2030,11 @@ public class MediaPortalApp : D3D, IRender
       
       case SIZE_MAXIMIZED:
         Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
-        VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
-        VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+        if (VisualizationBase.VisualizationWindow != null)
+        {
+          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+        }
         break;
       
       case SIZE_MAXSHOW:
