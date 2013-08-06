@@ -684,7 +684,7 @@ namespace MediaPortal.Player
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
 
-        if (GUIGraphicsContext.Vmr9Active)
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
         {
           Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: dynamic refresh rate change - notify video renderer");
           VMR9Util.g_vmr9.UpdateEVRDisplayFPS();
