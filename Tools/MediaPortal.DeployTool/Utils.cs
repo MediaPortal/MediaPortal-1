@@ -565,8 +565,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 3;
-          revision = 100;
+          minor = 4;
+          revision = 0;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -587,7 +587,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 4;
-      int revision = 0;
+      int revision = 100;
 
       Version ver = new Version(major, minor, revision);
       return ver;
