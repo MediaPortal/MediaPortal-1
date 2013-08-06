@@ -87,7 +87,7 @@
     		<posX>588</posX>
     		<posY>907</posY>
     		<width>737</width>
-    		<height>17</height>
+    		<height>18</height>
     		<texture>osd_progress_bg.png</texture>
 			<visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     	</control>
@@ -104,23 +104,20 @@
 			<TextureOffsetY>0</TextureOffsetY>
 			<bottomtexture>-</bottomtexture>
 			<texturetick>-</texturetick>
-			<lefttexture>osd_progress_left_translucent.png</lefttexture>
+			<lefttexture>osd_progress_left.png</lefttexture>
 			<midtexture>-</midtexture>
 			<righttexture>-</righttexture>
 			<logotexture>-</logotexture>
 			<fillbackgroundtexture>-</fillbackgroundtexture>
 			<fillbgxoff>-3</fillbgxoff>
 			<fillbgyoff>0</fillbgyoff>
-    		<filltexture1>osd_progress_mid_translucent.png</filltexture1>
-		    <filltexture2>osd_progress_mid_translucent.png</filltexture2>
-		    <filltexture3>osd_progress_mid_orange_translucent.png</filltexture3>
-		    <markertexture>osd_progress_comskip_marker.png</markertexture>
+    		<filltexture1>osd_progress_mid.png</filltexture1>
+    		<filltexture2>osd_progress_mid.png</filltexture2>
+    		<filltexture3>osd_progress_mid_orange.png</filltexture3>
 			<fillheight>15</fillheight>
 			<label>#TV.Record.percent1</label>
 			<label1>#TV.Record.percent2</label1>
 			<label2>#TV.Record.percent3</label2>
-			<labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
-            <labelmarkerends>#TV.Record.chapters</labelmarkerends>
 			<startlabel />
 			<endlabel />
 			<toplabel />
