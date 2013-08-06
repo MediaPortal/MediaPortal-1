@@ -635,7 +635,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.4.0";
+      return "1.5.0 Pre Release";
     }
 
     /// <summary>
