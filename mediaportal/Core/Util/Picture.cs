@@ -808,7 +808,7 @@ namespace MediaPortal.Util
                                        int aThumbHeight, int iRotate, bool aFastMode)
     {
       return CreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
-                             aThumbHeight, iRotate, aFastMode, false, true);
+                             aThumbHeight, iRotate, aFastMode, true, true);
     }
 
     private static bool BitmapFromSource(BitmapSource bitmapsource, string thumbnailImageDest)
@@ -932,7 +932,7 @@ namespace MediaPortal.Util
     /// 1 = rotate 90 degrees
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
-    /// <param name="fallBack">Needed if generated file need to be delete (for ex in temp folder)</param>
+    /// <param name="fallBack">Set to true to generated file that need to be deleted (for ex in temp folder)</param>
     /// </param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
