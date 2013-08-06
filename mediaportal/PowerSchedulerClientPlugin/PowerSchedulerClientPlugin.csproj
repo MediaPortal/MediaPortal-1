@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -40,14 +40,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;CLIENT</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -68,6 +68,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -76,15 +77,41 @@
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Handlers\ActiveNetworkStandbyHandler.cs" />
+    <Compile Include="Handlers\ActiveSharesStandbyHandler.cs" />
+    <Compile Include="Handlers\ProcessActiveStandbyHandler.cs" />
+    <Compile Include="Handlers\RebootWakeupHandler.cs" />
+    <Compile Include="Handlers\WakeableStandbyHandler.cs" />
+    <Compile Include="Handlers\WakeableWakeupHandler.cs" />
+    <Compile Include="MasterVolume.cs" />
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerClientPlugin.cs" />
-    <Compile Include="PowerSchedulerClientSetup.cs">
+    <Compile Include="PowerSchedulerFactory.cs" />
+    <Compile Include="Setup\PowerSchedulerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PowerSchedulerClientSetup.designer.cs">
-      <DependentUpon>PowerSchedulerClientSetup.cs</DependentUpon>
+    <Compile Include="Setup\PowerSchedulerSetup.designer.cs">
+      <DependentUpon>PowerSchedulerSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\PowerSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\PowerSettingsForm.designer.cs">
+      <DependentUpon>PowerSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup\SelectProcessForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\SelectProcessForm.designer.cs">
+      <DependentUpon>SelectProcessForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\SelectShareForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\SelectShareForm.designer.cs">
+      <DependentUpon>SelectShareForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UnattendedWindow.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -106,13 +133,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PowerSchedulerClientSetup.resx">
-      <DependentUpon>PowerSchedulerClientSetup.cs</DependentUpon>
+    <EmbeddedResource Include="PowerScheduler.gif" />
+    <EmbeddedResource Include="PowerScheduler_disabled.gif" />
+    <EmbeddedResource Include="Setup\PowerSchedulerSetup.resx">
+      <DependentUpon>PowerSchedulerSetup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PowerScheduler.gif" />
-    <EmbeddedResource Include="PowerScheduler_disabled.gif" />
-  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(ProjectDir)..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup\*" "$(ProjectDir)Setup" /D /Y
+xcopy "$(ProjectDir)Setup\*" "$(ProjectDir)..\..\TvEngine3\TVLibrary\Plugins\PowerScheduler\Setup" /D /Y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

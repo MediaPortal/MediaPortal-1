@@ -1,18 +1,18 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
-// 
+//
 // MediaPortal is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // MediaPortal is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
@@ -22,36 +22,33 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
+using System.Threading;
+using Gentle.Common;
 using TvControl;
 using TvDatabase;
 using TvEngine.Interfaces;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using System.Runtime.InteropServices;
-using System.Threading;
-using Gentle.Common;
+using TvLibrary.Log;
 
 #endregion
 
 namespace TvEngine.PowerScheduler
 {
   /// <summary>
-  /// PowerScheduler: tvservice plugin which controls power management
+  /// PowerScheduler Server Plugin: tvservice plugin which controls power management
   /// </summary>
   public class PowerScheduler : MarshalByRefObject, IPowerScheduler, IPowerController
   {
     #region Variables
-
-    public event PowerSchedulerEventHandler OnPowerSchedulerEvent;
 
     /// <summary>
     /// PowerScheduler single instance
@@ -70,14 +67,14 @@ namespace TvEngine.PowerScheduler
     private IController _controller;
 
     /// <summary>
+    /// Thread starting and stopping PowerScheduler
+    /// </summary>
+    private Thread _parentThread;
+
+    /// <summary>
     /// Factory for creating various IStandbyHandlers/IWakeupHandlers
     /// </summary>
     private PowerSchedulerFactory _factory;
-
-    /// <summary>
-    /// Manages setting the according thread execution state
-    /// </summary>
-    private PowerManager _powerManager;
 
     /// <summary>
     /// List of registered standby handlers ("disable standby" plugins)
@@ -90,30 +87,44 @@ namespace TvEngine.PowerScheduler
     private List<IWakeupHandler> _wakeupHandlers;
 
     /// <summary>
-    /// IStandbyHandler for the client in singleseat setups
+    /// StandbyHandler for the IPowerController interface
     /// </summary>
-    private GenericStandbyHandler _clientStandbyHandler;
+    private PowerControllerStandbyHandler _powerControllerStandbyHandler;
 
     /// <summary>
-    /// IWakeupHandler for the client in singleseat setups
+    /// WakeupHandler for the IPowerController interface
     /// </summary>
-    private GenericWakeupHandler _clientWakeupHandler;
+    private PowerControllerWakeupHandler _powerControllerWakeupHandler;
 
     /// <summary>
-    /// Polls standby handlers to check if shutdown is allowed
+    /// IStandbyHandler for remote clients in client/server setups
     /// </summary>
-    /// 
-    private Thread _pollThread;
+    private RemoteClientStandbyHandler _remoteClientStandbyHandler;
 
     /// <summary>
-    ///  How often we should reload settings
+    /// EventWaitHandle to trigger the StandbyWakeupThread
     /// </summary>
-    private int _reloadInterval = 60;
+    private EventWaitHandle _standbyWakeupTriggered;
 
     /// <summary>
-    ///  Stop poll thread 
+    /// EventWaitHandle to signal "Suspend" to the StandbyWakeupThread
     /// </summary>
-    private ManualResetEvent _stopThread;
+    private EventWaitHandle _standbyWakeupSuspend;
+
+    /// <summary>
+    /// EventWaitHandle to signal "Resume" to the StandbyWakeupThread
+    /// </summary>
+    private EventWaitHandle _standbyWakeupResume;
+
+    /// <summary>
+    /// EventWaitHandle to signal "Finished"
+    /// </summary>
+    private EventWaitHandle _standbyWakeupFinished;
+
+    /// <summary>
+    /// Thread to check for standby and set wakeup timer
+    /// </summary>
+    private Thread _standbyWakeupThread;
 
     /// <summary>
     /// Timer with support for waking up the system
@@ -126,14 +137,19 @@ namespace TvEngine.PowerScheduler
     private DateTime _lastUserTime;
 
     /// <summary>
-    /// Global indicator if the PowerScheduler thinks the system is idle
+    /// Indicator if the PowerScheduler thinks the system is idle
     /// </summary>
-    private bool _idle = false;
+    private bool _idle;
 
     /// <summary>
     /// Indicating whether the PowerScheduler is in standby-mode.
     /// </summary>
     private bool _standby = false;
+
+    /// <summary>
+    /// Used to avoid concurrent suspend requests which could result in a suspend - user resumes - immediately suspends.
+    /// </summary>
+    private DateTime _ignoreSuspendUntil = DateTime.MinValue;
 
     /// <summary>
     /// All PowerScheduler related settings are stored here
@@ -167,185 +183,82 @@ namespace TvEngine.PowerScheduler
     {
       _standbyHandlers = new List<IStandbyHandler>();
       _wakeupHandlers = new List<IWakeupHandler>();
-      _clientStandbyHandler = new GenericStandbyHandler();
-      _clientWakeupHandler = new GenericWakeupHandler();
       _lastUserTime = DateTime.Now;
       _idle = false;
 
-      // Add ourselves to the GlobalServiceProvider
-      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+      // Register as global service provider instance
+      if (!GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
-        GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
+        GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
       }
-      GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
-      Log.Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
+      Log.Debug("PS: Registered PowerScheduler as IPowerScheduler service to GlobalServiceProvider");
     }
 
     ~PowerScheduler()
     {
       try
       {
-        // disable the wakeup timer
-        _wakeupTimer.SecondsToWait = -1;
-        _wakeupTimer.Close();
+        // Disable the wakeup timer, if not done already
+        if (_wakeupTimer != null)
+        {
+          _wakeupTimer.TimeToWakeup = DateTime.MaxValue;
+          _wakeupTimer.Close();
+          _wakeupTimer = null;
+        }
+
+        // Unregister as global service provider instance
+        if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+        {
+          GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
+          Log.Debug("PS: Unregistered IPowerScheduler service from GlobalServiceProvider");
+        }
       }
-      catch (ObjectDisposedException) {}
-      catch (AppDomainUnloadedException appex)
+      catch (Exception ex)
       {
-        Log.Info("PowerScheduler: Error on dispose - {0}", appex.Message);
+        Log.Error("PS: Exception in Destructor: {0}", ex);
+        Log.Info("PS: Exception in Destructor: {0}", ex);
+      }
+    }
+
+    public static PowerScheduler Instance
+    {
+      get
+      {
+        if (_powerScheduler == null)
+        {
+          lock (_mutex)
+          {
+            if (_powerScheduler == null)
+            {
+              _powerScheduler = new PowerScheduler();
+            }
+          }
+        }
+        return _powerScheduler;
       }
     }
 
     #endregion
 
-    #region Public methods
-
-    #region Start/Stop methods
+    #region MarshalByRefObject overrides
 
     /// <summary>
-    /// Called by the PowerSchedulerPlugin to start the PowerScheduler
+    /// Make sure SAO never expires
     /// </summary>
-    /// <param name="controller">TVController from the tvservice</param>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    public void Start(IController controller)
+    /// <returns></returns>
+    public override object InitializeLifetimeService()
     {
-      try
-      {
-        string threadname = Thread.CurrentThread.Name;
-        if (string.IsNullOrEmpty(threadname))
-          Thread.CurrentThread.Name = "Powerscheduler";
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
-      }
-
-      _controller = controller;
-
-      Register(_clientStandbyHandler);
-      Register(_clientWakeupHandler);
-      RegisterPowerEventHandler();
-
-      Log.Debug("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
-
-      // Create the PowerManager that helps setting the correct thread executation state
-      _powerManager = new PowerManager();
-
-      // Create the timer that will wakeup the system after a specific amount of time after the
-      // system has been put into standby
-      if (_wakeupTimer == null)
-      {
-        _wakeupTimer = new WaitableTimer();
-        _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(OnWakeupTimerExpired);
-        _wakeupTimer.OnTimerException += new WaitableTimer.TimerExceptionHandler(OnWakeupTimerException);
-      }
-
-      // Configure remoting if not already done
-      StartRemoting();
-
-      LoadSettings();
-
-      // Create the default set of standby/resume handlers
-      if (_factory == null)
-        _factory = new PowerSchedulerFactory(controller);
-      _factory.CreateDefaultSet();
-
-      SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
-
-      Log.Debug("PowerScheduler: Starting poll thread");
-      _stopThread = new ManualResetEvent(false);
-      _pollThread = new Thread(new ThreadStart(PollThread));
-      _pollThread.Name = "PowerScheduler poll thread";
-      _pollThread.IsBackground = true;
-      _pollThread.Priority = ThreadPriority.Normal;
-      _pollThread.Start();
-
-      Log.Info("Powerscheduler: started");
-    }
-
-    /// <summary>
-    /// Called by the PowerSchedulerPlugin to stop the PowerScheduler
-    /// </summary>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    public void Stop()
-    {
-      _stopThread.Set();
-
-      UnRegisterPowerEventHandler();
-
-      // dereference the PowerManager instance
-      _powerManager = null;
-
-      // Remove the default set of standby/resume handlers
-      _factory.RemoveDefaultSet();
-      Unregister(_clientStandbyHandler);
-      Unregister(_clientWakeupHandler);
-      Log.Debug("PowerScheduler: Removed default set of standby/resume handlers to PowerScheduler");
-
-      SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
-
-      Log.Info("Powerscheduler: stopped");
-    }
-
-    private void RegisterPowerEventHandler()
-    {
-      // register to power events generated by the system
-      if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
-      {
-        GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
-        Log.Debug("PowerScheduler: Registered PowerScheduler as PowerEventHandler to tvservice");
-      }
-      else
-      {
-        Log.Error("PowerScheduler: Unable to register power event handler!");
-      }
-    }
-
-    private void UnRegisterPowerEventHandler()
-    {
-      // unregister to power events generated by the system
-      if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
-      {
-        GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
-          new PowerEventHandler(OnPowerEvent));
-        Log.Debug("PowerScheduler: UnRegistered PowerScheduler as PowerEventHandler to tvservice");
-      }
-      else
-      {
-        Log.Error("PowerScheduler: Unable to unregister power event handler!");
-      }
-    }
-
-    /// <summary>
-    /// Configure remoting for power control from MP
-    /// </summary>
-    private void StartRemoting()
-    {
-      if (_remotingStarted)
-        return;
-      try
-      {
-        ListDictionary channelProperties = new ListDictionary();
-        channelProperties.Add("port", 31457);
-        channelProperties.Add("exclusiveAddressUse", false);
-        HttpChannel channel = new HttpChannel(channelProperties,
-                                              new SoapClientFormatterSinkProvider(),
-                                              new SoapServerFormatterSinkProvider());
-
-        ChannelServices.RegisterChannel(channel, false);
-      }
-      catch (RemotingException) {}
-      catch (System.Net.Sockets.SocketException) {}
-      // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
-      ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof (IPowerController));
-      RemotePowerControl.Clear();
-      Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
-      _remotingStarted = true;
+      return null;
     }
 
     #endregion
 
     #region IPowerScheduler implementation
+
+    /// <summary>
+    /// Register to this event to receive status changes from the PowerScheduler
+    /// </summary>
+    public event PowerSchedulerEventHandler OnPowerSchedulerEvent;
 
     /// <summary>
     /// Registers a new IStandbyHandler plugin which can prevent entering standby
@@ -414,29 +327,13 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// Checks if a suspend request is in progress
+    /// Requests suspension of the system
     /// </summary>
-    /// <returns>is the system currently trying to suspend?</returns>
-    public bool IsSuspendInProgress()
-    {
-      return _isSuspendInProgress;
-    }
-
-
-    /// <summary>
-    /// Used to avoid concurrent suspend requests which could result in a suspend - user resumes - immediately suspends.
-    /// </summary>
-    private DateTime _ignoreSuspendUntil = DateTime.MinValue;
-
-    /// <summary>
-    /// Manually puts the system in Standby (Suspend/Hibernate depending on what is configured)
-    /// </summary>
-    /// <param name="source">description of the source who puts the system into standby</param>
-    /// <param name="force">should we ignore PowerScheduler's current state (true) or not? (false)</param>
-    /// <returns></returns>
+    /// <param name="source">Description of who wants to suspend the system</param>
+    /// <param name="force">Force the system to suspend (XP only)</param>
     public void SuspendSystem(string source, bool force)
     {
-      Log.Info("PowerScheduler: Manual system suspend requested by {0}", source);
+      Log.Info("PS: System suspend requested by {0}", string.IsNullOrEmpty(source) ? "PowerScheduler" : source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -447,22 +344,45 @@ namespace TvEngine.PowerScheduler
         case ShutdownMode.Hibernate:
           SuspendSystem(source, (int)RestartOptions.Hibernate, force);
           break;
+        case ShutdownMode.Shutdown:
+          SuspendSystem(source, (int)RestartOptions.ShutDown, force);
+          break;
         case ShutdownMode.StayOn:
-          Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
+          Log.Debug("PS: Standby requested but system is configured to stay on");
           break;
         default:
-          Log.Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
+          Log.Error("PS: Unknown shutdown mode: {0}", _settings.ShutdownMode);
+          Log.Info("PS: Unknown shutdown mode: {0}", _settings.ShutdownMode);
           break;
       }
     }
 
     /// <summary>
-    /// Puts the system into the configured standby mode (Suspend/Hibernate)
+    /// Puts the system into sleep mode (Suspend/Hibernate)
     /// </summary>
-    /// <returns>bool indicating whether or not the request was honoured</returns>
-    private void SuspendSystem()
+    /// <param name="source">Description of who wants to suspend the system</param>
+    /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
+    /// <param name="force">Force the system to suspend (XP only)</param>
+    public void SuspendSystem(string source, int how, bool force)
     {
-      SuspendSystem("", _settings.ForceShutdown);
+      Log.Debug("PS: SuspendSystem(source: {0}, how: {1}, force: {2})", source, (RestartOptions)how, force);
+
+      if (_standby)
+      {
+        Log.Debug("PS: SuspendSystem aborted - suspend request is already in progress");
+        return;
+      }
+
+      Log.Debug("PS: Kick off shutdown thread (how: {0})", (RestartOptions)how);
+      SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
+      data.that = this;
+      data.how = (RestartOptions)how;
+      data.force = force;
+      data.source = source;
+
+      Thread _suspendThread = new Thread(SuspendSystemThread);
+      _suspendThread.Name = "PS Suspend";
+      _suspendThread.Start(data);
     }
 
     protected class SuspendSystemThreadEnv
@@ -474,124 +394,284 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// Puts the system into the configured standby mode (Suspend/Hibernate)
+    /// Wrapper for SuspendSystemThread
     /// </summary>
-    /// <param name="force">should the system be forced to enter standby?</param>
-    /// <returns>bool indicating whether or not the request was honoured</returns>
-    public void SuspendSystem(string source, int how, bool force)
-    {
-      lock (this)
-      {
-        DateTime now = DateTime.Now;
-
-        // block concurrent request?
-        if (_ignoreSuspendUntil > now)
-        {
-          Log.Info("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
-          return;
-        }
-
-        // block any other request forever (for now)
-        _ignoreSuspendUntil = DateTime.MaxValue;
-      }
-
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
-               force);
-      SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
-      data.that = this;
-      data.how = (RestartOptions)how;
-      data.force = force;
-      data.source = source;
-
-      Thread suspendThread = new Thread(SuspendSystemThread);
-      suspendThread.Name = "Powerscheduler Suspender";
-      suspendThread.Start(data);
-    }
-
+    /// <param name="_data">Data object</param>
     protected static void SuspendSystemThread(object _data)
     {
       SuspendSystemThreadEnv data = (SuspendSystemThreadEnv)_data;
       data.that.SuspendSystemThread(data.source, data.how, data.force);
     }
 
+    /// <summary>
+    /// Thread that puts the system into sleep mode (Suspend/Hibernate)
+    /// </summary>
+    /// <param name="how">How to suspend, see MediaPortal.Util.RestartOptions</param>
     protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
-      Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
-      _isSuspendInProgress = true;
-      Log.Debug("PowerScheduler: Informing handlers about UserShutdownNow");
+      Log.Debug("PS: Shutdown thread is running: how: {0}, force: {1}", how, force);
+
+      Log.Debug("PS: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
-      // user is away, so we set _lastUserTime long time in the past to pretend that he didn't access system a long time
-      _lastUserTime = DateTime.MinValue;
-
-      // test if shutdown is allowed
-      bool disallow = DisAllowShutdown(true);
-
-      Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
-
-      if (disallow && !force)
-      {
-        lock (this)
-        {
-          // allow further requests
-          _ignoreSuspendUntil = DateTime.MinValue;
-        }
-        _isSuspendInProgress = false;
-        return;
-      }
-
-      SetWakeupTimer();
       if (source == "System")
       {
-        // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
-        // the suspend request
-        _querySuspendFailed++;
-        Log.Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
+        // XP only: We just denied a QUERYSUSPEND message and called SuspendSystem() with source "System".
+        // Before actually suspending, we have to wait for the outstanding QUERYSUSPENDFAILED message (only Windows XP).
+        _QuerySuspendFailedCount++;
+        Log.Debug("PS: {0} outstanding QUERYSUSPENDFAILED messages", _QuerySuspendFailedCount);
         do
         {
           System.Threading.Thread.Sleep(1000);
-        } while (_querySuspendFailed > 0);
+        } while (_QuerySuspendFailedCount > 0);
       }
-      // activate standby
-      _denySuspendQuery = false;
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
-      WindowsController.ExitWindows((RestartOptions)how, force, SuspendSystemThreadAfter);
+      _denyQuerySuspend = false;
+
+      // Stop PowerScheduler plugin before shutdown or reboot
+      if ((how == RestartOptions.PowerOff) || (how == RestartOptions.Reboot))
+        Stop();
+
+      // Activate standby
+      Log.Info("PS: Entering shutdown: how: {0}, force: {1}", (RestartOptions)how, force);
+      WindowsController.ExitWindows((RestartOptions)how, force);
     }
 
-    protected void SuspendSystemThreadAfter(RestartOptions how, bool force, bool result)
+    /// <summary>
+    /// Puts the system in sleep mode (Suspend/Hibernate depending on what is configured)
+    /// </summary>
+    private void SuspendSystem()
     {
-      _isSuspendInProgress = false;
+      SuspendSystem("", false);
+    }
 
-      lock (this)
+    /// <summary>
+    /// User activity was detected on the local client or a remote client is active
+    /// </summary>
+    /// <param name="when">Time of last user activity (local client) or DateTime.MinValue (remote client)</param>
+    public void UserActivityDetected(DateTime when)
+    {
+      if (when == DateTime.MinValue)
       {
-        if (!result)
+        Log.Debug("PS: Remote client activity detected");
+        _remoteClientStandbyHandler.DisAllowShutdown = true;
+        return;
+      }
+
+      if (when > _lastUserTime)
+      {
+        Log.Debug("PS: Set time of last user activity to {0:T}", when);
+        _lastUserTime = when;
+      }
+    }
+
+    /// <summary>
+    /// Indicating current state
+    /// </summary>
+    private DateTime _currentNextWakeupTime = DateTime.MaxValue;          // next time when the system has to wakeup from suspend
+    private String _currentNextWakeupHandler = "";                        // handler that wants to wakeup system
+    private StandbyMode _currentStandbyMode = StandbyMode.StandbyAllowed; // indicates requested standby mode
+    private String _currentStandbyHandler = "";                           // handlers that want to disallow standby
+    private bool _denyQuerySuspend = true;                                // indicates if we should deny QUERYSUSPEND messages (Win XP)
+    private int _QuerySuspendFailedCount = 0;                             // how many QUERQSUSPENDFAILED messages are still outstanding (Win XP)
+
+    /// <summary>
+    /// Get the current state.
+    /// </summary>
+    /// <param name="refresh">Indicates if state should be rechecked or stored values should be returned</param>
+    /// <param name="unattended"></param>
+    /// <param name="disAllowShutdown"></param>
+    /// <param name="disAllowShutdownHandler"></param>
+    /// <param name="nextWakeupTime"></param>
+    /// <param name="nextWakeupHandler"></param>
+    public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown,
+      out String disAllowShutdownHandler, out DateTime nextWakeupTime, out String nextWakeupHandler)
+    {
+      if (refresh)
+      {
+        // Trigger StandbyWakeupThread to check for standby conditions and next wakeup time and wait until it has done its work
+        _standbyWakeupFinished.Reset();
+        _standbyWakeupTriggered.Set();
+        Log.Debug("PS: GetCurrentState - Reset \"Finished\" and triggered StandbyWakeupThread");
+
+        _standbyWakeupFinished.WaitOne(100);
+        Log.Debug("PS: GetCurrentState - StandbyWakeupThread signaled \"Finished\"");
+      }
+      unattended = _lastUserTime.AddMinutes(_settings.IdleTimeout) <= DateTime.Now;
+      disAllowShutdown = _currentStandbyMode != StandbyMode.StandbyAllowed;
+      disAllowShutdownHandler = _currentStandbyHandler;
+      nextWakeupTime = _currentNextWakeupTime;
+      nextWakeupHandler = _currentNextWakeupHandler;
+    }
+
+    /// <summary>
+    /// Checks if a suspend request is in progress
+    /// </summary>
+    /// <returns>is the system currently trying to suspend?</returns>
+    public bool IsSuspendInProgress()
+    {
+      return _standby;
+    }
+
+    /// <summary>
+    /// Provides access to PowerScheduler's settings
+    /// </summary>
+    public PowerSettings Settings
+    {
+      get { return _settings; }
+    }
+
+    #endregion
+
+    #region IStandbyHandler(Ex)/IwakeupHandler methods
+
+    /// <summary>
+    /// Indicator which standby mode is requested by the handler
+    /// </summary>
+    private StandbyMode StandbyMode
+    {
+      [MethodImpl(MethodImplOptions.Synchronized)]
+      get
+      {
+        StandbyMode standbyMode = StandbyMode.StandbyAllowed;
+        string standbyHandler = "";
+
+        // First ask the standby handlers
+        foreach (IStandbyHandler handler in _standbyHandlers)
         {
-          // allow further requests
-          _ignoreSuspendUntil = DateTime.MinValue;
-          return;
+          StandbyMode handlerStandbyMode;
+
+          if (handler is IStandbyHandlerEx)
+            handlerStandbyMode = ((IStandbyHandlerEx)handler).StandbyMode;
+          else
+            handlerStandbyMode = handler.DisAllowShutdown ? StandbyMode.StandbyPrevented : StandbyMode.StandbyAllowed;
+          if (handlerStandbyMode != StandbyMode.StandbyAllowed)
+          {
+            if (standbyMode != StandbyMode.AwayModeRequested)
+              standbyMode = handlerStandbyMode;
+            if (standbyHandler == "")
+              standbyHandler = handler.HandlerName;
+            else
+              standbyHandler += ", " + handler.HandlerName;
+          }
+          Log.Debug("PS: Inspecting {0}: {1}", handler.HandlerName,
+            handlerStandbyMode == StandbyMode.StandbyAllowed ? "" : handlerStandbyMode.ToString());
         }
-        switch (how)
+        if (standbyMode != StandbyMode.StandbyAllowed)
         {
-          case RestartOptions.LogOff:
-          case RestartOptions.Suspend:
-          case RestartOptions.Hibernate:
-            {
-              // allow not before 5 seconds
-              // *** this will block any about-to-suspend requests that have been pending before the shutdown was issued
-              // *** (resolves the system-immediately-suspends-after-resume issue)
-              _ignoreSuspendUntil = DateTime.Now.AddSeconds(5);
-              break;
-            }
-          case RestartOptions.PowerOff:
-          case RestartOptions.Reboot:
-          case RestartOptions.ShutDown:
-            {
-              // allow not before 120 seconds, i.e. give enough time to shutdown the system (anyway this value is reset on reboot)
-              _ignoreSuspendUntil = DateTime.Now.AddSeconds(120);
-              break;
-            }
+          _currentStandbyHandler = standbyHandler;
+          _currentStandbyMode = standbyMode;
+          return standbyMode;
+        }
+
+        // Then check whether the next event is almost due (within pre-no-standby time)
+        Log.Debug("PS: Check whether the next event is almost due");
+        if (DateTime.Now >= _currentNextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
+        {
+          Log.Debug("PS: Event is almost due ({0}): StandbyPrevented", _currentNextWakeupHandler);
+          _currentStandbyHandler = "Event due";
+          _currentStandbyMode = StandbyMode.StandbyPrevented;
+          return StandbyMode.StandbyPrevented;
+        }
+
+        // Then check if standby is allowed at this moment
+        Log.Debug("PS: Check if standby is allowed at this moment");
+        int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
+        if ( // Stop time one day after start time (23:00 -> 07:00)
+          ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
+           && (Current24hHour < _settings.AllowedSleepStartTime)
+           && (Current24hHour >= _settings.AllowedSleepStopTime))
+          ||
+          // Start time and stop time on the same day (01:00 -> 17:00)
+          ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime)
+           &&
+          // 2 possibilities for the same day: before or after the timespan
+           ((Current24hHour < _settings.AllowedSleepStartTime) ||
+            (Current24hHour >= _settings.AllowedSleepStopTime))
+          ))
+        {
+          Log.Debug("PS: Standby is not allowed at this hour: StandbyPrevented");
+          _currentStandbyHandler = "NOT-ALLOWED-TIME";
+          _currentStandbyMode = StandbyMode.StandbyPrevented;
+          return StandbyMode.StandbyPrevented;
+        }
+
+        // Nothing prevents standby
+        _currentStandbyHandler = "";
+        _currentStandbyMode = StandbyMode.StandbyAllowed;
+        return StandbyMode.StandbyAllowed;
+      }
+    }
+
+    /// <summary>
+    /// Indicator whether to prevent suspension/hibernation of the system
+    /// </summary>
+    private bool DisAllowShutdown
+    {
+      get
+      {
+        return (StandbyMode != StandbyMode.StandbyAllowed);
+      }
+    }
+
+    /// <summary>
+    /// Description of the source that allows / disallows shutdown
+    /// </summary>
+    private string HandlerName
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(_currentStandbyHandler))
+          return "Client Plugin";
+        else
+          return string.Format("Client Plugin ({0})", _currentStandbyHandler);
+      }
+    }
+
+    /// <summary>
+    /// Called by the SuspendSystemThread to inform handlers
+    /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void UserShutdownNow()
+    {
+      // Trigger the handlers
+      foreach (IStandbyHandler handler in _standbyHandlers)
+      {
+        handler.UserShutdownNow();
+      }
+    }
+
+    /// <summary>
+    /// Retrieves the earliest wakeup time from all IWakeupHandlers
+    /// </summary>
+    /// <param name="earliestWakeupTime">indicates the earliest valid wake up time that is considered valid by the PowerScheduler</param>
+    /// <returns>the next wakeup time</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
+    {
+      string handlerName = String.Empty;
+      DateTime nextWakeupTime = DateTime.MaxValue;
+
+      // Inspect all registered IWakeupHandlers
+      foreach (IWakeupHandler handler in _wakeupHandlers)
+      {
+        DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+        if (nextTime < earliestWakeupTime)
+          nextTime = DateTime.MaxValue;
+        Log.Debug("PS: Inspecting {0}: {1}",
+          handler.HandlerName, (nextTime < DateTime.MaxValue ? nextTime.ToString() : ""));
+        if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
+        {
+          handlerName = handler.HandlerName;
+          nextWakeupTime = nextTime;
         }
       }
+      _currentNextWakeupHandler = handlerName;
+      if (nextWakeupTime != _currentNextWakeupTime)
+      {
+        _currentNextWakeupTime = nextWakeupTime;
+        Log.Debug("PS: New next wakeup time {0:G} found by {1}", nextWakeupTime, handlerName);
+      }
+      return nextWakeupTime;
     }
 
     #endregion
@@ -599,75 +679,57 @@ namespace TvEngine.PowerScheduler
     #region IPowerController implementation
 
     /// <summary>
-    /// Allows the PowerScheduler client plugin to register its powerstate with the tvserver PowerScheduler
+    /// Enables clients on singleseat setups to indicate whether or not the system
+    /// is allowed to enter standby
     /// </summary>
-    /// <param name="standbyAllowed">Is standby allowed by the client (true) or not? (false)</param>
-    /// <param name="handlerName">Description of the handler preventing standby</param>
+    /// <param name="standbyAllowed">is standby allowed?</param>
+    /// <param name="handlerName">client handlername which prevents standby</param>
     public void SetStandbyAllowed(bool standbyAllowed, string handlerName)
     {
-      LogVerbose("PowerScheduler.SetStandbyAllowed: {0} {1}", standbyAllowed, handlerName);
-      _clientStandbyHandler.DisAllowShutdown = !standbyAllowed;
-      _clientStandbyHandler.HandlerName = handlerName;
+      Log.Debug("PS: SetStandbyAllowed: {0}, {1}", standbyAllowed, handlerName);
+      _powerControllerStandbyHandler.DisAllowShutdown = !standbyAllowed;
+      _powerControllerStandbyHandler.HandlerName = "PowerController (" + handlerName + ")";
     }
 
     /// <summary>
-    /// Allows the PowerScheduler client plugin to set its desired wakeup time
+    /// Enables clients on singleseat setups to indicate when the next
+    /// earliest wakeup time is due
     /// </summary>
-    /// <param name="nextWakeupTime">desired (earliest) wakeup time</param>
-    /// <param name="handlerName">Description of the handler causing the system to wakeup</param>
+    /// <param name="nextWakeupTime">DateTime when to wakeup the system</param>
+    /// <param name="handlerName">client handlername which is responsible for this wakeup time</param>
     public void SetNextWakeupTime(DateTime nextWakeupTime, string handlerName)
     {
-      LogVerbose("PowerScheduler.SetNextWakeupTime: {0} {1}", nextWakeupTime, handlerName);
-      _clientWakeupHandler.Update(nextWakeupTime, handlerName);
-    }
-
-    /// <summary>
-    /// Resets the idle timer of the PowerScheduler. When enough time has passed (IdleTimeout), the system
-    /// is suspended as soon as possible (no handler disallows shutdown).
-    /// Note that the idle timer is automatically reset when the user moves the mouse or touchs the keyboard.
-    /// </summary>
-    public void UserActivityDetected(DateTime when)
-    {
-      if (when > _lastUserTime)
-      {
-        _lastUserTime = when;
-        LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
-      }
-    }
-
-    /// <summary>
-    /// Indicates whether or not the client is connected to the server (or not)
-    /// </summary>
-    public bool IsConnected
-    {
-      get { return true; }
-    }
-
-    public IPowerSettings PowerSettings
-    {
-      get { return _settings; }
+      Log.Debug("PS: SetNextWakeupTime: {0:G}, {1}", nextWakeupTime, handlerName);
+      _powerControllerWakeupHandler.Update(nextWakeupTime, handlerName);
     }
 
     private int _remoteTags = 0;
-    private Hashtable _remoteStandbyHandlers = new Hashtable();
-    private Hashtable _remoteWakeupHandlers = new Hashtable();
-    private Dictionary<string, int> _remoteStandbyHandlerURIs = new Dictionary<string, int>();
-    private Dictionary<string, int> _remoteWakeupHandlerURIs = new Dictionary<string, int>();
+    private Hashtable _localClientStandbyHandlers = new Hashtable();
+    private Hashtable _localClientWakeupHandlers = new Hashtable();
+    private Dictionary<string, int> _localClientStandbyHandlerURIs = new Dictionary<string, int>();
+    private Dictionary<string, int> _localClientWakeupHandlerURIs = new Dictionary<string, int>();
 
+    /// <summary>
+    /// Register remote handlers. If an empty string or null is passed, no handler is registered for that type.
+    /// </summary>
+    /// <param name="standbyHandlerURI"></param>
+    /// <param name="wakeupHandlerURI"></param>
+    /// <returns>Returns a tag used to unregister the handler(s)</returns>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public int RegisterRemote(string standbyHandlerURI, string wakeupHandlerURI)
     {
       int oldStandbyTag = 0;
       int oldWakeupTag = 0;
+      bool registeredHandler = false;
 
-      // Find existing registrations
+      // Find existing tags
       if (!string.IsNullOrEmpty(standbyHandlerURI) &&
-          !_remoteStandbyHandlerURIs.TryGetValue(standbyHandlerURI, out oldStandbyTag))
+          !_localClientStandbyHandlerURIs.TryGetValue(standbyHandlerURI, out oldStandbyTag))
       {
         oldStandbyTag = _remoteTags + 1;
       }
       if (!string.IsNullOrEmpty(wakeupHandlerURI) &&
-          !_remoteWakeupHandlerURIs.TryGetValue(wakeupHandlerURI, out oldWakeupTag))
+          !_localClientWakeupHandlerURIs.TryGetValue(wakeupHandlerURI, out oldWakeupTag))
       {
         oldWakeupTag = _remoteTags + 1;
       }
@@ -695,39 +757,41 @@ namespace TvEngine.PowerScheduler
       }
 
       // Register handlers
-      LogVerbose("PowerScheduler: RegisterRemote tag: {0}, uris: {1}, {2}", newTag, standbyHandlerURI, wakeupHandlerURI);
+      Log.Debug("PS: RegisterRemote tag: {0}, uris: {1}, {2}", newTag, standbyHandlerURI, wakeupHandlerURI);
       if (standbyHandlerURI != null && standbyHandlerURI.Length > 0)
       {
-        RemoteStandbyHandler hdl;
+        LocalClientStandbyHandler hdl;
         if (newTag <= _remoteTags)
         {
-          hdl = (RemoteStandbyHandler)_remoteStandbyHandlers[oldStandbyTag];
-          _remoteStandbyHandlers.Remove(oldStandbyTag);
+          hdl = (LocalClientStandbyHandler)_localClientStandbyHandlers[oldStandbyTag];
+          _localClientStandbyHandlers.Remove(oldStandbyTag);
         }
         else
         {
-          hdl = new RemoteStandbyHandler(standbyHandlerURI, newTag);
+          hdl = new LocalClientStandbyHandler(standbyHandlerURI, newTag);
           Register(hdl);
+          registeredHandler = true;
         }
 
-        _remoteStandbyHandlers[newTag] = hdl;
-        _remoteStandbyHandlerURIs[standbyHandlerURI] = newTag;
+        _localClientStandbyHandlers[newTag] = hdl;
+        _localClientStandbyHandlerURIs[standbyHandlerURI] = newTag;
       }
       if (wakeupHandlerURI != null && wakeupHandlerURI.Length > 0)
       {
-        RemoteWakeupHandler hdl;
+        LocalClientWakeupHandler hdl;
         if (newTag <= _remoteTags)
         {
-          hdl = (RemoteWakeupHandler)_remoteWakeupHandlers[oldWakeupTag];
-          _remoteWakeupHandlers.Remove(oldWakeupTag);
+          hdl = (LocalClientWakeupHandler)_localClientWakeupHandlers[oldWakeupTag];
+          _localClientWakeupHandlers.Remove(oldWakeupTag);
         }
         else
         {
-          hdl = new RemoteWakeupHandler(wakeupHandlerURI, newTag);
+          hdl = new LocalClientWakeupHandler(wakeupHandlerURI, newTag);
           Register(hdl);
+          registeredHandler = true;
         }
-        _remoteWakeupHandlers[newTag] = hdl;
-        _remoteWakeupHandlerURIs[wakeupHandlerURI] = newTag;
+        _localClientWakeupHandlers[newTag] = hdl;
+        _localClientWakeupHandlerURIs[wakeupHandlerURI] = newTag;
       }
       if (newTag > _remoteTags)
         _remoteTags = newTag;
@@ -741,243 +805,422 @@ namespace TvEngine.PowerScheduler
       {
         UnregisterRemote(oldWakeupTag);
       }
+
+      // Trigger StandbWakeupThread
+      if (registeredHandler)
+      {
+        _standbyWakeupTriggered.Set();
+        Log.Debug("PS: RegisterRemote - Triggered StandbyWakeupThread");
+      }
+
       return newTag;
     }
 
+    /// <summary>
+    /// Unregister remote handlers.
+    /// </summary>
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void UnregisterRemote(int tag)
     {
       {
-        RemoteStandbyHandler hdl = (RemoteStandbyHandler)_remoteStandbyHandlers[tag];
+        LocalClientStandbyHandler hdl = (LocalClientStandbyHandler)_localClientStandbyHandlers[tag];
         if (hdl != null)
         {
-          _remoteStandbyHandlers.Remove(tag);
-          _remoteStandbyHandlerURIs.Remove(hdl.Url);
+          _localClientStandbyHandlers.Remove(tag);
+          _localClientStandbyHandlerURIs.Remove(hdl._url);
           hdl.Close();
-          LogVerbose("PowerScheduler: UnregisterRemote StandbyHandler {0}", tag);
+          Log.Debug("PS: UnregisterRemote StandbyHandler {0}", tag);
           Unregister(hdl);
         }
       }
       {
-        RemoteWakeupHandler hdl = (RemoteWakeupHandler)_remoteWakeupHandlers[tag];
+        LocalClientWakeupHandler hdl = (LocalClientWakeupHandler)_localClientWakeupHandlers[tag];
         if (hdl != null)
         {
-          _remoteWakeupHandlers.Remove(tag);
-          _remoteWakeupHandlerURIs.Remove(hdl.Url);
+          _localClientWakeupHandlers.Remove(tag);
+          _localClientWakeupHandlerURIs.Remove(hdl._url);
           hdl.Close();
-          LogVerbose("PowerScheduler: UnregisterRemote WakeupHandler {0}", tag);
+          Log.Debug("PS: UnregisterRemote WakeupHandler {0}", tag);
           Unregister(hdl);
         }
       }
     }
 
-    #endregion
-
-    #region MarshalByRefObject overrides
+    /// <summary>
+    /// Indicates whether or not the client is connected to the server (or not)
+    /// </summary>
+    public bool IsConnected
+    {
+      get { return true; }
+    }
 
     /// <summary>
-    /// Make sure SAO never expires
+    /// Provides access to PowerScheduler's settings
     /// </summary>
-    /// <returns></returns>
-    public override object InitializeLifetimeService()
+    public IPowerSettings PowerSettings
     {
-      return null;
+      get { return _settings; }
     }
 
     #endregion
+
+    #region Public methods
+
+    /// <summary>
+    /// Start the PowerScheduler plugin
+    /// </summary>
+    /// <param name="controller">TVController from the tvservice</param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Start(IController controller)
+    {
+      Log.Info("PS: Starting PowerScheduler server plugin...");
+
+      try
+      {
+        // Save controller
+        _controller = controller;
+
+        // Create the timer that will wakeup the system after a specific amount of time after the
+        // system has been put into standby
+        _wakeupTimer = new WaitableTimer();
+
+        // Load settings
+        LoadSettings();
+
+        // Register standby/wakeup handlers
+        _powerControllerStandbyHandler = new PowerControllerStandbyHandler();
+        Register(_powerControllerStandbyHandler);
+        _powerControllerWakeupHandler = new PowerControllerWakeupHandler();
+        Register(_powerControllerWakeupHandler);
+        _remoteClientStandbyHandler = new RemoteClientStandbyHandler();
+        Register(_remoteClientStandbyHandler);
+        _factory = new PowerSchedulerFactory(controller);
+        _factory.CreateDefaultSet();
+        Log.Debug("PS: Registered standby/wakeup handlers to PowerScheduler server plugin");
+
+        // Register power event handler to TVServer
+        RegisterPowerEventHandler();
+
+        // Register PowerScheduler as IPowerControl remoting service
+        StartRemoting();
+
+        // Create the EventWaitHandles for the StandbyWakeupThread and GetCurrentState
+        _standbyWakeupTriggered = new EventWaitHandle(false, EventResetMode.AutoReset, "TvEngine.PowerScheduler.StandbyWakeupTriggered");
+        _standbyWakeupFinished = new AutoResetEvent(false);
+        _standbyWakeupSuspend = new AutoResetEvent(false);  // initially do not take suspend branch
+        _standbyWakeupResume = new ManualResetEvent(true);  // initially releases (no block)
+
+        // Start the StandbyWakeupThread responsible for checking standby conditions and setting the wakeup timer
+        _parentThread = Thread.CurrentThread;
+        _standbyWakeupThread = new Thread(StandbyWakeupThread);
+        _standbyWakeupThread.Name = "PS StandbyWakeup";
+        _standbyWakeupThread.Start();
+        Log.Debug("PS: StandbyWakeupThread started");
+
+        SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
+        Log.Info("PS: PowerScheduler server plugin started");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("PS: Exception in Start: {0}", ex);
+        Log.Info("PS: Exception in Start: {0}", ex);
+        Stop();
+      }
+    }
+
+    /// <summary>
+    /// Stop the PowerScheduler plugin
+    /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void Stop()
+    {
+      Log.Info("PS: Stopping PowerScheduler server plugin...");
+
+      try
+      {
+        // Stop and remove the StandbyWakeupThread
+        if (_standbyWakeupThread != null)
+        {
+          _standbyWakeupThread.Abort();
+          _standbyWakeupThread.Join(100);
+          _standbyWakeupThread = null;
+        }
+
+        // Remove the EventWaitHandles
+        if (_standbyWakeupTriggered != null)
+        {
+          _standbyWakeupTriggered.Close();
+          _standbyWakeupTriggered = null;
+        }
+        if (_standbyWakeupSuspend != null)
+        {
+          _standbyWakeupSuspend.Close();
+          _standbyWakeupSuspend = null;
+        }
+        if (_standbyWakeupResume != null)
+        {
+          _standbyWakeupResume.Close();
+          _standbyWakeupResume = null;
+        }
+        if (_standbyWakeupFinished != null)
+        {
+          _standbyWakeupFinished.Close();
+          _standbyWakeupFinished = null;
+        }
+
+        // Unregister power event handler
+        UnRegisterPowerEventHandler();
+
+        // Remove the standby/resume handlers
+        if (_factory != null)
+        {
+          _factory.RemoveDefaultSet();
+          _factory = null;
+        }
+        Unregister(_remoteClientStandbyHandler);
+        Unregister(_powerControllerWakeupHandler);
+        Unregister(_powerControllerStandbyHandler);
+        Log.Debug("PS: Removed standby/wakeup handlers");
+
+        // Disable the wakeup timer
+        if (_wakeupTimer != null)
+        {
+          _wakeupTimer.TimeToWakeup = DateTime.MaxValue;
+          _wakeupTimer.Close();
+          _wakeupTimer = null;
+        }
+
+        SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
+        Log.Info("PS: PowerScheduler server plugin stopped");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("PS: Exception in Stop: {0}", ex);
+        Log.Info("PS: Exception in Stop: {0}", ex);
+      }
+    }
 
     #endregion
 
     #region Private methods
 
     /// <summary>
-    /// Called when the wakeup timer is due (when system resumes from standby)
+    /// StandbyWakeupThread checks for standby required conditions and sets the wakeup timer.
+    /// It is activated periodically or by events signaled from the standby and wakeup handlers.
     /// </summary>
-    private void OnWakeupTimerExpired()
+    private void StandbyWakeupThread()
     {
-      Log.Debug("PowerScheduler: OnResume");
-    }
+      Thread.Sleep(1000);
 
-    /// <summary>
-    /// Called when the wakeup fails in any way
-    /// </summary>
-    private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
-    {
-      Log.Error("PowerScheduler: WaitableTimer had an exception:");
-      Log.Write(exception);
-    }
+      while (_parentThread.IsAlive)
+      {
+        // Load settings and trigger registered handlers
+        CacheManager.Clear();
+        GC.Collect();
+        LoadSettings();
+        SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
 
-    /// <summary>
-    /// Periodically refreshes the standby configuration and checks if the system should enter standby
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void PollThread()
-    {
-      try
-      {
-        string threadname = Thread.CurrentThread.Name;
-        if (string.IsNullOrEmpty(threadname))
-          Thread.CurrentThread.Name = "Powerscheduler poll thread";
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
-      }
+        // Check handlers for next wakeup time and standby allowed
+        SetWakeupTimer();
+        CheckForStandby();
 
-      int reload = 0;
-      do
-      {
-        if (!_standby)
+        // Signal "Finished" to waiting threads
+        _standbyWakeupFinished.Set();
+
+        // Wait for next trigger event or timeout
+        _standbyWakeupTriggered.Reset();
+        if (_standbyWakeupTriggered.WaitOne(_settings.CheckInterval * 1000))
         {
-          try
+          // Trigger event
+
+          // Check, if the Suspend event is set (system is in standby mode)
+          // (call wil never block since timeout = 0)
+          if (_standbyWakeupSuspend.WaitOne(0))
           {
-            if (reload++ == _reloadInterval)
-            {
-              reload = 0;
-              CheckForStandby(true);
-              // Clear cache
-              CacheManager.Clear();
-              GC.Collect();
-              LoadSettings();
-              SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
-            }
-            else
-              CheckForStandby(false);
+            // Suspend event is set
+            Log.Debug("PS: StandbyWakeupThread suspended");
+
+            // Wait for the resume event
+            _standbyWakeupResume.WaitOne();
+            Log.Debug("PS: StandbyWakeupThread resumed");
+            Thread.Sleep(1000);
           }
-          catch (Exception ex)
+          else
           {
-            Log.Write(ex);
+            // Suspend event is reset
+            Log.Debug("PS: StandbyWakeupThread triggered by event");
           }
         }
-        if (_stopThread.WaitOne(1000)) // Wait one sec / exit
+        else
         {
-          LogVerbose("Powerscheduler poll thread - exit");
-          return;
+          // Check interval timeout
+          Log.Debug("PS: StandbyWakeupThread triggered by check interval");
         }
-      } while (true);
+      }
     }
 
     /// <summary>
-    /// Refreshes the standby configuration
+    /// Loads the standby configuration
     /// </summary>
     private void LoadSettings()
     {
-      int setting;
       bool changed = false;
+      bool boolSetting;
+      int intSetting;
+      string stringSetting;
+      PowerSetting powerSetting;
 
-      if (_settings == null)
-        _settings = new PowerSettings();
+      Log.Debug("PS: LoadSettings()");
 
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      // Check if PowerScheduler should log verbose debug messages
-      if (_settings.ExtensiveLogging !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
+      // Load initial settings only once
+      if (_settings == null)
       {
-        _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
-        Log.Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
+        // Check if update of old PS settings is necessary
+        Setting setting = layer.GetSetting("PowerSchedulerExpertMode");
+        if (setting.Value == "")
+        {
+          setting.Remove();
+
+          // Initialise list of old and new settings to update
+          List<String[]> settingNames = new List<String[]>();
+          settingNames.Add(new String[] { "PreventStandybyWhenSpecificSharesInUse", "PowerSchedulerActiveShares" });
+          settingNames.Add(new String[] { "PreventStandybyWhenSharesInUse", "PowerSchedulerActiveSharesEnabled" });
+          settingNames.Add(new String[] { "PowerSchedulerEpgCommand", "PowerSchedulerEPGCommand" });
+          settingNames.Add(new String[] { "PreventStandbyWhenGrabbingEPG", "PowerSchedulerEPGPreventStandby" });
+          settingNames.Add(new String[] { "WakeupSystemForEPGGrabbing", "PowerSchedulerEPGWakeup" });
+          settingNames.Add(new String[] { "EPGWakeupConfig", "PowerSchedulerEPGWakeupConfig" });
+          settingNames.Add(new String[] { "NetworkMonitorEnabled", "PowerSchedulerNetworkMonitorEnabled" });
+          settingNames.Add(new String[] { "NetworkMonitorIdleLimit", "PowerSchedulerNetworkMonitorIdleLimit" });
+          settingNames.Add(new String[] { "PowerSchedulerPreNoShutdownTime", "PowerSchedulerPreNoStandbyTime" });
+          settingNames.Add(new String[] { "PowerSchedulerShutdownActive", "PowerSchedulerShutdownEnabled" });
+          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedStart", "PowerSchedulerStandbyHoursFrom" });
+          settingNames.Add(new String[] { "PowerSchedulerStandbyAllowedEnd", "PowerSchedulerStandbyHoursTo" });
+
+          // Update settings names
+          foreach (String[] settingName in settingNames)
+          {
+            setting = layer.GetSetting(settingName[0], "---");
+            if (setting.Value != "---")
+            {
+              setting.Tag = settingName[1];
+              setting.Persist();
+            }
+            else
+            {
+              setting.Remove();
+            }
+          }
+        }
+
+        _settings = new PowerSettings();
         changed = true;
+
+        // Set constant values (needed for backward compatibility)
+        _settings.ForceShutdown = false;
+        _settings.ExtensiveLogging = false;
+        _settings.CheckInterval = 15;
       }
+
       // Check if PowerScheduler should actively put the system into standby
-      if (_settings.ShutdownEnabled !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownActive", "false").Value))
+      boolSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerShutdownEnabled", "false").Value);
+      if (_settings.ShutdownEnabled != boolSetting)
       {
-        _settings.ShutdownEnabled = !_settings.ShutdownEnabled;
-        LogVerbose("PowerScheduler: entering standby is enabled: {0}", _settings.ShutdownEnabled);
-        changed = true;
-      }
-      // Check if PowerScheduler should wakeup the system automatically
-      if (_settings.WakeupEnabled != Convert.ToBoolean(layer.GetSetting("PowerSchedulerWakeupActive", "false").Value))
-      {
-        _settings.WakeupEnabled = !_settings.WakeupEnabled;
-        LogVerbose("PowerScheduler: automatic wakeup is enabled: {0}", _settings.WakeupEnabled);
-        changed = true;
-      }
-      // Check if PowerScheduler should force the system into suspend/hibernate
-      if (_settings.ForceShutdown != Convert.ToBoolean(layer.GetSetting("PowerSchedulerForceShutdown", "false").Value))
-      {
-        _settings.ForceShutdown = !_settings.ForceShutdown;
-        LogVerbose("PowerScheduler: force shutdown enabled: {0}", _settings.ForceShutdown);
-        changed = true;
-      }
-      // Check if PowerScheduler should reinitialize the TVController after wakeup
-      if (_settings.ReinitializeController !=
-          Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value))
-      {
-        _settings.ReinitializeController = !_settings.ReinitializeController;
-        LogVerbose("PowerScheduler: Reinitialize controller on wakeup: {0}", _settings.ReinitializeController);
+        _settings.ShutdownEnabled = boolSetting;
+        Log.Debug("PS: PowerScheduler forces system to go to standby when idle: {0}", boolSetting);
         changed = true;
       }
 
-      PowerSetting pSetting = _settings.GetSetting("ExternalCommand");
-      string sSetting = layer.GetSetting("PowerSchedulerCommand", String.Empty).Value;
-      if (!sSetting.Equals(pSetting.Get<string>()))
+      if (_settings.ShutdownEnabled)
       {
-        pSetting.Set<string>(sSetting);
-        LogVerbose("PowerScheduler: Run external command before standby / after resume: {0}", sSetting);
+        // Check configured shutdown mode
+        intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerShutdownMode", "0").Value);
+        if ((int)_settings.ShutdownMode != intSetting)
+        {
+          _settings.ShutdownMode = (ShutdownMode)intSetting;
+          Log.Debug("PS: Shutdown mode: {0}", _settings.ShutdownMode.ToString());
+          changed = true;
+        }
+      }
+
+      // Get idle timeout
+      if (_settings.ShutdownEnabled)
+        intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "30").Value);
+      else
+        intSetting = (int)PowerManager.GetActivePowerSetting(PowerManager.SystemPowerSettingType.STANDBYIDLE) / 60;
+      if (_settings.IdleTimeout != intSetting)
+      {
+        _settings.IdleTimeout = intSetting;
+        Log.Debug("PS: {0}: {1} minutes", (_settings.ShutdownEnabled ? "Standby after" : "System idle timeout"), intSetting);
         changed = true;
       }
 
-      // Check configured PowerScheduler idle timeout
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerIdleTimeout", "5").Value);
-      if (_settings.IdleTimeout != setting)
-      {
-        _settings.IdleTimeout = setting;
-        LogVerbose("PowerScheduler: idle timeout set to: {0} minutes", _settings.IdleTimeout);
-        changed = true;
-      }
       // Check configured pre-wakeup time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
-      if (_settings.PreWakeupTime != setting)
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerPreWakeupTime", "60").Value);
+      if (_settings.PreWakeupTime != intSetting)
       {
-        _settings.PreWakeupTime = setting;
-        LogVerbose("PowerScheduler: pre-wakeup time set to: {0} seconds", _settings.PreWakeupTime);
+        _settings.PreWakeupTime = intSetting;
+        Log.Debug("PS: Pre-wakeup time: {0} seconds", intSetting);
         changed = true;
       }
 
-      // Check configured pre-no-shutdown time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerPreNoShutdownTime", "120").Value);
-      if (_settings.PreNoShutdownTime != setting)
+      // Check configured pre-no-standby time
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerPreNoStandbyTime", "300").Value);
+      if (_settings.PreNoShutdownTime != intSetting)
       {
-        _settings.PreNoShutdownTime = setting;
-        LogVerbose("PowerScheduler: pre-no-shutdown time set to: {0} seconds", _settings.PreNoShutdownTime);
+        _settings.PreNoShutdownTime = intSetting;
+        Log.Debug("PS: Pre-no-standby time: {0} seconds", intSetting);
         changed = true;
       }
 
-      // Check if check interval needs to be updated
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerCheckInterval", "60").Value);
-      if (_settings.CheckInterval != setting)
+      // Check allowed start time
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyHoursFrom", "0").Value);
+      if (_settings.AllowedSleepStartTime != intSetting)
       {
-        _settings.CheckInterval = setting;
-        LogVerbose("PowerScheduler: Check interval set to {0} seconds", _settings.CheckInterval);
-        _reloadInterval = setting;
-        changed = true;
-      }
-      // Check configured shutdown mode
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerShutdownMode", "2").Value);
-      if ((int)_settings.ShutdownMode != setting)
-      {
-        _settings.ShutdownMode = (ShutdownMode)setting;
-        LogVerbose("PowerScheduler: Shutdown mode set to {0}", _settings.ShutdownMode);
+        _settings.AllowedSleepStartTime = intSetting;
+        Log.Debug("PS: Standby allowed from {0} o' clock", _settings.AllowedSleepStartTime);
         changed = true;
       }
 
       // Check allowed stop time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedEnd", "24").Value);
-      if (_settings.AllowedSleepStopTime != setting)
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyHoursTo", "24").Value);
+      if (_settings.AllowedSleepStopTime != intSetting)
       {
-        _settings.AllowedSleepStopTime = setting;
-        LogVerbose("PowerScheduler: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
+        _settings.AllowedSleepStopTime = intSetting;
+        Log.Debug("PS: Standby allowed until {0} o' clock", _settings.AllowedSleepStopTime);
         changed = true;
       }
 
-      // Check configured allowed start time
-      setting = Int32.Parse(layer.GetSetting("PowerSchedulerStandbyAllowedStart", "0").Value);
-      if (_settings.AllowedSleepStartTime != setting)
+      // Check if PowerScheduler should wakeup the system automatically
+      intSetting = Int32.Parse(layer.GetSetting("PowerSchedulerProfile", "0").Value);
+      if (intSetting == 2)
+        boolSetting = false;  // Notebook
+      else
+        boolSetting = true;   // HTPC, Desktop, Server
+      if (_settings.WakeupEnabled != boolSetting)
       {
-        _settings.AllowedSleepStartTime = setting;
-        LogVerbose("PowerScheduler: Standby allowed starting at {0} o' clock", _settings.AllowedSleepStartTime);
+        _settings.WakeupEnabled = boolSetting;
+        Log.Debug("PS: Wakeup system for varios events: {0}", boolSetting);
+        changed = true;
+      }
+
+      // Check if PowerScheduler should reinitialize the TVService after wakeup
+      boolSetting = Convert.ToBoolean(layer.GetSetting("PowerSchedulerReinitializeController", "false").Value);
+      if (_settings.ReinitializeController != boolSetting)
+      {
+        _settings.ReinitializeController = boolSetting;
+        Log.Debug("PS: Reinitialize TVService on wakeup: {0}", boolSetting);
+        changed = true;
+      }
+
+      // Get external command
+      powerSetting = _settings.GetSetting("Command");
+      stringSetting = layer.GetSetting("PowerSchedulerCommand", String.Empty).Value;
+      if (!stringSetting.Equals(powerSetting.Get<string>()))
+      {
+        powerSetting.Set<string>(stringSetting);
+        Log.Debug("PS: Run command on power state change: {0}", stringSetting);
         changed = true;
       }
 
@@ -991,201 +1234,131 @@ namespace TvEngine.PowerScheduler
     }
 
     /// <summary>
-    /// struct for GetLastInpoutInfo
-    /// </summary>
-    internal struct LASTINPUTINFO
-    {
-      public uint cbSize;
-      public uint dwTime;
-    }
-
-    /// <summary>
-    /// The GetLastInputInfo function retrieves the time of the last input event.
-    /// </summary>
-    /// <param name="plii"></param>
-    /// <returns></returns>
-    [DllImport("user32.dll")]
-    private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
-
-    /// <summary>
-    /// Returns the current tick as uint (pref. over Environemt.TickCount which only uses int)
-    /// </summary>
-    /// <returns></returns>
-    [DllImport("kernel32.dll")]
-    private static extern uint GetTickCount();
-
-    /// <summary>
-    /// This functions returns the time of the last user input recogniized,
-    /// i.e. mouse moves or keyboard inputs.
-    /// </summary>
-    /// <returns>Last time of user input</returns>
-    private DateTime GetLastInputTime()
-    {
-      long systemUptime = Environment.TickCount;
-
-      LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
-      lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
-      lastInputInfo.dwTime = 0;
-
-      if (!GetLastInputInfo(ref lastInputInfo))
-      {
-        Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
-        return DateTime.MinValue;
-      }
-
-      long lastKick = lastInputInfo.dwTime;
-      long delta = lastKick - systemUptime;
-
-      if (delta > 0)
-      {
-        // there was an overflow (restart at 0) in the tick-counter!
-        delta = delta - uint.MaxValue - 1;
-      }
-
-      return DateTime.Now.AddMilliseconds(delta);
-    }
-
-    /// <summary>
     /// Checks if the system should enter standby
     /// </summary>
-    private void CheckForStandby(bool refresh)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void CheckForStandby()
     {
-      lock (this) // to avoid clash with OnPowerEvent
+      Log.Debug("PS: CheckForStandby()");
+
+      // Check handlers for allowing standby
+      StandbyMode standbyMode = StandbyMode;
+
+      // Allow / prevent system from being suspended
+      Log.Debug("PS: SetStandbyMode({0})", standbyMode);
+      PowerManager.SetStandbyMode(standbyMode);
+
+      if (standbyMode == StandbyMode.StandbyAllowed)
       {
-        // scenario: CheckForStandby is called right after resume, but before Resume is handled by OnPowerEvent
-        // then we could mis-send the PC to hibernation again (Unattended not reset yet)
-        // so, we just check for _standby
-        if (_standby)
-          return;
-
-        // unattended? (check regualary to have log entries)
-        bool unattended = Unattended;
-
-        // is anybody disallowing shutdown?
-        if (!DisAllowShutdown(refresh))
+        if (!_idle)
         {
-          _powerManager.AllowStandby();
-          if (!_idle)
-          {
-            Log.Info("PowerScheduler: System changed from busy state to idle state");
-            _idle = true;
-            SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
-          }
+          Log.Info("PS: System changed from busy state to idle state");
 
-          // Bav fixing mantis bug 1183: TV Server kick comp to hib after long time "editing" in TV Setup
-          // DisAllowShutdown takes some seconds to run => check once again Unattended 
-          if (Unattended && _settings.ShutdownEnabled)
+          // Do not suspend for the next two minutes to prevent sudden standby
+          _ignoreSuspendUntil = DateTime.Now.AddSeconds(120);
+
+          _idle = true;
+          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
+        }
+        Log.Debug("PS: System is idle and may go to standby");
+
+        // Suspend system if ShutdownEnabled is checked
+        if (_settings.ShutdownEnabled)
+        {
+          DateTime idleTimeout = _lastUserTime.AddMinutes(_settings.IdleTimeout);
+
+          if (idleTimeout <= DateTime.Now && _ignoreSuspendUntil <= DateTime.Now)
           {
-            Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
+            Log.Debug("PS: Active standby is enabled - go to standby now");
             SuspendSystem();
+          }
+          else
+          {
+            if (idleTimeout > _ignoreSuspendUntil)
+              Log.Debug("PS: Active standby is enabled - go to standby after idle timeout at {0:T}", idleTimeout);
+            else
+              Log.Debug("PS: SuspendSystem aborted - wait at least until {0:T}", _ignoreSuspendUntil);
           }
         }
         else
         {
-          _powerManager.PreventStandby();
-          if (_idle)
+          Log.Debug("PS: Active standby is disabled - standby is handled by Windows");
+          string requests = PowerManager.GetPowerCfgRequests(true);
+          if (requests != null)
           {
-            Log.Info("PowerScheduler: System changed from idle state to busy state");
-            _idle = false;
-            SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+            if (requests == string.Empty)
+              Log.Debug("PS: System will go to standby after Windows idle timeout");
+            else
+              Log.Debug("PS: Requests preventing Windows standby: " + requests.Replace(Environment.NewLine, ", "));
           }
         }
+      }
+      else
+      {
+        if (_idle)
+        {
+          Log.Info("PS: System changed from idle state to busy state");
+          _idle = false;
+          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
+        }
+        Log.Debug("PS: System is busy and should not go to standby");
       }
     }
 
     /// <summary>
-    /// Windows PowerEvent handler
+    /// Called on system suspend
     /// </summary>
-    /// <param name="powerStatus">PowerBroadcastStatus the system is changing to</param>
-    /// <returns>bool indicating if the broadcast was honoured</returns>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private bool OnPowerEvent(PowerEventType powerStatus)
+    private void OnSuspend()
     {
-      switch (powerStatus)
-      {
-        case PowerEventType.QuerySuspend:
-        case PowerEventType.QueryStandBy:
-          Log.Debug("PowerScheduler: System wants to enter standby (query)");
-          // First request for suspend, this we will reject by returning false.
-          // Instead we will start a shutdown thread that will de-init and last will 
-          // issue a new suspend query that will accept.
-          if (_denySuspendQuery)
-          {
-            Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
-            // Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
-            SuspendSystem("System", (int)RestartOptions.Hibernate, false);
-            return false;
-          }
-          return true;
-        case PowerEventType.Suspend:
-        case PowerEventType.StandBy:
-          Suspend(powerStatus);
-          return true;
-        case PowerEventType.QuerySuspendFailed:
-        case PowerEventType.QueryStandByFailed:
-          _querySuspendFailed--;
-          Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
-          return true;
-        case PowerEventType.ResumeAutomatic:
-        case PowerEventType.ResumeCritical:
-        case PowerEventType.ResumeSuspend:
-          // note: this event may not arrive unless the user has moved the mouse or hit a key
-          // so, we should also handle ResumeAutomatic and ResumeCritical (as done above)
-          Resume(powerStatus);
-          return true;
-      }
-      return true;
-    }
-
-    private void Suspend(PowerEventType powerStatus)
-    {
-      if (powerStatus == PowerEventType.Suspend)
-        Log.Debug("PowerScheduler: System is going to suspend");
-      else if (powerStatus == PowerEventType.StandBy)
-        Log.Debug("PowerScheduler: System is going to standby");
-      _denySuspendQuery = true; // reset the flag
+      Log.Debug("PS: System is going to suspend");
+      _denyQuerySuspend = true; // reset the flag
       _standby = true;
+
+      // Suspend the StandbyWakeup thread
+      Log.Debug("PS: Signal \"Suspend\" to StandbyWakeupThread");
+      _standbyWakeupResume.Reset();   // block resume
+      _standbyWakeupSuspend.Set();    // set suspend branch
+      _standbyWakeupTriggered.Set();  // release wait for trigger
+
+      Log.Debug("PS: Stop EPG grabbing and TV controller");
       _controller.EpgGrabberEnabled = false;
-      SetWakeupTimer();
       DeInitController();
-      RunExternalCommand("suspend");
+
+      // Run external command
+      Log.Debug("PS: Run external command");
+      RunExternalCommand("Command", "suspend");
+
+      Log.Debug("PS: Send \"EnteringStandby\" event");
       SendPowerSchedulerEvent(PowerSchedulerEventType.EnteringStandby, false);
     }
 
-    private void Resume(PowerEventType powerStatus)
+    /// <summary>
+    /// Called on system resume
+    /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void OnResume()
     {
-      if (powerStatus == PowerEventType.ResumeAutomatic)
-        Log.Debug("PowerScheduler: System has resumed automatically from standby");
-      else if (powerStatus == PowerEventType.ResumeCritical)
-        Log.Debug("PowerScheduler: System has resumed from standby after a critical suspend");
-      else if (powerStatus == PowerEventType.ResumeSuspend)
-        Log.Debug("PowerScheduler: System has resumed from standby");
+      Log.Debug("PS: System has resumed from standby");
 
-      if (!_standby)
-        return;
+      // Do not suspend for the next two minutes to prevent sudden standby
+      _ignoreSuspendUntil = DateTime.Now.AddSeconds(120);
 
-      lock (this)
-      {
-        // INSIDE lock!!! to avoid clash with CheckForStandBy --->
-        _lastUserTime = DateTime.Now;
-        if (_idle)
-        {
-          Log.Info("PowerScheduler: System changed from idle state to busy state");
-          _idle = false;
-          SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
-        }
-        _standby = false;
-        // <--- INSIDE lock!!!
+      // Run external command
+      Log.Debug("PS: Run external command");
+      RunExternalCommand("Command", "wakeup");
 
-        // if real resume, run command
-        RunExternalCommand("wakeup");
-
-        // reinitialize TVController if system is configured to do so and not already done
-        ReInitController();
-      }
-
+      // Reinitialize TVController if system is configured to do so and not already done
+      Log.Info("PS: ReInitController");
+      ReInitController();
       if (!_controller.EpgGrabberEnabled)
         _controller.EpgGrabberEnabled = true;
+
+      // Resume the StandbyWakeupThread
+      Log.Debug("PS: Signal \"Resume\" to the StandbyWakeupThread");
+      _standbyWakeupResume.Set();
+
+      Log.Debug("PS: Send \"ResumedFromStandby\" event");
+      _standby = false;
       SendPowerSchedulerEvent(PowerSchedulerEventType.ResumedFromStandby);
     }
 
@@ -1194,53 +1367,77 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void SetWakeupTimer()
     {
-      Log.Debug("PowerScheduler: SetWakeupTimer");
+      Log.Debug("PS: SetWakeupTimer()");
       if (_settings.WakeupEnabled)
       {
-        // determine next wakeup time from IWakeupHandlers
-        DateTime nextWakeup = NextWakeupTime(true);
-        bool disallow = DisAllowShutdown(true);
-        if (disallow && OSInfo.OSInfo.VistaOrLater())
+        // Determine next wakeup time from IWakeupHandlers
+        DateTime nextWakeup = GetNextWakeupTime(DateTime.Now);
+        if (nextWakeup < DateTime.MaxValue)
         {
-          // fixing mantis 1487: If suspend it's triggered by remote on vista PSClient tells TV Server Power scheduler to wakeup after 1 min 
-          Log.Debug("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
-          disallow = false;
-        }
-        if (nextWakeup < DateTime.MaxValue || disallow)
-        {
-          double delta;
-          if (disallow) delta = 0; // should instantly restart
-          else
-          {
-            nextWakeup = nextWakeup.AddSeconds(-_settings.PreWakeupTime);
-            delta = nextWakeup.Subtract(DateTime.Now).TotalSeconds;
-          }
+          nextWakeup = nextWakeup.AddSeconds(-_settings.PreWakeupTime);
 
+          double delta = nextWakeup.Subtract(DateTime.Now).TotalSeconds;
           if (delta < 60)
-          {
-            // the wake up event is too near, when we set the timer and the suspend process takes to long, i.e. the timer gets fired
-            // while suspending, the system would NOT wake up!
+            nextWakeup = nextWakeup.AddSeconds(60 - delta);
 
-            // so, we will in any case set the wait time to 60 seconds
-            delta = 60;
-          }
-          _wakeupTimer.SecondsToWait = delta;
-          Log.Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
+          _wakeupTimer.TimeToWakeup = nextWakeup;
+          Log.Debug("PS: Set wakeup timer to wakeup system at {0:G}", nextWakeup);
         }
         else
         {
-          Log.Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
-          _wakeupTimer.SecondsToWait = -1;
+          Log.Debug("PS: No pending events found in the future which should wakeup the system");
+          _wakeupTimer.TimeToWakeup = DateTime.MaxValue;
         }
       }
       else
-        Log.Debug("PowerScheduler: Warning WakeupEnabled is not set.");
+      {
+        Log.Debug("PS: Wakeup not enabled");
+        _currentNextWakeupHandler = "";
+        _currentNextWakeupTime = DateTime.MaxValue;
+      }
     }
 
-    #region Message handling
+    /// <summary>
+    /// Runs an external command
+    /// </summary>
+    /// <param name="cmd">Setting to get command string from</param>
+    /// <param name="action">Parameter for command</param>
+    private void RunExternalCommand(String cmd, String action)
+    {
+      PowerSetting setting = _settings.GetSetting(cmd);
+      if (string.IsNullOrEmpty(setting.Get<string>()))
+        return;
+      using (System.Diagnostics.Process p = new System.Diagnostics.Process())
+      {
+        ProcessStartInfo psi = new ProcessStartInfo();
+        psi.FileName = setting.Get<string>();
+        psi.UseShellExecute = true;
+        psi.WindowStyle = ProcessWindowStyle.Minimized;
+        psi.Arguments = action;
+        psi.ErrorDialog = false;
+        if (Environment.OSVersion.Version.Major >= 6)
+        {
+          psi.Verb = "runas";
+        }
+
+        p.StartInfo = psi;
+        Log.Debug("PS: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        try
+        {
+          p.Start();
+          p.WaitForExit();
+        }
+        catch (Exception ex)
+        {
+          Log.Error("PS: Exception in RunExternalCommand: {0}", ex);
+          Log.Info("PS: Exception in RunExternalCommand: {0}", ex);
+        }
+        Log.Debug("PS: External command finished");
+      }
+    }
 
     /// <summary>
-    /// Sends the given PowerScheduler event type to receivers 
+    /// Sends the given PowerScheduler event type to receivers
     /// </summary>
     /// <param name="eventType">Event type to send</param>
     private void SendPowerSchedulerEvent(PowerSchedulerEventType eventType)
@@ -1291,61 +1488,122 @@ namespace TvEngine.PowerScheduler
       }
     }
 
-    #endregion
-
-    /// <summary>
-    /// action: standby, wakeup, epg
-    /// </summary>
-    /// <param name="action"></param>
-    public void RunExternalCommand(String action)
+    private void RegisterPowerEventHandler()
     {
-      PowerSetting setting = _settings.GetSetting("ExternalCommand");
-      if (setting.Get<string>().Equals(String.Empty))
-        return;
-      using (Process p = new Process())
+      // Register to power events generated by the system
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
       {
-        ProcessStartInfo psi = new ProcessStartInfo();
-        psi.FileName = setting.Get<string>();
-        psi.UseShellExecute = true;
-        psi.WindowStyle = ProcessWindowStyle.Minimized;
-        psi.Arguments = action;
-        psi.ErrorDialog = false;
-        if (OSInfo.OSInfo.VistaOrLater())
-        {
-          psi.Verb = "runas";
-        }
-
-        p.StartInfo = psi;
-        LogVerbose("Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
-        try
-        {
-          p.Start();
-          p.WaitForExit();
-        }
-        catch (Exception e)
-        {
-          Log.Write(e);
-        }
-        LogVerbose("External command finished");
+        GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
+        Log.Debug("PS: Registered PowerScheduler as IPowerEventHandler service to GlobalServiceProvider");
+      }
+      else
+      {
+        Log.Info("PS: Unable to register PowerScheduler as IPowerEventHandler service to GlobalServiceProvider");
       }
     }
 
-    #region Logging wrapper methods
-
-    private void LogVerbose(string msg)
+    private void UnRegisterPowerEventHandler()
     {
-      //don't just do this: LogVerbose(msg, null);!!
-      if (_settings.ExtensiveLogging)
-        Log.Debug(msg);
+      // Unregister to power events generated by the system
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
+      {
+        GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
+          new PowerEventHandler(OnPowerEvent));
+        Log.Debug("PS: UnRegistered IPowerEventHandler from GlobalServiceProvider");
+      }
+      else
+      {
+        Log.Info("PS: Unable to unregister IPowerEventHandler from GlobalServiceProvider");
+      }
     }
 
-    private void LogVerbose(string format, params object[] args)
+    /// <summary>
+    /// Windows PowerEvent handler
+    /// </summary>
+    /// <param name="powerStatus">PowerBroadcastStatus the system is changing to</param>
+    /// <returns>bool indicating if the broadcast was honoured</returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private bool OnPowerEvent(PowerEventType powerStatus)
     {
-      if (_settings.ExtensiveLogging)
-        Log.Debug(format, args);
+      switch (powerStatus)
+      {
+        // This event is triggered only on Windows XP
+        case PowerEventType.QuerySuspend:
+          Log.Debug("PS: QUERYSUSPEND");
+          if (_currentStandbyMode == StandbyMode.AwayModeRequested)
+          {
+            // We reject all requests for suspend when a suspend should not be allowed
+            Log.Debug("PS: Suspend queried while away mode is required - deny suspend");
+            return false;
+          }
+          if (_denyQuerySuspend)
+          {
+            // We reject all requests for suspend not coming from PowerScheduler by returning false.
+            // Instead we start our own shutdown thread that issues a new QUERYSUSPEND that we will accept.
+            // Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
+            Log.Debug("PS: Suspend queried by another application - deny suspend and start own suspend sequence");
+            SuspendSystem("System", (int)RestartOptions.Hibernate, false);
+            return false;
+          }
+          return true;
+
+        case PowerEventType.Suspend:
+          Log.Debug("PS: SUSPEND");
+          OnSuspend();
+          return true;
+
+        // This event is triggered only on Windows XP
+        case PowerEventType.QuerySuspendFailed:
+          Log.Debug("PS: QUERYSUSPENDFAILED");
+          // Another application prevents our suspend
+          _QuerySuspendFailedCount--;
+          return true;
+
+        case PowerEventType.ResumeAutomatic:
+          Log.Debug("PS: RESUMEAUTOMATIC");
+          OnResume();
+          return true;
+
+        case PowerEventType.ResumeCritical:
+          Log.Debug("PS: RESUMECRITICAL");
+          OnResume();
+          return true;
+
+        case PowerEventType.ResumeSuspend:
+          // Note: This event is triggered when the user has moved the mouse or hit a key
+          // ResumeAutomatic or ResumeCritical have triggered before, so no need to call OnResume()
+          Log.Debug("PS: RESUMESUSPEND");
+          _lastUserTime = DateTime.Now;
+          return true;
+      }
+      return true;
     }
 
-    #endregion
+    /// <summary>
+    /// Configure remoting for power control from MP
+    /// </summary>
+    private void StartRemoting()
+    {
+      if (_remotingStarted)
+        return;
+      try
+      {
+        ListDictionary channelProperties = new ListDictionary();
+        channelProperties.Add("port", 31457);
+        channelProperties.Add("exclusiveAddressUse", false);
+        HttpChannel channel = new HttpChannel(channelProperties,
+                                              new SoapClientFormatterSinkProvider(),
+                                              new SoapServerFormatterSinkProvider());
+        ChannelServices.RegisterChannel(channel, false);
+      }
+      catch (RemotingException) { }
+      catch (System.Net.Sockets.SocketException) { }
+      // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
+      ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof(IPowerController));
+      RemotePowerControl.Clear();
+      Log.Debug("PS: Registered PowerScheduler as IPowerControl remoting service");
+      _remotingStarted = true;
+    }
 
     /// <summary>
     /// Frees the tv tuners before entering standby
@@ -1354,14 +1612,14 @@ namespace TvEngine.PowerScheduler
     {
       if (_cardsStopped)
         return;
-      // only free tuner cards if reinitialization is enabled in settings
+      // Only free tuner cards if reinitialization is enabled in settings
       if (!_settings.ReinitializeController)
         return;
 
       TvService.TVController controller = _controller as TvService.TVController;
       if (controller != null)
       {
-        Log.Debug("PowerScheduler: DeInit controller");
+        Log.Debug("PS: DeInit controller");
         controller.DeInit();
         _cardsStopped = true;
         _reinitializeController = true;
@@ -1375,226 +1633,19 @@ namespace TvEngine.PowerScheduler
     {
       if (!_reinitializeController)
         return;
-      // only reinitialize controller if enabled in settings
+      // Only reinitialize controller if enabled in settings
       if (!_settings.ReinitializeController)
         return;
 
       TvService.TVController controller = _controller as TvService.TVController;
       if (controller != null && _reinitializeController)
       {
-        Log.Debug("PowerScheduler: ReInit Controller");
+        Log.Debug("PS: ReInit Controller");
         Thread.Sleep(5000); // Give it a few seconds.
         controller.Init();
         _reinitializeController = false;
         _cardsStopped = false;
       }
-    }
-
-    #endregion
-
-    private bool _currentUnattended = false;
-    private DateTime _currentNextWakeupTime = DateTime.MaxValue;
-    private String _currentNextWakeupHandler = "";
-    private bool _currentDisAllowShutdown = false;
-    private String _currentDisAllowShutdownHandler = "";
-    private bool _denySuspendQuery = true;
-    private int _querySuspendFailed = 0;
-    private bool _isSuspendInProgress = false;
-
-    public void GetCurrentState(bool refresh, out bool unattended, out bool disAllowShutdown,
-                                out String disAllowShutdownHandler, out DateTime nextWakeupTime,
-                                out String nextWakeupHandler)
-    {
-      if (refresh)
-      {
-        bool dummy = DisAllowShutdown(true);
-        DateTime dummy2 = NextWakeupTime(true);
-        dummy = Unattended;
-      }
-
-      // give state
-      unattended = _currentUnattended;
-      disAllowShutdown = _currentDisAllowShutdown;
-      disAllowShutdownHandler = _currentDisAllowShutdownHandler;
-      nextWakeupTime = _currentNextWakeupTime;
-      nextWakeupHandler = _currentNextWakeupHandler;
-    }
-
-    #region Private properties
-
-    /// <summary>
-    /// Checks whether the system is unattended, i.e. the user was idle some time.
-    /// </summary>
-    private bool Unattended
-    {
-      [MethodImpl(MethodImplOptions.Synchronized)]
-      get
-      {
-        // adjust _lastUserTime by user activity
-        DateTime userInput = GetLastInputTime();
-
-        if (userInput > _lastUserTime)
-        {
-          _lastUserTime = userInput;
-          LogVerbose("PowerScheduler: User input detected at {0}", _lastUserTime);
-        }
-
-        LogVerbose("PowerScheduler: lastUserTime: {0:HH:mm:ss.ffff} , {1}", _lastUserTime, _currentUnattended);
-
-        bool val = _lastUserTime <= DateTime.Now.AddMinutes(-_settings.IdleTimeout);
-        if (val != _currentUnattended)
-        {
-          _currentUnattended = val;
-          LogVerbose("PowerScheduler: System is now unattended: {0}", val);
-        }
-        return val;
-      }
-    }
-
-    /// <summary>
-    /// Checks all IStandbyHandlers if one of them wants to prevent standby;
-    /// returns false if one of them does; returns true of none of them does.
-    /// </summary>
-    /// <param name="checkStatusOnly">true = Check status of standby handlers only, don't actually disallow</param>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private bool DisAllowShutdown(bool refresh)
-    {
-      // at first ask the handlers
-
-      foreach (IStandbyHandler handler in _standbyHandlers)
-      {
-        bool handlerDisAllowsShutdown = handler.DisAllowShutdown;
-        LogVerbose("PowerScheduler.DisAllowShutdown: inspecting handler:{0} DisAllowShutdown:{1}", handler.HandlerName,
-                   handlerDisAllowsShutdown);
-        if (handlerDisAllowsShutdown)
-        {
-          _currentDisAllowShutdownHandler = handler.HandlerName;
-          _currentDisAllowShutdown = true;
-
-          _lastUserTime = DateTime.Now;
-          // remember this time; avoid immediate shutdown after preventing handler is finished
-          return true;
-        }
-      }
-
-      // then, check whether the next event is almost due, i.e. within PreNoShutdownTime seconds
-      DateTime nextWakeupTime = NextWakeupTime(refresh);
-      if (DateTime.Now >= nextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
-      {
-        LogVerbose("PowerScheduler.DisAllowShutdown: some event is almost due");
-        _currentDisAllowShutdownHandler = "EVENT-DUE";
-        _currentDisAllowShutdown = true;
-        return true;
-      }
-
-      // get a save 24h hour regardless of the regional settings.
-      int Current24hHour = Convert.ToInt32(DateTime.Now.ToString("HH"));
-
-      //check if is allowed to sleep at this time. 
-      // e.g. 23:00 -> 07:00 or 01:00 -> 17:00
-      if ( // Stop time one day after start time (23:00 -> 07:00)
-        ((_settings.AllowedSleepStartTime > _settings.AllowedSleepStopTime)
-         && (Current24hHour < _settings.AllowedSleepStartTime)
-         && (Current24hHour >= _settings.AllowedSleepStopTime))
-        ||
-        // Start time and stop time on the same day (01:00 -> 17:00)
-        ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime)
-         &&
-         // 2 possibilities for the same day: before or after the timespan
-         ((Current24hHour < _settings.AllowedSleepStartTime) ||
-          (Current24hHour >= _settings.AllowedSleepStopTime))
-        ))
-      {
-        _currentDisAllowShutdownHandler = "NOT-ALLOWED-TIME";
-        LogVerbose("PowerScheduler.DisAllowShutdown: not allowed hour for standby {0}", Current24hHour);
-        _currentDisAllowShutdown = true;
-        return true;
-      }
-
-      _currentDisAllowShutdown = false;
-      _currentDisAllowShutdownHandler = "";
-      return false;
-    }
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private void UserShutdownNow()
-    {
-      // trigger the handlers
-      foreach (IStandbyHandler handler in _standbyHandlers)
-      {
-        handler.UserShutdownNow();
-      }
-    }
-
-    /// <summary>
-    /// Returns the earliest desirable wakeup time from all IWakeupHandlers
-    /// </summary>
-    [MethodImpl(MethodImplOptions.Synchronized)]
-    private DateTime NextWakeupTime(bool refresh)
-    {
-      if (!refresh && _currentNextWakeupTime != DateTime.MaxValue)
-        return _currentNextWakeupTime;
-
-      // earliestWakeupTime is set to "now" in order to not miss wakeups that are almost due.
-      // preWakupTime is not substracted here.
-      String handlerName = "";
-
-      DateTime nextWakeupTime = DateTime.MaxValue;
-      DateTime earliestWakeupTime = DateTime.Now;
-
-      //too much logging Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
-      foreach (IWakeupHandler handler in _wakeupHandlers)
-      {
-        DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
-        if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
-        LogVerbose("PowerScheduler.NextWakeupTime: inspecting IWakeupHandler:{0} time:{1}", handler.HandlerName,
-                   nextTime);
-        if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
-        {
-          //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
-          handlerName = handler.HandlerName;
-          nextWakeupTime = nextTime;
-        }
-      }
-
-      _currentNextWakeupHandler = handlerName;
-
-      // next wake-up time changed?
-      if (nextWakeupTime != _currentNextWakeupTime)
-      {
-        _currentNextWakeupTime = nextWakeupTime;
-
-        Log.Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
-      }
-
-      return nextWakeupTime;
-    }
-
-    #endregion
-
-    #region Public properties
-
-    public static PowerScheduler Instance
-    {
-      get
-      {
-        if (_powerScheduler == null)
-        {
-          lock (_mutex)
-          {
-            if (_powerScheduler == null)
-            {
-              _powerScheduler = new PowerScheduler();
-            }
-          }
-        }
-        return _powerScheduler;
-      }
-    }
-
-    public PowerSettings Settings
-    {
-      get { return _settings; }
     }
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -763,11 +763,24 @@ namespace MediaPortal.Mixer
     private IAudioEndpointVolume _AudioEndPointVolume;
     private AudioEndpointVolumeCallback _CallBack;
     public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
+    private static string _devId = String.Empty;
 
-    internal AEDev()
+    public AEDev()
     {
       IMMDevice _Device = null;
-      Marshal.ThrowExceptionForHR(((IMMDeviceEnumerator)_realEnumerator).GetDefaultAudioEndpoint(0, 1, out _Device));
+      if (String.IsNullOrEmpty(_devId))
+      {
+        Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(0, 1, out _Device));
+        Marshal.ThrowExceptionForHR(_Device.GetId(out _devId));
+      }
+      else
+      {
+        Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(_devId, out _Device));
+      }
+      devstatus state;
+      Marshal.ThrowExceptionForHR(_Device.GetState(out state));
+      if (state != devstatus.DEVICE_STATE_ACTIVE)
+        throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
       _RealDevice = _Device;
       object result;
       Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
