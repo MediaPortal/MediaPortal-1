@@ -586,7 +586,7 @@ namespace OSInfo
 
       if (VerifyDesktopOSMinRequirement(5, 1, 2600, NT_WORKSTATION, 3))
       { // XP SP3
-        return OsSupport.FullySupported;
+        return OsSupport.NotSupported;
       }
       if (VerifyDesktopOSMinRequirement(6, 0, 6000, NT_WORKSTATION, 2))
       { // Vista SP2
