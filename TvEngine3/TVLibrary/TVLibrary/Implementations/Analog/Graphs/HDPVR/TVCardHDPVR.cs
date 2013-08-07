@@ -333,7 +333,7 @@ namespace TvLibrary.Implementations.Analog
     {
       int id = _subChannelId++;
       Log.Log.Info("HDPVR: GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
-      HDPVRChannel subChannel = new HDPVRChannel(this, _deviceType, id, _filterTsWriter, _graphBuilder);
+      HDPVRChannel subChannel = new HDPVRChannel(this, id, _filterTsWriter, _graphBuilder, null);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -547,7 +547,7 @@ namespace TvLibrary.Implementations.Analog
         AddEncoderFilter();
         AddTsWriterFilterToGraph();
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _filterEncoder, _filterCapture,
-                                                                     null, null);
+                                                                     null);
         if (_qualityControl == null)
         {
           Log.Log.WriteFile("HDPVR: No quality control support found");

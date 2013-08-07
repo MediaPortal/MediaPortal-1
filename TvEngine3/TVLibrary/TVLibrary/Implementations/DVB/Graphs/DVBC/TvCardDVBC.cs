@@ -344,7 +344,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!CheckThreadId())
           return null;
-        return new DVBCScanning(this);
+        return new DVBCScanning(this, _interfaceChannelScan);
       }
     }
 

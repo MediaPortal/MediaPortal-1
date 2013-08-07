@@ -54,8 +54,8 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public ATSCScanning(TvCardDvbBase card)
-      : base(card)
+    public ATSCScanning(ITVCard card, ITsChannelScan analyzer)
+      : base(card, analyzer)
     {
       _enableWaitForVCT = true;
     }

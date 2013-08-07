@@ -31,7 +31,7 @@ namespace TvLibrary.Implementations.Analog.Components
   /// <summary>
   /// The TvAudio component of the graph
   /// </summary>
-  internal class TvAudio : IDisposable
+  public class TvAudio : IDisposable
   {
     #region variables
 

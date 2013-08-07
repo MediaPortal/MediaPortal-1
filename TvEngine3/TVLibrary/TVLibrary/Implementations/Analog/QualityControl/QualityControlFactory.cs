@@ -33,26 +33,23 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// Creates the object that implements the IQuality interface
     /// </summary>
     public static IQuality createQualityControl(Configuration configuration, IBaseFilter filterVideoEncoder,
-                                                IBaseFilter filterCapture, IBaseFilter filterMultiplexer,
-                                                IBaseFilter filterVideoCompressor)
+                                                IBaseFilter filterCapture, IBaseFilter filterMultiplexer)
     {
-      ICodecAPI codecAPI = checkCodecAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+      ICodecAPI codecAPI = checkCodecAPI(filterVideoEncoder, filterCapture, filterMultiplexer);
 
       if (codecAPI != null)
       {
         return new CodecAPIControl(configuration, codecAPI);
       }
 
-      IVideoEncoder videoEncoder = checkVideoEncoder(filterVideoEncoder, filterCapture, filterMultiplexer,
-                                                     filterVideoCompressor);
+      IVideoEncoder videoEncoder = checkVideoEncoder(filterVideoEncoder, filterCapture, filterMultiplexer);
       if (videoEncoder != null)
       {
         return new VideoEncoderControl(configuration, videoEncoder);
       }
 
 #pragma warning disable 618,612
-      IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer,
-                                               filterVideoCompressor);
+      IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer);
       if (encoderAPI != null)
       {
         return new EncoderAPIControl(configuration, encoderAPI);
@@ -63,8 +60,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     }
 
 #pragma warning disable 618,612
-    private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
-                                               IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer)
     {
       IEncoderAPI videoEncoder = null;
 
@@ -83,17 +79,11 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         videoEncoder = filterMultiplexer as IEncoderAPI;
       }
 
-      if (videoEncoder == null && filterVideoCompressor != null)
-      {
-        videoEncoder = filterVideoCompressor as IEncoderAPI;
-      }
-
       return videoEncoder;
     }
 #pragma warning restore 618,612
 
-    private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
-                                                   IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer)
     {
       IVideoEncoder videoEncoder = null;
 
@@ -112,16 +102,10 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         videoEncoder = filterMultiplexer as IVideoEncoder;
       }
 
-      if (videoEncoder == null && filterVideoCompressor != null)
-      {
-        videoEncoder = filterVideoCompressor as IVideoEncoder;
-      }
-
       return videoEncoder;
     }
 
-    private static ICodecAPI checkCodecAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
-                                           IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static ICodecAPI checkCodecAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer)
     {
       ICodecAPI videoEncoder = null;
 
@@ -138,11 +122,6 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       if (videoEncoder == null && filterMultiplexer != null)
       {
         videoEncoder = filterMultiplexer as ICodecAPI;
-      }
-
-      if (videoEncoder == null && filterVideoCompressor != null)
-      {
-        videoEncoder = filterVideoCompressor as ICodecAPI;
       }
 
       return videoEncoder;

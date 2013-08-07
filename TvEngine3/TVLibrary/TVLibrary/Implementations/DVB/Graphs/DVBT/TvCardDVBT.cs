@@ -333,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!CheckThreadId())
           return null;
-        return new DVBTScanning(this);
+        return new DVBTScanning(this, _interfaceChannelScan);
       }
     }
 

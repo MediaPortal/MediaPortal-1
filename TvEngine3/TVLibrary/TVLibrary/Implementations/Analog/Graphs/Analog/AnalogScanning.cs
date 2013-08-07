@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+ï»¿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -20,170 +20,66 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
+using TvLibrary.Channels;
+using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Implementations.Analog
 {
   /// <summary>
-  /// Class which implements scanning for tv/radio channels for analog cards
+  /// Class which implements scanning for tv/radio channels for DVB-T BDA cards
   /// </summary>
-  public class AnalogScanning : ITVScanning, IAnalogChannelScanCallback
+  public class AnalogScanning : DvbBaseScanning
   {
-    private readonly TvCardAnalog _card;
-    private long _previousFrequency;
-    private int _radioSensitivity = 1;
-    private ManualResetEvent _event;
-    private IAnalogChanelScan _scanner;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public AnalogScanning(TvCardAnalog card)
+    public AnalogScanning(ITVCard card, ITsChannelScan analyzer)
+      : base(card, analyzer)
     {
-      _card = card;
     }
 
-    /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
+    protected override void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
     {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Disposes this instance.
-    /// </summary>
-    public void Dispose() {}
-
-    /// <summary>
-    /// resets the scanner
-    /// </summary>
-    public void Reset()
-    {
-      _previousFrequency = 0;
-    }
-
-    /// <summary>
-    /// Property to set Radio tuning sensitivity.
-    /// sensitivity range from 1MHz for value 1 to 0.1MHZ for value 10
-    /// </summary>
-    public int RadioSensitivity
-    {
-      get { return _radioSensitivity; }
-      set { _radioSensitivity = value; }
-    }
-
-    /// <summary>
-    /// Tunes to the channel specified and will start scanning for any channel
-    /// </summary>
-    /// <param name="channel">channel to tune to</param>
-    /// <param name="settings"></param>
-    /// <returns>list of channels found</returns>
-    public List<IChannel> Scan(IChannel channel, ScanParameters settings)
-    {
-      _card.IsScanning = true;
-      _card.Tune(0, channel);
-      if (_card.IsTunerLocked)
+      AnalogChannel analogChannel = channel as AnalogChannel;
+      if (analogChannel != null)
       {
-        if (channel.IsTv)
+        if (analogChannel.IsTv)
         {
-          if (_card.VideoFrequency == _previousFrequency)
-            return new List<IChannel>();
-          _previousFrequency = _card.VideoFrequency;
+          info.service_name = String.Format("Analog TV {0}", analogChannel.ChannelNumber);
         }
-
-        if (channel.IsTv)
+        else
         {
-          try
-          {
-            _scanner = _card.GetChannelScanner();
-            _event = new ManualResetEvent(false);
-            _scanner.SetCallBack(this);
-            _scanner.Start();
-            _event.WaitOne(settings.TimeOutAnalog * 1000, true);
-
-            IntPtr serviceName;
-            _scanner.GetChannel(out serviceName);
-            _scanner.Stop();
-            string channelName = DvbTextConverter.Convert(serviceName, "");
-
-            int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
-            if (pos != -1)
-            {
-              channelName = channelName.Substring(0, pos);
-            }
-            //Some times channel name includes program name after :
-            pos = channelName.LastIndexOf(":");
-            if (pos != -1)
-            {
-              channelName = channelName.Substring(0, pos);
-            }
-            channelName = channelName.TrimEnd(new char[] {'\'', '\"', '´', '`'});
-            channelName = channelName.Trim();
-            if (channelName != "")
-            {
-              channel.Name = "";
-              for (int x = 0; x < channelName.Length; ++x)
-              {
-                char k = channelName[x];
-                if (k < (char)32 || k > (char)127)
-                  break;
-                channel.Name += k.ToString();
-              }
-            }
-          }
-          finally
-          {
-            if (_scanner != null)
-            {
-              _scanner.SetCallBack(null);
-              _scanner.Stop();
-            }
-            if (_event != null)
-            {
-              _event.Close();
-            }
-          }
+          info.service_name = String.Format("FM {0}", ((float)analogChannel.Frequency / 1000000).ToString("F1"));
         }
-        List<IChannel> list = new List<IChannel>();
-        list.Add(channel);
-        _card.IsScanning = false;
-        return list;
       }
-      _card.IsScanning = false;
-      return null;
     }
 
     /// <summary>
-    /// Tunes to channels based on the list the multiplexes that make up a DVB network.
-    /// This information is obtained from the DVB NIT (Network Information Table)
-    /// Not applicable for Analog.
+    /// Creates the new channel.
     /// </summary>
-    /// <param name="channel">channel to tune to</param>
-    /// <param name="settings">ScanParameters to use while tuning</param>
-    /// <returns></returns>
-    public List<IChannel> ScanNIT(IChannel channel, ScanParameters settings)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      return new List<IChannel>();
+      AnalogChannel tuningChannel = (AnalogChannel)channel;
+      AnalogChannel analogChannel = new AnalogChannel();
+      analogChannel.Name = info.service_name;
+      analogChannel.ChannelNumber = tuningChannel.ChannelNumber;
+      analogChannel.Frequency = tuningChannel.Frequency;
+      analogChannel.TunerSource = tuningChannel.TunerSource;
+      analogChannel.VideoSource = tuningChannel.VideoSource;
+      analogChannel.AudioSource = tuningChannel.AudioSource;
+      analogChannel.Country = tuningChannel.Country;
+      analogChannel.IsVCRSignal = tuningChannel.IsVCRSignal;
+      analogChannel.IsTv = IsTvService(info.serviceType);
+      analogChannel.IsRadio = IsRadioService(info.serviceType);
+      Log.Log.Write("Found: {0}", analogChannel);
+      return analogChannel;
     }
-
-    #region IAnalogChannelScanCallback Members
-
-    /// <summary>
-    /// Called when [scanner done].
-    /// </summary>
-    /// <returns></returns>
-    public int OnScannerDone()
-    {
-      _event.Set();
-      return 0;
-    }
-
-    #endregion
   }
 }

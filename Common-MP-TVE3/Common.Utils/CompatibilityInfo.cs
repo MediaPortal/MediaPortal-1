@@ -50,7 +50,6 @@ using MediaPortal.Common.Utils;
 
 [assembly: SubsystemVersion("MP.Filters", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Filters.TsWriter", "1.1.6.27644")]
-[assembly: SubsystemVersion("MP.Filters.MPFileWriter", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Filters.StreamingServer", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Filters.TsReader", "1.1.6.27644")]
 [assembly: SubsystemVersion("MP.Filters.DVBSubs", "1.1.6.27644")]

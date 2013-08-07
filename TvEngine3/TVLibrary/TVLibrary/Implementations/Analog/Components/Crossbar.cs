@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.Analog.Components
   /// <summary>
   /// The crossbar component of the graph
   /// </summary>
-  internal class Crossbar : IDisposable
+  public class Crossbar : IDisposable
   {
     #region variables
 
@@ -119,6 +119,14 @@ namespace TvLibrary.Implementations.Analog.Components
     public String CrossBarName
     {
       get { return _crossBarDevice.Name; }
+    }
+
+    /// <summary>
+    /// Gets the crossbar device path
+    /// </summary>
+    public String DevicePath
+    {
+      get { return _crossBarDevice.DevicePath; }
     }
 
     /// <summary>

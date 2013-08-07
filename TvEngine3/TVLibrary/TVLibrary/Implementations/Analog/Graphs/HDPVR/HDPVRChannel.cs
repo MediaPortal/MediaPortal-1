@@ -29,6 +29,7 @@ using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Channels;
+using TvLibrary.Implementations.Analog.Components;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -39,20 +40,20 @@ namespace TvLibrary.Implementations.Analog
   {
     #region constants
 
-    private readonly TvCardHDPVR _card;
+    private readonly ITVCard _card;
+    private readonly TvAudio _tvAudio;
 
     // The Hauppauge HD PVR and Colossus deliver a DVB stream with a single service on a fixed
     // service ID with a fixed PMT PID.
-    private readonly String _deviceType;
-    private readonly int SERVICE_ID = 1;
-    private readonly int PMT_PID = 0x100;
+    private const int SERVICE_ID = 1;
+    private const int PMT_PID = 0x10;
 
     #endregion
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HDPVRChannel"/> class.
     /// </summary>
-    public HDPVRChannel(TvCardHDPVR card, String deviceType, Int32 subchannelId, IBaseFilter filterTsWriter, IFilterGraph2 graphBuilder)
+    public HDPVRChannel(ITVCard card, Int32 subchannelId, IBaseFilter filterTsWriter, IFilterGraph2 graphBuilder, TvAudio tvAudio)
     {
       _eventPMT = new ManualResetEvent(false);
       _graphState = GraphState.Created;
@@ -63,7 +64,9 @@ namespace TvLibrary.Implementations.Analog
 
       // Keep a reference to the card for quality control.
       _card = card;
-      _deviceType = deviceType;
+
+      // For setting audio stream.
+      _tvAudio = tvAudio;
 
       _tsFilterInterface = (ITsFilter)filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);

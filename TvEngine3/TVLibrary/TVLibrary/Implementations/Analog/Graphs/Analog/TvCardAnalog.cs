@@ -43,10 +43,10 @@ namespace TvLibrary.Implementations.Analog
   /// </summary>
   public class TvCardAnalog : TvCardBase, ITVCard
   {
-    #region imports
+    #region constants
 
-    [ComImport, Guid("DB35F5ED-26B2-4A2A-92D3-852E145BF32D")]
-    private class MpFileWriter {}
+    [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
+    private class MpTsAnalyzer {}
 
     #endregion
 
@@ -133,15 +133,6 @@ namespace TvLibrary.Implementations.Analog
 
       Log.Log.WriteFile("analog: PauseGraph state:{0}", state);
       _isScanning = false;
-      if (_tsFileSink != null)
-      {
-        IMPRecord record = _tsFileSink as IMPRecord;
-        if (record != null)
-        {
-          record.StopTimeShifting(_subChannelId);
-          record.StopRecord(_subChannelId);
-        }
-      }
       if (state != FilterState.Running)
       {
         _graphState = GraphState.Created;
@@ -178,15 +169,6 @@ namespace TvLibrary.Implementations.Analog
 
       Log.Log.WriteFile("analog: StopGraph state:{0}", state);
       _isScanning = false;
-      if (_tsFileSink != null)
-      {
-        IMPRecord record = _tsFileSink as IMPRecord;
-        if (record != null)
-        {
-          record.StopTimeShifting(_subChannelId);
-          record.StopRecord(_subChannelId);
-        }
-      }
       if (state == FilterState.Stopped)
       {
         _graphState = GraphState.Created;
@@ -261,7 +243,7 @@ namespace TvLibrary.Implementations.Analog
       {
         if (!CheckThreadId())
           return null;
-        return new AnalogScanning(this);
+        return new AnalogScanning(this, _tsFileSink as ITsChannelScan);
       }
     }
 
@@ -316,7 +298,6 @@ namespace TvLibrary.Implementations.Analog
         FreeSubChannel(subChannel.SubChannelId);
         throw;
       }
-      _encoder.UpdatePinVideo(channel.IsTv, _graphBuilder);
       return subChannel;
     }
 
@@ -333,7 +314,9 @@ namespace TvLibrary.Implementations.Analog
       int id = _subChannelId++;
       Log.Log.Info("analog:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
-      AnalogSubChannel subChannel = new AnalogSubChannel(this, id, _tvAudio, _capture.SupportsTeletext, _tsFileSink);
+      HDPVRChannel subChannel = new HDPVRChannel(this, id, _tsFileSink, _graphBuilder, _tvAudio);
+      subChannel.Parameters = Parameters;
+      subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
       return id;
     }
@@ -569,8 +552,7 @@ namespace TvLibrary.Implementations.Analog
       {
         if (_graphState != GraphState.Idle)
         {
-          Log.Log.WriteFile("analog: Graph already build");
-          throw new TvException("Graph already build");
+          throw new TvException("Graph already built");
         }
         //create a new filter graph
         _graphBuilder = (IFilterGraph2)new FilterGraph();
@@ -581,7 +563,6 @@ namespace TvLibrary.Implementations.Analog
         _tuner = new Tuner(_device);
         if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
         {
-          Log.Log.Error("analog: unable to add tv tuner filter");
           throw new TvException("Analog: unable to add tv tuner filter");
         }
         _minChannel = _tuner.MinChannel;
@@ -590,21 +571,18 @@ namespace TvLibrary.Implementations.Analog
         _crossbar = new Crossbar();
         if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
         {
-          Log.Log.Error("analog: unable to add tv crossbar filter");
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
         //add the tv audio tuner device and connect it to the crossbar
         _tvAudio = new TvAudio();
         if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
         {
-          Log.Log.Error("analog: unable to add tv audio tuner filter");
           throw new TvException("Analog: unable to add tv audio tuner filter");
         }
         //add the tv capture device and connect it to the crossbar
         _capture = new Capture();
         if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
         {
-          Log.Log.Error("analog: unable to add capture filter");
           throw new TvException("Analog: unable to add capture filter");
         }
         Configuration.writeConfiguration(_configuration);
@@ -613,21 +591,18 @@ namespace TvLibrary.Implementations.Analog
         {
           if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
           {
-            Log.Log.Error("analog: unable to setup teletext filters");
             throw new TvException("Analog: unable to setup teletext filters");
           }
         }
         Configuration.writeConfiguration(_configuration);
         _encoder = new Encoder();
-        if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
+        if (!_encoder.CreateFilterInstance(_graphBuilder, _crossbar, _capture))
         {
-          Log.Log.Error("analog: unable to add encoding filter");
-          throw new TvException("Analog: unable to add capture filter");
+          throw new TvException("Analog: unable to add encoder filter(s)");
         }
         Log.Log.WriteFile("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
-                                                                     _capture.VideoFilter, _encoder.MultiplexerFilter,
-                                                                     _encoder.VideoCompressorFilter);
+                                                                     _capture.VideoFilter, _encoder.MultiplexerFilter);
         if (_qualityControl == null)
         {
           Log.Log.WriteFile("analog: No quality control support found");
@@ -636,7 +611,7 @@ namespace TvLibrary.Implementations.Analog
           //However, if we wish to change quality for a live graph, the deviceID must be passed in
           if (_tunerDevice != null && _capture.VideoFilter != null)
           {
-            if (_capture.VideoCaptureName.Contains("Hauppauge"))
+            if (_capture.VideoName.Contains("Hauppauge"))
             {
               Hauppauge _hauppauge = new Hauppauge(_capture.VideoFilter, string.Empty);
               _hauppauge.SetStream(103);
@@ -652,7 +627,7 @@ namespace TvLibrary.Implementations.Analog
           }
         }
 
-        if (!AddTsFileSink())
+        if (!AddAndConnectTsWriter())
         {
           throw new TvException("Analog: unable to add mpfilewriter");
         }
@@ -677,45 +652,63 @@ namespace TvLibrary.Implementations.Analog
       }
     }
 
-    #region demuxer, muxer and mpfilewriter graph building
-
     /// <summary>
-    /// adds the TsFileSink filter to the graph
+    /// Add and connect the MediaPortal TS writer/analyser filter into the graph.
     /// </summary>
     /// <returns></returns>
-    private bool AddTsFileSink()
+    private bool AddAndConnectTsWriter()
     {
-      if (!CheckThreadId())
+      Log.Log.Debug("analog: add and connect TsWriter");
+      _tsFileSink = (IBaseFilter)new MpTsAnalyzer();
+      int hr = 0;
+      try
+      {
+        hr = _graphBuilder.AddFilter(_tsFileSink, "MediaPortal TS Writer");
+        DsError.ThrowExceptionForHR(hr);
+      }
+      catch
+      {
+        Log.Log.Debug("analog: failed to add, hr = 0x{0:x}", hr);
         return false;
-      Log.Log.WriteFile("analog:AddTsFileSink");
-      _tsFileSink = (IBaseFilter)new MpFileWriter();
-      int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("analog:AddTsFileSink returns:0x{0:X}", hr);
-        throw new TvException("Unable to add TsFileSink");
       }
-      Log.Log.WriteFile("analog:connect muxer->tsfilesink");
-      IPin pin = DsFindPin.ByDirection(_encoder.MultiplexerFilter, PinDirection.Output, 0);
-      if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, _tsFileSink, 0))
+      
+      IPin outputPin = DsFindPin.ByDirection(_encoder.TsMultiplexerFilter, PinDirection.Output, 0);
+      IPin inputPin = DsFindPin.ByDirection(_tsFileSink, PinDirection.Input, 0);
+      try
       {
-        Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
-        throw new TvException("Unable to connect pins");
+        hr = _graphBuilder.ConnectDirect(outputPin, inputPin, null);
+        DsError.ThrowExceptionForHR(hr);
       }
-      Release.ComObject("mpegmux pinin", pin);
+      finally
+      {
+        if (outputPin != null)
+        {
+          Release.ComObject(outputPin);
+        }
+        if (inputPin != null)
+        {
+          Release.ComObject(inputPin);
+        }
+      }
       if (_capture.SupportsTeletext)
       {
-        Log.Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
-        if (!FilterGraphTools.ConnectPin(_graphBuilder, _teletext.WST_VBI_Pin, _tsFileSink, 1))
+        Log.Log.Debug("analog: connect WST/VBI");
+        inputPin = DsFindPin.ByDirection(_encoder.TsMultiplexerFilter, PinDirection.Input, 4);
+        try
         {
-          Log.Log.WriteFile("analog:unable to connect wst/vbi->tsfilesink");
-          throw new TvException("Unable to connect pins");
+          hr = _graphBuilder.ConnectDirect(_teletext.WST_VBI_Pin, inputPin, null);
+          DsError.ThrowExceptionForHR(hr);
+        }
+        finally
+        {
+          if (inputPin != null)
+          {
+            Release.ComObject(inputPin);
+          }
         }
       }
       return true;
     }
-
-    #endregion
 
     /// <summary>
     /// Methods which starts the graph
@@ -801,20 +794,6 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region scanning interface
-
-    ///<summary>
-    /// Returns the channel scanner interface
-    ///</summary>
-    ///<returns></returns>
-    public IAnalogChanelScan GetChannelScanner()
-    {
-      IAnalogChanelScan channelScanner = null;
-      if (_tsFileSink != null)
-      {
-        channelScanner = (IAnalogChanelScan)_tsFileSink;
-      }
-      return channelScanner;
-    }
 
     /// <summary>
     /// Gets the video frequency.

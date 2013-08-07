@@ -36,7 +36,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="DVBTScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DVBTScanning(TvCardDvbBase card) : base(card) {}
+    public DVBTScanning(TvCardDvbBase card, ITsChannelScan analyzer) : base(card, analyzer) { }
 
     /// <summary>
     /// Creates the new channel.

@@ -347,7 +347,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value></value>
     public override ITVScanning ScanningInterface
     {
-      get { return new ATSCScanning(this); }
+      get { return new ATSCScanning(this, _interfaceChannelScan); }
     }
 
     #endregion

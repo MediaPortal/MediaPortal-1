@@ -171,7 +171,7 @@ namespace TvLibrary.Implementations.DVB
     #region variables
 
     private ITsChannelScan _analyzer;
-    protected readonly TvCardDvbBase _card;
+    protected readonly ITVCard _card;
     private ManualResetEvent _event;
 
     /// <summary>
@@ -187,9 +187,10 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DvbBaseScanning(TvCardDvbBase card)
+    public DvbBaseScanning(ITVCard card, ITsChannelScan analyzer)
     {
       _card = card;
+      _analyzer = analyzer;
     }
 
     #endregion
@@ -221,24 +222,6 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="info">The subchannel detail.</param>
     /// <returns>The new channel.</returns>
     protected abstract IChannel CreateNewChannel(IChannel channel, ChannelInfo info);
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected virtual ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Sets the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected virtual void SetHwPids(List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
 
     /// <summary>
     /// Resets the signal update.
@@ -283,7 +266,6 @@ namespace TvLibrary.Implementations.DVB
       {
         _card.IsScanning = true;
         _card.Scan(0, channel);
-        _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
           Log.Log.WriteFile("Scan: no analyzer interface available");
@@ -442,7 +424,6 @@ namespace TvLibrary.Implementations.DVB
       {
         _card.IsScanning = true;
         _card.Scan(0, channel);
-        _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
           Log.Log.WriteFile("Scan: no analyzer interface available");

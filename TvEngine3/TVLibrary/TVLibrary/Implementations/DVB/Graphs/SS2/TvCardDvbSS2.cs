@@ -117,13 +117,6 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region imports
-
-    [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    private class MpTsAnalyzer {}
-
-    #endregion
-
     #region Structs
 
     //
@@ -706,13 +699,13 @@ namespace TvLibrary.Implementations.DVB
         switch (CardType)
         {
           case CardType.DvbT:
-            return new DVBTScanning(this);
+            return new DVBTScanning(this, _interfaceChannelScan);
           case CardType.DvbS:
-            return new DVBSScanning(this);
+            return new DVBSScanning(this, _interfaceChannelScan);
           case CardType.DvbC:
-            return new DVBCScanning(this);
+            return new DVBCScanning(this, _interfaceChannelScan);
           case CardType.Atsc:
-            return new ATSCScanning(this);
+            return new ATSCScanning(this, _interfaceChannelScan);
         }
         return null;
       }

@@ -56,20 +56,4 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int OnNotify(PidType pidType);
   }
-
-  /// <summary>
-  /// MPFileWiter video/audio observer
-  /// </summary>
-  [ComVisible(true), ComImport, Guid("F94D89B5-C888-4da1-9782-15C1C0CBFE4D"),
-   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IAnalogVideoAudioObserver
-  {
-    ///<summary>
-    /// Called when a pid is detected
-    ///</summary>
-    ///<param name="pidType">The pid type</param>
-    ///<returns>Error code</returns>
-    [PreserveSig]
-    int OnNotify(PidType pidType);
-  }
 }

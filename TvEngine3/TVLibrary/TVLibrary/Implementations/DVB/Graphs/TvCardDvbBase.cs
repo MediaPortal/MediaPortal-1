@@ -94,15 +94,6 @@ namespace TvLibrary.Implementations.DVB
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     private class MpTsAnalyzer {}
 
-    [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
-    private class CyberLinkMuxer {}
-
-    [ComImport, Guid("7F2BBEAF-E11C-4D39-90E8-938FB5A86045")]
-    private class PowerDirectorMuxer {}
-
-    [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
-    private class CyberLinkDumpFilter {} ;
-
     #endregion
 
     #region variables
@@ -2217,14 +2208,6 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region properties
-
-    /// <summary>
-    /// returns the ITsChannelScan interface for the graph
-    /// </summary>
-    public ITsChannelScan StreamAnalyzer
-    {
-      get { return _interfaceChannelScan; }
-    }
 
     /// <summary>
     /// Activates / deactivates the epg grabber

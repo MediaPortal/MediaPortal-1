@@ -131,31 +131,37 @@ namespace TvLibrary.Implementations.Analog.Components
     #region properties
 
     /// <summary>
-    /// Gets the video capture name
+    /// Gets the video capture device name
     /// </summary>
-    public String VideoCaptureName
+    public string VideoName
     {
-      get { return _videoCaptureDevice.Name; }
+      get
+      {
+        if (_videoCaptureDevice == null)
+        {
+          return string.Empty;
+        }
+        return _videoCaptureDevice.Name;
+      }
     }
 
     /// <summary>
-    /// Gets the video capture device path
+    /// Gets the audio capture device name
     /// </summary>
-    public String VideoCaptureDevicePath
+    public string AudioName
     {
-      get { return _videoCaptureDevice.DevicePath; }
+      get
+      {
+        if (_audioCaptureDevice == null)
+        {
+          return string.Empty;
+        }
+        return _audioCaptureDevice.Name;
+      }
     }
 
     /// <summary>
-    /// Gets the audio capture name
-    /// </summary>
-    public String AudioCaptureName
-    {
-      get { return _audioCaptureDevice.Name; }
-    }
-
-    /// <summary>
-    /// Get the video capture filter
+    /// Gets the video capture filter
     /// </summary>
     public IBaseFilter VideoFilter
     {
@@ -163,7 +169,7 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
-    /// Gt the audio capture filter
+    /// Gets the audio capture filter
     /// </summary>
     public IBaseFilter AudioFilter
     {
@@ -231,9 +237,10 @@ namespace TvLibrary.Implementations.Analog.Components
         Release.ComObject("vbipin filter", _pinVBI);
         _pinVBI = null;
       }
-      if (_filterAudioCapture != null && _filterVideoCapture != _filterAudioCapture)
+      if (_filterAudioCapture != null)
       {
         Release.ComObject("audio capture filter", _filterAudioCapture);
+        _filterAudioCapture = null;
       }
       if (_filterVideoCapture != null)
       {
@@ -241,17 +248,16 @@ namespace TvLibrary.Implementations.Analog.Components
         _filterVideoCapture = null;
         _analogVideoDecoder = null;
       }
-      _filterAudioCapture = null;
-      if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
+      if (_audioCaptureDevice != null)
       {
         DevicesInUse.Instance.Remove(_audioCaptureDevice);
+        _audioCaptureDevice = null;
       }
       if (_videoCaptureDevice != null)
       {
         DevicesInUse.Instance.Remove(_videoCaptureDevice);
         _videoCaptureDevice = null;
       }
-      _audioCaptureDevice = null;
     }
 
     #endregion
@@ -398,20 +404,15 @@ namespace TvLibrary.Implementations.Analog.Components
         if (audioDeviceName.Equals(devices[i].Name) &&
             FilterGraphTools.ConnectPin(graphBuilder, crossbar.AudioOut, tmp, graph.Capture.AudioIn))
         {
-          _filterAudioCapture = tmp;
-          _audioCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          if (devices[i] != _videoCaptureDevice)
           {
+            _filterAudioCapture = tmp;
+            _audioCaptureDevice = devices[i];
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           audioConnected = true;
           filterUsed = true;
-        }
-          // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
-        else
-        {
-          _audioCaptureDevice = devices[i];
         }
 
         if (!filterUsed)
@@ -535,10 +536,7 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           _filterVideoCapture = tmp;
           _videoCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
-          {
-            DevicesInUse.Instance.Add(_videoCaptureDevice);
-          }
+          DevicesInUse.Instance.Add(_videoCaptureDevice);
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected video to crossbar successfully");
           graph.Capture.Name = _videoCaptureDevice.Name;
           graph.Capture.VideoIn = destinationIndex;
@@ -549,10 +547,10 @@ namespace TvLibrary.Implementations.Analog.Components
         // Many video capture are also the audio capture filter, so we can always try it again
         if (videoConnected && FilterGraphTools.ConnectFilter(graphBuilder, crossbar.AudioOut, tmp, out destinationIndex))
         {
-          _filterAudioCapture = tmp;
-          _audioCaptureDevice = devices[i];
-          if (_audioCaptureDevice != _videoCaptureDevice)
+          if (devices[i] != _videoCaptureDevice)
           {
+            _filterAudioCapture = tmp;
+            _audioCaptureDevice = devices[i];
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
           Log.Log.WriteFile("analog: AddTvCaptureFilter connected audio to crossbar successfully");
@@ -560,11 +558,6 @@ namespace TvLibrary.Implementations.Analog.Components
           graph.Capture.AudioIn = destinationIndex;
           audioConnected = true;
           filterUsed = true;
-        }
-          // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
-        else
-        {
-          _audioCaptureDevice = devices[i];
         }
 
         if (!filterUsed)

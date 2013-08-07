@@ -30,7 +30,7 @@ namespace TvLibrary.Implementations.Analog.Components
   /// <summary>
   /// The tuner component of the graph
   /// </summary>
-  internal class Tuner : IDisposable
+  public class Tuner : IDisposable
   {
     #region variables
 
@@ -397,24 +397,6 @@ namespace TvLibrary.Implementations.Analog.Components
     #endregion
 
     #region public methods
-
-    /// <summary>
-    /// Indicates if it is a special plextor card
-    /// </summary>
-    /// <returns>true, if it is a special plextor card</returns>
-    public bool IsPlextorCard()
-    {
-      return FilterGraphTools.GetFilterName(_filterTvTuner).Contains("Plextor ConvertX");
-    }
-
-    /// <summary>
-    /// Indicates if it is a special Nvidia nvtv card
-    /// </summary>
-    /// <returns>true, if it is a special nvidia card</returns>
-    public bool IsNvidiaCard()
-    {
-      return FilterGraphTools.GetFilterName(_filterTvTuner).Contains("NVTV");
-    }
 
     /// <summary>
     /// Updates the signal quality

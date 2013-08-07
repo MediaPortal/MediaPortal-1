@@ -28,9 +28,6 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
-  [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-  internal class MpTsAnalyzer {}
-
   /// <summary>
   /// Constructor if TvCardDVBIP
   /// </summary>
@@ -152,7 +149,7 @@ namespace TvLibrary.Implementations.DVB
       get
       {
         if (!CheckThreadId()) return null;
-        return new DVBIPScanning(this);
+        return new DVBIPScanning(this, _interfaceChannelScan);
       }
     }
 

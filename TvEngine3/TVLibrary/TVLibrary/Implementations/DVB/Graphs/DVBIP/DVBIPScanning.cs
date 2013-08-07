@@ -34,7 +34,7 @@ namespace TvLibrary.Implementations.DVB
     /// Constructor
     /// </summary>
     /// <param name="card"></param>
-    public DVBIPScanning(TvCardDVBIP card) : base(card) {}
+    public DVBIPScanning(TvCardDVBIP card, ITsChannelScan analyzer) : base(card, analyzer) {}
 
     /// <summary>
     /// CreateNewChannel

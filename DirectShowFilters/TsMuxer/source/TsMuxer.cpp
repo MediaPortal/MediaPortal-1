@@ -177,15 +177,15 @@ m_pTsMuxer(pTsMuxer)
 CBasePin * CTsMuxerFilter::GetPin(int n)
 {
 	if (n == 0) {
-		return m_pTsMuxer->m_pMPEGInputPin;
-	}else if (n == 1) {
-		return m_pTsMuxer->m_pVideoInputPin;
-	}else if (n == 2) {
-		return m_pTsMuxer->m_pAudioInputPin;
-	}else if (n == 3) {
-		return m_pTsMuxer->m_pTeletextInputPin;
-	}else if (n == 4) {
 		return m_pTsMuxer->m_pTsInputPin;
+	}else if (n == 1) {
+		return m_pTsMuxer->m_pMPEGInputPin;
+	}else if (n == 2) {
+		return m_pTsMuxer->m_pVideoInputPin;
+	}else if (n == 3) {
+		return m_pTsMuxer->m_pAudioInputPin;
+	}else if (n == 4) {
+		return m_pTsMuxer->m_pTeletextInputPin;
 	}else if (n == 5) {
 		return m_pTsMuxer->m_pTsOutputPin;
 	} else {
@@ -262,7 +262,9 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME tStart)
 
 	m_pTsMuxer->m_pProgramTsWriter->Initialize(m_pTsMuxer->m_pTsOutputPin);
 	m_pTsMuxer->m_pElementaryTsWriter->Initialize(m_pTsMuxer->m_pTsOutputPin);
-	return CBaseFilter::Run(tStart);
+  int hr = CBaseFilter::Run(tStart);
+  LogDebug("CTsMuxerFilter::Run() result 0x%x", hr);
+	return hr;
 }
 
 
@@ -538,6 +540,13 @@ HRESULT CTsMuxer::WriteProgram(PBYTE pbData, LONG lDataLength)
 		return S_OK;
 	}
 	m_pProgramTsWriter->Write(pbData,lDataLength);
+  /*LogDebug("debug: write program, length = %d", lDataLength);
+  int offset = 0;
+  while (lDataLength - offset >= 16)
+  {
+    LogDebug("  %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x", pbData[offset + 0], pbData[offset + 1], pbData[offset + 2], pbData[offset + 3], pbData[offset + 4], pbData[offset + 5], pbData[offset + 6], pbData[offset + 7], pbData[offset + 8], pbData[offset + 9], pbData[offset + 10], pbData[offset + 11], pbData[offset + 12], pbData[offset + 13], pbData[offset + 14], pbData[offset + 15]);
+    offset += 16;
+  }*/
 	return S_OK;
 }
 
@@ -554,6 +563,13 @@ HRESULT CTsMuxer::WriteVideo(PBYTE pbData, LONG lDataLength)
 		LogDebug("write: pbData=NULL");
 		return S_OK;
 	}
+  /*LogDebug("debug: write video, length = %d", lDataLength);
+  int offset = 0;
+  while (lDataLength - offset >= 16)
+  {
+    LogDebug("  %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x", pbData[offset + 0], pbData[offset + 1], pbData[offset + 2], pbData[offset + 3], pbData[offset + 4], pbData[offset + 5], pbData[offset + 6], pbData[offset + 7], pbData[offset + 8], pbData[offset + 9], pbData[offset + 10], pbData[offset + 11], pbData[offset + 12], pbData[offset + 13], pbData[offset + 14], pbData[offset + 15]);
+    offset += 16;
+  }*/
 	m_pElementaryTsWriter->WriteVideo(pbData,lDataLength);
 	return S_OK;
 }
@@ -571,6 +587,13 @@ HRESULT CTsMuxer::WriteAudio(PBYTE pbData, LONG lDataLength)
 		LogDebug("write: pbData=NULL");
 		return S_OK;
 	}
+  /*LogDebug("debug: write audio, length = %d", lDataLength);
+  int offset = 0;
+  while (lDataLength - offset >= 16)
+  {
+    LogDebug("  %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x", pbData[offset + 0], pbData[offset + 1], pbData[offset + 2], pbData[offset + 3], pbData[offset + 4], pbData[offset + 5], pbData[offset + 6], pbData[offset + 7], pbData[offset + 8], pbData[offset + 9], pbData[offset + 10], pbData[offset + 11], pbData[offset + 12], pbData[offset + 13], pbData[offset + 14], pbData[offset + 15]);
+    offset += 16;
+  }*/
 	m_pElementaryTsWriter->WriteAudio(pbData,lDataLength);
 	return S_OK;
 }
@@ -593,6 +616,13 @@ HRESULT CTsMuxer::WriteTeletext(PBYTE pbData, LONG lDataLength){
 	if(m_pChannelScan!=NULL){
 		m_pChannelScan->OnTeletextData(pbData,lDataLength);
 	}
+  /*LogDebug("debug: write teletext, length = %d", lDataLength);
+  int offset = 0;
+  while (lDataLength - offset >= 16)
+  {
+    LogDebug("  %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x", pbData[offset + 0], pbData[offset + 1], pbData[offset + 2], pbData[offset + 3], pbData[offset + 4], pbData[offset + 5], pbData[offset + 6], pbData[offset + 7], pbData[offset + 8], pbData[offset + 9], pbData[offset + 10], pbData[offset + 11], pbData[offset + 12], pbData[offset + 13], pbData[offset + 14], pbData[offset + 15]);
+    offset += 16;
+  }*/
 	return S_OK;
 }
 
