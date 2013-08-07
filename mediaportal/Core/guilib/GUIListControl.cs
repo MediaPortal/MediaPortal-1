@@ -845,19 +845,6 @@ namespace MediaPortal.GUI.Library
           color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
         }
 
-        //// apply unfocusedAlpha if label is not selected
-        //if (!gotFocus)
-        //{
-        //  // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering 
-        //  color = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb() : color;
-
-        //  // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
-        //  if (!item.Selected && _unfocusedAlphaApplyToAll)
-        //  {
-        //    color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-        //  }
-        //}
-
         // if control is not in focus apply color dimming
         if (!Focus)
         {
@@ -956,19 +943,6 @@ namespace MediaPortal.GUI.Library
         {
           color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
         }
-
-        //// apply unfocusedAlpha if label is not selected
-        //if (!gotFocus)
-        //{
-        //  // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering
-        //  color = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb() : color;
-
-        //  // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
-        //  if (!item.Selected && _unfocusedAlphaApplyToAll)
-        //  {
-        //    color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-        //  }
-        //}
 
         // if control is not in focus apply color dimming
         if (!Focus)
