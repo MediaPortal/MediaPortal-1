@@ -38,7 +38,11 @@ namespace MediaPortal.Visualization
     } ;
 
     private string[] BlackList = new string[]
-                                   {
+                                   {                                     
+                                     "{6870D1D8-5018-454f-8DBE-4EE920743B8B}",
+                                     // Windows Media 9 Series (Rhythm and Wave) not work without IWMPEffects2 interface, we don't need this one
+                                     "{B0D32936-2E7A-4a69-8AB8-40FB4E83A0D0}",
+                                     // Windows Media Player 10 (Energy Bliss) not work without IWMPEffects2 interface, we don't need this one
                                      "{BFA29983-66E4-11d7-A75D-0000B4908923}",
                                      // The WMP version the the G-Force plugin.  Since we support G-Force natively, we don't need this one
                                      "{3DC95765-154D-11d8-A75D-0000B4908923}",
