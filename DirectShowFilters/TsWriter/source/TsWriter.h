@@ -34,6 +34,7 @@
 using namespace std;
 
 class CMpTsFilterPin;
+class CMpOobSiFilterPin;
 class CMpTs;
 class CMpTsFilter;
 
@@ -152,6 +153,32 @@ private:
 };
 
 
+// This pin is designed to receive digital cable service information, normally carried out of band.
+// The format of these sections is specified in ANSI/SCTE 65.
+class CMpOobSiFilterPin : public CRenderedInputPin
+{
+  CMpTs* const m_pWriterFilter;   // Main renderer object
+  CCritSec* const m_pReceiveLock; // Sample critical section
+
+  public:
+    CMpOobSiFilterPin(CMpTs* pDump, LPUNKNOWN pUnk, CBaseFilter* pFilter, CCritSec* pLock, CCritSec* pReceiveLock, HRESULT* phr);
+
+    STDMETHODIMP Receive(IMediaSample *pSample);
+    STDMETHODIMP EndOfStream(void);
+    STDMETHODIMP ReceiveCanBlock();
+    HRESULT CheckMediaType(const CMediaType*);
+    HRESULT BreakConnect();
+    BOOL IsReceiving();
+    STDMETHODIMP NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+
+    void AssignRawSectionWriter(FileWriter* rawSectionWriter);
+
+  private:
+    CCritSec m_section;
+    FileWriter* m_rawSectionWriter;
+};
+
+
 //  CMpTs object which has filter and pin members
 
 class CMpTs : public CUnknown, public ITSFilter
@@ -159,8 +186,10 @@ class CMpTs : public CUnknown, public ITSFilter
 
     friend class CMpTsFilter;
     friend class CMpTsFilterPin;
+    friend class CMpOobSiFilterPin;
     CMpTsFilter*	m_pFilter;       // Methods for filter interfaces
     CMpTsFilterPin*	m_pPin;          // A simple rendered input pin
+    CMpOobSiFilterPin*	m_pOobSiPin; // A simple rendered input pin for receiving out-of-band SI sections.
     CCritSec 		m_Lock;                // Main renderer critical section
     CCritSec 		m_ReceiveLock;         // Sublock for received samples
 public:
@@ -217,6 +246,7 @@ public:
     ~CMpTs();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 		void AnalyzeTsPacket(byte* tsPacket);
+    void AnalyzeOobSiSection(CSection& section);
 
 private:
     // Overriden to say what interfaces we support where

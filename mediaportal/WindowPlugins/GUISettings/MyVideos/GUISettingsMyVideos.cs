@@ -239,6 +239,16 @@ namespace WindowPlugins.GUISettings.TV
       {
         OnOtherSettings();
       }
+      if (control == btnForceSourceSplitter)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
+      if (control == btnautoDecoderSettings)
+      {
+        SaveSettings();
+        LoadSettings();
+      }
 
       base.OnClicked(controlId, control, actionType);
     }
@@ -263,13 +273,23 @@ namespace WindowPlugins.GUISettings.TV
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(496)); //Menu
 
-        dlg.AddLocalizedString(6000); // MPEG2
-        dlg.AddLocalizedString(6036); // H264
-        dlg.AddLocalizedString(300212); // VC-1
-        dlg.AddLocalizedString(300213); // VC-1i
-        dlg.AddLocalizedString(300214); // DivX/Xvid
-        dlg.AddLocalizedString(300215); // Splitter
-        dlg.AddLocalizedString(300216); // FileSplitter
+        if (!_autoDecoderSettings)
+        {
+          dlg.AddLocalizedString(6000); // MPEG2
+          dlg.AddLocalizedString(6036); // H264
+          dlg.AddLocalizedString(300212); // VC-1
+          dlg.AddLocalizedString(300213); // VC-1i
+          dlg.AddLocalizedString(300214); // DivX/Xvid
+          if (_ForceSourceSplitter)
+          {
+            dlg.AddLocalizedString(300215); // Splitter
+            if ((_strSplitterFilter == "File Source (Async.)" ||
+                 _strSplitterFilter == "File Source (URL)"))
+            {
+              dlg.AddLocalizedString(300216); // FileSplitter
+            }
+          }
+        }
         dlg.AddLocalizedString(6004); // Aspect Ratio
         dlg.AddLocalizedString(1029); // Subtitle
 

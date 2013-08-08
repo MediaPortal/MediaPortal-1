@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.IO;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Util;
 
@@ -289,7 +290,17 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool HasThumbnail
     {
-      get { return _thumbNailName.Length > 0; }
+      get
+      {
+        if (!File.Exists(_thumbNailName))
+        {
+          return false;
+        }
+        else
+        {
+          return _thumbNailName.Length > 0;
+        }
+      }
     }
 
     /// <summary>

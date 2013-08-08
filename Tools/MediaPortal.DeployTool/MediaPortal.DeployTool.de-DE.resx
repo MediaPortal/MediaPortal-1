@@ -515,4 +515,7 @@ Bitte fahren Sie nach dem Neustart mit der Installation fort.</value>
   <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
     <value>Skin auswählen</value>
   </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Bestehende Installation Version {0} erneut installieren</value>
+  </data>
 </root>
