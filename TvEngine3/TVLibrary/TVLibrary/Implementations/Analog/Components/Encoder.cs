@@ -318,19 +318,47 @@ namespace TvLibrary.Implementations.Analog.Components
 
             // The Plextor capture filter is a video encoder filter, but not an
             // audio encoder filter.
-            bool connectedAudio = false;
+            TvBusinessLayer layer = new TvBusinessLayer();
             if (videoPin != null && !capture.VideoName.StartsWith("Plextor ConvertX"))
             {
-              if (!AddAndConnectSoftwareVideoEncoder(graph, videoPin, audioPin, out _filterVideoEncoder, out _videoCompressorDevice, out connectedAudio))
+              Log.Log.Debug("encoder: add video encoder...");
+              if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.VideoCompressorCategory, layer.GetSofwareEncodersVideo(), videoPin, out _filterVideoEncoder, out _videoCompressorDevice))
               {
                 throw new TvExceptionSWEncoderMissing("Failed to add a software video encoder.");
               }
             }
-            if (!connectedAudio && audioPin != null)
+            if (audioPin != null)
             {
-              if (!AddAndConnectSoftwareAudioEncoder(graph, audioPin, out _filterAudioEncoder, out _audioCompressorDevice))
+              // Sometimes the video encoder may also encode audio.
+              // Unfortunately the encoders I've seen don't usually advertise
+              // the supported media types on their input pins. We're forced to
+              // check the pin name to confirm that the second pin is not a
+              // closed caption pin.
+              bool connectedAudio = false;
+              if (_filterVideoEncoder != null)
               {
-                throw new TvExceptionSWEncoderMissing("Failed to add a software audio encoder.");
+                IPin inputPin = DsFindPin.ByDirection(_filterVideoEncoder, PinDirection.Input, 1);
+                if (inputPin != null)
+                {
+                  Log.Log.Debug("encoder: detected additional input pin on video encoder");
+                  if (!GetPinName(inputPin).ToLowerInvariant().Contains("cc"))
+                  {
+                    Log.Log.Debug("encoder: connect...");
+                    if (graph.ConnectDirect(audioPin, inputPin, null) == 0)
+                    {
+                      Log.Log.Debug("encoder: connected!");
+                      connectedAudio = true;
+                    }
+                  }
+                }
+              }
+              if (!connectedAudio)
+              {
+                Log.Log.Debug("encoder: add audio encoder...");
+                if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.AudioCompressorCategory, layer.GetSofwareEncodersAudio(), audioPin, out _filterAudioEncoder, out _audioCompressorDevice))
+                {
+                  throw new TvExceptionSWEncoderMissing("Failed to add a software audio encoder.");
+                }
               }
             }
           }
@@ -720,28 +748,25 @@ namespace TvLibrary.Implementations.Analog.Components
       return false;
     }
 
-    #region s/w encoding card specific graph building
-
-    private bool AddAndConnectSoftwareAudioEncoder(IFilterGraph2 graph, IPin audioPin, out IBaseFilter filter, out DsDevice device)
+    private bool AddAndConnectSoftwareEncoder(IFilterGraph2 graph, Guid category, IList<SoftwareEncoder> compatibleEncoders, IPin outputPin, out IBaseFilter filter, out DsDevice device)
     {
       int hr = 0;
       filter = null;
       device = null;
 
       int installedEncoderCount = 0;
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(category);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      IList<SoftwareEncoder> encoders = new TvBusinessLayer().GetSofwareEncodersAudio();
-      DsDevice[] devices = new DsDevice[encoders.Count];
-      for (int x = 0; x < encoders.Count; ++x)
+      DsDevice[] devices = new DsDevice[compatibleEncoders.Count];
+      for (int x = 0; x < compatibleEncoders.Count; ++x)
       {
         devices[x] = null;
       }
       for (int i = 0; i < devices1.Length; i++)
       {
-        for (int x = 0; x < encoders.Count; ++x)
+        for (int x = 0; x < compatibleEncoders.Count; ++x)
         {
-          if (encoders[x].Name == devices1[i].Name)
+          if (compatibleEncoders[x].Name == devices1[i].Name)
           {
             devices[x] = devices1[i];
             installedEncoderCount++;
@@ -751,9 +776,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       for (int i = 0; i < devices2.Length; i++)
       {
-        for (int x = 0; x < encoders.Count; ++x)
+        for (int x = 0; x < compatibleEncoders.Count; ++x)
         {
-          if (encoders[x].Name == devices2[i].Name)
+          if (compatibleEncoders[x].Name == devices2[i].Name)
           {
             if (devices[x] == null)
             {
@@ -764,12 +789,12 @@ namespace TvLibrary.Implementations.Analog.Components
           }
         }
       }
-      Log.Log.Debug("encoder: add and connect software audio encoder, compressor count = {0}, legacy filter count = {1}, DB count = {2}, installed count = {3}", devices1.Length, devices2.Length, devices.Length, installedEncoderCount);
+      Log.Log.Debug("encoder: add and connect software encoder, compressor count = {0}, legacy filter count = {1}, DB count = {2}, installed count = {3}", devices1.Length, devices2.Length, devices.Length, installedEncoderCount);
 
       for (int i = 0; i < devices.Length; i++)
       {
         DsDevice d = devices[i];
-        if (d == null || !EncodersInUse.Instance.Add(d, encoders[i]))
+        if (d == null || !EncodersInUse.Instance.Add(d, compatibleEncoders[i]))
         {
           continue;
         }
@@ -790,11 +815,10 @@ namespace TvLibrary.Implementations.Analog.Components
 
         Log.Log.Debug("encoder: connect...");
         bool connected = false;
-        IPin inputPin1 = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
-        IPin inputPin2 = DsFindPin.ByDirection(filter, PinDirection.Input, 1);
+        IPin inputPin = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
         try
         {
-          hr = graph.ConnectDirect(audioPin, inputPin1, null);
+          hr = graph.ConnectDirect(outputPin, inputPin, null);
           DsError.ThrowExceptionForHR(hr);
           Log.Log.Debug("encoder: connected!");
           device = d;
@@ -806,13 +830,9 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         finally
         {
-          if (inputPin1 != null)
+          if (inputPin != null)
           {
-            Release.ComObject(inputPin1);
-          }
-          if (inputPin2 != null)
-          {
-            Release.ComObject(inputPin2);
+            Release.ComObject(inputPin);
           }
           if (!connected)
           {
@@ -826,134 +846,6 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       return false;
     }
-
-    private bool AddAndConnectSoftwareVideoEncoder(IFilterGraph2 graph, IPin videoPin, IPin audioPin, out IBaseFilter filter, out DsDevice device, out bool connectedAudio)
-    {
-      int hr = 0;
-      filter = null;
-      device = null;
-      connectedAudio = false;
-
-      int installedEncoderCount = 0;
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
-      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      IList<SoftwareEncoder> encoders = new TvBusinessLayer().GetSofwareEncodersVideo();
-      DsDevice[] devices = new DsDevice[encoders.Count];
-      for (int x = 0; x < encoders.Count; ++x)
-      {
-        devices[x] = null;
-      }
-      for (int i = 0; i < devices1.Length; i++)
-      {
-        for (int x = 0; x < encoders.Count; ++x)
-        {
-          if (encoders[x].Name == devices1[i].Name)
-          {
-            devices[x] = devices1[i];
-            installedEncoderCount++;
-            break;
-          }
-        }
-      }
-      for (int i = 0; i < devices2.Length; i++)
-      {
-        for (int x = 0; x < encoders.Count; ++x)
-        {
-          if (encoders[x].Name == devices2[i].Name)
-          {
-            if (devices[x] == null)
-            {
-              installedEncoderCount++;
-            }
-            devices[x] = devices2[i];
-            break;
-          }
-        }
-      }
-      Log.Log.Debug("encoder: add and connect software video encoder, compressor count = {0}, legacy filter count = {1}, DB count = {2}, installed count = {3}", devices1.Length, devices2.Length, devices.Length, installedEncoderCount);
-
-      for (int i = 0; i < devices.Length; i++)
-      {
-        DsDevice d = devices[i];
-        if (d == null || !EncodersInUse.Instance.Add(d, encoders[i]))
-        {
-          continue;
-        }
-
-        try
-        {
-          Log.Log.Debug("encoder: attempt to add {0} {1}", d.Name, d.DevicePath);
-          hr = graph.AddSourceFilterForMoniker(d.Mon, null, d.Name, out filter);
-          DsError.ThrowExceptionForHR(hr);
-        }
-        catch (Exception)
-        {
-          Log.Log.Debug("encoder: failed to add, hr = 0x{0:x}", hr);
-          EncodersInUse.Instance.Remove(d);
-          filter = null;
-          continue;
-        }
-
-        Log.Log.Debug("encoder: connect...");
-        bool connected = false;
-        IPin inputPin1 = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
-        IPin inputPin2 = DsFindPin.ByDirection(filter, PinDirection.Input, 1);
-        try
-        {
-          hr = graph.ConnectDirect(videoPin, inputPin1, null);
-          DsError.ThrowExceptionForHR(hr);
-          Log.Log.Debug("encoder: connected [video]!");
-
-          // Unfortunately the encoders I've seen don't usually advertise the
-          // supported media types on their input pins. We're forced to check
-          // the pin name to confirm that the second pin is not a closed
-          // caption pin.
-          if (inputPin2 != null)
-          {
-            Log.Log.Debug("encoder: detected additional input pin");
-            if (!GetPinName(inputPin2).ToLowerInvariant().Contains("cc"))
-            {
-              Log.Log.Debug("encoder: connect...");
-              hr = graph.ConnectDirect(audioPin, inputPin2, null);
-              if (hr == 0)
-              {
-                Log.Log.Debug("encoder: connected [audio]!");
-                connectedAudio = true;
-              }
-            }
-          }
-
-          device = d;
-          connected = true;
-          return true;
-        }
-        catch
-        {
-        }
-        finally
-        {
-          if (inputPin1 != null)
-          {
-            Release.ComObject(inputPin1);
-          }
-          if (inputPin2 != null)
-          {
-            Release.ComObject(inputPin2);
-          }
-          if (!connected)
-          {
-            Log.Log.Debug("encoder: failed to connect");
-            EncodersInUse.Instance.Remove(d);
-            graph.RemoveFilter(filter);
-            Release.ComObject(filter);
-            filter = null;
-          }
-        }
-      }
-      return false;
-    }
-
-    #endregion
 
     private bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IPin videoOutputPin, IPin audioOutputPin, IPin captureOutputPin, Guid captureMediaSubType)
     {
