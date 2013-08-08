@@ -340,15 +340,22 @@ namespace TvLibrary.Implementations.Analog.Components
                 IPin inputPin = DsFindPin.ByDirection(_filterVideoEncoder, PinDirection.Input, 1);
                 if (inputPin != null)
                 {
-                  Log.Log.Debug("encoder: detected additional input pin on video encoder");
-                  if (!GetPinName(inputPin).ToLowerInvariant().Contains("cc"))
+                  try
                   {
-                    Log.Log.Debug("encoder: connect...");
-                    if (graph.ConnectDirect(audioPin, inputPin, null) == 0)
+                    Log.Log.Debug("encoder: detected additional input pin on video encoder");
+                    if (!GetPinName(inputPin).ToLowerInvariant().Contains("cc"))
                     {
-                      Log.Log.Debug("encoder: connected!");
-                      connectedAudio = true;
+                      Log.Log.Debug("encoder: connect...");
+                      if (graph.ConnectDirect(audioPin, inputPin, null) == 0)
+                      {
+                        Log.Log.Debug("encoder: connected!");
+                        connectedAudio = true;
+                      }
                     }
+                  }
+                  finally
+                  {
+                    Release.ComObject(inputPin);
                   }
                 }
               }
