@@ -571,7 +571,7 @@ namespace TvPlugin
 
     private void AutoTurnOnTv(Channel channel)
     {
-      if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+      if (_autoTurnOnTv && !_playbackStopped)
       {
         if (!wasPrevWinTVplugin())
         {
@@ -911,26 +911,33 @@ namespace TvPlugin
       }
 
       _ServerNotConnectedHandled = true;
-      GUIDialogNotify pDlgOK = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify pDlgOK = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
 
       if (pDlgOK == null)
       {
         return;
       }
 
-      pDlgOK.Reset();
-      pDlgOK.SetHeading(257); //error
-      if (Navigator != null && Navigator.CurrentChannel != null && g_Player.IsTV)
+      try
       {
-        pDlgOK.SetText(Navigator.CurrentChannel);
+        pDlgOK.Reset();
+        pDlgOK.SetHeading(257); //error
+        if (Navigator != null && Navigator.CurrentChannel != null && g_Player.IsTV)
+        {
+          pDlgOK.SetText(Navigator.CurrentChannel);
+        }
+        else
+        {
+          pDlgOK.SetText("");
+        }
+        pDlgOK.SetText(GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+        pDlgOK.TimeOut = 5;
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
       }
-      else
+      catch (Exception)
       {
-        pDlgOK.SetText("");
+        // Catch null message, can happen when closing MP
       }
-      pDlgOK.SetText(GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-      pDlgOK.TimeOut = 5;
-      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 
     public static void ShowDlgThread()
@@ -1642,6 +1649,13 @@ namespace TvPlugin
 
     private void OnSuspend()
     {
+      // OnSuspend already in progress
+      if (_suspended)
+      {
+        Log.Info("TVHome: Suspend is already in progress");
+        return;
+      }
+
       Log.Debug("TVHome.OnSuspend()");
 
       RemoteControl.OnRemotingDisconnected -=
@@ -1670,6 +1684,12 @@ namespace TvPlugin
 
     private void OnResume()
     {
+      if (!_suspended)
+      {
+        Log.Info("TVHome: Resuming is already in progress");
+        return;
+      }
+
       Log.Debug("TVHome.OnResume()");
       try
       {
