@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C0BE4419-A495-4933-9425-A79AF4FB30F6}</ProjectGuid>
-    <RootNamespace>MPTSWriter</RootNamespace>
+    <RootNamespace>BDReader</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
