@@ -26,6 +26,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Music.Database
 {
@@ -60,6 +61,12 @@ namespace MediaPortal.Music.Database
 
       var searchPage = new HtmlWeb().Load(strURL);
       var artistMatches = searchPage.DocumentNode.SelectNodes(@"//ul[@class=""search-results""]/li[@class=""artist""]");
+      if (artistMatches == null)
+      {
+        possibleMatches = new List<AllMusicArtistMatch>();
+        return false;
+      }
+
       var allMusicArtistMatches = artistMatches.Select(artist => new AllMusicArtistMatch
         {
           Artist = CleanString(CleanInnerText(artist.SelectSingleNode(@"div[@class=""info""]/div[@class=""name""]"))),

@@ -124,6 +124,9 @@ namespace MediaPortal.GUI.Music
     protected delegate void ReplacePlaylistDelegate(PlayList newPlaylist);
     protected delegate void StartPlayingPlaylistDelegate();
 
+    protected bool _strippedPrefixes;
+    protected string _artistPrefixes;
+
     #endregion
 
     #region SkinControls
@@ -215,6 +218,9 @@ namespace MediaPortal.GUI.Music
         _selectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         _addAllOnSelect = xmlreader.GetValueAsBool("musicfiles", "addall", true);
         _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
+
+        _strippedPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         for (int i = 0; i < _sortModes.Length; ++i)
         {
@@ -1453,25 +1459,37 @@ namespace MediaPortal.GUI.Music
       }
       else if (song.Album != "")
       {
-        ShowAlbumInfo(song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
+        ShowAlbumInfo(song.Artist, song.Album);
       }
-      else if (song.Artist != "")
+      else if (!string.IsNullOrEmpty(song.Artist))
       {
-        ShowArtistInfo(song.Artist, song.Album);
+        var artist = song.Artist;
+        if (_strippedPrefixes)
+        {
+          artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+        }
+
+        ShowArtistInfo(artist, song.Album);
       }
-      else if (song.AlbumArtist != "")
+      else if (!string.IsNullOrEmpty(song.AlbumArtist))
       {
-        ShowArtistInfo(song.AlbumArtist, song.Album);
+        var artist = song.AlbumArtist;
+        if (_strippedPrefixes)
+        {
+          artist = AudioscrobblerBase.UndoArtistPrefix(song.AlbumArtist);
+        }
+
+        ShowArtistInfo(artist, song.Album);
       }
       facadeLayout.RefreshCoverArt();
     }
 
-    protected void ShowAlbumInfo(string artistName, string albumName, string strPath, MusicTag tag)
+    protected void ShowAlbumInfo(string artistName, string albumName)
     {
-      ShowAlbumInfo(GetID, artistName, albumName, strPath, tag);
+      ShowAlbumInfo(GetID, artistName, albumName);
     }
 
-    public void ShowAlbumInfo(int parentWindowID, string artistName, string albumName, string strPath, MusicTag tag)
+    public void ShowAlbumInfo(int parentWindowID, string artistName, string albumName)
     {
       Log.Debug("Searching for album: {0} - {1}", albumName, artistName);
 
@@ -1619,7 +1637,7 @@ namespace MediaPortal.GUI.Music
           if (pDlgAlbumInfo.NeedsRefresh)
           {
             m_database.DeleteAlbumInfo(albumName, artistName);
-            ShowAlbumInfo(parentWindowID, artistName, albumName, strPath, tag);
+            ShowAlbumInfo(parentWindowID, artistName, albumName);
             return;
           }
         }
