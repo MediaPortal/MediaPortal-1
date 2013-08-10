@@ -206,13 +206,16 @@ namespace MediaPortal.Music.Database
       {
         var albumPage = new HtmlWeb().Load(albumPageURL);
         var albums = albumPage.DocumentNode.SelectNodes(@"//section[@class=""discography""]/table/tbody/tr");
-        foreach (var album in albums)
+        if (albums != null)
         {
-          var year = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""year""]"));
-          var title = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a"));
-          var label = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""label""]"));
+          foreach (var album in albums)
+          {
+            var year = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""year""]"));
+            var title = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a"));
+            var label = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""label""]"));
 
-          albumList += year + " - " + title + " (" + label + ")" + Environment.NewLine;
+            albumList += year + " - " + title + " (" + label + ")" + Environment.NewLine;
+          }
         }
       }
 
