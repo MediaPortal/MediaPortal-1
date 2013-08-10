@@ -149,9 +149,10 @@ namespace MediaPortal.Music.Database
     /// <returns>True is scrape was sucessful</returns>
     public bool Parse(string strUrl)
     {
+      var mainPage = new HtmlWeb().Load(strUrl);
+
       // moods
       var moods = string.Empty;
-      var mainPage = new HtmlWeb().Load(strUrl);
       var moodNodes = mainPage.DocumentNode.SelectNodes(@"//section[@class=""moods""]/ul/*");
       if (moodNodes != null)
       {
@@ -164,40 +165,55 @@ namespace MediaPortal.Music.Database
 
       // artist image URL
       var artistImg = AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//div[@class=""artist-image""]/img"), "src");
-      
-      // bio
-      var bioPage = new HtmlWeb().Load(strUrl + "/biography");
-      var bio = AllmusicSiteScraper.CleanInnerText(bioPage.DocumentNode.SelectSingleNode(@"//section[@class=""biography""]/div[@class=""text""]"));
 
       //years active
-      var yearsActive = AllmusicSiteScraper.CleanInnerText(bioPage.DocumentNode.SelectSingleNode(@"//section[@class=""basic-info""]/div[@class=""active-dates""]/div"));
+      var yearsActive = AllmusicSiteScraper.CleanInnerText(mainPage.DocumentNode.SelectSingleNode(@"//section[@class=""basic-info""]/div[@class=""active-dates""]/div"));
 
       //genre
-      var genre = AllmusicSiteScraper.CleanInnerText(bioPage.DocumentNode.SelectSingleNode(@"//section[@class=""basic-info""]/div[@class=""genre""]/div/a"));
+      var genres = string.Empty;
+      var genreNodes = mainPage.DocumentNode.SelectNodes(@"//section[@class=""basic-info""]/div[@class=""genre""]/div/a");
+      if (genreNodes != null)
+      {
+        genres = genreNodes.Aggregate(genres, (current, genre) => current + (AllmusicSiteScraper.CleanInnerText(genre) + ", "));
+        genres = genres.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "        
+      }
 
       // born / formed
-      var born = AllmusicSiteScraper.CleanInnerText(bioPage.DocumentNode.SelectSingleNode(@"//section[@class=""basic-info""]/div[@class=""birth""]/div"));
+      var born = AllmusicSiteScraper.CleanInnerText(mainPage.DocumentNode.SelectSingleNode(@"//section[@class=""basic-info""]/div[@class=""birth""]/div"));
 
       // styles
       var styles = string.Empty;
-      var styleNodes = bioPage.DocumentNode.SelectNodes(@"//section[@class=""basic-info""]/div[@class=""styles""]/div/a");
+      var styleNodes = mainPage.DocumentNode.SelectNodes(@"//section[@class=""basic-info""]/div[@class=""styles""]/div/a");
       if (styleNodes != null)
       {
         styles = styleNodes.Aggregate(styles, (current, style) => current + (AllmusicSiteScraper.CleanInnerText(style) + ", "));
-        styles = styles.TrimEnd(new[] {',', ' '}); // remove trailing ", "
+        styles = styles.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "
+      }
+      
+      // bio
+      var bio = string.Empty;
+      var bioURL = AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab biography""]/a"), "href");
+      if (!string.IsNullOrEmpty(bioURL))
+      {
+        var bioPage = new HtmlWeb().Load(bioURL);
+        bio = AllmusicSiteScraper.CleanInnerText(bioPage.DocumentNode.SelectSingleNode(@"//section[@class=""biography""]/div[@class=""text""]"));
       }
 
       // albums
       var albumList = string.Empty;
-      var albumPage = new HtmlWeb().Load(strUrl + "/discography");
-      var albums = albumPage.DocumentNode.SelectNodes(@"//section[@class=""discography""]/table/tbody/tr");
-      foreach (var album in albums)
+      var albumPageURL = AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab discography""]/a"), "href");
+      if (!string.IsNullOrEmpty(albumPageURL))
       {
-        var year = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""year""]"));
-        var title = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a"));
-        var label = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""label""]"));
+        var albumPage = new HtmlWeb().Load(albumPageURL);
+        var albums = albumPage.DocumentNode.SelectNodes(@"//section[@class=""discography""]/table/tbody/tr");
+        foreach (var album in albums)
+        {
+          var year = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""year""]"));
+          var title = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a"));
+          var label = AllmusicSiteScraper.CleanInnerText(album.SelectSingleNode(@"td[@class=""label""]"));
 
-        albumList += year + " - " + title + " (" + label + ")" + Environment.NewLine;
+          albumList += year + " - " + title + " (" + label + ")" + Environment.NewLine;
+        }
       }
 
 
@@ -208,7 +224,7 @@ namespace MediaPortal.Music.Database
         Artist = artistName,
         Born = born,
         Compilations = string.Empty,
-        Genres = genre,
+        Genres = genres,
         Image = artistImg,
         Instruments = string.Empty,
         Misc = string.Empty,

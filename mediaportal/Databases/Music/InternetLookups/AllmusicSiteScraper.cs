@@ -98,6 +98,15 @@ namespace MediaPortal.Music.Database
     /// <returns>True if an album was found</returns>
     public bool GetAlbumUrl(string strAlbum, string strArtistUrl, out string strAlbumUrl)
     {
+      var artistPage = new HtmlWeb().Load(strArtistUrl);
+      var albumPageURL = AllmusicSiteScraper.CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab discography""]/a"), "href");
+      if (string.IsNullOrEmpty(albumPageURL))
+      {
+        Log.Debug("No discography page found");
+        strAlbumUrl = string.Empty;
+        return false;
+      }
+
       // standard albums
       if (!GetAlbumURL(strArtistUrl + "/discography", strAlbum, out strAlbumUrl))
       {
@@ -132,6 +141,7 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private static bool GetAlbumURL(string strURL, string strAlbum, out string strAlbumURL)
     {
+      //TODO should return list of album matches
       strAlbumURL = string.Empty;
       var strCleanAlbum = CleanString(strAlbum);
 
