@@ -198,6 +198,10 @@
     <ClInclude Include="source\VideoInputPin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\baseclasses\BaseClasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="..\LiveMedia555\LiveMedia555.vcxproj">
       <Project>{3c398bd4-5714-4802-ab86-d43add15b3c0}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
