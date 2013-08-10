@@ -106,7 +106,7 @@ namespace MediaPortal.Music.Database
     public bool GetAlbumUrl(string strAlbum, string strArtistUrl, out string strAlbumUrl)
     {
       var artistPage = new HtmlWeb().Load(strArtistUrl);
-      var albumPageURL = AllmusicSiteScraper.CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab discography""]/a"), "href");
+      var albumPageURL = "http://www.allmusic.com/" + AllmusicSiteScraper.CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab discography""]/a"), "href");
       if (string.IsNullOrEmpty(albumPageURL))
       {
         Log.Debug("No discography page found");

@@ -192,7 +192,7 @@ namespace MediaPortal.Music.Database
       
       // bio
       var bio = string.Empty;
-      var bioURL = AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab biography""]/a"), "href");
+      var bioURL = "http://www.allmusic.com/" + AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab biography""]/a"), "href");
       if (!string.IsNullOrEmpty(bioURL))
       {
         var bioPage = new HtmlWeb().Load(bioURL);
@@ -201,7 +201,7 @@ namespace MediaPortal.Music.Database
 
       // albums
       var albumList = string.Empty;
-      var albumPageURL = AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[class=""tabs overview""]/li[class=""tab discography""]/a"), "href");
+      var albumPageURL = "http://www.allmusic.com/" + AllmusicSiteScraper.CleanAttribute(mainPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab discography""]/a"), "href");
       if (!string.IsNullOrEmpty(albumPageURL))
       {
         var albumPage = new HtmlWeb().Load(albumPageURL);
