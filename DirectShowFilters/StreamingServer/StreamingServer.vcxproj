@@ -69,7 +69,7 @@
     <Link>
       <AdditionalDependencies>DvbCoreUtilsD.lib;strmbasd.lib;winmm.lib;livemedia555D.lib;WS2_32.Lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>.\bin\Debug\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\shared;$(WINDOWS_SDK)lib;$(DXSDK_DIR)lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>Source\StreamingServer.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -104,7 +104,7 @@
     <Link>
       <AdditionalDependencies>DvbCoreUtils.lib;strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release\$(ProjectName).dll</OutputFile>
-      <AdditionalLibraryDirectories>..\baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\shared;$(WINDOWS_SDK)lib;$(DXSDK_DIR)lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>Source\StreamingServer.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
