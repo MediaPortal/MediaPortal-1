@@ -123,9 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\EffectStateManager.cpp" />
-    <ClCompile Include="source\fontEngine.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(DSHOW_BASE);  $(WINDOWS_SDK)Include; $(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
+    <ClCompile Include="source\fontEngine.cpp" />
     <ClCompile Include="source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
