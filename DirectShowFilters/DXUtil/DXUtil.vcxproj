@@ -96,7 +96,7 @@
     </ClCompile>
     <Link>
       <OutputFile>bin\Release/dxutil.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Release/dxutil.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>

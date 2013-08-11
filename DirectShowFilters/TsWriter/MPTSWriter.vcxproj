@@ -97,7 +97,7 @@
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>bin\Release/TsWriter.ax</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\TsWriter.def</ModuleDefinitionFile>

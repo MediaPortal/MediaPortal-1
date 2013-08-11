@@ -71,7 +71,7 @@
     <Link>
       <AdditionalDependencies>dxguid.lib;d3d9.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Debug/fontEngine.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\debug;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\source\fontEngine.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Debug/fontEngine.pdb</ProgramDatabaseFile>
@@ -104,7 +104,7 @@
     <Link>
       <AdditionalDependencies>dxguid.lib;d3d9.lib;d3dx9.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>bin\Release/fontEngine.dll</OutputFile>
-      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>(SolutionDir)baseclasses\release;$(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>./source/fontEngine.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>bin\Release/fontEngine.pdb</ProgramDatabaseFile>
