@@ -119,6 +119,9 @@ namespace MediaPortal.GUI.Video
     
     #region variables
 
+    public static int GetMediaInfoThreadNumber = 0;
+    public static Thread _GetMediaInfoThread;
+    private static bool _GetMediaInfoThreadAbort = false;
     private static bool _askBeforePlayingDVDImage;
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
@@ -2173,6 +2176,8 @@ namespace MediaPortal.GUI.Video
 
     public static void PlayMovie(int idMovie, bool requestPin)
     {
+
+      
       int selectedFileIndex = 1;
 
       if (IsStacked)
@@ -2769,6 +2774,7 @@ namespace MediaPortal.GUI.Video
 
     private void LoadDirectory(string newFolderName, bool useCache)
     {
+
       if (newFolderName == null)
       {
         Log.Warn("GUIVideoFiles::LoadDirectory called with invalid argument. newFolderName is null!");
@@ -2781,6 +2787,7 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Show();
+
 
       if (newFolderName != _currentFolder && _mapSettings != null)
       {
@@ -2810,6 +2817,7 @@ namespace MediaPortal.GUI.Video
       IMDBMovie.ResetMovieProperties(); // Clear skin properties values
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       List<GUIListItem> itemlist = null;
+      List<GUIListItem> itemlist2 = new List<GUIListItem>(); // for GetMediaInfoThread
       ISelectDVDHandler selectDvdHandler = GetSelectDvdHandler();
       ISelectBDHandler selectBDHandler = GetSelectBDHandler();
 
@@ -2822,6 +2830,15 @@ namespace MediaPortal.GUI.Video
         
         foreach (GUIListItem item in itemlist)
         {
+
+          // Get last watch status (IMDBMovie containes old one in caced objects)
+          string file = item.Path;
+          int percentWatched = 0;
+          int timesWatched = 0;
+          int movieId = VideoDatabase.GetMovieId(file);
+          bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+          item.Duration = VideoDatabase.GetMovieDuration(movieId);
+
           // set label 1 & 2
           SetLabel(item);
 
@@ -2829,7 +2846,6 @@ namespace MediaPortal.GUI.Video
           if (item.IsBdDvdFolder || Util.Utils.IsVideo(item.Path))
           {
             // Check db for watched status for played movie or changed status in movie info window
-            string file = item.Path;
 
             if (item.IsFolder)
             {
@@ -2840,12 +2856,7 @@ namespace MediaPortal.GUI.Video
                 file = selectBDHandler.GetFolderVideoFile(item.Path);
               }
             }
-            // Get last watch status (IMDBMovie containes old one in caced objects)
-            int percentWatched = 0;
-            int timesWatched = 0;
-            int movieId = VideoDatabase.GetMovieId(file);
-            bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
-            
+
             // Update full IMDBMovie object for last selected item (Movie info screen can change many info data)
             if (currentItemIndex == _currentSelectedItem)
             {
@@ -2896,9 +2907,14 @@ namespace MediaPortal.GUI.Video
             {
               item.Label3 = percentWatched + "% #" + timesWatched;
             }
+            if (movieId < 0 || movieId != -1 && item.Duration == 0)
+            {
+              itemlist2.Add(item);
+            }
           }
-          
+
           //Do NOT add OnItemSelected event handler here, because its still there...
+          
           facadeLayout.Add(item);
           currentItemIndex ++;
         }
@@ -2914,6 +2930,7 @@ namespace MediaPortal.GUI.Video
 
           for (int i = 0; i < itemlist.Count; ++i)
           {
+            
             GUIListItem item1 = itemlist[i];
             string cleanFilename = item1.Label;
             Util.Utils.RemoveStackEndings(ref cleanFilename);
@@ -2970,9 +2987,16 @@ namespace MediaPortal.GUI.Video
                 item.Label = pair.Key;
               }
 
-              SetLabel(item);
-              // Check db for watched status for played movie or changed status in movie info window
               string file = item.Path;
+              int percentWatched = 0;
+              int timesWatched = 0;
+              int movieId = VideoDatabase.GetMovieId(file);
+              bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
+              item.Duration = VideoDatabase.GetMovieDuration(movieId);
+
+              SetLabel(item);
+
+              // Check db for watched status for played movie or changed status in movie info window
               
               if (!item.IsFolder || isMovieFolder)
               {
@@ -2988,10 +3012,6 @@ namespace MediaPortal.GUI.Video
                   }
                 }
 
-                int percentWatched = 0;
-                int timesWatched = 0;
-                int movieId = VideoDatabase.GetMovieId(file);
-                bool played = VideoDatabase.GetmovieWatchedStatus(movieId, out percentWatched, out timesWatched);
 
                 if (_markWatchedFiles)
                 {
@@ -3019,10 +3039,15 @@ namespace MediaPortal.GUI.Video
                 {
                   item.Label3 = percentWatched + "% #" + timesWatched;
                 }
+
+                if (movieId < 0 || movieId != -1 && item.Duration == 0)
+                {
+                  itemlist2.Add(item);
+                }
               }
 
               item.OnItemSelected += item_OnItemSelected;
-              facadeLayout.Add(item);
+              facadeLayout.Add(item);  
             }
           }
           itemlist = facadeLayout.ListLayout.ListItems;
@@ -3080,6 +3105,10 @@ namespace MediaPortal.GUI.Video
               {
                 item.Label3 = percentWatched + "% #" + timesWatched;
               }
+              if (movieId < 0 || movieId != -1 && item.Duration == 0)
+              {
+                itemlist2.Add(item);
+              }
             }
 
             item.OnItemSelected += item_OnItemSelected;
@@ -3094,7 +3123,7 @@ namespace MediaPortal.GUI.Video
       if (_cachedItems != null)
       {
         _cachedItems.Clear();
-        _cachedItems.AddRange(facadeLayout.ListLayout.ListItems);
+        _cachedItems.AddRange(facadeLayout.ListLayout.ListItems); 
       }
 
       _cachedDir = _currentFolder;
@@ -3137,6 +3166,7 @@ namespace MediaPortal.GUI.Video
           {
             LoadDirectory(string.Empty, false);
           }
+
           GUIWaitCursor.Hide();
           return;
         }
@@ -3153,9 +3183,78 @@ namespace MediaPortal.GUI.Video
         SetImdbThumbs(itemlist, selectDvdHandler);
       }
 
+
+      // if have new item we close the previous thread and start a new one 
+      if (itemlist2.Count != 0)
+      {
+        try
+        {
+          if (_GetMediaInfoThread.IsAlive)
+          {
+            // dont want to abort, rather send a signal and wait to finish, it is a clean exit
+            Log.Debug("GetMediaInfoThread: send an exit signal to the last thread and waiting for exit.");
+            _GetMediaInfoThreadAbort = true;
+            _GetMediaInfoThread.Join();
+            Log.Debug("GetMediaInfoThread: after join.");
+          }
+        }
+        catch (Exception) { }
+
+        _GetMediaInfoThreadAbort = false;
+        GetMediaInfoThreadNumber++;
+        _GetMediaInfoThread = new Thread(GetMediaInfoThread);
+        _GetMediaInfoThread.Priority = ThreadPriority.Lowest;
+        _GetMediaInfoThread.IsBackground = true;
+        _GetMediaInfoThread.Name = "GetMediaInfoThread " + GetMediaInfoThreadNumber;
+        _GetMediaInfoThread.Start(itemlist2);
+      }
+
       GUIWaitCursor.Hide();
     }
 
+    // main thread. It adds all file to database and refresh the ListLayout on the screen.
+    private void GetMediaInfoThread(object i)
+    {
+      List<GUIListItem> itemlist = (List<GUIListItem>) i;
+      Log.Debug("GetMediaInfoThread: current folder: {0}, itemlist count: {1}", _currentFolder, itemlist.Count);
+
+      foreach (GUIListItem item in itemlist)
+      {
+        if (_GetMediaInfoThreadAbort)
+        {
+          Log.Debug("GetMediaInfoThread: finished with _GetMediaInfoThreadAbort signal.");
+          return;
+        }
+        try
+        {
+          Log.Debug("GetMediaInfoThread: Work on {0}", item.Path);
+          AddFileToDatabase(item.Path);
+             
+          int newMovieId = VideoDatabase.GetMovieId(item.Path);
+          item.Duration = VideoDatabase.GetMovieDuration(newMovieId);
+          if (item.Duration > 0)
+          {
+            for (int n = facadeLayout.ListLayout.ListItems.Count - 1; n > 0; n--)
+            {
+              if (facadeLayout.ListLayout.ListItems[n].Label == item.Label)
+              {
+                SetLabel(item);
+                facadeLayout.ListLayout.ListItems[n].Label2 = item.Label2;
+                break;
+              }
+            }
+          }
+        }
+        catch (ThreadAbortException)
+        {
+          Log.Debug("GetMediaInfoThread: ThreadAbortException");
+        }
+        Thread.Sleep(100);
+      }
+      Log.Debug("GetMediaInfoThread: Finished.");
+      return;
+    }
+    
     private void LoadFolderSettings(string folderName)
     {
       if (folderName == string.Empty)
