@@ -252,17 +252,19 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        int counter = 0;
 
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
+        BassVis.BASSVIS_Free(_visParam);
+        bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+        if (bFree)
         {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
+          _visParam.VisHandle = 0;
         }
-        _visParam.VisHandle = 0;
-      }
+        else
+        {
+          Log.Warn("Visualization Manager: Failed to unload Winamp viz module - {0}", VizPluginInfo.Name);
+          _visParam.VisHandle = 0;
+        }
+      }           
 
       int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
@@ -328,24 +330,7 @@ namespace MediaPortal.Visualization
       if (VizPluginInfo == null || VizPluginInfo.FilePath.Length == 0 || !File.Exists(VizPluginInfo.FilePath))
       {
         return false;
-      }
-
-      if (_visParam.VisHandle != 0)
-      {
-        RenderStarted = false;
-
-        int counter = 0;
-
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
-        {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
-        }
-        _visParam.VisHandle = 0;
-      }
-
+      }      
 
       try
       {

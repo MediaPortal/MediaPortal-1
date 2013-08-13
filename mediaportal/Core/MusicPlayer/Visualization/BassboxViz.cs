@@ -284,23 +284,6 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (_visParam.VisHandle != 0)
-      {
-        RenderStarted = false;
-
-        int counter = 0;
-
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
-        {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
-        }
-        _visParam.VisHandle = 0;
-      }
-
-
       try
       {
         string vizPath = VizPluginInfo.FilePath;

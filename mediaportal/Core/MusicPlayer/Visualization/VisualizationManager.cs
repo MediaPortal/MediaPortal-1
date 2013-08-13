@@ -336,16 +336,17 @@ namespace MediaPortal.Visualization
 
             if (_visParam.VisHandle != 0)
             {
-              int counter = 0;
-
-              bool bFree = BassVis.BASSVIS_Free(_visParam);
-              while ((!bFree) && (counter <= 10))
+              BassVis.BASSVIS_Free(_visParam);
+              bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+              if (bFree)
               {
-                bFree = BassVis.BASSVIS_IsFree(_visParam);
-                System.Windows.Forms.Application.DoEvents();
-                counter++;
+                _visParam.VisHandle = 0;
               }
-              _visParam.VisHandle = 0;
+              else
+              {
+                Log.Warn("VisualisationManager: Failed to unload Sonique viz module - {0}", name);
+                _visParam.VisHandle = 0;
+              }
             }
 
             BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
@@ -411,16 +412,17 @@ namespace MediaPortal.Visualization
 
             if (_visParam.VisHandle != 0)
             {
-              int counter = 0;
-
-              bool bFree = BassVis.BASSVIS_Free(_visParam);
-              while ((!bFree) && (counter <= 10))
+              BassVis.BASSVIS_Free(_visParam);
+              bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+              if (bFree)
               {
-                bFree = BassVis.BASSVIS_IsFree(_visParam);
-                System.Windows.Forms.Application.DoEvents();
-                counter++;
+                _visParam.VisHandle = 0;
               }
-              _visParam.VisHandle = 0;
+              else
+              {
+                Log.Warn("VisualisationManager: Failed to unload BassBox viz module - {0}", name);
+                _visParam.VisHandle = 0;
+              }
             }
 
             BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);

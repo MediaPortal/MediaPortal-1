@@ -278,24 +278,7 @@ namespace MediaPortal.Visualization
       }
 
       string vizPath = VizPluginInfo.FilePath;
-      string configFile = Path.Combine(Path.GetDirectoryName(vizPath), "vis.ini");
-
-      if (_visParam.VisHandle != 0)
-      {
-        RenderStarted = false;
-
-        int counter = 0;
-
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
-        {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
-        }
-        _visParam.VisHandle = 0;
-      }
-
+      string configFile = Path.Combine(Path.GetDirectoryName(vizPath), "vis.ini");     
 
       try
       {
