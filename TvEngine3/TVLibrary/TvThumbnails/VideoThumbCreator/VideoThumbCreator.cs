@@ -90,12 +90,7 @@ namespace TvThumbnails.VideoThumbCreator
 
       if (preGapSec > Duration)
       {
-        preGapSec = Duration - 240;
-      }
-
-      if (preGapSec < 0)
-      {
-        preGapSec = 4;
+        preGapSec = Duration / 100 * 20;
       }
 
       TimeIntBwThumbs = (Duration - preGapSec) / ((Thumbs.PreviewColumns * Thumbs.PreviewRows) + 1); ;

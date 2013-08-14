@@ -160,10 +160,14 @@ namespace MediaPortal.GUI.Pictures
 
                     if (thumbRet && autocreateLargeThumbs)
                     {
+                      item.ThumbnailImage = thumbnailImageL;
+                      item.IconImage = thumbnailImage;
                       Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
                     }
                     else if (thumbRet)
                     {
+                      item.ThumbnailImage = thumbnailImage;
+                      item.IconImage = thumbnailImage;
                       Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
                     }
                   }
@@ -294,10 +298,14 @@ namespace MediaPortal.GUI.Pictures
 
             if (thumbRet && autocreateLargeThumbs)
             {
+              itemObject.ThumbnailImage = thumbnailImageL;
+              itemObject.IconImage = thumbnailImage;
               Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item);
             }
             else if (thumbRet)
             {
+              itemObject.ThumbnailImage = thumbnailImage;
+              itemObject.IconImage = thumbnailImage;
               Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item);
             }
           }
@@ -1375,22 +1383,31 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      Util.Utils.SetDefaultIcons(item);
       if (!item.IsFolder)
       {
-        string thumbnailImage = GetThumbnail(item.Path);
-        if (File.Exists(thumbnailImage) || Util.Utils.FileExistsInCache(thumbnailImage))
+        if (item.HasThumbnail)
         {
-          item.IconImage = thumbnailImage;
-        }
-        if (_autocreateLargeThumbs)
-        {
+          string thumbnailImage = GetThumbnail(item.Path);
           string thumbnailLargeImage = GetLargeThumbnail(item.Path);
-          item.ThumbnailImage = thumbnailLargeImage;
+          if (File.Exists(thumbnailImage) || Util.Utils.FileExistsInCache(thumbnailImage))
+          {
+            item.IconImage = thumbnailImage;
+
+            if (_autocreateLargeThumbs)
+            {
+              item.ThumbnailImage = thumbnailLargeImage;
+              item.IconImage = thumbnailImage;
+            }
+            else
+            {
+              item.ThumbnailImage = thumbnailImage;
+              item.IconImage = thumbnailImage;
+            }
+          }
         }
         else
         {
-          item.ThumbnailImage = thumbnailImage;
+          OnRetrieveThumbnailFiles(item);
         }
         Util.Utils.SetThumbnails(ref item);
       }
@@ -1413,37 +1430,42 @@ namespace MediaPortal.GUI.Pictures
       {
         return;
       }
-      Util.Utils.SetDefaultIcons(item);
       if (!item.IsFolder)
       {
-        string thumbnailImage = GetThumbnail(item.Path);
-        string thumbnailLargeImage = GetLargeThumbnail(item.Path);
-        if (File.Exists(thumbnailImage) || Util.Utils.FileExistsInCache(thumbnailImage))
+        if (!item.HasThumbnail)
         {
-          item.IconImage = thumbnailImage;
-        }
-        if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
-        {
-          item.ThumbnailImage = thumbnailLargeImage;
-        }
-
-        if ((!File.Exists(thumbnailImage) || !Util.Utils.FileExistsInCache(thumbnailImage)) &&
-            Util.Utils.IsPicture(item.Path))
-        {
-          ThreadPool.QueueUserWorkItem(delegate
-                                         {
-                                           try
+          string thumbnailImage = GetThumbnail(item.Path);
+          string thumbnailLargeImage = GetLargeThumbnail(item.Path);
+          if (!Util.Utils.FileExistsInCache(thumbnailImage) && Util.Utils.IsPicture(item.Path))
+          {
+            ThreadPool.QueueUserWorkItem(delegate
                                            {
-                                             GetThumbnailfile(ref item);
-                                           }
-                                           catch (Exception ex)
-                                           {
-                                             Log.Error(
-                                               "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles)");
-                                           }
-                                         });
+                                             try
+                                             {
+                                               GetThumbnailfile(ref item);
+                                             }
+                                             catch (Exception ex)
+                                             {
+                                               Log.Error(
+                                                 "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles)");
+                                             }
+                                           });
+          }
+          else
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(item);
+            item.IconImage = thumbnailImage;
+            if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
+            {
+              item.ThumbnailImage = thumbnailLargeImage;
+            }
+            else
+            {
+              item.ThumbnailImage = thumbnailImage;
+            }
+          }
+          Util.Utils.SetThumbnails(ref item);
         }
-        Util.Utils.SetThumbnails(ref item);
       }
       else
       {
