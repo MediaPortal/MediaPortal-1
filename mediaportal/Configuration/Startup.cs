@@ -278,9 +278,7 @@ namespace MediaPortal.Configuration
         return null;
       }
       Log.Warn(
-        "Failed to locate assembly '" + args.Name + "'." + Environment.NewLine +
-        "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.",
-        "MediaPortal");
+        "Failed to locate assembly '" + args.Name + "'.");
       return null;
     }
   }
