@@ -1355,7 +1355,15 @@ namespace TvPlugin
         SetProperties(rec);
         if (!pItem.IsFolder)
         {
-          GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          if (string.IsNullOrEmpty(pItem.ThumbnailImage))
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          }
         }
       }
       catch (Exception ex)
