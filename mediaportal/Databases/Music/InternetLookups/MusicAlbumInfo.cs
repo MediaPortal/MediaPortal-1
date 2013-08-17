@@ -192,9 +192,9 @@ namespace MediaPortal.Music.Database
           "src");
     
       // Rating
-      var dRating = 0.0;
+      var iRating = 0;
       var ratingMatch = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//div[starts-with(@class,""allmusic-rating rating-allmusic"")]"));
-      double.TryParse(ratingMatch, out dRating);  
+      int.TryParse(ratingMatch, out iRating);  
       
       // year
       var iYear = 0;
@@ -269,7 +269,7 @@ namespace MediaPortal.Music.Database
         Styles = strThemes,
         Review = strReview,
         Image = imgURL,
-        Rating = (int)(dRating * 2),
+        Rating = iRating,
         Tracks = strTracks,
         AlbumArtist = strAlbumArtist,
         Year = iYear
