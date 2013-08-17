@@ -1454,14 +1454,18 @@ namespace MediaPortal.GUI.Pictures
           else
           {
             MediaPortal.Util.Utils.SetDefaultIcons(item);
-            item.IconImage = thumbnailImage;
-            if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
+            if (Util.Utils.FileExistsInCache(thumbnailImage))
             {
-              item.ThumbnailImage = thumbnailLargeImage;
-            }
-            else
-            {
-              item.ThumbnailImage = thumbnailImage;
+              if (_autocreateLargeThumbs && Util.Utils.FileExistsInCache(thumbnailLargeImage))
+              {
+                item.ThumbnailImage = thumbnailLargeImage;
+                item.IconImage = thumbnailImage;
+              }
+              else
+              {
+                item.ThumbnailImage = thumbnailImage;
+                item.IconImage = thumbnailImage;
+              }
             }
           }
           Util.Utils.SetThumbnails(ref item);
