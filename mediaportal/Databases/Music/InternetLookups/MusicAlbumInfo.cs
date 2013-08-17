@@ -207,7 +207,7 @@ namespace MediaPortal.Music.Database
 
       // build up track listing into one string
       var strTracks = string.Empty;
-      var trackNodes = albumPage.DocumentNode.SelectNodes(@"//tbody[@itemprop=""tracks""]/tr[@itemprop=""track""]");
+      var trackNodes = albumPage.DocumentNode.SelectNodes(@"//tr[@itemprop=""track""]");
       if (trackNodes != null)
       {
         foreach (var track in trackNodes)
