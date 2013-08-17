@@ -1344,12 +1344,22 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         rec = pItem.TVTag as Recording;
         if (rec == null)
         {
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         SetProperties(rec);
@@ -1365,6 +1375,7 @@ namespace TvPlugin
             GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
           }
         }
+        
       }
       catch (Exception ex)
       {
@@ -1407,7 +1418,7 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");          
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
         }
       }
       catch (Exception ex)
