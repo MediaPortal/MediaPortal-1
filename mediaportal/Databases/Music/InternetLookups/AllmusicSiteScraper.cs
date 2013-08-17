@@ -26,7 +26,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 
 namespace MediaPortal.Music.Database
 {
@@ -106,7 +105,7 @@ namespace MediaPortal.Music.Database
     public bool GetAlbumUrl(string strAlbum, string strArtistUrl, out string strAlbumUrl)
     {
       var artistPage = new HtmlWeb().Load(strArtistUrl);
-      var albumPageURL = "http://www.allmusic.com/" + AllmusicSiteScraper.CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab discography""]/a"), "href");
+      var albumPageURL = "http://www.allmusic.com/" + CleanAttribute(artistPage.DocumentNode.SelectSingleNode(@"//ul[@class=""tabs overview""]/li[@class=""tab discography""]/a"), "href");
       if (string.IsNullOrEmpty(albumPageURL))
       {
         Log.Debug("No discography page found");
@@ -154,6 +153,10 @@ namespace MediaPortal.Music.Database
 
       var discographyPage = new HtmlWeb().Load(strURL);
       var albums = discographyPage.DocumentNode.SelectNodes(@"//section[@class=""discography""]/table/tbody/tr");
+      if (albums == null)
+      {
+        return false;
+      }
       var albumlist = albums.Select(album => new AllMusicAlbumMatch
         {
           Album = CleanInnerText(album.SelectSingleNode(@"td[@class=""title""]/a")),

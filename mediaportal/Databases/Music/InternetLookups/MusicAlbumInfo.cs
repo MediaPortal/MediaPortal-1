@@ -208,28 +208,39 @@ namespace MediaPortal.Music.Database
       // build up track listing into one string
       var strTracks = string.Empty;
       var trackNodes = albumPage.DocumentNode.SelectNodes(@"//tbody[@itemprop=""tracks""]/tr[@itemprop=""track""]");
-      foreach (var track in trackNodes)
+      if (trackNodes != null)
       {
-        var trackNo = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""tracknum""]"));
-        var title = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""title-composer""]/div[@class=""title""]/a"));
-        var strDuration = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""time""]"));
-        var iDuration = 0;
-        var iPos = strDuration.IndexOf(":", StringComparison.Ordinal);
-        if (iPos >= 0)
+        foreach (var track in trackNodes)
         {
-          var strMin = strDuration.Substring(0, iPos);
-          var strSec = strDuration.Substring(iPos + 1);
-          int iMin = 0, iSec = 0;
-          Int32.TryParse(strMin, out iMin);
-          Int32.TryParse(strSec, out iSec);
-          iDuration = (iMin * 60) + iSec;
-        }
+          var trackNo = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""tracknum""]"));
+          var title =
+            AllmusicSiteScraper.CleanInnerText(
+              track.SelectSingleNode(@"td[@class=""title-composer""]/div[@class=""title""]/a"));
+          var strDuration = AllmusicSiteScraper.CleanInnerText(track.SelectSingleNode(@"td[@class=""time""]"));
+          var iDuration = 0;
+          var iPos = strDuration.IndexOf(":", StringComparison.Ordinal);
+          if (iPos >= 0)
+          {
+            var strMin = strDuration.Substring(0, iPos);
+            var strSec = strDuration.Substring(iPos + 1);
+            int iMin = 0, iSec = 0;
+            Int32.TryParse(strMin, out iMin);
+            Int32.TryParse(strSec, out iSec);
+            iDuration = (iMin*60) + iSec;
+          }
 
-        strTracks += trackNo + "@" + title + "@" + iDuration.ToString(CultureInfo.InvariantCulture) + "|";
+          strTracks += trackNo + "@" + title + "@" + iDuration.ToString(CultureInfo.InvariantCulture) + "|";
+        }
       }
 
-      // genre
-      var strGenres = AllmusicSiteScraper.CleanInnerText(albumPage.DocumentNode.SelectSingleNode(@"//div[@class=""genre""]/div/a"));
+      // genres
+      var strGenres = string.Empty;
+      var genreNodes = albumPage.DocumentNode.SelectNodes(@"//section[@class=""basic-info""]/div[@class=""genre""]/div/a");
+      if (genreNodes != null)
+      {
+        strGenres = genreNodes.Aggregate(strGenres, (current, genre) => current + (AllmusicSiteScraper.CleanInnerText(genre) + ", "));
+        strGenres = strGenres.TrimEnd(new[] { ',', ' ' }); // remove trailing ", "        
+      }
 
       // build up styles into one string
       var strThemes = string.Empty;
