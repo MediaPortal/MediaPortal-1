@@ -761,7 +761,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         {
           filter = filter.Replace("{BPM}", tag.BPM.ToString(CultureInfo.InvariantCulture));
         }
-        filter = filter.Replace("{dir}", "'" + Path.GetDirectoryName(tag.FileName) + "'");
       }
       catch (Exception ex)
       {
