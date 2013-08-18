@@ -1418,7 +1418,9 @@ namespace MediaPortal.Player
               _BDInternalMenu = xmlreader.GetValueAsBool("bdplayer", "useInternalBDPlayer", true);
             }
             if (_BDInternalMenu && extension == ".bdmv")
+            {
               AskForRefresh = false;
+            }
             if (AskForRefresh)
             {
               // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
@@ -1429,21 +1431,11 @@ namespace MediaPortal.Player
             }
           }
 
-          if (RefreshRateChanger.RefreshRateChangePending)
+          if (RefreshRateChangePending())
           {
-            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
-            {
-              Log.Info(
-                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-              RefreshRateChanger.ResetRefreshRateState();
-            }
-            else
-            {
-              return true;
-            }
+            return true;
           }
+
           // Set bool to know if we want to use video codec for .ts files
           if (fromExtTS)
           {
@@ -1470,20 +1462,31 @@ namespace MediaPortal.Player
               bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
               bool bInternalDVD = xmlreader.GetValueAsBool("dvdplayer", "internal", true);
 
+              // check if we are running from Images / Discs
+              string pathRoot = Path.GetPathRoot(strFile);
+              if (Util.Utils.getDriveType(pathRoot) == 5 && !bInternalDVD)
+              {
+                bInternalDVD = false;
+              }
+              else
+              {
+                bInternalDVD = true;
+              }
+
               // External player extension filter
               _externalPlayerExtensions = xmlreader.GetValueAsString("movieplayer", "extensions", "");
               if (!bInternal && !string.IsNullOrEmpty(_externalPlayerExtensions) &&
-                  extension != ".ifo" && extension != ".vob" && !Util.Utils.IsDVDImage(strFile))
+                  extension != ".ifo" && extension != ".vob" && extension != ".bdmv" && !Util.Utils.IsDVDImage(strFile))
               {
                 // Do not use external player if file ext is not in the extension list
                 if (!CheckExtension(strFile))
                   bInternal = true;
               }
 
-              if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob")) ||
+              if ((!bInternalDVD && !isImageFile && (extension == ".ifo" || extension == ".vob" || extension == ".bdmv")) ||
                   (!bInternalDVD && isImageFile && Util.Utils.IsDVDImage(strFile)) ||
                   // No image and no DVD folder rips
-                  (!bInternal && !isImageFile && extension != ".ifo" && extension != ".vob") ||
+                  (!bInternal && !isImageFile && extension != ".ifo" && extension != ".vob" && extension != ".bdmv") ||
                   // BluRay image
                   (!bInternal && isImageFile && Util.Utils.IsBDImage(strFile))) // external player used
               {
@@ -1499,6 +1502,14 @@ namespace MediaPortal.Player
                       return false;
                   }
                 }
+                // Do refresh rate
+                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+
+                if (RefreshRateChangePending())
+                {
+                  return true;
+                }
+
                 if (Util.Utils.PlayMovie(strFile))
                 {
                   return true;
@@ -1576,6 +1587,26 @@ namespace MediaPortal.Player
         Starting = false;
       }
       UnableToPlay(strFile, type);
+      return false;
+    }
+
+    private static bool RefreshRateChangePending()
+    {
+      if (RefreshRateChanger.RefreshRateChangePending)
+      {
+        TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+        if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+        {
+          Log.Info(
+            "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+            RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+          RefreshRateChanger.ResetRefreshRateState();
+        }
+        else
+        {
+          return true;
+        }
+      }
       return false;
     }
 
