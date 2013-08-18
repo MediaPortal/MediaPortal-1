@@ -90,7 +90,7 @@ namespace MediaPortal.Music.Database
       }
 
       Log.Debug("AllmusicScraper.  Searched-Artist: {0} Found: {1} matches", strArtist,
-                allMusicArtistMatches.Count.ToString(CultureInfo.InvariantCulture));
+                possibleMatches.Count.ToString(CultureInfo.InvariantCulture));
 
       return possibleMatches.Count != 0;
     }
