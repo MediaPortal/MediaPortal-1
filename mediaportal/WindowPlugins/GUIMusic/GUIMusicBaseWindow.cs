@@ -1459,7 +1459,12 @@ namespace MediaPortal.GUI.Music
       }
       else if (song.Album != "")
       {
-        ShowAlbumInfo(song.Artist, song.Album);
+        var artist = song.Artist;
+        if (_strippedPrefixes)
+        {
+          artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+        }
+        ShowAlbumInfo(artist, song.Album);
       }
       else if (!string.IsNullOrEmpty(song.Artist))
       {
