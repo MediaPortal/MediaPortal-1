@@ -524,6 +524,7 @@ namespace TvLibrary.Implementations.Dri
       catch (Exception ex)
       {
         Log.Log.Error("DRI CC: failed to read device info\r\n{0}", ex);
+        throw;
       }
     }
 
