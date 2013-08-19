@@ -1077,44 +1077,60 @@ namespace MediaPortal.GUI.Library
     }
     
     #region Private methods
-    private void parseMarkerValues(string strStarts, string strEnds) {
+    private void parseMarkerValues(string strStarts, string strEnds)
+    {
       //parse the labels and populate the percentages
       Log.Debug("GUITVProgressControl.parseMarkerValues() - parsing markers");
-      if (LabelMarkerStarts.Length > 0)
+      if (!string.IsNullOrEmpty(LabelMarkerStarts))
       {
-        if (strStarts.Length>0) {
+        if (!string.IsNullOrEmpty(strStarts))
+        {
           string[] strMarkerStarts = strStarts.Trim().Split(' ');
           MarkerStartsPercent.Clear();
-          for (int i=0; i < strMarkerStarts.Length; i++)
+          for (int i = 0; i < strMarkerStarts.Length; i++)
           {
             try
             {
               MarkerStartsPercent.Add(float.Parse(strMarkerStarts[i]));
             }
-            catch (Exception) {}
-            if (MarkerStartsPercent[i] < 0 || MarkerStartsPercent[i] > 100)
+            catch (Exception ex)
             {
-              MarkerStartsPercent[i] = 0;
+              Log.Error("GUITVProgressControl.parseMarkerValues() - exception in parsing start markers: {0}", ex);
+              break;
+            }
+            if (MarkerStartsPercent.Count > i)
+            {
+              if (MarkerStartsPercent[i] < 0 || MarkerStartsPercent[i] > 100)
+              {
+                MarkerStartsPercent[i] = 0;
+              }
             }
           }
         }
       }
-      if (LabelMarkerEnds.Length > 0)
+      if (!string.IsNullOrEmpty(LabelMarkerEnds))
       {
-        if (strEnds.Length > 0)
+        if (!string.IsNullOrEmpty(strEnds))
         {
           string[] strMarkerEnds = strEnds.Trim().Split(' ');
           MarkerEndsPercent.Clear();
-          for (int i=0; i < strMarkerEnds.Length; i++)
+          for (int i = 0; i < strMarkerEnds.Length; i++)
           {
             try
             {
               MarkerEndsPercent.Add(float.Parse(strMarkerEnds[i]));
             }
-            catch (Exception) {}
-            if (MarkerEndsPercent[i] < 0 || MarkerEndsPercent[i] > 100)
+            catch (Exception ex)
             {
-              MarkerEndsPercent[i] = 0;
+              Log.Error("GUITVProgressControl.parseMarkerValues() - exception in parsing end markers: {0}", ex);
+              break;
+            }
+            if (MarkerEndsPercent.Count > i)
+            {
+              if (MarkerEndsPercent[i] < 0 || MarkerEndsPercent[i] > 100)
+              {
+                MarkerEndsPercent[i] = 0;
+              }
             }
           }
         }
