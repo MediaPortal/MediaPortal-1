@@ -102,7 +102,7 @@ void CPmtParser::OnNewSection(CSection& section)
       stream_type = section.Data[pointer];
       elementary_PID = ((section.Data[pointer+1]&0x1F)<<8)+section.Data[pointer+2];
       ES_info_length = ((section.Data[pointer+3] & 0xF)<<8)+section.Data[pointer+4];
-      // LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
+      //LogDebug("pmt: pid:%x type:%x",elementary_PID, stream_type);
       if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
         || stream_type==SERVICE_TYPE_VIDEO_MPEG2
         || stream_type==SERVICE_TYPE_VIDEO_MPEG4
@@ -154,7 +154,7 @@ void CPmtParser::OnNewSection(CSection& section)
           pid.Pid=elementary_PID;
           pid.AudioServiceType=(indicator==DESCRIPTOR_DVB_AC3) ? SERVICE_TYPE_AUDIO_AC3 : SERVICE_TYPE_AUDIO_DD_PLUS;
           
-          for(int i(0); i<tempPids.size(); i++)
+          for(unsigned int i(0); i<tempPids.size(); i++)
           {
             if(tempPids[i].Pid==elementary_PID)
             {
@@ -207,22 +207,25 @@ void CPmtParser::OnNewSection(CSection& section)
 
               pidFound=true;
             }
-          // Find corresponding subtitle stream by PID, if not found
-          // the stream type is be unknown to us
-          for(unsigned int i(0); i<m_pidInfo.subtitlePids.size(); i++)
-          {
-            if(m_pidInfo.subtitlePids[i].Pid == elementary_PID)
+            // Find corresponding subtitle stream by PID, if not found
+            // the stream type is be unknown to us
+            for(unsigned int i(0); i<m_pidInfo.subtitlePids.size(); i++)
             {
-              m_pidInfo.subtitlePids[i].Lang[0]=section.Data[pointer+2];
-              m_pidInfo.subtitlePids[i].Lang[1]=section.Data[pointer+3];
-              m_pidInfo.subtitlePids[i].Lang[2]=section.Data[pointer+4];
-              m_pidInfo.subtitlePids[i].Lang[3]=0;
-              pidFound=true;
-            }
+              if(m_pidInfo.subtitlePids[i].Pid == elementary_PID)
+              {
+                m_pidInfo.subtitlePids[i].Lang[0]=section.Data[pointer+2];
+                m_pidInfo.subtitlePids[i].Lang[1]=section.Data[pointer+3];
+                m_pidInfo.subtitlePids[i].Lang[2]=section.Data[pointer+4];
+                m_pidInfo.subtitlePids[i].Lang[3]=0;
+                pidFound=true;
+              }
+            }            
           }
-            
+
           if(!pidFound)
           {
+            //Create a temporary pid to hold the language data - needed for some 
+            //AC3 streams (which are carried as private streams i.e. stream_type = 0x6) 
             int descriptorLen = section.Data[pointer+1];
             TempPid pid;
             pid.Pid=elementary_PID;
@@ -246,7 +249,7 @@ void CPmtParser::OnNewSection(CSection& section)
             tempPids.push_back(pid);
           }
         }
-        }
+        
         if(indicator==DESCRIPTOR_VBI_TELETEXT)
         {
           //LogDebug("VBI teletext descriptor");
