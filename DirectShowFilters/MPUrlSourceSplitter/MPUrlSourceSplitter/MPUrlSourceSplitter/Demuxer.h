@@ -134,8 +134,9 @@ public:
 
   // seeks to specified time
   // @param time : the time to seek in stream
+  // @param seekingMethod : the method of seeking (one of SEEKING_METHOD flags), if SEEKING_METHOD_NONE than seeking method from protocol is used
   // @return : S_OK if successful, false otherwise
-  HRESULT Seek(REFERENCE_TIME time);
+  HRESULT Seek(REFERENCE_TIME time, unsigned int seekingMethod);
 
 protected:
 

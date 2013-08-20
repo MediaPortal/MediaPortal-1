@@ -457,7 +457,6 @@ HRESULT CDemuxer::GetNextPacket(COutputPinPacket *packet)
           packet->SetFlags(packet->GetFlags() | FLAG_PACKET_PARSED);
         }
 
-        ASSERT(rt >= 0);
         packet->SetStartTime(rt);
         packet->SetEndTime(rt);
 
@@ -809,13 +808,13 @@ CStream *CDemuxer::SelectAudioStream(void)
   return result;
 }
 
-HRESULT CDemuxer::Seek(REFERENCE_TIME time)
+HRESULT CDemuxer::Seek(REFERENCE_TIME time, unsigned int seekingMethod)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
   this->logger->Log(LOGGER_INFO, L"%s: %s: seeking to time: %lld", MODULE_NAME, METHOD_SEEK_NAME, time);
 
   // get seeking capabilities from filter
-  unsigned int seekingCapabilities = this->filter->GetSeekingCapabilities();
+  unsigned int seekingCapabilities = (seekingMethod == SEEKING_METHOD_NONE) ? this->filter->GetSeekingCapabilities() : seekingMethod;
   bool seeked = false;
   // we prefer seeking by position, it's simplier and buffer is also based on position
 
@@ -828,7 +827,8 @@ HRESULT CDemuxer::Seek(REFERENCE_TIME time)
     {
       this->logger->Log(LOGGER_WARNING, L"%s: %s: first seek by position failed: 0x%08X", MODULE_NAME, METHOD_SEEK_NAME, result);
 
-      result = this->SeekByPosition(time, flags | AVSEEK_FLAG_ANY);
+      //result = this->SeekByPosition(time, flags | AVSEEK_FLAG_ANY);
+      result = this->SeekByPosition(time, AVSEEK_FLAG_ANY);
       if (FAILED(result))
       {
         this->logger->Log(LOGGER_WARNING, L"%s: %s: second seek by position failed: 0x%08X", MODULE_NAME, METHOD_SEEK_NAME, result);
@@ -1422,7 +1422,7 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
 
   // if we have a video stream, seek on that one
   // if we don't, well, then don't
-  if (time > 0)
+  if (time >= 0)
   {
     if (videoStreamId != -1)
     {
@@ -1679,7 +1679,7 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
   // if we have a video stream, seek on that one
   // if we don't, well, then don't
-  if (time > 0)
+  if (time >= 0)
   {
     if (videoStreamId != -1)
     {
@@ -2304,7 +2304,7 @@ HRESULT CDemuxer::SeekBySequenceReading(REFERENCE_TIME time, int flags)
 
   // if we have a video stream, seek on that one
   // if we don't, well, then don't
-  if (time > 0)
+  if (time >= 0)
   {
     if (videoStreamId != -1)
     {

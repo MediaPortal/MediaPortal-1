@@ -1853,7 +1853,11 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       this->demuxStart = this->demuxNewStart;
       this->demuxStop = this->demuxNewStop;
 
-      this->demuxer->Seek(max(this->demuxStart, 0));
+      // in case of live stream, seek by position (slightly forward or backward in stream)
+      // in live stream we can't receive seek request from graph to skip forward or backward
+      // we can only seek in case of starting playback (created thread, not CMD_PLAY request) or in case of changing stream (probably audio or subtitle stream)
+      // TO DO : changing stream in live stream will probably not work (at least it is not tested)
+      this->demuxer->Seek(max(this->demuxStart, 0), this->IsLiveStream() ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE);
 
       if (cmd != (DWORD)-1)
       {
@@ -2981,8 +2985,8 @@ DWORD WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpParam)
       }
 
       // remove used media packets
-      // in case of live stream they will not be needed (after created demuxer)
-      if ((!caller->IsDownloadingFile()) && (caller->IsLiveStream()) && (caller->IsCreatedDemuxer()) && ((GetTickCount() - lastCheckTime) > 1000))
+      // in case of live stream they will not be needed (after created demuxer and started playing)
+      if ((!caller->IsDownloadingFile()) && (caller->IsLiveStream()) && (caller->IsCreatedDemuxer()) && (caller->lastCommand == CMD_PLAY) && ((GetTickCount() - lastCheckTime) > 1000))
       {
         lastCheckTime = GetTickCount();
 

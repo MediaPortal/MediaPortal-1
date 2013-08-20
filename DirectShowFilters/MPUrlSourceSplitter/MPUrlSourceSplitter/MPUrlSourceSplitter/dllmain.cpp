@@ -87,7 +87,8 @@ const AMOVIESETUP_FILTER sudIptvFilterReg =
   wszIptvSource,                    // filter name
   MERIT_NORMAL,                     // merit
   1,                                // count of registered pins
-  sudIptvOutputPins                 // list of pins to register
+  sudIptvOutputPins,                // list of pins to register
+  CLSID_LegacyAmFilterCategory      // this parameter is not included in Windows 7.1 SDK
 };
 
 // for MP Url Source Splitter
@@ -97,7 +98,8 @@ const AMOVIESETUP_FILTER sudUrlSourceSplitterFilterReg =
   wszUrlSourceSplitter,             // filter name
   MERIT_NORMAL,                     // merit
   1,                                // count of registered pins
-  sudUrlSourceSplitterOutputPins    // list of pins to register
+  sudUrlSourceSplitterOutputPins,   // list of pins to register
+  CLSID_LegacyAmFilterCategory      // this parameter is not included in Windows 7.1 SDK
 };
 
 // List of class IDs and creator functions for the class factory. This
