@@ -1,0 +1,291 @@
+
+The purpose of this document is to remark all changes made in ffmpeg by any developer. These same changes
+(or at least their meaning) must be made in next releases of ffmpeg.
+
+Changes in ffmpeg (ffmpeg from lavfilters HEAD 89e359e74bf32b558d03a78d4f644c3f349a7a19):
+
+File: build_ff_win32.sh
+Comment: replace OPTIONS
+Code: 
+
+OPTIONS="
+--disable-network \
+--disable-doc \
+--disable-ffmpeg \
+--disable-ffplay \
+--disable-ffprobe \
+--disable-ffserver \
+--disable-avdevice \
+--disable-swresample \
+--disable-swscale \
+--disable-postproc \
+--disable-avfilter \
+--disable-avresample \
+--disable-static \
+--disable-debug \
+--disable-encoders \
+--disable-bsfs \
+--disable-devices \
+--enable-shared \
+--enable-gpl \
+--enable-version3 \
+--enable-w32threads \
+--enable-runtime-cpudetect \
+--enable-demuxers \
+--disable-demuxer=matroska \
+--disable-filters \
+--disable-protocols \
+--enable-protocol=file \
+--disable-muxers \
+--disable-hwaccels \
+--enable-hwaccel=h264_dxva2 \
+--enable-hwaccel=vc1_dxva2 \
+--enable-hwaccel=wmv3_dxva2 \
+--enable-hwaccel=mpeg2_dxva2 \
+--arch=x86 --cpu=i686 --target-os=mingw32 \
+--build-suffix=-mpurlsourcesplitter"
+
+--------------------------------------------
+Comment: change build command
+Code: 
+
+make -j8 &&
+cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32 &&
+cp lib*/*.lib ../bin_Win32/lib &&
+cp lib*/*-mpurlsourcesplitter-*.dll ../bin_Win32d &&
+cp lib*/*.lib ../bin_Win32d/lib &&
+
+--------------------------------------------
+File: \libavformat\libavformat.v
+Comment: add export of needed functions, in global: add
+Code:
+
+ff_read_frame_flush;
+ff_update_cur_dts;
+asf_reset_header2;
+
+--------------------------------------------
+File: \libavformat\flvdec.c
+Comment: change in method flv_read_packet(), disable seeking to end of file
+Code:
+
+whole condition starting with: if(s->pb->seekable && (!s->duration || s->duration==AV_NOPTS_VALUE))
+must be disabled (comment it)
+
+--------------------------------------------
+File: \libavformat\asfdec.c
+Comment: after including section add
+Code:
+
+void asf_reset_header2(AVFormatContext *s);
+
+--------------------------------------------
+Comment: copy asf_reset_header() method and rename it to asf_reset_header2 (remove static)
+Code:
+
+--------------------------------------------
+File: \libavformat\utils.c
+Comment: change in method avformat_find_stream_info(), faster starting (parsing) ASF video
+Code:
+
+whole part
+
+if (st->first_dts == AV_NOPTS_VALUE &&
+    (st->codec->codec_type == AVMEDIA_TYPE_VIDEO ||
+    st->codec->codec_type == AVMEDIA_TYPE_AUDIO))
+    break;
+
+must be disabled (comment it)
+
+--------------------------------------------
+Comment: in method estimate_timings() block calling estimate_timings_from_pts2()
+Code:
+
+/* else if (ic->iformat->read_timestamp &&
+        file_size && ic->pb->seekable) {
+         get accurate estimate from the PTSes 
+        estimate_timings_from_pts2(ic, old_offset);
+    } */
+
+--------------------------------------------
+File: \libavformat\isom.h
+Comment: add in MOVContext struct
+Code:
+
+int fragmented;         /// fragmented video
+int stop_parsing_at_fragmented_index; /// stops parsing when fragmented index box is found
+
+--------------------------------------------
+File: \libavformat\mov.c
+Comment: in mov_read_ftyp() method add after if (strcmp(type, "qt  ")) c->isom = 1;
+Code:
+
+c->fragmented = (strcmp(type, "isml") == 0) ? 1 : 0;
+c->stop_parsing_at_fragmented_index = 0;
+
+--------------------------------------------
+Comment: after mov_read_tmcd() method add
+Code:
+
+static int mov_read_fmix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+{
+    int ret = 0;
+
+    avio_r8(pb); /* version */
+    avio_rb24(pb); /* flags */
+
+    atom.size -= 4;
+
+    if ((ret = mov_read_default(c, pb, atom)) < 0)
+        return ret;
+
+    return ret;
+}
+
+static int mov_read_ftix(MOVContext *c, AVIOContext *pb, MOVAtom atom)
+{
+    int i;
+    AVStream *st = NULL;
+    uint32_t trackId;
+    uint32_t entries;
+
+    avio_r8(pb); 	/* version */
+    avio_rb24(pb); 	/* flags */
+    trackId = avio_rb32(pb);	/* track ID */
+    entries = avio_rb32(pb);	/* count of fragmented track index */
+
+    for (i = 0; i < c->fc->nb_streams; i++)
+    {
+        if (c->fc->streams[i]->id == trackId)
+        {
+            st = c->fc->streams[i];
+            break;
+        }
+    }
+
+    if (!st)
+    {
+        av_log(c->fc, AV_LOG_ERROR, "could not find corresponding track id %d\n", trackId);
+        return AVERROR_INVALIDDATA;
+    }
+
+    st->nb_index_entries = 0;
+
+    for (i = 0; i < entries; i++)
+    {
+        uint64_t timestamp = avio_rb64(pb);
+        avio_rb64(pb);
+
+        av_add_index_entry(st, 0, timestamp, 0, 0, AVINDEX_KEYFRAME);
+    }
+    
+    return 0;
+}
+
+--------------------------------------------
+Comment: in mov_default_parse_table table add to end (before { 0, NULL })
+Code:
+
+{ MKTAG('f','m','i','x'), mov_read_fmix },
+{ MKTAG('f','t','i','x'), mov_read_ftix },
+ 
+--------------------------------------------
+Comment: in mov_read_default() method replace 'MOVAtom a;'
+Code:
+
+MOVAtom a = { .type = 0 };
+
+--------------------------------------------
+Comment: in mov_read_default() method replace 'while (total_size + 8 <= atom.size && !url_feof(pb)) {'
+Code:
+
+while (total_size + 8 <= atom.size && !url_feof(pb) && !(c->found_moov && c->found_mdat && c->fragmented) && !(c->fragmented && c->stop_parsing_at_fragmented_index && a.type == MKTAG('f','m','i','x'))) {
+
+--------------------------------------------
+Comment: in mov_read_default() method add after cycle 'for (i = 0; mov_default_parse_table[i].type; i++)'
+Code:
+
+if (c->fragmented && (a.type == MKTAG('m','d','a','t')))
+{
+    int64_t start_pos = avio_tell(pb);
+    c->next_root_atom = start_pos + a.size;
+}
+
+--------------------------------------------
+Comment: in mov_read_default() method replace 'return 0;'
+Code:
+
+return (a.type == MKTAG('f','m','i','x')) ? 1 : 0;
+
+--------------------------------------------
+Comment: in mov_read_seek() method add after 'int i;' (variable declare)
+Code:
+
+ MOVContext *mov = s->priv_data;
+ MOVStreamContext *sc;
+
+--------------------------------------------
+Comment: in mov_read_seek() method add after 'if (sample_time < 0) sample_time = 0;'
+Code:
+
+if (mov->fragmented)
+{
+    MOVAtom atom = { AV_RL32("root"), .size = INT64_MAX };
+    int err = 0;
+
+    mov->found_mdat = 0;
+    mov->next_root_atom = 0;
+    mov->stop_parsing_at_fragmented_index = 1;
+
+    /* seek to 0, data MUST be always from 0 */
+    if ((err = avio_seek(s->pb, 0, SEEK_SET)) < 0)
+    {
+        av_log(s, AV_LOG_ERROR, "error seeking to start: %d", err);
+        return err;
+    }
+
+    /* read fragmented index */
+    if ((err = mov_read_default(mov, s->pb, atom)) != 1)
+    {
+        av_log(s, AV_LOG_ERROR, "fragmented index not found");
+        return (-1);
+    }
+
+    mov->stop_parsing_at_fragmented_index = 0;
+
+    for (i = 0; i < s->nb_streams; i++)
+    {
+        st = s->streams[i];
+        sample = mov_seek_stream(s, st, sample_time, flags);
+
+        if (sample < 0)
+        {
+            av_log(NULL, AV_LOG_ERROR, "cannot find sample for stream, index: %d, timestamp: %"PRId64"", i, sample_time);
+            return sample;
+        }
+
+        seek_timestamp = st->index_entries[sample].timestamp;
+        sc = s->streams[i]->priv_data;
+
+        timestamp = av_rescale_q(seek_timestamp, s->streams[stream_index]->time_base, st->time_base);
+
+        sc->track_end = timestamp;
+
+        if (stream_index == i)
+            continue;
+        mov_seek_stream(s, st, timestamp, flags);
+    }
+
+    for (i = 0; i < s->nb_streams; i++)
+    {
+        st = s->streams[i];
+        st->nb_index_entries = 0;
+    }
+
+    /* read all root atoms */
+    if ((err = mov_read_default(mov, s->pb, atom)) < 0)
+    {
+        av_log(s, AV_LOG_ERROR, "error reading header: %d", err);
+        return err;
+    }
+}

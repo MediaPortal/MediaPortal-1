@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_afhs_decryption_akamai.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

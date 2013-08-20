@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_protocol_rtsp.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

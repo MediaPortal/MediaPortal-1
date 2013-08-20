@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_parser_asx.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

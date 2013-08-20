@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_parser_mshs.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

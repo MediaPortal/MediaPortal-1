@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Demuxers">
+      <UniqueIdentifier>{3fe86870-f3c3-4ecf-b4eb-432977264202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Demuxers\Header Files">
+      <UniqueIdentifier>{c79f08d6-41f0-487e-92ab-c4bc0d1070f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Demuxers\Source Files">
+      <UniqueIdentifier>{398ba232-0b4b-44f7-be62-02c68d12e766}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParserHoster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProtocolHoster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputStreamHoster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPinPacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPinPacketCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPinAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputPinMediaSample.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterOutputPin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPUrlSourceSplitterOutputPinCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Stream.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamInfo.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DemuxerUtils.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DemuxerAudioHelper.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DemuxerVideoHelper.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteParser.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraDataParser.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="H264Nalu.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamCollection.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Demuxer.h">
+      <Filter>Demuxers\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParserHoster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProtocolHoster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputStreamHoster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinPacketCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputPinMediaSample.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterOutputPin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MPUrlSourceSplitterOutputPinCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Stream.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamInfo.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemuxerUtils.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemuxerAudioHelper.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemuxerVideoHelper.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteParser.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExtraDataParser.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="H264Nalu.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamCollection.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Demuxer.cpp">
+      <Filter>Demuxers\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MPUrlSourceSplitter.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="necessary_changes_in_ffmpeg.txt" />
+  </ItemGroup>
+</Project>

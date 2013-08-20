@@ -1,0 +1,94 @@
+/*
+    Copyright (C) 2007-2010 Team MediaPortal
+    http://www.team-mediaportal.com
+
+    This file is part of MediaPortal 2
+
+    MediaPortal 2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    MediaPortal 2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with MediaPortal 2.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#pragma once
+
+#ifndef __BASE_RTP_PACKET_DEFINED
+#define __BASE_RTP_PACKET_DEFINED
+
+#define BASE_RTP_PACKET_HEADER_SIZE                                     1               // length of the header in bytes
+
+#define FLAG_BASE_RTP_PACKET_NONE                                       0x00000000
+#define FLAG_BASE_RTP_PACKET_PADDING                                    0x00000001
+
+// base RTP packet is simple base class for RTP packets and RTCP packets
+// RTP and RTCP packets have similar header but totally different meanings of each value
+// that's why RTCP packets have each own branch from  RTP packets
+class CBaseRtpPacket
+{
+public:
+  // intializes a new instance of CBaseRtpPacket
+  CBaseRtpPacket(void);
+  virtual ~CBaseRtpPacket(void);
+
+  /* get methods */
+
+  // gets the version of base RTP packet
+  // @return : version of base RTP packet or UINT_MAX if error
+  virtual unsigned int GetVersion(void);
+
+  // gets packet base type (RTP or RTCP packet)
+  // @return : base type of packet or UINT_MAX if not specified
+  virtual unsigned int GetBaseType(void);
+
+  // gets packet size
+  // @return : packet size or UINT_MAX if error
+  virtual unsigned int GetSize(void);
+
+  // gets padding length
+  // @return : padding length (0 if padding is not used)
+  virtual unsigned int GetPaddingLength(void);
+
+  /* set methods */
+
+  /* other methods */
+
+  // tests if packet is padded with extra padding bytes
+  // @return : true if packet is padded, false otherwise
+  virtual bool IsPadded(void);
+
+  // sets current instance to default state
+  virtual void Clear(void);
+
+  // parses data in buffer
+  // @param buffer : buffer with packet data for parsing
+  // @param length : the length of data in buffer
+  // @return : true if successfully parsed, false otherwise
+  virtual bool Parse(const unsigned char *buffer, unsigned int length);
+
+protected:
+
+  // holds various flags
+  unsigned int flags;
+
+  // holds packet version
+  unsigned int version;
+
+  // holds packet base type
+  unsigned int baseType;
+
+  // holds packet size after parsing
+  unsigned int size;
+
+  // holds padding length
+  unsigned int paddingLength;
+};
+
+#endif
