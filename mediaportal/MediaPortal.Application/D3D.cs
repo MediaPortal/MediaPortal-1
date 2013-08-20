@@ -834,6 +834,9 @@ namespace MediaPortal
           HideTaskBar(false);
         }
 
+        // Enable _firstTimeActivated to focus on restore
+        _firstTimeActivated = false;
+
         MouseCursor = true;
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
@@ -2165,6 +2168,7 @@ namespace MediaPortal
         ShowMouseCursor(false);
       }
       _lostFocus = false;
+      _firstTimeActivated = true;
       base.OnGotFocus(e);
     }
 
