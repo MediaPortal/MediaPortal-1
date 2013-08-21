@@ -1633,6 +1633,10 @@ STDMETHODIMP CMPUrlSourceSplitter::DownloadAsync(LPCOLESTR uri, LPCOLESTR fileNa
     result = this->Load();
   }
 
+  // create demuxer read request worker
+  // it is needed also to store file for downloading
+  CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->CreateDemuxerReadRequestWorker());
+
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DOWNLOAD_ASYNC_NAME, result);
   return result;
 }
