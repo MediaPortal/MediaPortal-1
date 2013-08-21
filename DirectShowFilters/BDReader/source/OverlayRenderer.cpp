@@ -31,14 +31,13 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define LOG_DRAWING
+//#define LOG_DRAWING
 
 extern void LogDebug(const char *fmt, ...);
 
 COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   m_pLib(pLib),
-  m_pD3DDevice(NULL),
-  m_bOverlayScheduled(false)
+  m_pD3DDevice(NULL)
 {
   m_pPlanes[BD_OVERLAY_PG] = NULL;
   m_pPlanes[BD_OVERLAY_IG] = NULL;
@@ -51,40 +50,60 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
 
   m_hThread = CreateThread(0, 0, COverlayRenderer::ScheduleThreadEntryPoint, (LPVOID)this, 0, NULL);
 
-  m_hOverlayTimer= CreateWaitableTimer(NULL, false, NULL);
+  m_hOverlayTimerIG = CreateWaitableTimer(NULL, false, NULL);
+  m_hOverlayTimerPG = CreateWaitableTimer(NULL, false, NULL);
 }
 
 COverlayRenderer::~COverlayRenderer()
 {
-  if (CancelWaitableTimer(m_hOverlayTimer) == 0)
+  CAutoLock renderLock(&m_csRenderLock);
+  CAutoLock queueLock(&m_csOverlayQueue);
+
+  FreeOverlayQueue(BD_OVERLAY_IG);
+  FreeOverlayQueue(BD_OVERLAY_PG);
+
+  if (m_hOverlayTimerIG)
   {
-    DWORD error = GetLastError();
-    LogDebug("COverlayRenderer::~COverlayRenderer - CancelWaitableTimer failed: %d", error);
+    CloseHandle(m_hOverlayTimerIG);
+    m_hOverlayTimerIG = NULL;
   }
 
-  if (m_hOverlayTimer)
+  if (m_hOverlayTimerPG)
   {
-    CloseHandle(m_hOverlayTimer);
-    m_hOverlayTimer = NULL;
+    CloseHandle(m_hOverlayTimerPG);
+    m_hOverlayTimerPG = NULL;
   }
-
-  FreeOverlayQueue();
-
-  if (m_hThread)
-  {
-    CloseHandle(m_hThread);
-    m_hThread = NULL;
-    ResetEvent(m_hStopThreadEvent);
-  }
-
-  if (m_hStopThreadEvent)
-    CloseHandle(m_hStopThreadEvent);
 
   if (m_hNewOverlayAvailable)
     CloseHandle(m_hNewOverlayAvailable);
 
+  if (m_hStopThreadEvent)
+  {
+    SetEvent(m_hStopThreadEvent);
+    CloseHandle(m_hStopThreadEvent);
+    WaitForSingleObject(m_hThread, INFINITE);
+  }
+
+  if (m_hThread)
+    CloseHandle(m_hThread);
+
   CloseOverlay(BD_OVERLAY_PG);
   CloseOverlay(BD_OVERLAY_IG);
+}
+
+void COverlayRenderer::CancelTimers()
+{
+  if (CancelWaitableTimer(m_hOverlayTimerIG) == 0)
+  {
+    DWORD error = GetLastError();
+    LogDebug("COverlayRenderer::CancelTimers - CancelWaitableTimer failed: %d", error);
+  }
+
+  if (CancelWaitableTimer(m_hOverlayTimerPG) == 0)
+  {
+    DWORD error = GetLastError();
+    LogDebug("COverlayRenderer::CancelTimers - CancelWaitableTimer failed: %d", error);
+  }
 }
 
 DWORD WINAPI COverlayRenderer::ScheduleThreadEntryPoint(LPVOID lpParameter)
@@ -94,20 +113,24 @@ DWORD WINAPI COverlayRenderer::ScheduleThreadEntryPoint(LPVOID lpParameter)
 
 DWORD COverlayRenderer::ScheduleThread()
 {
-  HANDLE handles[2];
+  const DWORD eventArraySize = 4;
+
+  HANDLE handles[eventArraySize];
   handles[0] = m_hStopThreadEvent;
-  handles[1] = m_hOverlayTimer;
-  handles[2] = m_hNewOverlayAvailable;
+  handles[1] = m_hOverlayTimerIG;
+  handles[2] = m_hOverlayTimerPG;
+  handles[3] = m_hNewOverlayAvailable;
 
   DWORD stopThread = WAIT_OBJECT_0;
-  DWORD processOverlay = WAIT_OBJECT_0 + 1;
-  DWORD newOverlayAvailable = WAIT_OBJECT_0 + 2;
+  DWORD processOverlayIG = WAIT_OBJECT_0 + 1;
+  DWORD processOverlayPG = WAIT_OBJECT_0 + 2;
+  DWORD newOverlayAvailable = WAIT_OBJECT_0 + 3;
 
   while (true)
   {
-    ScheduleOverlay();
+    ScheduleOverlays();
 
-    DWORD result = WaitForMultipleObjects(3, handles, false, INFINITE);
+    DWORD result = WaitForMultipleObjects(eventArraySize, handles, false, INFINITE);
 
     if (result == WAIT_FAILED)
       return 0;
@@ -121,25 +144,26 @@ DWORD COverlayRenderer::ScheduleThread()
       LogDebug("newOverlayAvailable");
 #endif
     }
-    else if (result == processOverlay)
+    else if (result == processOverlayIG || result == processOverlayPG)
     {
+      UINT8 plane = result == processOverlayIG ? BD_OVERLAY_IG : BD_OVERLAY_PG;
+
       CAutoLock queueLock(&m_csOverlayQueue);
 
-      if (!m_overlayQueue.empty())
+      if (!m_overlayQueue[plane].empty())
       {
-        ivecOverlayQueue it = m_overlayQueue.begin();
+        ivecOverlayQueue it = m_overlayQueue[plane].begin();
 
         if ((*it))
         {
-#ifdef LOG_DRAWING
+  #ifdef LOG_DRAWING
           LogDebug("RENDERING PTS: %6.3f", (CONVERT_90KHz_DS((*it)->pts) + m_rtOffset) / 10000000.0);
-#endif
+  #endif
 
           // close frees all overlays
           bool freeOverlay = (*it)->cmd != BD_OVERLAY_CLOSE;
 
           ProcessOverlay((*it));
-          m_bOverlayScheduled = false;
 
           if (freeOverlay)
             FreeOverlay(it);
@@ -163,31 +187,31 @@ ivecOverlayQueue COverlayRenderer::FreeOverlay(ivecOverlayQueue overlay)
   if ((*overlay)->palette)
     delete (*overlay)->palette;
 
+  UINT8 plane = (*overlay)->plane;
+
   delete (*overlay);
   (*overlay) = NULL;
 
-  return m_overlayQueue.erase(overlay);
+  return m_overlayQueue[plane].erase(overlay);
 }
 
-void COverlayRenderer::FreeOverlayQueue()
+void COverlayRenderer::FreeOverlayQueue(const uint8_t plane)
 {
   CAutoLock queueLock(&m_csOverlayQueue);
-  ivecOverlayQueue it = m_overlayQueue.begin();
-  while (it != m_overlayQueue.end())
+  ivecOverlayQueue it = m_overlayQueue[plane].begin();
+  while (it != m_overlayQueue[plane].end())
   {
     it = FreeOverlay(it);
   }
 }
 
- bool COverlayRenderer::NextScheduleTime(REFERENCE_TIME& rtPts)
+ bool COverlayRenderer::NextScheduleTime(REFERENCE_TIME& rtPts, UINT8 plane)
 {
-  ivecOverlayQueue it;
-
-  CAutoLock queueLock(&m_csOverlayQueue);
-  if (!m_overlayQueue.empty())
+  if (!m_overlayQueue[plane].empty())
   {
-    it = m_overlayQueue.begin();
-    const BD_OVERLAY* overlay = *it;
+    BD_OVERLAY_EX* overlay = *m_overlayQueue[plane].begin();
+    if (overlay->scheduled)
+      return false;
 
     if (overlay->pts <= 0)
     {
@@ -208,7 +232,7 @@ void COverlayRenderer::FreeOverlayQueue()
         LogDebug("SCHEDULING --- was negative -> 0");
       }
 
-#ifdef LOG_DRAWING      
+#ifdef LOG_DRAWING
       LogDebug("SCHEDULING PTS: %6.3f wait: %6.3f", pts / 10000000.0, rtPts / 10000000.0);
 #endif
     }
@@ -220,27 +244,41 @@ void COverlayRenderer::FreeOverlayQueue()
   return false;
 }
 
-void COverlayRenderer::ScheduleOverlay()
+void COverlayRenderer::ScheduleOverlays()
 {
+  CAutoLock queueLock(&m_csOverlayQueue);
+
   REFERENCE_TIME rtDue = 0;
-  if (NextScheduleTime(rtDue))
+  if (NextScheduleTime(rtDue, BD_OVERLAY_IG))
   {
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = -rtDue;
 
     LogDebug("           liDueTime: %6.3f", liDueTime.QuadPart / 10000000.0);
 
-    if (!m_bOverlayScheduled && SetWaitableTimer(m_hOverlayTimer, &liDueTime, 0, NULL, NULL, 0) == 0)
+    if (SetWaitableTimer(m_hOverlayTimerIG, &liDueTime, 0, NULL, NULL, 0) == 0)
     {
 #ifdef LOG_DRAWING      
       DWORD error = GetLastError();
       LogDebug("COverlayRenderer::ScheduleOverlay - SetWaitableTimer failed: %d", error);
 #endif
-      
-      m_bOverlayScheduled = false;
     }
-    else
-      m_bOverlayScheduled = true;
+  }
+
+  if (NextScheduleTime(rtDue, BD_OVERLAY_PG))
+  {
+    LARGE_INTEGER liDueTime;
+    liDueTime.QuadPart = -rtDue;
+
+    LogDebug("           liDueTime: %6.3f", liDueTime.QuadPart / 10000000.0);
+
+    if (SetWaitableTimer(m_hOverlayTimerPG, &liDueTime, 0, NULL, NULL, 0) == 0)
+    {
+#ifdef LOG_DRAWING
+      DWORD error = GetLastError();
+      LogDebug("COverlayRenderer::ScheduleOverlay - SetWaitableTimer failed: %d", error);
+#endif
+    }
   }
 }
 
@@ -261,8 +299,15 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
   if (!ov)
     return;
   
-  BD_OVERLAY *copy = (BD_OVERLAY*)malloc(sizeof(*ov));
+  if (ov->cmd == BD_OVERLAY_CLOSE || ov->cmd == BD_OVERLAY_INIT)
+  {
+    ProcessOverlay(ov);
+    return;
+  }
+
+  BD_OVERLAY_EX *copy = (BD_OVERLAY_EX*)malloc(sizeof(BD_OVERLAY_EX));
   memcpy(copy, ov, sizeof(*ov));
+  copy->scheduled = false;
 
   if (ov->palette) 
   {
@@ -279,7 +324,8 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 #endif
 
     CAutoLock queueLock(&m_csOverlayQueue);
-    m_overlayQueue.push_back(copy);
+
+    m_overlayQueue[copy->plane].push_back(copy);
     SetEvent(m_hNewOverlayAvailable);
   }
 }
@@ -289,7 +335,7 @@ void COverlayRenderer::ProcessOverlay(const BD_OVERLAY* pOv)
   if (!pOv)
   {
     CloseOverlay(BD_OVERLAY_IG);
-    FreeOverlayQueue();
+    CloseOverlay(BD_OVERLAY_PG);
     return;
   }
   else if (pOv->plane > BD_OVERLAY_IG)
@@ -304,14 +350,9 @@ void COverlayRenderer::ProcessOverlay(const BD_OVERLAY* pOv)
       return;
     case BD_OVERLAY_CLOSE:
       CloseOverlay(pOv->plane);
-      FreeOverlayQueue();
+      FreeOverlayQueue(pOv->plane);
       return;
   }
-
-  CAutoLock lock(&m_csRenderLock);
-  
-  if (!m_pD3DDevice)
-    return;
 
   OSDTexture* plane = m_pPlanesBackbuffer[pOv->plane];
 
@@ -438,6 +479,8 @@ void COverlayRenderer::OpenOverlay(const BD_ARGB_OVERLAY* pOv)
 
 void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
+  CAutoLock lock(&m_csRenderLock);
+  
   if (!m_pD3DDevice)
     return;
 
@@ -452,7 +495,7 @@ void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint
       ppOsdTexture = &m_pPlanesBackbuffer[plane];
 
     OSDTexture* osdTexture = new OSDTexture;
-    osdTexture->height = h;
+    osdTexture->height = h; 
     osdTexture->width = w;
     osdTexture->x = x;
     osdTexture->y = y;
@@ -479,6 +522,8 @@ void COverlayRenderer::CreateFrontAndBackBuffers(uint8_t plane, uint16_t x, uint
 
 void COverlayRenderer::CloseOverlay(const uint8_t plane)
 {
+  CAutoLock lock(&m_csOverlayQueue);
+
   if (m_pPlanes[plane])
   {
     ClearOverlay(plane);
@@ -504,10 +549,15 @@ void COverlayRenderer::CloseOverlay(const uint8_t plane)
       m_pPlanesBackbuffer[plane] = NULL;
     }
   }
+
+  FreeOverlayQueue(plane);
+  CancelTimers();
 }
 
 void COverlayRenderer::ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv)
 {
+  CAutoLock lock(&m_csRenderLock);
+
   if (m_pD3DDevice)
   {
     HRESULT hr = S_FALSE;
@@ -556,6 +606,8 @@ void COverlayRenderer::ClearOverlay(const uint8_t plane)
 
 void COverlayRenderer::DrawBitmap(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv)
 {
+  CAutoLock lock(&m_csRenderLock);
+  
   if (!pOsdTexture || !m_pD3DDevice)
     return;
 
@@ -618,6 +670,8 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv
 
 void COverlayRenderer::DrawARGBBitmap(OSDTexture* pOsdTexture, const BD_ARGB_OVERLAY* pOv)
 {
+  CAutoLock lock(&m_csRenderLock);
+  
   if (!pOsdTexture || !m_pD3DDevice || !pOv)
     return;
 
