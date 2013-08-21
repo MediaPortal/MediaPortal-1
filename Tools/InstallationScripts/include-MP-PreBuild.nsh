@@ -57,6 +57,8 @@
 !system '"${git_DeployVersionGIT}\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /git="${git_ROOT}" /path="${git_ROOT}\Common-MP-TVE3"' = 0
 !endif
 
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" "${git_ROOT}\Build\RestorePackages.targets"' = 0
+
 !ifdef BUILD_MediaPortal
 !insertmacro PrepareBuildReport DirectShowFilters
 !system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" ${logger} /target:rebuild /property:Configuration=Release ${git_DirectShowFilters}\Filters.sln' = 0
