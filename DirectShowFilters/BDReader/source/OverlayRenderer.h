@@ -36,7 +36,12 @@ using namespace std;
 
 class CLibBlurayWrapper;
 
-typedef vector<const BD_OVERLAY*>::iterator ivecOverlayQueue;
+struct BD_OVERLAY_EX : BD_OVERLAY
+{
+  bool scheduled;
+};
+
+typedef vector<BD_OVERLAY_EX*>::iterator ivecOverlayQueue;
 
 class COverlayRenderer
 {
@@ -82,11 +87,12 @@ private:
 
   static DWORD WINAPI ScheduleThreadEntryPoint(LPVOID lpParameter);
   DWORD ScheduleThread();
-  bool NextScheduleTime(REFERENCE_TIME& rtPts);
-  void ScheduleOverlay();
+  bool NextScheduleTime(REFERENCE_TIME& rtPts, UINT8 plane);
+  void ScheduleOverlays();
+  void CancelTimers();
 
   ivecOverlayQueue FreeOverlay(ivecOverlayQueue overlay);
-  void FreeOverlayQueue();
+  void FreeOverlayQueue(const uint8_t plane);
 
   uint32_t m_palette[PALETTE_SIZE];
 
@@ -99,14 +105,14 @@ private:
   RECT m_dirtyRect[NUM_OF_PLANES];
 
   CCritSec m_csOverlayQueue;
-  vector<const BD_OVERLAY*> m_overlayQueue;
+  vector<BD_OVERLAY_EX*> m_overlayQueue[NUM_OF_PLANES];
 
   HANDLE m_hThread;
   HANDLE m_hStopThreadEvent;
 
-  HANDLE m_hOverlayTimer;
+  HANDLE m_hOverlayTimerIG;
+  HANDLE m_hOverlayTimerPG;
   HANDLE m_hNewOverlayAvailable;
-  bool m_bOverlayScheduled;
 
   REFERENCE_TIME m_rtPlaybackPosition;
   REFERENCE_TIME m_rtOffset;

@@ -102,8 +102,6 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
   CAutoLock cRenderLock(&m_csRenderLock);
   CAutoLock cLibLock(&m_csLibLock);
 
-  m_pOverlayRenderer->SetD3DDevice(NULL);
-
   if (m_pBd)
   {
     _bd_register_overlay_proc(m_pBd, NULL, NULL);
@@ -112,6 +110,9 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
 
   if (m_pTitleInfo)
     _bd_free_title_info(m_pTitleInfo);
+
+  m_pOverlayRenderer->SetD3DDevice(NULL);
+  delete m_pOverlayRenderer;
 
   FreeLibrary(m_hDLL);
 }
@@ -1047,7 +1048,7 @@ void CLibBlurayWrapper::LogTitleInfo(int pIndex, bool ignoreShort)
 
 void CLibBlurayWrapper::HandleOSDUpdate(OSDTexture& texture)
 {
-  ivecObservers it = m_eventObservers.begin();
+   ivecObservers it = m_eventObservers.begin();
   while (it != m_eventObservers.end())
   {
     (*it)->HandleOSDUpdate(texture);
