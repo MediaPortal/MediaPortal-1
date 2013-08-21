@@ -109,6 +109,7 @@ const AMOVIESETUP_FILTER sudUrlSourceSplitterFilterReg =
 
 CFactoryTemplate g_Templates[] = 
 {
+  /* temporary disabled for testing of merging IPTV and MP Url Source Splitter
   { 
     wszIptvSource,                                      // Name
     sudIptvFilterReg.clsID,                             // CLSID
@@ -116,7 +117,7 @@ CFactoryTemplate g_Templates[] =
     NULL,                                               // Initialization function
     &sudIptvFilterReg                                   // Set-up information (for filters)
   }, // for MP IPTV source
-
+  */
   { 
     wszUrlSourceSplitter,                                     // Name
     sudUrlSourceSplitterFilterReg.clsID,                      // CLSID
