@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBTTuning>
-    <Frequency>482000</Frequency><!-- C22 = Arq A -->
+    <Frequency>490000</Frequency><!-- C23 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>490000</Frequency><!-- C23 = BBC A -->
+    <Frequency>514000</Frequency><!-- C26 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>506000</Frequency><!-- C25 = SDN -->
+    <Frequency>546000</Frequency><!-- C30 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>514000</Frequency><!-- C26 = D3&4 -->
+    <Frequency>506000</Frequency><!-- C25 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>529800</Frequency><!-- C28 = Arq B -->
+    <Frequency>482000</Frequency><!-- C22 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>538000</Frequency><!-- C29 = Local -->
+    <Frequency>530000</Frequency><!-- C28 Now -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>545800</Frequency><!-- C30 = BBC B -->
+    <Frequency>538000</Frequency><!-- C29 From 2014 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>570000</Frequency><!-- C33 = HD 1 -->
+    <Frequency>570000</Frequency><!-- C33 from 2014 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>586000</Frequency><!-- C35 = HD 2 -->
+    <Frequency>586000</Frequency><!-- C35 from 2014 -->
     <BandWidth>8</BandWidth>
     <Offset>167</Offset>
   </DVBTTuning>
