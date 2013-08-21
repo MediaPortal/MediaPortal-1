@@ -113,6 +113,13 @@ namespace TvLibrary.Implementations.Analog
         _captureDeviceName = "Hauppauge Colossus Capture " + deviceNumber;
         _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
       }
+      else if (device.Name.Contains("Siena"))
+      {
+        _deviceType = "HD-PVR 2";
+        _crossbarDeviceName = device.Name;
+        _captureDeviceName = "Hauppauge Siena Video Capture";
+        _encoderDeviceName = "Hauppauge Siena Encoder";
+      }
 
       _mapSubChannels = new Dictionary<Int32, BaseSubChannel>();
       _supportsSubChannels = true;
@@ -943,6 +950,7 @@ namespace TvLibrary.Implementations.Analog
         int audioLine = 0;
         int audioSPDIF = 0;
         int audioAux = 0;
+        int audioAes = 0;
         int videoCvbsNr = 0;
         int videoSvhsNr = 0;
         int videoYrYbYNr = 0;
@@ -1006,6 +1014,21 @@ namespace TvLibrary.Implementations.Analog
                   break;
               }
               break;
+            case PhysicalConnectorType.Audio_AESDigital:
+              audioAes++;
+              switch (audioAes)
+              {
+                case 1:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput1, i);
+                  break;
+                case 2:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput2, i);
+                  break;
+                case 3:
+                  _audioPinMap.Add(AnalogChannel.AudioInputType.AesInput3, i);
+                  break;
+              }
+              break;
             case PhysicalConnectorType.Video_Composite:
               videoCvbsNr++;
               switch (videoCvbsNr)
@@ -1037,8 +1060,8 @@ namespace TvLibrary.Implementations.Analog
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.VideoInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.VideoInput3, relatedPinIndex);
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
                   break;
               }
               break;
@@ -1055,8 +1078,8 @@ namespace TvLibrary.Implementations.Analog
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput2, relatedPinIndex);
                   break;
                 case 3:
-                  _videoPinMap.Add(AnalogChannel.VideoInputType.SvhsInput3, i);
-                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.SvhsInput3, relatedPinIndex);
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.RgbInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.RgbInput3, relatedPinIndex);
                   break;
               }
               break;

@@ -151,7 +151,19 @@ namespace TvLibrary.Implementations
       /// <summary>
       /// SPDIF input #3
       /// </summary>
-      SPDIFInput3
+      SPDIFInput3,
+      /// <summary>
+      /// AES input #1
+      /// </summary>
+      AesInput1,
+      /// <summary>
+      /// AES input #2
+      /// </summary>
+      AesInput2,
+      /// <summary>
+      /// AES input #3
+      /// </summary>
+      AesInput3
     }
 
     #endregion
