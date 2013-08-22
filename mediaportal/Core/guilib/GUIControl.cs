@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -953,7 +954,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Perform an update after a change has occured. E.g. change to a new position.
     /// </summary>
-    protected virtual void Update() {}
+    protected virtual void Update() { }
+
+    public virtual Type GetSubType(string subType)
+    {
+      return null;
+    }
 
     /// <summary>
     /// Sends a GUI_MSG_HIDDEN message to a control (Hide a control).

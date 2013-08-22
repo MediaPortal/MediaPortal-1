@@ -356,6 +356,8 @@
     <Compile Include="guilib\IDialogbox2.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
+    <Compile Include="guilib\GUIMenuClassic.cs" />
+    <Compile Include="guilib\GUIMenuGrid.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
@@ -1879,6 +1881,7 @@
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WmiExtensions.cs" />
     <Compile Include="Vista Toolbelt\NativeInterop.cs" />
     <Compile Include="Vista Toolbelt\ThumbnailGenerator.cs" />
     <Compile Include="wmfsdk\BufferTypes.cs">

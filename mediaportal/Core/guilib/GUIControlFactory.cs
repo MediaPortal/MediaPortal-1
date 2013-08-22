@@ -382,42 +382,38 @@ namespace MediaPortal.GUI.Library
     public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary<string, string> defines,
                                     string filename)
     {
-      Type typeOfControlToCreate = GetControlType(pControlNode);
-      if (typeOfControlToCreate == null)
-      {
-        return null;
-      }
+      Type typeOfControl;
+      Type subTypeOfControl;
 
-      object[] ctorParams = {dwParentId};
-      GUIControl control = (GUIControl)
-                           Activator.CreateInstance(typeOfControlToCreate, ctorParams);
+      // Get type of control to create
+      typeOfControl = GetControlType(pControlNode);
+      if (typeOfControl == null)
+        return null;
+
+      // Create new control
+      object[] ctorParams = { dwParentId };
+      GUIControl control = (GUIControl)Activator.CreateInstance(typeOfControl, ctorParams);
 
       try
       {
-        //				if(control is ISupportInitialize)
+        // Load control's tags from the skin files
+        LoadControlTags(control, typeOfControl, pControlNode, defines, filename);
+
+        // If <subType> tag is defined, use subtype control instead of base control
+        subTypeOfControl = control.GetSubType(control.SubType);
+        if (subTypeOfControl != null)
+        {
+          // Dispose base control and create new subtype control
+          control.Dispose();
+          control = (GUIControl)Activator.CreateInstance(subTypeOfControl, ctorParams);
+
+          // Load control's tags from the skin files
+          Type baseTypeOfControl = typeOfControl;
+          typeOfControl = subTypeOfControl;
+          LoadControlTags(control, typeOfControl, baseTypeOfControl, pControlNode, defines, filename);
+        }
+
         ((ISupportInitialize)control).BeginInit();
-
-        XmlNode referenceNode =
-          (XmlNode)m_referenceNodesByControlType[typeOfControlToCreate];
-
-        if (referenceNode != null)
-        {
-          UpdateControlWithXmlData(control, typeOfControlToCreate, referenceNode, defines, filename);
-        }
-
-        XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
-
-        if (styleAttribute != null)
-        {
-          XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
-
-          if (styleNode != null)
-          {
-            UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines, filename);
-          }
-        }
-
-        UpdateControlWithXmlData(control, typeOfControlToCreate, pControlNode, defines, filename);
 
         control.ScaleToScreenResolution();
         AddSubitemsToControl(pControlNode, control);
@@ -431,7 +427,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        if (typeOfControlToCreate == typeof (GUIFacadeControl))
+        if (typeOfControl == typeof(GUIFacadeControl))
         {
           GUIFacadeControl facade = (GUIFacadeControl)control;
           XmlNodeList nodeList = pControlNode.SelectNodes("control");
@@ -472,9 +468,6 @@ namespace MediaPortal.GUI.Library
             //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }
         }
-
-        //				if(control is ISupportInitialize)
-        ((ISupportInitialize)control).EndInit();
       }
       catch (Exception e)
       {
@@ -482,8 +475,57 @@ namespace MediaPortal.GUI.Library
         Log.Info("Parent: {0} Id: {1}", dwParentId, control.GetID);
       }
 
+      //				if(control is ISupportInitialize)
+      ((ISupportInitialize)control).EndInit();
+
       return control;
     }
+
+    /// <summary>
+    /// Loads control's tags from the skin files (references and window file)
+    /// </summary>
+    /// <param name="control">the control for which to load tags</param>
+    /// <param name="typeOfControl">the type of the control</param>
+    /// <param name="pControlNode">the XML node in the skin file defining the control</param>
+    /// <param name="defines">#defines from the skin file</param>
+    /// <param name="filename">the filename of the skin file</param>
+    private static void LoadControlTags(GUIControl control, Type typeOfControl,
+      XmlNode pControlNode, IDictionary<string, string> defines, string filename)
+    {
+      LoadControlTags(control, typeOfControl, typeOfControl, pControlNode, defines, filename);
+    }
+
+
+    /// <summary>
+    /// Loads control's tags from the skin files (references and window file)
+    /// </summary>
+    /// <param name="control">the control for which to load tags</param>
+    /// <param name="typeOfControl">the type of the control</param>
+    /// <param name="baseTypeOfControl">the  base type of the control</param>
+    /// <param name="pControlNode">the XML node in the skin file defining the control</param>
+    /// <param name="defines">#defines from the skin file</param>
+    /// <param name="filename">the filename of the skin file</param>
+    private static void LoadControlTags(GUIControl control, Type typeOfControl, Type baseTypeOfControl,
+      XmlNode pControlNode, IDictionary<string, string> defines, string filename)
+    {
+      // Update control with default definitions for the control's base type in the references file
+      XmlNode referenceNode = (XmlNode)m_referenceNodesByControlType[baseTypeOfControl];
+      if (referenceNode != null)
+        UpdateControlWithXmlData(control, typeOfControl, referenceNode, defines, filename);
+
+      // Update control with style definitions in the references file
+      XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
+      if (styleAttribute != null)
+      {
+        XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+        if (styleNode != null)
+          UpdateControlWithXmlData(control, typeOfControl, styleNode, defines, filename);
+      }
+
+      // Update control with definitions in the window file
+      UpdateControlWithXmlData(control, typeOfControl, pControlNode, defines, filename);
+    }
+
 
     private static bool GetConditionalVisibility(XmlNode element, GUIControl control, ref int condition,
                                                  ref bool allowHiddenFocus)
