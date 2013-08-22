@@ -475,19 +475,30 @@ STDMETHODIMP CMPUrlSourceSplitter::NonDelegatingQueryInterface(REFIID riid, void
     return m_pDemuxer->QueryInterface(riid, ppv);
   }*/
 
-  return
-    QI(IFileSourceFilter)
-    QI(IMediaSeeking)
-    QI(IAMStreamSelect)
-    QI(IAMOpenProgress)
-    QI(IDownload)
-    //QI2(ISpecifyPropertyPages)
-    //QI2(ILAVFSettings)
-    //QI2(ILAVFSettingsInternal)
-    //QI(IObjectWithSite)
-    //QI(IBufferInfo)
-    QI(IFilterState)
-    __super::NonDelegatingQueryInterface(riid, ppv);
+  if (this->IsIptv())
+  {
+    return
+      QI(IFileSourceFilter)
+      __super::NonDelegatingQueryInterface(riid, ppv);
+  }
+  else if (this->IsSplitter())
+  {
+    return
+      QI(IFileSourceFilter)
+      QI(IMediaSeeking)
+      QI(IAMStreamSelect)
+      QI(IAMOpenProgress)
+      QI(IDownload)
+      //QI2(ISpecifyPropertyPages)
+      //QI2(ILAVFSettings)
+      //QI2(ILAVFSettingsInternal)
+      //QI(IObjectWithSite)
+      //QI(IBufferInfo)
+      QI(IFilterState)
+      __super::NonDelegatingQueryInterface(riid, ppv);
+  }
+
+  return __super::NonDelegatingQueryInterface(riid, ppv);
 }
 
 // CBaseFilter
@@ -682,7 +693,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 
       if (SUCCEEDED(result))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"MediaPortal IPTV Source Output Pin", this, this, &result);
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"Output", this, this, &result);
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY);
@@ -1105,7 +1116,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetDuration(LONGLONG* pDuration)
   CheckPointer(pDuration, E_POINTER);
   CheckPointer(this->demuxer, E_UNEXPECTED);
   
-  *pDuration = demuxer->GetDuration();
+  *pDuration = this->demuxer->GetDuration();
 
   return (*pDuration < 0) ? E_FAIL : S_OK;
 }
@@ -1258,7 +1269,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Count(DWORD *pcStreams)
   *pcStreams = 0;
   for (int i = 0; i < CDemuxer::Unknown; i++)
   {
-    *pcStreams += (DWORD)demuxer->GetStreams((CDemuxer::StreamType)i)->Count();
+    *pcStreams += (DWORD)this->demuxer->GetStreams((CDemuxer::StreamType)i)->Count();
   }
 
   return S_OK;
@@ -1857,11 +1868,14 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       this->demuxStart = this->demuxNewStart;
       this->demuxStop = this->demuxNewStop;
 
-      // in case of live stream, seek by position (slightly forward or backward in stream)
-      // in live stream we can't receive seek request from graph to skip forward or backward
-      // we can only seek in case of starting playback (created thread, not CMD_PLAY request) or in case of changing stream (probably audio or subtitle stream)
-      // TO DO : changing stream in live stream will probably not work (at least it is not tested)
-      this->demuxer->Seek(max(this->demuxStart, 0), this->IsLiveStream() ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE);
+      if (this->IsSplitter())
+      {
+        // in case of live stream, seek by position (slightly forward or backward in stream)
+        // in live stream we can't receive seek request from graph to skip forward or backward
+        // we can only seek in case of starting playback (created thread, not CMD_PLAY request) or in case of changing stream (probably audio or subtitle stream)
+        // TO DO : changing stream in live stream will probably not work (at least it is not tested)
+        this->demuxer->Seek(max(this->demuxStart, 0), this->IsLiveStream() ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE);
+      }
 
       if (cmd != (DWORD)-1)
       {
@@ -2089,7 +2103,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Close()
   this->m_State = State_Stopped;
   this->DeleteOutputs();
 
-  FREE_MEM_CLASS(demuxer);
+  FREE_MEM_CLASS(this->demuxer);
 
   // release AVIOContext for demuxer
 
