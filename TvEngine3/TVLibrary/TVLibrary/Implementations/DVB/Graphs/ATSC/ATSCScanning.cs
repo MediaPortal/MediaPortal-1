@@ -95,7 +95,10 @@ namespace TvLibrary.Implementations.DVB
     {
       ATSCChannel tuningChannel = (ATSCChannel)channel;
       ATSCChannel atscChannel = new ATSCChannel();
-      if (tuningChannel.PhysicalChannel == 0) // ie. digital cable CableCARD tuner scan
+      // When scanning with a CableCARD tuner and/or NIT or VCT frequency info
+      // has been received and it looks plausible...
+      if (tuningChannel.PhysicalChannel == 0 ||
+        (info.freq > 0 && tuningChannel.Frequency > 0 && info.freq != tuningChannel.Frequency))
       {
         atscChannel.PhysicalChannel = ATSCChannel.GetPhysicalChannelFromFrequency(info.freq);
         atscChannel.Frequency = info.freq;
