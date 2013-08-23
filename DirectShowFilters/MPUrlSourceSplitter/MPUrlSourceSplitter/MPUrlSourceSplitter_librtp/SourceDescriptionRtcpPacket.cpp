@@ -35,6 +35,55 @@ CSourceDescriptionRtcpPacket::~CSourceDescriptionRtcpPacket(void)
 
 /* get methods */
 
+unsigned int CSourceDescriptionRtcpPacket::GetPacketValue(void)
+{
+  return this->chunks->Count();
+}
+
+unsigned int CSourceDescriptionRtcpPacket::GetPacketType(void)
+{
+  return SOURCE_DESCRIPTION_RTCP_PACKET_TYPE;
+}
+
+unsigned int CSourceDescriptionRtcpPacket::GetPacketSize(void)
+{
+  unsigned int size = SOURCE_DESCRIPTION_RTCP_PACKET_HEADER_SIZE + __super::GetPacketSize();
+
+  for (unsigned int i = 0; i < this->GetChunks()->Count(); i++)
+  {
+    CSourceDescriptionChunk *chunk = this->GetChunks()->GetItem(i);
+
+    size += chunk->GetSize();
+  }
+
+  return size;
+}
+
+bool CSourceDescriptionRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetPacket(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetPacketSize();
+
+    for (unsigned int i = 0; (result && (i < this->GetChunks()->Count())); i++)
+    {
+      CSourceDescriptionChunk *chunk = this->GetChunks()->GetItem(i);
+
+      result &= chunk->GetChunk(buffer + position, length - position);
+      position += chunk->GetSize();
+    }
+  }
+
+  return result;
+}
+
+CSourceDescriptionChunkCollection *CSourceDescriptionRtcpPacket::GetChunks(void)
+{
+  return this->chunks;
+}
+
 /* set methods */
 
 /* other methods */
@@ -51,7 +100,7 @@ bool CSourceDescriptionRtcpPacket::Parse(const unsigned char *buffer, unsigned i
   bool result = (this->chunks != NULL);
   result &= __super::Parse(buffer, length);
   result &= (this->packetType == SOURCE_DESCRIPTION_RTCP_PACKET_TYPE);
-  result &= (this->payloadLength >= SOURCE_DESCRIPTION_RTCP_PACKET_HEADER_SIZE);
+  result &= (this->payloadSize >= SOURCE_DESCRIPTION_RTCP_PACKET_HEADER_SIZE);
 
   if (result)
   {
@@ -59,14 +108,14 @@ bool CSourceDescriptionRtcpPacket::Parse(const unsigned char *buffer, unsigned i
     unsigned int position = 0;
 
     // parse chunks
-    while (result && (position < this->payloadLength))
+    while (result && (position < this->payloadSize))
     {
       CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk();
       result &= (chunk != NULL);
 
       if (result)
       {
-        result &= chunk->Parse(this->payload + position, this->payloadLength - position);
+        result &= chunk->Parse(this->payload + position, this->payloadSize - position);
       }
 
       if (result)

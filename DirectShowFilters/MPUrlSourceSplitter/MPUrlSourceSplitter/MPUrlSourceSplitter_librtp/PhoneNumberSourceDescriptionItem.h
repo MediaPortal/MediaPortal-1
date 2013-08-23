@@ -36,11 +36,29 @@ public:
 
   /* get methods */
 
+  // gets phone number source description item type
+  // @return : phone number source description item type
+  virtual unsigned int GetType(void);
+
+  // gets phone number source description item size
+  // @return : phone number source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole phone number source description item into buffer
+  // @param buffer : the buffer to store phone number source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets phone number
   // @return : phone number or NULL if error
-  const wchar_t *GetPhoneNumber(void);
+  virtual const wchar_t *GetPhoneNumber(void);
 
   /* set methods */
+
+  // gets phone number
+  // @return : phone number or NULL if error
+  virtual bool SetPhoneNumber(const wchar_t *phoneNumber);
 
   /* other methods */
 
@@ -57,7 +75,6 @@ protected:
 
   // holds phone number
   wchar_t *phoneNumber;
-
 };
 
 #endif

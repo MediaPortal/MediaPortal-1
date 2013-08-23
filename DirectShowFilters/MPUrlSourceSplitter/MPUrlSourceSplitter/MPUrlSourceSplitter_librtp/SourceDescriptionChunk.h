@@ -41,14 +41,24 @@ public:
   virtual unsigned int GetIdentifier(void);
 
   // gets chunk size
-  // @return : chunk size or UINT_MAX if error
+  // @return : chunk size
   virtual unsigned int GetSize(void);
 
   // gets items in source description chunk
   // @return : source description items
   virtual CSourceDescriptionItemCollection *GetItems(void);
 
+  // get whole source description chunk into buffer
+  // @param buffer : the buffer to store source description chunk
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetChunk(unsigned char *buffer, unsigned int length);
+
   /* set methods */
+
+  // sets SSRC or CSRC of source description chunk
+  // @param identifier : SSRC or CSRC of source description chunk
+  virtual void SetIdentifier(unsigned int identifier);
 
   /* other methods */
 
@@ -65,9 +75,6 @@ protected:
 
   // holds SSRC/CSRC
   unsigned int identifier;
-
-  // holds chunk size
-  unsigned int size;
 
   // holds source description items
   CSourceDescriptionItemCollection *items;

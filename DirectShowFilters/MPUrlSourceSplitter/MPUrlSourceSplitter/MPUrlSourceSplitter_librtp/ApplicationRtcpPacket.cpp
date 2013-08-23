@@ -80,7 +80,7 @@ bool CApplicationRtcpPacket::Parse(const unsigned char *buffer, unsigned int len
 {
   bool result = __super::Parse(buffer, length);
   result &= (this->packetType == APPLICATION_RTCP_PACKET_TYPE);
-  result &= (this->payloadLength >= APPLICATION_RTCP_PACKET_HEADER_SIZE);
+  result &= (this->payloadSize >= APPLICATION_RTCP_PACKET_HEADER_SIZE);
 
   if (result)
   {
@@ -103,7 +103,7 @@ bool CApplicationRtcpPacket::Parse(const unsigned char *buffer, unsigned int len
 
     FREE_MEM(temp);
 
-    this->applicationDataLength = this->payloadLength - position;
+    this->applicationDataLength = this->payloadSize - position;
 
     if (result && (this->applicationDataLength > 0))
     {

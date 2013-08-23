@@ -35,12 +35,55 @@ CPhoneNumberSourceDescriptionItem::~CPhoneNumberSourceDescriptionItem(void)
 
 /* get methods */
 
+unsigned int CPhoneNumberSourceDescriptionItem::GetType(void)
+{
+  return PHONE_NUMBER_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CPhoneNumberSourceDescriptionItem::GetSize(void)
+{
+  unsigned int size = __super::GetSize();
+
+  // it is in UTF-8 encoded string (without NULL terminating character)
+  char *result = ConvertUnicodeToUtf8(this->GetPhoneNumber());
+  size += (result != NULL) ? (strlen(result) - 1) : 0;
+
+  FREE_MEM(result);
+  return size;
+}
+
+bool CPhoneNumberSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetSourceDescriptionItem(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+    char *converted = ConvertUnicodeToUtf8(this->GetPhoneNumber());
+    result &= (converted != NULL);
+
+    if (result)
+    {
+      memcpy(buffer + position, converted, (strlen(converted) - 1));
+    }
+
+    FREE_MEM(converted);
+  }
+
+  return result;
+}
+
 const wchar_t *CPhoneNumberSourceDescriptionItem::GetPhoneNumber(void)
 {
   return this->phoneNumber;
 }
 
 /* set methods */
+
+bool CPhoneNumberSourceDescriptionItem::SetPhoneNumber(const wchar_t *phoneNumber)
+{
+  SET_STRING_RETURN_WITH_NULL(this->phoneNumber, phoneNumber);
+}
 
 /* other methods */
 

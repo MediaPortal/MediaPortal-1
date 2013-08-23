@@ -35,12 +35,55 @@ CToolSourceDescriptionItem::~CToolSourceDescriptionItem(void)
 
 /* get methods */
 
+unsigned int CToolSourceDescriptionItem::GetType(void)
+{
+  return TOOL_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CToolSourceDescriptionItem::GetSize(void)
+{
+  unsigned int size = __super::GetSize();
+
+  // it is in UTF-8 encoded string (without NULL terminating character)
+  char *result = ConvertUnicodeToUtf8(this->GetTool());
+  size += (result != NULL) ? (strlen(result) - 1) : 0;
+
+  FREE_MEM(result);
+  return size;
+}
+
+bool CToolSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetSourceDescriptionItem(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+    char *converted = ConvertUnicodeToUtf8(this->GetTool());
+    result &= (converted != NULL);
+
+    if (result)
+    {
+      memcpy(buffer + position, converted, (strlen(converted) - 1));
+    }
+
+    FREE_MEM(converted);
+  }
+
+  return result;
+}
+
 const wchar_t *CToolSourceDescriptionItem::GetTool(void)
 {
   return this->tool;
 }
 
 /* set methods */
+
+bool CToolSourceDescriptionItem::SetTool(const wchar_t *tool)
+{
+  SET_STRING_RETURN_WITH_NULL(this->tool, tool);
+}
 
 /* other methods */
 

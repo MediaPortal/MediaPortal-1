@@ -40,6 +40,16 @@ CReceiverReportRtcpPacket::~CReceiverReportRtcpPacket(void)
 
 /* get methods */
 
+unsigned int CReceiverReportRtcpPacket::GetPacketValue(void)
+{
+  return this->reportBlocks->Count();
+}
+
+unsigned int CReceiverReportRtcpPacket::GetPacketType(void)
+{
+  return RECEIVER_REPORT_RTCP_PACKET_TYPE;
+}
+
 unsigned int CReceiverReportRtcpPacket::GetSenderSynchronizationSourceIdentifier(void)
 {
   return this->senderSynchronizationSourceIdentifier;
@@ -60,7 +70,44 @@ CReportBlockCollection *CReceiverReportRtcpPacket::GetReportBlocks(void)
   return this->reportBlocks;
 }
 
+unsigned int CReceiverReportRtcpPacket::GetPacketSize(void)
+{
+  // receiver report packet has RTCP_PACKET_HEADER_SIZE + SSRC + RECEIVER_REPORT_REPORT_BLOCK_SIZE * count of blocks
+  return (__super::GetPacketSize() + 4 + RECEIVER_REPORT_REPORT_BLOCK_SIZE * this->GetReportBlocks()->Count());
+}
+
+bool CReceiverReportRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetPacket(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetPacketSize();
+
+    WBE32INC(buffer, position, this->GetSenderSynchronizationSourceIdentifier());
+    for (unsigned int i = 0; i < this->GetReportBlocks()->Count(); i++)
+    {
+      CReportBlock *report = this->GetReportBlocks()->GetItem(i);
+
+      WBE32INC(buffer, position, report->GetSynchronizationSourceIdentifier());
+      WBE8INC(buffer, position, report->GetFractionLost());
+      WBE24INC(buffer, position, report->GetCumulativeNumberOfPacketsLost());
+      WBE32INC(buffer, position, report->GetExtendedHighestSequenceNumberReceived());
+      WBE32INC(buffer, position, report->GetInterarrivalJitter());
+      WBE32INC(buffer, position, report->GetLastSenderReport());
+      WBE32INC(buffer, position, report->GetDelaySinceLastSenderReport());
+    }
+  }
+
+  return result;
+}
+
 /* set methods */
+
+void CReceiverReportRtcpPacket::SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier)
+{
+  this->senderSynchronizationSourceIdentifier = senderSynchronizationSourceIdentifier;
+}
 
 /* other methods */
 
@@ -84,7 +131,7 @@ bool CReceiverReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int 
   bool result = __super::Parse(buffer, length);
   result &= (this->reportBlocks != NULL);
   result &= (this->packetType == RECEIVER_REPORT_RTCP_PACKET_TYPE);
-  result &= (this->payloadLength >= RECEIVER_REPORT_RTCP_PACKET_HEADER_SIZE);
+  result &= (this->payloadSize >= RECEIVER_REPORT_RTCP_PACKET_HEADER_SIZE);
 
   if (result)
   {
@@ -95,7 +142,7 @@ bool CReceiverReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int 
 
     // without padding we must have enough bytes for report blocks
 
-    unsigned int reportBlockAndProfileSpecificExtensions = this->payloadLength - RECEIVER_REPORT_RTCP_PACKET_HEADER_SIZE;
+    unsigned int reportBlockAndProfileSpecificExtensions = this->payloadSize - RECEIVER_REPORT_RTCP_PACKET_HEADER_SIZE;
     unsigned int reportBlockCount = reportBlockAndProfileSpecificExtensions / RECEIVER_REPORT_REPORT_BLOCK_SIZE;
     result &= (this->packetValue == reportBlockCount);
 
@@ -112,11 +159,11 @@ bool CReceiverReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int 
         {
           reportBlock->SetSynchronizationSourceIdentifier(RBE32(this->payload, position));
           reportBlock->SetFractionLost(RBE8(this->payload, (position + 4)));
-          reportBlock->SetCumulativeNumberOfPacketsLost(RBE8(this->payload, (position + 5)));
-          reportBlock->SetExtendedHighestSequenceNumberReceived(RBE8(this->payload, (position + 8)));
-          reportBlock->SetInterarrivalJitter(RBE8(this->payload, (position + 12)));
-          reportBlock->SetLastSenderReport(RBE8(this->payload, (position + 16)));
-          reportBlock->SetDelaySinceLastSenderReport(RBE8(this->payload, (position + 20)));
+          reportBlock->SetCumulativeNumberOfPacketsLost(RBE24(this->payload, (position + 5)));
+          reportBlock->SetExtendedHighestSequenceNumberReceived(RBE32(this->payload, (position + 8)));
+          reportBlock->SetInterarrivalJitter(RBE32(this->payload, (position + 12)));
+          reportBlock->SetLastSenderReport(RBE32(this->payload, (position + 16)));
+          reportBlock->SetDelaySinceLastSenderReport(RBE32(this->payload, (position + 20)));
 
           result &= this->reportBlocks->Add(reportBlock);
         }

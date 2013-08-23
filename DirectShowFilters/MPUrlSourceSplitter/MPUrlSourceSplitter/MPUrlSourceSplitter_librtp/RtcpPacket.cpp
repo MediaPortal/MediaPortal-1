@@ -31,11 +31,12 @@ CRtcpPacket::CRtcpPacket(void)
   this->packetType = UINT_MAX;
   this->packetValue = UINT_MAX;
   this->payload = NULL;
-  this->payloadLength = 0;
+  this->payloadSize = 0;
 }
 
 CRtcpPacket::~CRtcpPacket(void)
 {
+  FREE_MEM(this->payload);
 }
 
 /* get methods */
@@ -55,12 +56,77 @@ const unsigned char *CRtcpPacket::GetPayload(void)
   return this->payload;
 }
 
-unsigned int CRtcpPacket::GetPayloadLength(void)
+unsigned int CRtcpPacket::GetPayloadSize(void)
 {
-  return this->payloadLength;
+  return this->payloadSize;
+}
+
+unsigned int CRtcpPacket::GetPacketSize(void)
+{
+  // for creating packets we assume that derived RTCP packets has payload length zero and payload is NULL
+  return (this->GetPayloadSize() + RTCP_PACKET_HEADER_SIZE);
+}
+
+bool CRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
+{
+  unsigned int size = this->GetPacketSize();
+  bool result = ((buffer != NULL) && (length >= size));
+
+  if (result)
+  {
+    // write RTCP packet header
+    unsigned int position = 0;
+
+    unsigned int header = (RTCP_PACKET_VERSION << 6) + this->GetPacketValue();
+    WBE8INC(buffer, position, header);
+    WBE8INC(buffer, position, this->GetPacketType());
+    WBE16INC(buffer, position, ((size / 4) - 1));
+
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->GetPayload(), memcpy(buffer + position, this->GetPayload(), this->GetPayloadSize()));
+  }
+
+  return result;
 }
 
 /* set methods */
+
+void CRtcpPacket::SetPacketValue(unsigned int packetValue)
+{
+  this->packetValue = packetValue;
+}
+
+void CRtcpPacket::SetPacketType(unsigned int packetType)
+{
+  this->packetType = packetType;
+}
+
+bool CRtcpPacket::SetPayload(const unsigned char *payload, unsigned int payloadLength)
+{
+  bool result = true;
+  FREE_MEM(this->payload);
+  this->payloadSize = payloadLength;
+
+  // payload length + RTCP_PACKET_HEADER_SIZE must be multiple of four
+  result &= (((this->payloadSize + RTCP_PACKET_HEADER_SIZE) % 4) == 0);
+
+  if (this->payloadSize != 0)
+  {
+    result &= (payload != NULL);
+
+    if (result)
+    {
+      this->payload = ALLOC_MEM_SET(this->payload, unsigned char, this->payloadSize, 0);
+      result = (this->payload != NULL);
+
+      if (result)
+      {
+        memcpy(this->payload, payload, this->payloadSize);
+      }
+    }
+  }
+
+  return result;
+}
 
 /* other methods */
 
@@ -71,7 +137,7 @@ void CRtcpPacket::Clear(void)
   this->packetType = UINT_MAX;
   this->packetValue = UINT_MAX;
   FREE_MEM(this->payload);
-  this->payloadLength = 0;
+  this->payloadSize = 0;
 }
 
 bool CRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
@@ -113,15 +179,15 @@ bool CRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
     if (result)
     {
       // from position to this->size - this->paddingLength is payload
-      this->payloadLength = this->size - this->paddingLength - position;
-      if (this->payloadLength > 0)
+      this->payloadSize = this->size - this->paddingLength - position;
+      if (this->payloadSize > 0)
       {
-        this->payload = ALLOC_MEM_SET(this->payload, unsigned char, this->payloadLength, 0);
+        this->payload = ALLOC_MEM_SET(this->payload, unsigned char, this->payloadSize, 0);
         result &= (this->payload != NULL);
 
         if (result)
         {
-          memcpy(this->payload, buffer + position, this->payloadLength);
+          memcpy(this->payload, buffer + position, this->payloadSize);
         }
       }
     }

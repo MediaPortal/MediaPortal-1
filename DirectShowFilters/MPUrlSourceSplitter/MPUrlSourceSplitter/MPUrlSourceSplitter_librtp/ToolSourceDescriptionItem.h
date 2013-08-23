@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets tool source description item type
+  // @return : tool source description item type
+  virtual unsigned int GetType(void);
+
+  // gets tool source description item size
+  // @return : tool source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole tool source description item into buffer
+  // @param buffer : the buffer to store tool source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets tool
   // @return : tool or NULL if error
-  const wchar_t *GetTool(void);
+  virtual const wchar_t *GetTool(void);
 
   /* set methods */
+
+  // sets tool
+  // @param : the tool to set
+  // @return : true if successful, false otherwise
+  virtual bool SetTool(const wchar_t *tool);
 
   /* other methods */
 

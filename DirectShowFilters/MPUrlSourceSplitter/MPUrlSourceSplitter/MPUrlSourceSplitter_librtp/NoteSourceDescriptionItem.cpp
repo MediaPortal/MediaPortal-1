@@ -35,12 +35,55 @@ CNoteSourceDescriptionItem::~CNoteSourceDescriptionItem(void)
 
 /* get methods */
 
+unsigned int CNoteSourceDescriptionItem::GetType(void)
+{
+  return NOTE_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CNoteSourceDescriptionItem::GetSize(void)
+{
+  unsigned int size = __super::GetSize();
+
+  // it is in UTF-8 encoded string (without NULL terminating character)
+  char *result = ConvertUnicodeToUtf8(this->GetNote());
+  size += (result != NULL) ? (strlen(result) - 1) : 0;
+
+  FREE_MEM(result);
+  return size;
+}
+
+bool CNoteSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetSourceDescriptionItem(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+    char *converted = ConvertUnicodeToUtf8(this->GetNote());
+    result &= (converted != NULL);
+
+    if (result)
+    {
+      memcpy(buffer + position, converted, (strlen(converted) - 1));
+    }
+
+    FREE_MEM(converted);
+  }
+
+  return result;
+}
+
 const wchar_t *CNoteSourceDescriptionItem::GetNote(void)
 {
   return this->note;
 }
 
 /* set methods */
+
+bool CNoteSourceDescriptionItem::SetNote(const wchar_t *note)
+{
+  SET_STRING_RETURN_WITH_NULL(this->note, note);
+}
 
 /* other methods */
 

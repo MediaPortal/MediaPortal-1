@@ -37,6 +37,20 @@ public:
 
   /* get methods */
 
+  // gets source description item type
+  // @return : source description item type
+  virtual unsigned int GetType(void);
+
+  // gets source description item size
+  // @return : source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole NULL source description item into buffer
+  // @param buffer : the buffer to store NULL source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   /* set methods */
 
   /* other methods */

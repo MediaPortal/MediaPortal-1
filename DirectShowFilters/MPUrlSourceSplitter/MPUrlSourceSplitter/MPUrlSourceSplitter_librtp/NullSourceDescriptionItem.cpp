@@ -36,6 +36,32 @@ CNullSourceDescriptionItem::~CNullSourceDescriptionItem(void)
 
 /* get methods */
 
+unsigned int CNullSourceDescriptionItem::GetType(void)
+{
+  return NULL_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CNullSourceDescriptionItem::GetSize(void)
+{
+  return NULL_SOURCE_DESCRIPTION_ITEM_HEADER;
+}
+
+bool CNullSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  unsigned int size = this->GetSize();
+  bool result = ((buffer != NULL) && (length >= size));
+
+  if (result)
+  {
+    // write NULL source description item header
+    unsigned int position = 0;
+
+    WBE8INC(buffer, position, this->GetType());
+  }
+
+  return result;
+}
+
 /* set methods */
 
 /* other methods */
@@ -60,7 +86,6 @@ bool CNullSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int
 
     RBE8INC(buffer, position, this->type);
     result &= (this->type == NULL_SOURCE_DESCRIPTION_ITEM_TYPE);
-    this->size  = NULL_SOURCE_DESCRIPTION_ITEM_HEADER;
   }
 
   if (!result)

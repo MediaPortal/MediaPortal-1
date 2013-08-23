@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets email source description item type
+  // @return : email source description item type
+  virtual unsigned int GetType(void);
+
+  // gets email source description item size
+  // @return : email source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole email source description item into buffer
+  // @param buffer : the buffer to store email source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets e-mail
   // @return : e-mail or NULL if error
-  const wchar_t *GetEmail(void);
+  virtual const wchar_t *GetEmail(void);
 
   /* set methods */
+
+  // sets e-mail
+  // @param email : the email to set
+  // @return : true if successful, false otherwise
+  virtual bool SetEmail(const wchar_t *email);
 
   /* other methods */
 
@@ -57,7 +76,6 @@ protected:
 
   // holds e-mail
   wchar_t *email;
-
 };
 
 #endif

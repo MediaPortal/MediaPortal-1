@@ -93,6 +93,14 @@ public:
 
   /* get methods */
 
+  // gets packet value
+  // @return : packet value or UINT_MAX if error
+  virtual unsigned int GetPacketValue(void);
+
+  // gets packet type
+  // @return : packet type or UINT_MAX if error
+  virtual unsigned int GetPacketType(void);
+
   virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
 
   virtual const unsigned char *GetProfileSpecificExtensions(void);
@@ -101,7 +109,21 @@ public:
 
   virtual CReportBlockCollection *GetReportBlocks(void);
 
+  // gets RTCP packet size
+  // @return : RTCP packet size
+  virtual unsigned int GetPacketSize(void);
+
+  // gets RTCP packet content
+  // @param buffer : the buffer to store RTCP packet content
+  // @param length : the length of buffer to store RTCP packet
+  // @return : true if successful, false otherwise
+  virtual bool GetPacket(unsigned char *buffer, unsigned int length);
+
   /* set methods */
+
+  // sets SSRC of receiver report RTCP packet
+  // @param senderSynchronizationSourceIdentifier : SSRC of receiver report RTCP packet
+  virtual void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
 
   /* other methods */
 

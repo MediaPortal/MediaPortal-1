@@ -115,7 +115,7 @@ bool CSenderReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int le
   bool result = __super::Parse(buffer, length);
   result &= (this->reportBlocks != NULL);
   result &= (this->packetType == SENDER_REPORT_RTCP_PACKET_TYPE);
-  result &= (this->payloadLength >= SENDER_REPORT_RTCP_PACKET_HEADER_SIZE);
+  result &= (this->payloadSize >= SENDER_REPORT_RTCP_PACKET_HEADER_SIZE);
 
   if (result)
   {
@@ -130,7 +130,7 @@ bool CSenderReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int le
 
     // without padding we must have enough bytes for report blocks
 
-    unsigned int reportBlockAndProfileSpecificExtensions = this->payloadLength - position;
+    unsigned int reportBlockAndProfileSpecificExtensions = this->payloadSize - position;
     unsigned int reportBlockCount = reportBlockAndProfileSpecificExtensions / SENDER_REPORT_REPORT_BLOCK_SIZE;
     result &= (this->packetValue == reportBlockCount);
 

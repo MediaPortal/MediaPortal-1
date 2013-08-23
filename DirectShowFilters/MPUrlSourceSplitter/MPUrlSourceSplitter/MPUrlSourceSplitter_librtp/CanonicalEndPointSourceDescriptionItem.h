@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets canonical end point source description item type
+  // @return : canonical end point source description item type
+  virtual unsigned int GetType(void);
+
+  // gets canonical end point source description item size
+  // @return : canonical end point source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole canonical end point source description item into buffer
+  // @param buffer : the buffer to store canonical end point source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets canonical end-point name
   // @return : canonical end-point name or NULL if error
-  const wchar_t *GetEndPointName(void);
+  virtual const wchar_t *GetEndPointName(void);
 
   /* set methods */
+
+  // sets canonical end-point name
+  // @param endPointName : the canonical end-point name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetEndPointName(const wchar_t *endPointName);
 
   /* other methods */
 
@@ -57,7 +76,6 @@ protected:
 
   // holds end-point name
   wchar_t *endPointName;
-
 };
 
 #endif

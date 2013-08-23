@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets note source description item type
+  // @return : note source description item type
+  virtual unsigned int GetType(void);
+
+  // gets note source description item size
+  // @return : note source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole note source description item into buffer
+  // @param buffer : the buffer to store note source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets note
   // @return : note or NULL if error
-  const wchar_t *GetNote(void);
+  virtual const wchar_t *GetNote(void);
 
   /* set methods */
+
+  // sets note
+  // @param note : the note to set
+  // @return : true if successful, false otherwise
+  virtual bool SetNote(const wchar_t *note);
 
   /* other methods */
 
@@ -57,7 +76,6 @@ protected:
 
   // holds note
   wchar_t *note;
-
 };
 
 #endif

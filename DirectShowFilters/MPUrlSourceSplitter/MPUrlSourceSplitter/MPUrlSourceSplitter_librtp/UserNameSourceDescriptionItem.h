@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets user name source description item type
+  // @return : user name source description item type
+  virtual unsigned int GetType(void);
+
+  // gets user name source description item size
+  // @return : user name source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole user name source description item into buffer
+  // @param buffer : the buffer to store user name source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets user name
   // @return : user name or NULL if error
-  const wchar_t *GetUserName(void);
+  virtual const wchar_t *GetUserName(void);
 
   /* set methods */
+
+  // sets user name
+  // @param userName : the user name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetUserName(const wchar_t *userName);
 
   /* other methods */
 

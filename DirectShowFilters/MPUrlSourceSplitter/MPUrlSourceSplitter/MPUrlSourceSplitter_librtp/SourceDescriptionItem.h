@@ -23,7 +23,7 @@
 #ifndef __SOURCE_DESCRIPTION_ITEM_DEFINED
 #define __SOURCE_DESCRIPTION_ITEM_DEFINED
 
-#define SOURCE_DESCRIPTION_ITEM_HEADER                                2       // source descrpition item header size
+#define SOURCE_DESCRIPTION_ITEM_HEADER                                2       // source descripition item header size
 
 class CSourceDescriptionItem
 {
@@ -50,6 +50,12 @@ public:
   // @return : payload size of source description item
   virtual unsigned int GetPayloadSize(void);
 
+  // get whole source description item into buffer
+  // @param buffer : the buffer to store source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   /* set methods */
 
   /* other methods */
@@ -67,9 +73,6 @@ protected:
 
   // holds source description item type
   unsigned int type;
-
-  // holds source description item size
-  unsigned int size;
 
   // holds payload
   unsigned char *payload;

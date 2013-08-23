@@ -35,12 +35,55 @@ CCanonicalEndPointSourceDescriptionItem::~CCanonicalEndPointSourceDescriptionIte
 
 /* get methods */
 
+unsigned int CCanonicalEndPointSourceDescriptionItem::GetType(void)
+{
+  return CANONICAL_END_POINT_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CCanonicalEndPointSourceDescriptionItem::GetSize(void)
+{
+  unsigned int size = __super::GetSize();
+
+  // it is in UTF-8 encoded string (without NULL terminating character)
+  char *result = ConvertUnicodeToUtf8(this->GetEndPointName());
+  size += (result != NULL) ? (strlen(result) - 1) : 0;
+
+  FREE_MEM(result);
+  return size;
+}
+
+bool CCanonicalEndPointSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetSourceDescriptionItem(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+    char *converted = ConvertUnicodeToUtf8(this->GetEndPointName());
+    result &= (converted != NULL);
+
+    if (result)
+    {
+      memcpy(buffer + position, converted, (strlen(converted) - 1));
+    }
+
+    FREE_MEM(converted);
+  }
+
+  return result;
+}
+
 const wchar_t *CCanonicalEndPointSourceDescriptionItem::GetEndPointName(void)
 {
   return this->endPointName;
 }
 
 /* set methods */
+
+bool CCanonicalEndPointSourceDescriptionItem::SetEndPointName(const wchar_t *endPointName)
+{
+  SET_STRING_RETURN_WITH_NULL(this->endPointName, endPointName);
+}
 
 /* other methods */
 

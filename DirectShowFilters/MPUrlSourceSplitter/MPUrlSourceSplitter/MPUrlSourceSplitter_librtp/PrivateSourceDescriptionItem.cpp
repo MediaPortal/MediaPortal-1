@@ -33,6 +33,21 @@ CPrivateSourceDescriptionItem::~CPrivateSourceDescriptionItem(void)
 
 /* get methods */
 
+unsigned int CPrivateSourceDescriptionItem::GetType(void)
+{
+  return PRIVATE_SOURCE_DESCRIPTION_ITEM_TYPE;
+}
+
+unsigned int CPrivateSourceDescriptionItem::GetSize(void)
+{
+  return __super::GetSize();
+}
+
+bool CPrivateSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  return __super::GetSourceDescriptionItem(buffer, length);
+}
+
 /* set methods */
 
 /* other methods */

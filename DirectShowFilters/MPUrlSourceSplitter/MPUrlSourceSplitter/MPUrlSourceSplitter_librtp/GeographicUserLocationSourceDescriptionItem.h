@@ -36,11 +36,30 @@ public:
 
   /* get methods */
 
+  // gets geographic user location source description item type
+  // @return : geographic user location source description item type
+  virtual unsigned int GetType(void);
+
+  // gets geographic user location source description item size
+  // @return : geographic user location source description item size
+  virtual unsigned int GetSize(void);
+
+  // get whole geographic user location source description item into buffer
+  // @param buffer : the buffer to store geographic user location source description item
+  // @param length : the length of buffer
+  // @return : true if successful, false otherwise
+  virtual bool GetSourceDescriptionItem(unsigned char *buffer, unsigned int length);
+
   // gets geographic user location
   // @return : geographic user location name or NULL if error
-  const wchar_t *GetGeographicUserLocation(void);
+  virtual const wchar_t *GetGeographicUserLocation(void);
 
   /* set methods */
+
+  // sets geographic user location
+  // @param geographicUserLocation : geographic user location name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetGeographicUserLocation(const wchar_t *geographicUserLocation);
 
   /* other methods */
 
@@ -57,7 +76,6 @@ protected:
 
   // holds geographic user location
   wchar_t *geographicUserLocation;
-
 };
 
 #endif

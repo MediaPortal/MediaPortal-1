@@ -72,11 +72,11 @@ bool CGoodbyeRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
   bool result = (this->identifiers != NULL);
   result &= __super::Parse(buffer, length);
   result &= (this->packetType == GOODBYE_RTCP_PACKET_TYPE);
-  result &= (this->payloadLength >= GOODBYE_RTCP_PACKET_HEADER_SIZE);
+  result &= (this->payloadSize >= GOODBYE_RTCP_PACKET_HEADER_SIZE);
 
   // we must have enough bytes for SSRC/CSRC and optionally for reason
   // in this->packetValue is count of SSRC/CSRC (each of 4 bytes)
-  result &= (this->payloadLength >= (this->packetValue * 4));
+  result &= (this->payloadSize >= (this->packetValue * 4));
 
   if (result)
   {
@@ -104,12 +104,12 @@ bool CGoodbyeRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
       }
     }
 
-    if (result && (position < this->payloadLength))
+    if (result && (position < this->payloadSize))
     {
       // there are still some data, it have to be reason
       RBE8INC_DEFINE(this->payload, position, reasonLength, unsigned int);
       result &= (reasonLength != 0);
-      result &= ((position + reasonLength) < this->payloadLength);
+      result &= ((position + reasonLength) < this->payloadSize);
 
       if (result)
       {

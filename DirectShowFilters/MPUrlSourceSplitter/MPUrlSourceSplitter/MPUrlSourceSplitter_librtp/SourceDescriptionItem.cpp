@@ -28,7 +28,6 @@
 CSourceDescriptionItem::CSourceDescriptionItem(void)
 {
   this->type = UINT_MAX;
-  this->size = UINT_MAX;
   this->payload = NULL;
   this->payloadSize = 0;
 }
@@ -47,7 +46,7 @@ unsigned int CSourceDescriptionItem::GetType(void)
 
 unsigned int CSourceDescriptionItem::GetSize(void)
 {
-  return this->size;
+  return (SOURCE_DESCRIPTION_ITEM_HEADER + this->GetPayloadSize());
 }
 
 const unsigned char *CSourceDescriptionItem::GetPayload(void)
@@ -60,6 +59,26 @@ unsigned int CSourceDescriptionItem::GetPayloadSize(void)
   return this->payloadSize;
 }
 
+bool CSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
+{
+  unsigned int size = this->GetSize();
+  bool result = ((buffer != NULL) && (length >= size));
+
+  if (result)
+  {
+    // write source description item header
+    unsigned int position = 0;
+
+    WBE8INC(buffer, position, this->GetType());
+    WBE8INC(buffer, position, (size - SOURCE_DESCRIPTION_ITEM_HEADER));
+    WBE16INC(buffer, position, (size / 4) - 1);
+
+    CHECK_CONDITION_NOT_NULL_EXECUTE(this->GetPayload(), memcpy(buffer + position, this->GetPayload(), this->GetPayloadSize()));
+  }
+
+  return result;
+}
+
 /* set methods */
 
 /* other methods */
@@ -67,7 +86,6 @@ unsigned int CSourceDescriptionItem::GetPayloadSize(void)
 void CSourceDescriptionItem::Clear(void)
 {
   this->type = UINT_MAX;
-  this->size = UINT_MAX;
   FREE_MEM(this->payload);
   this->payloadSize = 0;
 }
@@ -81,15 +99,16 @@ bool CSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int len
     this->Clear();
 
     unsigned int position = 0;
+    unsigned int size = 0;
 
     RBE8INC(buffer, position, this->type);
-    RBE8INC(buffer, position, this->size);
+    RBE8INC(buffer, position, size);
 
     // in size is not included two already read bytes
-    this->payloadSize = this->size;
-    this->size += SOURCE_DESCRIPTION_ITEM_HEADER;
+    this->payloadSize = size;
+    size += SOURCE_DESCRIPTION_ITEM_HEADER;
 
-    result &= (length >= this->size);
+    result &= (length >= size);
 
     if ((result) && (this->payloadSize != 0))
     {
