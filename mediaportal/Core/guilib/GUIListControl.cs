@@ -866,17 +866,19 @@ namespace MediaPortal.GUI.Library
         // override text color if item is on a remote folder
         if (item.IsRemote)
         {
-          color = _remoteColor;
-          if (item.IsDownloading)
-          {
-            color = _downloadColor;
-          }
+          color = item.IsDownloading ? _downloadColor : _remoteColor; 
         }
 
         // override text color if item is a BD or DVD folder
         if (item.IsBdDvdFolder)
         {
           color = _bdDvdDirectoryColor;
+        }
+
+        // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
+        if (!gotFocus && !item.Selected)
+        {
+          color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
         }
 
         // if control is not in focus apply color dimming
@@ -903,18 +905,8 @@ namespace MediaPortal.GUI.Library
             // set position for rendering
             label2.SetPosition(positionX - GUIGraphicsContext.ScaleHorizontal(6), positionY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
 
-            // apply unfocusedAlpha if label is not selected
-            if (!gotFocus)
-            {
-              // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering 
-              label2.TextColor = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb() : color;
-
-              // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
-              if (!item.Selected && _unfocusedAlphaApplyToAll)
-              {
-                label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-              }
-            }
+            // set label text color
+            label2.TextColor = color;
 
             // set text, alignment and font for rendering
             label2.Label = item.Label2;
@@ -981,6 +973,12 @@ namespace MediaPortal.GUI.Library
           color = _bdDvdDirectoryColor;
         }
 
+        // apply unfocusedAlpha to color if item is not selected and plugin didn't set it as selected
+        if (!gotFocus && !item.Selected)
+        {
+          color = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
+        }
+
         // if control is not in focus apply color dimming
         if (!Focus)
         {
@@ -1003,18 +1001,8 @@ namespace MediaPortal.GUI.Library
             // set position for rendering
             label3.SetPosition(positionX, ypos);
 
-            // apply unfocusedAlpha if label is not selected
-            if (!gotFocus)
-            {
-              // apply unfocusedAlpha if control is in focus, else use color in its current state for rendering
-              label3.TextColor = Focus ? Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int) color)).ToArgb() : color;
-
-              // apply unfocused alpha if plugin sets label as not selected and unfocused alpha should be applied to all labels
-              if (!item.Selected && _unfocusedAlphaApplyToAll)
-              {
-                label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)color)).ToArgb();
-              }
-            }
+            // set label text color
+            label3.TextColor = color;
 
             // set label text for rendering
             label3.Label = item.Label3;
