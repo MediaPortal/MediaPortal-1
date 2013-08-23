@@ -153,7 +153,7 @@ namespace MediaPortal.Util
      
       if (preGapSec > Duration)
       {
-        preGapSec = Duration / 100 * 20;
+        preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
       }
 
       TimeBetweenThumbs = (Duration - preGapSec) / ((PreviewColumns * PreviewRows) + 1);

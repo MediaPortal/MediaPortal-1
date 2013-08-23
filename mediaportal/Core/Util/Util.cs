@@ -685,6 +685,7 @@ namespace MediaPortal.Util
       }
 
       string strThumb = string.Empty;
+      string strThumbFolder = string.Empty;
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant())))
       {
@@ -783,6 +784,7 @@ namespace MediaPortal.Util
         if (item.Label != "..")
         {
           strThumb = item.Path + @"\folder.jpg";
+          strThumbFolder = strThumb;
           if (FileExistsInCache(strThumb))
           {
             item.ThumbnailImage = strThumb;
@@ -791,7 +793,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      if (!string.IsNullOrEmpty(strThumb))
+      if (!string.IsNullOrEmpty(strThumb) && !strThumb.Equals(strThumbFolder))
       {
         strThumb = ConvertToLargeCoverArt(strThumb);
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
@@ -901,6 +903,7 @@ namespace MediaPortal.Util
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = Util.Utils.GetVideosThumbPathname(path);
+      string strThumbLarge = Util.Utils.GetVideosThumbPathname(path);
       if (FileExistsInCache(strThumb))
       {
         return;
@@ -943,9 +946,11 @@ namespace MediaPortal.Util
             if (Picture.CreateThumbnail(thumb, strThumb, (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false))
             {
-              if (Picture.CreateThumbnail(thumb, Utils.ConvertToLargeCoverArt(strThumb), (int)Thumbs.ThumbLargeResolution,
+              if (Picture.CreateThumbnail(thumb, strThumbLarge, (int)Thumbs.ThumbLargeResolution,
                                         (int)Thumbs.ThumbLargeResolution, 0, false))
               {
+                item.ThumbnailImage = strThumbLarge;
+                item.IconImage = strThumb;
                 SetThumbnails(ref item);
               }
             }
