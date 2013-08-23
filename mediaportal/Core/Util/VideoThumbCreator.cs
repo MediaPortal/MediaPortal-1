@@ -175,7 +175,7 @@ namespace MediaPortal.Util
         string ShareThumbTemp = Path.GetTempPath() + Path.GetFileName(ShareThumb);
         // ffmpeg
         string ffmpegFallbackArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", PreviewColumns, PreviewRows);
-        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}.jpg\"", 5, aVideoPath, TimeToSeek, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
+        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}.jpg\"", 5, aVideoPath, TimeToSeek, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
         
         if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb))
             // No thumb in share although it should be there 
@@ -201,7 +201,7 @@ namespace MediaPortal.Util
             TimeOffset = preGapSec + i * TimeBetweenThumbs;
 
             ffmpegArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile=1x1");
-            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
             Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
             Log.Debug("VideoThumbCreator: thumb creation {0}", ExtractorArgs);
             if (!Success)

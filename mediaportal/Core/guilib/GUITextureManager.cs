@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (Exception) {}
+            catch (Exception) { }
 
             for (int i = 0; i < newCache.Frames; ++i)
             {
@@ -516,14 +516,7 @@ namespace MediaPortal.GUI.Library
       try
       {
 #if DO_RESAMPLE
-        try
-        {
-          imgSrc=ImageFast.FromFile(fileName);
-        }
-        catch (Exception)
-        {
-          imgSrc=Image.FromFile(fileName);
-        }
+        imgSrc=Image.FromFile(fileName);
         if (imgSrc==null) return null;
 				//Direct3D prefers textures which height/width are a power of 2
 				//doing this will increases performance
@@ -723,7 +716,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        if (string.IsNullOrEmpty(fileName) || !MediaPortal.Util.Utils.FileExistsInCache(fileName))
+        if (string.IsNullOrEmpty(fileName))
         {
           return;
         }
@@ -790,7 +783,7 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsTemporary(string fileName)
     {
-      if (String.IsNullOrEmpty(fileName) || !MediaPortal.Util.Utils.FileExistsInCache(fileName))
+      if (String.IsNullOrEmpty(fileName))
       {
         return false;
       }

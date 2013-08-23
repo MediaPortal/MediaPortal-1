@@ -3737,39 +3737,41 @@ namespace MediaPortal.Util
         {
           try
           {
-            img = ImageFast.FromFile(strFileName);
+            using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+            {
+              using (img = Image.FromStream(fs, true, false))
+              {
+                int iRotation = Util.Picture.GetRotateByExif(img);
+                switch (iRotation)
+                {
+                  case 1:
+                    img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+                  case 2:
+                    img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
+                  case 3:
+                    img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    break;
+                  default:
+                    break;
+                }
+                if (img != null)
+                  g.DrawImage(img, x, y, w, h);
+              }
+            }
           }
-          catch (Exception)
+          catch
+            (OutOfMemoryException)
           {
-            img = Image.FromFile(strFileName);
+            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!",
+                     strFileName);
           }
-          int iRotation = Util.Picture.GetRotateByExif(img);
-          switch (iRotation)
-          {
-            case 1:
-              img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-              break;
-            case 2:
-              img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-              break;
-            case 3:
-              img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-              break;
-            default:
-              break;
-          }
-          if (img != null)
-            g.DrawImage(img, x, y, w, h);
-        }
-        catch (OutOfMemoryException)
-        {
-          Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
         }
         catch (Exception ex)
         {
           Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
-        //}
       }
       finally
       {
