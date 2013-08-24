@@ -85,16 +85,16 @@ public:
   /* get methods */
 
   // gets packet value
-  // @return : packet value or UINT_MAX if error
+  // @return : packet value
   virtual unsigned int GetPacketValue(void);
 
   // gets packet type
-  // @return : packet type or UINT_MAX if error
+  // @return : packet type
   virtual unsigned int GetPacketType(void);
 
   // gets RTCP packet size
   // @return : RTCP packet size
-  virtual unsigned int GetPacketSize(void);
+  virtual unsigned int GetSize(void);
 
   // gets RTCP packet content
   // @param buffer : the buffer to store RTCP packet content

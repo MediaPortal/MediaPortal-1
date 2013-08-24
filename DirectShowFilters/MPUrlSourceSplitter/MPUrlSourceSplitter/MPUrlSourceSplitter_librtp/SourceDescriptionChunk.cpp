@@ -29,7 +29,7 @@
 
 CSourceDescriptionChunk::CSourceDescriptionChunk(void)
 {
-  this->identifier = UINT_MAX;
+  this->identifier = 0;
   this->items = new CSourceDescriptionItemCollection();
 }
 
@@ -49,16 +49,31 @@ unsigned int CSourceDescriptionChunk::GetSize(void)
 {
   // each source description chunk must be aligned to 32-bit boundary
   unsigned int size = 4;
+  bool foundNullSourceDescriptionItem = false;
   for (unsigned int i = 0; i < this->GetItems()->Count(); i++)
   {
     CSourceDescriptionItem *item = this->GetItems()->GetItem(i);
 
+    foundNullSourceDescriptionItem |= (item->GetType() == NULL_SOURCE_DESCRIPTION_ITEM_TYPE);
+
     size += item->GetSize();
+  }
+
+  // each chunk must be ended with NULL source description item
+  // if not found, add one NULL source description item
+  if (!foundNullSourceDescriptionItem)
+  {
+    size += NULL_SOURCE_DESCRIPTION_ITEM_HEADER;
   }
 
   if ((size % 4) != 0)
   {
     size += (4 - (size % 4));
+  }
+
+  if (size < SOURCE_DESCRIPTION_CHUNK_MIN_SIZE)
+  {
+    size = SOURCE_DESCRIPTION_CHUNK_MIN_SIZE;
   }
 
   return size;
@@ -109,7 +124,7 @@ void CSourceDescriptionChunk::SetIdentifier(unsigned int identifier)
 
 void CSourceDescriptionChunk::Clear(void)
 {
-  this->identifier = UINT_MAX;
+  this->identifier = 0;
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->items, this->items->Clear());
 }
 
@@ -155,17 +170,10 @@ bool CSourceDescriptionChunk::Parse(const unsigned char *buffer, unsigned int le
       }
     }
 
-    FREE_MEM_CLASS(factory);
+    // by specification each chunk must be ended with NULL source description item
+    result &= nullSourceDescriptionItemFound;
 
-    //if (result)
-    //{
-    //  // each source description chunk must be aligned to 32-bit boundary
-    //  this->size = position;
-    //  if ((this->size % 4) != 0)
-    //  {
-    //    this->size += (4 - (this->size % 4));
-    //  }
-    //}
+    FREE_MEM_CLASS(factory);
   }
 
   if (!result)

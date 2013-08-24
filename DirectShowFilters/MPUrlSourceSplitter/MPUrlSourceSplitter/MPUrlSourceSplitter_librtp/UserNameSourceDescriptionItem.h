@@ -76,7 +76,6 @@ protected:
 
   // holds user name
   wchar_t *userName;
-
 };
 
 #endif

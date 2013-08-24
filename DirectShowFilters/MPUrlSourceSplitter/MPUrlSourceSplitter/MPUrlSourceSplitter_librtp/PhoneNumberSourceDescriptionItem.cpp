@@ -26,6 +26,7 @@ CPhoneNumberSourceDescriptionItem::CPhoneNumberSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
   this->phoneNumber = NULL;
+  this->type = PHONE_NUMBER_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CPhoneNumberSourceDescriptionItem::~CPhoneNumberSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CPhoneNumberSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetPhoneNumber());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CPhoneNumberSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CPhoneNumberSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->phoneNumber);
+  this->type = PHONE_NUMBER_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CPhoneNumberSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

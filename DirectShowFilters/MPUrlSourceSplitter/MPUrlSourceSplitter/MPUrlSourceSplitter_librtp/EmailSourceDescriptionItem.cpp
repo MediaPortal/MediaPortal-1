@@ -26,6 +26,7 @@ CEmailSourceDescriptionItem::CEmailSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
   this->email = NULL;
+  this->type = EMAIL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CEmailSourceDescriptionItem::~CEmailSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CEmailSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetEmail());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CEmailSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CEmailSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->email);
+  this->type = EMAIL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CEmailSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

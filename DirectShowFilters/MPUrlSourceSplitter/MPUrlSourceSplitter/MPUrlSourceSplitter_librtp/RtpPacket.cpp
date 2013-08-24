@@ -28,9 +28,6 @@
 CRtpPacket::CRtpPacket(void)
   : CBaseRtpPacket()
 {
-  this->payload = NULL;
-  this->payloadLength = 0;
-
   this->contributeSourceIdentifiers = new CContributeSourceIdentifierCollection();
   this->payloadType = UINT_MAX;
   this->sequenceNumber = UINT_MAX;
@@ -43,12 +40,27 @@ CRtpPacket::CRtpPacket(void)
 
 CRtpPacket::~CRtpPacket(void)
 {
-  FREE_MEM(this->payload);
   FREE_MEM(this->extensionHeader);
   FREE_MEM_CLASS(this->contributeSourceIdentifiers);
 }
 
 /* get methods */
+
+unsigned int CRtpPacket::GetSize(void)
+{
+  unsigned int size = RTP_PACKET_HEADER_SIZE;
+  size += 4 * this->contributeSourceIdentifiers->Count();
+
+  if (this->IsExtended())
+  {
+    size += 4 + this->extensionHeaderLength;
+  }
+
+  size += this->GetPayloadSize();
+  size += this->paddingSize;
+
+  return size;
+}
 
 unsigned int CRtpPacket::GetPayloadType(void)
 {
@@ -75,9 +87,9 @@ const unsigned char *CRtpPacket::GetPayload(void)
   return this->payload;
 }
 
-unsigned int CRtpPacket::GetPayloadLength(void)
+unsigned int CRtpPacket::GetPayloadSize(void)
 {
-  return this->payloadLength;
+  return this->payloadSize;
 }
 
 /* set methods */
@@ -185,18 +197,18 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
       if (position < length)
       {
         // there are still some data in packet
-        this->payloadLength = length - position;
-        this->payload = ALLOC_MEM_SET(this->payload, unsigned char, this->payloadLength, 0);
+        this->payloadSize = length - position;
+        this->payload = ALLOC_MEM_SET(this->payload, unsigned char, this->payloadSize, 0);
         result &= (this->payload != NULL);
 
         if (result)
         {
-          memcpy(this->payload, buffer + position, this->payloadLength);
-          position += this->payloadLength;
+          memcpy(this->payload, buffer + position, this->payloadSize);
+          position += this->payloadSize;
 
           if ((this->flags & FLAG_RTP_PACKET_PADDING) != 0)
           {
-            this->paddingLength = RBE8(this->payload, this->payloadLength - 1) & 0xFF;
+            this->paddingSize = RBE8(this->payload, this->payloadSize - 1) & 0xFF;
           }
         }
       }
@@ -204,7 +216,6 @@ bool CRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
 
     if (result)
     {
-      this->size = position;
       this->baseType = RTP_PACKET_BASE_TYPE;
     }
   }
@@ -221,11 +232,8 @@ void CRtpPacket::Clear(void)
 {
   __super::Clear();
 
-  FREE_MEM(this->payload);
   FREE_MEM(this->extensionHeader);
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->contributeSourceIdentifiers, this->contributeSourceIdentifiers->Clear());
-
-  this->payloadLength = 0;
 
   this->payloadType = UINT_MAX;
   this->sequenceNumber = UINT_MAX;

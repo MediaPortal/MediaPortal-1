@@ -26,6 +26,7 @@ CUserNameSourceDescriptionItem::CUserNameSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
   this->userName = NULL;
+  this->type = USER_NAME_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CUserNameSourceDescriptionItem::~CUserNameSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CUserNameSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetUserNameW());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CUserNameSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buf
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CUserNameSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->userName);
+  this->type = USER_NAME_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CUserNameSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

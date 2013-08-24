@@ -1100,7 +1100,7 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
       {
         // in case of RTP packet
         // add payload to track received data
-        result &= (track->GetDownloadResponse()->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadLength(), track->GetDownloadResponse()->GetReceivedData()->GetBufferSize() * 2) == rtpPacket->GetPayloadLength());
+        result &= (track->GetDownloadResponse()->GetReceivedData()->AddToBufferWithResize(rtpPacket->GetPayload(), rtpPacket->GetPayloadSize(), track->GetDownloadResponse()->GetReceivedData()->GetBufferSize() * 2) == rtpPacket->GetPayloadSize());
       }
     }
   }

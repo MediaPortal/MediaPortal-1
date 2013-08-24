@@ -26,7 +26,7 @@
 CReceiverReportRtcpPacket::CReceiverReportRtcpPacket(void)
   : CRtcpPacket()
 {
-  this->senderSynchronizationSourceIdentifier = UINT_MAX;
+  this->senderSynchronizationSourceIdentifier = 0;
   this->profileSpecificExtensions = NULL;
   this->profileSpecificExtensionsLength = 0;
   this->reportBlocks = new CReportBlockCollection();
@@ -70,10 +70,10 @@ CReportBlockCollection *CReceiverReportRtcpPacket::GetReportBlocks(void)
   return this->reportBlocks;
 }
 
-unsigned int CReceiverReportRtcpPacket::GetPacketSize(void)
+unsigned int CReceiverReportRtcpPacket::GetSize(void)
 {
   // receiver report packet has RTCP_PACKET_HEADER_SIZE + SSRC + RECEIVER_REPORT_REPORT_BLOCK_SIZE * count of blocks
-  return (__super::GetPacketSize() + 4 + RECEIVER_REPORT_REPORT_BLOCK_SIZE * this->GetReportBlocks()->Count());
+  return (__super::GetSize() + 4 + RECEIVER_REPORT_REPORT_BLOCK_SIZE * this->GetReportBlocks()->Count());
 }
 
 bool CReceiverReportRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
@@ -82,7 +82,7 @@ bool CReceiverReportRtcpPacket::GetPacket(unsigned char *buffer, unsigned int le
 
   if (result)
   {
-    unsigned int position = __super::GetPacketSize();
+    unsigned int position = __super::GetSize();
 
     WBE32INC(buffer, position, this->GetSenderSynchronizationSourceIdentifier());
     for (unsigned int i = 0; i < this->GetReportBlocks()->Count(); i++)
@@ -120,7 +120,7 @@ void CReceiverReportRtcpPacket::Clear(void)
 {
   __super::Clear();
 
-  this->senderSynchronizationSourceIdentifier = UINT_MAX;
+  this->senderSynchronizationSourceIdentifier = 0;
   FREE_MEM(this->profileSpecificExtensions);
   this->profileSpecificExtensionsLength = 0;
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->reportBlocks, this->reportBlocks->Clear());
@@ -136,9 +136,9 @@ bool CReceiverReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int 
   if (result)
   {
     // receiver report RTCP packet header is at least RECEIVER_REPORT_RTCP_PACKET_HEADER_SIZE long
-    unsigned int position = this->size;
+    unsigned int position = 0;
 
-    RBE32INC(buffer, position, this->senderSynchronizationSourceIdentifier);
+    RBE32INC(this->payload, position, this->senderSynchronizationSourceIdentifier);
 
     // without padding we must have enough bytes for report blocks
 

@@ -77,15 +77,38 @@ public:
 
   /* get methods */
 
-  // gets identifiers
-  // @return : identifiers
-  virtual CIdentifierCollection *GetIdentifiers(void);
+  // gets packet value
+  // @return : packet value
+  virtual unsigned int GetPacketValue(void);
+
+  // gets packet type
+  // @return : packet type
+  virtual unsigned int GetPacketType(void);
+
+  // gets synchronization source identifiers
+  // @return : synchronization source identifiers
+  virtual CIdentifierCollection *GetSenderSynchronizationSourceIdentifiers(void);
 
   // gets reason of goodbye
   // @return : reason or NULL if not specified or error
   virtual const wchar_t *GetReason(void);
 
+  // gets RTCP packet size
+  // @return : RTCP packet size
+  virtual unsigned int GetSize(void);
+
+  // gets RTCP packet content
+  // @param buffer : the buffer to store RTCP packet content
+  // @param length : the length of buffer to store RTCP packet
+  // @return : true if successful, false otherwise
+  virtual bool GetPacket(unsigned char *buffer, unsigned int length);
+
   /* set methods */
+
+  // sets reason of goodbye
+  // @param reason : the reason of goodbye to set
+  // @return : true if successful, false otherwise
+  virtual bool SetReason(const wchar_t *reason);
 
   /* other methods */
 
@@ -108,7 +131,7 @@ protected:
   wchar_t *reason;
 
   // holds SSRC/CSRC identifiers
-  CIdentifierCollection *identifiers;
+  CIdentifierCollection *senderSynchronizationSourceIdentifiers;
 };
 
 #endif

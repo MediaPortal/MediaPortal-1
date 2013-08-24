@@ -24,6 +24,13 @@
 
 CReportBlock::CReportBlock(void)
 {
+  this->synchronizationSourceIdentifier = 0;
+  this->fractionLost = 0;
+  this->cumulativeNumberOfPacketsLost = 0;
+  this->extendedHighestSequenceNumberReceived = 0;
+  this->interarrivalJitter = 0;
+  this->lastSenderReport = 0;
+  this->delaySinceLastSenderReport = 0;
 }
 
 CReportBlock::~CReportBlock(void)

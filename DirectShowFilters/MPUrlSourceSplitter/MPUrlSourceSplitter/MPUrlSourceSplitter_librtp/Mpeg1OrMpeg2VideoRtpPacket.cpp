@@ -115,9 +115,9 @@ const unsigned char *CMpeg1OrMpeg2VideoRtpPacket::GetPayload(void)
   return (this->payload + MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
 }
 
-unsigned int CMpeg1OrMpeg2VideoRtpPacket::GetPayloadLength(void)
+unsigned int CMpeg1OrMpeg2VideoRtpPacket::GetPayloadSize(void)
 {
-  return (this->payloadLength - MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
+  return (this->payloadSize - MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
 }
 
 /* set methods */
@@ -173,7 +173,7 @@ bool CMpeg1OrMpeg2VideoRtpPacket::Parse(const unsigned char *buffer, unsigned in
     // maybe later will be implemented collection of accepted payload types (if necessary)
 
     result &= (this->payloadType == MPEG1_OR_MPEG2_VIDEO_PAYLOAD_TYPE_DEFAULT);
-    result &= (this->payloadLength >= MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
+    result &= (this->payloadSize >= MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
 
     if (result)
     {

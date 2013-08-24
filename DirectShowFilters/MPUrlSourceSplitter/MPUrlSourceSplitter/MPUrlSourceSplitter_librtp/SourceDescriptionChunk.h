@@ -37,7 +37,7 @@ public:
   /* get methods */
 
   // gets SSRC or CSRC of source description chunk
-  // @return : SSRC or CSRC or UINT_MAX if not specifed or error
+  // @return : SSRC or CSRC
   virtual unsigned int GetIdentifier(void);
 
   // gets chunk size

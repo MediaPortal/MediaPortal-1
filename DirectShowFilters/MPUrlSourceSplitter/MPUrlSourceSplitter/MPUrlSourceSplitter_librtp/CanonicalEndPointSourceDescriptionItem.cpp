@@ -26,6 +26,7 @@ CCanonicalEndPointSourceDescriptionItem::CCanonicalEndPointSourceDescriptionItem
   : CSourceDescriptionItem()
 {
   this->endPointName = NULL;
+  this->type = CANONICAL_END_POINT_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CCanonicalEndPointSourceDescriptionItem::~CCanonicalEndPointSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CCanonicalEndPointSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetEndPointName());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CCanonicalEndPointSourceDescriptionItem::GetSourceDescriptionItem(unsigned 
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CCanonicalEndPointSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->endPointName);
+  this->type = CANONICAL_END_POINT_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CCanonicalEndPointSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

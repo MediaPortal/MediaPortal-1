@@ -29,20 +29,32 @@ CGoodbyeRtcpPacket::CGoodbyeRtcpPacket(void)
   : CRtcpPacket()
 {
   this->reason = NULL;
-  this->identifiers = new CIdentifierCollection();
+  this->senderSynchronizationSourceIdentifiers = new CIdentifierCollection();
+
+  this->packetType = GOODBYE_RTCP_PACKET_TYPE;
 }
 
 CGoodbyeRtcpPacket::~CGoodbyeRtcpPacket(void)
 {
   FREE_MEM(this->reason);
-  FREE_MEM_CLASS(this->identifiers);
+  FREE_MEM_CLASS(this->senderSynchronizationSourceIdentifiers);
 }
 
 /* get methods */
 
-CIdentifierCollection *CGoodbyeRtcpPacket::GetIdentifiers(void)
+unsigned int CGoodbyeRtcpPacket::GetPacketValue(void)
 {
-  return this->identifiers;
+  return this->GetSenderSynchronizationSourceIdentifiers()->Count();
+}
+
+unsigned int CGoodbyeRtcpPacket::GetPacketType(void)
+{
+  return GOODBYE_RTCP_PACKET_TYPE;
+}
+
+CIdentifierCollection *CGoodbyeRtcpPacket::GetSenderSynchronizationSourceIdentifiers(void)
+{
+  return this->senderSynchronizationSourceIdentifiers;
 }
 
 const wchar_t *CGoodbyeRtcpPacket::GetReason(void)
@@ -50,7 +62,86 @@ const wchar_t *CGoodbyeRtcpPacket::GetReason(void)
   return this->reason;
 }
 
+unsigned int CGoodbyeRtcpPacket::GetSize(void)
+{
+  unsigned int size = __super::GetSize() + GOODBYE_RTCP_PACKET_HEADER_SIZE + 4 * this->GetSenderSynchronizationSourceIdentifiers()->Count();
+
+  if (this->HasReason())
+  {
+    char *temp = ConvertUnicodeToUtf8(this->GetReason());
+    if (temp != NULL)
+    {
+      size += 1 + min(0xFF, strlen(temp));
+    }
+    FREE_MEM(temp);
+  }
+
+  if ((size % 4) != 0)
+  {
+    size += (4 - (size % 4));
+  }
+
+  return size;
+}
+
+bool CGoodbyeRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetPacket(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+
+    for (unsigned int i = 0; i < this->GetSenderSynchronizationSourceIdentifiers()->Count(); i++)
+    {
+      CIdentifier *identifier = this->GetSenderSynchronizationSourceIdentifiers()->GetItem(i);
+
+      WBE32INC(buffer, position, identifier->GetIdentifier());
+    }
+
+    if (this->HasReason())
+    {
+      unsigned int size = 0;
+      char *temp = ConvertUnicodeToUtf8(this->GetReason());
+      if (temp != NULL)
+      {
+        size = 1 + min(0xFF, strlen(temp));
+
+        WBE8INC(buffer, position, (size - 1));
+        if (size > 1)
+        {
+          memcpy(buffer + position, temp, size - 1);
+          position += size - 1;
+        }
+      }
+      FREE_MEM(temp);
+
+      if ((size % 4) != 0)
+      {
+        size = (4 - (size % 4));
+        memset(buffer + position, 0, size);
+        position += size;
+      }
+    }
+  }
+
+  return result;
+}
+
 /* set methods */
+
+bool CGoodbyeRtcpPacket::SetReason(const wchar_t *reason)
+{
+  this->flags &= ~FLAG_GOODBYE_RTCP_PACKET_REASON;
+  SET_STRING_RESULT_WITH_NULL_DEFINE(this->reason, reason, result);
+
+  if (result && (this->reason != NULL))
+  {
+    this->flags |= FLAG_GOODBYE_RTCP_PACKET_REASON;
+  }
+
+  return result;
+}
 
 /* other methods */
 
@@ -64,12 +155,14 @@ void CGoodbyeRtcpPacket::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->reason);
-  CHECK_CONDITION_NOT_NULL_EXECUTE(this->identifiers, this->identifiers->Clear());
+  CHECK_CONDITION_NOT_NULL_EXECUTE(this->senderSynchronizationSourceIdentifiers, this->senderSynchronizationSourceIdentifiers->Clear());
+
+  this->packetType = GOODBYE_RTCP_PACKET_TYPE;
 }
 
 bool CGoodbyeRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
 {
-  bool result = (this->identifiers != NULL);
+  bool result = (this->senderSynchronizationSourceIdentifiers != NULL);
   result &= __super::Parse(buffer, length);
   result &= (this->packetType == GOODBYE_RTCP_PACKET_TYPE);
   result &= (this->payloadSize >= GOODBYE_RTCP_PACKET_HEADER_SIZE);
@@ -95,7 +188,7 @@ bool CGoodbyeRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
       if (result)
       {
         identifier->SetIdentifier(temp);
-        result &= this->identifiers->Add(identifier);
+        result &= this->senderSynchronizationSourceIdentifiers->Add(identifier);
       }
 
       if (!result)
@@ -109,7 +202,7 @@ bool CGoodbyeRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
       // there are still some data, it have to be reason
       RBE8INC_DEFINE(this->payload, position, reasonLength, unsigned int);
       result &= (reasonLength != 0);
-      result &= ((position + reasonLength) < this->payloadSize);
+      result &= ((position + reasonLength) <= this->payloadSize);
 
       if (result)
       {

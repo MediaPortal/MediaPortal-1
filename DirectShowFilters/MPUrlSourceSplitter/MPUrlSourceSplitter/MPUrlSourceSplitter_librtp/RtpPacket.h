@@ -98,6 +98,10 @@ public:
 
   /* get methods */
 
+  // gets packet size
+  // @return : packet size or UINT_MAX if error
+  virtual unsigned int GetSize(void);
+
   // gets payload type
   // @return : payload type or UINT_MAX if error
   virtual unsigned int GetPayloadType(void);
@@ -118,9 +122,9 @@ public:
   // @return : payload data or NULL if error
   virtual const unsigned char *GetPayload(void);
 
-  // gets payload length
-  // @return : payload length or UINT_MAX if error
-  virtual unsigned int GetPayloadLength(void);
+  // gets payload size
+  // @return : payload size
+  virtual unsigned int GetPayloadSize(void);
 
   /* set methods */
 
@@ -156,12 +160,6 @@ protected:
 
   unsigned char *extensionHeader;
   unsigned int extensionHeaderLength;
-
-  // holds payload of RTP packet
-  unsigned char *payload;
-  // holds payload length of RTP packet
-  unsigned int payloadLength;
-
 };
 
 #endif

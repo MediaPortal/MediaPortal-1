@@ -76,7 +76,6 @@ protected:
 
   // holds tool
   wchar_t *tool;
-
 };
 
 #endif

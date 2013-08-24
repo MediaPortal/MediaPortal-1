@@ -26,6 +26,7 @@ CGeographicUserLocationSourceDescriptionItem::CGeographicUserLocationSourceDescr
   : CSourceDescriptionItem()
 {
   this->geographicUserLocation = NULL;
+  this->type = GEOGRAPHICS_USER_LOCATION_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CGeographicUserLocationSourceDescriptionItem::~CGeographicUserLocationSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CGeographicUserLocationSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetGeographicUserLocation());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CGeographicUserLocationSourceDescriptionItem::GetSourceDescriptionItem(unsi
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CGeographicUserLocationSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->geographicUserLocation);
+  this->type = GEOGRAPHICS_USER_LOCATION_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CGeographicUserLocationSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

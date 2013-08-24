@@ -28,6 +28,7 @@
 CNullSourceDescriptionItem::CNullSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
+  this->type = NULL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CNullSourceDescriptionItem::~CNullSourceDescriptionItem(void)
@@ -69,6 +70,8 @@ bool CNullSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer,
 void CNullSourceDescriptionItem::Clear(void)
 {
   __super::Clear();
+
+  this->type = NULL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CNullSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

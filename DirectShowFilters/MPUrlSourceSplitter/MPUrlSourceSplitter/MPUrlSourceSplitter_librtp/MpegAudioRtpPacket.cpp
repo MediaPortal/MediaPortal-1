@@ -37,19 +37,19 @@ CMpegAudioRtpPacket::~CMpegAudioRtpPacket(void)
 
 /* get methods */
 
-/* set methods */
-
-/* other methods */
-
 const unsigned char *CMpegAudioRtpPacket::GetPayload(void)
 {
   return (this->payload + MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
 }
 
-unsigned int CMpegAudioRtpPacket::GetPayloadLength(void)
+unsigned int CMpegAudioRtpPacket::GetPayloadSize(void)
 {
-  return (this->payloadLength - MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
+  return (this->payloadSize - MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
 }
+
+/* set methods */
+
+/* other methods */
 
 void CMpegAudioRtpPacket::Clear(void)
 {
@@ -68,7 +68,7 @@ bool CMpegAudioRtpPacket::Parse(const unsigned char *buffer, unsigned int length
     // maybe later will be implemented collection of accepted payload types (if necessary)
 
     result &= (this->payloadType == MPEG_AUDIO_PAYLOAD_TYPE_DEFAULT);
-    result &= (this->payloadLength >= MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
+    result &= (this->payloadSize >= MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
 
     if (result)
     {

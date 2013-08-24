@@ -39,24 +39,9 @@ CSourceDescriptionItem::~CSourceDescriptionItem(void)
 
 /* get methods */
 
-unsigned int CSourceDescriptionItem::GetType(void)
-{
-  return this->type;
-}
-
 unsigned int CSourceDescriptionItem::GetSize(void)
 {
-  return (SOURCE_DESCRIPTION_ITEM_HEADER + this->GetPayloadSize());
-}
-
-const unsigned char *CSourceDescriptionItem::GetPayload(void)
-{
-  return this->payload;
-}
-
-unsigned int CSourceDescriptionItem::GetPayloadSize(void)
-{
-  return this->payloadSize;
+  return SOURCE_DESCRIPTION_ITEM_HEADER;
 }
 
 bool CSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, unsigned int length)
@@ -71,9 +56,6 @@ bool CSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer, uns
 
     WBE8INC(buffer, position, this->GetType());
     WBE8INC(buffer, position, (size - SOURCE_DESCRIPTION_ITEM_HEADER));
-    WBE16INC(buffer, position, (size / 4) - 1);
-
-    CHECK_CONDITION_NOT_NULL_EXECUTE(this->GetPayload(), memcpy(buffer + position, this->GetPayload(), this->GetPayloadSize()));
   }
 
   return result;

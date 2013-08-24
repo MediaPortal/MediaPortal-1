@@ -86,24 +86,16 @@ public:
   /* get methods */
 
   // gets packet value
-  // @return : packet value or UINT_MAX if error
-  virtual unsigned int GetPacketValue(void);
+  // @return : packet value
+  virtual unsigned int GetPacketValue(void) = 0;
 
   // gets packet type
-  // @return : packet type or UINT_MAX if error
-  virtual unsigned int GetPacketType(void);
-
-  // gets payload
-  // @return : payload or NULL if error
-  virtual const unsigned char *GetPayload(void);
-
-  // gets payload size
-  // @return : payload size
-  virtual unsigned int GetPayloadSize(void);
+  // @return : packet type
+  virtual unsigned int GetPacketType(void) = 0;
 
   // gets RTCP packet size
-  // @return : RTCP packet size (header + payload)
-  virtual unsigned int GetPacketSize(void);
+  // @return : RTCP packet size
+  virtual unsigned int GetSize(void);
 
   // gets RTCP packet content
   // for creating packets is assumed that derived RTCP packets has payload length zero and payload is NULL
@@ -113,20 +105,6 @@ public:
   virtual bool GetPacket(unsigned char *buffer, unsigned int length);
 
   /* set methods */
-
-  // sets RTCP packet value
-  // @param packetValue : RTCP packet value to set
-  virtual void SetPacketValue(unsigned int packetValue);
-
-  // sets RTCP packet type
-  // @param packetType : RTCP packet type to set
-  virtual void SetPacketType(unsigned int packetType);
-
-  // sets RTCP packet payload
-  // @param payload : payload to set (can be NULL if payloadLength is zero)
-  // @param  payloadSize : the length of payload to set (payload length + RTCP_PACKET_HEADER_SIZE must be multiple of four)
-  // @return : true if successful, false otherwise
-  virtual bool SetPayload(const unsigned char *payload, unsigned int payloadSize);
 
   /* other methods */
 
@@ -145,8 +123,13 @@ protected:
   unsigned int packetValue;
   unsigned int packetType;
 
-  unsigned char *payload;
-  unsigned int payloadSize;
+  // payload length + RTCP_PACKET_HEADER_SIZE must be multiple of four
+
+  /* get methods */
+
+  /* set methods */
+
+  /* other methods */
 };
 
 #endif

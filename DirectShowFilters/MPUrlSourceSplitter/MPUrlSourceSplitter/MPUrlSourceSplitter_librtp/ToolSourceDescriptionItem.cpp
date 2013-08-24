@@ -26,6 +26,7 @@ CToolSourceDescriptionItem::CToolSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
   this->tool = NULL;
+  this->type = TOOL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CToolSourceDescriptionItem::~CToolSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CToolSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetTool());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CToolSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer,
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CToolSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->tool);
+  this->type = TOOL_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CToolSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

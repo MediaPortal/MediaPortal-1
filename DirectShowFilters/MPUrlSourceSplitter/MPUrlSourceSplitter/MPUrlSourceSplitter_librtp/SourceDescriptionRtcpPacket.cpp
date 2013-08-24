@@ -26,6 +26,8 @@ CSourceDescriptionRtcpPacket::CSourceDescriptionRtcpPacket(void)
   : CRtcpPacket()
 {
   this->chunks = new CSourceDescriptionChunkCollection();
+
+  this->packetType = SOURCE_DESCRIPTION_RTCP_PACKET_TYPE;
 }
 
 CSourceDescriptionRtcpPacket::~CSourceDescriptionRtcpPacket(void)
@@ -37,7 +39,7 @@ CSourceDescriptionRtcpPacket::~CSourceDescriptionRtcpPacket(void)
 
 unsigned int CSourceDescriptionRtcpPacket::GetPacketValue(void)
 {
-  return this->chunks->Count();
+  return this->GetChunks()->Count();
 }
 
 unsigned int CSourceDescriptionRtcpPacket::GetPacketType(void)
@@ -45,9 +47,9 @@ unsigned int CSourceDescriptionRtcpPacket::GetPacketType(void)
   return SOURCE_DESCRIPTION_RTCP_PACKET_TYPE;
 }
 
-unsigned int CSourceDescriptionRtcpPacket::GetPacketSize(void)
+unsigned int CSourceDescriptionRtcpPacket::GetSize(void)
 {
-  unsigned int size = SOURCE_DESCRIPTION_RTCP_PACKET_HEADER_SIZE + __super::GetPacketSize();
+  unsigned int size = SOURCE_DESCRIPTION_RTCP_PACKET_HEADER_SIZE + __super::GetSize();
 
   for (unsigned int i = 0; i < this->GetChunks()->Count(); i++)
   {
@@ -65,7 +67,7 @@ bool CSourceDescriptionRtcpPacket::GetPacket(unsigned char *buffer, unsigned int
 
   if (result)
   {
-    unsigned int position = __super::GetPacketSize();
+    unsigned int position = __super::GetSize();
 
     for (unsigned int i = 0; (result && (i < this->GetChunks()->Count())); i++)
     {
@@ -93,6 +95,8 @@ void CSourceDescriptionRtcpPacket::Clear(void)
   __super::Clear();
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->chunks, this->chunks->Clear());
+
+  this->packetType = SOURCE_DESCRIPTION_RTCP_PACKET_TYPE;
 }
 
 bool CSourceDescriptionRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)

@@ -61,8 +61,8 @@ application-dependent data: variable length
 
 #include "RtcpPacket.h"
 
-#define APPLICATION_RTCP_PACKET_HEADER_SIZE                             8               // length of the goodbye RTCP header in bytes
-#define APPLICATION_RTCP_PACKET_TYPE                                    0xCC            // goodbye RTCP packet type
+#define APPLICATION_RTCP_PACKET_HEADER_SIZE                             8               // length of the application RTCP header in bytes
+#define APPLICATION_RTCP_PACKET_TYPE                                    0xCC            // application RTCP packet type
 
 class CApplicationRtcpPacket : public CRtcpPacket
 {
@@ -73,23 +73,64 @@ public:
 
   /* get methods */
 
-  // gets SSRC/CSRC identifier
-  // @return : SSRC/CSRC identifier
-  virtual unsigned int GetIdentifier(void);
+  // gets packet value
+  // @return : packet value
+  virtual unsigned int GetPacketValue(void);
+
+  // gets packet type
+  // @return : packet type
+  virtual unsigned int GetPacketType(void);
+
+  // gets synchronization source identifier of sender
+  // @return : synchronization source identifier of sender
+  virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
 
   // gets name
   // @return : name
   virtual const wchar_t *GetName(void);
 
+  // gets application subtype
+  // @return : application subtype
+  virtual unsigned int GetApplicationSubtype(void);
+
   // gets application data
   // @return : application data or NULL if not specified
   virtual unsigned char *GetApplicationData(void);
 
-  // gets application data length
-  // @return : application data length
-  virtual unsigned int GetApplicationDataLength(void);
+  // gets application data size
+  // @return : application data size
+  virtual unsigned int GetApplicationDataSize(void);
+
+  // gets RTCP packet size
+  // @return : RTCP packet size
+  virtual unsigned int GetSize(void);
+
+  // gets RTCP packet content
+  // @param buffer : the buffer to store RTCP packet content
+  // @param length : the length of buffer to store RTCP packet
+  // @return : true if successful, false otherwise
+  virtual bool GetPacket(unsigned char *buffer, unsigned int length);
 
   /* set methods */
+
+  // sets synchronization source identifier of sender
+  // @param senderSynchronizationSourceIdentifier : synchronization source identifier of sender to set
+  virtual void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
+
+  // sets application subtype
+  // @param applicationSubtype : application subtype to set
+  virtual void SetApplicationSubtype(unsigned int applicationSubtype);
+
+  // sets name
+  // @param name : the name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetName(const wchar_t *name);
+
+  // sets application data
+  // @param applicationData : the application data to set, can be NULL if applicationDataSize is zero
+  // @param applicationDataSize : the size of application data, it MUST be a multiple of 32 bits
+  // @return : true if successful, false otherwise
+  virtual bool SetApplicationData(unsigned char *applicationData, unsigned int applicationDataSize);
 
   /* other methods */
 
@@ -104,11 +145,11 @@ public:
 
 protected:
 
-  unsigned int identifier;
+  unsigned int senderSynchronizationSourceIdentifier;
+
   wchar_t *name;
   unsigned char *applicationData;
-  unsigned int applicationDataLength;
-
+  unsigned int applicationDataSize;
 };
 
 #endif

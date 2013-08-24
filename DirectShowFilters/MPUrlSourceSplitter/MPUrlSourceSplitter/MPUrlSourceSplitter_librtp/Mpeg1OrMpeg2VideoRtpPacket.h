@@ -139,9 +139,9 @@ public:
   // @return : payload data or NULL if error
   virtual const unsigned char *GetPayload(void);
 
-  // gets payload length
-  // @return : payload length or UINT_MAX if error
-  virtual unsigned int GetPayloadLength(void);
+  // gets payload size
+  // @return : payload size
+  virtual unsigned int GetPayloadSize(void);
 
   /* set methods */
 
@@ -173,7 +173,6 @@ protected:
 
   // holds last byte value (necessary if picture type is not from specified picture types)
   unsigned int lastByte;
-
 };
 
 #endif

@@ -114,7 +114,18 @@ public:
 
   /* get methods */
 
+  // gets packet value
+  // @return : packet value
+  virtual unsigned int GetPacketValue(void);
+
+  // gets packet type
+  // @return : packet type
+  virtual unsigned int GetPacketType(void);
+
+  // gets synchronization source identifier of sender
+  // @return : synchronization source identifier of sender
   virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
+
   virtual uint64_t GetNtpTimestamp(void);
   virtual unsigned int GetRtpTimestamp(void);
   virtual unsigned int GetSenderPacketCount(void);
@@ -126,7 +137,26 @@ public:
 
   virtual CReportBlockCollection *GetReportBlocks(void);
 
+  // gets RTCP packet size
+  // @return : RTCP packet size
+  virtual unsigned int GetSize(void);
+
+  // gets RTCP packet content
+  // @param buffer : the buffer to store RTCP packet content
+  // @param length : the length of buffer to store RTCP packet
+  // @return : true if successful, false otherwise
+  virtual bool GetPacket(unsigned char *buffer, unsigned int length);
+
   /* set methods */
+
+  // sets synchronization source identifier of sender
+  // @param senderSynchronizationSourceIdentifier : synchronization source identifier of sender to set
+  virtual void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
+
+  virtual void SetNtpTimestamp(uint64_t ntpTimestamp);
+  virtual void SetRtpTimestamp(unsigned int rtpTimestamp);
+  virtual void SetSenderPacketCount(unsigned int senderPacketCount);
+  virtual void SetSenderOctetCount(unsigned int senderOctetCount);
 
   /* other methods */
 

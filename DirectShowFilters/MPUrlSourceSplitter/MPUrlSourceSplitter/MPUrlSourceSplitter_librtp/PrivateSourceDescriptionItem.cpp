@@ -25,6 +25,7 @@
 CPrivateSourceDescriptionItem::CPrivateSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
+  this->type = PRIVATE_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CPrivateSourceDescriptionItem::~CPrivateSourceDescriptionItem(void)
@@ -55,6 +56,8 @@ bool CPrivateSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buff
 void CPrivateSourceDescriptionItem::Clear(void)
 {
   __super::Clear();
+
+  this->type = PRIVATE_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CPrivateSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)

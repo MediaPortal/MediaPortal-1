@@ -29,13 +29,15 @@ CBaseRtpPacket::CBaseRtpPacket(void)
 {
   this->flags = FLAG_BASE_RTP_PACKET_NONE;
   this->version = UINT_MAX;
-  this->size = UINT_MAX;
-  this->paddingLength = 0;
+  this->paddingSize = 0;
   this->baseType = UINT_MAX;
+  this->payloadSize = 0;
+  this->payload = NULL;
 }
 
 CBaseRtpPacket::~CBaseRtpPacket(void)
 {
+  FREE_MEM(this->payload);
 }
 
 /* get methods */
@@ -52,12 +54,7 @@ unsigned int CBaseRtpPacket::GetBaseType(void)
 
 unsigned int CBaseRtpPacket::GetSize(void)
 {
-  return this->size;
-}
-
-unsigned int CBaseRtpPacket::GetPaddingLength(void)
-{
-  return this->paddingLength;
+  return BASE_RTP_PACKET_HEADER_SIZE;
 }
 
 /* set methods */
@@ -73,9 +70,10 @@ void CBaseRtpPacket::Clear(void)
 {
   this->flags = FLAG_BASE_RTP_PACKET_NONE;
   this->version = UINT_MAX;
-  this->size = UINT_MAX;
-  this->paddingLength = 0;
+  this->paddingSize = 0;
   this->baseType = UINT_MAX;
+  FREE_MEM(this->payload);
+  this->payloadSize = 0;
 }
 
 bool CBaseRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
@@ -93,12 +91,7 @@ bool CBaseRtpPacket::Parse(const unsigned char *buffer, unsigned int length)
     this->flags |= ((RBE8(buffer, position) & 0x20) != 0) ? FLAG_BASE_RTP_PACKET_PADDING : FLAG_BASE_RTP_PACKET_NONE;
     position++;
 
-    if (result)
-    {
-      this->size = position;
-
-      // we don't set this->baseType because base RTP packet is mostly abstract class
-    }
+    // we don't set this->baseType because base RTP packet is mostly abstract class
   }
 
   return result;

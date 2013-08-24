@@ -26,15 +26,17 @@
 CSenderReportRtcpPacket::CSenderReportRtcpPacket(void)
   : CRtcpPacket()
 {
-  this->senderSynchronizationSourceIdentifier = UINT_MAX;
-  this->ntpTimestamp = UINT64_MAX;
-  this->rtpTimestamp = UINT_MAX;
-  this->senderPacketCount = UINT_MAX;
-  this->senderOctetCount = UINT_MAX;
+  this->senderSynchronizationSourceIdentifier = 0;
+  this->ntpTimestamp = 0;
+  this->rtpTimestamp = 0;
+  this->senderPacketCount = 0;
+  this->senderOctetCount = 0;
 
   this->profileSpecificExtensions = NULL;
   this->profileSpecificExtensionsLength = 0;
   this->reportBlocks = new CReportBlockCollection();
+
+  this->packetType = SENDER_REPORT_RTCP_PACKET_TYPE;
 }
 
 CSenderReportRtcpPacket::~CSenderReportRtcpPacket(void)
@@ -44,6 +46,16 @@ CSenderReportRtcpPacket::~CSenderReportRtcpPacket(void)
 }
 
 /* get methods */
+
+unsigned int CSenderReportRtcpPacket::GetPacketValue(void)
+{
+  return this->GetReportBlocks()->Count();
+}
+
+unsigned int CSenderReportRtcpPacket::GetPacketType(void)
+{
+  return SENDER_REPORT_RTCP_PACKET_TYPE;
+}
 
 unsigned int CSenderReportRtcpPacket::GetSenderSynchronizationSourceIdentifier(void)
 {
@@ -85,7 +97,68 @@ CReportBlockCollection *CSenderReportRtcpPacket::GetReportBlocks(void)
   return this->reportBlocks;
 }
 
+unsigned int CSenderReportRtcpPacket::GetSize(void)
+{
+  return (__super::GetSize() + SENDER_REPORT_RTCP_PACKET_HEADER_SIZE + this->GetReportBlocks()->Count() * SENDER_REPORT_REPORT_BLOCK_SIZE);
+}
+
+bool CSenderReportRtcpPacket::GetPacket(unsigned char *buffer, unsigned int length)
+{
+  bool result = __super::GetPacket(buffer, length);
+
+  if (result)
+  {
+    unsigned int position = __super::GetSize();
+
+    WBE32INC(buffer, position, this->GetSenderSynchronizationSourceIdentifier());
+    WBE64INC(buffer, position, this->GetNtpTimestamp());
+    WBE32INC(buffer, position, this->GetRtpTimestamp());
+    WBE32INC(buffer, position, this->GetSenderPacketCount());
+    WBE32INC(buffer, position, this->GetSenderOctetCount());
+
+    for (unsigned int i = 0; i < this->GetReportBlocks()->Count(); i++)
+    {
+      CReportBlock *report = this->GetReportBlocks()->GetItem(i);
+
+      WBE32INC(buffer, position, report->GetSynchronizationSourceIdentifier());
+      WBE8INC(buffer, position, report->GetFractionLost());
+      WBE24INC(buffer, position, report->GetCumulativeNumberOfPacketsLost());
+      WBE32INC(buffer, position, report->GetExtendedHighestSequenceNumberReceived());
+      WBE32INC(buffer, position, report->GetInterarrivalJitter());
+      WBE32INC(buffer, position, report->GetLastSenderReport());
+      WBE32INC(buffer, position, report->GetDelaySinceLastSenderReport());
+    }
+  }
+
+  return result;
+}
+
 /* set methods */
+
+void CSenderReportRtcpPacket::SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier)
+{
+  this->senderSynchronizationSourceIdentifier = senderSynchronizationSourceIdentifier;
+}
+
+void CSenderReportRtcpPacket::SetNtpTimestamp(uint64_t ntpTimestamp)
+{
+  this->ntpTimestamp = ntpTimestamp;
+}
+
+void CSenderReportRtcpPacket::SetRtpTimestamp(unsigned int rtpTimestamp)
+{
+  this->rtpTimestamp = rtpTimestamp;
+}
+
+void CSenderReportRtcpPacket::SetSenderPacketCount(unsigned int senderPacketCount)
+{
+  this->senderPacketCount = senderPacketCount;
+}
+
+void CSenderReportRtcpPacket::SetSenderOctetCount(unsigned int senderOctetCount)
+{
+  this->senderOctetCount = senderOctetCount;
+}
 
 /* other methods */
 
@@ -98,16 +171,18 @@ void CSenderReportRtcpPacket::Clear(void)
 {
   __super::Clear();
 
-  this->senderSynchronizationSourceIdentifier = UINT_MAX;
-  this->ntpTimestamp = UINT64_MAX;
-  this->rtpTimestamp = UINT_MAX;
-  this->senderPacketCount = UINT_MAX;
-  this->senderOctetCount = UINT_MAX;
+  this->senderSynchronizationSourceIdentifier = 0;
+  this->ntpTimestamp = 0;
+  this->rtpTimestamp = 0;
+  this->senderPacketCount = 0;
+  this->senderOctetCount = 0;
 
   FREE_MEM(this->profileSpecificExtensions);
   this->profileSpecificExtensionsLength = 0;
 
   CHECK_CONDITION_NOT_NULL_EXECUTE(this->reportBlocks, this->reportBlocks->Clear());
+
+  this->packetType = SENDER_REPORT_RTCP_PACKET_TYPE;
 }
 
 bool CSenderReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int length)
@@ -147,11 +222,11 @@ bool CSenderReportRtcpPacket::Parse(const unsigned char *buffer, unsigned int le
         {
           reportBlock->SetSynchronizationSourceIdentifier(RBE32(this->payload, position));
           reportBlock->SetFractionLost(RBE8(this->payload, (position + 4)));
-          reportBlock->SetCumulativeNumberOfPacketsLost(RBE8(this->payload, (position + 5)));
-          reportBlock->SetExtendedHighestSequenceNumberReceived(RBE8(this->payload, (position + 8)));
-          reportBlock->SetInterarrivalJitter(RBE8(this->payload, (position + 12)));
-          reportBlock->SetLastSenderReport(RBE8(this->payload, (position + 16)));
-          reportBlock->SetDelaySinceLastSenderReport(RBE8(this->payload, (position + 20)));
+          reportBlock->SetCumulativeNumberOfPacketsLost(RBE24(this->payload, (position + 5)));
+          reportBlock->SetExtendedHighestSequenceNumberReceived(RBE32(this->payload, (position + 8)));
+          reportBlock->SetInterarrivalJitter(RBE32(this->payload, (position + 12)));
+          reportBlock->SetLastSenderReport(RBE32(this->payload, (position + 16)));
+          reportBlock->SetDelaySinceLastSenderReport(RBE32(this->payload, (position + 20)));
 
           result &= this->reportBlocks->Add(reportBlock);
         }

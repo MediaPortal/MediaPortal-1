@@ -52,10 +52,6 @@ public:
   // @return : packet size or UINT_MAX if error
   virtual unsigned int GetSize(void);
 
-  // gets padding length
-  // @return : padding length (0 if padding is not used)
-  virtual unsigned int GetPaddingLength(void);
-
   /* set methods */
 
   /* other methods */
@@ -84,11 +80,12 @@ protected:
   // holds packet base type
   unsigned int baseType;
 
-  // holds packet size after parsing
-  unsigned int size;
+  // holds padding size
+  unsigned int paddingSize;
 
-  // holds padding length
-  unsigned int paddingLength;
+  // holds payload size and payload
+  unsigned char *payload;
+  unsigned int payloadSize;
 };
 
 #endif

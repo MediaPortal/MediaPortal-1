@@ -36,19 +36,11 @@ public:
 
   // gets source description item type
   // @return : source description item type or UINT_MAX if not specified or error
-  virtual unsigned int GetType(void);
+  virtual unsigned int GetType(void) = 0;
 
   // gets source description item size
   // @return : source description item size
   virtual unsigned int GetSize(void);
-
-  // gets payload of source description item
-  // @return : payload of source description item or NULL if error
-  virtual const unsigned char *GetPayload(void);
-
-  // gets payload size of source description item
-  // @return : payload size of source description item
-  virtual unsigned int GetPayloadSize(void);
 
   // get whole source description item into buffer
   // @param buffer : the buffer to store source description item

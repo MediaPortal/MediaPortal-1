@@ -26,6 +26,7 @@ CNoteSourceDescriptionItem::CNoteSourceDescriptionItem(void)
   : CSourceDescriptionItem()
 {
   this->note = NULL;
+  this->type = NOTE_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 CNoteSourceDescriptionItem::~CNoteSourceDescriptionItem(void)
@@ -46,7 +47,7 @@ unsigned int CNoteSourceDescriptionItem::GetSize(void)
 
   // it is in UTF-8 encoded string (without NULL terminating character)
   char *result = ConvertUnicodeToUtf8(this->GetNote());
-  size += (result != NULL) ? (strlen(result) - 1) : 0;
+  size += (result != NULL) ? strlen(result) : 0;
 
   FREE_MEM(result);
   return size;
@@ -64,7 +65,7 @@ bool CNoteSourceDescriptionItem::GetSourceDescriptionItem(unsigned char *buffer,
 
     if (result)
     {
-      memcpy(buffer + position, converted, (strlen(converted) - 1));
+      memcpy(buffer + position, converted, strlen(converted));
     }
 
     FREE_MEM(converted);
@@ -92,6 +93,7 @@ void CNoteSourceDescriptionItem::Clear(void)
   __super::Clear();
 
   FREE_MEM(this->note);
+  this->type = NOTE_SOURCE_DESCRIPTION_ITEM_TYPE;
 }
 
 bool CNoteSourceDescriptionItem::Parse(const unsigned char *buffer, unsigned int length)
