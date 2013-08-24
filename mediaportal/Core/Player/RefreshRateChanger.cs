@@ -220,6 +220,7 @@ namespace MediaPortal.Player
       displayDevice.cb = (ushort)Marshal.SizeOf(displayDevice);
       DEVMODE_Display devMode = new DEVMODE_Display();
       devMode.dmSize = (ushort)Marshal.SizeOf(devMode);
+      ChangeDisplaySettings_Result displayResult = ChangeDisplaySettings_Result.DISP_CHANGE_SUCCESSFUL;
 
       int result = EnumDisplayDevices(null, monitorIndex, displayDevice, 0);
       if (result != 0)
@@ -265,11 +266,18 @@ namespace MediaPortal.Player
                                                                                          .CDS_NORESET |
                                                                                     ChangeDisplaySettings_Flags
                                                                                          .CDS_UPDATEREGISTRY),
-                                                                                   IntPtr.Zero);
-              // Apply settings
-              r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
-              Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
-              FixDwm();
+                                                                                   IntPtr.Zero);              
+              if (r != displayResult)
+              {
+                Log.Info("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
+              }
+              else
+              {
+                // Apply settings
+                r = ChangeDisplaySettingsEx(null, null, IntPtr.Zero, 0, IntPtr.Zero);
+                Log.Info("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
+                FixDwm();
+              }
             }
           }
         }
