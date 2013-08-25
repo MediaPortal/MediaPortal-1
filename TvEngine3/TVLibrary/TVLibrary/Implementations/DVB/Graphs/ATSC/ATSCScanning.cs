@@ -98,10 +98,12 @@ namespace TvLibrary.Implementations.DVB
       // When scanning with a CableCARD tuner and/or NIT or VCT frequency info
       // has been received and it looks plausible...
       if (tuningChannel.PhysicalChannel == 0 ||
-        (info.freq > 0 && tuningChannel.Frequency > 0 && info.freq != tuningChannel.Frequency))
+        (info.freq > 1750 && tuningChannel.Frequency > 0 && info.freq != tuningChannel.Frequency))
       {
         atscChannel.PhysicalChannel = ATSCChannel.GetPhysicalChannelFromFrequency(info.freq);
-        atscChannel.Frequency = info.freq;
+        // Convert from centre frequency to the analog video carrier
+        // frequency. This is a BDA convention.
+        atscChannel.Frequency = info.freq - 1750;
       }
       else
       {
