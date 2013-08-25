@@ -50,6 +50,12 @@
 #include "RtspContentBaseResponseHeader.h"
 #include "RtspContentLocationResponseHeader.h"
 
+#include "SenderReportRtcpPacket.h"
+#include "ReceiverReportRtcpPacket.h"
+#include "SourceDescriptionRtcpPacket.h"
+
+#include "CanonicalEndPointSourceDescriptionItem.h"
+
 #include "hex.h"
 
 CRtspCurlInstance::CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
@@ -200,96 +206,6 @@ CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode error
 
 bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  //unsigned int outputLength = 60 * 1024 * 1024;
-  //unsigned int outputPosition = 0;
-  //ALLOC_MEM_DEFINE_SET(outputBuffer, unsigned char, outputLength, 0);
-
-  //unsigned int processingLength = 1 * 1024 * 1024;
-  //unsigned int processingPosition = 0;
-  //ALLOC_MEM_DEFINE_SET(processingBuffer, unsigned char, processingLength, 0);
-
-  //for (unsigned int count_net = 0; count_net < 14497; count_net++)
-  //{
-  //  unsigned int readLength = 1 * 1024 * 1024;
-  //  int offset = -processingPosition;
-  //  ALLOC_MEM_DEFINE_SET(readBuffer, unsigned char, readLength, 0);
-
-  //  wchar_t *fileName = FormatString(L"G:\\temp2\\network_%08d.dat", count_net);
-  //  FILE *stream = _wfopen(fileName, L"rb");
-  //  unsigned int actuallyRead = fread(readBuffer + 4, sizeof(unsigned char), readLength, stream);
-  //  fclose(stream);
-
-  //  if (actuallyRead > 0)
-  //  {
-  //    if (readBuffer[4] == 0x80)
-  //    {
-  //      readBuffer[0] = INTERLEAVED_PACKET_HEADER_IDENTIFIER;   
-  //      readBuffer[1] = 0x00;                   
-  //      WBE16(readBuffer, 2, actuallyRead);     
-
-  //      memcpy(processingBuffer + processingPosition, readBuffer, actuallyRead + 4);
-  //      processingPosition += actuallyRead + 4;
-  //    }
-  //  }
-
-  //  FREE_MEM(fileName);
-  //  FREE_MEM(readBuffer);
-
-  //  CInterleavedDataPacket *packet = new CInterleavedDataPacket();
-  //  while (packet->Parse(processingBuffer, processingPosition) > 0)
-  //  {
-  //    for (unsigned int i = 0; (i < packet->GetBaseRtpPackets()->Count()); i++)
-  //    {
-  //      CBaseRtpPacket *baseRtppacket = packet->GetBaseRtpPackets()->GetItem(i);
-  //      CRtpPacket *rtpPacket = dynamic_cast<CRtpPacket *>(baseRtppacket);
-
-  //      if (rtpPacket != NULL)
-  //      {
-  //        // in case of RTP packet
-  //        // add payload to track received data
-  //        
-  //        memcpy(outputBuffer + outputPosition, rtpPacket->GetPayload(), rtpPacket->GetPayloadLength());
-  //        outputPosition += rtpPacket->GetPayloadLength();
-  //      }
-  //    }
-
-  //    memmove(processingBuffer, processingBuffer + packet->GetPacketSize(), processingPosition - packet->GetPacketSize());
-  //    processingPosition -= packet->GetPacketSize();
-  //    offset += packet->GetPacketSize();
-  //  }
-  //  FREE_MEM_CLASS(packet);
-
-  //  if (processingPosition > 0)
-  //  {
-  //    unsigned int i = 0;
-  //    while (i < processingPosition)
-  //    {
-  //      if (processingBuffer[i] == 0x24)
-  //      {
-  //        break;
-  //      }
-
-  //      i++;
-  //    }
-
-  //    if (i > 0)
-  //    {
-  //      memmove(processingBuffer, processingBuffer + i, processingPosition - i);
-  //      processingPosition -= i;
-  //    }
-  //  }
-  //}
-
-  //if (outputPosition > 0)
-  //{
-  //  FILE *stream = _wfopen(L"G:\\temp2\\output.dat", L"wb");
-  //  fwrite(outputBuffer, sizeof(unsigned char), outputPosition, stream);
-  //  fclose(stream);
-  //}
-
-  //FREE_MEM(processingBuffer);
-  //FREE_MEM(outputBuffer);
-
   DWORD startTicks = GetTickCount();
   DWORD endTicks = startTicks + this->GetReceiveDataTimeout();
 
@@ -679,10 +595,16 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                     CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort), error);
                     CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort), error);
 
-                    CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetClientDataPort(clientPort));
-                    CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetClientControlPort(clientPort));
-                    CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetServerDataPort(serverPort));
-                    CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetServerControlPort(serverPort));
+                    if (error == CURLE_OK)
+                    {
+                      track->SetClientDataPort(clientPort);
+                      track->SetClientControlPort(clientPort);
+                      track->SetServerDataPort(serverPort);
+                      track->SetServerControlPort(serverPort);
+
+                      track->SetLastReceiverReportTime(GetTickCount());
+                      track->SetReceiverReportInterval(RECEIVER_REPORT_MIN_TIME);
+                    }
                   }
 
                   CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->rtspDownloadResponse->GetRtspTracks()->Add(track) ? error : CURLE_OUT_OF_MEMORY);
@@ -929,6 +851,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                         track->SetServerDataPort(transport->GetMinServerPort());
                         track->SetServerControlPort(transport->GetMaxServerPort());
 
+                        track->SetLastReceiverReportTime(GetTickCount());
+                        track->SetReceiverReportInterval(RECEIVER_REPORT_MIN_TIME);
+
                         // set data and control server to track
                         track->SetDataServer(dataServer);
                         track->SetControlServer(controlServer);
@@ -953,10 +878,16 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                       CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_PRIMARY_PORT, &serverPort), error);
                       CHECK_CONDITION_EXECUTE_RESULT(error == CURLE_OK, curl_easy_getinfo(this->curl, CURLINFO_LOCAL_PORT, &clientPort), error);
 
-                      CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetClientDataPort(clientPort));
-                      CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetClientControlPort(clientPort));
-                      CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetServerDataPort(serverPort));
-                      CHECK_CONDITION_EXECUTE(error == CURLE_OK, track->SetServerControlPort(serverPort));
+                      if (error == CURLE_OK)
+                      {
+                        track->SetClientDataPort(clientPort);
+                        track->SetClientControlPort(clientPort);
+                        track->SetServerDataPort(serverPort);
+                        track->SetServerControlPort(serverPort);
+
+                        track->SetLastReceiverReportTime(GetTickCount());
+                        track->SetReceiverReportInterval(RECEIVER_REPORT_MIN_TIME);
+                      }
 
                       // data and control servers are not needed, destroy them
                       FREE_MEM_CLASS(dataServer);
@@ -1095,6 +1026,13 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
       if (rtcpPacket != NULL)
       {
         // handle control packet
+
+        CSenderReportRtcpPacket *senderReport = dynamic_cast<CSenderReportRtcpPacket *>(rtcpPacket);
+
+        if (senderReport != NULL)
+        {
+          track->SetSenderSynchronizationSourceIdentifier(senderReport->GetSenderSynchronizationSourceIdentifier());
+        }
       }
       else
       {
@@ -1450,7 +1388,7 @@ DWORD CRtspCurlInstance::CurlWorker(void)
                       if (SUCCEEDED(result))
                       {
                         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = packet->Parse(buffer, interleavedPacketLength) ? result : E_FAIL);
-                         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->ProcessReceivedBaseRtpPackets(track, udpContext->GetIpAddress()->GetPort(), packet->GetBaseRtpPackets()) ? result : E_FAIL);
+                        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = this->ProcessReceivedBaseRtpPackets(track, udpContext->GetIpAddress()->GetPort(), packet->GetBaseRtpPackets()) ? result : E_FAIL);
 
                         if (FAILED(result))
                         {
@@ -1509,6 +1447,180 @@ DWORD CRtspCurlInstance::CurlWorker(void)
           }
         }
       }
+    }
+
+    if (errorCode == CURLE_OK)
+    {
+      // only one thread can work with RTSP tracks and responses in one time
+      CLockMutex lock(this->mutex, INFINITE);
+
+      for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < this->rtspDownloadResponse->GetRtspTracks()->Count())); i++)
+      {
+        CRtspTrack *track = this->rtspDownloadResponse->GetRtspTracks()->GetItem(i);
+
+        // check last receiver report time and interval
+        // if needed, send receiver report for track and set last receiver report
+        if ((GetTickCount() - track->GetLastReceiverReportTime()) > track->GetReceiverReportInterval())
+        {
+          CReceiverReportRtcpPacket *receiverReport = new CReceiverReportRtcpPacket();
+          CSourceDescriptionRtcpPacket *sourceDescription = new CSourceDescriptionRtcpPacket();
+
+          errorCode = (receiverReport != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+          errorCode = (sourceDescription != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+          // we must have sender SSRC to send report
+          errorCode = track->IsSetSenderSynchronizationSourceIdentifier() ? errorCode : CURLE_SEND_ERROR;
+
+          if (errorCode == CURLE_OK)
+          {
+            // fill receiver report RTCP packet with data
+            receiverReport->SetSenderSynchronizationSourceIdentifier(track->GetSynchronizationSourceIdentifier());
+
+            CReportBlock *reportBlock = new CReportBlock();
+            errorCode = (receiverReport != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+            if (errorCode == CURLE_OK)
+            {
+              // set SSRC of server track
+              reportBlock->SetSynchronizationSourceIdentifier(track->GetSenderSynchronizationSourceIdentifier());
+
+              // set statistics of track
+
+              errorCode = receiverReport->GetReportBlocks()->Add(reportBlock) ? errorCode : CURLE_OUT_OF_MEMORY;
+            }
+
+            if (errorCode != CURLE_OK)
+            {
+              FREE_MEM_CLASS(reportBlock);
+            }
+          }
+
+          if (errorCode == CURLE_OK)
+          {
+            // fill source description RTCP packet with data
+            CSourceDescriptionChunk *chunk = new CSourceDescriptionChunk();
+            errorCode = (chunk != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+            if (errorCode == CURLE_OK)
+            {
+              chunk->SetIdentifier(track->GetSynchronizationSourceIdentifier());
+
+              CCanonicalEndPointSourceDescriptionItem *endPoint = new CCanonicalEndPointSourceDescriptionItem();
+              errorCode = (chunk != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+              if (errorCode == CURLE_OK)
+              {
+                ALLOC_MEM_DEFINE_SET(computerName, wchar_t, (MAX_COMPUTERNAME_LENGTH + 1), 0);
+                errorCode = (computerName != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+                if (errorCode == CURLE_OK)
+                {
+                  DWORD length = MAX_COMPUTERNAME_LENGTH + 1;
+                  errorCode = GetComputerName(computerName, &length) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+                  if (errorCode == CURLE_OK)
+                  {
+                    errorCode = endPoint->SetEndPointName(computerName) ? errorCode : CURLE_OUT_OF_MEMORY;
+                    errorCode = chunk->GetItems()->Add(endPoint) ? errorCode : CURLE_OUT_OF_MEMORY;
+                  }
+                }
+                FREE_MEM(computerName);
+              }
+
+              if (errorCode != CURLE_OK)
+              {
+                FREE_MEM_CLASS(endPoint);
+              }
+
+              errorCode = sourceDescription->GetChunks()->Add(chunk) ? errorCode : CURLE_OUT_OF_MEMORY;
+            }
+
+            if (errorCode != CURLE_OK)
+            {
+              FREE_MEM_CLASS(chunk);
+            }
+          }
+
+          if (errorCode == CURLE_OK)
+          {
+            unsigned int receiverReportSize = receiverReport->GetSize();
+            unsigned int sourceDescriptionSize = sourceDescription->GetSize();
+
+            // allocate four more bytes - in case that we need to create interlaved packet
+            ALLOC_MEM_DEFINE_SET(reportBuffer, unsigned char, (receiverReportSize + sourceDescriptionSize + 4), 0);
+            errorCode = (reportBuffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY;
+
+            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = receiverReport->GetPacket(reportBuffer + 4, receiverReportSize) ? errorCode : CURLE_SEND_ERROR);
+            CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = sourceDescription->GetPacket(reportBuffer + 4 + receiverReportSize, sourceDescriptionSize) ? errorCode : CURLE_SEND_ERROR);
+
+            if (errorCode == CURLE_OK)
+            {
+              // send report buffer to remote server
+              CSimpleServer *controlServer = track->GetControlServer(); 
+
+              if (controlServer != NULL)
+              {
+                // track has control server
+
+                CUdpServer *udpControlServer = dynamic_cast<CUdpServer *>(controlServer);
+                CTcpServer *tcpControlServer = dynamic_cast<CTcpServer *>(controlServer);
+
+                if (udpControlServer != NULL)
+                {
+                  CUdpSocketContext *udpContext = NULL;
+
+                  // get control UDP socket context with set last sender IP address
+                  for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
+                  {
+                    CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+
+                    if (server->GetLastSenderIpAddress() != NULL)
+                    {
+                      udpContext = server;
+                      break;
+                    }
+                  }
+
+                  errorCode = (udpContext != NULL) ? errorCode : CURLE_SEND_ERROR;
+
+                  if (errorCode == CURLE_OK)
+                  {
+                    unsigned int sentLength = 0;
+                    errorCode = SUCCEEDED(udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength)) ? errorCode : CURLE_SEND_ERROR;
+                    errorCode = (sentLength == (receiverReportSize + sourceDescriptionSize)) ? errorCode : CURLE_SEND_ERROR;
+                  }
+                }
+
+                if (tcpControlServer != NULL)
+                {
+                  // not implemented
+                  errorCode = CURLE_SEND_ERROR;
+                }
+              }
+              else
+              {
+                // track hasn't control server = it's interleaved transport
+                // in that case we send receiver report packet through CURL instance
+
+                // but first we need to create interleaved packet
+                reportBuffer[0] = INTERLEAVED_PACKET_HEADER_IDENTIFIER;                             // interleaved packet identifier
+                reportBuffer[1] = track->GetTransportResponseHeader()->GetMaxInterleavedChannel();  // interleaved packet channnel (specified in transport header)
+                WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
+
+                errorCode = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout());
+              }
+
+              track->SetLastReceiverReportTime(GetTickCount());
+            }
+
+            FREE_MEM(reportBuffer);
+          }
+
+          FREE_MEM_CLASS(receiverReport);
+          FREE_MEM_CLASS(sourceDescription);
+        }
+      }
+
+      errorCode = CURLE_OK;
     }
 
     Sleep(1);

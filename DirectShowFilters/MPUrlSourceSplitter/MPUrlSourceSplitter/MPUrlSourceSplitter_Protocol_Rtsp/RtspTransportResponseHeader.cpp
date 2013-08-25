@@ -31,6 +31,7 @@ CRtspTransportResponseHeader::CRtspTransportResponseHeader(void)
   this->flags = FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_NONE;
 
   this->destination = NULL;
+  this->source = NULL;
   this->layers = 0;
   this->lowerTransport = NULL;
   this->maxClientPort = 0;
@@ -51,6 +52,7 @@ CRtspTransportResponseHeader::CRtspTransportResponseHeader(void)
 CRtspTransportResponseHeader::~CRtspTransportResponseHeader(void)
 {
   FREE_MEM(this->destination);
+  FREE_MEM(this->source);
   FREE_MEM(this->lowerTransport);
   FREE_MEM(this->mode);
   FREE_MEM(this->profile);
@@ -137,6 +139,11 @@ const wchar_t *CRtspTransportResponseHeader::GetMode(void)
 unsigned int CRtspTransportResponseHeader::GetSynchronizationSourceIdentifier(void)
 {
   return this->synchronizationSourceIdentifier;
+}
+
+const wchar_t *CRtspTransportResponseHeader::GetSource(void)
+{
+  return this->source;
 }
 
 /* set methods */
@@ -229,6 +236,7 @@ bool CRtspTransportResponseHeader::CloneInternal(CHttpHeader *clonedHeader)
     header->flags = this->flags;
 
     SET_STRING_AND_RESULT_WITH_NULL(header->destination, this->destination, result);
+    SET_STRING_AND_RESULT_WITH_NULL(header->source, this->source, result);
     SET_STRING_AND_RESULT_WITH_NULL(header->lowerTransport, this->lowerTransport, result);
     SET_STRING_AND_RESULT_WITH_NULL(header->mode, this->mode, result);
     SET_STRING_AND_RESULT_WITH_NULL(header->profile, this->profile, result);
@@ -351,6 +359,9 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
           this->flags |= FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_MULTICAST;
         }
         else if (wcsncmp(this->value + position, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_DESTINATION, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_DESTINATION_LENGTH) == 0)
+        {
+        }
+        else if (wcsncmp(this->value + position, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SOURCE, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SOURCE_LENGTH) == 0)
         {
         }
         else if (wcsncmp(this->value + position, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_INTERLEAVED, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_INTERLEAVED_LENGTH) == 0)

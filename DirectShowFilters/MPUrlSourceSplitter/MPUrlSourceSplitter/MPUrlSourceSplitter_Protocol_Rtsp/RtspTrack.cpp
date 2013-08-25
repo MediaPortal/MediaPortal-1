@@ -33,6 +33,18 @@ CRtspTrack::CRtspTrack(void)
   this->dataServer = NULL;
   this->controlServer = NULL;
   this->transportResponseHeader = NULL;
+  this->lastReceiverReportTime = 0;
+  this->receiverReportInterval = 0;
+
+  // create GUID and set SSRC to its first 4 bytes (Data1)
+  GUID guid;
+  if (CoCreateGuid(&guid) == S_OK)
+  {
+    this->synchronizationSourceIdentifier = (unsigned int)guid.Data1;
+  }
+
+  this->senderSynchronizationSourceIdentifier = 0;
+  this->senderSynchronizationSourceIdentifierSet = false;
 }
 
 CRtspTrack::~CRtspTrack(void)
@@ -91,6 +103,26 @@ CRtspTransportResponseHeader *CRtspTrack::GetTransportResponseHeader(void)
   return this->transportResponseHeader;
 }
 
+DWORD CRtspTrack::GetLastReceiverReportTime(void)
+{
+  return this->lastReceiverReportTime;
+}
+
+DWORD CRtspTrack::GetReceiverReportInterval(void)
+{
+  return this->receiverReportInterval;
+}
+
+unsigned int CRtspTrack::GetSynchronizationSourceIdentifier(void)
+{
+  return this->synchronizationSourceIdentifier;
+}
+
+unsigned int CRtspTrack::GetSenderSynchronizationSourceIdentifier(void)
+{
+  return this->senderSynchronizationSourceIdentifier;
+}
+
 /* set methods */
 
 void CRtspTrack::SetServerDataPort(unsigned int serverDataPort)
@@ -142,6 +174,27 @@ bool CRtspTrack::SetTransportResponseHeader(CRtspTransportResponseHeader *header
   return result;
 }
 
+void CRtspTrack::SetLastReceiverReportTime(DWORD lastReceiverReportTime)
+{
+  this->lastReceiverReportTime = lastReceiverReportTime;
+}
+
+void CRtspTrack::SetReceiverReportInterval(DWORD receiverReportInterval)
+{
+  this->receiverReportInterval = receiverReportInterval;
+}
+
+void CRtspTrack::SetSynchronizationSourceIdentifier(unsigned int synchronizationSourceIdentifier)
+{
+  this->synchronizationSourceIdentifier = synchronizationSourceIdentifier;
+}
+
+void CRtspTrack::SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier)
+{
+  this->senderSynchronizationSourceIdentifier = senderSynchronizationSourceIdentifier;
+  this->senderSynchronizationSourceIdentifierSet = true;
+}
+
 /* other methods */
 
 bool CRtspTrack::IsServerDataPort(unsigned int port)
@@ -164,6 +217,11 @@ bool CRtspTrack::IsClientControlPort(unsigned int port)
   return (this->clientControlPort == port);
 }
 
+bool CRtspTrack::IsSetSenderSynchronizationSourceIdentifier(void)
+{
+  return this->senderSynchronizationSourceIdentifierSet;
+}
+
 CRtspTrack *CRtspTrack::Clone(void)
 {
   bool res = true;
@@ -175,6 +233,10 @@ CRtspTrack *CRtspTrack::Clone(void)
     result->clientDataPort = this->clientDataPort;
     result->serverControlPort = this->serverControlPort;
     result->serverDataPort = this->serverDataPort;
+    result->lastReceiverReportTime = this->lastReceiverReportTime;
+    result->receiverReportInterval = this->receiverReportInterval;
+    result->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
+    result->senderSynchronizationSourceIdentifier = this->senderSynchronizationSourceIdentifier;
 
     result->downloadResponse = this->downloadResponse->Clone();
     res &= (result->downloadResponse != NULL);

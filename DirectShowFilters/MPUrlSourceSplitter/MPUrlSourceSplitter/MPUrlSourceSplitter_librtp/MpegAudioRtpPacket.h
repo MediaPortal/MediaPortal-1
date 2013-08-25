@@ -54,6 +54,10 @@ public:
 
   /* get methods */
 
+  // gets packet size
+  // @return : packet size or UINT_MAX if error
+  virtual unsigned int GetSize(void);
+
   // gets payload data
   // @return : payload data or NULL if error
   virtual const unsigned char *GetPayload(void);

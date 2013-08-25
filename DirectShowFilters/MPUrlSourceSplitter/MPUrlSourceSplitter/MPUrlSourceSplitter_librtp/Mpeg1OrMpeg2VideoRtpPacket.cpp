@@ -39,6 +39,11 @@ CMpeg1OrMpeg2VideoRtpPacket::~CMpeg1OrMpeg2VideoRtpPacket(void)
 
 /* get methods */
 
+unsigned int CMpeg1OrMpeg2VideoRtpPacket::GetSize(void)
+{
+  return (__super::GetSize() + MPEG1_OR_MPEG2_VIDEO_PAYLOAD_HEADER_LENGTH);
+}
+
 unsigned int CMpeg1OrMpeg2VideoRtpPacket::GetTemporalReference(void)
 {
   return this->temporalReference;

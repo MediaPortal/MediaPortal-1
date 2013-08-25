@@ -37,6 +37,11 @@ CMpegAudioRtpPacket::~CMpegAudioRtpPacket(void)
 
 /* get methods */
 
+unsigned int CMpegAudioRtpPacket::GetSize(void)
+{
+  return (__super::GetSize() + MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);
+}
+
 const unsigned char *CMpegAudioRtpPacket::GetPayload(void)
 {
   return (this->payload + MPEG_AUDIO_PAYLOAD_HEADER_LENGTH);

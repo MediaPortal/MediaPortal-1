@@ -2041,6 +2041,12 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
           endOfStream = true;
         }
+
+        if (result == S_FALSE)
+        {
+          // no output packet, sleep some time
+          Sleep(1);
+        }
       }
       else
       {

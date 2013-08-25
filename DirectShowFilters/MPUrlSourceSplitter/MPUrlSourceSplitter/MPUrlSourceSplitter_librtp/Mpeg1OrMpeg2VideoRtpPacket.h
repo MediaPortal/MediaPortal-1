@@ -127,6 +127,10 @@ public:
 
   /* get methods */
 
+  // gets packet size
+  // @return : packet size or UINT_MAX if error
+  virtual unsigned int GetSize(void);
+
   virtual unsigned int GetTemporalReference(void);
   virtual unsigned int GetPictureType(void);
 

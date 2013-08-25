@@ -25,11 +25,13 @@
 CUdpSocketContext::CUdpSocketContext(void)
   : CSocketContext()
 {
+  this->lastSenderIpAddress = NULL;
 }
 
 CUdpSocketContext::CUdpSocketContext(SOCKET socket)
   : CSocketContext(socket)
 {
+  FREE_MEM_CLASS(this->lastSenderIpAddress);
 }
 
 CUdpSocketContext::~CUdpSocketContext(void)
@@ -38,6 +40,89 @@ CUdpSocketContext::~CUdpSocketContext(void)
 
 /* get methods */
 
+CIpAddress *CUdpSocketContext::GetLastSenderIpAddress(void)
+{
+  return this->lastSenderIpAddress;
+}
+
 /* set methods */
 
 /* other methods */
+
+HRESULT CUdpSocketContext::Send(const char *buffer, unsigned int length, unsigned int *sentLength)
+{
+  return this->Send(buffer, length, sentLength, this->GetLastSenderIpAddress());
+}
+
+HRESULT CUdpSocketContext::Send(const char *buffer, unsigned int length, int flags, unsigned int *sentLength)
+{
+  return this->Send(buffer, length, flags, sentLength, this->GetLastSenderIpAddress());
+}
+
+HRESULT CUdpSocketContext::Send(const char *buffer, unsigned int length, unsigned int *sentLength, CIpAddress *client)
+{
+  return this->Send(buffer, length, 0, sentLength, client);
+}
+
+HRESULT CUdpSocketContext::Send(const char *buffer, unsigned int length, int flags, unsigned int *sentLength, CIpAddress *client)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_HRESULT(result, buffer, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, sentLength, result, E_INVALIDARG);
+  CHECK_POINTER_HRESULT(result, client, result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    *sentLength = sendto(this->internalSocket, buffer, length, flags, client->GetAddressIP(), client->GetAddressLength());
+    if ((*sentLength) == SOCKET_ERROR)
+    {
+      result = HRESULT_FROM_WIN32(WSAGetLastError());
+      *sentLength = 0;
+    }
+    else
+    {
+      this->sentDataLength += *sentLength;
+    }
+  }
+
+  return result;
+}
+
+HRESULT CUdpSocketContext::Receive(char *buffer, unsigned int length, unsigned int *receivedLength)
+{
+  return this->Receive(buffer, length, 0, receivedLength);
+}
+
+HRESULT CUdpSocketContext::Receive(char *buffer, unsigned int length, int flags, unsigned int *receivedLength)
+{
+  return this->Receive(buffer, length, flags, receivedLength, NULL);
+}
+
+HRESULT CUdpSocketContext::Receive(char *buffer, unsigned int length, unsigned int *receivedLength, CIpAddress **sender)
+{
+  return this->Receive(buffer, length, 0, receivedLength, sender);
+}
+
+HRESULT CUdpSocketContext::Receive(char *buffer, unsigned int length, int flags, unsigned int *receivedLength, CIpAddress **sender)
+{
+  HRESULT result = S_OK;
+
+  FREE_MEM_CLASS(this->lastSenderIpAddress);
+  result = __super::Receive(buffer, length, flags, receivedLength, &this->lastSenderIpAddress);
+
+  if (SUCCEEDED(result))
+  {
+    if (sender != NULL)
+    {
+      *sender = this->lastSenderIpAddress->Clone();
+      CHECK_POINTER_HRESULT(result, (*sender), result, E_OUTOFMEMORY);
+    }
+  }
+
+  if (FAILED(result))
+  {
+    FREE_MEM_CLASS(this->lastSenderIpAddress);
+  }
+
+  return result;
+}

@@ -56,6 +56,7 @@
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SERVER_PORT              L"server_port"
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SSRC                     L"ssrc"
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MODE                     L"mode"
+#define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SOURCE                   L"source"
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_UNICAST_LENGTH           7
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MULTICAST_LENGTH         9
@@ -69,6 +70,7 @@
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SERVER_PORT_LENGTH       11
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SSRC_LENGTH              4
 #define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MODE_LENGTH              4
+#define RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_SOURCE_LENGTH            6
 
 #define RTSP_TRANSPORT_RESPONSE_HEADER_SEPARATOR                          L";"
 #define RTSP_TRANSPORT_RESPONSE_HEADER_SEPARATOR_LENGTH                   1
@@ -158,6 +160,10 @@ public:
   // gets RTP synchronization source identifier
   // @return : RTP synchronization source identifier
   virtual unsigned int GetSynchronizationSourceIdentifier(void);
+
+  // gets source
+  // @return : source or NULL if not specified
+  virtual const wchar_t *GetSource(void);
 
   /* set methods */
 
@@ -250,6 +256,8 @@ protected:
 
   // holds destination
   wchar_t *destination;
+  // holds source
+  wchar_t *source;
 
   // holds min and max interleaved channel number (if specified)
   unsigned int minInterleaved;

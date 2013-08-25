@@ -26,8 +26,11 @@
 #include "DownloadResponse.h"
 #include "SimpleServer.h"
 #include "RtspTransportResponseHeader.h"
+#include "IpAddress.h"
 
 #define PORT_UNSPECIFIED                                              UINT_MAX
+// receiver report minimum time is 5000 ms
+#define RECEIVER_REPORT_MIN_TIME                                      5000
 
 class CRtspTrack
 {
@@ -74,6 +77,24 @@ public:
   // @return : RTSP transport response header or NULL if not specified
   virtual CRtspTransportResponseHeader *GetTransportResponseHeader(void);
 
+  // gets last receiver report time
+  // @return : last receiver report time
+  virtual DWORD GetLastReceiverReportTime(void);
+
+  // gets receiver report interval
+  // @return : receiver report interval
+  virtual DWORD GetReceiverReportInterval(void);
+
+  // gets track synchronization source identifier
+  // SSRC for track is generated when created class
+  // @return : synchronization source identifier
+  virtual unsigned int GetSynchronizationSourceIdentifier(void);
+
+  // gets sender synchronization source identifier
+  // SSRC for track is generated when created class
+  // @return : sender synchronization source identifier
+  virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
+
   /* set methods */
 
   // sets server data port
@@ -112,6 +133,22 @@ public:
   // @return : true if successful, false otherwise
   virtual bool SetTransportResponseHeader(CRtspTransportResponseHeader *header);
 
+  // sets last receiver report time
+  // @param lastReceiverReportTime : last receiver report time to set
+  virtual void SetLastReceiverReportTime(DWORD lastReceiverReportTime);
+
+  // sets receiver report interval
+  // @param receiverReportInterval : receiver report interval to set
+  virtual void SetReceiverReportInterval(DWORD receiverReportInterval);
+
+  // sets synchronization source identifier
+  // @param synchronizationSourceIdentifier : synchronization source identifier to set
+  virtual void SetSynchronizationSourceIdentifier(unsigned int synchronizationSourceIdentifier);
+
+  // sets sender synchronization source identifier
+  // @param senderSynchronizationSourceIdentifier : sender synchronization source identifier to set
+  virtual void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
+
   /* other methods */
 
   // tests if specified port is server data port
@@ -134,6 +171,10 @@ public:
   // @return : true if tested port is client control port, false otherwise
   virtual bool IsClientControlPort(unsigned int port);
 
+  // tests if sender synchronization source identifier is set or not
+  // @return : true if SSRC is set, false otherwise
+  virtual bool IsSetSenderSynchronizationSourceIdentifier(void);
+
   // deeply clones current instance
   // curl handle is not cloned
   // @result : deep clone of current instance or NULL if error
@@ -141,9 +182,11 @@ public:
 
 protected:
 
+  // holds remote server data and control ports
   unsigned int serverDataPort;
   unsigned int serverControlPort;
 
+  // holds our data and server ports
   unsigned int clientDataPort;
   unsigned int clientControlPort;
 
@@ -159,6 +202,17 @@ protected:
 
   // holds RTSP transport response header (mostly for interleaved channels)
   CRtspTransportResponseHeader *transportResponseHeader;
+
+  // holds last receiver report time
+  DWORD lastReceiverReportTime;
+  // holds receiver report interval
+  DWORD receiverReportInterval;
+
+  // holds track SSRC
+  unsigned int synchronizationSourceIdentifier;
+  // holds sender SSRC
+  unsigned int senderSynchronizationSourceIdentifier;
+  bool senderSynchronizationSourceIdentifierSet;
 };
 
 #endif
