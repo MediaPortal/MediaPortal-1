@@ -41,7 +41,6 @@ namespace MediaPortal.Util
     private static int PreviewRows = 2;
     private static int preRecordInterval = 1;
     private static bool LeaveShareThumb = false;
-    private static bool NeedsConfigRefresh = true;
     private static MediaPortal.Player.MediaInfoWrapper MediaInfo = null;
     private static int TimeBetweenThumbs = 60;
 
@@ -57,7 +56,6 @@ namespace MediaPortal.Util
         preRecordInterval = xmlreader.GetValueAsInt("thumbnails", "preRecordInterval", 1);
         Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}, preRecordInterval = {3}.",
                   PreviewColumns, PreviewRows, LeaveShareThumb, preRecordInterval);
-        NeedsConfigRefresh = false;
       }
     }
 
@@ -80,10 +78,7 @@ namespace MediaPortal.Util
     {
       //Log.Debug("VideoThumbCreator: args {0}, {1}!", aVideoPath, aThumbPath);
 
-      if (NeedsConfigRefresh)
-      {
         LoadSettings();
-      }
 
       if (String.IsNullOrEmpty(aVideoPath) || String.IsNullOrEmpty(aThumbPath))
       {
@@ -136,13 +131,16 @@ namespace MediaPortal.Util
       const double flblank = 0.6;
       string blank = flblank.ToString("F", CultureInfo.CurrentCulture);
 
-      int preGapSec = preRecordInterval*60; 
+      int preGapSec = preRecordInterval*60;
 
+      int TimeToSeek = 3;
+
+      // intRnd is used if user refresh the thumbnail from context menu
       int intRnd = 0;
       if (aOmitCredits)
       {
         Random rnd = new Random();
-        intRnd = rnd.Next(10, 120);
+        intRnd = rnd.Next(10, 300);
       }
 
       preGapSec = preGapSec+intRnd;
@@ -155,15 +153,10 @@ namespace MediaPortal.Util
      
       if (preGapSec > Duration)
       {
-        preGapSec = Duration - 240;
+        preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
       }
 
-      if (preGapSec < 0)
-      {
-        preGapSec = 4;
-      }
-
-      TimeBetweenThumbs = (Duration - preGapSec) / 4;
+      TimeBetweenThumbs = (Duration - preGapSec) / ((PreviewColumns * PreviewRows) + 1);
 
       Log.Debug("{0} duration is {1}.", aVideoPath, Duration);
       
@@ -181,8 +174,8 @@ namespace MediaPortal.Util
         string strFilenamewithoutExtensionTemp = Path.GetTempPath() + Path.GetFileName(strFilenamewithoutExtension);
         string ShareThumbTemp = Path.GetTempPath() + Path.GetFileName(ShareThumb);
         // ffmpeg
-        string ffmpegFallbackArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",{0}),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={1}x{2}", 5, PreviewColumns, PreviewRows);
-        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}.jpg\"", 5, aVideoPath, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
+        string ffmpegFallbackArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", PreviewColumns, PreviewRows);
+        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}.jpg\"", 5, aVideoPath, TimeToSeek, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
         
         if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb))
             // No thumb in share although it should be there 
@@ -207,8 +200,8 @@ namespace MediaPortal.Util
           {
             TimeOffset = preGapSec + i * TimeBetweenThumbs;
 
-            ffmpegArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",{0}),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={1}x{2}", 1, 1, 1);
-            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_{4}.jpg\"", TimeOffset, aVideoPath, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            ffmpegArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile=1x1");
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
             Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
             Log.Debug("VideoThumbCreator: thumb creation {0}", ExtractorArgs);
             if (!Success)

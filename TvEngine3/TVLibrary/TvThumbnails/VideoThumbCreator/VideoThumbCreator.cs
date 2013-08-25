@@ -78,6 +78,8 @@ namespace TvThumbnails.VideoThumbCreator
 
       int TimeIntBwThumbs = 0;
 
+      int TimeToSeek = 3;
+
       int preGapSec = Thumbs.TimeOffset * 60;
 
       Log.Debug("TvThumbnails.VideoThumbCreator: preGapSec: {0}", preGapSec);
@@ -88,15 +90,10 @@ namespace TvThumbnails.VideoThumbCreator
 
       if (preGapSec > Duration)
       {
-        preGapSec = Duration - 240;
+        preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
       }
 
-      if (preGapSec < 0)
-      {
-        preGapSec = 4;
-      }
-
-      TimeIntBwThumbs = (Duration - preGapSec) / 4;
+      TimeIntBwThumbs = (Duration - preGapSec) / ((Thumbs.PreviewColumns * Thumbs.PreviewRows) + 1); ;
 
       Log.Debug("{0} duration is {1}, TimeIntBwThumbs is {2}", aVideoPath, Duration, TimeIntBwThumbs);
 
@@ -111,7 +108,6 @@ namespace TvThumbnails.VideoThumbCreator
         string.Format("tile={0}x{1}", Thumbs.PreviewColumns, Thumbs.PreviewRows);
 */
       string ffmpegFallbackArgs =
-        string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,{0}),", 5) +
         string.Format("yadif=0:-1:0,") +
         string.Format("scale={0}:{1},", 600, 337) +
         string.Format("setsar=1:1,") +
@@ -127,7 +123,8 @@ namespace TvThumbnails.VideoThumbCreator
       string ExtractorFallbackArgs =
         string.Format("-loglevel quiet -ss 5 ") +
         string.Format("-i \"{0}\" ", aVideoPath) +
-        string.Format("-vf {0} ", ffmpegFallbackArgs) +
+        string.Format("-y -vf {0} ", ffmpegFallbackArgs) +
+        string.Format("-ss {0} ", TimeToSeek) +
         string.Format("-vframes 1 -vsync 0 ") +
         string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
 
@@ -154,8 +151,8 @@ namespace TvThumbnails.VideoThumbCreator
           {
             TimeOffset = preGapSec + i * TimeIntBwThumbs;
 
-            ffmpegArgs = string.Format("select=isnan(prev_selected_t)+gte(t-prev_selected_t" + "\\" + ",{0}),yadif=0:-1:0,scale=600:337,setsar=1:1,tile={1}x{2}", 1, 1, 1);
-            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -vf {2} -vframes 1 -vsync 0 -an \"{3}_{4}.jpg\"", TimeOffset, aVideoPath, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            ffmpegArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", 1, 1);
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
             Success = StartProcess(_extractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
             Log.Debug("TvThumbnails.VideoThumbCreator: thumb creation {0}", ExtractorArgs);
             if (!Success)
@@ -419,9 +416,14 @@ namespace TvThumbnails.VideoThumbCreator
       {
         try
         {
-          img = Image.FromFile(strFileName);
-          if (img != null)
-            g.DrawImage(img, x, y, w, h);
+          using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+          {
+            using (img = Image.FromStream(fs, true, false))
+            {
+              if (img != null)
+                g.DrawImage(img, x, y, w, h);
+            }
+          }
         }
         catch (OutOfMemoryException)
         {
@@ -431,7 +433,7 @@ namespace TvThumbnails.VideoThumbCreator
         {
           Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
-       }
+      }
       finally
       {
         if (img != null)
@@ -469,15 +471,29 @@ namespace TvThumbnails.VideoThumbCreator
               int thumbnailWidth = 256;
               int thumbnailHeight = 256;
               // draw a fullsize thumb if only 1 pic is available
-              if (aPictureList.Count == 1)
+              switch (PreviewColumns)
               {
-                thumbnailWidth = width;
-                thumbnailHeight = height;
+                case 1:
+                  thumbnailWidth = width;
+                  break;
+                case 2:
+                  thumbnailWidth = width / 2;
+                  break;
+                case 3:
+                  thumbnailWidth = width / 3;
+                  break;
               }
-              else
+              switch (PreviewRows)
               {
-                thumbnailWidth = width/2;
-                thumbnailHeight = height/2;
+                case 1:
+                  thumbnailHeight = height;
+                  break;
+                case 2:
+                  thumbnailHeight = height / 2;
+                  break;
+                case 3:
+                  thumbnailHeight = height / 3;
+                  break;
               }
 
               using (Bitmap bmp = new Bitmap(width, height))
@@ -489,38 +505,74 @@ namespace TvThumbnails.VideoThumbCreator
                   g.SmoothingMode = Thumbs.Smoothing;
 
                   g.DrawImage(imgFolder, 0, 0, width, height);
-                  int x, y, w, h;
-                  x = 0;
-                  y = 0;
+                  int w, h;
                   w = thumbnailWidth;
                   h = thumbnailHeight;
-                  Log.Debug("aPictureList.Count: {0}", aPictureList.Count);
 
                   try
                   {
-                    switch (aPictureList.Count)
+                    if (PreviewColumns == 1 && PreviewRows == 1)
                     {
-                      case 1:
-                        AddPicture(g, (string) aPictureList[0], x, y, w, h);
-                        break;
-                      case 2:
-                        if (PreviewColumns == 1 && PreviewRows == 2)
-                        {
-                          AddPicture(g, (string) aPictureList[0], x, y, w*2, h);
-                          AddPicture(g, (string) aPictureList[1], x, y + thumbnailHeight, w*2, h);
-                        }
-                        else
-                        {
-                          AddPicture(g, (string) aPictureList[0], x, y, w, h*2);
-                          AddPicture(g, (string) aPictureList[1], x + thumbnailWidth, y, w, h*2);
-                        }
-                        break;
-                      case 4:
-                        AddPicture(g, (string) aPictureList[0], x, y, w, h);
-                        AddPicture(g, (string) aPictureList[1], x + thumbnailWidth, y, w, h);
-                        AddPicture(g, (string) aPictureList[2], x, y + thumbnailHeight, w, h);
-                        AddPicture(g, (string) aPictureList[3], x + thumbnailWidth, y + thumbnailHeight, w, h);
-                        break;
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                    }
+                    if (PreviewColumns == 1 && PreviewRows == 2)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], 0, h, w, h);
+                    }
+                    if (PreviewColumns == 2 && PreviewRows == 1)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                    }
+                    if (PreviewColumns == 2 && PreviewRows == 2)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[2], 0, h, w, h);
+                      AddPicture(g, (string)aPictureList[3], w, h, w, h);
+                    }
+                    if (PreviewColumns == 1 && PreviewRows == 3)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], 0, h, w, h);
+                      AddPicture(g, (string)aPictureList[2], 0, 2 * h, w, h);
+                    }
+                    if (PreviewColumns == 2 && PreviewRows == 3)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[2], 0, h, w, h);
+                      AddPicture(g, (string)aPictureList[3], w, h, w, h);
+                      AddPicture(g, (string)aPictureList[4], 0, 2 * h, w, h);
+                      AddPicture(g, (string)aPictureList[5], w, 2 * h, w, h);
+                    }
+                    if (PreviewColumns == 3 && PreviewRows == 3)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[3], 0, h, w, h);
+                      AddPicture(g, (string)aPictureList[4], w, h, w, h);
+                      AddPicture(g, (string)aPictureList[5], 2 * w, h, w, h);
+                      AddPicture(g, (string)aPictureList[6], 0, 2 * h, w, h);
+                      AddPicture(g, (string)aPictureList[7], w, 2 * h, w, h);
+                      AddPicture(g, (string)aPictureList[8], 2 * w, 2 * h, w, h);
+                    }
+                    if (PreviewColumns == 3 && PreviewRows == 1)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
+                    }
+                    if (PreviewColumns == 3 && PreviewRows == 2)
+                    {
+                      AddPicture(g, (string)aPictureList[0], 0, 0, w, h);
+                      AddPicture(g, (string)aPictureList[1], w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[2], 2 * w, 0, w, h);
+                      AddPicture(g, (string)aPictureList[3], 0, h, w, h);
+                      AddPicture(g, (string)aPictureList[4], w, h, w, h);
+                      AddPicture(g, (string)aPictureList[5], 2 * w, h, w, h);
                     }
                   }
                   catch (Exception ex)
@@ -571,7 +623,7 @@ namespace TvThumbnails.VideoThumbCreator
                 }
                 catch (Exception ex2)
                 {
-                  Log.Error("Utils: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath,
+                  Log.Error("CreateTileThumb: An exception occured saving CreateTileThumb: {0} - {1}", aThumbPath,
                             ex2.Message);
                 }
               }
@@ -580,16 +632,12 @@ namespace TvThumbnails.VideoThumbCreator
         }
         catch (FileNotFoundException)
         {
-          Log.Error("Utils: Your skin does not supply previewbackground.png to create CreateTileThumb!");
+          Log.Error("CreateTileThumb: Your skin does not find first image to create CreateTileThumb!");
         }
         catch (Exception exm)
         {
-          Log.Error("Utils: An error occured creating folder CreateTileThumb: {0}", exm.Message);
+          Log.Error("CreateTileThumb: An error occured creating folder CreateTileThumb: {0}", exm.Message);
         }
-      }
-      else
-      {
-        result = false;
       }
       return result;
     }

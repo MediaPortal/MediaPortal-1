@@ -219,6 +219,9 @@ namespace TvService
           }
         }
 
+        var layer = new TvBusinessLayer();
+        layer.SetLogLevel();
+
         _tvServiceThread.Start();
 
         while (!TvServiceThread.Started)

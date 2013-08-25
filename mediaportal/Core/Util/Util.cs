@@ -685,6 +685,7 @@ namespace MediaPortal.Util
       }
 
       string strThumb = string.Empty;
+      string strThumbFolder = string.Empty;
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant())))
       {
@@ -783,6 +784,7 @@ namespace MediaPortal.Util
         if (item.Label != "..")
         {
           strThumb = item.Path + @"\folder.jpg";
+          strThumbFolder = strThumb;
           if (FileExistsInCache(strThumb))
           {
             item.ThumbnailImage = strThumb;
@@ -791,7 +793,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      if (!string.IsNullOrEmpty(strThumb))
+      if (!string.IsNullOrEmpty(strThumb) && !strThumb.Equals(strThumbFolder))
       {
         strThumb = ConvertToLargeCoverArt(strThumb);
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
@@ -901,6 +903,7 @@ namespace MediaPortal.Util
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = Util.Utils.GetVideosThumbPathname(path);
+      string strThumbLarge = Util.Utils.GetVideosThumbPathname(path);
       if (FileExistsInCache(strThumb))
       {
         return;
@@ -943,9 +946,11 @@ namespace MediaPortal.Util
             if (Picture.CreateThumbnail(thumb, strThumb, (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false))
             {
-              if (Picture.CreateThumbnail(thumb, Utils.ConvertToLargeCoverArt(strThumb), (int)Thumbs.ThumbLargeResolution,
+              if (Picture.CreateThumbnail(thumb, strThumbLarge, (int)Thumbs.ThumbLargeResolution,
                                         (int)Thumbs.ThumbLargeResolution, 0, false))
               {
+                item.ThumbnailImage = strThumbLarge;
+                item.IconImage = strThumb;
                 SetThumbnails(ref item);
               }
             }
@@ -3737,39 +3742,41 @@ namespace MediaPortal.Util
         {
           try
           {
-            img = ImageFast.FromFile(strFileName);
+            using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+            {
+              using (img = Image.FromStream(fs, true, false))
+              {
+                int iRotation = Util.Picture.GetRotateByExif(img);
+                switch (iRotation)
+                {
+                  case 1:
+                    img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+                  case 2:
+                    img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
+                  case 3:
+                    img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    break;
+                  default:
+                    break;
+                }
+                if (img != null)
+                  g.DrawImage(img, x, y, w, h);
+              }
+            }
           }
-          catch (Exception)
+          catch
+            (OutOfMemoryException)
           {
-            img = Image.FromFile(strFileName);
+            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!",
+                     strFileName);
           }
-          int iRotation = Util.Picture.GetRotateByExif(img);
-          switch (iRotation)
-          {
-            case 1:
-              img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-              break;
-            case 2:
-              img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-              break;
-            case 3:
-              img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-              break;
-            default:
-              break;
-          }
-          if (img != null)
-            g.DrawImage(img, x, y, w, h);
-        }
-        catch (OutOfMemoryException)
-        {
-          Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
         }
         catch (Exception ex)
         {
           Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
-        //}
       }
       finally
       {
@@ -4000,15 +4007,29 @@ namespace MediaPortal.Util
             int thumbnailWidth = 256;
             int thumbnailHeight = 256;
             // draw a fullsize thumb if only 1 pic is available
-            if (aPictureList.Count == 1)
+            switch (PreviewColumns)
             {
-              thumbnailWidth = width;
-              thumbnailHeight = height;
+              case 1:
+                thumbnailWidth = width;
+                break;
+              case 2:
+                thumbnailWidth = width/2;
+                break;
+              case 3:
+                thumbnailWidth = width/3;
+                break;
             }
-            else
+            switch (PreviewRows)
             {
-              thumbnailWidth = width / 2;
-              thumbnailHeight = height / 2;
+              case 1:
+                thumbnailHeight = height;
+                break;
+              case 2:
+                thumbnailHeight = height/2;
+                break;
+              case 3:
+                thumbnailHeight = height/3;
+                break;
             }
 
             using (Bitmap bmp = new Bitmap(width, height))
@@ -4020,37 +4041,74 @@ namespace MediaPortal.Util
                 g.SmoothingMode = Thumbs.Smoothing;
 
                 g.DrawImage(imgFolder, 0, 0, width, height);
-                int x, y, w, h;
-                x = 0;
-                y = 0;
+                int w, h;
                 w = thumbnailWidth;
                 h = thumbnailHeight;
 
                 try
                 {
-                  switch (aPictureList.Count)
+                  if (PreviewColumns == 1 && PreviewRows == 1)
                   {
-                    case 1:
-                      AddPicture(g, (string)aPictureList[0], x, y, w, h);
-                      break;
-                    case 2:
-                      if (PreviewColumns == 1 && PreviewRows == 2)
-                      {
-                        AddPicture(g, (string)aPictureList[0], x, y, w * 2, h);
-                        AddPicture(g, (string)aPictureList[1], x, y + thumbnailHeight, w * 2, h);
-                      }
-                      else
-                      {
-                        AddPicture(g, (string)aPictureList[0], x, y, w, h * 2);
-                        AddPicture(g, (string)aPictureList[1], x + thumbnailWidth, y, w, h * 2);
-                      }
-                      break;
-                    case 4:
-                      AddPicture(g, (string)aPictureList[0], x, y, w, h);
-                      AddPicture(g, (string)aPictureList[1], x + thumbnailWidth, y, w, h);
-                      AddPicture(g, (string)aPictureList[2], x, y + thumbnailHeight, w, h);
-                      AddPicture(g, (string)aPictureList[3], x + thumbnailWidth, y + thumbnailHeight, w, h);
-                      break;
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                  }
+                  if (PreviewColumns == 1 && PreviewRows == 2)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], 0, h, w, h);
+                  }
+                  if (PreviewColumns == 2 && PreviewRows == 1)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                  }
+                  if (PreviewColumns == 2 && PreviewRows == 2)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[2], 0, h, w, h);
+                    AddPicture(g, (string) aPictureList[3], w, h, w, h);
+                  }
+                  if (PreviewColumns == 1 && PreviewRows == 3)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], 0, h, w, h);
+                    AddPicture(g, (string) aPictureList[2], 0, 2*h, w, h);
+                  }
+                  if (PreviewColumns == 2 && PreviewRows == 3)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[2], 0, h, w, h);
+                    AddPicture(g, (string) aPictureList[3], w, h, w, h);
+                    AddPicture(g, (string) aPictureList[4], 0, 2*h, w, h);
+                    AddPicture(g, (string) aPictureList[5], w, 2*h, w, h);
+                  }
+                  if (PreviewColumns == 3 && PreviewRows == 3)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[3], 0, h, w, h);
+                    AddPicture(g, (string) aPictureList[4], w, h, w, h);
+                    AddPicture(g, (string) aPictureList[5], 2*w, h, w, h);
+                    AddPicture(g, (string) aPictureList[6], 0, 2*h, w, h);
+                    AddPicture(g, (string) aPictureList[7], w, 2*h, w, h);
+                    AddPicture(g, (string) aPictureList[8], 2*w, 2*h, w, h);
+                  }
+                  if (PreviewColumns == 3 && PreviewRows == 1)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
+                  }
+                  if (PreviewColumns == 3 && PreviewRows == 2)
+                  {
+                    AddPicture(g, (string) aPictureList[0], 0, 0, w, h);
+                    AddPicture(g, (string) aPictureList[1], w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[2], 2*w, 0, w, h);
+                    AddPicture(g, (string) aPictureList[3], 0, h, w, h);
+                    AddPicture(g, (string) aPictureList[4], w, h, w, h);
+                    AddPicture(g, (string) aPictureList[5], 2*w, h, w, h);
                   }
                 }
                 catch (Exception ex)
@@ -4065,8 +4123,8 @@ namespace MediaPortal.Util
                 bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
                 Log.Debug("CreateTileThumb: Saving thumb!");
 
-                Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
-                                          (int)Thumbs.ThumbLargeResolution, 0, false);
+                Picture.CreateThumbnail(tmpFile, aThumbPath, (int) Thumbs.ThumbLargeResolution,
+                                        (int) Thumbs.ThumbLargeResolution, 0, false);
                 FileDelete(tmpFile);
 
                 if (defaultBackgroundResized != null)
@@ -4123,10 +4181,6 @@ namespace MediaPortal.Util
         {
           Log.Error("Utils: An error occured creating folder CreateTileThumb: {0}", exm.Message);
         }
-      }
-      else
-      {
-        result = false;
       }
       return result;
     }
@@ -4253,9 +4307,9 @@ namespace MediaPortal.Util
             {
               DeleteFiles(subDir, strPattern, true);
               Directory.Delete(subDir);
-            }
-            catch (Exception) {}
-          }
+      }
+      catch (Exception) {}
+    }
         }
       }
       catch (Exception) {}
