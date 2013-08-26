@@ -1,5 +1,5 @@
 /* 
-*	Copyright (C) 2006 Team MediaPortal
+*	Copyright (C) 2006-2013 Team MediaPortal
 *	http://www.team-mediaportal.com
 *
 *  This Program is free software; you can redistribute it and/or modify
@@ -123,7 +123,8 @@ void CPmtParser::OnNewSection(CSection& section)
         stream_type==SERVICE_TYPE_AUDIO_AC3 || 
         stream_type==SERVICE_TYPE_AUDIO_AAC || 
         stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
-        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS )
+        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS ||
+        stream_type==SERVICE_TYPE_AUDIO_E_AC3)
       {				  
         AudioPid pid;
         pid.Pid=elementary_PID;
