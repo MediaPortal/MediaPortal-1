@@ -162,6 +162,9 @@
     <ClInclude Include="RtspNormalPlayTimeRangeRequestHeader.h">
       <Filter>RtspRequest\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtspTrackStatistics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -289,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="RtspNormalPlayTimeRangeRequestHeader.cpp">
       <Filter>RtspRequest\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspTrackStatistics.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -45,6 +45,8 @@ CRtspTrack::CRtspTrack(void)
 
   this->senderSynchronizationSourceIdentifier = 0;
   this->senderSynchronizationSourceIdentifierSet = false;
+
+  this->statistics = new CRtspTrackStatistics();
 }
 
 CRtspTrack::~CRtspTrack(void)
@@ -54,6 +56,7 @@ CRtspTrack::~CRtspTrack(void)
   FREE_MEM_CLASS(this->dataServer);
   FREE_MEM_CLASS(this->controlServer);
   FREE_MEM_CLASS(this->transportResponseHeader);
+  FREE_MEM_CLASS(this->statistics);
 }
 
 /* get methods */
@@ -121,6 +124,11 @@ unsigned int CRtspTrack::GetSynchronizationSourceIdentifier(void)
 unsigned int CRtspTrack::GetSenderSynchronizationSourceIdentifier(void)
 {
   return this->senderSynchronizationSourceIdentifier;
+}
+
+CRtspTrackStatistics *CRtspTrack::GetStatistics(void)
+{
+  return this->statistics;
 }
 
 /* set methods */

@@ -201,6 +201,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="RtspTeardownRequest.h" />
     <ClInclude Include="RtspTrack.h" />
     <ClInclude Include="RtspTrackCollection.h" />
+    <ClInclude Include="RtspTrackStatistics.h" />
     <ClInclude Include="RtspTransportRequestHeader.h" />
     <ClInclude Include="RtspTransportResponseHeader.h" />
     <ClInclude Include="RtspUserAgentRequestHeader.h" />
@@ -253,6 +254,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="RtspTeardownRequest.cpp" />
     <ClCompile Include="RtspTrack.cpp" />
     <ClCompile Include="RtspTrackCollection.cpp" />
+    <ClCompile Include="RtspTrackStatistics.cpp" />
     <ClCompile Include="RtspTransportRequestHeader.cpp" />
     <ClCompile Include="RtspTransportResponseHeader.cpp" />
     <ClCompile Include="RtspUserAgentRequestHeader.cpp" />

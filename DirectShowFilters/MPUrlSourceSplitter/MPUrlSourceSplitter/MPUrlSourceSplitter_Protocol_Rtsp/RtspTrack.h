@@ -27,6 +27,7 @@
 #include "SimpleServer.h"
 #include "RtspTransportResponseHeader.h"
 #include "IpAddress.h"
+#include "RtspTrackStatistics.h"
 
 #define PORT_UNSPECIFIED                                              UINT_MAX
 // receiver report minimum time is 5000 ms
@@ -94,6 +95,10 @@ public:
   // SSRC for track is generated when created class
   // @return : sender synchronization source identifier
   virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
+
+  // gets RTSP track statistical information
+  // @return : RTSP strack statistical information
+  virtual CRtspTrackStatistics *GetStatistics(void);
 
   /* set methods */
 
@@ -213,6 +218,8 @@ protected:
   // holds sender SSRC
   unsigned int senderSynchronizationSourceIdentifier;
   bool senderSynchronizationSourceIdentifierSet;
+
+  CRtspTrackStatistics *statistics;
 };
 
 #endif
