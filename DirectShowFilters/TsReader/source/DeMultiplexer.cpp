@@ -143,9 +143,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_mpegPesParser = new CMpegPesParser();
   
   LogDebug(" ");
-  LogDebug("=================== New filter instance =========================");
-  LogDebug("  Logging format: Date Time [InstanceID] [ThreadID] Message....  ");
-  LogDebug("=================================================================");
+  LogDebug("=================== New filter instance ===========================");
+  LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
+  LogDebug("===================================================================");
   LogDebug("demux: Start file read thread");
   
   StartThread();
