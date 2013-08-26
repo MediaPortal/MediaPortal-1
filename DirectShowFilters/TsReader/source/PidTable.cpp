@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2009 Team MediaPortal
+ *	Copyright (C) 2006-2013 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -198,6 +198,8 @@ LPCTSTR CPidTable::StreamFormatAsString(int streamType)
 		return _T("DTS-HD");
 	case 0x86:
 		return _T("DTS-HD Master Audio");
+	case 0x87:
+		return _T("DD+");
   case 0x0f:
 		return _T("AAC");
 	case 0x11:
