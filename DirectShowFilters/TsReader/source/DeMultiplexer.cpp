@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2009 Team MediaPortal
+ *  Copyright (C) 2005-2013 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -347,6 +347,16 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_DD_PLUS:
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      break;
+    case SERVICE_TYPE_AUDIO_E_AC3:  //ATSC E-AC3 (DD plus)
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);

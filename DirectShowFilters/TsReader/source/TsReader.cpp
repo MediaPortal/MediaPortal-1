@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2012 Team MediaPortal
+ *  Copyright (C) 2005-2013 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -318,7 +318,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogDebug("------------- v0.5.%d -------------", TSREADER_VERSION);
+  LogDebug("------------- v%d.%d.%d.0 -------------", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;
