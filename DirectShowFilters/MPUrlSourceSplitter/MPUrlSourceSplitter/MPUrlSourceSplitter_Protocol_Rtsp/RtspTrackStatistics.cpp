@@ -24,6 +24,7 @@
 
 CRtspTrackStatistics::CRtspTrackStatistics()
 {
+  this->jitter = 0;
   this->lastTime = 0;
   this->lastRtpPacketTimestamp = 0;
   this->clockFrequency = 0;
@@ -36,6 +37,9 @@ CRtspTrackStatistics::CRtspTrackStatistics()
 
   this->lastExpectedSequenceNumber = 0;
   this->lastReceivedPacketCount = 0;
+
+  this->lastSenderReportTimestamp = 0;
+  this->lastSenderReportTime = 0;
 }
 
 CRtspTrackStatistics::~CRtspTrackStatistics()
@@ -78,11 +82,25 @@ unsigned int CRtspTrackStatistics::GetCumulativePacketLostCount()
 
   // cumulative packet lost is only 24 bits number
   // the maximum value is 0x0000000000FFFFFF, the minimum value is 0xFFFFFFFFFF800000
-  lostCount = min(lostCount, 0x0000000000FFFFFF);
-  lostCount = max(lostCount, 0xFFFFFFFFFF800000);
+  lostCount = min(lostCount, (int64_t)0x0000000000FFFFFF);
+  lostCount = max(lostCount, (int64_t)0xFFFFFFFFFF800000);
   lostCount &= 0x0000000000FFFFFF;
 
   return (unsigned int)lostCount;
+}
+
+unsigned int CRtspTrackStatistics::GetLastSenderReportTimestamp(void)
+{
+  return this->lastSenderReportTimestamp;
+}
+
+unsigned int CRtspTrackStatistics::GetDelaySinceLastSenderReport(unsigned int currentTime)
+{
+  uint64_t result = currentTime - this->lastSenderReportTime;
+  result = result * 65536 / 1000;
+  result = min(result, 0xFFFFFFFF);
+
+  return (unsigned int)result;
 }
 
 unsigned int CRtspTrackStatistics::GetExtendedHighestSequenceNumberReceived()
@@ -166,4 +184,10 @@ void CRtspTrackStatistics::AdjustExpectedAndLostPacketCount(unsigned int sequenc
   }
 
   this->receivedPacketCount++;
+}
+
+void CRtspTrackStatistics::AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp, unsigned int currentTime)
+{
+  this->lastSenderReportTime = currentTime;
+  this->lastSenderReportTimestamp = (unsigned int)((ntpTimestamp & 0x0000FFFFFFFF0000) >> 16);
 }

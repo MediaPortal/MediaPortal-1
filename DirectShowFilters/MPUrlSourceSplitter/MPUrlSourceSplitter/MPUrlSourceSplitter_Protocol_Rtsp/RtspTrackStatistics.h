@@ -53,6 +53,15 @@ public:
   // @return : clock frequency to compute RTP timestamps
   unsigned int GetClockFrequency(void);
 
+  // gets last sender report timestamp
+  // @return : last sender report timestamp
+  unsigned int GetLastSenderReportTimestamp(void);
+
+  // gets delay since last sender report
+  // @param currentTime : the current time measured in client environment in ms
+  // @return : delay since last sender report
+  unsigned int GetDelaySinceLastSenderReport(unsigned int currentTime);
+
   /* set methods */
 
   // sets clock frequency used to compute RTP timestamps
@@ -62,13 +71,18 @@ public:
   /* other methods */
 
   // adjusts jitter in RTSP track statistics
-  // @param currentTime : the current time measured in client environment
+  // @param currentTime : the current time measured in client environment in ms
   // @param rtpPacketTimestamp : RTP packet timestamp
   void AdjustJitter(unsigned int currentTime, unsigned int rtpPacketTimestamp);
 
   // adjusts expected and lost packet count
   // @param sequenceNumber : the sequence number of RTP packet
   void AdjustExpectedAndLostPacketCount(unsigned int sequenceNumber);
+
+  // adjusts last sender report timestamp
+  // @param ntpTimestamp : RTCP packet NTP timestamp
+  // @param currentTime : the current time measured in client environment in ms
+  void AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp, unsigned int currentTime);
 
 protected:
 
@@ -91,6 +105,11 @@ protected:
 
   unsigned int lastExpectedSequenceNumber;
   unsigned int lastReceivedPacketCount;
+
+  /* last sender report timestamp and time*/
+
+  unsigned int lastSenderReportTimestamp;
+  unsigned int lastSenderReportTime;
 };
 
 #endif

@@ -1032,11 +1032,13 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
         if (senderReport != NULL)
         {
           track->SetSenderSynchronizationSourceIdentifier(senderReport->GetSenderSynchronizationSourceIdentifier());
+          track->GetStatistics()->AdjustLastSenderReportTimestamp(senderReport->GetNtpTimestamp(), GetTickCount());
         }
       }
       else
       {
         // in case of RTP packet
+        track->SetSenderSynchronizationSourceIdentifier(rtpPacket->GetSynchronizationSourceIdentifier());
 
         // adjust RTSP track statistics
         track->GetStatistics()->AdjustJitter(GetTickCount(), rtpPacket->GetTimestamp());
@@ -1493,8 +1495,8 @@ DWORD CRtspCurlInstance::CurlWorker(void)
               reportBlock->SetCumulativeNumberOfPacketsLost(track->GetStatistics()->GetCumulativePacketLostCount());
               reportBlock->SetExtendedHighestSequenceNumberReceived(track->GetStatistics()->GetExtendedHighestSequenceNumberReceived());
               reportBlock->SetInterarrivalJitter(track->GetStatistics()->GetJitter());
-              //reportBlock->SetLastSenderReport();
-              //reportBlock->SetDelaySinceLastSenderReport();
+              reportBlock->SetLastSenderReport(track->GetStatistics()->GetLastSenderReportTimestamp());
+              reportBlock->SetDelaySinceLastSenderReport(track->GetStatistics()->GetDelaySinceLastSenderReport(GetTickCount()));
 
               errorCode = receiverReport->GetReportBlocks()->Add(reportBlock) ? errorCode : CURLE_OUT_OF_MEMORY;
             }
