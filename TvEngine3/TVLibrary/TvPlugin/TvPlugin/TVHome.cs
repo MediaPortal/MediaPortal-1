@@ -99,7 +99,7 @@ namespace TvPlugin
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
-    private static ChannelNavigator m_navigator;
+    public static ChannelNavigator m_navigator;
     private static TVUtil _util;
     private static VirtualCard _card = null;
     private static DateTime _updateTimer = DateTime.Now;
@@ -107,7 +107,7 @@ namespace TvPlugin
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
     private TvCropManager _cropManager = new TvCropManager();
-    private TvNotifyManager _notifyManager = new TvNotifyManager();
+    private static TvNotifyManager _notifyManager = new TvNotifyManager();
     private static List<string> _preferredLanguages;
     private static bool _usertsp;
     private static string _recordingpath = "";
@@ -119,7 +119,7 @@ namespace TvPlugin
     private static bool _showlastactivemodule = false;
     private static bool _showlastactivemoduleFullscreen = false;
     private static bool _playbackStopped = false;
-    private static bool _onPageLoadDone = false;
+    public static bool _onPageLoadDone = false;
     private static bool _userChannelChanged = false;
     private static bool _showChannelStateIcons = true;
     private static bool _doingHandleServerNotConnected = false;
@@ -129,6 +129,7 @@ namespace TvPlugin
     private static bool _connected = false;
     private static bool _isAnyCardRecording = false;
     protected static TvServer _server;
+    public static bool firstNotLoaded = true;
 
     private static ManualResetEvent _waitForBlackScreen = null;
     private static ManualResetEvent _waitForVideoReceived = null;
@@ -274,6 +275,44 @@ namespace TvPlugin
       return Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
     }
 
+    public static void OnLoaded()
+    {
+      Log.Info("TVHome:OnLoaded");
+
+      try
+      {
+        if (Connected && !firstNotLoaded)
+        {
+          m_navigator = new ChannelNavigator();
+          m_navigator.OnZapChannel -= new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
+          m_navigator.OnZapChannel += new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
+          LoadSettings(true);
+
+          string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+          string tvServerVersion = Connected ? RemoteControl.Instance.GetAssemblyVersion : "Unknown";
+
+          if (Connected && pluginVersion != tvServerVersion)
+          {
+            string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
+            strLine += "TvServer Version: " + tvServerVersion + "\r\n";
+            strLine += "TvPlugin Version: " + pluginVersion;
+            Log.Error(strLine);
+          }
+          else
+            Log.Info("TVHome V" + pluginVersion + ":ctor");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVHome: Error occured in on loading : {0}, st {1}", ex.Message, Environment.StackTrace);
+      }
+
+      if (!firstNotLoaded)
+      {
+        _notifyManager.Start();
+      }
+    }
+
     public override void OnAdded()
     {
       Log.Info("TVHome:OnAdded");
@@ -332,31 +371,13 @@ namespace TvPlugin
 
         TVHome.OnChannelChanged -= new OnChannelChangedDelegate(ForceUpdates);
         TVHome.OnChannelChanged += new OnChannelChangedDelegate(ForceUpdates);
-
-        m_navigator = new ChannelNavigator();
-        m_navigator.OnZapChannel -= new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
-        m_navigator.OnZapChannel += new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
-        LoadSettings();
-
-        string pluginVersion = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-        string tvServerVersion = Connected ? RemoteControl.Instance.GetAssemblyVersion : "Unknown";
-
-        if (Connected && pluginVersion != tvServerVersion)
-        {
-          string strLine = "TvPlugin and TvServer don't have the same version.\r\n";
-          strLine += "TvServer Version: " + tvServerVersion + "\r\n";
-          strLine += "TvPlugin Version: " + pluginVersion;
-          Log.Error(strLine);
-        }
-        else
-          Log.Info("TVHome V" + pluginVersion + ":ctor");
       }
       catch (Exception ex)
       {
         Log.Error("TVHome: Error occured in Init(): {0}, st {1}", ex.Message, Environment.StackTrace);
       }
 
-      _notifyManager.Start();
+      OnLoaded();
     }
 
 
@@ -459,19 +480,12 @@ namespace TvPlugin
 
       if (!Connected)
       {
-        if (!_onPageLoadDone)
-        {
-          RemoteControl.Clear();
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
-          return;
-        }
-        else
-        {
-          UpdateStateOfRecButton();
-          UpdateProgressPercentageBar();
-          UpdateRecordingIndicator();
-          return;
-        }
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        UpdateStateOfRecButton();
+        UpdateProgressPercentageBar();
+        UpdateRecordingIndicator();
+        return;
       }
 
       try
@@ -491,6 +505,7 @@ namespace TvPlugin
       if (!_onPageLoadDone && m_navigator != null)
       {
         m_navigator.ReLoad();
+        LoadSettings(false);
       }
 
       if (m_navigator == null)
@@ -680,7 +695,7 @@ namespace TvPlugin
         }
 
         // turn tv on/off        
-        if (Navigator.Channel.IsTv)
+        if (Navigator.Channel != null && Navigator.Channel.IsTv)
         {
           ViewChannelAndCheck(Navigator.Channel);
         }
@@ -843,7 +858,7 @@ namespace TvPlugin
     {
       if (!settingsLoaded)
       {
-        LoadSettings();
+        LoadSettings(false);
       }
       return _usertsp;
     }
@@ -896,19 +911,25 @@ namespace TvPlugin
       }
 
       _ServerNotConnectedHandled = true;
-      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      GUIDialogNotify pDlgOK = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+
+      if (pDlgOK == null)
+      {
+        return;
+      }
 
       pDlgOK.Reset();
       pDlgOK.SetHeading(257); //error
       if (Navigator != null && Navigator.CurrentChannel != null && g_Player.IsTV)
       {
-        pDlgOK.SetLine(1, Navigator.CurrentChannel);
+        pDlgOK.SetText(Navigator.CurrentChannel);
       }
       else
       {
-        pDlgOK.SetLine(1, "");
+        pDlgOK.SetText("");
       }
-      pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+      pDlgOK.SetText(GUILocalizeStrings.Get(1510)); //Connection to TV server lost
+      pDlgOK.TimeOut = 5;
       pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
 
@@ -1122,9 +1143,9 @@ namespace TvPlugin
 
     #region Serialisation
 
-    private static void LoadSettings()
+    public static void LoadSettings(bool force)
     {
-      if (settingsLoaded)
+      if (settingsLoaded && !force)
       {
         return;
       }
@@ -1361,9 +1382,14 @@ namespace TvPlugin
       {
         _recoverTV = false;
         GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int) Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
                                  null);
         GUIWindowManager.SendThreadMessage(initMsg);
+      }
+      if (firstNotLoaded)
+      {
+        firstNotLoaded = false;
+        OnLoaded();
       }
     }
 
@@ -1392,6 +1418,7 @@ namespace TvPlugin
 
     private void HeartBeatTransmitter()
     {
+      RemoteControl.Clear();
       int countToHBLoop = 5;
 
       while (true)

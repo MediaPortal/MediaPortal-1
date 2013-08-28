@@ -2477,13 +2477,16 @@ namespace TvPlugin
       // Set recorder status
       VirtualCard card;
       var server = new TvServer();
-      if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+      if (TVHome.Navigator.Channel != null)
       {
-        ShowControl(GetID, (int)Control.REC_LOGO);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.REC_LOGO);
+        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+        {
+          ShowControl(GetID, (int)Control.REC_LOGO);
+        }
+        else
+        {
+          HideControl(GetID, (int)Control.REC_LOGO);
+        }
       }
 
       int speed = g_Player.Speed;

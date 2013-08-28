@@ -19,8 +19,10 @@
  *
  */
 #pragma once
+#include <Windows.h>
 
 #define MAX_SECTION_LENGTH 4300
+#define MAX_TABLE_VERSION_NUMBER 31
 class CSection
 {
 public:

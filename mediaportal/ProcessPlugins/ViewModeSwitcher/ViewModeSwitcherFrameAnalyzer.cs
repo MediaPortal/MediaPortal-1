@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -42,18 +43,18 @@ namespace ProcessPlugins.ViewModeSwitcher
     private int rightStart = 0;
     private int rightEnd = 0;
 
-    private int maxBrightnessTreshold = 40;
+    private int maxBrightnessTreshold = 32;
     private int minBrightnessTreshold = 16;
 
-    private float topScanStartFraction = 0.30f;
-    private float topScanEndFraction = 0.70f;
-    private float bottomScanEndFraction = 0.70f;
-    private float bottomScanStartFraction = 0.30f;
+    private double topScanStartFraction = 0.3;
+    private double topScanEndFraction = 0.7;
+    private double bottomScanEndFraction = 0.7;
+    private double bottomScanStartFraction = 0.3;
 
-    private float leftScanStartFraction = 0.30f;
-    private float leftScanEndFraction = 0.70f;
-    private float rightScanStartFraction = 0.30f;
-    private float rightScanEndFraction = 0.70f;
+    private double leftScanStartFraction = 0.3;
+    private double leftScanEndFraction = 0.7;
+    private double rightScanStartFraction = 0.3;
+    private double rightScanEndFraction = 0.7;
 
     private int[] histR = new int[256];
     private int[] histG = new int[256];
@@ -61,7 +62,21 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     private Bitmap frame = null;
 
-    public FrameAnalyzer() {}
+    public FrameAnalyzer() 
+    {
+      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMaxBlackLevel;
+      minBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBMinBlackLevel;
+      
+      topScanStartFraction    = (double)(100-ViewModeSwitcher.currentSettings.DetectWidthPercent)/200.0;
+      topScanEndFraction      = 1.0 - topScanStartFraction;
+      bottomScanStartFraction = topScanStartFraction;
+      bottomScanEndFraction   = topScanEndFraction;
+      
+      leftScanStartFraction   = (double)(100-ViewModeSwitcher.currentSettings.DetectHeightPercent)/200.0;
+      leftScanEndFraction     = 1.0 - topScanStartFraction;                                             
+      rightScanStartFraction  = leftScanStartFraction;
+      rightScanEndFraction    = leftScanEndFraction;
+    }
 
     /// <summary>
     /// Find top and bottom bounds of a given bitmap. Performs a top down and bottom down scan
@@ -78,6 +93,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
       this.frame = frame;
 
+
       int topLine = 0;
       int bottomLine = frame.Height - 1;
       int leftLine = 0;
@@ -88,29 +104,29 @@ namespace ProcessPlugins.ViewModeSwitcher
       bool foundLeft = false;
       bool foundRight = false;
 
-      topStart = (int)(topScanStartFraction * frame.Width);
-      topEnd = (int)(topScanEndFraction * frame.Width);
+      topStart = (int)(topScanStartFraction * (double)frame.Width);
+      topEnd = (int)(topScanEndFraction * (double)frame.Width);
       if (topEnd >= frame.Width)
       {
         topEnd--;
       }
 
-      bottomStart = (int)(bottomScanStartFraction * frame.Width);
-      bottomEnd = (int)(bottomScanEndFraction * frame.Width);
+      bottomStart = (int)(bottomScanStartFraction * (double)frame.Width);
+      bottomEnd = (int)(bottomScanEndFraction * (double)frame.Width);
       if (bottomEnd >= frame.Width)
       {
         bottomEnd--;
       }
 
-      leftStart = (int)(leftScanStartFraction * frame.Height);
-      leftEnd = (int)(leftScanEndFraction * frame.Height);
+      leftStart = (int)(leftScanStartFraction * (double)frame.Height);
+      leftEnd = (int)(leftScanEndFraction * (double)frame.Height);
       if (leftEnd >= frame.Height)
       {
         leftEnd--;
       }
 
-      rightStart = (int)(rightScanStartFraction * frame.Height);
-      rightEnd = (int)(rightScanEndFraction * frame.Height);
+      rightStart = (int)(rightScanStartFraction * (double)frame.Height);
+      rightEnd = (int)(rightScanEndFraction * (double)frame.Height);
       if (rightEnd >= frame.Height)
       {
         rightEnd--;
@@ -128,7 +144,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //Top black bar binary search scan
       int mid = 1;
       int low = 1;
-      int high = (int)(frame.Height * 0.25f);
+      int high = (int)((double)frame.Height * 0.25);
 
       while (low <= high)
       {
@@ -150,28 +166,41 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
         mid = (low + high) / 2;
       }
-
-      if (topLine == 0)
+      if (topLine < 1)
       {
         topLine = 1;
       }
 
-      // vertical scan of left half of screen      
-      for (int line = 1; line < frame.Width * 0.25f; line++)
+      //Left black bar binary search scan
+      mid = 1;
+      low = 1;
+      high = (int)((double)frame.Width * 0.25);
+
+      while (low <= high)
       {
-        ScanLine(line, topLine, frame.Height - topLine, false);
+        ScanLine(mid, leftStart, leftEnd, false);
         if (IsContent(leftStart, leftEnd))
         {
-          leftLine = line;
+          high = mid - 1;
+          leftLine = mid;
           foundLeft = true;
           if (ViewModeSwitcher.currentSettings.verboseLog)
           {
             Log.Debug("ViewModeSwitcher: Found left line: {0}", leftLine);
             //DrawLine(leftLine, leftStart, leftEnd, Color.Red, false);
           }
-          break;
         }
+        else
+        {
+          low = mid + 1;
+        }
+        mid = (low + high) / 2;
       }
+      if (leftLine < 1)
+      {
+        leftLine = 1;
+      }
+
       if (!foundLeft && !foundTop)
       {
         bounds.Y = 0;
@@ -182,22 +211,36 @@ namespace ProcessPlugins.ViewModeSwitcher
         //return false;
       }
 
-      // vertical scan of right half of screen
-      for (int line = frame.Width - 1; line > frame.Width * 0.75f; line--)
+
+      //Right black bar binary search scan
+      low = (int)((double)frame.Width * 0.75);
+      high = frame.Width - 1;
+      mid = high;
+      while (low <= high)
       {
-        ScanLine(line, topLine, frame.Height - topLine, false);
+        ScanLine(mid, rightStart, rightEnd, false);
         if (IsContent(rightStart, rightEnd))
         {
-          rightLine = line;
+          low = mid + 1;
+          rightLine = mid;
           foundRight = true;
           if (ViewModeSwitcher.currentSettings.verboseLog)
           {
             Log.Debug("ViewModeSwitcher: Found right line: {0}", rightLine);
             //DrawLine(rightLine, rightStart, rightEnd, Color.Coral, false);
           }
-          break;
         }
+        else
+        {
+          high = mid - 1;
+        }
+        mid = (low + high) / 2;
       }
+      if (rightLine >= frame.Width)
+      {
+        rightLine = frame.Width - 1;
+      }
+
       if (!foundLeft && !foundRight)
       {
         bounds.Y = 0;
@@ -209,7 +252,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       }
 
       //Bottom black bar binary search scan
-      low = (int)(frame.Height * 0.75f);
+      low = (int)((double)frame.Height * 0.75);
       high = frame.Height - 1;
       mid = high;
       while (low <= high)
@@ -232,11 +275,15 @@ namespace ProcessPlugins.ViewModeSwitcher
         }
         mid = (low + high) / 2;
       }
+      if (bottomLine >= frame.Height)
+      {
+        bottomLine = frame.Height - 1;
+      }
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
 
-      if (!foundBottom || bottomLine - topLine < frame.Height * 0.25f ||
-          rightLine - leftLine < frame.Width * 0.25f)
+      if (!foundBottom || (bottomLine - topLine) < (int)((double)frame.Height * 0.25) ||
+          (rightLine - leftLine) < (int)((double)frame.Width * 0.25))
       {
         if (ViewModeSwitcher.currentSettings.verboseLog)
         {
@@ -364,8 +411,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       //if (ViewModeSwitcher.currentSettings.verboseLog)
       //  Log.Debug("ViewModeSwitcher: Max : R{0}, G{1}, B{2}", maxR, maxG, maxB);
 
-      //At least one pixel with brightness level over 40 is found
-      maxBrightnessTreshold = (int)ViewModeSwitcher.currentSettings.LBBlackLevel;
+      //At least one pixel with brightness level over 'LBMaxBlackLevel' is found
       if (maxR > maxBrightnessTreshold || maxG > maxBrightnessTreshold || maxB > maxBrightnessTreshold)
       {
         return true;
@@ -374,8 +420,8 @@ namespace ProcessPlugins.ViewModeSwitcher
       //if (ViewModeSwitcher.currentSettings.verboseLog)
       //  Log.Debug("ViewModeSwitcher: Number of pixel above treshold : R{0}, G{1}, B{2}", sumR, sumG, sumB);
 
-      //Over half of the number of pixels are above the brightness treshold
-      if (sumR > ((end - start) / 2) || sumG > ((end - start) / 2) || sumB > ((end - start) / 2))
+      //Over 25% of the pixels in the line are above the minimum brightness treshold
+      if (sumR > ((end - start) / 4) || sumG > ((end - start) / 4) || sumB > ((end - start) / 4))
       {
         return true;
       }
