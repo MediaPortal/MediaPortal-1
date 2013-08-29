@@ -38,24 +38,19 @@
 // the guid value can be changed to any valid value.
 #define CLIENTGUID_FORMAT_VALUE                                     L"xClientGUID=%s"
 
+#define PROTOCOL_NAME                                               L"MMS"
 
-// we should get data in twenty seconds
-#define MMS_RECEIVE_DATA_TIMEOUT_DEFAULT                          20000
-#define MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT              3
-
-#define PROTOCOL_NAME                                             L"MMS"
-
-#define METHOD_GET_MMS_HEADER_DATA_NAME                           L"GetMmsHeaderData()"
-#define METHOD_GET_MMS_CHUNK_NAME                                 L"GetMmsChunk()"
-#define METHOD_PARSE_MMS_ASF_HEADER_NAME                          L"ParseMmsAsfHeader()"
+#define METHOD_GET_MMS_HEADER_DATA_NAME                             L"GetMmsHeaderData()"
+#define METHOD_GET_MMS_CHUNK_NAME                                   L"GetMmsChunk()"
+#define METHOD_PARSE_MMS_ASF_HEADER_NAME                            L"ParseMmsAsfHeader()"
 
 #define TOTAL_SUPPORTED_PROTOCOLS                                 1
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] = { L"MMS" };
 
-#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                        1 * 1024 * 1024
+#define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                          1 * 1024 * 1024
 
-#define CHUNK_HEADER_LENGTH                                       4   // 2bytes chunk type and 2bytes chunk length
-#define EXT_HEADER_LENGTH                                         8   // 4bytes sequence, 2bytes useless and 2bytes chunk length
+#define CHUNK_HEADER_LENGTH                                         4   // 2bytes chunk type and 2bytes chunk length
+#define EXT_HEADER_LENGTH                                           8   // 4bytes sequence, 2bytes useless and 2bytes chunk length
 
 class CMPUrlSourceSplitter_Protocol_Mms : public IProtocolPlugin
 {
@@ -72,10 +67,6 @@ public:
   // test if connection is opened
   // @return : true if connected, false otherwise
   bool IsConnected(void);
-
-  // get protocol maximum open connection attempts
-  // @return : maximum attempts of opening connections or UINT_MAX if error
-  unsigned int GetOpenConnectionMaximumAttempts(void);
 
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
@@ -103,7 +94,7 @@ public:
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
   // @return : S_OK if url is loaded, false otherwise
-  HRESULT StartReceivingData(const CParameterCollection *parameters);
+  HRESULT StartReceivingData(CParameterCollection *parameters);
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -170,9 +161,6 @@ protected:
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;
-
-  // holds open connection maximum attempts
-  unsigned int openConnetionMaximumAttempts;
 
   // the lenght of stream
   LONGLONG streamLength;

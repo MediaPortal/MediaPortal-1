@@ -77,7 +77,6 @@ CMPUrlSourceSplitter_Protocol_File::CMPUrlSourceSplitter_Protocol_File(CParamete
   this->fileStream = NULL;
 
   this->receiveDataTimeout = 0;
-  this->openConnetionMaximumAttempts = FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->fileLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -116,11 +115,6 @@ CMPUrlSourceSplitter_Protocol_File::~CMPUrlSourceSplitter_Protocol_File()
 bool CMPUrlSourceSplitter_Protocol_File::IsConnected(void)
 {
   return ((this->fileStream != NULL) || (this->wholeStreamDownloaded));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_File::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_File::ParseUrl(const CParameterCollection *parameters)
@@ -384,7 +378,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_File::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_File::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_File::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, this->filePath);
@@ -581,10 +575,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::Initialize(PluginConfiguration *conf
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT, true, FILE_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? FILE_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return S_OK;
 }

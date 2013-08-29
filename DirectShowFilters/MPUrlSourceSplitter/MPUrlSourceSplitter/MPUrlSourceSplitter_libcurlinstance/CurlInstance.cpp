@@ -41,7 +41,11 @@ CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *proto
   this->totalReceivedBytes = 0;
   this->curlWorkerShouldExit = false;
   this->lastReceiveTime = 0;
+  this->networkInterfaceName = NULL;
+  this->networkInterfaces = new CNetworkInterfaceCollection();
+  this->finishTime = FINISH_TIME_NOT_SPECIFIED;
 
+  this->SetNetworkInterfaceName(this->networkInterfaceName);    // this sets network interfaces
   this->SetWriteCallback(CCurlInstance::CurlReceiveDataCallback, this);
 
   this->downloadRequest = NULL;
@@ -64,21 +68,120 @@ CCurlInstance::~CCurlInstance(void)
     this->multi_curl = NULL;
   }
 
+  FREE_MEM(this->networkInterfaceName);
   FREE_MEM(this->protocolName);
   FREE_MEM_CLASS(this->downloadRequest);
   FREE_MEM_CLASS(this->downloadResponse);
+  FREE_MEM_CLASS(this->networkInterfaces);
 }
+
+/* get methods */
+
+unsigned int CCurlInstance::GetReceiveDataTimeout(void)
+{
+  return this->receiveDataTimeout;
+}
+
+unsigned int CCurlInstance::GetCurlState(void)
+{
+  return this->state;
+}
+
+wchar_t *CCurlInstance::GetCurlVersion(void)
+{
+  char *curlVersion = curl_version();
+
+  return ConvertToUnicodeA(curlVersion);
+}
+
+CDownloadRequest *CCurlInstance::GetDownloadRequest(void)
+{
+  return this->downloadRequest;
+}
+
+CDownloadResponse *CCurlInstance::GetDownloadResponse(void)
+{
+  return this->downloadResponse;
+}
+
+CDownloadResponse *CCurlInstance::GetNewDownloadResponse(void)
+{
+  return new CDownloadResponse();
+}
+
+const wchar_t *CCurlInstance::GetNetworkInterfaceName(void)
+{
+  return this->networkInterfaceName;
+}
+
+unsigned int CCurlInstance::GetFinishTime(void)
+{
+  return this->finishTime;
+}
+
+/* set methods */
+
+void CCurlInstance::SetReceivedDataTimeout(unsigned int timeout)
+{
+  this->receiveDataTimeout = timeout;
+}
+
+bool CCurlInstance::SetNetworkInterfaceName(const wchar_t *networkInterfaceName)
+{
+  bool result = (this->networkInterfaces != NULL);
+
+  if (result)
+  {
+    this->networkInterfaces->Clear();
+    SET_STRING_RESULT_WITH_NULL(this->networkInterfaceName, networkInterfaceName, result);
+  }
+
+  if (result)
+  {
+    result = SUCCEEDED(CNetworkInterface::GetAllNetworkInterfaces(this->networkInterfaces, AF_UNSPEC));
+  }
+
+  if (result && (this->networkInterfaceName != NULL))
+  {
+    // in network interface collection have to stay only interfaces with specified network interface name
+    unsigned int i = 0;
+    while (i < this->networkInterfaces->Count())
+    {
+      CNetworkInterface *nic = this->networkInterfaces->GetItem(i);
+
+      if (CompareWithNull(nic->GetFriendlyName(), this->networkInterfaceName) == 0)
+      {
+        i++;
+      }
+      else
+      {
+        this->networkInterfaces->Remove(i);
+      }
+    }
+
+    result &= (this->networkInterfaces->Count() != 0);
+  }
+
+  return result;
+}
+
+void CCurlInstance::SetFinishTime(unsigned int finishTime)
+{
+  this->finishTime = finishTime;
+}
+
+/* other methods */
 
 bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  bool result = (this->logger != NULL) && (this->protocolName != NULL);
+  bool result = (this->logger != NULL) && (this->protocolName != NULL) && (this->networkInterfaces != NULL);
   result &= SUCCEEDED(this->DestroyCurlWorker());
 
   if (result)
   {
     FREE_MEM_CLASS(this->downloadRequest);
     this->downloadRequest = downloadRequest->Clone();
-    result &= (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL);
+    result &= (this->downloadRequest != NULL) && (this->downloadRequest != NULL)  && (this->downloadRequest->GetUrl() != NULL) && (this->networkInterfaces->Count() != 0);
   }
 
   if (result)
@@ -104,12 +207,28 @@ bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     CURLcode errorCode = CURLE_OK;
     if (this->receiveDataTimeout != UINT_MAX)
     {
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(this->receiveDataTimeout / 1000));
+      unsigned int dataTimeout = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? this->receiveDataTimeout : (this->finishTime - GetTickCount());
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000));
       if (errorCode != CURLE_OK)
       {
         this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting connection timeout", errorCode);
         result = false;
       }
+    }
+
+    if ((errorCode == CURLE_OK) && (this->networkInterfaceName != NULL))
+    {
+      wchar_t *curlNic = FormatString(L"if!%s", this->networkInterfaceName);
+      char *curlInterface = ConvertToMultiByte(curlNic);
+      errorCode = curl_easy_setopt(this->curl, CURLOPT_INTERFACE, curlInterface);
+      if (errorCode != CURLE_OK)
+      {
+        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting network interface", errorCode);
+        result = false;
+      }
+
+      FREE_MEM(curlInterface);
+      FREE_MEM(curlNic);
     }
 
     if (errorCode == CURLE_OK)
@@ -365,16 +484,6 @@ DWORD CCurlInstance::CurlWorker(void)
   return S_OK;
 }
 
-unsigned int CCurlInstance::GetReceiveDataTimeout(void)
-{
-  return this->receiveDataTimeout;
-}
-
-void CCurlInstance::SetReceivedDataTimeout(unsigned int timeout)
-{
-  this->receiveDataTimeout = timeout;
-}
-
 void CCurlInstance::SetWriteCallback(curl_write_callback writeCallback, void *writeData)
 {
   this->writeCallback = writeCallback;
@@ -392,11 +501,6 @@ bool CCurlInstance::StartReceivingData(void)
 bool CCurlInstance::StopReceivingData(void)
 {
   return (this->DestroyCurlWorker() == S_OK);
-}
-
-unsigned int CCurlInstance::GetCurlState(void)
-{
-  return this->state;
 }
 
 size_t CCurlInstance::CurlReceiveDataCallback(char *buffer, size_t size, size_t nmemb, void *userdata)
@@ -478,30 +582,8 @@ int CCurlInstance::CurlDebugCallback(CURL *handle, curl_infotype type, char *dat
   return 0;
 }
 
-wchar_t *CCurlInstance::GetCurlVersion(void)
-{
-  char *curlVersion = curl_version();
-
-  return ConvertToUnicodeA(curlVersion);
-}
-
 void CCurlInstance::CurlDebug(curl_infotype type, const wchar_t *data)
 {
-}
-
-CDownloadRequest *CCurlInstance::GetDownloadRequest(void)
-{
-  return this->downloadRequest;
-}
-
-CDownloadResponse *CCurlInstance::GetDownloadResponse(void)
-{
-  return this->downloadResponse;
-}
-
-CDownloadResponse *CCurlInstance::GetNewDownloadResponse(void)
-{
-  return new CDownloadResponse();
 }
 
 CURLcode CCurlInstance::SetString(CURLoption option, const wchar_t *string)

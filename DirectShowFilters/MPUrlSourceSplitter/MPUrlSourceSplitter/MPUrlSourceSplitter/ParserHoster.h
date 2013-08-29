@@ -60,7 +60,7 @@ public:
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
   // @return : S_OK if url is loaded, false otherwise
-  HRESULT StartReceivingData(const CParameterCollection *parameters);
+  HRESULT StartReceivingData(CParameterCollection *parameters);
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -190,6 +190,11 @@ protected:
 
   // holds if data are supressed
   bool supressData;
+  // specifies if we are in StartReceiveData() method (it is required to set correct parameters to StartReceivingData() of protocol
+  volatile bool startReceivingData;
+  // holds finish time for protocol (protocol must return from StartReceivingData() to this time)
+  // it is acquired be GetTickCount() (time in ms)
+  volatile unsigned int finishTime;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;

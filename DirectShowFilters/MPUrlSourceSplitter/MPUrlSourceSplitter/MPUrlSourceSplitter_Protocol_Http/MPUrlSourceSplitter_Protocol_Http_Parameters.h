@@ -24,7 +24,6 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT                  L"HttpReceiveDataTimeout"
-#define PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"HttpOpenConnectionMaximumAttempts"
 #define PARAMETER_NAME_HTTP_REFERER                               L"HttpReferer"
 #define PARAMETER_NAME_HTTP_USER_AGENT                            L"HttpUserAgent"
 #define PARAMETER_NAME_HTTP_COOKIE                                L"HttpCookie"
@@ -36,6 +35,5 @@
 
 // we should get data in twenty seconds
 #define HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
-#define HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT             3
 
 #endif

@@ -101,7 +101,6 @@ CMPUrlSourceSplitter_Protocol_Rtmp::CMPUrlSourceSplitter_Protocol_Rtmp(CParamete
   FREE_MEM(version);
   
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
   this->setEndOfStream = false;
@@ -169,11 +168,6 @@ CMPUrlSourceSplitter_Protocol_Rtmp::~CMPUrlSourceSplitter_Protocol_Rtmp()
 bool CMPUrlSourceSplitter_Protocol_Rtmp::IsConnected(void)
 {
   return ((this->isConnected) || (this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_Rtmp::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection *parameters)
@@ -1105,7 +1099,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Rtmp::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
@@ -1233,7 +1227,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->setEndOfStream = false;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamDuration = 0;
   this->bytePosition = 0;
   FREE_MEM_CLASS(this->rtmpStreamFragments);
@@ -1404,11 +1397,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::Initialize(PluginConfiguration *conf
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTMP_RECEIVE_DATA_TIMEOUT, true, RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
   this->liveStream = this->configurationParameters->GetValueBool(PARAMETER_NAME_LIVE_STREAM, true, PARAMETER_NAME_LIVE_STREAM_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return S_OK;
 }

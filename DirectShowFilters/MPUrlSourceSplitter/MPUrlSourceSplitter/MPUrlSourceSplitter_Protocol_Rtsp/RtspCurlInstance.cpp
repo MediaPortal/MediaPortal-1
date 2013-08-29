@@ -206,8 +206,7 @@ CURLcode CRtspCurlInstance::SendAndReceive(CRtspRequest *request, CURLcode error
 
 bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 {
-  DWORD startTicks = GetTickCount();
-  DWORD endTicks = startTicks + this->GetReceiveDataTimeout();
+  unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
 
   bool result = __super::Initialize(downloadRequest);
   this->state = CURL_STATE_CREATED;
@@ -265,7 +264,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         CRtspOptionsRequest *options = new CRtspOptionsRequest();
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (options != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (options->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, options->SetTimeout(this->GetReceiveDataTimeout()));
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, options->SetTimeout(endTicks - GetTickCount()));
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, options->SetSequenceNumber(this->lastSequenceNumber++));
 
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(options, errorCode, L"OPTIONS", METHOD_INITIALIZE_NAME));
@@ -317,7 +316,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         CRtspDescribeRequest *describe = new CRtspDescribeRequest();
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (describe != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (describe->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, describe->SetTimeout(this->GetReceiveDataTimeout()));
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, describe->SetTimeout(endTicks - GetTickCount()));
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, describe->SetSequenceNumber(this->lastSequenceNumber++));
 
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(describe, errorCode, L"DESCRIBE", METHOD_INITIALIZE_NAME));
@@ -417,7 +416,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
     bool negotiatedTransport = false;
 
-    while ((!negotiatedTransport) && (errorCode == CURLE_OK))
+    while ((!negotiatedTransport) && (errorCode == CURLE_OK) && (endTicks > GetTickCount()))
     {
       CURLcode error = CURLE_OK;
 
@@ -506,7 +505,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(this->GetReceiveDataTimeout()));
+              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
 
@@ -734,8 +733,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
               if (error == CURLE_OK)
               {
-                error = SUCCEEDED(dataServer->Initialize(AF_UNSPEC, clientPort)) ? error : CURLE_FAILED_INIT;
-                error = SUCCEEDED(controlServer->Initialize(AF_UNSPEC, clientPort + 1)) ? error : CURLE_FAILED_INIT;
+                if (error == CURLE_OK)
+                {
+                  error = SUCCEEDED(dataServer->Initialize(AF_UNSPEC, clientPort, this->networkInterfaces)) ? error : CURLE_FAILED_INIT;
+                  error = SUCCEEDED(controlServer->Initialize(AF_UNSPEC, clientPort + 1, this->networkInterfaces)) ? error : CURLE_FAILED_INIT;
+                }
               }
 
               if (error == CURLE_OK)
@@ -752,7 +754,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 clientPort++;
               }
             }
-            while ((error != CURLE_OK) && (clientPort < RTSP_CLIENT_PORT_MAX));
+            while ((error != CURLE_OK) && (clientPort < RTSP_CLIENT_PORT_MAX) && (endTicks > GetTickCount()));
+
+            CHECK_CONDITION_EXECUTE((error == CURLE_OK) && (endTicks <= GetTickCount()), error = CURLE_OPERATION_TIMEDOUT);
 
             if (error == CURLE_OK)
             {
@@ -760,7 +764,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup != NULL) ? error : CURLE_OUT_OF_MEMORY);
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->GetTransportRequestHeader() != NULL) ? error : CURLE_OUT_OF_MEMORY);
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = (setup->SetUri(streamUrl)) ? error : CURLE_OUT_OF_MEMORY);
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(this->GetReceiveDataTimeout()));
+              CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetTimeout(endTicks - GetTickCount()));
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, setup->SetSequenceNumber(this->lastSequenceNumber++));
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = setup->SetSessionId(this->sessionId) ? error : CURLE_OUT_OF_MEMORY);
 
@@ -948,6 +952,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         }
       }
     }
+    CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
     
     if (errorCode == CURLE_OK)
@@ -963,7 +968,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         CRtspPlayRequest *play = new CRtspPlayRequest();
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (play->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetTimeout(this->GetReceiveDataTimeout()));
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetTimeout(endTicks - GetTickCount()));
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, play->SetSequenceNumber(this->lastSequenceNumber++));
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = play->SetStartTime(0) ? errorCode : CURLE_FAILED_INIT);
@@ -1845,13 +1850,15 @@ bool CRtspCurlInstance::StopReceivingData(void)
 {
   if ((this->lastCommand == CURL_RTSPREQ_SETUP) || (this->lastCommand == CURL_RTSPREQ_PLAY))
   {
+    unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
+
     // create and send TEARDOWN request for stream
     CURLcode errorCode = CURLE_OK;
 
     CRtspTeardownRequest *teardown = new CRtspTeardownRequest();
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetTimeout(this->GetReceiveDataTimeout()));
+    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetTimeout(endTicks - GetTickCount()));
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
 

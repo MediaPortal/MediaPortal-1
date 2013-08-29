@@ -45,7 +45,7 @@ public:
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
   // @return : S_OK if url is loaded, false otherwise
-  virtual HRESULT StartReceivingData(const CParameterCollection *parameters) = 0;
+  virtual HRESULT StartReceivingData(CParameterCollection *parameters) = 0;
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful

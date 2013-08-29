@@ -599,7 +599,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
 
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH);
-                            continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_AFHS_REFERER);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_AFHS_USER_AGENT);
@@ -740,7 +739,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
 
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, (void *)&invariant);
                     this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, (void *)&invariant);

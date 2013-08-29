@@ -98,7 +98,6 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CParamete
   FREE_MEM(version);
   
   this->receiveDataTimeout = AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
   this->setEndOfStream = false;
@@ -190,11 +189,6 @@ CMPUrlSourceSplitter_Protocol_Afhs::~CMPUrlSourceSplitter_Protocol_Afhs()
 bool CMPUrlSourceSplitter_Protocol_Afhs::IsConnected(void)
 {
   return ((this->isConnected) || (this->wholeStreamDownloaded));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ParseUrl(const CParameterCollection *parameters)
@@ -1042,7 +1036,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Afhs::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
@@ -1348,7 +1342,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->bytePosition = 0;
   FREE_MEM_CLASS(this->bootstrapInfoBox);
   FREE_MEM_CLASS(this->segmentsFragments);
@@ -1501,10 +1494,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::Initialize(PluginConfiguration *conf
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, true, AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   HRESULT result = S_OK;
   FREE_MEM_CLASS(this->manifest);

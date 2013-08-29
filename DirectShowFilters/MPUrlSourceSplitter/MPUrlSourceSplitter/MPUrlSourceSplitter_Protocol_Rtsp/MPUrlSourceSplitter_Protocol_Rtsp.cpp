@@ -84,7 +84,6 @@ CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CParamete
   FREE_MEM(version);
   
   this->receiveDataTimeout = RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
   this->streamTime = 0;
@@ -135,11 +134,6 @@ CMPUrlSourceSplitter_Protocol_Rtsp::~CMPUrlSourceSplitter_Protocol_Rtsp()
 bool CMPUrlSourceSplitter_Protocol_Rtsp::IsConnected(void)
 {
   return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ParseUrl(const CParameterCollection *parameters)
@@ -537,12 +531,28 @@ unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
 
   CHECK_POINTER_DEFAULT_HRESULT(result, this->configurationParameters);
+
+  if (SUCCEEDED(result) && (parameters != NULL))
+  {
+    this->configurationParameters->Append(parameters);
+  }
+
+  unsigned int finishTime = UINT_MAX;
+  if (SUCCEEDED(result))
+  {
+    unsigned int finishTime = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+    if (finishTime != UINT_MAX)
+    {
+      unsigned int currentTime = GetTickCount();
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+    }
+  }
 
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
@@ -556,6 +566,9 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(const CParameterC
 
     if (SUCCEEDED(result))
     {
+      // set finish time, all methods must return before finish time
+      this->mainCurlInstance->SetFinishTime(finishTime);
+
       // set connection priorities
       this->mainCurlInstance->SetMulticastPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE, true, RTSP_MULTICAST_PREFERENCE_DEFAULT));
       this->mainCurlInstance->SetSameConnectionTcpPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE, true, RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT));
@@ -578,6 +591,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(const CParameterC
   if (SUCCEEDED(result))
   {
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+    this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
     /*if (this->currentCookies != NULL)
     {
     result = (this->mainCurlInstance->SetCurrentCookies(this->currentCookies)) ? S_OK : E_FAIL;
@@ -609,7 +623,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(const CParameterC
       result = (this->mainCurlInstance->StartReceivingData()) ? S_OK : E_FAIL;
     }
   }
-
 
   if (FAILED(result))
   {
@@ -686,7 +699,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
   //this->endStreamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
 
   FREE_MEM_CLASS(this->receivedData);
   //FREE_MEM_CLASS(this->currentCookies);
@@ -802,10 +814,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::Initialize(PluginConfiguration *conf
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT, true, RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return S_OK;
 }

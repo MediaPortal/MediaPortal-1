@@ -22,6 +22,5 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_FILE_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_FILE_RECEIVE_DATA_TIMEOUT                  L"FileReceiveDataTimeout"
-#define PARAMETER_NAME_FILE_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"FileOpenConnectionMaximumAttempts"
 
 #endif

@@ -97,7 +97,6 @@ CMPUrlSourceSplitter_Protocol_Mshs::CMPUrlSourceSplitter_Protocol_Mshs(CParamete
   FREE_MEM(version);
   
   this->receiveDataTimeout = MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
   this->setEndOfStream = false;
@@ -170,11 +169,6 @@ CMPUrlSourceSplitter_Protocol_Mshs::~CMPUrlSourceSplitter_Protocol_Mshs()
 bool CMPUrlSourceSplitter_Protocol_Mshs::IsConnected(void)
 {
   return ((this->isConnected) || (this->wholeStreamDownloaded));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ParseUrl(const CParameterCollection *parameters)
@@ -1034,7 +1028,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Mshs::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
@@ -1248,7 +1242,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
   this->streamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->bytePosition = 0;
   FREE_MEM(this->storeFilePath);
   this->isConnected = false;
@@ -1397,10 +1390,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::Initialize(PluginConfiguration *conf
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT, true, MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return S_OK;
 }

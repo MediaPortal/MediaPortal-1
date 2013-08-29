@@ -55,10 +55,6 @@ public:
   // @return : true if connected, false otherwise
   bool IsConnected(void);
 
-  // get protocol maximum open connection attempts
-  // @return : maximum attempts of opening connections or UINT_MAX if error
-  unsigned int GetOpenConnectionMaximumAttempts(void);
-
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
   // @param parameters : the url and connection parameters
@@ -85,7 +81,7 @@ public:
   // starts receiving data from specified url and configuration parameters
   // @param parameters : the url and parameters used for connection
   // @return : S_OK if url is loaded, false otherwise
-  HRESULT StartReceivingData(const CParameterCollection *parameters);
+  HRESULT StartReceivingData(CParameterCollection *parameters);
 
   // request protocol implementation to cancel the stream reading operation
   // @return : S_OK if successful
@@ -152,9 +148,6 @@ protected:
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;
-
-  // holds open connection maximum attempts
-  unsigned int openConnetionMaximumAttempts;
 
   // the lenght of stream
   LONGLONG streamLength;

@@ -91,11 +91,6 @@ bool CProtocolHoster::IsConnected(void)
   return (this->activeProtocol != NULL) ? this->activeProtocol->IsConnected() : false;
 }
 
-unsigned int CProtocolHoster::GetOpenConnectionMaximumAttempts(void)
-{
-  return (this->activeProtocol != NULL) ? this->activeProtocol->GetOpenConnectionMaximumAttempts() : UINT_MAX;
-}
-
 HRESULT CProtocolHoster::ParseUrl(const CParameterCollection *parameters)
 {
   HRESULT retval = (this->pluginImplementationsCount == 0) ? E_NO_PROTOCOL_LOADED : S_OK;
@@ -154,7 +149,7 @@ unsigned int CProtocolHoster::GetReceiveDataTimeout(void)
   return (this->activeProtocol != NULL) ? this->activeProtocol->GetReceiveDataTimeout() : 0;
 }
 
-HRESULT CProtocolHoster::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CProtocolHoster::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_HRESULT(result, this->activeProtocol, result, E_NO_ACTIVE_PROTOCOL);

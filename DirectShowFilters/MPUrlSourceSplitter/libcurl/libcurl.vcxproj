@@ -306,7 +306,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;CURL_DISABLE_LDAP;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;USE_LIBRTMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;CURL_DISABLE_LDAP;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;USE_LIBRTMP;USE_IPV6;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -315,7 +315,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)d\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;winmm.lib;libeay32.lib;ssleay32.lib;libssh2.lib;librtmp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;winmm.lib;libeay32.lib;ssleay32.lib;libssh2.lib;librtmp.lib;zlib.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>
       </ImportLibrary>
     </Link>
@@ -337,7 +337,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;CURL_DISABLE_LDAP;USE_LIBRTMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;BUILDING_LIBCURL;USE_LIBSSH2;HAVE_LIBSSH2;HAVE_LIBSSH2_H;LIBSSH2_WIN32;LIBSSH2_LIBRARY;USE_SSLEAY;CURL_DISABLE_LDAP;USE_LIBRTMP;USE_IPV6;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\include;..\OpenSSL\include\openssl;..\OpenSSL\include;..\libssh2\include;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
     </ClCompile>
@@ -348,7 +348,7 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)bin_$(PlatformName)d\$(Ta
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>
       </ImportLibrary>
-      <AdditionalDependencies>ws2_32.lib;wldap32.lib;winmm.lib;libeay32.lib;ssleay32.lib;libssh2.lib;librtmp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wldap32.lib;winmm.lib;libeay32.lib;ssleay32.lib;libssh2.lib;librtmp.lib;zlib.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin_$(PlatformName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <PreventDllBinding>
       </PreventDllBinding>

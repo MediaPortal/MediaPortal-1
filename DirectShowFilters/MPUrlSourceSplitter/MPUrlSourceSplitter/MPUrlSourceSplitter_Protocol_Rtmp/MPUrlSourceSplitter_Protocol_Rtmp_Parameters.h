@@ -58,9 +58,6 @@
 // conn=B:1 conn=S:authMe conn=O:1 conn=NN:code:1.23 conn=NS:flag:ok conn=O:0
 #define PARAMETER_NAME_RTMP_ARBITRARY_DATA                                     L"RtmpArbitraryData"
 
-// The maximum attempts for opening connection to RTMP server.
-#define PARAMETER_NAME_RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS                   L"RtmpOpenConnectionMaximumAttempts"
-
 /* SESSION PARAMETERS */
 
 // These options take effect after the Connect request has succeeded.
@@ -121,7 +118,6 @@
 
 // we should get data in twenty seconds
 #define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
-#define RTMP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
 // define default values for RTMP protocol
 

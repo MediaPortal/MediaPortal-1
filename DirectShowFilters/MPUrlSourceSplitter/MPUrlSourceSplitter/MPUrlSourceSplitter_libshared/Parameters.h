@@ -36,6 +36,8 @@
 #define PARAMETER_NAME_LOG_MAX_SIZE                                           L"LogMaxSize"
 #define PARAMETER_NAME_LOG_VERBOSITY                                          L"LogVerbosity"
 
+#define PARAMETER_NAME_FINISH_TIME                                            L"FinishTime"
+
 #define PARAMETER_NAME_LIVE_STREAM_DEFAULT                                    false
 
 #define LOG_MAX_SIZE_DEFAULT                                                  10485760

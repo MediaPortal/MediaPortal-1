@@ -108,7 +108,6 @@ CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CParameterC
   FREE_MEM(version);
   
   this->receiveDataTimeout = MMS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->streamLength = 0;
   this->setLength = false;
   this->lengthCanBeSet = false;
@@ -165,11 +164,6 @@ CMPUrlSourceSplitter_Protocol_Mms::~CMPUrlSourceSplitter_Protocol_Mms()
 bool CMPUrlSourceSplitter_Protocol_Mms::IsConnected(void)
 {
   return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded) || (this->seekingActive));
-}
-
-unsigned int CMPUrlSourceSplitter_Protocol_Mms::GetOpenConnectionMaximumAttempts(void)
-{
-  return this->openConnetionMaximumAttempts;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mms::ParseUrl(const CParameterCollection *parameters)
@@ -577,7 +571,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Mms::GetReceiveDataTimeout(void)
   return this->receiveDataTimeout;
 }
 
-HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
@@ -993,7 +987,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ClearSession(void)
   this->bytePosition = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = MMS_RECEIVE_DATA_TIMEOUT_DEFAULT;
-  this->openConnetionMaximumAttempts = MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT;
   this->sequenceNumber = 1;
   this->receivingData = false;
   this->streamEndedLogged = false;
@@ -1100,10 +1093,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::Initialize(PluginConfiguration *confi
   this->configurationParameters->LogCollection(this->logger, LOGGER_VERBOSE, PROTOCOL_IMPLEMENTATION_NAME, METHOD_INITIALIZE_NAME);
 
   this->receiveDataTimeout = this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_RECEIVE_DATA_TIMEOUT, true, MMS_RECEIVE_DATA_TIMEOUT_DEFAULT);
-  this->openConnetionMaximumAttempts = this->configurationParameters->GetValueLong(PARAMETER_NAME_MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT);
 
   this->receiveDataTimeout = (this->receiveDataTimeout < 0) ? MMS_RECEIVE_DATA_TIMEOUT_DEFAULT : this->receiveDataTimeout;
-  this->openConnetionMaximumAttempts = (this->openConnetionMaximumAttempts < 0) ? MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT : this->openConnetionMaximumAttempts;
 
   return S_OK;
 }

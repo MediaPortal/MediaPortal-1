@@ -24,7 +24,6 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_AFHS_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT                              L"AfhsReceiveDataTimeout"
-#define PARAMETER_NAME_AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS                  L"AfhsOpenConnectionMaximumAttempts"
 #define PARAMETER_NAME_AFHS_REFERER                                           L"AfhsReferer"
 #define PARAMETER_NAME_AFHS_USER_AGENT                                        L"AfhsUserAgent"
 #define PARAMETER_NAME_AFHS_COOKIE                                            L"AfhsCookie"
@@ -45,7 +44,6 @@
 
 // we should get data in twenty seconds
 #define AFHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
-#define AFHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
 #endif

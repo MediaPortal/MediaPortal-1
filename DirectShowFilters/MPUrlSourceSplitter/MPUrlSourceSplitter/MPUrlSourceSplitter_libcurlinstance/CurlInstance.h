@@ -48,6 +48,10 @@
 
 #define MINIMUM_BUFFER_SIZE                                                   256 * 1024
 
+#define FINISH_TIME_NOT_SPECIFIED                                             UINT_MAX
+
+#include "NetworkInterfaceCollection.h"
+
 class CCurlInstance
 {
 public:
@@ -60,6 +64,54 @@ public:
 
   // destructor
   virtual ~CCurlInstance(void);
+
+  /* get methods */
+
+  // gets receive data timeout
+  // @return : receive data timeout or UINT_MAX if not specified
+  virtual unsigned int GetReceiveDataTimeout(void);
+
+  // gets CURL state
+  // @return : one of CURL_STATE values
+  virtual unsigned int GetCurlState(void);
+
+  // gets libcurl version
+  // caller is responsible for freeing memory
+  // @return : libcurl version or NULL if error
+  static wchar_t *GetCurlVersion(void);
+
+  // gets download request
+  // @return : download request
+  virtual CDownloadRequest *GetDownloadRequest(void);
+
+  // gets download response
+  // @return : download respose
+  virtual CDownloadResponse *GetDownloadResponse(void);
+
+  // gets network interface name
+  // @return : network interface name or NULL if not specified
+  virtual const wchar_t *GetNetworkInterfaceName(void);
+
+  // gets finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  // @return : the finish time or FINISH_TIME_NOT_SPECIFIED if not specified
+  virtual unsigned int GetFinishTime(void);
+
+  /* set methods */
+
+  // sets receive data timeout
+  // @param timeout : receive data timeout (UINT_MAX if not specified)
+  virtual void SetReceivedDataTimeout(unsigned int timeout);
+
+  // sets network interface name
+  // @param networkInterfaceName : the network interface name to set
+  // @return : true if successful, false otherwise
+  virtual bool SetNetworkInterfaceName(const wchar_t *networkInterfaceName);
+
+  // set finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  // @param finishTime : the finish time to set
+  virtual void SetFinishTime(unsigned int finishTime);
+
+  /* other methods */
 
   // report libcurl error into log file
   // @param logLevel : the verbosity level of logged message
@@ -82,14 +134,6 @@ public:
   // @return : true if successful, false otherwise
   virtual bool Initialize(CDownloadRequest *downloadRequest);
 
-  // gets receive data timeout
-  // @return : receive data timeout or UINT_MAX if not specified
-  virtual unsigned int GetReceiveDataTimeout(void);
-
-  // sets receive data timeout
-  // @param timeout : receive data timeout (UINT_MAX if not specified)
-  virtual void SetReceivedDataTimeout(unsigned int timeout);
-
   // starts receiving data
   // @return : true if successful, false otherwise
   virtual bool StartReceivingData(void);
@@ -97,23 +141,6 @@ public:
   // stops receiving data
   // @return : true if successful, false otherwise
   virtual bool StopReceivingData(void);
-
-  // gets CURL state
-  // @return : one of CURL_STATE values
-  virtual unsigned int GetCurlState(void);
-
-  // gets libcurl version
-  // caller is responsible for freeing memory
-  // @return : libcurl version or NULL if error
-  static wchar_t *GetCurlVersion(void);
-
-  // gets download request
-  // @return : download request
-  virtual CDownloadRequest *GetDownloadRequest(void);
-
-  // gets download response
-  // @return : download respose
-  virtual CDownloadResponse *GetDownloadResponse(void);
 
   // sets string to CURL option
   // @param curl : curl handle to set CURL option
@@ -177,6 +204,14 @@ protected:
 
   // holds last receive time of any data
   volatile DWORD lastReceiveTime;
+
+  // holds network interface name
+  wchar_t *networkInterfaceName;
+  // holds network interfaces (if specified network interface, than collection has only interfaces with specified network name)
+  CNetworkInterfaceCollection *networkInterfaces;
+
+  // holds finish time (methods like Initialize(), StartReceivingData() and StopReceivingData() must finish before this time)
+  unsigned int finishTime;
 
   /* methods */
 

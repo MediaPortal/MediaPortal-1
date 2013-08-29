@@ -448,7 +448,6 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
 
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_MSHS_COOKIE);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH);
-                        continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, true, PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_REFERER, true, PARAMETER_NAME_MSHS_REFERER);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_USER_AGENT, true, PARAMETER_NAME_MSHS_USER_AGENT);
@@ -500,7 +499,6 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
 
                   this->connectionParameters->Remove(PARAMETER_NAME_MSHS_COOKIE, (void *)&invariant);
                   this->connectionParameters->Remove(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS, (void *)&invariant);
                   this->connectionParameters->Remove(PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
                   this->connectionParameters->Remove(PARAMETER_NAME_MSHS_REFERER, (void *)&invariant);
                   this->connectionParameters->Remove(PARAMETER_NAME_MSHS_USER_AGENT, (void *)&invariant);

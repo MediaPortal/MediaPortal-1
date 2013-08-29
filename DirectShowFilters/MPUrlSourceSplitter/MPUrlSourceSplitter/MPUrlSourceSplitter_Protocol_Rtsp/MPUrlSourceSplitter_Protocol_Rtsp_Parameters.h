@@ -24,7 +24,6 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT                  L"RtspReceiveDataTimeout"
-#define PARAMETER_NAME_RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS      L"RtspOpenConnectionMaximumAttempts"
 #define PARAMETER_NAME_RTSP_REFERER                               L"RtspReferer"
 #define PARAMETER_NAME_RTSP_USER_AGENT                            L"RtspUserAgent"
 //#define PARAMETER_NAME_RTSP_COOKIE                                L"RtspCookie"
@@ -42,13 +41,12 @@
 #define PARAMETER_NAME_RTSP_CLIENT_PORT                           L"RtspClientPort"
 
 // we should get data in twenty seconds
-#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
-#define RTSP_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT             3
+#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         2000000
 
-#define RTSP_MULTICAST_PREFERENCE_DEFAULT                         2
-#define RTSP_UDP_PREFERENCE_DEFAULT                               1
-#define RTSP_TCP_PREFERENCE_DEFAULT                               3
-#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               0
+#define RTSP_MULTICAST_PREFERENCE_DEFAULT                         1
+#define RTSP_UDP_PREFERENCE_DEFAULT                               0
+#define RTSP_TCP_PREFERENCE_DEFAULT                               2
+#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               3
 
 #define RTSP_CLIENT_PORT_DEFAULT                                  50000
 #define RTSP_CLIENT_PORT_MIN                                      1

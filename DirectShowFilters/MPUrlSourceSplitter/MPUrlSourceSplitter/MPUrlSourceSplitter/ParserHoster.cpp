@@ -23,6 +23,7 @@
 #include "ParserHoster.h"
 #include "ErrorCodes.h"
 #include "LockMutex.h"
+#include "Parameters.h"
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
@@ -50,6 +51,8 @@ CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuratio
   this->status = STATUS_NONE;
 
   this->supressData = false;
+  this->startReceivingData = false;
+  this->finishTime = 0;
   this->lockMutex = CreateMutex(NULL, FALSE, NULL);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_PARSER_HOSTER_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -344,7 +347,7 @@ unsigned int CParserHoster::GetReceiveDataTimeout(void)
   return (this->protocolHoster != NULL) ? this->protocolHoster->GetReceiveDataTimeout() : UINT_MAX;
 }
 
-HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters)
+HRESULT CParserHoster::StartReceivingData(CParameterCollection *parameters)
 {
   HRESULT retval = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(retval, parameters);
@@ -385,21 +388,23 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
           }
         }
 
+        DWORD timeout = 0;
+
         if (SUCCEEDED(retval))
         {
+          // get receive data timeout for active protocol
+          timeout = this->protocolHoster->GetReceiveDataTimeout();
+          this->finishTime = GetTickCount() + timeout;
+
           // now we have active protocol with loaded url, but still not working
           // create thread for receiving data
 
+          this->startReceivingData = true;
           retval = this->CreateReceiveDataWorker();
         }
 
         if (SUCCEEDED(retval))
-        {
-          DWORD ticks = GetTickCount();
-          DWORD timeout = 0;
-
-          // get receive data timeout for active protocol
-          timeout = this->protocolHoster->GetReceiveDataTimeout();
+        {          
           const wchar_t *protocolName = this->protocolHoster->GetName();
           if (protocolName != NULL)
           {
@@ -414,7 +419,7 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
           if (SUCCEEDED(retval))
           {
             // wait for receiving data, timeout or exit
-            while ((this->status != STATUS_NEW_URL_SPECIFIED) && (this->status != STATUS_RECEIVING_DATA) && (this->status >= STATUS_NONE) && ((GetTickCount() - ticks) <= timeout) && (!this->receiveDataWorkerShouldExit))
+            while ((this->status != STATUS_NEW_URL_SPECIFIED) && (this->status != STATUS_RECEIVING_DATA) && (this->status >= STATUS_NONE) && (GetTickCount() <= this->finishTime) && (!this->receiveDataWorkerShouldExit))
             {
               Sleep(1);
             }
@@ -461,6 +466,8 @@ HRESULT CParserHoster::StartReceivingData(const CParameterCollection *parameters
             }
           }
         }
+
+        this->startReceivingData = false;
       } while ((newUrlSpecified) && SUCCEEDED(retval));
     }
 
@@ -668,7 +675,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
     {
       if (maximumReopenTime == 0)
       {
-        maximumReopenTime = caller->protocolHoster->GetOpenConnectionMaximumAttempts() * caller->protocolHoster->GetReceiveDataTimeout();
+        maximumReopenTime = caller->protocolHoster->GetReceiveDataTimeout();
       }
 
       if (maximumReopenTime != 0)
@@ -717,7 +724,18 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
         {
           if (((GetTickCount() - lastReopenStart) <= maximumReopenTime) || (openedConnection))
           {
-            result = caller->protocolHoster->StartReceivingData(NULL);
+            CParameterCollection *parameters = new CParameterCollection();
+            wchar_t *finishTimeString = FormatString(L"%u", caller->finishTime);
+
+            if ((parameters != NULL) && (finishTimeString != NULL))
+            {
+              parameters->Add(PARAMETER_NAME_FINISH_TIME, finishTimeString);
+            }
+
+            result = caller->protocolHoster->StartReceivingData(parameters);
+
+            FREE_MEM(finishTimeString);
+            FREE_MEM_CLASS(parameters);
 
             if (openedConnection)
             {

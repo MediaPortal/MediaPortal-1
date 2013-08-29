@@ -39,10 +39,6 @@ public:
   // @return : true if connected, false otherwise
   virtual bool IsConnected(void) = 0;
 
-  // get protocol maximum open connection attempts
-  // @return : maximum attempts of opening connections or UINT_MAX if error
-  virtual unsigned int GetOpenConnectionMaximumAttempts(void) = 0;
-
   // parse given url to internal variables for specified protocol
   // errors should be logged to log file
   // @param parameters : the url and connection parameters

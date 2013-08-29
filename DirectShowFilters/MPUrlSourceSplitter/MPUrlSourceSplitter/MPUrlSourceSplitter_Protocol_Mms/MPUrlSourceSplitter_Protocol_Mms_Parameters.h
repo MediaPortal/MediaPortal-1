@@ -24,11 +24,13 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_MMS_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_MMS_RECEIVE_DATA_TIMEOUT                   L"MmsReceiveDataTimeout"
-#define PARAMETER_NAME_MMS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS       L"MmsOpenConnectionMaximumAttempts"
 #define PARAMETER_NAME_MMS_REFERER                                L"MmsReferer"
 #define PARAMETER_NAME_MMS_USER_AGENT                             L"MmsUserAgent"
 #define PARAMETER_NAME_MMS_COOKIE                                 L"MmsCookie"
 #define PARAMETER_NAME_MMS_VERSION                                L"MmsVersion"
 #define PARAMETER_NAME_MMS_IGNORE_CONTENT_LENGTH                  L"MmsIgnoreContentLength"
+
+// we should get data in twenty seconds
+#define MMS_RECEIVE_DATA_TIMEOUT_DEFAULT                          20000
 
 #endif

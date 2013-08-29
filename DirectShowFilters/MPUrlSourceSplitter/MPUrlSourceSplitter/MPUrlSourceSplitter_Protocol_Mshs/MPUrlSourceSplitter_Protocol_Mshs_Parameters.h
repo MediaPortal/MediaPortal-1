@@ -24,7 +24,6 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_MSHS_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT                              L"MshsReceiveDataTimeout"
-#define PARAMETER_NAME_MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS                  L"MshsOpenConnectionMaximumAttempts"
 #define PARAMETER_NAME_MSHS_REFERER                                           L"MshsReferer"
 #define PARAMETER_NAME_MSHS_USER_AGENT                                        L"MshsUserAgent"
 #define PARAMETER_NAME_MSHS_COOKIE                                            L"MshsCookie"
@@ -36,6 +35,5 @@
 
 // we should get data in twenty seconds
 #define MSHS_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
-#define MSHS_OPEN_CONNECTION_MAXIMUM_ATTEMPTS_DEFAULT                         3
 
 #endif
