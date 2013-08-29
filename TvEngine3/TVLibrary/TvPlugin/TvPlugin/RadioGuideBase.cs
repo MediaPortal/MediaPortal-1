@@ -204,7 +204,10 @@ namespace TvPlugin
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("radioguide", "channel", _currentChannel);
+        if (_currentChannel != null)
+        {
+          xmlwriter.SetValue("radioguide", "channel", _currentChannel);
+        }
         xmlwriter.SetValue("radioguide", "ypos", _cursorX.ToString());
         xmlwriter.SetValue("radioguide", "yoffset", ChannelOffset.ToString());
         xmlwriter.SetValue("radioguide", "timeperblock", _timePerBlock);
@@ -648,7 +651,10 @@ namespace TvPlugin
             {
               base.OnMessage(message);
               SaveSettings();
-              _recordingList.Clear();
+              if (_recordingList != null && TVHome.Connected)
+              {
+                _recordingList.Clear();
+              }
 
               _controls = new Dictionary<int, GUIButton3PartControl>();
               _channelList = null;
@@ -660,8 +666,35 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {              
-              TVHome.WaitForGentleConnection();        
-      
+
+              if (!TVHome.Connected)
+              {
+                RemoteControl.Clear();
+                GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+                return false;
+              }
+
+              TVHome.WaitForGentleConnection();
+
+              if (TVHome.Navigator == null)
+              {
+                TVHome.OnLoaded();
+              }
+              else if (TVHome.Navigator.Channel == null)
+              {
+                TVHome.m_navigator.ReLoad();
+                TVHome.LoadSettings(false);
+              }
+
+              if (TVHome.m_navigator == null)
+              {
+                TVHome.m_navigator = new ChannelNavigator(); // Create the channel navigator (it will load groups and channels)
+              }
+
+              // Reload ChannelGroups
+              Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+              radioLoad.OnAdded();
+
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);

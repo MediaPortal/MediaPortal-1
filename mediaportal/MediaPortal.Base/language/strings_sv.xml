@@ -995,6 +995,7 @@
     <String id="1196">Slå på textning</String>
     <String id="1197">Slå av DXVA</String>
     <String id="1198">DVD-Navigator</String>
+    <String id="1199">Använd intern Blu-Rayspelare</String>
     <String id="1200">Inställningsguiden</String>
     <String id="1201">Spela upp videon från början</String>
     <String id="1202">Sortering: Auto</String>
@@ -1098,6 +1099,9 @@
     <String id="1318">Spara ändrad undertext?</String>
     <String id="1319">Namn (mappar och filer)</String>
     <String id="1320">{0} som {1} &#10;</String>
+    <String id="1321">Använd Automatiskt val av Avkodare</String>
+    <String id="1322">Tvinga källfilter</String>
+    <String id="1323">VideoAvkodare för .TS-filer</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
     <String id="1442">Scroll-hastighet (Horisontel)</String>
@@ -1186,6 +1190,7 @@
     <String id="1976">varvantal</String>
     <String id="1977">Filsystem</String>
     <String id="1978">Virtuellt minne</String>
+    <String id="1984">Uppdatera tumavbilder för videor</String>
     <String id="2005">Ta bort</String>
     <String id="2006">Titel</String>
     <String id="2007">Vinst</String>
@@ -2330,5 +2335,9 @@
     <String id="300225">Använd "Sorterings-titel"</String>
     <String id="300226">Använd endast intern nfo-hämtning</String>
     <String id="300227">Radera svartlistade tumnagelbilder</String>
+    <String id="300228">Fråga om bekräftelse innan timeshift stängs av</String>
+    <String id="300229">Minimera till statusfältet när fokus förloras</String>
+    <String id="300230">Stoppa avspelning när aktiv ljudrenderare tas bort</String>
+    <String id="300231">Sänk framerate när fokus förloras</String>
   </Section>
 </Language>

@@ -149,6 +149,18 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+      foreach (ITVCard card in _cards)
+      {
+        card.RegisterEpgEventListener(eventListener);
+      }
+    }
+
+    /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>

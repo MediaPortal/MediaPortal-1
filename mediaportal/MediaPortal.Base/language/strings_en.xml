@@ -1075,7 +1075,7 @@
     <String id="1302">Downloading actor info</String>
     <String id="1303">Select Artist</String>
     <String id="1304">Create nfo file</String>
-    <String id="1305">Nfo crated!</String>
+    <String id="1305">Nfo created</String>
     <String id="1306">Create nfo files for all movies</String>
     <String id="1307">Update internal Grabber scripts</String>
     <String id="1308">Rename SortTitle</String>
@@ -1183,6 +1183,7 @@
     <String id="1976">rpm</String>
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
+    <String id="1984">Refresh video thumb</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>

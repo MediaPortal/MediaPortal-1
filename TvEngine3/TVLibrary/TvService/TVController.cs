@@ -49,7 +49,7 @@ namespace TvService
   /// and if server is the master it will delegate the requests to the 
   /// correct slave servers
   /// </summary>
-  public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent, IEpgEvents, ICiMenuCallbacks
+  public class TVController : MarshalByRefObject, IController, IDeviceEventListener, IDisposable, ITvServerEvent, IEpgEvents, ICiMenuCallbacks
   {
     #region constants
 
@@ -59,7 +59,6 @@ namespace TvService
 
     #region variables
 
-    private readonly Dictionary<int, bool> _cardPresent = new Dictionary<int, bool>();
     private readonly TvBusinessLayer _layer = new TvBusinessLayer();
     private readonly ICardAllocation _cardAllocation;
     private readonly ChannelStates _channelStates;
@@ -97,40 +96,15 @@ namespace TvService
     private Server _ourServer;
 
     /// <summary>
-    private TvCardCollection _localCardCollection;
+    private DeviceDetector _deviceDetector;
 
     /// <summary>
     /// Indicates how many free cards to try for timeshifting
     /// </summary>
     private int _maxFreeCardsToTry;
 
-    /// <summary>
-    /// Initialized Conditional Access handler
-    /// </summary>
-    /// <param name="cardId">id of the card.</param>
-    /// <returns>true if successful</returns>
-    public bool InitConditionalAccess(int cardId)
-    {
-      if (ValidateTvControllerParams(cardId, false))
-      {
-        Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");
-        return false;
-      }
-      ITVCard unknownCard = _cards[cardId].Card;
-
-      if (unknownCard is TvCardBase)
-      {
-        TvCardBase card = (TvCardBase)unknownCard;
-        if (card.ConditionalAccess == null)
-        {
-          card.BuildGraph();
-        }
-        return true;
-      }
-      return false;
-    }
-
     private Dictionary<int, ITvCardHandler> _cards;
+    private Dictionary<int, HybridCardGroup> _deviceGroups;
 
     /// 
     // contains a cached copy of all the channels in the user defined groups (excl. the all channels group)
@@ -182,8 +156,6 @@ namespace TvService
     public event TvServerEventHandler OnTvServerEvent;
 
     #endregion
-
-    #region ctor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TVController"/> class.
@@ -349,6 +321,32 @@ namespace TvService
         */
 
     /// <summary>
+    /// Initialized Conditional Access handler
+    /// </summary>
+    /// <param name="cardId">id of the card.</param>
+    /// <returns>true if successful</returns>
+    public bool InitConditionalAccess(int cardId)
+    {
+      if (ValidateTvControllerParams(cardId, false))
+      {
+        Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");
+        return false;
+      }
+      ITVCard unknownCard = _cards[cardId].Card;
+
+      if (unknownCard is TvCardBase)
+      {
+        TvCardBase card = (TvCardBase)unknownCard;
+        if (card.ConditionalAccess == null)
+        {
+          card.BuildGraph();
+        }
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
     /// Determines whether the specified host name is the local pc or not.
     /// </summary>
     /// <param name="hostName">Name of the host or ip adress</param>
@@ -510,9 +508,6 @@ namespace TvService
         Log.Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
-        _cards = new Dictionary<int, ITvCardHandler>();
-        _localCardCollection = new TvCardCollection(this);
-
         //log all local ip adresses, usefull for debugging problems
         Log.Write("Controller: started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName());
@@ -572,196 +567,22 @@ namespace TvService
         }
         _isMaster = _ourServer.IsMaster;
 
-        //enumerate all tv cards in this pc...        
         _maxFreeCardsToTry = Int32.Parse(_layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value);
 
-        for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
+        _deviceGroups = new Dictionary<int, HybridCardGroup>();
+        _cards = new Dictionary<int, ITvCardHandler>();
+        _deviceDetector = new DeviceDetector(this);
+        // Logic here to delay starting to detect devices.
+        // Ideally this should also apply after resuming from standby.
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("delayCardDetect", "0");
+        int delayDetect = Convert.ToInt32(setting.Value);
+        if (delayDetect >= 1)
         {
-          //for each card, check if its already mentioned in the database
-          bool found = false;
-          IList<Card> cards = _ourServer.ReferringCard();
-          foreach (Card card in cards)
-          {
-            if (card.DevicePath == _localCardCollection.Cards[i].DevicePath)
-            {
-              found = true;
-              break;
-            }
-          }
-          if (!found)
-          {
-            // card is not yet in the database, so add it
-            Log.Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
-            _layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath, _ourServer);
-          }
+          Log.Info("Controller: delaying device detection for {0} second(s)", delayDetect);
+          Thread.Sleep(delayDetect * 1000);
         }
-        //notify log about cards from the database which are removed from the pc
-        IList<Card> cardsInDbs = Card.ListAll();
-        int cardsInstalled = _localCardCollection.Cards.Count;
-        foreach (Card dbsCard in cardsInDbs)
-        {
-          if (dbsCard.ReferencedServer().IdServer == _ourServer.IdServer)
-          {
-            bool found = false;
-            for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
-            {
-              if (dbsCard.DevicePath == _localCardCollection.Cards[cardNumber].DevicePath)
-              {
-                Card cardDB = _layer.GetCardByDevicePath(_localCardCollection.Cards[cardNumber].DevicePath);
-
-                bool cardEnabled = cardDB.Enabled;
-                bool cardPresent = _localCardCollection.Cards[cardNumber].CardPresent;
-
-                if (cardEnabled && cardPresent)
-                {
-                  ITVCard unknownCard = _localCardCollection.Cards[cardNumber];
-
-                  if (unknownCard is TvCardBase)
-                  {
-                    TvCardBase card = (TvCardBase)unknownCard;
-                    if (card.PreloadCard)
-                    {
-                      try
-                      {
-                        Log.Info("Controller: preloading card :{0}", card.Name);
-                        card.BuildGraph();
-                        if (unknownCard is TvCardAnalog)
-                        {
-                          ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
-                        }
-                      }
-                      catch (Exception ex)
-                      {
-                        Log.Error("failed to preload card '{0}', ex = {1}", card.Name, ex);
-                      }
-                    }
-                    else
-                    {
-                      Log.Info("Controller: NOT preloading card :{0}", card.Name);
-                    }
-                  }
-                  else
-                  {
-                    Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
-                  }
-                }
-
-                found = true;
-                break;
-              }
-            }
-            if (!found)
-            {
-              Log.Info("Controller: card not found :{0}", dbsCard.Name);
-
-              for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
-              {
-                if (_localCardCollection.Cards[i].DevicePath == dbsCard.DevicePath)
-                {
-                  _localCardCollection.Cards[i].CardPresent = false;
-                  break;
-                }
-              }
-
-              // Fix mantis 0002790: Bad behavior when card count for IPTV = 0 
-              if (dbsCard.Name.StartsWith("MediaPortal IPTV Source Filter"))
-              {
-                CardRemove(dbsCard.IdCard);
-              }
-            }
-          }
-        }
-
-        Dictionary<int, ITVCard> localcards = new Dictionary<int, ITVCard>();
-
-        cardsInDbs = Card.ListAll();
-        foreach (Card card in cardsInDbs)
-        {
-          if (IsLocal(card.ReferencedServer().HostName))
-          {
-            for (int x = 0; x < _localCardCollection.Cards.Count; ++x)
-            {
-              if (_localCardCollection.Cards[x].DevicePath == card.DevicePath)
-              {
-                localcards[card.IdCard] = _localCardCollection.Cards[x];
-                break;
-              }
-            }
-          }
-        }
-
-        Log.Info("Controller: setup hybrid cards");
-        IList<CardGroup> cardgroups = CardGroup.ListAll();
-        foreach (CardGroup group in cardgroups)
-        {
-          IList<CardGroupMap> cards = group.CardGroupMaps();
-          HybridCardGroup hybridCardGroup = new HybridCardGroup();
-          foreach (CardGroupMap card in cards)
-          {
-            if (localcards.ContainsKey(card.IdCard))
-            {
-              localcards[card.IdCard].IsHybrid = true;
-              Log.WriteFile("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
-              HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
-              localcards[card.IdCard] = hybridCard;
-            }
-          }
-        }
-
-        cardsInDbs = Card.ListAll();
-        foreach (Card dbsCard in cardsInDbs)
-        {
-          if (localcards.ContainsKey(dbsCard.IdCard))
-          {
-            ITVCard card = localcards[dbsCard.IdCard];
-            TvCardHandler tvcard = new TvCardHandler(dbsCard, card);
-            _cards[dbsCard.IdCard] = tvcard;
-          }
-
-          // remove any old timeshifting TS files	
-          try
-          {
-            string TimeShiftPath = dbsCard.TimeShiftFolder;
-            if (string.IsNullOrEmpty(dbsCard.TimeShiftFolder))
-            {
-              TimeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
-                                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-            }
-            if (!Directory.Exists(TimeShiftPath))
-            {
-              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
-              Directory.CreateDirectory(TimeShiftPath);
-            }
-
-            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, TimeShiftPath);
-            if (TimeShiftPath != null)
-            {
-              string[] files = Directory.GetFiles(TimeShiftPath);
-
-              foreach (string file in files)
-              {
-                try
-                {
-                  FileInfo fInfo = new FileInfo(file);
-                  bool delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0);
-
-                  if (!delFile)
-                  {
-                    delFile = (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
-                              (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0);
-                  }
-                  if (delFile)
-                    File.Delete(fInfo.FullName);
-                }
-                catch (IOException) {}
-              }
-            }
-          }
-          catch (Exception exd)
-          {
-            Log.Info("Controller: Error cleaning old ts buffer - {0}", exd.Message);
-          }
-        }
+        _deviceDetector.Start();
 
         Log.Info("Controller: setup streaming");
         _streamer = new RtspStreaming(_ourServer.HostName, _ourServer.RtspPort);
@@ -814,8 +635,6 @@ namespace TvService
       heartBeatMonitorThread.IsBackground = true;
       heartBeatMonitorThread.Start();
     }
-
-    #endregion
 
     #region MarshalByRefObject overrides
 
@@ -890,6 +709,8 @@ namespace TvService
 
         //clean up the tv cards
         FreeCards();
+        _deviceDetector.Stop();
+        _deviceDetector.Dispose();
 
         Gentle.Common.CacheManager.Clear();
         if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
@@ -1004,28 +825,11 @@ namespace TvService
     /// <returns>true if card is present otherwise false</returns>		
     public bool CardPresent(int cardId)
     {
-      bool cardPresent = false;
-      if (cardId > 0)
+      if (_cards.ContainsKey(cardId))
       {
-        bool cardPresentFound = _cardPresent.TryGetValue(cardId, out cardPresent);
-
-        if (!cardPresentFound)
-        {
-          if (_cards.ContainsKey(cardId))
-          {
-            string devicePath = _cards[cardId].Card.DevicePath;
-            if (devicePath.Length > 0)
-            {
-              // Remove it from the local card collection
-              cardPresent =
-                (from t in _localCardCollection.Cards where t.DevicePath == devicePath select t.CardPresent).
-                  FirstOrDefault();
-            }
-          }
-          _cardPresent.Add(cardId, cardPresent);
-        }
+        return _cards[cardId].Card.CardPresent;
       }
-      return cardPresent;
+      return false;
     }
 
     /// <summary>
@@ -1059,8 +863,6 @@ namespace TvService
         _cards[cardId].DataBaseCard.Remove();
         // Remove it from the card collection
         _cards.Remove(cardId);
-        // Remove it from the local card collection
-        _localCardCollection.Cards.Remove(_cards[cardId].Card);
       }
     }
 
@@ -4669,5 +4471,164 @@ namespace TvService
 
       return subchannels;
     }
+
+    #region IDeviceEventListener members
+
+    /// <summary>
+    /// This callback is invoked when a device is detected.
+    /// </summary>
+    /// <param name="device">The device that has been detected.</param>
+    public void OnDeviceAdded(ITVCard device)
+    {
+      Log.Info("Controller: add device {0} {1}", device.Name, device.DevicePath);
+      device.RegisterEpgEventListener(this);
+
+      // Check if we have settings for this device in the DB. Create them if we don't.
+      Card dbSettings = _layer.GetCardByDevicePath(device.DevicePath);
+      if (dbSettings == null)
+      {
+        Log.Info("Controller: create settings");
+        dbSettings = _layer.AddCard(device.Name, device.DevicePath, _ourServer);
+      }
+      dbSettings.IdServer = _ourServer.IdServer;
+
+      // Do we already have a handler for this device? If so, replace it.
+      ITvCardHandler handler = null;
+      if (_cards.TryGetValue(dbSettings.IdCard, out handler))
+      {
+        if (handler.Card.CardPresent)
+        {
+          Log.Info("Controller: warn, device was already present");
+          handler.Dispose();
+        }
+        handler = null;
+      }
+
+      // Preload the device if configured to do so. Note that it should not be possible
+      // to preload multiple parts of a hybrid device... but we're not checking that.
+      if (dbSettings.Enabled && dbSettings.PreloadCard)
+      {
+        // TODO: TvCardBase is library implementation detail. It should *not* be referenced here!
+        TvCardBase tuner = device as TvCardBase;
+        if (tuner != null)
+        {
+          Log.Info("Controller: preloading device");
+          try
+          {
+            tuner.BuildGraph();
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Failed to preload device {0} {1}!\r\n{2}", device.Name, device.DevicePath, ex);
+          }
+        }
+      }
+
+      // Check if the device is a member of any device groups.
+      // Note that this implementation allows a device to be in a
+      // maximum of one group.
+      IList<CardGroup> dbDeviceGroups = CardGroup.ListAll();
+      foreach (CardGroup dbDeviceGroup in dbDeviceGroups)
+      {
+        IList<CardGroupMap> devicesInGroup = dbDeviceGroup.CardGroupMaps();
+        foreach (CardGroupMap groupDevice in devicesInGroup)
+        {
+          if (groupDevice.IdCard == dbSettings.IdCard)
+          {
+            Log.Info("Controller: adding to group {0}", dbDeviceGroup.Name);
+            device.IsHybrid = true;
+            HybridCardGroup deviceGroup;
+            if (!_deviceGroups.TryGetValue(dbDeviceGroup.IdCardGroup, out deviceGroup))
+            {
+              deviceGroup = new HybridCardGroup();
+              _deviceGroups.Add(dbDeviceGroup.IdCardGroup, deviceGroup);
+            }
+            HybridCard hybridDevice = deviceGroup.Add(dbSettings.IdCard, device);
+
+            Log.Debug("Controller: creating hybrid handler");
+            handler = new TvCardHandler(dbSettings, hybridDevice);
+            break;
+          }
+        }
+        if (handler != null)
+        {
+          break;
+        }
+      }
+
+      if (handler == null)
+      {
+        Log.Debug("Controller: creating standard handler");
+        handler = new TvCardHandler(dbSettings, device);
+      }
+      _cards[dbSettings.IdCard] = handler;
+
+
+      // Remove any old timeshifting files or create the timeshifting directory.
+      try
+      {
+        String timeShiftPath = dbSettings.TimeShiftFolder;
+        if (string.IsNullOrEmpty(dbSettings.TimeShiftFolder))
+        {
+          timeShiftPath = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
+                                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        }
+
+        if (!Directory.Exists(timeShiftPath))
+        {
+          Log.Info("Controller: creating timeshifting folder \"{0}\"", timeShiftPath);
+          Directory.CreateDirectory(timeShiftPath);
+        }
+        else
+        {
+          Log.Debug("Controller: current timeshifting folder is \"{0}\"", timeShiftPath);
+          string[] files = Directory.GetFiles(timeShiftPath);
+          foreach (string file in files)
+          {
+            try
+            {
+              FileInfo fInfo = new FileInfo(file);
+              if (
+                (fInfo.Extension.ToUpperInvariant().IndexOf(".TSBUFFER") == 0) ||
+                (
+                  (fInfo.Extension.ToUpperInvariant().IndexOf(".TS") == 0) &&
+                  (fInfo.Name.ToUpperInvariant().IndexOf("TSBUFFER") > 0)
+                )
+              )
+              {
+                File.Delete(fInfo.FullName);
+              }
+            }
+            catch (IOException)
+            {
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Failed to create timeshifting folder or clean up old timeshift files!\r\n{0}", ex);
+      }
+    }
+
+    /// <summary>
+    /// This callback is invoked when a device is removed.
+    /// </summary>
+    /// <param name="deviceIdentifier">The identifier of the device that has been removed.</param>
+    public void OnDeviceRemoved(String deviceIdentifier)
+    {
+      foreach (TvCardHandler handler in _cards.Values)
+      {
+        if (handler.Card.DevicePath.Equals(deviceIdentifier))
+        {
+          Log.Info("Controller: remove device {0} {1}", handler.Card.Name, deviceIdentifier);
+          handler.Card.CardPresent = false;
+          handler.Dispose();
+          break;
+        }
+      }
+    }
+
+    #endregion
   }
 }

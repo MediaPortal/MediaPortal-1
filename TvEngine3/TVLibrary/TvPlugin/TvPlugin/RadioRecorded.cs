@@ -199,7 +199,34 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+      if (!TVHome.Connected)
+      {
+        RemoteControl.Clear();
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SETTINGS_TVENGINE);
+        return;
+      }
+
       TVHome.WaitForGentleConnection();
+
+      if (TVHome.Navigator == null)
+      {
+        TVHome.OnLoaded();
+      }
+      else if (TVHome.Navigator.Channel == null)
+      {
+        TVHome.m_navigator.ReLoad();
+        TVHome.LoadSettings(false);
+      }
+
+      // Create the channel navigator (it will load groups and channels)
+      if (TVHome.m_navigator == null)
+      {
+        TVHome.m_navigator = new ChannelNavigator();
+      }
+
+      // Reload ChannelGroups
+      Radio radioLoad = (Radio)GUIWindowManager.GetWindow((int)Window.WINDOW_RADIO);
+      radioLoad.OnAdded();
 
       base.OnPageLoad();
       InitViewSelections();
@@ -1276,18 +1303,36 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         rec = pItem.TVTag as Recording;
         if (rec == null)
         {
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         SetProperties(rec);
         if (!pItem.IsFolder)
         {
-          GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          if (string.IsNullOrEmpty(pItem.ThumbnailImage))
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          }
         }
       }
       catch (Exception ex)
