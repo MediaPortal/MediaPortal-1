@@ -348,6 +348,9 @@ namespace MediaPortal.Visualization
         visExec.AMP_ModuleIndex = VizPluginInfo.PresetIndex;
         visExec.AMP_UseOwnW1 = 1;
         visExec.AMP_UseOwnW2 = 1;
+        // The flag below is needed for the Vis to have it's own message queue
+        // Thus it is avoided that it steals focus from MP.
+        visExec.AMP_UseFakeWindow = true; 
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
         if (_visParam.VisHandle != 0)
         {
