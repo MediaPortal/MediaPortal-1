@@ -41,6 +41,11 @@ public:
 
   /* set methods */
 
+  // sets last sender IP address
+  // @param sender : the IP address of last sender
+  // @return : true if successful, false oterwise
+  virtual bool SetLastSenderIpAddress(CIpAddress *sender);
+
   /* other methods */
 
   // sends data on a connected socket

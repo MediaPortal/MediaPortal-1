@@ -47,6 +47,14 @@ CIpAddress *CUdpSocketContext::GetLastSenderIpAddress(void)
 
 /* set methods */
 
+bool CUdpSocketContext::SetLastSenderIpAddress(CIpAddress *sender)
+{
+  FREE_MEM_CLASS(this->lastSenderIpAddress);
+  this->lastSenderIpAddress = sender->Clone();
+
+  return (((this->lastSenderIpAddress == NULL) && (sender == NULL)) || ((this->lastSenderIpAddress != NULL) && (sender != NULL)));
+}
+
 /* other methods */
 
 HRESULT CUdpSocketContext::Send(const char *buffer, unsigned int length, unsigned int *sentLength)

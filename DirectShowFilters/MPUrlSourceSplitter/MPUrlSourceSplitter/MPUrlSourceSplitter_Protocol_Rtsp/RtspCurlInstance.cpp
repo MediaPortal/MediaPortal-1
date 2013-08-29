@@ -1477,6 +1477,8 @@ DWORD CRtspCurlInstance::CurlWorker(void)
           // we must have sender SSRC to send report
           errorCode = track->IsSetSenderSynchronizationSourceIdentifier() ? errorCode : CURLE_SEND_ERROR;
 
+          CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while initializing receiver report and source description RTCP packets", errorCode));
+
           if (errorCode == CURLE_OK)
           {
             // fill receiver report RTCP packet with data
@@ -1505,6 +1507,8 @@ DWORD CRtspCurlInstance::CurlWorker(void)
             {
               FREE_MEM_CLASS(reportBlock);
             }
+
+            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of receiver report RTCP packet", errorCode));
           }
 
           if (errorCode == CURLE_OK)
@@ -1551,6 +1555,8 @@ DWORD CRtspCurlInstance::CurlWorker(void)
             {
               FREE_MEM_CLASS(chunk);
             }
+
+            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of source description RTCP packet", errorCode));
           }
 
           if (errorCode == CURLE_OK)
@@ -1564,6 +1570,8 @@ DWORD CRtspCurlInstance::CurlWorker(void)
 
             CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = receiverReport->GetPacket(reportBuffer + 4, receiverReportSize) ? errorCode : CURLE_SEND_ERROR);
             CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = sourceDescription->GetPacket(reportBuffer + 4 + receiverReportSize, sourceDescriptionSize) ? errorCode : CURLE_SEND_ERROR);
+
+            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while serializing receiver report and source description RTCP packets", errorCode));
 
             if (errorCode == CURLE_OK)
             {
@@ -1579,27 +1587,116 @@ DWORD CRtspCurlInstance::CurlWorker(void)
 
                 if (udpControlServer != NULL)
                 {
-                  CUdpSocketContext *udpContext = NULL;
-
-                  // get control UDP socket context with set last sender IP address
-                  for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
+                  if (udpControlServer->GetServers()->Count() != 0)
                   {
-                    CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+                    CUdpSocketContext *udpContext = NULL;
 
-                    if (server->GetLastSenderIpAddress() != NULL)
+                    // get control UDP socket context with set last sender IP address
+                    for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
                     {
-                      udpContext = server;
-                      break;
+                      CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+
+                      if (server->GetLastSenderIpAddress() != NULL)
+                      {
+                        udpContext = server;
+                        break;
+                      }
                     }
-                  }
 
-                  errorCode = (udpContext != NULL) ? errorCode : CURLE_SEND_ERROR;
+                    if (udpContext == NULL)
+                    {
+                      this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"no RTCP control packets received");
 
-                  if (errorCode == CURLE_OK)
-                  {
-                    unsigned int sentLength = 0;
-                    errorCode = SUCCEEDED(udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength)) ? errorCode : CURLE_SEND_ERROR;
-                    errorCode = (sentLength == (receiverReportSize + sourceDescriptionSize)) ? errorCode : CURLE_SEND_ERROR;
+                      // it's bad, but not critical
+                      // we don't received any RTCP packet on control server
+                      // so we don't know on which interface and to which client we have to send our report
+
+                      // we need to find data server, which receives data and with its information we send our report
+
+                      CUdpServer *udpDataServer = dynamic_cast<CUdpServer *>(track->GetDataServer());
+
+                      if (udpDataServer != NULL)
+                      {
+                        CUdpSocketContext *udpDataServerContext = NULL;
+
+                        for (unsigned int i = 0; i < udpDataServer->GetServers()->Count(); i++)
+                        {
+                          CUdpSocketContext *server = (CUdpSocketContext *)udpDataServer->GetServers()->GetItem(i);
+
+                          if (server->GetLastSenderIpAddress() != NULL)
+                          {
+                            udpDataServerContext = server;
+                            break;
+                          }
+                        }
+
+                        CHECK_CONDITION_EXECUTE(udpDataServerContext == NULL, this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"no RTP data packets received"));
+
+                        if (udpDataServerContext != NULL)
+                        {
+                          // we have network interface with last sender
+                          // we need to use same network interface and same last sender
+
+                          CIpAddress *ipAddress = udpDataServerContext->GetIpAddress()->Clone();
+                          CHECK_CONDITION_EXECUTE(ipAddress == NULL, this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"cannot get IP address from data server"));
+                          if (ipAddress != NULL)
+                          {
+                            // set port to control port
+                            ipAddress->SetPort(udpControlServer->GetServers()->GetItem(0)->GetIpAddress()->GetPort());
+
+                            // get control UDP socket context with same IP address and port
+                            for (unsigned int i = 0; i < udpControlServer->GetServers()->Count(); i++)
+                            {
+                              CUdpSocketContext *server = (CUdpSocketContext *)udpControlServer->GetServers()->GetItem(i);
+
+                              if (server->GetIpAddress()->GetAddressLength() == ipAddress->GetAddressLength())
+                              {
+                                if (memcmp(server->GetIpAddress()->GetAddress(), ipAddress->GetAddress(), ipAddress->GetAddressLength()) == 0)
+                                {
+                                  // IP addresses are same
+                                  udpContext = server;
+                                  break;
+                                }
+                              }
+                            }
+
+                            CHECK_CONDITION_EXECUTE(udpContext == NULL, this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"cannot find control server with same IP address as data server"));
+
+                            if (udpContext != NULL)
+                            {
+                              // get last sender IP address and change its port to sender control port
+                              CIpAddress *lastSenderIpAddress = udpDataServerContext->GetLastSenderIpAddress()->Clone();
+
+                              if (lastSenderIpAddress != NULL)
+                              {
+                                lastSenderIpAddress->SetPort(track->GetServerControlPort());
+
+                                // set last sender IP address to control server
+                                udpContext = udpContext->SetLastSenderIpAddress(lastSenderIpAddress) ? udpContext : NULL;
+
+                                CHECK_CONDITION_EXECUTE(udpContext == NULL, this->logger->Log(LOGGER_WARNING, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"cannot set control server last sender IP address"));
+                              }
+
+                              FREE_MEM_CLASS(lastSenderIpAddress);
+                            }
+                          }
+
+                          FREE_MEM_CLASS(ipAddress);
+                        }
+                      }
+                    }
+
+                    errorCode = (udpContext != NULL) ? errorCode : CURLE_SEND_ERROR;
+                    CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_CURL_WORKER_NAME, L"no endpoint found"));
+
+                    if (errorCode == CURLE_OK)
+                    {
+                      unsigned int sentLength = 0;
+                      errorCode = SUCCEEDED(udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength)) ? errorCode : CURLE_SEND_ERROR;
+                      errorCode = (sentLength == (receiverReportSize + sourceDescriptionSize)) ? errorCode : CURLE_SEND_ERROR;
+
+                      CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending RTCP packets", errorCode));
+                    }
                   }
                 }
 
@@ -1620,6 +1717,7 @@ DWORD CRtspCurlInstance::CurlWorker(void)
                 WBE16(reportBuffer, 2, (receiverReportSize + sourceDescriptionSize));               // interleaved packet length (without header length)
 
                 errorCode = this->SendData(reportBuffer, receiverReportSize + sourceDescriptionSize + 4, this->GetReceiveDataTimeout());
+                CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending interleaved RTCP packets", errorCode));
               }
 
               track->SetLastReceiverReportTime(GetTickCount());

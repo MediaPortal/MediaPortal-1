@@ -96,7 +96,7 @@ unsigned int CRtspTrackStatistics::GetLastSenderReportTimestamp(void)
 
 unsigned int CRtspTrackStatistics::GetDelaySinceLastSenderReport(unsigned int currentTime)
 {
-  uint64_t result = currentTime - this->lastSenderReportTime;
+  uint64_t result = currentTime - ((this->lastSenderReportTime == 0) ? currentTime : this->lastSenderReportTime);
   result = result * 65536 / 1000;
   result = min(result, 0xFFFFFFFF);
 
