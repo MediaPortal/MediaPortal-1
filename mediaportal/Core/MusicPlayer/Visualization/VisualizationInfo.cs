@@ -203,7 +203,7 @@ namespace MediaPortal.Visualization
     /// <param name="vizInfo"></param>
     /// <returns>true if data is identical</returns>
     /// </summary>
-    public bool IsIdenticalTo(VisualizationInfo vizInfo, bool doSimpleCheck)
+    public bool IsIdenticalTo(VisualizationInfo vizInfo)
     {
       if (this._Name != vizInfo._Name)
       {
@@ -230,36 +230,9 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (this.PresetIndex != vizInfo.PresetIndex)
-      {
-        return false;
-      }
-
       if (this.VisualizationType != vizInfo.VisualizationType)
       {
         return false;
-      }
-
-      if (!doSimpleCheck)
-      {
-        if (this.HasPresets != vizInfo.HasPresets)
-        {
-          return false;
-        }
-
-
-        if (this.PresetNames.Count != vizInfo.PresetNames.Count)
-        {
-          return false;
-        }
-
-        for (int i = 0; i < this.PresetNames.Count; i++)
-        {
-          if (this.PresetNames[i] != vizInfo.PresetNames[i])
-          {
-            return false;
-          }
-        }
       }
 
       return true;

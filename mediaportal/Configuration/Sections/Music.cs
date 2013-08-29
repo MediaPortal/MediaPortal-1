@@ -1144,9 +1144,10 @@ namespace MediaPortal.Configuration.Sections
       {
         VisualizationInfo pluginInfo = vizPluginsInfo[i];
 
-        if (pluginInfo.IsIdenticalTo(VizPluginInfo, true))
+        if (pluginInfo.IsIdenticalTo(VizPluginInfo))
         {
           selectedIndex = i;
+          pluginInfo.PresetIndex = VizPluginInfo.PresetIndex;
         }
 
         VisualizationsCmbBox.Items.Add(pluginInfo);
