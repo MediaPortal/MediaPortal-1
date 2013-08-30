@@ -761,6 +761,19 @@ namespace TvService
         if (plugin.MasterOnly == false || _controller.IsMaster)
         {
           Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+          
+          // Start PowerScheduler if PS++ is enabled and remove PS++ entry
+          if (plugin.Name == "PowerScheduler")
+          {
+            Setting settingPSpp = layer.GetSetting(String.Format("pluginPowerScheduler++"), "false");
+            if (settingPSpp.Value == "true")
+            {
+              setting.Value = "true";
+              setting.Persist();
+            }
+            settingPSpp.Remove();
+          }
+
           if (setting.Value == "true")
           {
             Log.Info("TV Service: Plugin: {0} started", plugin.Name);
