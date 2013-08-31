@@ -223,8 +223,9 @@ protected:
   // @param configurationParameters : the configuration parameters
   // @param bootstrapInfoBox : bootstrap info box to create segment and fragment collection
   // @param logCollection : specifies if result collection should be logged
+  // @param lastSegmentFragmentTimestamp : the last segment and fragment timestamp (only segments and fragments with overlapping and higher timestamps will be returned, 0 to return all segments and fragments)
   // @return : segment and fragment collection created from bootstrap info box or NULL if error
-  CSegmentFragmentCollection *GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection);
+  CSegmentFragmentCollection *GetSegmentsFragmentsFromBootstrapInfoBox(CLogger *logger, const wchar_t *methodName, CParameterCollection *configurationParameters, CBootstrapInfoBox *bootstrapInfoBox, bool logCollection, uint64_t lastSegmentFragmentTimestamp);
 
   // gets store file path based on configuration
   // creates folder structure if not created

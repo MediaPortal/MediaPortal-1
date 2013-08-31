@@ -41,12 +41,12 @@
 #define PARAMETER_NAME_RTSP_CLIENT_PORT                           L"RtspClientPort"
 
 // we should get data in twenty seconds
-#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         2000000
+#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
 
-#define RTSP_MULTICAST_PREFERENCE_DEFAULT                         1
-#define RTSP_UDP_PREFERENCE_DEFAULT                               0
-#define RTSP_TCP_PREFERENCE_DEFAULT                               2
-#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               3
+#define RTSP_MULTICAST_PREFERENCE_DEFAULT                         2
+#define RTSP_UDP_PREFERENCE_DEFAULT                               1
+#define RTSP_TCP_PREFERENCE_DEFAULT                               3
+#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               0
 
 #define RTSP_CLIENT_PORT_DEFAULT                                  50000
 #define RTSP_CLIENT_PORT_MIN                                      1
