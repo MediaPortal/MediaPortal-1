@@ -1696,6 +1696,9 @@ DWORD CRtspCurlInstance::CurlWorker(void)
 
                     if (errorCode == CURLE_OK)
                     {
+                      // for sure, set server control port, some server sent data/control packets on another ports as they negotiated
+                      udpContext->GetLastSenderIpAddress()->SetPort(track->GetServerControlPort());
+
                       unsigned int sentLength = 0;
                       errorCode = SUCCEEDED(udpContext->Send((const char *)(reportBuffer + 4), receiverReportSize + sourceDescriptionSize, &sentLength)) ? errorCode : CURLE_SEND_ERROR;
                       errorCode = (sentLength == (receiverReportSize + sourceDescriptionSize)) ? errorCode : CURLE_SEND_ERROR;
