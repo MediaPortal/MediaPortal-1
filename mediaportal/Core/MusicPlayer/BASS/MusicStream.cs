@@ -62,6 +62,7 @@ namespace MediaPortal.MusicPlayer.BASS
       Ended,
       InternetStreamChanged,
       Disposed,
+      Crossfading,
     }
 
     #endregion
@@ -776,12 +777,9 @@ namespace MediaPortal.MusicPlayer.BASS
                      {
                        Log.Debug("BASS: X-Fading out stream {0}", _filePath);
 
-                       if (Config.CrossFadeIntervalMs > 0)
+                       if (MusicStreamMessage != null)
                        {
-                         // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-                         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
-                                                         0, 0, 0, null);
-                         GUIWindowManager.SendThreadMessage(msg);
+                         MusicStreamMessage(this, StreamAction.Crossfading);
                        }
 
                        // We want to get informed, when Crossfading has ended
@@ -837,15 +835,6 @@ namespace MediaPortal.MusicPlayer.BASS
                      Log.Debug("BASS: End of stream {0}", _filePath);
                      _crossFading = false;
 
-                     // The Playlist Player waits on a Crossfading message to play the next song.
-                     // So if X-fading is set to 0, we must send the message in order to start playback of the next
-                     // file.
-                     if (Config.CrossFadeIntervalMs == 0)
-                     {
-                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-                       GUIWindowManager.SendThreadMessage(msg);
-                     }
-
                      if (MusicStreamMessage != null)
                      {
                        MusicStreamMessage(this, StreamAction.Ended);
@@ -867,12 +856,9 @@ namespace MediaPortal.MusicPlayer.BASS
                    {
                      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
 
-                     if (Config.CrossFadeIntervalMs > 0)
+                     if (MusicStreamMessage != null)
                      {
-                       // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0,
-                                                       0, 0, 0, null);
-                       GUIWindowManager.SendThreadMessage(msg);
+                       MusicStreamMessage(this, StreamAction.Crossfading);
                      }
 
                      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
