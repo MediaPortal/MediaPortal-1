@@ -634,11 +634,11 @@ namespace MediaPortal.MusicPlayer.BASS
           nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
           if (nextSong != string.Empty)
           {
+            PlayInternal(nextSong);
             if (PlaybackStart != null)
             {
               PlaybackStart(g_Player.MediaType.Music, nextSong);
             }
-            PlayInternal(nextSong);
           }
           else
           {
