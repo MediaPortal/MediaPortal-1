@@ -281,6 +281,8 @@ bool CF4MManifest::Parse(const char *buffer)
         }
       }
     }
+
+    FREE_MEM_CLASS(document);
   }
 
   return result;

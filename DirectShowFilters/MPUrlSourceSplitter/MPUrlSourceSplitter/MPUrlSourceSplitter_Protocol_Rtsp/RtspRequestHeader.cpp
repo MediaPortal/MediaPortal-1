@@ -30,6 +30,7 @@ CRtspRequestHeader::CRtspRequestHeader(void)
 
 CRtspRequestHeader::~CRtspRequestHeader(void)
 {
+  FREE_MEM(this->requestHeader);
 }
 
 /* get methods */

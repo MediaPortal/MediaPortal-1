@@ -523,6 +523,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               }
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
+              // if no error in SETUP request, we must call TEARDOWN to free resources
+              CHECK_CONDITION_EXECUTE(error == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
 
               FREE_MEM_CLASS(setup);
             }
@@ -787,6 +789,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               }
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
+              // if no error in SETUP request, we must call TEARDOWN to free resources
+              CHECK_CONDITION_EXECUTE(error == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
 
               FREE_MEM_CLASS(setup);
             }
@@ -950,6 +954,34 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"can't negotiate any transport");
         }
+      }
+
+      if ((!negotiatedTransport) && (this->lastCommand == CURL_RTSPREQ_SETUP))
+      {
+        // we don't have negotiated transport and SETUP request was sent and received correctly
+        // we need to call TEARDOWN request to free resources and try something else
+
+        // create and send TEARDOWN request for stream
+        CURLcode errorCode = CURLE_OK;
+
+        CRtspTeardownRequest *teardown = new CRtspTeardownRequest();
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown->SetUri(this->rtspDownloadRequest->GetUrl())) ? errorCode : CURLE_OUT_OF_MEMORY);
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetTimeout(endTicks - GetTickCount()));
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
+
+        // session ID is no longer required
+        // clear it to avoid error in processing response
+        FREE_MEM(this->sessionId);
+
+        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", METHOD_INITIALIZE_NAME));
+        FREE_MEM_CLASS(teardown);
+
+        // session ID is no longer required
+        // some RTSP servers send us back session ID, which is no longer valid
+        // clear it to avoid error in processing another request
+        FREE_MEM(this->sessionId);
       }
     }
     CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
@@ -1446,6 +1478,22 @@ DWORD CRtspCurlInstance::CurlWorker(void)
                       FREE_MEM_CLASS(sender);
                     }
                   }
+
+                  if (result == HRESULT_FROM_WIN32(WSAECONNRESET))
+                  {
+                    // this is special case, it means that we are sending mostly RTCP packets to remote server, but remote server isn't listening
+                    // we need to read data from UDP context to release error
+
+                    ALLOC_MEM_DEFINE_SET(buffer, unsigned char, 1024, 0);
+                    CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
+
+                    // ignore return code, it's always error
+                    unsigned int readData = 0;
+                    udpContext->Receive((char *)buffer, 1024, &readData);
+
+                    FREE_MEM(buffer);
+                    result = S_OK;
+                  }
                 }
                 while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
 
@@ -1871,6 +1919,11 @@ bool CRtspCurlInstance::StopReceivingData(void)
 
     CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", L"StopReceivingData()"));
     FREE_MEM_CLASS(teardown);
+
+    // session ID is no longer required
+    // some RTSP servers send us back session ID, which is no longer valid
+    // clear it to avoid error in processing another request
+    FREE_MEM(this->sessionId);
   }
 
   return __super::StopReceivingData();
