@@ -524,7 +524,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
               // if no error in SETUP request, we must call TEARDOWN to free resources
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
+              {
+                CLockMutex lock(this->mutex, INFINITE);
+
+                CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_SETUP);
+              }
 
               FREE_MEM_CLASS(setup);
             }
@@ -790,7 +794,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
               // if no error in SETUP request, we must call TEARDOWN to free resources
-              CHECK_CONDITION_EXECUTE(error == CURLE_OK, this->lastCommand = CURL_RTSPREQ_SETUP);
+              {
+                CLockMutex lock(this->mutex, INFINITE);
+
+                CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_SETUP);
+              }
 
               FREE_MEM_CLASS(setup);
             }
@@ -1007,11 +1015,17 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(play, errorCode, L"PLAY", METHOD_INITIALIZE_NAME));
 
+        // if no error in PLAY request, we must call TEARDOWN to free resources
+        {
+          CLockMutex lock(this->mutex, INFINITE);
+
+          CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_PLAY);
+        }
+
         FREE_MEM_CLASS(play);
       }
       CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while sending RTSP PLAY", errorCode));
     }
-    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, this->lastCommand = CURL_RTSPREQ_PLAY);
 
     result &= (errorCode == CURLE_OK);
   }
