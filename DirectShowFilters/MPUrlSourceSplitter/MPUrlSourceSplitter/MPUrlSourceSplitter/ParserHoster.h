@@ -153,9 +153,8 @@ protected:
   // status of processing
   int status;
   HANDLE hReceiveDataWorkerThread;
-  DWORD dwReceiveDataWorkerThreadId;
-  bool receiveDataWorkerShouldExit;
-  static DWORD WINAPI ReceiveDataWorker(LPVOID lpParam);
+  volatile bool receiveDataWorkerShouldExit;
+  static unsigned int WINAPI ReceiveDataWorker(LPVOID lpParam);
 
   // creates receive data worker
   // @return : S_OK if successful

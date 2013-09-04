@@ -578,6 +578,22 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollecti
 
   CHECK_POINTER_DEFAULT_HRESULT(result, this->configurationParameters);
 
+  if (SUCCEEDED(result) && (parameters != NULL))
+  {
+    this->configurationParameters->Append(parameters);
+  }
+
+  unsigned int finishTime = UINT_MAX;
+  if (SUCCEEDED(result))
+  {
+    finishTime = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+    if (finishTime != UINT_MAX)
+    {
+      unsigned int currentTime = GetTickCount();
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+    }
+  }
+
   wchar_t *url = NULL;
   if (SUCCEEDED(result))
   {
@@ -668,7 +684,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollecti
           result = request->GetHeaders()->Add(L"Pragma", clientGuidString) ? result : E_FAIL;
           result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
 
+          // set finish time, all methods must return before finish time
+          this->mainCurlInstance->SetFinishTime(finishTime);
+
           this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+          this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
           if (SUCCEEDED(result))
           {
@@ -689,7 +709,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollecti
 
     if (SUCCEEDED(result))
     {
-      this->mmsContext->SetTimeout(this->GetReceiveDataTimeout() / 2);
+      this->mmsContext->SetFinishTime(finishTime);
 
       // all parameters set
       // start receiving data
@@ -817,7 +837,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollecti
           {
             result = request->GetHeaders()->Add(L"Connection", L"Close") ? result : E_FAIL;
 
+            // set finish time, all methods must return before finish time
+            this->mainCurlInstance->SetFinishTime(finishTime);
+
             this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+            this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
             if (SUCCEEDED(result))
             {
@@ -907,7 +931,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StartReceivingData(CParameterCollecti
   // length can be set now
   this->lengthCanBeSet = true;
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
 }
 
@@ -1459,7 +1483,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
       // test for HRESULT_FROM_WIN32(ERROR_NO_DATA)
       if (result == HRESULT_FROM_WIN32(ERROR_NO_DATA))
       {
-        if ((GetTickCount() - startTime) <= mmsContext->GetTimeout())
+        if (GetTickCount() < mmsContext->GetFinishTime())
         {
           // reset error, wait some time
           result = S_OK;
@@ -1469,11 +1493,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
     }
 
     // free MMS chunk
-    if (tempMmsChunk != NULL)
-    {
-      delete tempMmsChunk;
-      tempMmsChunk = NULL;
-    }
+    FREE_MEM_CLASS(tempMmsChunk);
   }
 
   this->logger->Log(LOGGER_INFO, METHOD_END_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_GET_MMS_HEADER_DATA_NAME, result);

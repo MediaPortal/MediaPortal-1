@@ -943,6 +943,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
                 request->SetRtmpToken(this->configurationParameters->GetValue(PARAMETER_NAME_RTMP_TOKEN, true, RTMP_TOKEN_DEFAULT));
 
                 this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
                 result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
               }
               FREE_MEM_CLASS(request);
@@ -1144,7 +1145,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(CParameterCollect
 
   this->isConnected = SUCCEEDED(result);
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
 }
 

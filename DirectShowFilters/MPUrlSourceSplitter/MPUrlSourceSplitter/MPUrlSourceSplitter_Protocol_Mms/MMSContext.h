@@ -159,6 +159,8 @@ public:
   // destructor
   ~MMSContext(void);
 
+  /* get methods */
+
   // gets linear buffer
   // @return : reference to linear buffer or NULL if error
   CLinearBuffer *GetBuffer(void);
@@ -171,47 +173,13 @@ public:
   // @return : true if header is parsed, false otherwise
   bool GetHeaderParsed(void);
 
-  // set if ASF header is parsed
-  // @param headerParsed : true if header is parsed, false otherwise
-  void SetHeaderParsed(bool headerParsed);
-
-  // tests if context is valid
-  // @return : true if valid, false otherwise
-  bool IsValid(void);
-
-  // sets chunk sequence
-  // @param chunkSequence : chunk sequence to set
-  void SetChunkSequence(unsigned int chunkSequence);
-
   // gets chunk sequence
   // @return : chunk sequence
   unsigned int GetChunkSequence(void);
 
-  // sets network timeout
-  // @param timeout : timeout (ms) to set
-  void SetTimeout(unsigned int timeout);
-
-  // gets network timeout
-  // @return : network timeout
-  unsigned int GetTimeout(void);
-
-  // initializes ASF header
-  // @param asfHeaderLength : the length of ASF header
-  // @return : true if successful, false otherwise
-  bool InitializeAsfHeader(unsigned int asfHeaderLength);
-
-  // clears ASF header
-  void ClearAsfHeader(void);
-
   // gets ASF header
   // @return : reference to ASF header (can be NULL if not initialized)
   const unsigned char *GetAsfHeader(void);
-
-  // sets ASF header
-  // @param asfHeader : ASF header to set
-  // @param length : the length of ASF header
-  // @return : true if successful, false otherwise
-  bool SetAsfHeader(const unsigned char *asfHeader, unsigned int length);
 
   // gets ASF header length
   // @return : ASF header length
@@ -221,9 +189,47 @@ public:
   // @return : ASF packet length
   unsigned int GetAsfPacketLength(void);
 
+  // gets finish time for network activity
+  // @return : finish time
+  unsigned int GetFinishTime(void);
+
+  /* set methods */
+
+  // set if ASF header is parsed
+  // @param headerParsed : true if header is parsed, false otherwise
+  void SetHeaderParsed(bool headerParsed);
+
+  // sets chunk sequence
+  // @param chunkSequence : chunk sequence to set
+  void SetChunkSequence(unsigned int chunkSequence);
+
+  // sets ASF header
+  // @param asfHeader : ASF header to set
+  // @param length : the length of ASF header
+  // @return : true if successful, false otherwise
+  bool SetAsfHeader(const unsigned char *asfHeader, unsigned int length);
+
   // sets ASF packet length
   // @param : ASF packet length to set
   void SetAsfPacketLength(unsigned int asfPacketLength);
+
+  // sets finish time for network activity
+  // @param finishTime : the finish time to set
+  void SetFinishTime(unsigned int finishTime);
+
+  /* other methods */
+
+  // tests if context is valid
+  // @return : true if valid, false otherwise
+  bool IsValid(void);
+
+  // initializes ASF header
+  // @param asfHeaderLength : the length of ASF header
+  // @return : true if successful, false otherwise
+  bool InitializeAsfHeader(unsigned int asfHeaderLength);
+
+  // clears ASF header
+  void ClearAsfHeader(void);
 
 protected:
   // buffer for ASF header
@@ -243,8 +249,8 @@ protected:
   // chunk sequence
   unsigned int chunkSequence;
 
-  // specifies network timeout (ms)
-  unsigned int timeout;
+  // specifies finish time for network activity (ms)
+  unsigned int finishTime;
 
   // holds ASF header
   unsigned char *asfHeader;

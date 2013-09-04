@@ -895,6 +895,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
                   request->SetIgnoreContentLength((this->configurationParameters->GetValueLong(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true, HTTP_IGNORE_CONTENT_LENGTH_DEFAULT) == 1L));
 
                   this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                  this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
                   result = (this->mainCurlInstance->Initialize(request)) ? S_OK : E_FAIL;
                 }
                 FREE_MEM_CLASS(request);
@@ -1154,7 +1155,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::StartReceivingData(CParameterCollect
 
   this->isConnected = SUCCEEDED(result);
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
 }
 

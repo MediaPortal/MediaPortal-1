@@ -23,6 +23,8 @@
 #include "FlashInstance.h"
 #include "FlashWindow.h"
 
+#include <process.h>
+
 CFlashInstance::CFlashInstance(CLogger *logger, const wchar_t *instanceName, const wchar_t *swfFilePath)
 {
   this->logger = logger;
@@ -125,19 +127,28 @@ HRESULT CFlashInstance::CreateFlashWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME);
 
-  this->hFlashWorkerThread = CreateThread( 
-    NULL,                                   // default security attributes
-    0,                                      // use default stack size  
-    &CFlashInstance::FlashWorker,           // thread function name
-    this,                                   // argument to thread function 
-    0,                                      // use default creation flags 
-    NULL);                                  // returns the thread identifier
+  //this->hFlashWorkerThread = CreateThread( 
+  //  NULL,                                   // default security attributes
+  //  0,                                      // use default stack size  
+  //  &CFlashInstance::FlashWorker,           // thread function name
+  //  this,                                   // argument to thread function 
+  //  0,                                      // use default creation flags 
+  //  NULL);                                  // returns the thread identifier
+
+  //if (this->hFlashWorkerThread == NULL)
+  //{
+  //  // thread not created
+  //  result = HRESULT_FROM_WIN32(GetLastError());
+  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME, result);
+  //}
+
+  this->hFlashWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CFlashInstance::FlashWorker, this, 0, NULL);
 
   if (this->hFlashWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME, result);
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME, result);
@@ -154,7 +165,7 @@ HRESULT CFlashInstance::DestroyFlashWorker(void)
   // wait for the flash worker thread to exit      
   if (this->hFlashWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->hFlashWorkerThread, 2000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hFlashWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->instanceName, METHOD_DESTROY_FLASH_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -170,7 +181,7 @@ HRESULT CFlashInstance::DestroyFlashWorker(void)
   return result;
 }
 
-DWORD WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
+unsigned int WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
 {
   CFlashInstance *caller = (CFlashInstance *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->instanceName, METHOD_FLASH_WORKER_NAME);
@@ -269,5 +280,9 @@ DWORD WINAPI CFlashInstance::FlashWorker(LPVOID lpParam)
   OleUninitialize();
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->instanceName, METHOD_FLASH_WORKER_NAME);
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
   return S_OK;
 }

@@ -159,7 +159,7 @@ bool CF4MBootstrapInfo::HasValue(void)
   return (this->value != NULL);
 }
 
-HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies)
+HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int finishTime, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies, const wchar_t *networkInterfaceName)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, logger);
@@ -177,7 +177,8 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
       if (SUCCEEDED(result))
       {
-        curlInstance->SetReceivedDataTimeout(receiveDataTimeout);
+        curlInstance->SetFinishTime(finishTime);
+        curlInstance->SetNetworkInterfaceName(networkInterfaceName);
 
         CHttpDownloadRequest *request = new CHttpDownloadRequest();
         CHECK_POINTER_HRESULT(result, request, result, E_OUTOFMEMORY);

@@ -476,6 +476,22 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(CParameterCollect
 
   CHECK_POINTER_DEFAULT_HRESULT(result, this->configurationParameters);
 
+  if (SUCCEEDED(result) && (parameters != NULL))
+  {
+    this->configurationParameters->Append(parameters);
+  }
+
+  unsigned int finishTime = UINT_MAX;
+  if (SUCCEEDED(result))
+  {
+    finishTime = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+    if (finishTime != UINT_MAX)
+    {
+      unsigned int currentTime = GetTickCount();
+      this->logger->Log(LOGGER_VERBOSE, L"%s: %s: finish time specified, current time: %u, finish time: %u, diff: %u (ms)", PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, currentTime, finishTime, finishTime - currentTime);
+    }
+  }
+
   // lock access to stream
   CLockMutex lock(this->lockMutex, INFINITE);
 
@@ -500,7 +516,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(CParameterCollect
 
   if (SUCCEEDED(result))
   {
+    // set finish time, all methods must return before finish time
+    this->mainCurlInstance->SetFinishTime(finishTime);
+
     this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+    this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+
     if (this->currentCookies != NULL)
     {
       result = (this->mainCurlInstance->SetCurrentCookies(this->currentCookies)) ? S_OK : E_FAIL;
@@ -566,7 +587,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::StartReceivingData(CParameterCollect
     this->StopReceivingData();
   }
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
 }
 

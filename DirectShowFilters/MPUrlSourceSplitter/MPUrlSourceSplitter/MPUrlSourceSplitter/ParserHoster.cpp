@@ -27,6 +27,7 @@
 
 #include <Shlwapi.h>
 #include <Shlobj.h>
+#include <process.h>
 
 CParserHoster::CParserHoster(CLogger *logger, CParameterCollection *configuration, IParserOutputStream *parserOutputStream)
   : COutputStreamHoster(logger, configuration, L"ParserHoster", L"mpurlsourcesplitter_parser_*.dll", parserOutputStream)
@@ -80,6 +81,7 @@ CParserHoster::~CParserHoster(void)
 }
 
 // hoster methods
+
 PluginImplementation *CParserHoster::AllocatePluginsMemory(unsigned int maxPlugins)
 {
   return ALLOC_MEM(ParserImplementation, maxPlugins);
@@ -604,19 +606,28 @@ HRESULT CParserHoster::CreateReceiveDataWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME);
 
-  this->hReceiveDataWorkerThread = CreateThread( 
-    NULL,                                   // default security attributes
-    0,                                      // use default stack size  
-    &CParserHoster::ReceiveDataWorker,      // thread function name
-    this,                                   // argument to thread function 
-    0,                                      // use default creation flags 
-    &dwReceiveDataWorkerThreadId);          // returns the thread identifier
+  //this->hReceiveDataWorkerThread = CreateThread( 
+  //  NULL,                                   // default security attributes
+  //  0,                                      // use default stack size  
+  //  &CParserHoster::ReceiveDataWorker,      // thread function name
+  //  this,                                   // argument to thread function 
+  //  0,                                      // use default creation flags 
+  //  NULL);                                  // returns the thread identifier
+
+  //if (this->hReceiveDataWorkerThread == NULL)
+  //{
+  //  // thread not created
+  //  result = HRESULT_FROM_WIN32(GetLastError());
+  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
+  //}
+
+  this->hReceiveDataWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CParserHoster::ReceiveDataWorker, this, 0, NULL);
 
   if (this->hReceiveDataWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
@@ -633,7 +644,7 @@ HRESULT CParserHoster::DestroyReceiveDataWorker(void)
   // wait for the receive data worker thread to exit      
   if (this->hReceiveDataWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->hReceiveDataWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hReceiveDataWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->moduleName, METHOD_DESTROY_RECEIVE_DATA_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -649,7 +660,7 @@ HRESULT CParserHoster::DestroyReceiveDataWorker(void)
   return result;
 }
 
-DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
+unsigned int WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
 {
   CParserHoster *caller = (CParserHoster *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME);
@@ -660,7 +671,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
   HRESULT result = S_OK;
   CReceiveData *receiveData = NULL;
   unsigned int maximumReopenTime = 0;
-  DWORD lastReopenStart = GetTickCount();
+  DWORD endTicks = GetTickCount();
 
   while ((!caller->receiveDataWorkerShouldExit) && (!stopReceivingData))
   {
@@ -676,6 +687,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
       if (maximumReopenTime == 0)
       {
         maximumReopenTime = caller->protocolHoster->GetReceiveDataTimeout();
+        endTicks = GetTickCount() + maximumReopenTime;
       }
 
       if (maximumReopenTime != 0)
@@ -722,10 +734,17 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
         }
         else if (!caller->supressData)
         {
-          if (((GetTickCount() - lastReopenStart) <= maximumReopenTime) || (openedConnection))
+          if (openedConnection)
+          {
+            // we had opened connection, we lost it
+            // set timeout for reconnecting
+            endTicks = GetTickCount() + maximumReopenTime;
+          }
+
+          if (GetTickCount() < endTicks)
           {
             CParameterCollection *parameters = new CParameterCollection();
-            wchar_t *finishTimeString = FormatString(L"%u", caller->finishTime);
+            wchar_t *finishTimeString = FormatString(L"%u", caller->startReceivingData ? caller->finishTime : endTicks);
 
             if ((parameters != NULL) && (finishTimeString != NULL))
             {
@@ -737,14 +756,7 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
             FREE_MEM(finishTimeString);
             FREE_MEM_CLASS(parameters);
 
-            if (openedConnection)
-            {
-              lastReopenStart = GetTickCount();
-              caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, maximum re-open time: %u (ms)", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime);
-            }
-
-            // we don't have opened connection
-            openedConnection = false;
+            CHECK_CONDITION_EXECUTE(openedConnection, caller->logger->Log(LOGGER_WARNING, L"%s: %s: connection closed, trying to open, maximum re-open time: %u (ms)", caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME, maximumReopenTime));
           }
           else
           {
@@ -753,6 +765,9 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
             caller->status = result;
             stopReceivingData = true;
           }
+
+          // we don't have opened connection
+          openedConnection = false;
         }
       }
     }
@@ -766,6 +781,10 @@ DWORD WINAPI CParserHoster::ReceiveDataWorker(LPVOID lpParam)
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, caller->moduleName, METHOD_RECEIVE_DATA_WORKER_NAME);
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
   return S_OK;
 }
 

@@ -1131,7 +1131,7 @@ const wchar_t *CRtspCurlInstance::GetBaseUrl(void)
   return result;
 }
 
-DWORD CRtspCurlInstance::CurlWorker(void)
+unsigned int CRtspCurlInstance::CurlWorker(void)
 {
   this->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", this->protocolName, METHOD_CURL_WORKER_NAME, this->downloadRequest->GetUrl());
   this->startReceivingTicks = GetTickCount();

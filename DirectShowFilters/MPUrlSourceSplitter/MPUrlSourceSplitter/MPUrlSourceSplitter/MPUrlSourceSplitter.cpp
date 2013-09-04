@@ -31,6 +31,7 @@
 #include "LockMutex.h"
 
 #include <crtdbg.h>
+#include <process.h>
 
 extern "C"
 {
@@ -2241,7 +2242,7 @@ bool CMPUrlSourceSplitter::IsCreateDemuxerWorkerFinished(void)
 
 /* create demuxer worker methods */
 
-DWORD WINAPI CMPUrlSourceSplitter::CreateDemuxerWorker(LPVOID lpParam)
+unsigned int WINAPI CMPUrlSourceSplitter::CreateDemuxerWorker(LPVOID lpParam)
 {
   CMPUrlSourceSplitter *caller = (CMPUrlSourceSplitter *)lpParam;
 
@@ -2311,6 +2312,9 @@ DWORD WINAPI CMPUrlSourceSplitter::CreateDemuxerWorker(LPVOID lpParam)
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_WORKER_NAME);
   caller->flags |= FLAG_MP_URL_SOURCE_SPLITTER_CREATE_DEMUXER_WORKER_FINISHED;
 
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
   return S_OK;
 }
 
@@ -2324,20 +2328,29 @@ HRESULT CMPUrlSourceSplitter::CreateCreateDemuxerWorker(void)
 
   this->createDemuxerWorkerShouldExit = false;
 
-  DWORD dwCreateDemuxerWorkerThreadId = 0;
-  this->createDemuxerWorkerThread = CreateThread( 
-    NULL,                                                 // default security attributes
-    0,                                                    // use default stack size  
-    &CMPUrlSourceSplitter::CreateDemuxerWorker,           // thread function name
-    this,                                                 // argument to thread function 
-    0,                                                    // use default creation flags 
-    &dwCreateDemuxerWorkerThreadId);                      // returns the thread identifier
+  //this->createDemuxerWorkerThread = CreateThread( 
+  //  NULL,                                                 // default security attributes
+  //  0,                                                    // use default stack size  
+  //  &CMPUrlSourceSplitter::CreateDemuxerWorker,           // thread function name
+  //  this,                                                 // argument to thread function 
+  //  0,                                                    // use default creation flags 
+  //  NULL);                                                // returns the thread identifier
+
+  //if (this->createDemuxerWorkerThread == NULL)
+  //{
+  //  // thread not created
+  //  result = HRESULT_FROM_WIN32(GetLastError());
+  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_DEMUXER_WORKER_NAME, result);
+  //  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_CREATE_DEMUXER_WORKER_FINISHED;
+  //}
+
+  this->createDemuxerWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::CreateDemuxerWorker, this, 0, NULL);
 
   if (this->createDemuxerWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_DEMUXER_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_DEMUXER_WORKER_NAME, result);
     this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_CREATE_DEMUXER_WORKER_FINISHED;
   }
 
@@ -2355,7 +2368,7 @@ HRESULT CMPUrlSourceSplitter::DestroyCreateDemuxerWorker(void)
   // wait for the create demuxer worker thread to exit
   if (this->createDemuxerWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->createDemuxerWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->createDemuxerWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_CREATE_DEMUXER_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -2542,7 +2555,7 @@ int64_t CMPUrlSourceSplitter::DemuxerSeek(void *opaque,  int64_t offset, int whe
   return result;
 }
 
-DWORD WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpParam)
+unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpParam)
 {
   CMPUrlSourceSplitter *caller = (CMPUrlSourceSplitter *)lpParam;
   caller->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME);
@@ -3040,6 +3053,10 @@ DWORD WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpParam)
   }
 
   caller->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME);
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
   return S_OK;
 }
 
@@ -3050,20 +3067,28 @@ HRESULT CMPUrlSourceSplitter::CreateDemuxerReadRequestWorker(void)
 
   this->demuxerReadRequestWorkerShouldExit = false;
 
-  DWORD dwDemuxerReadRequestWorkerId = 0;
-  this->demuxerReadRequestWorkerThread = CreateThread( 
-    NULL,                                                 // default security attributes
-    0,                                                    // use default stack size  
-    &CMPUrlSourceSplitter::DemuxerReadRequestWorker,      // thread function name
-    this,                                                 // argument to thread function 
-    0,                                                    // use default creation flags 
-    &dwDemuxerReadRequestWorkerId);                       // returns the thread identifier
+  //this->demuxerReadRequestWorkerThread = CreateThread( 
+  //  NULL,                                                 // default security attributes
+  //  0,                                                    // use default stack size  
+  //  &CMPUrlSourceSplitter::DemuxerReadRequestWorker,      // thread function name
+  //  this,                                                 // argument to thread function 
+  //  0,                                                    // use default creation flags 
+  //  NULL);                                                // returns the thread identifier
+
+  //if (this->demuxerReadRequestWorkerThread == NULL)
+  //{
+  //  // thread not created
+  //  result = HRESULT_FROM_WIN32(GetLastError());
+  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME, result);
+  //}
+
+  this->demuxerReadRequestWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::DemuxerReadRequestWorker, this, 0, NULL);
 
   if (this->demuxerReadRequestWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME, result);
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME, result);
@@ -3080,7 +3105,7 @@ HRESULT CMPUrlSourceSplitter::DestroyDemuxerReadRequestWorker(void)
   // wait for the receive data worker thread to exit      
   if (this->demuxerReadRequestWorkerThread != NULL)
   {
-    if (WaitForSingleObject(this->demuxerReadRequestWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->demuxerReadRequestWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_DESTROY_DEMUXER_READ_REQUEST_WORKER_NAME, L"thread didn't exit, terminating thread");

@@ -63,7 +63,7 @@ protected:
   // worker thread 
   HANDLE hFlashWorkerThread;
   bool flashWorkerShouldExit;
-  static DWORD WINAPI FlashWorker(LPVOID lpParam);
+  static unsigned int WINAPI FlashWorker(LPVOID lpParam);
 
   // creates flash worker
   // @return : S_OK if successful

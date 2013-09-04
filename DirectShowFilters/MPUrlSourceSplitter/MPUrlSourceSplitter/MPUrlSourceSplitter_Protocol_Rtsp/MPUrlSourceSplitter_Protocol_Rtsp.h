@@ -177,6 +177,9 @@ protected:
   // specifies if filter requested supressing data
   bool supressData;
 
+  // specifies if we are still connected
+  bool isConnected;
+
   // holds current cookies of CURL instance
   //CParameterCollection *currentCookies;
 };

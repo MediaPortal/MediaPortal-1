@@ -658,6 +658,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
               if (SUCCEEDED(result))
               {
                 this->mainCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+                this->mainCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
 
                 // set current cookies (passed from HTTP CURL manifest instance, bootstrap info or from last download)
                 result = (this->mainCurlInstance->SetCurrentCookies(this->cookies)) ? result : E_FAIL;
@@ -860,6 +861,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
             if (continueWithBootstrapInfo)
             {
               this->bootstrapInfoCurlInstance->SetReceivedDataTimeout(this->receiveDataTimeout);
+              this->bootstrapInfoCurlInstance->SetNetworkInterfaceName(this->configurationParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL));
+
               continueWithBootstrapInfo &= this->bootstrapInfoCurlInstance->SetCurrentCookies(this->cookies);
             }
 
@@ -1253,7 +1256,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(CParameterCollect
 
   this->isConnected = SUCCEEDED(result);
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
 }
 

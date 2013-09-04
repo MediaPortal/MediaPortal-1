@@ -155,7 +155,7 @@ protected:
   virtual const wchar_t *GetBaseUrl(void);
 
   // virtual CurlWorker() method is called from static CurlWorker() method
-  virtual DWORD CurlWorker(void);
+  virtual unsigned int CurlWorker(void);
 
   // holds request command
   // command is cleared when request is done

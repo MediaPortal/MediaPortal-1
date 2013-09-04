@@ -34,6 +34,7 @@
 #define wszUrlSourceSplitter                                    L"MediaPortal Url Source Splitter"
 
 #include "MPUrlSourceSplitter.h"
+#include <curl/curl.h>
 
 #pragma warning(pop)
 
@@ -149,6 +150,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   switch (ul_reason_for_call)
   {
   case DLL_PROCESS_ATTACH:
+    curl_global_init(CURL_GLOBAL_ALL);
     break;
   case DLL_THREAD_ATTACH:
     break;
@@ -160,6 +162,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     {
       FREE_MEM_CLASS(ffmpegLoggerInstance);
     }
+    curl_global_cleanup();
     break;
   }
 

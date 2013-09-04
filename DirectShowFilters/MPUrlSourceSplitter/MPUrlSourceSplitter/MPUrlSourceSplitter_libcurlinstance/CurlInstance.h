@@ -216,9 +216,9 @@ protected:
   /* methods */
 
   // virtual CurlWorker() method is called from static CurlWorker() method
-  virtual DWORD CurlWorker(void);
+  virtual unsigned int CurlWorker(void);
 
-  static DWORD WINAPI CurlWorker(LPVOID lpParam);
+  static unsigned int WINAPI CurlWorker(LPVOID lpParam);
 
   // creates libcurl worker
   // @return : S_OK if successful

@@ -95,6 +95,7 @@ CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CParamete
   this->receivedData = NULL;
   this->mainCurlInstance = NULL;
   this->supressData = false;
+  this->isConnected = false;
   //this->currentCookies = NULL;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
@@ -133,7 +134,8 @@ CMPUrlSourceSplitter_Protocol_Rtsp::~CMPUrlSourceSplitter_Protocol_Rtsp()
 
 bool CMPUrlSourceSplitter_Protocol_Rtsp::IsConnected(void)
 {
-  return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
+  //return ((this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
+  return ((this->isConnected) || (this->mainCurlInstance != NULL) || (this->wholeStreamDownloaded));
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ParseUrl(const CParameterCollection *parameters)
@@ -228,6 +230,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ParseUrl(const CParameterCollection 
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveData)
 {
+  HRESULT result = S_OK;
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
   CLockMutex lock(this->lockMutex, INFINITE);
@@ -296,58 +299,65 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
 
       // check RTSP track count
 
-      if (this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count() == 1)
+      if (SUCCEEDED(result) && (this->mainCurlInstance != NULL))
       {
-        CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(0);
-
-        unsigned int bufferOccupiedSpace = track->GetDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-        if (bufferOccupiedSpace > 0)
+        if (this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->Count() == 1)
         {
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferOccupiedSpace, 0);
-          if (buffer != NULL)
+          CRtspTrack *track = this->mainCurlInstance->GetRtspDownloadResponse()->GetRtspTracks()->GetItem(0);
+
+          unsigned int bufferOccupiedSpace = track->GetDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
+          if (bufferOccupiedSpace > 0)
           {
-            track->GetDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferOccupiedSpace, 0, 0);
-            // create media packet
-            // set values of media packet
-            CMediaPacket *mediaPacket = new CMediaPacket();
-            mediaPacket->GetBuffer()->InitializeBuffer(bufferOccupiedSpace);
-            mediaPacket->GetBuffer()->AddToBuffer(buffer, bufferOccupiedSpace);
-            mediaPacket->SetStart(this->streamTime);
-            mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
-
-            if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+            ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferOccupiedSpace, 0);
+            if (buffer != NULL)
             {
-              FREE_MEM_CLASS(mediaPacket);
-            }
+              track->GetDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferOccupiedSpace, 0, 0);
+              // create media packet
+              // set values of media packet
+              CMediaPacket *mediaPacket = new CMediaPacket();
+              mediaPacket->GetBuffer()->InitializeBuffer(bufferOccupiedSpace);
+              mediaPacket->GetBuffer()->AddToBuffer(buffer, bufferOccupiedSpace);
+              mediaPacket->SetStart(this->streamTime);
+              mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
 
-            this->streamTime += bufferOccupiedSpace;
-            track->GetDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bufferOccupiedSpace);
+              if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+              {
+                FREE_MEM_CLASS(mediaPacket);
+              }
+
+              this->streamTime += bufferOccupiedSpace;
+              track->GetDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bufferOccupiedSpace);
+            }
+            FREE_MEM(buffer);
           }
-          FREE_MEM(buffer);
         }
       }
     }
 
-    if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
+    if (SUCCEEDED(result) && (this->mainCurlInstance != NULL))
     {
-      // all data received, we're not receiving data
-      // we don't check CURL error code, because we can't reopen RTSP stream
-
-      // whole stream downloaded
-      this->wholeStreamDownloaded = true;
-
-      if (!this->setLength)
+      if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
       {
-        this->streamLength = this->streamTime;
-        this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
-        receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
-        this->setLength = true;
-      }
+        // all data received, we're not receiving data
+        // we don't check CURL error code, because we can't reopen RTSP stream
 
-      // notify filter the we reached end of stream
-      int64_t streamTime = this->streamTime;
-      this->streamTime = this->streamLength;
-      receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+        // whole stream downloaded
+        this->wholeStreamDownloaded = true;
+        this->isConnected = false;
+
+        if (!this->setLength)
+        {
+          this->streamLength = this->streamTime;
+          this->logger->Log(LOGGER_VERBOSE, L"%s: %s: setting total length: %u", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->streamLength);
+          receiveData->GetTotalLength()->SetTotalLength(this->streamLength, false);
+          this->setLength = true;
+        }
+
+        // notify filter the we reached end of stream
+        int64_t streamTime = this->streamTime;
+        this->streamTime = this->streamLength;
+        receiveData->GetEndOfStreamReached()->SetStreamPosition(max(0, streamTime - 1));
+      }
     }
 
     //{
@@ -446,7 +456,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
   }
 
   this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-  return S_OK;
+  return result;
 }
 
 CParameterCollection *CMPUrlSourceSplitter_Protocol_Rtsp::GetConnectionParameters(void)
@@ -546,7 +556,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollect
   unsigned int finishTime = UINT_MAX;
   if (SUCCEEDED(result))
   {
-    unsigned int finishTime = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
+    finishTime = this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, UINT_MAX);
     if (finishTime != UINT_MAX)
     {
       unsigned int currentTime = GetTickCount();
@@ -629,8 +639,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollect
     this->StopReceivingData();
   }
 
-  this->logger->Log(LOGGER_INFO, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
+  this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
   return result;
+
+
+  //HRESULT result = S_OK;
+  //this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME);
+
+  //CHECK_POINTER_DEFAULT_HRESULT(result, this->configurationParameters);
+
+  //if (SUCCEEDED(result) && (parameters != NULL))
+  //{
+  //  this->configurationParameters->Append(parameters);
+  //}
+
+  //// lock access to stream
+  //CLockMutex lock(this->lockMutex, INFINITE);
+
+  //this->wholeStreamDownloaded = false;
+
+  //if (FAILED(result))
+  //{
+  //  this->StopReceivingData();
+  //}
+
+  //this->isConnected = SUCCEEDED(result);
+
+  //this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_START_RECEIVING_DATA_NAME, result);
+  //return result;
 }
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StopReceivingData(void)
@@ -642,6 +678,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StopReceivingData(void)
 
   FREE_MEM_CLASS(this->mainCurlInstance);
   FREE_MEM_CLASS(this->receivedData);
+
+  this->isConnected = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_STOP_RECEIVING_DATA_NAME);
   return S_OK;
@@ -699,6 +737,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
   //this->endStreamTime = 0;
   this->wholeStreamDownloaded = false;
   this->receiveDataTimeout = RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT;
+  this->isConnected = false;
 
   FREE_MEM_CLASS(this->receivedData);
   //FREE_MEM_CLASS(this->currentCookies);

@@ -113,13 +113,14 @@ public:
   // downloads bootstrap info
   // @param : logger for logging purposes
   // @param protocolName : the protocol name instantiating
-  // @param receivedDataTimeout : timeout (ms) for HTTP request
+  // @param finishTime : time when HTTP request timeout
   // @param referer : referer for HTTP request
   // @param userAgent : user agent for HTTP request
   // @param cookie : cookie for HTTP request
   // @param cookies : cookies for HTTP request, collection of cookies is updated after receving response
+  // @param networkInterfaceName : the name of network interface to make HTTP request (can be NULL)
   // @return : S_OK if successfully downloaded, error code otherwise
-  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int receiveDataTimeout, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies);
+  HRESULT DownloadBootstrapInfo(CLogger *logger, const wchar_t *protocolName, unsigned int finishTime, const wchar_t *referer, const wchar_t *userAgent, const wchar_t *cookie, CParameterCollection *cookies, const wchar_t *networkInterfaceName);
 
 private:
   // stores bootstrap info ID

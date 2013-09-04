@@ -24,6 +24,8 @@
 #include "Logger.h"
 #include "LockMutex.h"
 
+#include <process.h>
+
 CCurlInstance::CCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
 {
   this->logger = logger;
@@ -205,14 +207,27 @@ bool CCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   if (result)
   {
     CURLcode errorCode = CURLE_OK;
-    if (this->receiveDataTimeout != UINT_MAX)
+    unsigned int currentTime = GetTickCount();
+
+    CHECK_CONDITION_EXECUTE(this->finishTime < currentTime, errorCode = CURLE_OPERATION_TIMEOUTED);
+    if (errorCode != CURLE_OK)
+    {
+      this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"finish time before current time", errorCode);
+      result = false;
+    }
+
+    if (errorCode == CURLE_OK)
     {
       unsigned int dataTimeout = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? this->receiveDataTimeout : (this->finishTime - GetTickCount());
-      errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000));
-      if (errorCode != CURLE_OK)
+
+      if (dataTimeout != UINT_MAX)
       {
-        this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting connection timeout", errorCode);
-        result = false;
+        errorCode = curl_easy_setopt(this->curl, CURLOPT_CONNECTTIMEOUT, (long)(dataTimeout / 1000));
+        if (errorCode != CURLE_OK)
+        {
+          this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_INITIALIZE_NAME, L"error while setting connection timeout", errorCode);
+          result = false;
+        }
       }
     }
 
@@ -331,22 +346,34 @@ HRESULT CCurlInstance::CreateCurlWorker(void)
   // clear curl error code
   this->downloadResponse->SetResultCode(CURLE_OK);
 
+  //if (this->hCurlWorkerThread == NULL)
+  //{
+  //  this->hCurlWorkerThread = CreateThread( 
+  //    NULL,                                   // default security attributes
+  //    0,                                      // use default stack size  
+  //    &CCurlInstance::CurlWorker,             // thread function name
+  //    this,                                   // argument to thread function 
+  //    0,                                      // use default creation flags 
+  //    NULL);                                  // returns the thread identifier
+  //}
+
+  //if (this->hCurlWorkerThread == NULL)
+  //{
+  //  // thread not created
+  //  result = HRESULT_FROM_WIN32(GetLastError());
+  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->protocolName, METHOD_CREATE_CURL_WORKER_NAME, result);
+  //}
+
   if (this->hCurlWorkerThread == NULL)
   {
-    this->hCurlWorkerThread = CreateThread( 
-      NULL,                                   // default security attributes
-      0,                                      // use default stack size  
-      &CCurlInstance::CurlWorker,             // thread function name
-      this,                                   // argument to thread function 
-      0,                                      // use default creation flags 
-      NULL);                                  // returns the thread identifier
+    this->hCurlWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CCurlInstance::CurlWorker, this, 0, NULL);
   }
 
   if (this->hCurlWorkerThread == NULL)
   {
     // thread not created
     result = HRESULT_FROM_WIN32(GetLastError());
-    this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->protocolName, METHOD_CREATE_CURL_WORKER_NAME, result);
+    this->logger->Log(LOGGER_ERROR, L"%s: %s: _beginthreadex() error: 0x%08X", this->protocolName, METHOD_CREATE_CURL_WORKER_NAME, result);
   }
 
   this->logger->Log(LOGGER_INFO, (SUCCEEDED(result)) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, this->protocolName, METHOD_CREATE_CURL_WORKER_NAME, result);
@@ -362,7 +389,7 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   if (this->hCurlWorkerThread != NULL)
   {
     this->curlWorkerShouldExit = true;
-    if (WaitForSingleObject(this->hCurlWorkerThread, 1000) == WAIT_TIMEOUT)
+    if (WaitForSingleObject(this->hCurlWorkerThread, INFINITE) == WAIT_TIMEOUT)
     {
       // thread didn't exit, kill it now
       this->logger->Log(LOGGER_INFO, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_DESTROY_CURL_WORKER_NAME, L"thread didn't exit, terminating thread");
@@ -390,14 +417,19 @@ HRESULT CCurlInstance::DestroyCurlWorker(void)
   return result;
 }
 
-DWORD WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
+unsigned int WINAPI CCurlInstance::CurlWorker(LPVOID lpParam)
 {
   CCurlInstance *caller = (CCurlInstance *)lpParam;
 
-  return caller->CurlWorker();
+  unsigned int result = caller->CurlWorker();
+
+  // _endthreadex should be called automatically, but for sure
+  _endthreadex(0);
+
+  return result;
 }
 
-DWORD CCurlInstance::CurlWorker(void)
+unsigned int CCurlInstance::CurlWorker(void)
 {
   this->logger->Log(LOGGER_INFO, L"%s: %s: Start, url: '%s'", this->protocolName, METHOD_CURL_WORKER_NAME, this->downloadRequest->GetUrl());
   this->startReceivingTicks = GetTickCount();

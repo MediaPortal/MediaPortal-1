@@ -453,11 +453,12 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                           HRESULT downloadResult = bootstrapInfo->DownloadBootstrapInfo(
                             this->logger,
                             PARSER_IMPLEMENTATION_NAME,
-                            this->connectionParameters->GetValueLong(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT),
+                            this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_FINISH_TIME, true, GetTickCount() + this->connectionParameters->GetValueUnsignedInt(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, HTTP_RECEIVE_DATA_TIMEOUT_DEFAULT)),
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_REFERER, true, NULL),
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_USER_AGENT, true, NULL),
                             this->connectionParameters->GetValue(PARAMETER_NAME_HTTP_COOKIE, true, NULL),
-                            usedCookies
+                            usedCookies,
+                            this->connectionParameters->GetValue(PARAMETER_NAME_INTERFACE, true, NULL)
                             );
 
                           this->logger->Log(LOGGER_INFO, L"%s: %s: bootstrap info download result: 0x%08X", PARSER_IMPLEMENTATION_NAME, METHOD_PARSE_MEDIA_PACKETS_NAME, downloadResult);

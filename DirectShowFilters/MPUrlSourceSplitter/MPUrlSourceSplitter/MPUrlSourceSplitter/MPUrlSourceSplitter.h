@@ -429,7 +429,7 @@ protected:
   /* create demuxer worker methods */
 
   // demuxer worker thread method
-  static DWORD WINAPI CreateDemuxerWorker(LPVOID lpParam);
+  static unsigned int WINAPI CreateDemuxerWorker(LPVOID lpParam);
 
   // creates create demuxer worker
   // @return : S_OK if successful
@@ -447,7 +447,7 @@ protected:
   /* demuxer read request worker */
 
   // demuxer read request worker thread method
-  static DWORD WINAPI DemuxerReadRequestWorker(LPVOID lpParam);
+  static unsigned int WINAPI DemuxerReadRequestWorker(LPVOID lpParam);
 
   // creates demuxer read request worker
   // @return : S_OK if successful
