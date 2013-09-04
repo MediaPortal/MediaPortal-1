@@ -1422,9 +1422,21 @@ namespace MediaPortal.Player
             if (AskForRefresh)
             {
               // Refreshrate change done here. Blu-ray player will handle the refresh rate changes by itself
-              if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1)
+              // Identify if it's a video
+              if (strFile.IndexOf(@"\BDMV\INDEX.BDMV") == -1 && type != MediaType.Radio)
               {
-                RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType) (int) type);
+                // Make a double check on .ts because it can be recorded TV or Radio
+                if (extension == ".ts")
+                {
+                  if (MediaInfo.hasVideo)
+                  {
+                    RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                  }
+                }
+                else
+                {
+                  RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+                }
               }
             }
           }
