@@ -1849,19 +1849,22 @@ namespace TvPlugin
           VirtualCard card;
           TvServer server = new TvServer();
 
-          if (server.IsRecording(GetChannel().IdChannel, out card))
+          if (GetChannel() != null)
           {
-            if (g_Player.IsTVRecording)
+            if (server.IsRecording(GetChannel().IdChannel, out card))
             {
-              Recording rec = TvRecorded.ActiveRecording();
-              if (rec != null)
+              if (g_Player.IsTVRecording)
               {
-                isRecording = TvRecorded.IsLiveRecording();
+                Recording rec = TvRecorded.ActiveRecording();
+                if (rec != null)
+                {
+                  isRecording = TvRecorded.IsLiveRecording();
+                }
               }
-            }
-            else
-            {
-              isRecording = true;
+              else
+              {
+                isRecording = true;
+              }
             }
           }
 
