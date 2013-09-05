@@ -527,7 +527,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               {
                 CLockMutex lock(this->mutex, INFINITE);
 
-                CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_SETUP);
+                // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
+                CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
               }
 
               FREE_MEM_CLASS(setup);
@@ -797,7 +798,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
               {
                 CLockMutex lock(this->mutex, INFINITE);
 
-                CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_SETUP);
+                // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
+                CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_SETUP);
               }
 
               FREE_MEM_CLASS(setup);
@@ -970,7 +972,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         // we need to call TEARDOWN request to free resources and try something else
 
         // create and send TEARDOWN request for stream
-        CURLcode errorCode = CURLE_OK;
+        errorCode = CURLE_OK;
 
         CRtspTeardownRequest *teardown = new CRtspTeardownRequest();
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (teardown != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
@@ -979,17 +981,32 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, teardown->SetSequenceNumber(this->lastSequenceNumber++));
         CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = teardown->SetSessionId(this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY);
 
-        // session ID is no longer required
-        // clear it to avoid error in processing response
-        FREE_MEM(this->sessionId);
+        if (errorCode == CURLE_OK)
+        {
+          // backup session ID, in case of error we need to make TEARDOWN request later
+          wchar_t *sessionId = Duplicate(this->sessionId);
+          errorCode = TEST_STRING_WITH_NULL(sessionId, this->sessionId) ? errorCode : CURLE_OUT_OF_MEMORY;
 
-        CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", METHOD_INITIALIZE_NAME));
-        FREE_MEM_CLASS(teardown);
+          // session ID is no longer required
+          // clear it to avoid error in processing response
+          FREE_MEM(this->sessionId);
 
-        // session ID is no longer required
-        // some RTSP servers send us back session ID, which is no longer valid
-        // clear it to avoid error in processing another request
-        FREE_MEM(this->sessionId);
+          CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = this->SendAndReceive(teardown, errorCode, L"TEARDOWN", METHOD_INITIALIZE_NAME));
+          FREE_MEM_CLASS(teardown);
+
+          // session ID is no longer required
+          // some RTSP servers send us back session ID, which is no longer valid
+          // clear it to avoid error in processing another request
+          FREE_MEM(this->sessionId);
+
+          if (errorCode != CURLE_OK)
+          {
+            // error occured while sending and receiving TEARDOWN request, try it later, but we can't continue now
+            this->sessionId = Duplicate(sessionId);
+          }
+
+          FREE_MEM(sessionId);
+        }
       }
     }
     CHECK_CONDITION_EXECUTE((errorCode == CURLE_OK) && (endTicks <= GetTickCount()), errorCode = CURLE_OPERATION_TIMEDOUT);
@@ -1019,7 +1036,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           CLockMutex lock(this->mutex, INFINITE);
 
-          CHECK_CONDITION_EXECUTE(this->rtspDownloadResponse->GetRtspResponse()->IsSuccess(), this->lastCommand = CURL_RTSPREQ_PLAY);
+          // RTSP response can be NULL in case of error (e.g. timeout or wrong parameters)
+          CHECK_CONDITION_EXECUTE((this->rtspDownloadResponse->GetRtspResponse() != NULL) && (this->rtspDownloadResponse->GetRtspResponse()->IsSuccess()), this->lastCommand = CURL_RTSPREQ_PLAY);
         }
 
         FREE_MEM_CLASS(play);
