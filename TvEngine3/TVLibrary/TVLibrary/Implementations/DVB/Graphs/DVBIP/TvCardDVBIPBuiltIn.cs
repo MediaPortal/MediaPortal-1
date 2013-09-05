@@ -130,7 +130,7 @@ namespace TvLibrary.Implementations.DVB
       }
       //GetTunerSignalStatistics();
       _epgGrabbing = false;
-      if (_mapSubChannels.ContainsKey(subChannel))
+      if (_mapSubChannels.ContainsKey(subChannel) && (url != _defaultUrl))
       {
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
