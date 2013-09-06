@@ -23,31 +23,28 @@
 #ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 
-#define PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT                  L"RtspReceiveDataTimeout"
-#define PARAMETER_NAME_RTSP_REFERER                               L"RtspReferer"
-#define PARAMETER_NAME_RTSP_USER_AGENT                            L"RtspUserAgent"
-//#define PARAMETER_NAME_RTSP_COOKIE                                L"RtspCookie"
-//#define PARAMETER_NAME_RTSP_VERSION                               L"RtspVersion"
-//#define PARAMETER_NAME_RTSP_IGNORE_CONTENT_LENGTH                 L"RtspIgnoreContentLength"
+#define PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT                      L"RtspReceiveDataTimeout"
+//#define PARAMETER_NAME_RTSP_REFERER                                   L"RtspReferer"
+//#define PARAMETER_NAME_RTSP_USER_AGENT                                L"RtspUserAgent"
 
-//#define PARAMETER_NAME_RTSP_COOKIES_COUNT                         L"RtspCookiesCount"
-//#define RTSP_COOKIE_FORMAT_PARAMETER_NAME                         L"RtspCookie%08u"
+//#define PARAMETER_NAME_RTSP_COOKIES_COUNT                             L"RtspCookiesCount"
+//#define RTSP_COOKIE_FORMAT_PARAMETER_NAME                             L"RtspCookie%08u"
 
-#define PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE                  L"RtspMulticastPreference"
-#define PARAMETER_NAME_RTSP_UDP_PREFERENCE                        L"RtspUdpPreference"
-#define PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE        L"RtspSameConnectionTcpPreference"
+#define PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE                      L"RtspMulticastPreference"
+#define PARAMETER_NAME_RTSP_UDP_PREFERENCE                            L"RtspUdpPreference"
+#define PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE            L"RtspSameConnectionTcpPreference"
 
-//#define PARAMETER_NAME_RTSP_CLIENT_PORT                           L"RtspClientPort"
+#define PARAMETER_NAME_RTSP_CLIENT_PORT_MIN                           L"RtspClientPortMin"
+#define PARAMETER_NAME_RTSP_CLIENT_PORT_MAX                           L"RtspClientPortMax"
 
 // we should get data in twenty seconds
-#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
+#define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                             20000
 
-#define RTSP_MULTICAST_PREFERENCE_DEFAULT                         2
-#define RTSP_UDP_PREFERENCE_DEFAULT                               1
-#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               0
+#define RTSP_MULTICAST_PREFERENCE_DEFAULT                             2
+#define RTSP_UDP_PREFERENCE_DEFAULT                                   1
+#define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT                   0
 
-#define RTSP_CLIENT_PORT_DEFAULT                                  50000
-#define RTSP_CLIENT_PORT_MIN                                      1
-#define RTSP_CLIENT_PORT_MAX                                      65535
+#define RTSP_CLIENT_PORT_MIN_DEFAULT                                  50000
+#define RTSP_CLIENT_PORT_MAX_DEFAULT                                  65535
 
 #endif

@@ -71,8 +71,9 @@ CRtspCurlInstance::CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
   this->sameConnectionTcpPreference = RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT;
   this->multicastPreference = RTSP_MULTICAST_PREFERENCE_DEFAULT;
   this->udpPreference = RTSP_UDP_PREFERENCE_DEFAULT;
-  this->rtspClientPort = RTSP_CLIENT_PORT_DEFAULT;
   this->sessionId = NULL;
+  this->clientPortMin = RTSP_CLIENT_PORT_MIN_DEFAULT;
+  this->clientPortMax = RTSP_CLIENT_PORT_MAX_DEFAULT;
 
   this->SetWriteCallback(CRtspCurlInstance::CurlReceiveDataCallback, this);
 }
@@ -215,7 +216,9 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
   this->rtspDownloadRequest = dynamic_cast<CRtspDownloadRequest  *>(this->downloadRequest);
   this->rtspDownloadResponse = dynamic_cast<CRtspDownloadResponse *>(this->downloadResponse);
   result &= (this->rtspDownloadRequest != NULL) && (this->rtspDownloadResponse != NULL);
-  result &= ((this->rtspClientPort >= RTSP_CLIENT_PORT_MIN) && (this->rtspClientPort <= RTSP_CLIENT_PORT_MAX));
+  result &= (this->clientPortMin <= RTSP_CLIENT_PORT_MAX_DEFAULT);
+  result &= (this->clientPortMax <= RTSP_CLIENT_PORT_MAX_DEFAULT);
+  result &= (this->clientPortMin <= this->clientPortMax);
 
   if (result)
   {
@@ -638,7 +641,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"trying to negotiate udp transport");
 
         // for each media description create and negotiate UDP transport
-        unsigned int clientPort = this->rtspClientPort;
+        unsigned int clientPort = this->clientPortMin;
         CURLcode error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? CURLE_OK : CURLE_FAILED_INIT;
 
         for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
@@ -745,7 +748,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 clientPort++;
               }
             }
-            while ((error != CURLE_OK) && (clientPort < RTSP_CLIENT_PORT_MAX) && (endTicks > GetTickCount()));
+            while ((error != CURLE_OK) && (clientPort <= this->clientPortMax) && (endTicks > GetTickCount()));
 
             CHECK_CONDITION_EXECUTE((error == CURLE_OK) && (endTicks <= GetTickCount()), error = CURLE_OPERATION_TIMEDOUT);
 
@@ -1839,9 +1842,14 @@ unsigned int CRtspCurlInstance::GetUdpPreference(void)
   return this->udpPreference;
 }
 
-unsigned int CRtspCurlInstance::GetRtspClientPort(void)
+unsigned int CRtspCurlInstance::GetRtspClientPortMin(void)
 {
-  return this->rtspClientPort;
+  return this->clientPortMin;
+}
+
+unsigned int CRtspCurlInstance::GetRtspClientPortMax(void)
+{
+  return this->clientPortMax;
 }
 
 void CRtspCurlInstance::SetSameConnectionTcpPreference(unsigned int preference)
@@ -1859,9 +1867,14 @@ void CRtspCurlInstance::SetUdpPreference(unsigned int preference)
   this->udpPreference = preference;
 }
 
-void CRtspCurlInstance::SetRtspClientPort(unsigned int clientPort)
+void CRtspCurlInstance::SetRtspClientPortMin(unsigned int clientPortMin)
 {
-  this->rtspClientPort = clientPort;
+  this->clientPortMin = clientPortMin;
+}
+
+void CRtspCurlInstance::SetRtspClientPortMax(unsigned int clientPortMax)
+{
+  this->clientPortMax = clientPortMax;
 }
 
 bool CRtspCurlInstance::StopReceivingData(void)

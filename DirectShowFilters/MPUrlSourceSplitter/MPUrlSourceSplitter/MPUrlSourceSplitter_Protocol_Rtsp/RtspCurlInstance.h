@@ -79,9 +79,13 @@ public:
   // @return : UDP preference
   virtual unsigned int GetUdpPreference(void);
 
-  // gets RTSP client port
-  // @return : RTSP client port
-  virtual unsigned int GetRtspClientPort(void);
+  // gets RTSP minimum client port
+  // @return : RTSP minimum client port
+  virtual unsigned int GetRtspClientPortMin(void);
+
+  // gets RTSP maximum client port
+  // @return : RTSP maximum client port
+  virtual unsigned int GetRtspClientPortMax(void);
 
   /* set methods */
 
@@ -97,9 +101,13 @@ public:
   // @param preference : UDP preference to set
   virtual void SetUdpPreference(unsigned int preference);
 
-  // sets RTSP client port
-  // @param : RTSP client port to set
-  virtual void SetRtspClientPort(unsigned int clientPort);
+  // sets RTSP minimum client port
+  // @param clientPortMin : RTSP minimum client port to set
+  virtual void SetRtspClientPortMin(unsigned int clientPortMin);
+
+  // sets RTSP maximum client port
+  // @param clientPortMax : RTSP maximum client port to set
+  virtual void SetRtspClientPortMax(unsigned int clientPortMax);
 
   /* other methods */
 
@@ -126,8 +134,9 @@ protected:
   // @return : new download response or NULL if error
   virtual CDownloadResponse *GetNewDownloadResponse(void);
 
-  // holds client port for transport connection parameter
-  unsigned int clientPort;
+  // holds min and max port for transport connection parameter
+  unsigned int clientPortMin;
+  unsigned int clientPortMax;
 
   // process received base RTP packets
   // @param track : RTSP track to process packets
@@ -160,9 +169,6 @@ protected:
   unsigned int sameConnectionTcpPreference;
   unsigned int multicastPreference;
   unsigned int udpPreference;
-
-  // holds RTSP client port
-  unsigned int rtspClientPort;
 
   // holds last sequence number (increased with every request)
   unsigned int lastSequenceNumber;
