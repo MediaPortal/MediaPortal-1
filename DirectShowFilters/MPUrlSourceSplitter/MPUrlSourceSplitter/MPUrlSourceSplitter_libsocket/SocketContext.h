@@ -72,7 +72,7 @@ public:
   /* set methods */
 
   // sets IP address to be associated with socket
-  // @param address : IP address to set
+  // @param address : IP address to set (IP address is cloned)
   // @return : S_OK if successful, false otherwise
   virtual HRESULT SetIpAddress(CIpAddress *address);
 

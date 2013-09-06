@@ -83,7 +83,7 @@ HRESULT CUdpServer::Initialize(int family, WORD port, CNetworkInterfaceCollectio
               CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
             }
 
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
+            FREE_MEM_CLASS(ipAddr);
           }
         }
       }
