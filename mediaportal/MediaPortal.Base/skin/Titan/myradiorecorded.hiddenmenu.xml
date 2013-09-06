@@ -183,7 +183,7 @@
 				<height>64</height>
 				<textXOff>62</textXOff>
 				<textYOff>16</textYOff>
-				<ondown>10</ondown>
+				<ondown>9</ondown>
 			</control>
 			<control>
 				<description>Empty button</description>
@@ -198,11 +198,28 @@
 			</control>
 			<control>
 				<type>button</type>
+				<description>scheduled button</description>
+				<id>9</id>
+				<onleft>50</onleft>
+				<onright>50</onright>
+				<onup>6</onup>
+				<ondown>10</ondown>
+				<hyperlink>601</hyperlink>
+				<label>603</label>
+				<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+				<textureNoFocus>-</textureNoFocus>
+				<width>499</width>
+				<height>69</height>
+				<textXOff>62</textXOff>
+				<textYOff>16</textYOff>		
+			</control>
+			<control>
+				<type>button</type>
 				<description>Radio Guide</description>
 				<id>10</id>
 				<onleft>50</onleft>
 				<onright>50</onright>
-				<onup>6</onup>
+				<onup>9</onup>
 				<ondown>21</ondown>
 				<hyperlink>762</hyperlink>
 				<label>533</label>
