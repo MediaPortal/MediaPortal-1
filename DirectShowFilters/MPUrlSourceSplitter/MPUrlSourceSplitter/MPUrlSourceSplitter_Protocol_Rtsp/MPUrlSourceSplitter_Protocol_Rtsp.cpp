@@ -582,7 +582,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::StartReceivingData(CParameterCollect
       // set connection priorities
       this->mainCurlInstance->SetMulticastPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE, true, RTSP_MULTICAST_PREFERENCE_DEFAULT));
       this->mainCurlInstance->SetSameConnectionTcpPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE, true, RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT));
-      this->mainCurlInstance->SetTcpPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_TCP_PREFERENCE, true, RTSP_TCP_PREFERENCE_DEFAULT));
       this->mainCurlInstance->SetUdpPreference(this->configurationParameters->GetValueUnsignedInt(PARAMETER_NAME_RTSP_UDP_PREFERENCE, true, RTSP_UDP_PREFERENCE_DEFAULT));
     }
   }

@@ -103,7 +103,7 @@ HRESULT CTcpServer::Initialize(int family, WORD port, int connections, CNetworkI
               CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(server));
             }
 
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(ipAddr));
+            FREE_MEM_CLASS(ipAddr);
           }
         }
       }

@@ -34,7 +34,6 @@
 // connection preference can be adjusted by configuration parameters:
 // PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE
 // PARAMETER_NAME_RTSP_UDP_PREFERENCE
-// PARAMETER_NAME_RTSP_TCP_PREFERENCE
 // PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE
 
 #define RTSP_DESCRIBE_CONTENT_TYPE                          L"application/sdp"
@@ -80,10 +79,6 @@ public:
   // @return : UDP preference
   virtual unsigned int GetUdpPreference(void);
 
-  // gets TCP preference
-  // @return : TCP preference
-  virtual unsigned int GetTcpPreference(void);
-
   // gets RTSP client port
   // @return : RTSP client port
   virtual unsigned int GetRtspClientPort(void);
@@ -101,10 +96,6 @@ public:
   // sets UDP preference
   // @param preference : UDP preference to set
   virtual void SetUdpPreference(unsigned int preference);
-
-  // sets TCP preference
-  // @param preference : TCP preference to set
-  virtual void SetTcpPreference(unsigned int preference);
 
   // sets RTSP client port
   // @param : RTSP client port to set
@@ -169,7 +160,6 @@ protected:
   unsigned int sameConnectionTcpPreference;
   unsigned int multicastPreference;
   unsigned int udpPreference;
-  unsigned int tcpPreference;
 
   // holds RTSP client port
   unsigned int rtspClientPort;

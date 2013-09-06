@@ -71,7 +71,6 @@ CRtspCurlInstance::CRtspCurlInstance(CLogger *logger, HANDLE mutex, const wchar_
   this->sameConnectionTcpPreference = RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT;
   this->multicastPreference = RTSP_MULTICAST_PREFERENCE_DEFAULT;
   this->udpPreference = RTSP_UDP_PREFERENCE_DEFAULT;
-  this->tcpPreference = RTSP_TCP_PREFERENCE_DEFAULT;
   this->rtspClientPort = RTSP_CLIENT_PORT_DEFAULT;
   this->sessionId = NULL;
 
@@ -230,10 +229,7 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
     result &= (this->sameConnectionTcpPreference != this->multicastPreference);
     result &= (this->sameConnectionTcpPreference != this->udpPreference);
-    result &= (this->sameConnectionTcpPreference != this->tcpPreference);
     result &= (this->multicastPreference != this->udpPreference);
-    result &= (this->multicastPreference != this->tcpPreference);
-    result &= (this->udpPreference != this->tcpPreference);
   }
 
   if (result)
@@ -407,12 +403,11 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
     this->rtspDownloadResponse->GetReceivedData()->ClearBuffer();
 
     // RTSP setup depends on:
-    // 1. transport preference (same connection, multicast, udp, tcp)
+    // 1. transport preference (same connection, multicast, udp)
     // 2. SDP session tags (session control, media control, ...)
 
     unsigned int transportPreference = min(this->sameConnectionTcpPreference, this->multicastPreference);
     transportPreference = min(transportPreference, this->udpPreference);
-    transportPreference = min(transportPreference, this->tcpPreference);
 
     bool negotiatedTransport = false;
 
@@ -422,48 +417,47 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
 
       if (this->sameConnectionTcpPreference == transportPreference)
       {
-        // same connection UDP or TCP transports are very similar
         unsigned int interleavedChannel = 0;
 
         this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"trying to negotiate TCP transport on same connection");
 
-        // for each media description create and negotiate UDP or TCP transport
+        // for each media description create and negotiate TCP transport
         CURLcode error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? CURLE_OK : CURLE_FAILED_INIT;
 
         for (unsigned int i = 0; ((error == CURLE_OK) && (i < this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count())); i++)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
 
-          //bool supportedPayloadType = false;
-          //for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
-          //{
-          //  SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+          bool supportedPayloadType = false;
+          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          {
+            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
 
-          //  if (mediaDescription->GetMediaFormats()->Count() == 1)
-          //  {
-          //    // there must be only one media format
-          //    CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            {
+              // there must be only one media format
+              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-          //    if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-          //        (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
-          //    {
-          //      supportedPayloadType = true;
-          //    }
-          //    else
-          //    {
-          //      this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
-          //    }
-          //  }
-          //  else
-          //  {
-          //    this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
-          //  }
-          //}
+              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
+                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              {
+                supportedPayloadType = true;
+              }
+              else
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+            }
+          }
 
-          //if (!supportedPayloadType)
-          //{
-          //  continue;
-          //}
+          if (!supportedPayloadType)
+          {
+            continue;
+          }
 
           // find control attribute
           CAttributeCollection *attributes = mediaDescription->GetAttributes();
@@ -637,13 +631,13 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"multicast transport not implemented");
       }
 
-      if ((this->udpPreference == transportPreference) || (this->tcpPreference == transportPreference))
+      if (this->udpPreference == transportPreference)
       {
-        // UDP or TCP transports are very similar
+        // UDP transport
 
-        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, (this->udpPreference == transportPreference) ? L"trying to negotiate udp transport" : L"trying to negotiate tcp transport");
+        this->logger->Log(LOGGER_VERBOSE, METHOD_MESSAGE_FORMAT, this->protocolName, METHOD_INITIALIZE_NAME, L"trying to negotiate udp transport");
 
-        // for each media description create and negotiate UDP or TCP transport
+        // for each media description create and negotiate UDP transport
         unsigned int clientPort = this->rtspClientPort;
         CURLcode error = (this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->Count() != 0) ? CURLE_OK : CURLE_FAILED_INIT;
 
@@ -651,36 +645,36 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
 
-          //bool supportedPayloadType = false;
-          //for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
-          //{
-          //  SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+          bool supportedPayloadType = false;
+          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          {
+            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
 
-          //  if (mediaDescription->GetMediaFormats()->Count() == 1)
-          //  {
-          //    // there must be only one media format
-          //    CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            {
+              // there must be only one media format
+              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-          //    if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-          //        (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
-          //    {
-          //      supportedPayloadType = true;
-          //    }
-          //    else
-          //    {
-          //      this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
-          //    }
-          //  }
-          //  else
-          //  {
-          //    this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
-          //  }
-          //}
+              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
+                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              {
+                supportedPayloadType = true;
+              }
+              else
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+            }
+          }
 
-          //if (!supportedPayloadType)
-          //{
-          //  continue;
-          //}
+          if (!supportedPayloadType)
+          {
+            continue;
+          }
 
           // find control attribute
           CAttributeCollection *attributes = mediaDescription->GetAttributes();
@@ -723,18 +717,8 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
             {
               error = CURLE_OK;
 
-              if (this->udpPreference == transportPreference)
-              {
-                dataServer = new CUdpServer();
-                controlServer = new CUdpServer();
-              }
-              else
-              {
-                // TCP transport not tried !!!
-
-                //dataServer = new CTcpServer();
-                //controlServer = new CTcpServer();
-              }
+              dataServer = new CUdpServer();
+              controlServer = new CUdpServer();
 
               error = ((dataServer != NULL) && (controlServer != NULL)) ? error : CURLE_OUT_OF_MEMORY;
 
@@ -785,12 +769,6 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                 header->SetMinClientPort(clientPort);
                 header->SetMaxClientPort(clientPort + 1);
                 header->SetFlags(FLAG_RTSP_TRANSPORT_REQUEST_HEADER_UNICAST | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_TRANSPORT_PROTOCOL_RTP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_PROFILE_AVP | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_CLIENT_PORT);
-
-                if (this->tcpPreference == transportPreference)
-                {
-                  header->SetLowerTransport(RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP);
-                  header->SetFlags(header->GetFlags() | FLAG_RTSP_TRANSPORT_REQUEST_HEADER_LOWER_TRANSPORT_TCP);
-                }
               }
 
               CHECK_CONDITION_EXECUTE(error == CURLE_OK, error = this->SendAndReceive(setup, error, L"SETUP", METHOD_INITIALIZE_NAME));
@@ -828,24 +806,10 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
                   error = CURLE_FAILED_INIT;
                 }
 
-                if (error == CURLE_OK)
+                if ((error == CURLE_OK) && (!(transport->IsLowerTransportUDP() || (transport->GetLowerTransport() == NULL))))
                 {
-                  if (this->udpPreference == transportPreference)
-                  {
-                    if (!(transport->IsLowerTransportUDP() || (transport->GetLowerTransport() == NULL)))
-                    {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"no UDP transport header");
-                      error = CURLE_FAILED_INIT;
-                    }
-                  }
-                  else
-                  {
-                    if (!transport->IsLowerTransportTCP())
-                    {
-                      this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"no TCP transport header");
-                      error = CURLE_FAILED_INIT;
-                    }
-                  }
+                  this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, protocolName, METHOD_INITIALIZE_NAME, L"no UDP transport header");
+                  error = CURLE_FAILED_INIT;
                 }
 
                 if (error == CURLE_OK)
@@ -952,7 +916,6 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         CHECK_CONDITION_EXECUTE_RESULT(this->sameConnectionTcpPreference > transportPreference, min(temp, this->sameConnectionTcpPreference), temp);
         CHECK_CONDITION_EXECUTE_RESULT(this->multicastPreference > transportPreference, min(temp, this->multicastPreference), temp);
         CHECK_CONDITION_EXECUTE_RESULT(this->udpPreference > transportPreference, min(temp, this->udpPreference), temp);
-        CHECK_CONDITION_EXECUTE_RESULT(this->tcpPreference > transportPreference, min(temp, this->tcpPreference), temp);
 
         transportPreference = temp;
 
@@ -1628,10 +1591,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
                 FREE_MEM(computerName);
               }
 
-              if (errorCode != CURLE_OK)
-              {
-                FREE_MEM_CLASS(endPoint);
-              }
+              CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, FREE_MEM_CLASS(endPoint));
 
               errorCode = sourceDescription->GetChunks()->Add(chunk) ? errorCode : CURLE_OUT_OF_MEMORY;
             }
@@ -1639,9 +1599,8 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
             if (errorCode != CURLE_OK)
             {
               FREE_MEM_CLASS(chunk);
+              this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of source description RTCP packet", errorCode);
             }
-
-            CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while setting properties of source description RTCP packet", errorCode));
           }
 
           if (errorCode == CURLE_OK)
@@ -1855,20 +1814,6 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
           }
         }
       }
-
-      /*if (track->GetDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace() != 0)
-      {
-        unsigned int length = track->GetDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
-        ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-
-        track->GetDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, length, 0, 0);
-        wchar_t *file = FormatString(L"X:\\temp2\\output_%08u.dat", count++);
-        FILE *stream = _wfopen(file, L"wb");
-        fwrite(buffer, sizeof(unsigned char), length, stream);
-        fclose(stream);
-
-        FREE_MEM(buffer);
-      }*/
     }
   }
 
@@ -1894,11 +1839,6 @@ unsigned int CRtspCurlInstance::GetUdpPreference(void)
   return this->udpPreference;
 }
 
-unsigned int CRtspCurlInstance::GetTcpPreference(void)
-{
-  return this->tcpPreference;
-}
-
 unsigned int CRtspCurlInstance::GetRtspClientPort(void)
 {
   return this->rtspClientPort;
@@ -1919,11 +1859,6 @@ void CRtspCurlInstance::SetUdpPreference(unsigned int preference)
   this->udpPreference = preference;
 }
 
-void CRtspCurlInstance::SetTcpPreference(unsigned int preference)
-{
-  this->tcpPreference = preference;
-}
-
 void CRtspCurlInstance::SetRtspClientPort(unsigned int clientPort)
 {
   this->rtspClientPort = clientPort;
@@ -1933,7 +1868,7 @@ bool CRtspCurlInstance::StopReceivingData(void)
 {
   if ((this->lastCommand == CURL_RTSPREQ_SETUP) || (this->lastCommand == CURL_RTSPREQ_PLAY))
   {
-    unsigned int endTicks = (this->finishTime == FINISH_TIME_NOT_SPECIFIED) ? (GetTickCount() + this->GetReceiveDataTimeout()) : this->finishTime;
+    unsigned int endTicks = GetTickCount() + this->GetReceiveDataTimeout();
 
     // create and send TEARDOWN request for stream
     CURLcode errorCode = CURLE_OK;

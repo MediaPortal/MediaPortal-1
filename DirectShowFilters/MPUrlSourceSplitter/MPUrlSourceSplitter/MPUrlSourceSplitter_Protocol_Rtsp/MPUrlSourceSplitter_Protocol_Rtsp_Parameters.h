@@ -35,17 +35,15 @@
 
 #define PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE                  L"RtspMulticastPreference"
 #define PARAMETER_NAME_RTSP_UDP_PREFERENCE                        L"RtspUdpPreference"
-#define PARAMETER_NAME_RTSP_TCP_PREFERENCE                        L"RtspTcpPreference"
 #define PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE        L"RtspSameConnectionTcpPreference"
 
-#define PARAMETER_NAME_RTSP_CLIENT_PORT                           L"RtspClientPort"
+//#define PARAMETER_NAME_RTSP_CLIENT_PORT                           L"RtspClientPort"
 
 // we should get data in twenty seconds
 #define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                         20000
 
 #define RTSP_MULTICAST_PREFERENCE_DEFAULT                         2
 #define RTSP_UDP_PREFERENCE_DEFAULT                               1
-#define RTSP_TCP_PREFERENCE_DEFAULT                               3
 #define RTSP_SAME_CONNECTION_TCP_PREFERENCE_DEFAULT               0
 
 #define RTSP_CLIENT_PORT_DEFAULT                                  50000
