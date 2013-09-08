@@ -39,10 +39,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="epgEvents"></param>
     /// <param name="device"></param>
     /// <param name="sequence"></param>
-    public TvCardDVBIPBuiltIn(IEpgEvents epgEvents, DsDevice device, int sequence) : base(epgEvents, device, sequence)
+    public TvCardDVBIPBuiltIn(DsDevice device, int sequence)
+      : base(device, sequence)
     {
       _defaultUrl = "udp://@0.0.0.0:1234";
     }

@@ -25,6 +25,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Animation;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing.Imaging;
@@ -295,19 +296,26 @@ namespace MediaPortal.GUI.Library
               return;
             }
 
-            using (Image img = Image.FromFile(strFileNameTemp))
+            try
             {
-              if (0 == _width)
+              using (FileStream fs = new FileStream(strFileNameTemp, FileMode.Open, FileAccess.Read))
               {
-                _width = img.Width;
-              }
-              if (0 == _height)
-              {
-                _height = img.Height;
+                using (Image img = Image.FromStream(fs, true, false))
+                {
+                  if (0 == _width)
+                  {
+                    _width = img.Width;
+                  }
+                  if (0 == _height)
+                  {
+                    _height = img.Height;
+                  }
+                }
               }
             }
+            catch (Exception) { }
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
       base.ScaleToScreenResolution();

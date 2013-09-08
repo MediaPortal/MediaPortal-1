@@ -219,6 +219,9 @@ namespace TvService
           }
         }
 
+        var layer = new TvBusinessLayer();
+        layer.SetLogLevel();
+
         _tvServiceThread.Start();
 
         while (!TvServiceThread.Started)
@@ -911,14 +914,14 @@ namespace TvService
       }
       catch (ThreadAbortException)
       {
-        Log.Info("TvService is beeing stopped");
+        Log.Info("TvService is being stopped");
       }
       catch (Exception ex)
       {
         if (_started)
           Log.Error("TvService terminated unexpectedly: {0}", ex.ToString());
         else
-          Log.Error("TvService failed not start: {0}", ex.ToString());
+          Log.Error("TvService failed to start: {0}", ex.ToString());
       }
       finally
       {

@@ -537,4 +537,7 @@ Please proceed with it before continuing with MediaPortal installation.</value>
   <data name="DeployXmlDelete_Failed" xml:space="preserve">
     <value>Unable to delete deploy.xml\nDo you want to continue?\nSettings may not be upgraded correctly</value>
   </data>
+  <data name="Reinstall" xml:space="preserve">
+    <value>Reinstall current installation to {0}</value>
+  </data>
 </root>

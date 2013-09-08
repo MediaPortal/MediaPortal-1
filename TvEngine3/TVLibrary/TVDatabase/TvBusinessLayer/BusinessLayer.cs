@@ -648,6 +648,7 @@ namespace TvDatabase
           atscChannel.PmtPid = detail.PmtPid;
           atscChannel.Provider = detail.Provider;
           atscChannel.ServiceId = detail.ServiceId;
+          atscChannel.LogicalChannelNumber = detail.ChannelNumber;
           //atscChannel.SymbolRate = detail.Symbolrate;
           atscChannel.TransportId = detail.TransportId;
           atscChannel.ModulationType = (ModulationType)detail.Modulation;
@@ -3349,6 +3350,15 @@ namespace TvDatabase
                                                 typeof (Channel));
       IList<ChannelMap> maps = ObjectFactory.GetCollection<ChannelMap>(statement.Execute());
       return maps != null && maps.Count > 0;
+    }
+
+    /// <summary>
+    /// Set the log level
+    /// </summary>
+    public void SetLogLevel()
+    {
+      var logLevel = (LogLevel)int.Parse(GetSetting("loglevel", "5").Value); // default is debug
+      Log.SetLogLevel(logLevel);
     }
   }
 }

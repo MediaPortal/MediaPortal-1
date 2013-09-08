@@ -257,7 +257,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected bool matchDevicePath;
 
-    private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
+    private TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
     private WinTvCiModule winTvCiHandler;
 
     /// <summary>
@@ -274,14 +274,13 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
-    public TvCardDvbBase(IEpgEvents epgEvents, DsDevice device)
+    public TvCardDvbBase(DsDevice device)
       : base(device)
     {
       matchDevicePath = true;
       _lastSignalUpdate = DateTime.MinValue;
       _mapSubChannels = new Dictionary<int, BaseSubChannel>();
       _parameters = new ScanParameters();
-      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(epgEvents, (ITVCard)this);
       _minChannel = -1;
       _maxChannel = -1;
       _supportsSubChannels = true;
@@ -435,7 +434,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuneRequest">tune requests</param>
     /// <param name="performTune">Indicates if a tune is required</param>
     /// <returns></returns>
-    private ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
+    protected virtual ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
                                               bool performTune)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
@@ -1011,8 +1010,8 @@ namespace TvLibrary.Implementations.DVB
         _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, internalNetworkProviderClsId,
                                                                      networkProviderName);
         _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
-        string hash = TvCardCollection.GetHash(DevicePath);
-        _interfaceNetworkProvider.ConfigureLogging(TvCardCollection.GetFileName(DevicePath), hash,
+        string hash = DeviceDetector.GetHash(DevicePath);
+        _interfaceNetworkProvider.ConfigureLogging(DeviceDetector.GetFileName(DevicePath), hash,
                                                    LogLevelOption.Debug);
         return;
       }
@@ -1324,19 +1323,16 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Finds the correct bda tuner/capture filters and adds them to the graph
-    /// Creates a graph like
-    /// [NetworkProvider]->[Tuner]->[Capture]->[TsWriter]
-    /// or if no capture filter is present:
-    /// [NetworkProvider]->[Tuner]->[TsWriter]
-    /// When a wintv ci module is found the graph will look like:
-    /// [NetworkProvider]->[Tuner]->[Capture]->[WinTvCiUSB]->[TsWriter]
-    /// or if no capture filter is present:
-    /// [NetworkProvider]->[Tuner]->[WinTvCiUSB]->[TsWriter]
+    /// Finds the correct BDA tuner and capture filter(s) and connects them into the graph.
+    /// [Network Provider]->[Tuner]->[Capture/Receiver]
+    /// ...or if no capture filter is present:
+    /// [Network Provider]->[Tuner]
     /// </summary>
     /// <param name="device">Tuner device</param>
-    protected void AddAndConnectBDABoardFilters(DsDevice device)
+    /// <param name="lastFilter">A reference to the last hardware-specific filter successfully connected into in the graph.</param>
+    protected void AddAndConnectBDABoardFilters(DsDevice device, out IBaseFilter lastFilter)
     {
+      lastFilter = null;
       if (!CheckThreadId())
         return;
       Log.Log.WriteFile("dvb:AddAndConnectBDABoardFilters");
@@ -1398,7 +1394,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       Log.Log.WriteFile("dvb:  Setting lastFilter to Tuner filter");
-      IBaseFilter lastFilter = _filterTuner;
+      lastFilter = _filterTuner;
 
       // Attempt to connect [Tuner]->[Capture]
       if (UseCaptureFilter())
@@ -1414,6 +1410,19 @@ namespace TvLibrary.Implementations.DVB
           AddBDARendererToGraph(device, ref lastFilter);
         }
       }
+    }
+
+    /// <summary>
+    /// Complete the BDA filter graph.
+    /// ...[last filter]->{ [WinTV-CI] / [Infinite Tee]->[MD plugin 1]->..[MD plugin n] / [Digital Devices CI 1]->..[Digital Devices CI n] }->[Infinite Tee]
+    /// There are two branches from the final infinite tee.
+    ///       -->[MPEG Demultiplexor]->[BDA TIF]
+    ///       -->[TsWriter]
+    /// The demux branch is only created when a Microsoft network provider is in use.
+    /// </summary>
+    /// <param name="lastFilter">A reference to the last hardware-specific filter successfully connected into in the graph.</param>
+    protected void CompleteGraph(ref IBaseFilter lastFilter)
+    {
       // Add additional filters after the capture/tuner device
       AddWinTvCIModule(ref lastFilter);
       AddDigitalDevicesCIModule(ref lastFilter);
@@ -1440,7 +1449,7 @@ namespace TvLibrary.Implementations.DVB
     /// or whether it can be directly connected to an inf tee.
     /// </summary>
     /// <returns><c>true</c> if the tuner filter must be connected to a capture filter, otherwise <c>false</c></returns>
-    private bool UseCaptureFilter()
+    protected virtual bool UseCaptureFilter()
     {
       // First: check the media types and formats on the tuner output
       // pin. The WDK specifies (http://msdn.microsoft.com/en-us/library/ff557729%28v=vs.85%29.aspx)
@@ -1506,7 +1515,7 @@ namespace TvLibrary.Implementations.DVB
       // Finally: if the tuner is a Silicondust HDHomeRun then a capture
       // filter is not required. Neither of the other two detection methods
       // work as of 2011-02-11 (mm1352000).
-      if (_tunerDevice.Name.Contains("Silicondust HDHomeRun Tuner"))
+      if (_tunerDevice.Name.Contains("HDHomeRun"))
       {
         return false;
       }
@@ -2355,6 +2364,15 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region epg & scanning
+
+    /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public override void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+      _timeshiftingEPGGrabber = new TimeShiftingEPGGrabber(eventListener, this);
+    }
 
     /// <summary>
     /// checks if a received EPGChannel should be filtered from the resultlist

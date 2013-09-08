@@ -35,6 +35,7 @@ namespace MediaPortal.GUI.Library
     #region XML properties
 
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 3;
+    [XMLSkinElement("scrollYOffset")] protected int _yOffset = 2;
     [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
     [XMLSkinElement("font")] protected string _fontName = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
@@ -265,7 +266,7 @@ namespace MediaPortal.GUI.Library
             }
 
             int ixoff = _xOffset;
-            int ioffy = 2;
+            int ioffy = _yOffset;
             GUIGraphicsContext.ScaleVertical(ref ioffy);
             GUIGraphicsContext.ScaleHorizontal(ref ixoff);
             string wszText1 = String.Format("{0}", strLabel1);

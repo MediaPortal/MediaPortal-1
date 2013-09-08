@@ -389,7 +389,7 @@ namespace DirectShowLib.BDA
       );
 
     [PreserveSig]
-    int TuneByChannel([In] short usVirtualChannel);
+    int TuneByChannel([In] ushort usVirtualChannel);
 
     [PreserveSig]
     int SetProgram([In] short usProgramNumber);

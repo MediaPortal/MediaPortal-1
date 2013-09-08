@@ -1075,7 +1075,7 @@
     <String id="1302">Downloading actor info</String>
     <String id="1303">Select Artist</String>
     <String id="1304">Create nfo file</String>
-    <String id="1305">Nfo crated!</String>
+    <String id="1305">Nfo created</String>
     <String id="1306">Create nfo files for all movies</String>
     <String id="1307">Update internal Grabber scripts</String>
     <String id="1308">Rename SortTitle</String>
@@ -1091,8 +1091,8 @@
     <String id="1318">Save subtitle</String>
     <String id="1319">Save modified subtitle file?</String>
     <String id="1320">{0} as {1} &#10;</String>
-    <String id="1321">Auto Decoder Settings</String>
-    <String id="1322">Force Source Splitter</String>
+    <String id="1321">Auto Decoder Selection</String>
+    <String id="1322">Force Source filter</String>
     <String id="1323">Video Codecs for .TS files</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1183,6 +1183,7 @@
     <String id="1976">rpm</String>
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
+    <String id="1984">Refresh video thumb</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
@@ -2314,8 +2315,8 @@
     <String id="300212">VC-1 Video codec</String>
     <String id="300213">VC-1i Video codec</String>
     <String id="300214">DivX/Xvid video codec</String>
-    <String id="300215">Splitter source</String>
-    <String id="300216">Splitter filesync</String>
+    <String id="300215">Source filter</String>
+    <String id="300216">Splitter filter</String>
     <String id="300217">Blu-ray</String>
     <String id="300218">Region</String>
     <String id="300219">Audio Type</String>
