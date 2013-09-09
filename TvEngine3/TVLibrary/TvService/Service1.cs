@@ -499,7 +499,7 @@ namespace TvService
     {
       if (msg == WM_POWERBROADCAST)
       {
-        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {0}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -927,14 +927,14 @@ namespace TvService
       }
       catch (ThreadAbortException)
       {
-        Log.Info("TvService is beeing stopped");
+        Log.Info("TvService is being stopped");
       }
       catch (Exception ex)
       {
         if (_started)
           Log.Error("TvService terminated unexpectedly: {0}", ex.ToString());
         else
-          Log.Error("TvService failed not start: {0}", ex.ToString());
+          Log.Error("TvService failed to start: {0}", ex.ToString());
       }
       finally
       {
