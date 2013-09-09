@@ -156,12 +156,8 @@ namespace MediaPortal.Visualization
           return 0;
         }
 
-        // Set Song information, so that the plugin can display it
-        // Do not wiil see it with Sonique then deactivate _mediaInfo.SongTitle
-        // all others will be used, do not remove
-        if (trackTag != null && Bass != null)
+        if (Bass != null)
         {
-          _mediaInfo.SongTitle = _songTitle;
           _mediaInfo.Position = (int) (1000*Bass.CurrentPosition);
           _mediaInfo.Duration = (int) Bass.Duration;
         }
@@ -247,6 +243,7 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         // Hide the Viswindow, so that we don't see it, while moving
+        GUIGraphicsContext.form.Refresh();
         Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
         BassVis.BASSVIS_Resize(_visParam, 0, 0, newSize.Width, newSize.Height);
       }
@@ -286,14 +283,15 @@ namespace MediaPortal.Visualization
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
 
         // Create the Visualisation
-        // get HDC from VisualizationWindow this HDC is NOT the same as VisualizationWindow.CompatibleDC;
-        IntPtr hdc = GetDC(VisualizationWindow.Handle);
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
         visExec.SON_Flags = BASSVISFlags.BASSVIS_DEFAULT;
-        visExec.SON_PaintHandle = hdc;
+        visExec.SON_ParentHandle = VisualizationWindow.Handle;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
+        visExec.SON_UseOpenGL = true;
+        visExec.SON_ViewportWidth = 800;
+        visExec.SON_ViewportHeight = 600;
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
@@ -307,6 +305,8 @@ namespace MediaPortal.Visualization
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_USESLOWFADE, 1);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 5);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
+        
+          Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
         }
 
         firstRun = false;
