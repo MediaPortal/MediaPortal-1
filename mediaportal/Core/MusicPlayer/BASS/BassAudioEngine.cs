@@ -144,6 +144,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private TAG_INFO _tagInfo;
 
+    private System.Windows.Forms.Timer _stoppedStreamsTimer = new System.Windows.Forms.Timer();
+
     #endregion
 
     #region Properties
@@ -599,39 +601,26 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="action"></param>
-    void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
+    public void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
     {
       if (sender == null)
       {
         return;
       }
       MusicStream musicStream = (MusicStream)sender;
-      string nextSong = "";
 
       switch (action)
       {
         case MusicStream.StreamAction.Ended:
+          break;
+
+        case MusicStream.StreamAction.Crossfading:
           if (TrackPlaybackCompleted != null)
           {
             TrackPlaybackCompleted(g_Player.MediaType.Music, (int)CurrentPosition, musicStream.FilePath);
           }
 
-          // Check, if PlaylistPlayer has to offer more files)
-          if (Playlists.PlayListPlayer.SingletonPlayer.GetNext() == string.Empty)
-          {
-            MusicStream currentStream = GetCurrentStream();
-            if (currentStream == null || !currentStream.IsPlaying)
-            {
-              Log.Debug("BASS: Reached end of playlist.");
-              Stop();
-            }
-          }
-          BassMix.BASS_Mixer_ChannelRemove(musicStream.BassStream);
-          musicStream.Dispose();
-          break;
-
-        case MusicStream.StreamAction.Crossfading:
-          nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
+          string nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
           if (nextSong != string.Empty)
           {
             PlayInternal(nextSong);
@@ -724,6 +713,9 @@ namespace MediaPortal.MusicPlayer.BASS
           _streamcopy = new StreamCopy();
           _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
         }
+
+        _stoppedStreamsTimer.Interval = 30000;        
+        _stoppedStreamsTimer.Tick += CleanupStoppedStreams;
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1232,6 +1224,22 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    /// <summary>
+    /// Cleanup of Stopped streams. Invoked by a Timer
+    /// </summary>
+    private void CleanupStoppedStreams(Object obj, EventArgs evtArgs)
+    {
+      for (var i = _streams.Count - 1; i > 0; i--)
+      {
+        MusicStream stream = _streams[i];
+        if (!stream.IsPlaying)
+        {
+          Log.Debug("BASS: cleaning up stopped stream: {0}", stream.FilePath);
+          stream.Dispose();
+        }
+      }
+    }
+
     #endregion
 
     #region Visualisation Related
@@ -1671,6 +1679,11 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
+        if (!_stoppedStreamsTimer.Enabled)
+        {
+          _stoppedStreamsTimer.Start();
+        }
+
         if (Config.MusicPlayer == AudioPlayer.Asio && !BassAsio.BASS_ASIO_IsStarted())
         {
           BassAsio.BASS_ASIO_Stop();
@@ -1967,6 +1980,7 @@ namespace MediaPortal.MusicPlayer.BASS
                        Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
                      }
 
+                     _stoppedStreamsTimer.Stop();
                      NotifyPlaying = false;
                    }
         ) { Name = "BASS Stop" }.Start();
@@ -2040,8 +2054,9 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        // the elapsed time length
         Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
+        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+        _mixer.SetSyncPos(stream, newPos);
       }
       catch
       {
@@ -2084,8 +2099,9 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        // the elapsed time length
         Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
+        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+        _mixer.SetSyncPos(stream, newPos);
       }
 
       catch
@@ -2118,7 +2134,9 @@ namespace MediaPortal.MusicPlayer.BASS
             position += (int)_cueTrackStartPos;
           }
 
-          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
+          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position)); 
+          Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+          _mixer.SetSyncPos(stream, position);
         }
       }
 

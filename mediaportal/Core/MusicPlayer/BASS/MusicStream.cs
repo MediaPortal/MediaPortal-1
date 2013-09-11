@@ -45,7 +45,6 @@ namespace MediaPortal.MusicPlayer.BASS
     #region Delegates
 
     private SYNCPROC _playbackCrossFadeProcDelegate = null;
-    private SYNCPROC _playbackEndProcDelegate = null;
     private SYNCPROC _cueTrackEndProcDelegate = null;
     private SYNCPROC _metaTagSyncProcDelegate = null;
     private SYNCPROC _playBackSlideEndDelegate = null;
@@ -236,7 +235,6 @@ namespace MediaPortal.MusicPlayer.BASS
       _filePath = filePath;
 
       _playbackCrossFadeProcDelegate = new SYNCPROC(PlaybackCrossFadeProc);
-      _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
       _cueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
       _metaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
 
@@ -684,10 +682,6 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         _streamEventSyncHandles.Add(RegisterCrossFadeEvent(_stream));
       }
-      else
-      {
-        _streamEventSyncHandles.Add(RegisterPlaybackEndEvent(_stream));
-      }
     }
 
     /// <summary>
@@ -699,11 +693,9 @@ namespace MediaPortal.MusicPlayer.BASS
     private int RegisterCrossFadeEvent(int stream)
     {
       int syncHandle = 0;
-      long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
-      double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
       double fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
 
-      long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
+      long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, TotalStreamSeconds - fadeOutSeconds);
 
       syncHandle = Bass.BASS_ChannelSetSync(stream,
                                             BASSSync.BASS_SYNC_POS,
@@ -713,28 +705,6 @@ namespace MediaPortal.MusicPlayer.BASS
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterCrossFadeEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
-      }
-      return syncHandle;
-    }
-
-    /// <summary>
-    /// Register the Playback end Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private int RegisterPlaybackEndEvent(int stream)
-    {
-      int syncHandle = 0;
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_END,
-                                            0, _playbackEndProcDelegate,
-                                            IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream,
                   Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
       }
       return syncHandle;
@@ -777,11 +747,6 @@ namespace MediaPortal.MusicPlayer.BASS
                      {
                        Log.Debug("BASS: X-Fading out stream {0}", _filePath);
 
-                       if (MusicStreamMessage != null)
-                       {
-                         MusicStreamMessage(this, StreamAction.Crossfading);
-                       }
-
                        // We want to get informed, when Crossfading has ended
                        _playBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
                        Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, _playBackSlideEndDelegate,
@@ -818,29 +783,6 @@ namespace MediaPortal.MusicPlayer.BASS
                      }
                    }
       ) { Name = "BASS X-FadeEnded" }.Start();
-    }
-
-
-    /// <summary>
-    /// Playback end Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
-    {
-      new Thread(() =>
-                   {
-                     Log.Debug("BASS: End of stream {0}", _filePath);
-                     _crossFading = false;
-
-                     if (MusicStreamMessage != null)
-                     {
-                       MusicStreamMessage(this, StreamAction.Ended);
-                     }
-                   }
-      ) { Name = "BASS SongEnd" }.Start();
     }
 
     /// <summary>

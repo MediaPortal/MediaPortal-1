@@ -1109,7 +1109,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
-        trackBarCrossfade.Value = 5;
+        trackBarCrossfade.Value = 0;
         trackBarCrossfade_Scroll(trackBarCrossfade, new EventArgs());
         FadeOnStartStopChkbox.Checked = false;
       }
