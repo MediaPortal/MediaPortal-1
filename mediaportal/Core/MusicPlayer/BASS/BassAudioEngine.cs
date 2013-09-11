@@ -1229,7 +1229,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void CleanupStoppedStreams(Object obj, EventArgs evtArgs)
     {
-      for (var i = _streams.Count - 1; i > 0; i--)
+      for (var i = _streams.Count - 1; i >= 0; i--)
       {
         MusicStream stream = _streams[i];
         if (!stream.IsPlaying)
