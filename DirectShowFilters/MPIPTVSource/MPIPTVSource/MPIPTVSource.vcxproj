@@ -62,7 +62,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>strmbasd.lib;winmm.lib;Shlwapi.lib;Ws2_32.lib;Iphlpapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>mpiptvsource.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(DSHOW_BASE)Debug_MBCS\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)baseclasses\debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>IF NOT EXIST "$(SolutionDir)\MPIPTVSource\bin\Debug" mkdir "$(SolutionDir)\MPIPTVSource\bin\Debug"

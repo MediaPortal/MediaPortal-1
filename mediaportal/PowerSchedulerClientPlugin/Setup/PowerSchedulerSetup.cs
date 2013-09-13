@@ -1279,6 +1279,7 @@ namespace PowerScheduler.Setup
 
     private void checkBoxAutoPowerSettings_CheckedChanged(object sender, EventArgs e)
     {
+      buttonApply.Enabled = true;
       if (checkBoxAutoPowerSettings.Checked)
       {
         buttonPowerSettings.Enabled = false;
