@@ -1083,7 +1083,7 @@ namespace MediaPortal.GUI.Library
       Log.Debug("GUITVProgressControl.parseMarkerValues() - parsing markers");
       if (!string.IsNullOrEmpty(LabelMarkerStarts))
       {
-        if (!string.IsNullOrEmpty(strStarts))
+        if (!string.IsNullOrEmpty(strStarts) && !strStarts.StartsWith("#"))
         {
           string[] strMarkerStarts = strStarts.Trim().Split(' ');
           MarkerStartsPercent.Clear();
@@ -1110,7 +1110,7 @@ namespace MediaPortal.GUI.Library
       }
       if (!string.IsNullOrEmpty(LabelMarkerEnds))
       {
-        if (!string.IsNullOrEmpty(strEnds))
+        if (!string.IsNullOrEmpty(strEnds) && !strEnds.StartsWith("#"))
         {
           string[] strMarkerEnds = strEnds.Trim().Split(' ');
           MarkerEndsPercent.Clear();
