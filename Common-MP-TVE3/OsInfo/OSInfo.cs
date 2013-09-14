@@ -518,7 +518,7 @@ namespace OSInfo
                       osName = OSProductType == NT_WORKSTATION ? "Windows 8" : "Windows 2012";
                       break;
                     case 3:
-                      osName = OSProductType == NT_WORKSTATION ? "Windows 81";
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 81" : "Windows 2012";
                       break;
                   }
                   break;
@@ -606,7 +606,7 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 3, 9600, NT_WORKSTATION, 0))
       { // Windows 8.1 RTM
-        return OsSupport.NotSupported;
+        return OsSupport.FullySupported;
       }
       if (IsServer())
       { // any server OS
@@ -673,7 +673,7 @@ namespace OSInfo
     /// <returns>false means Win8 or previous</returns>
     public static bool Win81OrLater()
     {
-      return VerifyVersionGreaterEqual(6, 3, 9600);
+      return VerifyVersionGreaterEqual(6, 3);
     }
 
     /// <summary>
