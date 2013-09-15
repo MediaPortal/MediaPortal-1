@@ -1681,7 +1681,7 @@ public class MediaPortalApp : D3D, IRender
 
       case WA_ACTIVE:
       case WA_CLICKACTIVE:
-        Log.Info("Main: Activation reuqest received");
+        Log.Info("Main: Activation request received");
         RestoreFromTray();
         break;
     }

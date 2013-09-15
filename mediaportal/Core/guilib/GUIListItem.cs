@@ -292,14 +292,7 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (!File.Exists(_thumbNailName))
-        {
-          return false;
-        }
-        else
-        {
-          return _thumbNailName.Length > 0;
-        }
+        return _thumbNailName.Length > 0;
       }
     }
 
