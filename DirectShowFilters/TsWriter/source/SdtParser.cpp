@@ -54,7 +54,7 @@ void  CSdtParser::OnNewSection(CSection& sections)
 	int sectionLen=sections.section_length;
 
   //We only want the SDT for this actual mux (not 'others' with table_id 0x46)
-	if (sections.table_id!=0x42) return;
+	if (sections.table_id!=0x42 && sections.table_id!=0x46) return;
   
   long original_network_id = ((section[8])<<8)+section[9];
  // LogDebug("decodeSDTTable len=%d section no:%d last section no:%d cni:%d version:%d si:%d", 
