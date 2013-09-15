@@ -87,9 +87,7 @@ void CNttParser::OnNewSection(CSection& sections)
   {
     return;
   }
-  // Here sections.section_length contains the full section size, not the
-  // section length field value.
-  if (sections.section_length < 12)
+  if (sections.section_length < 9)
   {
     LogDebug("NttParser: invalid section size %d, expected at least 12 bytes", sections.section_length);
   }
@@ -98,7 +96,7 @@ void CNttParser::OnNewSection(CSection& sections)
   try
   {
     int sectionLength = ((section[1] & 0x0f) << 8) + section[2];
-    if (sections.section_length != 3 + sectionLength) // 2 for section length bytes, 1 for table ID
+    if (sections.section_length != sectionLength)
     {
       LogDebug("NttParser: invalid section length = %d, byte count = %d", sectionLength, sections.section_length);
       return;
