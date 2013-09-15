@@ -27,6 +27,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -930,7 +931,26 @@ namespace DShowNET.Helper
             }
 
             ReleaseComObject(i.pGraph);
-            hr = graphBuilder.Render(pins[0]);
+            try
+            {
+              if (pinName == "Audio")
+              {
+                VolumeHandler vh = VolumeHandler.Instance;
+                // vh.Volume = 19660500 that means Audio endpoint device are not available.
+                if (vh.Volume != 19660500)
+                {
+                  hr = graphBuilder.Render(pins[0]);
+                }
+              }
+              else
+              {
+                hr = graphBuilder.Render(pins[0]);
+              }
+            }
+            catch (Exception ex)
+            {
+              // Can't handle pin out
+            }
             if (hr != 0)
               Log.Debug(" - failed");
           }

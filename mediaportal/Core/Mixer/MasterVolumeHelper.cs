@@ -764,36 +764,51 @@ namespace MediaPortal.Mixer
     private AudioEndpointVolumeCallback _CallBack;
     public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
     private static string _devId = String.Empty;
+    private int _volumeValueForDeviceNotAvailable = 300;
 
     public AEDev()
     {
       IMMDevice _Device = null;
-      if (String.IsNullOrEmpty(_devId))
+      try
       {
-        Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(0, 1, out _Device));
-        Marshal.ThrowExceptionForHR(_Device.GetId(out _devId));
+        if (String.IsNullOrEmpty(_devId))
+        {
+          Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(0, 1, out _Device));
+          Marshal.ThrowExceptionForHR(_Device.GetId(out _devId));
+        }
+        else
+        {
+          Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(_devId, out _Device));
+        }
+        devstatus state;
+        Marshal.ThrowExceptionForHR(_Device.GetState(out state));
+        if (state != devstatus.DEVICE_STATE_ACTIVE)
+          throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
+        _RealDevice = _Device;
+        object result;
+        Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
+        _AudioEndPointVolume = result as IAudioEndpointVolume;
+        _CallBack = new AudioEndpointVolumeCallback(this);
+        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
       }
-      else
+      catch (Exception ex)
       {
-        Marshal.ThrowExceptionForHR(_realEnumerator.GetDevice(_devId, out _Device));
+        // Catch if no device is found
       }
-      devstatus state;
-      Marshal.ThrowExceptionForHR(_Device.GetState(out state));
-      if (state != devstatus.DEVICE_STATE_ACTIVE)
-        throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
-      _RealDevice = _Device;
-      object result;
-      Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
-      _AudioEndPointVolume = result as IAudioEndpointVolume;
-      _CallBack = new AudioEndpointVolumeCallback(this);
-      Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
     }
 
     public void Dispose()
     {
       if (_CallBack != null)
       {
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
+        try
+        {
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
+        }
+        catch (Exception ex)
+        {
+          // Catch if no device is found
+        }
         _CallBack = null;
       }
     }
@@ -812,12 +827,27 @@ namespace MediaPortal.Mixer
       get
       {
         float result = 0;
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevelScalar(out result));
+        try
+        {
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevelScalar(out result));
+        }
+        catch (Exception ex)
+        {
+          // Catch if no device is found
+          return _volumeValueForDeviceNotAvailable;
+        }
         return result;
       }
       set
       {
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
+        try
+        {
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
+        }
+        catch (Exception ex)
+        {
+          // Catch if no device is found
+        }
       }
     }
 
@@ -826,12 +856,26 @@ namespace MediaPortal.Mixer
       get
       {
         bool result = false;
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMute(out result));
+        try
+        {
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMute(out result));
+        }
+        catch (Exception ex)
+        {
+          // Catch if no device is found
+        }
         return result;
       }
       set
       {
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
+        try
+        {
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
+        }
+        catch ( Exception ex)
+        {
+          // Catch if no device is found
+        }
       }
     }
   }
