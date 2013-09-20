@@ -3259,7 +3259,12 @@ namespace MediaPortal.Player
         //remove || IsFileUsedbyAnotherProcess(chapterFile) we don't care if it's still in use
         if (!File.Exists(chapterFile) & !File.Exists(chapterFileXml) & !File.Exists(chapterFileEdl))
         {
-          Log.Debug("g_player.LoadChapters not found for {0}, {1}, {2}", chapterFile, chapterFileXml, chapterFileEdl);
+          Log.Debug("g_player.LoadChapters not found for {0}, {1}, {2}, will start watching for .xml file to be created", chapterFile, chapterFileXml, chapterFileEdl);
+          _commercialFileWatcher = new FileSystemWatcher(Path.GetDirectoryName(videoFile) + @"\", "*.xml");
+          _commercialFileWatcher.NotifyFilter = NotifyFilters.LastWrite;// | NotifyFilters.FileName | NotifyFilters.Size;//
+          _commercialFileWatcher.Created += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.Changed += new FileSystemEventHandler(commercialFileWatcher_Changed);
+          _commercialFileWatcher.EnableRaisingEvents = true;
           return false;
         }
 
