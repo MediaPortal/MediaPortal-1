@@ -210,7 +210,9 @@ namespace MediaPortal.GUI.Library
       ACTION_ROTATE_PICTURE_180 = 9997, // rotate current picture 180 during slideshow.
       ACTION_ROTATE_PICTURE_270 = 9998, // rotate current picture 270 during slideshow.
       ACTION_NEXT_EDITION = 134, // Switch to next edition
-      ACTION_NEXT_VIDEO = 135 // Switch to next video stream
+      ACTION_NEXT_VIDEO = 135, // Switch to next video stream
+      ACTION_TOGGLE_AUTO_COMMERCIAL_SKIP = 446,
+      ACTION_STEP_BACK_PREVIOUS_JUMP = 447 //Jump back to the point at which commercials were skipped
     } ;
 
     #endregion
