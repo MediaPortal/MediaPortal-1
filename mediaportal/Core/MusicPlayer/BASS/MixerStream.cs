@@ -333,12 +333,13 @@ namespace MediaPortal.MusicPlayer.BASS
     public bool AttachStream(MusicStream stream)
     {
       Bass.BASS_ChannelLock(_mixer, true);
-      bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
-                                        BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
-                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
 
       // Set SynyPos at end of stream
       SetSyncPos(stream, 0.0);
+
+      bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
+                                        BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
+                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
 
       Bass.BASS_ChannelLock(_mixer, false);
 
@@ -363,8 +364,9 @@ namespace MediaPortal.MusicPlayer.BASS
     public void SetSyncPos(MusicStream stream, double timePos)
     {
       double fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
-      long mixerPos = Bass.BASS_ChannelGetPosition(_mixer, BASSMode.BASS_POS_DECODE);
-      long syncPos = mixerPos + Bass.BASS_ChannelSeconds2Bytes(_mixer, stream.TotalStreamSeconds - timePos - fadeOutSeconds);
+      double totalStreamLen = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, Bass.BASS_ChannelGetLength(stream.BassStream, BASSMode.BASS_POS_BYTES));
+      long mixerPos = Bass.BASS_ChannelGetPosition(_mixer, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_DECODE);
+      long syncPos = mixerPos + Bass.BASS_ChannelSeconds2Bytes(_mixer, totalStreamLen - timePos - fadeOutSeconds);
 
       if (_syncProc != 0)
       {

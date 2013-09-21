@@ -615,11 +615,6 @@ namespace MediaPortal.MusicPlayer.BASS
           break;
 
         case MusicStream.StreamAction.Crossfading:
-          if (TrackPlaybackCompleted != null)
-          {
-            TrackPlaybackCompleted(g_Player.MediaType.Music, (int)CurrentPosition, musicStream.FilePath);
-          }
-
           string nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
           if (nextSong != string.Empty)
           {
@@ -633,6 +628,11 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             Log.Debug("BASS: Reached end of playlist.");
             Stop();
+          }
+
+          if (TrackPlaybackCompleted != null)
+          {
+            TrackPlaybackCompleted(g_Player.MediaType.Music, (int)CurrentPosition, musicStream.FilePath);
           }
           break;
 
@@ -1589,7 +1589,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       SetCueTrackEndPosition(stream);
 
-      // Plugin the stream into the Mixer
+      // Plug in the stream into the Mixer
       if (!_mixer.AttachStream(stream))
       {
         return false;
