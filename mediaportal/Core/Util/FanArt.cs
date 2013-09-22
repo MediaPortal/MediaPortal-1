@@ -157,11 +157,12 @@ namespace MediaPortal.Util
         return;
       }
 
+      bool searchByString = false;
       _fanartList.Clear();
 
       string[] vdbParserStr = VdbParserString();
 
-      if (vdbParserStr == null || vdbParserStr.Length != 6)
+      if (vdbParserStr == null || vdbParserStr.Length != 7)
       {
         return;
       }
@@ -170,57 +171,56 @@ namespace MediaPortal.Util
       {
         string strAbsUrl = string.Empty;
         string tmdbUrl = string.Empty; // TMDB Fanart api URL
-        string tmdbUrlWorkaround = string.Empty; // Sometimes link conatains double "/" before ttnumber
         // Firts try by IMDB id (100% accurate) then, if fail, by movie name (first result will be taken as defult fanart, no random)
         if ( imdbTT != string.Empty && imdbTT.StartsWith("tt"))
         {
-          //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-          //          imdbTT;
-          tmdbUrl = vdbParserStr[0] + imdbTT;
-          //tmdbUrlWorkaround =
-          //  "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-          //  imdbTT;
-          tmdbUrlWorkaround = vdbParserStr[1] + imdbTT;
+          //http://api.themoviedb.org/3/movie/imdbTT/images?api_key=APIKEY
+          tmdbUrl = vdbParserStr[0] + 
+                    imdbTT + 
+                    vdbParserStr[1];
         }
         else
         {
           if (strSearch == string.Empty)
           {
-            //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-            //          title;
+            //http://api.themoviedb.org/3/search/movie?api_key=APIKEY&query=title
             tmdbUrl = vdbParserStr[2] + title;
-            //tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-            //                    title;
-            tmdbUrlWorkaround = vdbParserStr[3] + title;
           }
           else
           {
-            //tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-            //          strSearch;
-            tmdbUrl = vdbParserStr[2] +strSearch;
-            //tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-            //                    strSearch;
-            tmdbUrlWorkaround = vdbParserStr[3] + strSearch;
+            //http://api.themoviedb.org/3/search/movie?api_key=APIKEY&query=strSearch
+            tmdbUrl = vdbParserStr[2] + strSearch;
           }
+          searchByString = true;
           random = false;
         }
         // Download fanart xml 
         string tmdbXml = string.Empty;
+        
         if (!GetPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbXml))
         {
-          if (!GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl, ref tmdbXml))
-          {
-            Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
-            return;
-          }
+          Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
+          return;
         }
 
-        //string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
-        string matchBackdrop = vdbParserStr[4];
+        string matchBackdrop = string.Empty;
+        
+        if (!searchByString)
+        {
+          tmdbXml = Regex.Match(tmdbXml, vdbParserStr[3], RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
+          //"file_path":"(?<BackDrop>.*?jpg)"
+          matchBackdrop = vdbParserStr[4];
+        }
+        else
+        {
+          //"backdrop_path":"/(?<BackDrop>.*?jpg)"
+          matchBackdrop = vdbParserStr[5];
+        }
 
         // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
         string configDir;
         GetFanArtFolder(out configDir);
+        
         // Check if FanArt directory Exists
         if (Directory.Exists(configDir))
         {
@@ -233,12 +233,9 @@ namespace MediaPortal.Util
               string strBd = string.Empty;
               strBd = mBd.Groups["BackDrop"].Value;
               
-              if (strBd.Contains(vdbParserStr[5]))
+              if (!string.IsNullOrEmpty(strBd))
               {
-                // Hack the extension cause many files shows as png but in reality on TMDB they are jpg (bug in API)
-                int extfile = 0;
-                extfile = strBd.LastIndexOf(".");
-                strBd = strBd.Remove(extfile) + ".jpg";
+                strBd = vdbParserStr[6] + strBd;
                 _fanartList.Add(strBd);
               }
             }
@@ -492,7 +489,6 @@ namespace MediaPortal.Util
               if (c == i)
               {
                 unclean = true;
-                //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
                 strFName = strFName.Replace(c, ' ');
                 break;
               }
@@ -500,6 +496,35 @@ namespace MediaPortal.Util
         }
       }
       return strFName;
+    }
+
+    public static string GetRandomFanartFileName(int movieId)
+    {
+      string fanart = string.Empty;
+
+      if (movieId > 0)
+      {
+        ArrayList fanarts = new ArrayList();
+
+        for (int i = 0; i < 5; i++)
+        {
+          GetFanArtfilename(movieId, i, out fanart);
+
+          if (File.Exists(fanart))
+          {
+            fanarts.Add(fanart);
+          }
+        }
+
+        if (fanarts.Count > 0)
+        {
+          Random rnd = new Random();
+          int r = rnd.Next(fanarts.Count);
+          fanart = fanarts[r].ToString();
+        }
+      }
+
+      return fanart;
     }
 
     private string[] VdbParserString()
@@ -569,8 +594,11 @@ namespace MediaPortal.Util
       {
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
-        WebRequest req = WebRequest.Create(strUrl);
-        req.Timeout = 20000;
+        HttpWebRequest req  = (HttpWebRequest)WebRequest.Create(strUrl);
+        req.Method = WebRequestMethods.Http.Get;
+        req.Accept = "application/json";
+        req.Timeout = 10000;
+
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 
@@ -616,5 +644,6 @@ namespace MediaPortal.Util
     }
 
     #endregion
+    
   }
 }
