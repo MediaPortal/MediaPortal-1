@@ -5687,7 +5687,15 @@ namespace MediaPortal.Video.Database
                 {
                   // IMPAwards
                   IMPAwardsSearch impSearch = new IMPAwardsSearch();
-                  impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                  if (movie.Year > 1900)
+                  {
+                    impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+                  }
+                  else
+                  {
+                    impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+                  }
 
                   if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
                   {
@@ -5760,7 +5768,15 @@ namespace MediaPortal.Video.Database
               {
                 // IMPAwards
                 IMPAwardsSearch impSearch = new IMPAwardsSearch();
-                impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+
+                if (movie.Year > 1900)
+                {
+                  impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+                }
+                else
+                {
+                  impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+                }
 
                 if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
                 {

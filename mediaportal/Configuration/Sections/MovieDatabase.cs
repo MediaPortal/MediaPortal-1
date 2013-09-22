@@ -1704,7 +1704,14 @@ namespace MediaPortal.Configuration.Sections
         ProgressBarAdvance(ref pbSearchCover, "Searching IMPAw... ", true);
 
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
-        impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
+        if (CurrentMovie.Year > 1900)
+        {
+          impSearch.SearchCovers(CurrentMovie.Title + " " + CurrentMovie.Year, CurrentMovie.IMDBNumber);
+        }
+        else
+        {
+          impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
+        }
 
         if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
         {
@@ -2976,7 +2983,15 @@ namespace MediaPortal.Configuration.Sections
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
         if (tmdbSearch.Count == 0 && chbImpAwCoverSource.Checked)
         {
-          impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+          if (movie.Year > 1900)
+          {
+            impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+          }
+          else
+          {
+            impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+          }
+
           if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
           {
             // Update database with new cover

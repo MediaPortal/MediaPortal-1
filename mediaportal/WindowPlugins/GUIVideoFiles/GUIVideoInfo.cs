@@ -1705,7 +1705,15 @@ namespace MediaPortal.GUI.Video
         tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
         // IMPAward search
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
-        impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+        
+        if (movie.Year > 1900)
+        {
+          impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+        }
+        else
+        {
+          impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+        }
 
         int thumb = 0;
 
