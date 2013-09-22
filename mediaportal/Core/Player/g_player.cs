@@ -3720,95 +3720,118 @@ namespace MediaPortal.Player
     #region private members
     private static void commercialFileWatcher_Changed(object sender, FileSystemEventArgs e)
     {
-      Log.Debug("g_player.xmlWatcher_Changed - XmlFileChanged: {0} MediaXmlPath: {1}", e.FullPath, _commercialPath);
-
-      if (e.FullPath.ToLower() == _commercialPath.ToLower())
+      try
       {
-        //we need to sleep we will get an IO error
-        Thread.Sleep(1000);
-        if (Path.GetExtension(e.FullPath) == ".xml")
+        Log.Debug("g_player.xmlWatcher_Changed - XmlFileChanged: {0} MediaXmlPath: {1}", e.FullPath, _commercialPath);
+
+        if (e.FullPath.ToLower() == _commercialPath.ToLower())
         {
-          Log.Debug("g_player.commercialFileWatcher_Changed - Load new XML file: {0}", e.FullPath);        
-         
-          List<double[]> jumpPointsList = ReadXmlCommercials(e.FullPath);
-          for (int i = 0; i < jumpPointsList.Count; i++)
+          //we need to sleep we will get an IO error
+          Thread.Sleep(1000);
+          if (Path.GetExtension(e.FullPath) == ".xml")
           {
-            _jumpPoints[i] = jumpPointsList[i][0];
-            _chapters[i] = jumpPointsList[i][1];
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new XML file: {0}", e.FullPath);            
+            List<double[]> jumpPointsList = ReadXmlCommercials(e.FullPath);
+            Array.Resize<double>(ref _jumpPoints, jumpPointsList.Count);
+            Array.Resize<double>(ref _chapters, jumpPointsList.Count);
+            for (int i = 0; i < jumpPointsList.Count; i++)
+            {
+              _jumpPoints[i] = jumpPointsList[i][0];
+              _chapters[i] = jumpPointsList[i][1];
+            }
+          }
+          else if (Path.GetExtension(e.FullPath) == ".edl")
+          {
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new edl file: {0}", e.FullPath);
+            List<double[]> jumpPointsList = ReadEdlCommercials(e.FullPath);
+            Array.Resize<double>(ref _jumpPoints, jumpPointsList.Count);
+            Array.Resize<double>(ref _chapters, jumpPointsList.Count);
+            for (int i = 0; i < jumpPointsList.Count; i++)
+            {
+              _jumpPoints[i] = jumpPointsList[i][0];
+              _chapters[i] = jumpPointsList[i][1];
+            }
+          }
+          else if (Path.GetExtension(e.FullPath) == ".txt")
+          {
+            Log.Debug("g_player.commercialFileWatcher_Changed - Load new txt file: {0}", e.FullPath);
+            using (TextReader chapters = new StreamReader(e.FullPath))
+            {
+              LoadChapters(chapters);
+            }
+
           }
         }
-        else if (Path.GetExtension(e.FullPath) == ".edl")
-        {
-          Log.Debug("g_player.commercialFileWatcher_Changed - Load new edl file: {0}", e.FullPath);
-          List<double[]> jumpPointsList = ReadEdlCommercials(e.FullPath);
-          _jumpPoints = new double[jumpPointsList.Count];
-          _chapters = new double[jumpPointsList.Count];
-          for (int i = 0; i < jumpPointsList.Count; i++)
-          {
-            _jumpPoints[i] = jumpPointsList[i][0];
-            _chapters[i] = jumpPointsList[i][1];
-          }
-        }
-        else if (Path.GetExtension(e.FullPath) == ".txt")
-        {
-          Log.Debug("g_player.commercialFileWatcher_Changed - Load new txt file: {0}", e.FullPath);
-          using (TextReader chapters = new StreamReader(e.FullPath))
-          {
-            LoadChapters(chapters);
-          }
-        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("g_player.commercialFileWatcher_Changed - Error {0}", ex.ToString());
       }
     }
 
     private static List<double[]> ReadXmlCommercials(string commFile)
     {
       List<double[]> arCommercials = new List<double[]>();
-
-      if (File.Exists(commFile))
+      try
       {
-        XmlDocument xComm = new XmlDocument();
-        //make sure we open the file read only
-        FileStream xmlFile = new FileStream(commFile, FileMode.Open, FileAccess.Read, FileShare.Read);
-        xComm.Load(xmlFile);
-        foreach (XmlNode n in xComm.SelectNodes("/root/commercial"))
+        if (File.Exists(commFile))
         {
-          double[] commercial = new double[2];
-          commercial[0] = XmlConvert.ToDouble(n.Attributes["start"].Value);
-          commercial[1] = XmlConvert.ToDouble(n.Attributes["end"].Value);
-          arCommercials.Add(commercial);
+          XmlDocument xComm = new XmlDocument();
+          //make sure we open the file read only
+          //FileStream xmlFile = new FileStream(commFile, FileMode.Open, FileAccess.Read, FileShare.Read);
+          xComm.Load(commFile);
+          foreach (XmlNode n in xComm.SelectNodes("/root/commercial"))
+          {
+            double[] commercial = new double[2];
+            commercial[0] = XmlConvert.ToDouble(n.Attributes["start"].Value);
+            commercial[1] = XmlConvert.ToDouble(n.Attributes["end"].Value);
+            arCommercials.Add(commercial);
+          }
         }
-      }
 
-      Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
-      return arCommercials;
+        Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
+        return arCommercials;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("g_player.ReadXmlCommercials() - Error {0}", ex.ToString());
+        return arCommercials;
+      }
     }
 
     private static List<double[]> ReadEdlCommercials(string commFile)
     {
       List<double[]> arCommercials = new List<double[]>();
-
-      if (File.Exists(commFile))
+      try
       {
-        using (StreamReader sr = File.OpenText(commFile))
+        if (File.Exists(commFile))
         {
-          string line = sr.ReadLine();
-          while (!string.IsNullOrEmpty(line))
+          using (StreamReader sr = File.OpenText(commFile))
           {
-            double[] commercial = new double[2];
-            Match cMatch = Regex.Match(line, @"^(?<start>\d+\.\d+)\t(?<end>\d+\.\d+)\t", RegexOptions.Compiled);
-            if (cMatch.Success)
+            string line = sr.ReadLine();
+            while (!string.IsNullOrEmpty(line))
             {
-              commercial[0] = XmlConvert.ToDouble(cMatch.Groups["start"].Value);
-              commercial[1] = XmlConvert.ToDouble(cMatch.Groups["end"].Value);
-              if (commercial[0] < commercial[1])
-                arCommercials.Add(commercial);
+              double[] commercial = new double[2];
+              Match cMatch = Regex.Match(line, @"^(?<start>\d+\.\d+)\t(?<end>\d+\.\d+)\t", RegexOptions.Compiled);
+              if (cMatch.Success)
+              {
+                commercial[0] = XmlConvert.ToDouble(cMatch.Groups["start"].Value);
+                commercial[1] = XmlConvert.ToDouble(cMatch.Groups["end"].Value);
+                if (commercial[0] < commercial[1])
+                  arCommercials.Add(commercial);
+              }
+              line = sr.ReadLine();
             }
-            line = sr.ReadLine();
           }
         }
+        Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
+        return arCommercials;
       }
-      Log.Debug("Commercial list loaded with a length of: {0}", arCommercials.Count);
-      return arCommercials;
+      catch (Exception ex)
+      {
+        Log.Error("g_player.ReadEdlCommercials() - Error {0}", ex.ToString());
+        return arCommercials;
+      }
     }
     #endregion
   }
