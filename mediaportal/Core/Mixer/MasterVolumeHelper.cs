@@ -793,7 +793,26 @@ namespace MediaPortal.Mixer
       }
       catch (Exception ex)
       {
-        // Catch if no device is found
+        // Catch if no device is found or changed device
+        try
+        {
+          Marshal.ThrowExceptionForHR(_realEnumerator.GetDefaultAudioEndpoint(0, 1, out _Device));
+          Marshal.ThrowExceptionForHR(_Device.GetId(out _devId));
+          devstatus state;
+          Marshal.ThrowExceptionForHR(_Device.GetState(out state));
+          if (state != devstatus.DEVICE_STATE_ACTIVE)
+            throw new ApplicationException(String.Format("audio device is not active ({0})", state.ToString()));
+          _RealDevice = _Device;
+          object result;
+          Marshal.ThrowExceptionForHR(_RealDevice.Activate(ref IID_IAudioEndpointVolume, CTX.ALL, IntPtr.Zero, out result));
+          _AudioEndPointVolume = result as IAudioEndpointVolume;
+          _CallBack = new AudioEndpointVolumeCallback(this);
+          Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
+        }
+        catch (Exception ex2)
+        {
+          // Catch if no device is found
+        }
       }
     }
 
