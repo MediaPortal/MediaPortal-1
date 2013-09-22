@@ -730,7 +730,7 @@ namespace TvLibrary.Implementations
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {0}, continuing graph", _mapSubChannels.Count);
       }
     }
 

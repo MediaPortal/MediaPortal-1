@@ -995,6 +995,7 @@
     <String id="1196">Ondertiteling</String>
     <String id="1197">DXVA uitschakelen</String>
     <String id="1198">DVD Navigator</String>
+	<String id="1199">Gebruik interne Blu-ray speler</String>
     <String id="1200">Installatiewizard</String>
     <String id="1201">Video vanaf begin afspelen</String>
     <String id="1202">Auto</String>
@@ -1089,6 +1090,10 @@
     <String id="1317">Ophalen van interne scripts...</String>
     <String id="1318">Ondertitel opslaan</String>
     <String id="1319">Gewijzigd ondertitelbestand opslaan?</String>
+	<String id="1320">{0} als {1} &#10;</String>
+    <String id="1321">Auto Decoder Selectie</String>
+    <String id="1322">Forceer Source filter</String>
+    <String id="1323">Video Codecs voor .TS files</String>
     <String id="1440" prefix="Mijn ">Teletekst</String>
     <String id="1441">Teletekst</String>
     <String id="1442">Rolsnelheid (horizontaal)</String>
@@ -1178,6 +1183,7 @@
     <String id="1976">tpm</String>
     <String id="1977">Bestandssysteem</String>
     <String id="1978">Virtueel geheugen</String>
+	<String id="1984">Ververs video miniaturenmap</String>
     <String id="2005">Verwijderen</String>
     <String id="2006">Titel</String>
     <String id="2007">Aantal</String>
@@ -2323,5 +2329,9 @@
     <String id="300225">Gebruik "Sorteer titel"</String>
     <String id="300226">Gebruik alleen de interne nfo scraper</String>
     <String id="300227">Verwijder miniatuur afbeeldingen op zwartelijst</String>
+	<String id="300228">Vraag bevestiging als timeshifting gestopt word</String>
+    <String id="300229">Minimaliseren naar systeemvak als focus verloren is</String>
+    <String id="300230">Stop afspelen als audio renderer verwijderd word</String>
+    <String id="300231">Verminder beeldsnelheid indien niet in focus</String>
   </Section>
 </Language>
