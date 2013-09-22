@@ -290,9 +290,7 @@ namespace MediaPortal.Player
 
     public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
     {
-      {
-        Win32_SetRefreshRate(monitorIndex, (uint)refreshRate);
-      }
+      Win32_SetRefreshRate(monitorIndex, (uint)refreshRate);
     }
 
     // Fix for Mantis 0002608
@@ -699,7 +697,9 @@ namespace MediaPortal.Player
     public static void SetRefreshRateBasedOnFPS(double fps, string strFile, MediaType type)
     {
       double currentRR = 0;
-      if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) || (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal))
+      if ((GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal == -1) ||
+          (Manager.Adapters.Count <= GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal) ||
+          (Manager.Adapters.Count > Screen.AllScreens.Length))
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: adapter number out of bounds");
       }
@@ -762,7 +762,6 @@ namespace MediaPortal.Player
         }
       }
     }
-
 
     // defaults the refreshrate
     public static void AdaptRefreshRate()

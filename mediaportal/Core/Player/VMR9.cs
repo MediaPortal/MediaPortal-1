@@ -378,11 +378,17 @@ namespace MediaPortal.Player
 
       if (_useEvr)
       {
+        // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
+        int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+        if (AdapterOrdinal >= Screen.AllScreens.Length)
+        {
+          AdapterOrdinal = Screen.AllScreens.Length - 1;
+          Log.Info("VMR9: adapter number out of bounds");
+        }
         if (GUIGraphicsContext.currentMonitorIdx != -1)
         {
           if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary) ||
-              OSInfo.OSInfo.Win8OrLater())
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                     GUIGraphicsContext.currentMonitorIdx, false, false);
@@ -392,24 +398,23 @@ namespace MediaPortal.Player
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
                     GUIGraphicsContext.currentMonitorIdx, true, true);
             Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary);
+                      Screen.AllScreens[AdapterOrdinal].Primary);
           }
         }
         else
         {
           if ((OSInfo.OSInfo.Win7OrLater() &&
-               Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary) ||
-              OSInfo.OSInfo.Win8OrLater())
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, false, false);
+                    AdapterOrdinal, false, false);
           }
           else
           {
             EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
-                    GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, true, true);
+                    AdapterOrdinal, true, true);
             Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
-                      Screen.AllScreens[GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal].Primary);
+                      Screen.AllScreens[AdapterOrdinal].Primary);
           }
         }
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
