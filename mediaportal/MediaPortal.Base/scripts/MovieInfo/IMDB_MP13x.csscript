@@ -296,48 +296,33 @@ internal class Grabber : IIMDBScriptGrabber
 
         // Writers
         regexBlockPattern = "<h4[^>]*>[^W]*Writer[s]?:[^<]*</h4>[^<]*(?<writers_block>.*?)</div>";
-        regexPattern =
-          @"href=""/name/nm\d{7}/[^>]*>(?<writer>.*?)</a>[^(]*(?<role>[^)]*\))|href=""/name/nm\d{7}/[^>]*>(?<writer>.*?)</a>(?<role>)";
+        //regexPattern =
+        //  @"href=""/name/nm\d{7}/[^>]*>(?<writer>.*?)</a>[^(]*(?<role>[^)]*\))|href=""/name/nm\d{7}/[^>]*>(?<writer>.*?)</a>(?<role>)";
         block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Groups["writers_block"].Value;
-        MatchCollection mcWriters = Regex.Matches(block, regexPattern);
-
-        if (mcWriters.Count != 0)
+        
+        try
         {
-          string writers = string.Empty;
-
-          foreach (Match mwriter in mcWriters)
+          if (!string.IsNullOrEmpty(block))
           {
             string strWriter = string.Empty;
-            strWriter = HttpUtility.HtmlDecode(mwriter.Groups["writer"].Value);
-            strWriter = Utils.stripHTMLtags(strWriter);
-            string strWriterRole = string.Empty;
-            strWriterRole = HttpUtility.HtmlDecode(mwriter.Groups["role"].Value);
-            strWriterRole = Utils.stripHTMLtags(strWriterRole);
+            strWriter = HttpUtility.HtmlDecode(block);
+            strWriter = Utils.stripHTMLtags(block).Trim();
 
-            if (strWriterRole != string.Empty)
+            if (strWriter.EndsWith(";"))
             {
-              writers = writers + strWriter + " " + strWriterRole + " / ";
-            }
-            else
-            {
-              writers = writers + strWriter + " / ";
-            }
-          }
-          try
-          {
-            if (!string.IsNullOrEmpty(writers))
-            {
-              writers = HttpUtility.HtmlDecode(writers.Remove(writers.LastIndexOf(" / ")));
+              int skipIndex = strWriter.LastIndexOf(",");
 
-              if (writers != null)
+              if (skipIndex > 0)
               {
-                movieDetails.WritingCredits = writers.Replace("...", "").Trim();
+                strWriter = strWriter.Substring(0, skipIndex);
               }
             }
+
+            movieDetails.WritingCredits = strWriter.Replace("...", "").Replace("\n", "").Replace("  ", "").Trim();
           }
-          catch (Exception)
-          {
-          }
+        }
+        catch (Exception)
+        {
         }
 
         // Actors
@@ -500,7 +485,7 @@ internal class Grabber : IIMDBScriptGrabber
             }
           }
           // No user country rating, try to set default as USA (if found in cert. list and not in  main page)
-          if ((mCertUsa == string.Empty || mCertUsa.ToLower().Contains("unrated") ||
+          if ((mCertUsa == string.Empty || mCertUsa.ToLower().Contains("unrated") || mCertUsa.ToLower().Contains("not-rated") || mCertUsa.ToLower().Contains("not rated") ||
                mCertUsa.ToLower().Contains("approved")) && movieDetails.MPARating == string.Empty)
           {
             for (int i = 0; i < landRating.Length; ++i)
@@ -510,6 +495,8 @@ internal class Grabber : IIMDBScriptGrabber
               if (mpaRating.Contains("USA:") &&
                   !mpaRating.ToLower().Contains("unrated") &&
                   !mpaRating.ToLower().Contains("approved") &&
+									!mpaRating.ToLower().Contains("not-rated") &&
+									!mpaRating.ToLower().Contains("not rated") &&
                   !mpaRating.ToLower().Contains("tv-"))
               {
                 if (mpaRating.Contains("("))
@@ -689,8 +676,12 @@ internal class Grabber : IIMDBScriptGrabber
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
       WebRequest req = WebRequest.Create(strUrl);
-      req.Headers.Add("Accept-Language", "en-US");
-      req.Timeout = 10000;
+        string uu = "BCYmcFe4PTBQ8nEoIcCgT5AJwPk7BAOCg5XsQrvqKyvxEUpEB6KqjE0Uv_pqnPChVCCnD8vgTK3UtK7FGCdw39E2j-Fb5MWegRLgbNA2rFWeYUJbbXhRyUaxqGuuW3AZb1grBhmGMxhDJyH5ntFDj1X1Ejh_jqR6BaQUk6P16AN1EMPstTSBIqxVW08QEqMKQgsK75y8_s1Ss9tyDfZpLZzCWhO5qftGUn3_bbw_DBF6sTZDo6xK-zy88VZ8cws-D30P";
+        string id = "BCYobsJMWRwG55i2yGvVuZe7v5twryi7KSxLglDHw2wVcI1rMq0OjHVT7duPo5NNHKDDVFBTVjJM4PoMonlTB_q9NvMCs-wB78Y1hGjdgCLX0SEEC2Y6BD4E3Z6cIoMwlhTDFSprYlxMqjEsFGYwWzVp1oIUYkZQ0kgpX_MvBrEh-fU";
+        string cookieHeader = string.Format("uu={0}; id={1}",uu, id); 
+        req.Headers.Add("Cookie", cookieHeader);
+        req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
+        req.Timeout = 10000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();
