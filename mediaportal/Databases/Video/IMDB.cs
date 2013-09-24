@@ -562,6 +562,41 @@ namespace MediaPortal.Video.Database
 
     #endregion
 
+    /// <summary>
+    /// Helper function for fetching actorsID from IMDB movie page using IMDBmovieID.
+    /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros)
+    /// </summary>
+    /// <param name="imdbMovieID"></param>
+    /// <param name="actorList"></param>
+    public void GetIMDBMovieActorsList(string imdbMovieID, ref ArrayList actorList)
+    {
+      if (!Win32API.IsConnectedToInternet())
+      {
+        return;
+      }
+      if (imdbMovieID == null) return;
+      if (imdbMovieID == string.Empty | !imdbMovieID.StartsWith("tt")) return;
+
+      bool shortActorsListSize = true;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short") != "Short")
+        {
+          shortActorsListSize = false;
+        }
+      }
+
+      InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
+
+      if (internalGrabber.LoadScript())
+      {
+        actorList = internalGrabber.InternalGrabber.GetIMDBMovieActorsList(imdbMovieID, shortActorsListSize);
+      }
+
+      internalGrabber = null;
+    }
+    
     // Get actor search parser strings
     private string[] VdbParserStringCleaner()
     {
@@ -587,5 +622,6 @@ namespace MediaPortal.Video.Database
     string GetThumbImdb(string imdbId);
     ArrayList FindIMDBActor(string strURL);
     bool GetActorDetails(IMDB.IMDBUrl url, out IMDBActor actor);
+    ArrayList GetIMDBMovieActorsList(string imdbMovieID, bool shrtActorsList);
   }
 }

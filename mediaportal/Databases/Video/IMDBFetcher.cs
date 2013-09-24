@@ -636,8 +636,8 @@ namespace MediaPortal.Video.Database
       if (VideoDatabase.CheckMovieImdbId(_movieDetails.IMDBNumber))
       {
         // Returns nm1234567 as actor name (IMDB actorID)
-        IMDBSearch imdbActors = new IMDBSearch();
-        imdbActors.SearchActors(_movieDetails.IMDBNumber, ref actors);
+        IMDB imdbActors = new IMDB();
+        imdbActors.GetIMDBMovieActorsList(_movieDetails.IMDBNumber, ref actors);
       }
       else
       {

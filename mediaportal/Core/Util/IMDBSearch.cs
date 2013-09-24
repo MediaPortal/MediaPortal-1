@@ -75,7 +75,7 @@ namespace MediaPortal.Util
       {
         return;
       }
-
+      
       _imageList.Clear();
       string defaultPic = "";
 
@@ -122,216 +122,13 @@ namespace MediaPortal.Util
         }
       }
     }
-
-    /// <summary>
-    /// Helper function for fetching actorsID from IMDB movie page using IMDBmovieID.
-    /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros)
-    /// </summary>
-    /// <param name="imdbMovieID"></param>
-    /// <param name="actorList"></param>
-    public void SearchActors(string imdbMovieID, ref ArrayList actorList)
-    {
-      if (!Win32API.IsConnectedToInternet())
-      {
-        return;
-      }
-      if (imdbMovieID == null) return;
-      if (imdbMovieID == string.Empty | !imdbMovieID.StartsWith("tt")) return;
-
-      string[] vdbParserStr = VdbParserStringIMDBActors();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 7)
-      {
-        return;
-      }
-
-      bool shortActorsListSize = true;
-
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (xmlreader.GetValueAsString("moviedatabase", "actorslistsize", "Short") != "Short")
-        {
-          shortActorsListSize = false;
-        }
-      }
-      
-      actorList.Clear();
-      string movieURL = "http://www.imdb.com/title/" + imdbMovieID + vdbParserStr[0];
-      string strBodyActors = GetPage(movieURL, "utf-8");
-      
-      if (string.IsNullOrEmpty(strBodyActors))
-      {
-        return;
-      }
-
-      // Director
-      string strDirectorImdbId = string.Empty;
-      string strDirectorName = string.Empty;
-      string regexBlockPattern = vdbParserStr[1];
-      string regexPattern = vdbParserStr[2];
-      string regexBlock = Regex.Match(HttpUtility.HtmlDecode(strBodyActors), 
-        regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
-      strDirectorImdbId = Regex.Match(regexBlock, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
-      strDirectorName = Regex.Match(regexBlock, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value;
-
-      if (strDirectorImdbId != string.Empty)
-      {
-        // Add prefix that it's director, will be removed on fetching details
-        actorList.Add("*d" + strDirectorName + "|" + strDirectorImdbId + "|" + GUILocalizeStrings.Get(199).Replace(":", string.Empty));
-      }
-
-      //Writers
-      regexBlockPattern = vdbParserStr[3];
-      regexBlock = Regex.Match(HttpUtility.HtmlDecode(strBodyActors), 
-        regexBlockPattern, RegexOptions.Singleline).Groups["writers_block"].Value;
-
-      regexPattern = vdbParserStr[4];
-      MatchCollection mc = Regex.Matches(regexBlock, regexPattern);
-
-      if (mc.Count != 0)
-      {
-        foreach (Match m in mc)
-        {
-          string writerId = string.Empty;
-          writerId = HttpUtility.HtmlDecode(m.Groups["imdbWriterId"].Value.Trim());
-          
-          string strWriterName = string.Empty;
-          strWriterName = HttpUtility.HtmlDecode(m.Groups["writer"].Value.Trim());
-
-          string writerRole = string.Empty;
-          writerRole = HttpUtility.HtmlDecode(m.Groups["wrole"].Value.Trim());
-
-          bool found = false;
-          
-          for (int i = 0; i < actorList.Count; i++)
-          {
-            if (writerId != null)
-            {
-              if (actorList[i].ToString().Contains(writerId))
-              {
-                // Check if writer is also director and add new role
-                if (!string.IsNullOrEmpty(writerRole))
-                {
-                  actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200)+ " " + writerRole.Replace("(", string.Empty).Replace(")", string.Empty);
-                  found = true;
-                }
-                else
-                {
-                  actorList[i] = actorList[i] + ", " + GUILocalizeStrings.Get(200).Replace(":", string.Empty);
-                  found = true;
-                }
-                break;
-              }
-            }
-          }
-          
-          if (!found && writerId != string.Empty)
-          {
-            if (!string.IsNullOrEmpty(writerRole))
-            {
-              actorList.Add(strWriterName + "|" + writerId + "|" +
-                          GUILocalizeStrings.Get(200)+ " " + writerRole.Replace("(", string.Empty).Replace(")", string.Empty));
-            }
-            else
-            {
-              actorList.Add(strWriterName + "|" + writerId + "|" +
-                          GUILocalizeStrings.Get(200).Replace(":", string.Empty));
-            }
-          }
-        }
-      }
-
-      // cast
-      regexBlockPattern = vdbParserStr[5];
-      regexPattern = vdbParserStr[6];
-      Match castBlock = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline);
-      string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
-
-      if (strCastBlock != null)
-      {
-        mc = Regex.Matches(strCastBlock, regexPattern, RegexOptions.Singleline);
-
-        if (mc.Count != 0)
-        {
-          int actorsCount = 0;
-
-          foreach (Match m in mc)
-          {
-            string strActorID = string.Empty;
-            strActorID = m.Groups["imdbActorID"].Value;
-            strActorID = Utils.stripHTMLtags(strActorID).Trim();
-
-            string strActorName = string.Empty;
-            strActorName = m.Groups["actor"].Value;
-            strActorName = Utils.stripHTMLtags(strActorName).Trim();
-
-            string strRole = string.Empty;
-            strRole = m.Groups["role"].Value;
-            strRole = HttpUtility.HtmlDecode(strRole);
-            strRole = Utils.stripHTMLtags(strRole).Trim().Replace("\n", "");
-            strRole = strRole.Replace(",", ";").Replace("  ", "");
-            
-            if (!strRole.StartsWith("("))
-            {
-              string regex = "(\\(.*\\))";
-              strRole = Regex.Replace(strRole, regex, "").Trim();
-            }
-            else
-            {
-              string regex = "(\\(as.*\\))";
-              strRole = Regex.Replace(strRole, regex, "").Trim().
-                              Replace("(", string.Empty).
-                              Replace(")", string.Empty);
-            }
-            
-            // Check if we have allready actor as director (actor also is director for movie)
-            bool found = false;
-            
-            for (int i = 0; i < actorList.Count; i++)
-            {
-              if (actorList[i].ToString().Contains(strActorID))
-              {
-                if (strRole != string.Empty)
-                {
-                  actorList[i] = actorList[i] + ", " + strRole;
-                }
-                
-                found = true;
-                break;
-              }
-            }
-            
-            if (!found && strActorID != string.Empty)
-            {
-              actorList.Add(strActorName + "|" + strActorID + "|" + strRole);
-            }
-
-            actorsCount++;
-            
-            if (shortActorsListSize)
-            {
-              if (actorsCount >= 15)
-              {
-                return;
-              }
-            }
-          }
-        }
-      }
-    }
-
+    
     private string[] VdbParserStringIMDBPoster()
     {
       string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMDBPoster");
       return vdbParserStr;
     }
-
-    private string[] VdbParserStringIMDBActors()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMDBActors");
-      return vdbParserStr;
-    }
-
+    
     // Get HTML Page
     private string GetPage(string strURL, string strEncode)
     {
@@ -346,7 +143,7 @@ namespace MediaPortal.Util
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strURL);
         req.Headers.Add("Accept-Language", "en-US");
-        req.Timeout = 10000;
+        req.Timeout = 20000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 
