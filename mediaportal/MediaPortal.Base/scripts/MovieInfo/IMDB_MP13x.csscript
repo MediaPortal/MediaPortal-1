@@ -681,7 +681,7 @@ internal class Grabber : IIMDBScriptGrabber
         string cookieHeader = string.Format("uu={0}; id={1}",uu, id); 
         req.Headers.Add("Cookie", cookieHeader);
         req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
-        req.Timeout = 10000;
+        req.Timeout = 20000;
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();

@@ -180,7 +180,7 @@ namespace MediaPortal.Util
         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
         req.Method = WebRequestMethods.Http.Get;
         req.Accept = "application/json";
-        req.Timeout = 10000;
+        req.Timeout = 20000;
 
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
