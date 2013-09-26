@@ -454,14 +454,16 @@ namespace MediaPortal.GUI.Settings
       string parserIndexFile = Config.GetFile(Config.Dir.Config, "scripts\\VDBParserStrings.xml");
       string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
       string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
-      string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
-
+      string internalActorsGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+      string internalMovieImagesGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalMovieImagesGrabber.csscript");
+      string internalMovieImagesGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalMovieImagesGrabber.csscript";
+      
       // VDB parser update
       progressDialog.SetHeading("Updating VDBparser file......");
       progressDialog.ShowProgressBar(true);
       progressDialog.SetLine(1, "Downloading VDBparser file...");
       progressDialog.SetLine(2, "Downloading...");
-      progressDialog.SetPercentage(75);
+      progressDialog.SetPercentage(33);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
       if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
@@ -470,24 +472,37 @@ namespace MediaPortal.GUI.Settings
         return;
       }
 
-      // Internal grabber script update
-      progressDialog.SetHeading("Updating InternalGrabberScript file......");
+      // Internal actors grabber script update
+      progressDialog.SetHeading("Updating InternalActorsGrabberScript file......");
       progressDialog.ShowProgressBar(true);
-      progressDialog.SetLine(1, "Downloading InternalGrabberScript file...");
+      progressDialog.SetLine(1, "Downloading InternalActorsGrabberScript file...");
       progressDialog.SetLine(2, "Downloading...");
-      progressDialog.SetPercentage(100);
+      progressDialog.SetPercentage(66);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-      if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
+      if (DownloadFile(internalGrabberScriptFile, internalActorsGrabberScriptUrl, Encoding.Default) == false)
       {
         progressDialog.Close();
         return;
       }
 
-      // For 1.3.0B
-      IMDB.InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
-      internalGrabber.LoadScript();
+      IMDB.InternalActorsScriptGrabber internalActorsGrabber = new IMDB.InternalActorsScriptGrabber();
+      internalActorsGrabber.LoadScript();
 
+      // Internal images grabber script update
+      progressDialog.SetHeading("Updating InternalImagesGrabberScript file......");
+      progressDialog.ShowProgressBar(true);
+      progressDialog.SetLine(1, "Downloading InternalImagesrabberScript file...");
+      progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetPercentage(100);
+      progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+      if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
+      {
+        progressDialog.Close();
+        return;
+      }
+      
       // read index file
       if (!File.Exists(_grabberIndexFile))
       {

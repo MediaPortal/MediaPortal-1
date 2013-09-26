@@ -18,13 +18,7 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Net;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -45,7 +39,7 @@ namespace MediaPortal.Util
       get
       {
         if (index < 0 || index >= _imageList.Count) return string.Empty;
-        return (string)_imageList[index];
+        return (string) _imageList[index];
       }
     }
 
@@ -64,164 +58,36 @@ namespace MediaPortal.Util
         return;
       }
 
-      string[] vdbParserStr = VdbParserStringPoster();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 7)
-      {
-        return;
-      }
-
       _imageList.Clear();
+      InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbImageScraper =
+        new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
-      if (!string.IsNullOrEmpty(imdbMovieID) && imdbMovieID.StartsWith("tt"))
+      if (tmdbImageScraper.LoadScript())
       {
-        //http://api.themoviedb.org/3/movie/imdbTT/images?api_key=APIKEY
-        string defaultPosterPageLinkUrl = vdbParserStr[0] +
-                                          imdbMovieID +
-                                          vdbParserStr[1];
-        string strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
-        //"posters":\[.*?\]
-        string posterBlock = Regex.Match(strBodyTMDB, vdbParserStr[3], RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
-        // Get all cover links and put it in the "cover" group
-        //"file_path":"/(?<cover>.*?jpg)"
-        MatchCollection covers = Regex.Matches(posterBlock, vdbParserStr[4]);
-        
-        foreach (Match cover in covers)
-        {
-          string coverUrl = string.Empty;
-          coverUrl = vdbParserStr[6] + cover.Groups["cover"].Value;
-          _imageList.Add(coverUrl);
-        }
-        return;
+        _imageList = tmdbImageScraper.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
       }
-      if (!string.IsNullOrEmpty(movieTitle))
-      {
-        // http://api.themoviedb.org/3/search/movie?api_key=APIKEY&query=title
-        string defaultPosterPageLinkUrl = vdbParserStr[2] + movieTitle;
-        string strBodyTmdb = GetPage(defaultPosterPageLinkUrl, "utf-8");
 
-        // Get all cover links and put it in the "cover" group
-        // "backdrop_path":"/(?<BackDrop>.*?jpg)"
-        MatchCollection covers = Regex.Matches(strBodyTmdb, vdbParserStr[5]);
+      tmdbImageScraper = null;
 
-        foreach (Match cover in covers)
-        {
-          string coverUrl = string.Empty;
-          coverUrl = vdbParserStr[6] + cover.Groups["cover"].Value;
-          _imageList.Add(coverUrl);
-        }
-      }
     }
 
     public void SearchActorImage(string actorName, ref ArrayList actorThumbs)
     {
-      if (!Win32API.IsConnectedToInternet())
-      {
-        return;
-      }
-
-      string[] vdbParserStr = VdbParserStringActorImage();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 2)
+      if (!Win32API.IsConnectedToInternet() || string.IsNullOrEmpty(actorName))
       {
         return;
       }
 
       actorThumbs.Clear();
+      InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbActorImageScraper =
+        new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
-      if (!string.IsNullOrEmpty(actorName))
+      if (tmdbActorImageScraper.LoadScript())
       {
-        // http://api.themoviedb.org/3/search/person?api_key=APIKEYa&query=actorName
-        string defaultPosterPageLinkUrl = vdbParserStr[0] + actorName;
-        string strXml = GetPage(defaultPosterPageLinkUrl, "utf-8");
-
-        // "profile_path":"/(?<cover>.*?jpg)"
-        MatchCollection actorImages = Regex.Matches(strXml, vdbParserStr[1]);
-        
-        if (actorImages.Count == 0)
-        {
-          return; 
-        }
-
-        foreach (Match actorImage in actorImages)
-        {
-          string actor = string.Empty;
-          actor = vdbParserStr[2] + actorImage.Groups["cover"].Value;
-          actorThumbs.Add(actor);
-        }
-        return;
+        actorThumbs = tmdbActorImageScraper.MovieImagesGrabber.GetTmdbActorImage(actorName);
       }
-    }
 
-    private string[] VdbParserStringPoster()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("TMDBPosters");
-      return vdbParserStr;
-    }
-
-    private string[] VdbParserStringActorImage()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("TMDBActorImages");
-      return vdbParserStr;
-    }
-
-    // Get HTML Page
-    private string GetPage(string strUrl, string strEncode)
-    {
-      string strBody = "";
-
-      Stream receiveStream = null;
-      StreamReader sr = null;
-      WebResponse result = null;
-      try
-      {
-        // Make the Webrequest
-        //Log.Info("IMDB: get page:{0}", strURL);
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
-        req.Method = WebRequestMethods.Http.Get;
-        req.Accept = "application/json";
-        req.Timeout = 20000;
-
-        result = req.GetResponse();
-        receiveStream = result.GetResponseStream();
-
-        // Encoding: depends on selected page
-        Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
-        sr = new StreamReader(receiveStream, encode);
-        strBody = sr.ReadToEnd();
-      }
-      catch (Exception)
-      {
-        Log.Info("TMDBCoverSearch: {0} unavailable.", strUrl);
-      }
-      finally
-      {
-        if (sr != null)
-        {
-          try
-          {
-            sr.Close();
-          }
-          catch (Exception) {}
-        }
-        if (receiveStream != null)
-        {
-          try
-          {
-            receiveStream.Close();
-          }
-          catch (Exception) {}
-        }
-        if (result != null)
-        {
-          try
-          {
-            result.Close();
-          }
-          catch (Exception) {}
-        }
-      }
-      return strBody;
+      tmdbActorImageScraper = null;
     }
   }
 }

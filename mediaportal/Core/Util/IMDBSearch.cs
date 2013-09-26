@@ -61,130 +61,22 @@ namespace MediaPortal.Util
     public void SearchCovers(string imdbID, bool defaultOnly)
 
     {
-      if (!Win32API.IsConnectedToInternet())
+      if (!Win32API.IsConnectedToInternet() || string.IsNullOrEmpty(imdbID))
       {
         return;
       }
 
-      if (imdbID == null) return;
-      if (imdbID == string.Empty | !imdbID.StartsWith("tt")) return;
-
-      string[] vdbParserStr = VdbParserStringIMDBPoster();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 8)
-      {
-        return;
-      }
+      if (!imdbID.StartsWith("tt")) return;
       
       _imageList.Clear();
-      string defaultPic = "";
-
-      // First lets take default IMDB cover because maybe it is not in the IMDB Product thumbs group
-      // Get Main Movie page and find default poster link
-      string defaultPosterPageLinkURL = vdbParserStr[0] + imdbID;
-      string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
+      InternalCSScriptGrabbersLoader.Movies.ImagesGrabber imdbImageScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
       
-      string regexBlockPattern = vdbParserStr[1];
-      string posterBlock = Regex.Match(strBodyPicDefault, regexBlockPattern, RegexOptions.Singleline).Value;
-      Match jpgDefault = Regex.Match(posterBlock, vdbParserStr[2], RegexOptions.Singleline);
-      
-      if (jpgDefault.Success)
+      if (imdbImageScraper.LoadScript())
       {
-        string posterUrl = HttpUtility.HtmlDecode(jpgDefault.Groups["image"].Value);
-        if (!string.IsNullOrEmpty(posterUrl))
-        {
-          _imageList.Add(posterUrl + vdbParserStr[3]);
-          // Remember default PIC, maybe it is in the Product Group so we can escape duplicate
-          defaultPic = posterUrl + vdbParserStr[3];
-        }
+        _imageList = imdbImageScraper.MovieImagesGrabber.GetIMDBImages(imdbID, defaultOnly);
       }
 
-      if (defaultOnly)
-      {
-        return;
-      }
-
-      // Then get all we can from IMDB Product thumbs group for movie
-      string posterPageLinkURL = vdbParserStr[4] + imdbID + vdbParserStr[5];
-      string strBodyThumbs = GetPage(posterPageLinkURL, "utf-8");
-      
-      // Get all thumbs links and put it in the PIC group
-      MatchCollection thumbs = Regex.Matches(strBodyThumbs, vdbParserStr[6]);
-      foreach (Match thumb in thumbs)
-      {
-        // Get picture
-        string posterUrl = HttpUtility.HtmlDecode(thumb.Groups["PIC"].Value) + vdbParserStr[3];
-        
-        // No default Picture again if it's here
-        if (!string.IsNullOrEmpty(posterUrl) && posterUrl != defaultPic)
-        {
-          _imageList.Add(posterUrl);
-        }
-      }
-    }
-    
-    private string[] VdbParserStringIMDBPoster()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("IMDBPoster");
-      return vdbParserStr;
-    }
-    
-    // Get HTML Page
-    private string GetPage(string strURL, string strEncode)
-    {
-      string strBody = "";
-
-      Stream receiveStream = null;
-      StreamReader sr = null;
-      WebResponse result = null;
-      try
-      {
-        // Make the Webrequest
-        //Log.Info("IMDB: get page:{0}", strURL);
-        WebRequest req = WebRequest.Create(strURL);
-        req.Headers.Add("Accept-Language", "en-US");
-        req.Timeout = 20000;
-        result = req.GetResponse();
-        receiveStream = result.GetResponseStream();
-
-        // Encoding: depends on selected page
-        Encoding encode = Encoding.GetEncoding(strEncode);
-        sr = new StreamReader(receiveStream, encode);
-        strBody = sr.ReadToEnd();
-      }
-      catch (Exception)
-      {
-        Log.Info("IMDBSearch: {0} unavailable.", strURL);
-      }
-
-      finally
-      {
-        if (sr != null)
-        {
-          try
-          {
-            sr.Close();
-          }
-          catch (Exception) {}
-        }
-        if (receiveStream != null)
-        {
-          try
-          {
-            receiveStream.Close();
-          }
-          catch (Exception) {}
-        }
-        if (result != null)
-        {
-          try
-          {
-            result.Close();
-          }
-          catch (Exception) {}
-        }
-      }
-      return strBody;
+      imdbImageScraper = null;
     }
   }
 }
