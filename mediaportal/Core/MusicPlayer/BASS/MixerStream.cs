@@ -352,7 +352,7 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Error("BASS: Error attaching Mixing Matrix. {0}", Bass.BASS_ErrorGetCode());
         }
       }
-      
+
       return result;
     }
 
@@ -374,7 +374,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       GCHandle pFilePath = GCHandle.Alloc(stream);
-      
+
       _syncProc = Bass.BASS_ChannelSetSync(_mixer,
         BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME,
         syncPos, _playbackEndProcDelegate,
@@ -684,23 +684,19 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      new Thread(() =>
+      try
       {
-        try
-        {
-          GCHandle gch = GCHandle.FromIntPtr(userData);
-          MusicStream musicstream = (MusicStream)gch.Target;
+        GCHandle gch = GCHandle.FromIntPtr(userData);
+        MusicStream musicstream = (MusicStream)gch.Target;
 
-          Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
+        Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
 
-          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
-        }
-        catch (AccessViolationException)
-        {
-          Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
-        }
+        _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
       }
-      ) { Name = "BASS SongEnd" }.Start();
+      catch (AccessViolationException)
+      {
+        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+      }
     }
 
 
