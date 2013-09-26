@@ -237,8 +237,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
           _wasapiProc = new WASAPIPROC(WasApiCallback);
 
-          int frequency = stream.ChannelInfo.freq;
-          int chans = outputChannels;
           bool wasApiExclusiveSupported = true;
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
@@ -279,7 +277,7 @@ namespace MediaPortal.MusicPlayer.BASS
           }
 
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
-                                      initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
+                                      initFlags, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
 
