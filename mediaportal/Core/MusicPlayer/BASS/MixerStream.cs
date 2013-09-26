@@ -239,6 +239,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
           bool wasApiExclusiveSupported = true;
 
+          // Check if we have an uneven number of channels
+          if (outputChannels%2 == 1)
+          {
+            outputChannels++; // increase the number of output channels
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
+
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (Config.WasApiExclusiveMode)
           {
@@ -249,7 +256,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
             BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_bassPlayer.DeviceNumber,
                                                                                stream.ChannelInfo.freq,
-                                                                               stream.ChannelInfo.chans,
+                                                                               outputChannels,
                                                                                BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
             if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
             {
@@ -276,7 +283,7 @@ namespace MediaPortal.MusicPlayer.BASS
             _wasapiShared = true;
           }
 
-          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
+          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, outputChannels,
                                       initFlags, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
