@@ -13,7 +13,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using System.Collections;
 
-internal class InternalGrabber : IIMDBInternalScriptGrabber
+internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
 
   private string _strBody = string.Empty;
@@ -703,8 +703,20 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
               if (role == string.Empty)
               {
                 movieParser.resetPosition();
-                movieParser.skipToEndOf("<br/>");
-                movieParser.extractTo("</li>", ref role);
+
+                if (movieParser.skipToEndOf("<br/>"))
+                {
+                  movieParser.extractTo("</li>", ref role);
+                }
+                else
+                {
+                  movieParser.resetPosition();
+
+                  if (movieParser.skipToEndOf("</b>"))
+                  {
+                    movieParser.extractTo("</li>", ref role);
+                  }
+                }
                 role = CleanCrlf(role);
               }
             }
@@ -716,37 +728,30 @@ internal class InternalGrabber : IIMDBInternalScriptGrabber
             {
               string wRole = string.Empty;
 
-              if (title != null)
+              // Check for cases like "(movie type)(role)" and use "(role)" only
+              MatchCollection mc = Regex.Matches(title, @"\([^)]+\)");
+
+              if (mc.Count > 0)
               {
-                // Check for cases like "(movie type)(role)" and use "(role)" only
-                MatchCollection mc = Regex.Matches(title, @"\([^)]+\)");
-
-                if (mc.Count > 0)
+                if (mc.Count > 1)
                 {
-                  if (mc.Count > 1)
-                  {
-                    wRole = mc[mc.Count - 1].Value;
-                  }
-                  else
-                  {
-                    wRole = mc[0].Value;
-                  }
+                  wRole = mc[mc.Count - 1].Value;
                 }
                 else
                 {
-                  continue;
+                  wRole = mc[0].Value;
                 }
+              }
 
-                if (!string.IsNullOrEmpty(wRole))
-                {
-                  // Remove parentheses (leave text inside)
-                  wRole = Regex.Replace(wRole, "([(]|[)])", string.Empty);
-                  role = GUILocalizeStrings.Get(200) + " " + wRole;
-                }
-                else
-                {
-                  role = GUILocalizeStrings.Get(200).Replace(":", string.Empty);
-                }
+              if (!string.IsNullOrEmpty(wRole))
+              {
+                // Remove parentheses (leave text inside)
+                wRole = Regex.Replace(wRole, "([(]|[)])", string.Empty);
+                role = GUILocalizeStrings.Get(200) + " " + wRole;
+              }
+              else
+              {
+                role = GUILocalizeStrings.Get(200).Replace(":", string.Empty);
               }
             }
 

@@ -832,13 +832,16 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (imageUrl.Length > 0)
+        if (imageUrl.Length > 7 && (imageUrl.Substring(0, 7).Equals("file://") ||
+                                    imageUrl.Substring(0, 7).Equals("http://")))
         {
           titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
           coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
           largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
           //added by BoelShit
           string largeCoverArtImageConvert = Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
+
+          Log.Debug("GUIVideoInfo: Refresh image: New Image url -> {0}", imageUrl);
 
           if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
@@ -852,7 +855,7 @@ namespace MediaPortal.GUI.Video
               temporaryFilenameLarge += imageExtension;
               Util.Utils.FileDelete(tmpFile);
               Util.Utils.FileDelete(temporaryFilenameLarge);
-              
+
               if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
               {
                 // Local image, don't download, just copy
@@ -861,30 +864,34 @@ namespace MediaPortal.GUI.Video
               }
               else
               {
+                Log.Debug("GUIVideoInfo Refresh image: Downloading image, new Image url -> {0}", imageUrl);
                 Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              
+
               if (File.Exists(temporaryFilename))
-              // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
+                // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
               {
-                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
-                                             (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", coverArtImage);
+                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int) Thumbs.ThumbResolution,
+                  (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
                 if (File.Exists(temporaryFilenameLarge))
-                // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
+                  // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
                 {
                   Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
-                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
-                                               Thumbs.SpeedThumbsLarge); //edited by Boelshit              
+                    (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,
+                    Thumbs.SpeedThumbsLarge); //edited by Boelshit
+                  Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", largeCoverArtImageConvert);
                 }
                 else
                 {
                   Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImageConvert,
-                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
-                                               Thumbs.SpeedThumbsLarge); //edited by Boelshit              
+                    (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,
+                    Thumbs.SpeedThumbsLarge); //edited by Boelshit
+                  Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", largeCoverArtImageConvert);
                 }
               }
-              
+
               Util.Utils.FileDelete(temporaryFilename);
             } //if ( strExtension.Length>0)
             else
@@ -898,15 +905,15 @@ namespace MediaPortal.GUI.Video
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
 
             VideoDatabase.GetFilesForMovie(idMovie, ref movies);
-            
+
             if (movies.Count > 0)
             {
               for (int i = 0; i < movies.Count; i++)
               {
-                string thumbFile = Util.Utils.EncryptLine((string)movies[i]);
+                string thumbFile = Util.Utils.EncryptLine((string) movies[i]);
                 coverArtImage = Util.Utils.GetCoverArtName(Thumbs.Videos, thumbFile);
                 largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.Videos, thumbFile);
-                
+
                 if (Util.Utils.FileExistsInCache(largeCoverArtImage))
                 {
                   _currentMovie.ThumbURL = "file://" + largeCoverArtImage;
@@ -919,11 +926,11 @@ namespace MediaPortal.GUI.Video
 
           if (((Util.Utils.FileExistsInCache(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) ||
               forceFolderThumb)
-          //edited by BoelShit
+            //edited by BoelShit
           {
             // copy icon to folder also;
             string strFolderImage = string.Empty;
-            
+
             if (forceFolderThumb)
             {
               strFolderImage = Path.GetFullPath(_currentMovie.Path);
@@ -937,7 +944,7 @@ namespace MediaPortal.GUI.Video
             try
             {
               Util.Utils.FileDelete(strFolderImage);
-              
+
               if (forceFolderThumb)
               {
                 if (Util.Utils.FileExistsInCache(largeCoverArtImage))
@@ -965,14 +972,19 @@ namespace MediaPortal.GUI.Video
             }
             catch (Exception ex1)
             {
-              Log.Info("GUIVideoInfo: Creating folder thumb {0}", ex1.Message);
+              Log.Info("GUIVideoInfo Refresh image: Creating folder thumb {0}", ex1.Message);
             }
           }
+        }
+        else
+        {
+          Log.Error("GUIVideoInfo Refresh image: New cover image link is not valid -> {0}", imageUrl);
+          return;
         }
       }
       catch (Exception ex2)
       {
-        Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
+        Log.Error("GUIVideoInfo Refresh image: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
       }
       
       ArrayList files = new ArrayList();
@@ -1055,6 +1067,8 @@ namespace MediaPortal.GUI.Video
           GUIVideoFiles.CurrentSelectedGUIItem.ThumbnailImage = newLargeThumb;
         }
       }
+
+      Refresh(false);
     }
 
     private void ResetSpinControl()
@@ -1204,7 +1218,12 @@ namespace MediaPortal.GUI.Video
         
         GUIListItem item = listActors.SelectedListItem;
         item.AlbumInfoTag = _currentMovie;
-        IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        
+        if (Win32API.IsConnectedToInternet())
+        {
+          IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        }
+
         actor = VideoDatabase.GetActorInfo(item.ItemId);
 
         if (actor == null)
@@ -1765,6 +1784,7 @@ namespace MediaPortal.GUI.Video
         {
           thumbUrls[pictureIndex++] = movie.ThumbURL;
         }
+        
         // IMP Award check and add
         if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
         {
@@ -2119,9 +2139,9 @@ namespace MediaPortal.GUI.Video
         listActors.Clear();
       }
 
-      if (imgActorArt != null)
+      if (imgCoverArt != null)
       {
-        imgActorArt.Dispose();
+        imgCoverArt.Dispose();
       }
 
       if (imgActorArt != null)

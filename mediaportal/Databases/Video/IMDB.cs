@@ -229,24 +229,24 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public class InternalMovieInfoScraper
+    public class InternalActorsScriptGrabber
     {
-      private IIMDBInternalScriptGrabber _internalGrabber;
-      private bool _internalGrabberLoaded;
+      private IIMDBInternalActorsScriptGrabber _internalActorsGrabber;
+      private bool _internalActorsGrabberLoaded;
       
-      public IIMDBInternalScriptGrabber InternalGrabber
+      public IIMDBInternalActorsScriptGrabber InternalActorsGrabber
       {
         get
         {
-          if (!_internalGrabberLoaded)
+          if (!_internalActorsGrabberLoaded)
           {
             if (!LoadScript())
-              InternalGrabber = null;
-            _internalGrabberLoaded = true; // only try to load it once
+              InternalActorsGrabber = null;
+            _internalActorsGrabberLoaded = true; // only try to load it once
           }
-          return _internalGrabber;
+          return _internalActorsGrabber;
         }
-        set { _internalGrabber = value; }
+        set { _internalActorsGrabber = value; }
       }
 
       public bool LoadScript()
@@ -264,7 +264,7 @@ namespace MediaPortal.Video.Database
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
           AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
-          InternalGrabber = (IIMDBInternalScriptGrabber)script.CreateObject("InternalGrabber");
+          InternalActorsGrabber = (IIMDBInternalActorsScriptGrabber)script.CreateObject("InternalActorsGrabber");
         }
         catch (Exception ex)
         {
@@ -526,11 +526,11 @@ namespace MediaPortal.Video.Database
     private void FindIMDBActor(string strURL)
     {
       _elements.Clear();
-      InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
+      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
       
       if (internalGrabber.LoadScript())
       {
-        _elements = internalGrabber.InternalGrabber.FindIMDBActor(strURL);
+        _elements = internalGrabber.InternalActorsGrabber.FindIMDBActor(strURL);
       }
 
       internalGrabber = null;
@@ -540,11 +540,11 @@ namespace MediaPortal.Video.Database
     public bool GetActorDetails(IMDBUrl url, out IMDBActor actor)
     {
       actor = new IMDBActor();
-      InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
+      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
       
       if (internalGrabber.LoadScript())
       {
-        if (internalGrabber.InternalGrabber.GetActorDetails(url, out actor))
+        if (internalGrabber.InternalActorsGrabber.GetActorDetails(url, out actor))
         {
 
           // Add filmography
@@ -587,11 +587,11 @@ namespace MediaPortal.Video.Database
         }
       }
 
-      InternalMovieInfoScraper internalGrabber = new IMDB.InternalMovieInfoScraper();
+      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
 
       if (internalGrabber.LoadScript())
       {
-        actorList = internalGrabber.InternalGrabber.GetIMDBMovieActorsList(imdbMovieID, shortActorsListSize);
+        actorList = internalGrabber.InternalActorsGrabber.GetIMDBMovieActorsList(imdbMovieID, shortActorsListSize);
       }
 
       internalGrabber = null;
@@ -616,7 +616,7 @@ namespace MediaPortal.Video.Database
     string GetLanguage();
   }
 
-  public interface IIMDBInternalScriptGrabber
+  public interface IIMDBInternalActorsScriptGrabber
   {
     bool GetPlotImdb(ref IMDBMovie movie);
     string GetThumbImdb(string imdbId);

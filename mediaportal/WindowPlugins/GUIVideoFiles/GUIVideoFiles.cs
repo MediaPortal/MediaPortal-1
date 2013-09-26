@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Video
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
     
-    private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
+    private static IMDB.InternalActorsScriptGrabber _internalGrabber = new IMDB.InternalActorsScriptGrabber();
 
     #endregion
 
@@ -2435,7 +2435,7 @@ namespace MediaPortal.GUI.Video
       progressDialog.ShowProgressBar(true);
       progressDialog.SetLine(1, GUILocalizeStrings.Get(300031));
       progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
-      progressDialog.SetPercentage(50);
+      progressDialog.SetPercentage(25);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
       if (internalScript)
@@ -2444,13 +2444,15 @@ namespace MediaPortal.GUI.Video
         string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
         string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
         string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+        string internalMovieImagesGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalMovieImagesGrabber.csscript");
+        string internalMovieImagesGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalMovieImagesGrabber.csscript";
 
         // VDB parser update
         progressDialog.SetHeading(GUILocalizeStrings.Get(1316)); // Updating internal scripts...
         progressDialog.ShowProgressBar(true);
         progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));// Downloading internal scripts...
         progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
-        progressDialog.SetPercentage(75);
+        progressDialog.SetPercentage(50);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
         if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
@@ -2459,7 +2461,21 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        // Internal grabber script update
+        // Internal actors grabber script update
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
+        progressDialog.ShowProgressBar(true);
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032));
+        progressDialog.SetPercentage(75);
+        progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
+        {
+          progressDialog.Close();
+          return;
+        }
+
+        // Internal images grabber script update
         progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
         progressDialog.ShowProgressBar(true);
         progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
@@ -2467,7 +2483,7 @@ namespace MediaPortal.GUI.Video
         progressDialog.SetPercentage(100);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
-        if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
+        if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
         {
           progressDialog.Close();
           return;
@@ -2725,7 +2741,7 @@ namespace MediaPortal.GUI.Video
       _virtualDirectory.SetExtensions(extensions);
     }
 
-    public static IMDB.InternalMovieInfoScraper InternalGrabber
+    public static IMDB.InternalActorsScriptGrabber InternalGrabber
     {
       get { return _internalGrabber; }
     }

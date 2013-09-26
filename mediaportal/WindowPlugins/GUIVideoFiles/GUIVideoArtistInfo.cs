@@ -1086,8 +1086,8 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         
         movie.IMDBNumber = ListItemMovieInfo(item).MovieImdbID;
-        
-        if(!GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie))
+
+        if (!GUIVideoFiles.InternalGrabber.InternalActorsGrabber.GetPlotImdb(ref movie))
         {
           return string.Empty;
         }
@@ -1160,7 +1160,7 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
-        string thumb = GUIVideoFiles.InternalGrabber.InternalGrabber.GetThumbImdb(ListItemMovieInfo(item).MovieImdbID);
+        string thumb = GUIVideoFiles.InternalGrabber.InternalActorsGrabber.GetThumbImdb(ListItemMovieInfo(item).MovieImdbID);
         return thumb;
       }
       catch (ThreadAbortException)

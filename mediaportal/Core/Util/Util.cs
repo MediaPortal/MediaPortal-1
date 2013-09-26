@@ -2399,7 +2399,7 @@ namespace MediaPortal.Util
       try
       {
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 5000;
+        wr.Timeout = 20000;
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.

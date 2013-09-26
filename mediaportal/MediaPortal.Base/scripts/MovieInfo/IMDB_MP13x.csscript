@@ -240,7 +240,7 @@ internal class Grabber : IIMDBScriptGrabber
         movieDetails.ThumbURL = SearchCover(movieDetails.IMDBNumber, strBody);
 
         // Title
-        string engTitleBodyUrl = url.URL + @"releaseinfo?ref_=tt_dt_dt#akas";
+        string engTitleBodyUrl = url.URL + "combined";//@"releaseinfo?ref_=tt_dt_dt#akas";
         string engNamePage = GetPage(engTitleBodyUrl, "utf-8", out strAbsUrl);
         regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
         string titleIMDB = Regex.Match(engNamePage, regexPattern).Groups["movieTitle"].Value.Replace("IMDb -", string.Empty);
