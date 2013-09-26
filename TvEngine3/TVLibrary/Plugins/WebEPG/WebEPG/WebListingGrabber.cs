@@ -153,6 +153,10 @@ namespace MediaPortal.WebEPG
           _parser = new XmlParser(_grabber.Listing.XmlTemplate);
           break;
 
+        case ListingInfo.Type.JSON:
+          _parser = new JSONParser(_grabber.Listing.JSONTemplate);
+          break;
+
         case ListingInfo.Type.Data:
 
           if (_grabber.Listing.DataTemplate.Template == null)
