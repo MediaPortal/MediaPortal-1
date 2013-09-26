@@ -96,8 +96,10 @@ namespace MediaPortal.WebEPG
 
         XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
 
-        TextReader r = new StreamReader(_strBaseDir + File);
-        _grabber = (GrabberConfigFile)s.Deserialize(r);
+        using (TextReader r = new StreamReader(_strBaseDir + File))
+        {
+          _grabber = (GrabberConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException ex)
       {
