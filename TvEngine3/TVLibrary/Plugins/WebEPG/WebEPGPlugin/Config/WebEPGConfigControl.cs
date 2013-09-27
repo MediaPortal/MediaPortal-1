@@ -563,9 +563,9 @@ namespace SetupTv.Sections
             grabberXml = (GrabberConfigFile)s.Deserialize(r);
           }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          Log.Info("WebEPG Config: File open failed - XML error");
+          Log.Info("WebEPG Config: File open failed - XML error: " + e.ToString());
           return;
         }
 
