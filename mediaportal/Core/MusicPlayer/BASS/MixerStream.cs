@@ -240,8 +240,10 @@ namespace MediaPortal.MusicPlayer.BASS
           bool wasApiExclusiveSupported = true;
 
           // Check if we have an uneven number of channels
-          if (outputChannels%2 == 1)
+          var chkChannels = outputChannels%2;
+          if (chkChannels == 1)
           {
+            Log.Warn("BASS: Found uneven number of channels {0}. increase output channels.", outputChannels);
             outputChannels++; // increase the number of output channels
             wasApiExclusiveSupported = false; // And indicate that we need a new mixer
           }
