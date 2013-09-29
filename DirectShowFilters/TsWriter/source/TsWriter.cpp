@@ -99,9 +99,11 @@ WORD logFileDate = -1;
 CMpTs* instanceID = 0;
 
 CCritSec m_qLock;
+CCritSec m_logLock;
 CCritSec m_logFileLock;
 std::queue<std::wstring> m_logQueue;
 BOOL m_bLoggerRunning = false;
+BOOL m_bLoggerStopped = false;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
@@ -233,11 +235,13 @@ void StopLogger()
 {
   if (m_hLogger)
   {
+    CAutoLock logLock(&m_logLock);
     m_bLoggerRunning = FALSE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
     m_hLogger = NULL;
+    m_bLoggerStopped = true;
     logFileParsed = -1;
     logFileDate = -1;
     instanceID = 0;
@@ -247,17 +251,19 @@ void StopLogger()
 
 void LogDebug(const wchar_t *fmt, ...) 
 {
-  static CCritSec lock;
-  va_list ap;
-  va_start(ap,fmt);
-
-  CAutoLock logLock(&lock);
+  CAutoLock logLock(&m_logLock);
+  if (m_bLoggerStopped)
+  {
+    return;
+  }
   if (!m_hLogger) {
     m_bLoggerRunning = true;
     StartLogger();
   }
+
   wchar_t buffer[2000]; 
   int tmp;
+  va_list ap;
   va_start(ap,fmt);
   tmp = vswprintf_s(buffer, fmt, ap);
   va_end(ap); 
@@ -284,8 +290,6 @@ void LogDebug(const char *fmt, ...)
   wchar_t logbufferw[2000];
 
 	va_list ap;
-	va_start(ap,fmt);
-
 	va_start(ap,fmt);
 	vsprintf_s(logbuffer, fmt, ap);
 	va_end(ap); 
@@ -628,6 +632,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
 // Destructor
 CMpTs::~CMpTs()
 {
+  LogDebug("CMpTs::dtor() ");
   delete m_pPin;
   delete m_pOobSiPin;
   delete m_pFilter;
