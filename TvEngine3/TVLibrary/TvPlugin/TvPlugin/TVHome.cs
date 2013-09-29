@@ -334,9 +334,6 @@ namespace TvPlugin
 
       GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 
-      // replace g_player's ShowFullScreenWindowTV
-      g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
-
       // Delete tv thumbs from local thumbs folder and file existence cache
       Log.Debug("TVHome.OnAdded: Delete thumb files in {0}", Thumbs.TVRecorded);
       try
@@ -2112,63 +2109,6 @@ namespace TvPlugin
       GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
     }
 
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowTV
-    /// </summary>
-    /// <returns></returns>
-    private static bool ShowFullScreenWindowTVHandler()
-    {
-      if ((g_Player.IsTV && Card.IsTimeShifting) || g_Player.IsTVRecording)
-      {
-        //push chapter and jumppoint information into the gui property manager
-        if (g_Player.IsTVRecording && g_Player.HasChapters)
-        {
-          double[] chapters = g_Player.Chapters;
-          double[] jumppoints = g_Player.JumpPoints;
-          
-          string strChapters = string.Empty;
-          string strJumpPoints = string.Empty;
-          
-          double duration = g_Player.Duration;
-          if (chapters != null)
-          {
-            foreach(double chapter in chapters)
-            {
-              double chapterPercent = chapter/duration*100.0d;
-              strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-            }
-          }
-          if (jumppoints != null)
-          {
-            foreach (double jump in jumppoints)
-            {
-              double jumpPercent = jump/duration*100.0d;
-              strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
-            }
-          }
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", strChapters);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", strJumpPoints);
-          Log.Debug("TVHome.ShowFullScreenWindowTVHandler - setting chapters: " + strChapters);
-          Log.Debug("TVHome.ShowFUllScreenWindowTVHandler - setting jumppoints: " + strJumpPoints);
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
-        }
-        // watching TV
-        if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
-        {
-          return true;
-        }
-        Log.Info("TVHome: ShowFullScreenWindow switching to fullscreen tv");
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVFULLSCREEN);
-        GUIGraphicsContext.IsFullScreenVideo = true;
-        return true;
-      }
-      return g_Player.ShowFullScreenWindowTVDefault();
-    }
-
     public static void UpdateTimeShift() { }
 
     private void OnActiveRecordings()
@@ -2654,9 +2594,6 @@ namespace TvPlugin
           percentLivePoint *= 100.0d;
           GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
           GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
-        
-          GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-          GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
         }
       }
 
@@ -2688,8 +2625,6 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
       GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
       GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.chapters", string.Empty);
-      GUIPropertyManager.SetProperty("#TV.Record.jumppoints", string.Empty);
     }
 
     private static void UpdateNextEpgProperties(Channel ch)

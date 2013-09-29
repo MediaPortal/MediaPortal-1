@@ -231,9 +231,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
 
-      // replace g_player's ShowFullScreenWindowVideoDefault()
-      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler;
-
       LoadSettings();
     }
 
@@ -4228,66 +4225,6 @@ namespace MediaPortal.GUI.Video
         facadeLayout.Clear();
       }
     }
-
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowVideoDefault()
-    /// </summary>
-    /// <returns></returns>
-    private static bool ShowFullScreenWindowVideoHandler()
-    {
-      if (g_Player.HasVideo && g_Player.HasChapters)
-      {
-        // Take chapter and jumppoint information to set the optical timeline markers
-        double[] jumppoints = g_Player.JumpPoints;
-        double[] chapters = g_Player.Chapters;
-        double duration = g_Player.Duration;
-
-        string strJumpPoints = string.Empty;
-        string strChapters = string.Empty;
-
-        if (jumppoints != null)
-        {
-          // Set the marker start to indicate the start of commercials
-          foreach (double jump in jumppoints)
-          {
-            double jumpPercent = jump / duration * 100.0d;
-            strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
-          }
-          // Set the marker end to indicate the end of commercials
-          foreach (double chapter in chapters)
-          {
-            double chapterPercent = chapter / duration * 100.0d;
-            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-          }
-        }
-        else
-        {
-          // Set a fixed size marker at the start of each chapter
-          double markerWidth = 0.7d;
-          foreach (double chapter in chapters)
-          {
-            double chapterPercent = chapter / duration * 100.0d;
-            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-            chapterPercent = (chapterPercent >= markerWidth) ? chapterPercent - markerWidth : 0.0d;
-            strJumpPoints += String.Format("{0:0.00}", chapterPercent) + " ";
-          }
-        }
-    
-        // Set chapters and jumppoints GUI properties
-        GUIPropertyManager.SetProperty("#chapters", strChapters);
-        GUIPropertyManager.SetProperty("#jumppoints", strJumpPoints);
-        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting chapters: " + strChapters);
-        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting jumppoints: " + strJumpPoints);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#chapters", string.Empty);
-        GUIPropertyManager.SetProperty("#jumppoints", string.Empty);
-      }
-
-      // Continue with the default handler
-      return g_Player.ShowFullScreenWindowVideoDefault();
-    }  
 
     #endregion
 

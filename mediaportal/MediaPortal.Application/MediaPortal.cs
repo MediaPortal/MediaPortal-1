@@ -3021,12 +3021,51 @@ public class MediaPortalApp : D3D, IRender
         GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
         double percent = 100 * g_Player.CurrentPosition / g_Player.Duration;
         GUIPropertyManager.SetProperty("#percentage", percent.ToString(CultureInfo.CurrentCulture));
+
+        // Set comskip or chapter markers
+        string strJumpPoints = string.Empty;
+        string strChapters = string.Empty;
+        if (((g_Player.IsTV && g_Player.IsTVRecording) || g_Player.HasVideo) && g_Player.HasChapters)
+        {
+          if (g_Player.JumpPoints != null)
+          {
+            // Set the marker start to indicate the start of commercials
+            foreach (double jump in g_Player.JumpPoints)
+            {
+              double jumpPercent = jump / g_Player.Duration * 100.0d;
+              strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
+            }
+            // Set the marker end to indicate the end of commercials
+            foreach (double chapter in g_Player.Chapters)
+            {
+              double chapterPercent = chapter / g_Player.Duration * 100.0d;
+              strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+            }
+          }
+          else
+          {
+            // Set a fixed size marker at the start of each chapter
+            double markerWidth = 0.7d;
+            foreach (double chapter in g_Player.Chapters)
+            {
+              double chapterPercent = chapter / g_Player.Duration * 100.0d;
+              strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
+              chapterPercent = (chapterPercent >= markerWidth) ? chapterPercent - markerWidth : 0.0d;
+              strJumpPoints += String.Format("{0:0.00}", chapterPercent) + " ";
+            }
+          }
+        }
+        GUIPropertyManager.SetProperty("#chapters", strChapters);
+        GUIPropertyManager.SetProperty("#jumppoints", strJumpPoints);
       }
       else
       {
         GUIPropertyManager.SetProperty("#duration", string.Empty);
         GUIPropertyManager.SetProperty("#shortduration", string.Empty);
         GUIPropertyManager.SetProperty("#percentage", "0,0");
+
+        GUIPropertyManager.SetProperty("#chapters", string.Empty);
+        GUIPropertyManager.SetProperty("#jumppoints", string.Empty);
       }
 
       GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString(CultureInfo.InvariantCulture));
