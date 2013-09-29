@@ -2055,7 +2055,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
-        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0, BASSMode.BASS_POS_BYTES); // reset the mixer
         _mixer.SetSyncPos(stream, newPos);
       }
       catch
@@ -2100,7 +2100,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, newPos));
-        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+        Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0, BASSMode.BASS_POS_BYTES); // reset the mixer
         _mixer.SetSyncPos(stream, newPos);
       }
 
@@ -2134,9 +2134,22 @@ namespace MediaPortal.MusicPlayer.BASS
             position += (int)_cueTrackStartPos;
           }
 
-          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position)); 
-          Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0); // reset the mixer
+          bool isWASAPI = false;
+          // For WASAPI output we need to Stop / Start for skipping to work
+          if (BassWasapi.BASS_WASAPI_IsStarted())
+          {
+            isWASAPI = true;
+            BassWasapi.BASS_WASAPI_Stop(true);
+          }
+          
+          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
+          Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0, BASSMode.BASS_POS_BYTES); // reset the mixer
           _mixer.SetSyncPos(stream, position);
+          
+          if (isWASAPI)
+          {
+            BassWasapi.BASS_WASAPI_Start();
+          }
         }
       }
 
