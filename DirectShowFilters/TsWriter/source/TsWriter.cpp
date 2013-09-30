@@ -595,7 +595,7 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *pHr)
   LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
   LogDebug("===================================================================");
   LogDebug("---------------------- v%d.%d.%d.0 --------------------------------", TSWRITER_MAJOR_VERSION,TSWRITER_MID_VERSION,TSWRITER_VERSION);
-  LogDebug("--- with async logging, v4 deadlock mods and 0x46 scan fix --------");
+  LogDebug("-- async logging, v4 deadlock, 0x46 scan, packetSync and PCR_hunt_v3 mods --");
   LogDebug(" ");  
 		
   b_dumpRawPackets = false;
