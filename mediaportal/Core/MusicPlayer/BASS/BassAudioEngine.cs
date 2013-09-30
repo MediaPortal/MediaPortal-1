@@ -1107,6 +1107,13 @@ namespace MediaPortal.MusicPlayer.BASS
         VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
                                               vizPreset);
 
+        if (vizType == (int)VisualizationInfo.PluginType.Sonique)
+        {
+          VizPluginInfo.UseOpenGL = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+          VizPluginInfo.RenderTiming = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+          VizPluginInfo.ViewPortSize = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+        }
+
         VizFPS = xmlreader.GetValueAsInt("musicvisualization", "fps", 30);
       }
     }

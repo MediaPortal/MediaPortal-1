@@ -134,6 +134,12 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxSoniqueVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label6 = new System.Windows.Forms.Label();
+      this.soniqueRenderTiming = new System.Windows.Forms.TrackBar();
+      this.label3 = new System.Windows.Forms.Label();
+      this.comboViewPortSizes = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.ckUseOpenGL = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -147,6 +153,7 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
+      this.soniqueRenderTimingLbl = new System.Windows.Forms.Label();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.tabControlPlayerSettings.SuspendLayout();
@@ -171,6 +178,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.SuspendLayout();
       this.VisualizationsTabPg.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
+      this.groupBoxSoniqueVis.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).BeginInit();
       this.groupBoxWinampVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
       this.SuspendLayout();
@@ -1139,6 +1148,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
+      this.mpGroupBox3.Controls.Add(this.groupBoxSoniqueVis);
       this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
       this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
       this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
@@ -1157,6 +1167,84 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.TabStop = false;
       this.mpGroupBox3.Text = "Visualization settings";
       // 
+      // groupBoxSoniqueVis
+      // 
+      this.groupBoxSoniqueVis.Controls.Add(this.soniqueRenderTimingLbl);
+      this.groupBoxSoniqueVis.Controls.Add(this.label6);
+      this.groupBoxSoniqueVis.Controls.Add(this.soniqueRenderTiming);
+      this.groupBoxSoniqueVis.Controls.Add(this.label3);
+      this.groupBoxSoniqueVis.Controls.Add(this.comboViewPortSizes);
+      this.groupBoxSoniqueVis.Controls.Add(this.ckUseOpenGL);
+      this.groupBoxSoniqueVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSoniqueVis.Location = new System.Drawing.Point(91, 86);
+      this.groupBoxSoniqueVis.Name = "groupBoxSoniqueVis";
+      this.groupBoxSoniqueVis.Size = new System.Drawing.Size(322, 144);
+      this.groupBoxSoniqueVis.TabIndex = 12;
+      this.groupBoxSoniqueVis.TabStop = false;
+      this.groupBoxSoniqueVis.Text = "Sonique Vis";
+      this.groupBoxSoniqueVis.Visible = false;
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(3, 59);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(81, 13);
+      this.label6.TabIndex = 9;
+      this.label6.Text = "Render Timimg:";
+      // 
+      // soniqueRenderTiming
+      // 
+      this.soniqueRenderTiming.LargeChange = 10;
+      this.soniqueRenderTiming.Location = new System.Drawing.Point(86, 44);
+      this.soniqueRenderTiming.Margin = new System.Windows.Forms.Padding(1);
+      this.soniqueRenderTiming.Maximum = 50;
+      this.soniqueRenderTiming.Minimum = 10;
+      this.soniqueRenderTiming.Name = "soniqueRenderTiming";
+      this.soniqueRenderTiming.Size = new System.Drawing.Size(188, 45);
+      this.soniqueRenderTiming.SmallChange = 5;
+      this.soniqueRenderTiming.TabIndex = 8;
+      this.soniqueRenderTiming.TickFrequency = 5;
+      this.soniqueRenderTiming.TickStyle = System.Windows.Forms.TickStyle.Both;
+      this.soniqueRenderTiming.Value = 25;
+      this.soniqueRenderTiming.Scroll += new System.EventHandler(this.soniqueRenderTiming_Scroll);
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(3, 112);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(75, 13);
+      this.label3.TabIndex = 7;
+      this.label3.Text = "ViewPort Size:";
+      // 
+      // comboViewPortSizes
+      // 
+      this.comboViewPortSizes.BorderColor = System.Drawing.Color.Empty;
+      this.comboViewPortSizes.FormattingEnabled = true;
+      this.comboViewPortSizes.Items.AddRange(new object[] {
+            "512X384",
+            "600X480",
+            "800X600",
+            "1024x786"});
+      this.comboViewPortSizes.Location = new System.Drawing.Point(86, 106);
+      this.comboViewPortSizes.Name = "comboViewPortSizes";
+      this.comboViewPortSizes.Size = new System.Drawing.Size(188, 21);
+      this.comboViewPortSizes.TabIndex = 1;
+      // 
+      // ckUseOpenGL
+      // 
+      this.ckUseOpenGL.AutoSize = true;
+      this.ckUseOpenGL.Checked = true;
+      this.ckUseOpenGL.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.ckUseOpenGL.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ckUseOpenGL.Location = new System.Drawing.Point(6, 20);
+      this.ckUseOpenGL.Name = "ckUseOpenGL";
+      this.ckUseOpenGL.Size = new System.Drawing.Size(157, 17);
+      this.ckUseOpenGL.TabIndex = 0;
+      this.ckUseOpenGL.Text = "Use OpenGL instead of GDI";
+      this.ckUseOpenGL.UseVisualStyleBackColor = true;
+      // 
       // groupBoxWinampVis
       // 
       this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
@@ -1167,6 +1255,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxWinampVis.TabIndex = 11;
       this.groupBoxWinampVis.TabStop = false;
       this.groupBoxWinampVis.Text = "Winamp Vis.";
+      this.groupBoxWinampVis.Visible = false;
       // 
       // btWinampConfig
       // 
@@ -1182,7 +1271,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.EnableStatusOverlaysChkBox.AutoSize = true;
       this.EnableStatusOverlaysChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 246);
+      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 281);
       this.EnableStatusOverlaysChkBox.Name = "EnableStatusOverlaysChkBox";
       this.EnableStatusOverlaysChkBox.Size = new System.Drawing.Size(299, 17);
       this.EnableStatusOverlaysChkBox.TabIndex = 9;
@@ -1194,7 +1283,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.ShowTrackInfoChkBox.AutoSize = true;
       this.ShowTrackInfoChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 267);
+      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 302);
       this.ShowTrackInfoChkBox.Name = "ShowTrackInfoChkBox";
       this.ShowTrackInfoChkBox.Size = new System.Drawing.Size(178, 17);
       this.ShowTrackInfoChkBox.TabIndex = 10;
@@ -1242,7 +1331,7 @@ namespace MediaPortal.Configuration.Sections
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(149, 220);
+      this.label7.Location = new System.Drawing.Point(149, 255);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(166, 13);
       this.label7.TabIndex = 8;
@@ -1251,7 +1340,7 @@ namespace MediaPortal.Configuration.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(21, 220);
+      this.label5.Location = new System.Drawing.Point(21, 255);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(64, 13);
       this.label5.TabIndex = 6;
@@ -1259,7 +1348,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // VisualizationFpsNud
       // 
-      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 218);
+      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 253);
       this.VisualizationFpsNud.Maximum = new decimal(new int[] {
             50,
             0,
@@ -1296,6 +1385,15 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.TabIndex = 6;
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
+      // 
+      // soniqueRenderTimingLbl
+      // 
+      this.soniqueRenderTimingLbl.AutoSize = true;
+      this.soniqueRenderTimingLbl.Location = new System.Drawing.Point(278, 59);
+      this.soniqueRenderTimingLbl.Name = "soniqueRenderTimingLbl";
+      this.soniqueRenderTimingLbl.Size = new System.Drawing.Size(29, 13);
+      this.soniqueRenderTimingLbl.TabIndex = 10;
+      this.soniqueRenderTimingLbl.Text = "0 ms";
       // 
       // Music
       // 
@@ -1339,6 +1437,9 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationsTabPg.ResumeLayout(false);
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
+      this.groupBoxSoniqueVis.ResumeLayout(false);
+      this.groupBoxSoniqueVis.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.soniqueRenderTiming)).EndInit();
       this.groupBoxWinampVis.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
       this.ResumeLayout(false);
@@ -1447,5 +1548,12 @@ namespace MediaPortal.Configuration.Sections
     private MPComboBox WasApiSpeakersCombo;
     private MPLabel mpLabel14;
     private MPLabel mpLabel15;
+    private MPGroupBox groupBoxSoniqueVis;
+    private Label label3;
+    private MPComboBox comboViewPortSizes;
+    private MPCheckBox ckUseOpenGL;
+    private Label label6;
+    private TrackBar soniqueRenderTiming;
+    private Label soniqueRenderTimingLbl;
   }
 }

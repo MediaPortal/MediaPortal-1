@@ -63,6 +63,9 @@ namespace MediaPortal.Visualization
     private bool _IsCOMPlugin = false;
     private bool _IsDummyPlugin = false;
     private bool _IsBlackListed = false;
+    private bool _useOpenGL = false;
+    private int _renderTiming = 0;
+    private int _viewPortSize = 0;
 
     public PluginType VisualizationType
     {
@@ -146,6 +149,70 @@ namespace MediaPortal.Visualization
     {
       get { return _IsBlackListed; }
       set { _IsBlackListed = value; }
+    }
+
+    public bool UseOpenGL
+    {
+      get { return _useOpenGL; }
+      set { _useOpenGL = value; }
+    }
+
+    public int RenderTiming
+    {
+      get { return _renderTiming; }
+      set { _renderTiming = value; }
+    }
+
+    public int ViewPortSize
+    {
+      get { return _viewPortSize; }
+      set { _viewPortSize = value; }
+    }
+
+    public int ViewPortSizeX
+    {
+      get
+      {
+        switch (_viewPortSize)
+        {
+          case 0:
+            return 512;
+
+          case 1:
+            return 600;
+
+          case 2:
+            return 800;
+
+          case 3:
+            return 1024;
+        }
+
+        return 512;
+      }
+    }
+
+    public int ViewPortSizeY
+    {
+      get
+      {
+        switch (_viewPortSize)
+        {
+          case 0:
+            return 384;
+
+          case 1:
+            return 480;
+
+          case 2:
+            return 600;
+
+          case 3:
+            return 786;
+        }
+
+        return 384;
+      }
     }
 
     public VisualizationInfo(PluginType vizType, string path, string name, string clsid, List<string> presets)

@@ -289,9 +289,9 @@ namespace MediaPortal.Visualization
         visExec.SON_ParentHandle = VisualizationWindow.Handle;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
-        visExec.SON_UseOpenGL = true;
-        visExec.SON_ViewportWidth = 800;
-        visExec.SON_ViewportHeight = 600;
+        visExec.SON_UseOpenGL = VizPluginInfo.UseOpenGL;
+        visExec.SON_ViewportWidth = VizPluginInfo.ViewPortSizeX;
+        visExec.SON_ViewportHeight = VizPluginInfo.ViewPortSizeY;
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
@@ -301,7 +301,7 @@ namespace MediaPortal.Visualization
           // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
           BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
           // Config Settings
-          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_RENDERTIMING, 25);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_RENDERTIMING, VizPluginInfo.RenderTiming);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_USESLOWFADE, 1);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 5);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
