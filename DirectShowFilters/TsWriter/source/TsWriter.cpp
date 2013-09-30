@@ -103,7 +103,6 @@ CCritSec m_logLock;
 CCritSec m_logFileLock;
 std::queue<std::wstring> m_logQueue;
 BOOL m_bLoggerRunning = false;
-BOOL m_bLoggerStopped = false;
 HANDLE m_hLogger = NULL;
 CAMEvent m_EndLoggingEvent;
 
@@ -233,15 +232,14 @@ void StartLogger()
 
 void StopLogger()
 {
+  CAutoLock logLock(&m_logLock);
   if (m_hLogger)
   {
-    CAutoLock logLock(&m_logLock);
     m_bLoggerRunning = FALSE;
     m_EndLoggingEvent.Set();
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
     m_hLogger = NULL;
-    m_bLoggerStopped = true;
     logFileParsed = -1;
     logFileDate = -1;
     instanceID = 0;
@@ -252,10 +250,7 @@ void StopLogger()
 void LogDebug(const wchar_t *fmt, ...) 
 {
   CAutoLock logLock(&m_logLock);
-  if (m_bLoggerStopped)
-  {
-    return;
-  }
+  
   if (!m_hLogger) {
     m_bLoggerRunning = true;
     StartLogger();
