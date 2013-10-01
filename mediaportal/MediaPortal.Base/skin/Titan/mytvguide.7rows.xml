@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
-  
 	<control>
 		<description>BG</description>
 		<type>image</type>
@@ -11,7 +10,6 @@
 		<texture>background.png</texture>
     <shouldCache>true</shouldCache>
 	</control>
-
   <control>
   	<description>VIEWPORT</description>
     <type>image</type>
@@ -23,7 +21,6 @@
     <texture>panel_tv_guide.png</texture>
     <shouldCache>true</shouldCache>
   </control>
-	
   <control>
  		<description>Description BG</description>
     <type>image</type>
@@ -34,7 +31,6 @@
     <height>329</height>
     <texture>tv_guide_description_bg.png</texture>
   </control>
-	
   <control>
   	<description>TVGUIDE Panel</description>
     <type>image</type>
@@ -47,7 +43,6 @@
     <texture>-</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
-	
 	<control>
 		<description>Single Channel Label</description>
 	  <type>label</type>
@@ -59,7 +54,6 @@
 	  <textcolor>6aa5cb</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>Single Channel Image</description>
 		<type>image</type>
@@ -72,10 +66,8 @@
 		<zoom>no</zoom>
 		<texture>defaultTVBig.png</texture>
 	</control>
-	
-    <!-- Timeheader background must be dedfined before Timeheader label template -->
-    <!-- b/c Timeheader is on the background and will be rendered first -->
-	
+  <!-- Timeheader background must be dedfined before Timeheader label template -->
+  <!-- b/c Timeheader is on the background and will be rendered first -->
 	<control>
 		<description>time header background image template</description>
 		<type>image</type>
@@ -86,7 +78,6 @@
 		<height>37</height>
 		<texture>-</texture>
 	</control>
-	
 	<control>
 		<description>time header label template</description>
 		<type>label</type>
@@ -96,7 +87,6 @@
 		<font>TitanLight12</font>
     <textcolor>ff000000</textcolor>
 	</control>
-
 	<control>
 		<description>day spin control</description>
 		<type>spincontrol</type>
@@ -117,7 +107,6 @@
 		<textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
 		<textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
 	</control>
-	
 	<control>
 		<description>time interval spin control</description>
 		<type>spincontrol</type>
@@ -136,7 +125,6 @@
 		<onleft>6</onleft>
 		<onright>8</onright>
 	</control>
-	
   <control>
 		<description>Channel template</description>
 		<type>image</type>
@@ -147,7 +135,6 @@
 		<height>67</height>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
-	
   <control>
 		<description>Channel image template</description>
 		<type>image</type>
@@ -161,7 +148,6 @@
 		<keepaspectratio>yes</keepaspectratio>
 		<texture>defaultTVBig.png</texture>
   </control>
-	
   <control>
 		<description>channel Label template</description>
 		<type>label</type>
@@ -174,7 +160,6 @@
 		<textcolor>FFFFFFFF</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
-	
 	<control>
 		<description>Current program title</description>
 		<type>fadelabel</type>
@@ -187,26 +172,24 @@
  		<textcolor>ffffff</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>Current program time</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>14</id>
 		<posX>439</posX>
 		<posY>254</posY>
-		<width>850</width>
+		<width>420</width>
 		<label>#TV.Guide.Time #TV.Guide.ChannelName</label>
 		<font>TitanLight12</font>
  		<textcolor>ffffff</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>Description1</description>
 		<type>textboxscrollup</type>
 		<id>15</id>
 		<posX>880</posX>
-		<posY>253</posY>
+		<posY>252</posY>
 		<width>925</width>
 		<height>110</height>
 		<font>TitanLight12</font>
@@ -214,7 +197,6 @@
  		<textcolor>ffffff</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<id>0</id>
 		<type>image</type>
@@ -225,7 +207,6 @@
 		<texture>#TV.Guide.thumb</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
   	<description>template for program title dark area</description>
     <type>label</type>
@@ -238,7 +219,6 @@
     <textcolor>FFFFFFFF</textcolor>
     <animation effect="fade" time="250">WindowOpen</animation>
   </control>
-
 	<control>
 		<description>template for program title light area</description>
 		<type>label</type>
@@ -251,7 +231,6 @@
 		<posY>14</posY>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>vertical timeline</description>
 		<type>image</type>
@@ -263,7 +242,6 @@
 		<texture>tvguide_slider.png</texture>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-
 	<control>
 		<description>Horizontal scrollbar</description>
 		<type>hscrollbar</type>
@@ -275,7 +253,6 @@
 		<visible>no</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>Vertical scrollbar</description>
 		<type>vscrollbar</type>
@@ -287,7 +264,6 @@
 		<visible>no</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-
 	<control>
 		<description>record pin</description>
 		<type>image</type>
@@ -298,7 +274,6 @@
 		<visible>no</visible>
     <animation effect="fade" time="250">WindowOpen</animation>
 	</control>
-	
 	<control>
 		<description>TvGroup button</description>
 		<type>button3part</type>
@@ -320,7 +295,6 @@
 		<textureIcon>-</textureIcon>
 		<textureIcon2>-</textureIcon2>
 	</control>
-        	
 	<control>
 		<description>TvGroup button label</description>
 		<type>label</type>
@@ -334,7 +308,6 @@
 		<animation effect="rotate" end="90" time="0">WindowOpen</animation>
 		<animation effect="rotate" end="90" time="0">WindowClose</animation>
 	</control>
-
   <control>
   	<description>Template for genre key color</description>
     <type>image</type>
@@ -346,7 +319,6 @@
     <texture overlay="tvguide_button_middle_colorize_overlay.png">tvguide_button_middle_colorize.png</texture>
   	<visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
   </control>
-
   <control>
   	<description>Template for genre key name</description>
     <type>fadelabel</type>
@@ -356,30 +328,27 @@
     <font>font10</font>
     <visible>skin.hassetting(#skin.tvguide.showgenrekey) + skin.hassetting(#skin.tvguide.usecolorsforgenre)</visible>
   </control>
-	
-    <control>
-      <id>0</id>
-      <type>image</type>
-	    <posX>79</posX>
-	    <posY>201</posY>
-      <width>344</width>
-      <height>198</height>
-      <texture>tvguide_thumb_shadow.png</texture>
-		  <visible>player.hasvideo</visible>
-    </control>
-    
-    <control>
-		  <description>video preview window</description>
-		  <type>videowindow</type>
-		  <id>99</id>
-		  <posX>82</posX>
-		  <posY>204</posY>
-		  <width>336</width>
-		  <height>190</height>
-		  <action>18</action>
-		  <textureFocus>tv_green_border.png</textureFocus>
-		  <visible>player.hasvideo</visible>
+  <control>
+		<id>0</id>
+    <type>image</type>
+	  <posX>79</posX>
+	  <posY>201</posY>
+    <width>344</width>
+    <height>198</height>
+		<texture>tvguide_thumb_shadow.png</texture>
+		<visible>player.hasvideo</visible>
+  </control>  
+  <control>
+	  <description>video preview window</description>
+		<type>videowindow</type>
+		<id>99</id>
+		<posX>82</posX>
+		<posY>204</posY>
+		<width>336</width>
+		<height>190</height>
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus>
+		<visible>player.hasvideo</visible>
 	</control>
-	
 </controls>
 </window>

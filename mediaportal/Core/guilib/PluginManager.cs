@@ -660,6 +660,17 @@ namespace MediaPortal.GUI.Library
                         MPSettings.Instance.SetValueAsBool("myplugins", setup.PluginName(), true);
                         MPSettings.Instance.SetValueAsBool("pluginswindows", t.ToString(), true);
                       }
+
+                      // Load PowerScheduler if PS++ is enabled and remove PS++ entry
+                      if (setup.PluginName() == "PowerScheduler")
+                      {
+                        if (MPSettings.Instance.GetValueAsBool("plugins", "PowerScheduler++", false))
+                        {
+                          MPSettings.Instance.SetValueAsBool("plugins", "PowerScheduler", true);
+                        }
+                        MPSettings.Instance.RemoveEntry("plugins", "PowerScheduler++");
+                      }
+
                       if (IsPluginNameEnabled(setup.PluginName()))
                       {
                         _setupForms.Add(setup);

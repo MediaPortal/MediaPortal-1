@@ -201,7 +201,7 @@ namespace MediaPortal.Util
         ".wv";
     
     public static string VideoExtensionsDefault =
-      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp";
+      ".avi,.bdmv,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.flv,.m4v,.3gp,.wtv,.ogv";
 
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
@@ -685,6 +685,7 @@ namespace MediaPortal.Util
       }
 
       string strThumb = string.Empty;
+      string strThumbFolder = string.Empty;
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLowerInvariant())))
       {
@@ -783,6 +784,7 @@ namespace MediaPortal.Util
         if (item.Label != "..")
         {
           strThumb = item.Path + @"\folder.jpg";
+          strThumbFolder = strThumb;
           if (FileExistsInCache(strThumb))
           {
             item.ThumbnailImage = strThumb;
@@ -791,7 +793,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      if (!string.IsNullOrEmpty(strThumb))
+      if (!string.IsNullOrEmpty(strThumb) && !strThumb.Equals(strThumbFolder))
       {
         strThumb = ConvertToLargeCoverArt(strThumb);
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
@@ -901,6 +903,7 @@ namespace MediaPortal.Util
       GUIListItem item = (GUIListItem)i;
       string path = item.Path;
       string strThumb = Util.Utils.GetVideosThumbPathname(path);
+      string strThumbLarge = Util.Utils.GetVideosThumbPathname(path);
       if (FileExistsInCache(strThumb))
       {
         return;
@@ -943,9 +946,11 @@ namespace MediaPortal.Util
             if (Picture.CreateThumbnail(thumb, strThumb, (int) Thumbs.ThumbLargeResolution,
                                         (int) Thumbs.ThumbLargeResolution, 0, false))
             {
-              if (Picture.CreateThumbnail(thumb, Utils.ConvertToLargeCoverArt(strThumb), (int)Thumbs.ThumbLargeResolution,
+              if (Picture.CreateThumbnail(thumb, strThumbLarge, (int)Thumbs.ThumbLargeResolution,
                                         (int)Thumbs.ThumbLargeResolution, 0, false))
               {
+                item.ThumbnailImage = strThumbLarge;
+                item.IconImage = strThumb;
                 SetThumbnails(ref item);
               }
             }
@@ -2057,7 +2062,7 @@ namespace MediaPortal.Util
           //if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob")
+          if (extension.ToLowerInvariant() == ".ifo" || extension.ToLowerInvariant() == ".vob" || extension.ToLowerInvariant() == ".bdmv")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -3737,39 +3742,41 @@ namespace MediaPortal.Util
         {
           try
           {
-            img = ImageFast.FromFile(strFileName);
+            using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+            {
+              using (img = Image.FromStream(fs, true, false))
+              {
+                int iRotation = Util.Picture.GetRotateByExif(img);
+                switch (iRotation)
+                {
+                  case 1:
+                    img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    break;
+                  case 2:
+                    img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                    break;
+                  case 3:
+                    img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                    break;
+                  default:
+                    break;
+                }
+                if (img != null)
+                  g.DrawImage(img, x, y, w, h);
+              }
+            }
           }
-          catch (Exception)
+          catch
+            (OutOfMemoryException)
           {
-            img = Image.FromFile(strFileName);
+            Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!",
+                     strFileName);
           }
-          int iRotation = Util.Picture.GetRotateByExif(img);
-          switch (iRotation)
-          {
-            case 1:
-              img.RotateFlip(RotateFlipType.Rotate90FlipNone);
-              break;
-            case 2:
-              img.RotateFlip(RotateFlipType.Rotate180FlipNone);
-              break;
-            case 3:
-              img.RotateFlip(RotateFlipType.Rotate270FlipNone);
-              break;
-            default:
-              break;
-          }
-          if (img != null)
-            g.DrawImage(img, x, y, w, h);
-        }
-        catch (OutOfMemoryException)
-        {
-          Log.Warn("Utils: Damaged picture file found: {0}. Try to repair or delete this file please!", strFileName);
         }
         catch (Exception ex)
         {
           Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
-        //}
       }
       finally
       {

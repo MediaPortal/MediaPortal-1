@@ -298,34 +298,24 @@ namespace MediaPortal.GUI.Library
 
             try
             {
-              using (Image img = ImageFast.FromFile(strFileNameTemp))
+              using (FileStream fs = new FileStream(strFileNameTemp, FileMode.Open, FileAccess.Read))
               {
-                if (0 == _width)
+                using (Image img = Image.FromStream(fs, true, false))
                 {
-                  _width = img.Width;
-                }
-                if (0 == _height)
-                {
-                  _height = img.Height;
+                  if (0 == _width)
+                  {
+                    _width = img.Width;
+                  }
+                  if (0 == _height)
+                  {
+                    _height = img.Height;
+                  }
                 }
               }
             }
-            catch (Exception) 
-            {
-              using (Image img = Image.FromFile(strFileNameTemp))
-              {
-                if (0 == _width)
-                {
-                  _width = img.Width;
-                }
-                if (0 == _height)
-                {
-                  _height = img.Height;
-                }
-              }
-            }
+            catch (Exception) { }
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
       base.ScaleToScreenResolution();
