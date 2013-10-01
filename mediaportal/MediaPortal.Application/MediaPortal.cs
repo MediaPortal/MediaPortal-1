@@ -79,7 +79,10 @@ public class MediaPortalApp : D3D, IRender
   private static bool           _avoidVersionChecking;
   #endif
   private readonly bool         _useScreenSaver = true;
+  private readonly bool         _useIdlePluginScreen;
+  private bool                  _idlePluginActive = false;
   private readonly bool         _useIdleblankScreen;
+  private int                   _idlePluginWindowId;
   private readonly bool         _showLastActiveModule;
   private readonly bool         _stopOnLostAudioRenderer; 
   private bool                  _playingState;
@@ -1067,6 +1070,8 @@ public class MediaPortalApp : D3D, IRender
       _useScreenSaver             = xmlreader.GetValueAsBool("general", "IdleTimer", true);
       _timeScreenSaver            = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
       _useIdleblankScreen         = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
+      _useIdlePluginScreen        = xmlreader.GetValueAsBool("general", "IdlePlugin", false);
+      _idlePluginWindowId         = xmlreader.GetValueAsInt("general", "IdlePluginWindow", 0);
       _showLastActiveModule       = xmlreader.GetValueAsBool("general", "showlastactivemodule", false);
       screenNumber                = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
       _stopOnLostAudioRenderer    = xmlreader.GetValueAsBool("general", "stoponaudioremoval", true);
@@ -3099,7 +3104,7 @@ public class MediaPortalApp : D3D, IRender
       }
       if (_useScreenSaver)
       {
-        if ((GUIGraphicsContext.IsFullScreenVideo && g_Player.Paused == false) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+        if ((GUIGraphicsContext.IsFullScreenVideo && g_Player.Paused == false) || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW || GUIWindowManager.ActiveWindow == _idlePluginWindowId)
         {
           GUIGraphicsContext.ResetLastActivity();
         }
@@ -3115,6 +3120,23 @@ public class MediaPortalApp : D3D, IRender
                 Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
               }
               GUIGraphicsContext.BlankScreen = true;
+            }
+            else if (_useIdlePluginScreen)
+            {
+              if (_idlePluginWindowId != 0)
+              {
+                if (!_idlePluginActive)
+                {
+                  _idlePluginActive = true;
+                  Log.Debug("Main: Idle timer is setting the screensaver application after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
+                  GUIWindowManager.ActivateWindow(_idlePluginWindowId);
+
+                }
+              }
+              else
+              {
+                Log.Debug("Main: Idle timer tried to set plugin screen saver but window id was 0");
+              }
             }
             else
             {
@@ -3786,6 +3808,7 @@ public class MediaPortalApp : D3D, IRender
   protected override void KeyPressEvent(KeyPressEventArgs e)
   {
     GUIGraphicsContext.BlankScreen = false;
+    _idlePluginActive = false;
     var key = new Key(e.KeyChar, 0);
     var action = new Action();
     if (GUIWindowManager.IsRouted || GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH)
