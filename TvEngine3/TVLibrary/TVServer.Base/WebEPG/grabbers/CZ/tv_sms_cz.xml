@@ -5,7 +5,7 @@
   <Channel id="CT1@ct.cz" siteId="%C8T1" />
   <Channel id="CT2@ct.cz" siteId="%C8T2" />
   <Channel id="Nova@nova.cz" siteId="Nova" />
-  <Channel id="Prima@prima.cz" siteId="Prima" />
+  <Channel id="Prima@prima.cz" siteId="Prima family" />
 
   <Channel id="Animax@animax.cz" siteId="Animax" />
   <Channel id="AnimalPlanet@discovery.cz" siteId="AnimalPlanet" />
@@ -19,12 +19,14 @@
   <Channel id="CSFilm@csfilm.cz" siteId="%C8S Film" />
   <Channel id="CT24@ct.cz" siteId="%C8T24" />
   <Channel id="CT4@ct.cz" siteId="%C8T4 Sport" />
+  <Channel id="CTHD@ct.cz" siteId="%C8T HD" />
   <Channel id="tvdeko@deko.cz" siteId="Deko" />
   <Channel id="doq@doq.cz" siteId="DoQ" />
   <Channel id="discovery@discovery.cz" siteId="Discovery" />
   <Channel id="discoveryHD@discovery.cz" siteId="Discovery HD" />
   <Channel id="Eurosport@eurosport.cz" siteId="EuroSport" />
   <Channel id="Eurosport2@eurosport.cz" siteId="EuroSport2" />
+  <Channel id="fanda@nova.cz" siteId="FANDA" />
   <Channel id="filmplus@filmplus.cz" siteId="Film+" />
   <Channel id="Filmbox@filmbox.cz" siteId="Filmbox" />
   <Channel id="FilmboxHD@filmbox.cz" siteId="Filmbox HD" />
@@ -37,6 +39,7 @@
   <Channel id="jetix@jetix.cz" siteId="Jetix" />
   <Channel id="JimJam@jimjam.cz" siteId="Jim Jam" />
   <Channel id="minimax@minimax.cz" siteId="Minimax" />
+  <Channel id="MTV@MTV.cz" siteId="MTV" />
   <Channel id="NationalGeographic@nationalgeographic.cz" siteId="National Geographic" />
   <Channel id="NovaCinema@nova.cz" siteId="Nova Cinema" />
   <Channel id="novasport@nova.cz" siteId="Nova sport" />
@@ -44,15 +47,23 @@
   <Channel id="nostalgia@nostalgia.cz" siteId="Nostalgia" />
   <Channel id="Ocko@ocko.cz" siteId="%D3%E8ko" />
   <Channel id="Paprika@paprika.cz" siteId="Paprika" />
+  <Channel id="Pohoda@tvpohoda.cz" siteId="TV Pohoda" />
   <Channel id="PrimaCool@prima.cz" siteId="Prima Cool" />
+  <Channel id="PrimaZoom@prima.cz" siteId="Prima ZOOM" />
+  <Channel id="PrimaLove@prima.cz" siteId="Prima LOVE" />
   <Channel id="publictv@publictv.cz" siteId="Public TV" />
+  <Channel id="reg@regionalnitelevize.cz" siteId="regionalnitelevize.cz" />
   <Channel id="Spektrum@spektrum.cz" siteId="Spektrum" />
   <Channel id="Sport1@sport1.cz" siteId="Sport1" />
   <Channel id="Sport5@ct.cz" siteId="Sport 5" />
+  <Channel id="SlagrTv@slagrtv.cz" siteId="%160l%E1gr TV" />
+  <Channel id="Smichov@nova.cz" siteId="SM%CDCHOV" />
   <Channel id="MGM@mgm.cz" siteId="MGM" />
+  <Channel id="TELKA@nova.cz" siteId="TELKA" />
   <Channel id="TIK@tik.cz" siteId="TIK" />
   <Channel id="ViasatExplorer@viasat.cz" siteId="Viasat Explorer" />
   <Channel id="viasatHistory@viasat.cz" siteId="Viasat History" />
+  <Channel id="V1@V1.cz" siteId="V1" />
   <Channel id="Z1@Z1.cz" siteId="Z1" />
   <Channel id="ZoneReality@zone.cz" siteId="Zone Reality" />
   <Channel id="ZoneRomantica@zone.cz" siteId="Zone Romantica" />
@@ -61,6 +72,7 @@
   <Channel id="JoJ@joj.sk" siteId="JOJ" />
   <Channel id="JoJPlus@joj.sk" siteId="JOJ Plus" />
   <Channel id="Markiza@markiza.sk" siteId="Mark%EDza" />
+  <Channel id="doma@markiza.sk" siteId="Doma" />
   <Channel id="musiq1@musiq1.sk" siteId="Musiq1" />
   <Channel id="STV1@stv.sk" siteId="STV1" />
   <Channel id="STV2@stv.sk" siteId="STV2" />
@@ -77,9 +89,6 @@
   <Channel id="NationalGeographicWild@nationalgeographic.cz" siteId="National Geographic Wild" />
   <Channel id="Travel_Channel@travelchannel.uk" siteId="Travel Channel" />
   <Channel id="VH1@vh1e.com" siteId="VH1" />
-  <Channel id="playboy_tv@playboy.uk" siteId="Playboy TV" />
-  <Channel id="private_spice@privatespice.com" siteId="Private Spice" />
-
   </Channels>
   <Listing type="Html">
     <Site url="http://tv.sms.cz/index.php?P_id_kategorie=56456&amp;P_soubor=%2Ftelevize%2Findex.php%3Fdatum%3D[YYYY]-[MM]-[DD]%26zobrazeni%3D" post="" cookies="P_cookies_siroke_zobrazeni=false;P_cookies_televize_stanice=[ID]" external="false" encoding="windows-1250" />
