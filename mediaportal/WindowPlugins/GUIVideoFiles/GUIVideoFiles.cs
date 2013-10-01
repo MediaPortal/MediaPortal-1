@@ -641,14 +641,32 @@ namespace MediaPortal.GUI.Video
 
       if ((item.IsFolder && !item.IsBdDvdFolder))
       {
-        _currentSelectedItem = -1;
-        
-        if (facadeLayout != null)
-        {
-          _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
-        }
-        
-        LoadDirectory(path);
+          // Play all in folder
+          if (_playClicked)
+          {
+              if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
+              {
+                  if (!_virtualDirectory.RequestPin(item.Path))
+                  {
+                      _playClicked = false;
+                      return;
+                  }
+
+                  OnPlayAll(item.Path);
+                  _playClicked = false;
+              }
+          }
+          else
+          {
+              _currentSelectedItem = -1;
+
+              if (facadeLayout != null)
+              {
+                  _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
+              }
+
+              LoadDirectory(path, true);
+          }
       }
       else
       {
@@ -1264,6 +1282,10 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(1262); // Update grabber scripts
         dlg.AddLocalizedString(1307); // Update internal grabber scripts
         dlg.AddLocalizedString(1263); // Set default grabber
+        if (!item.IsFolder)
+        {
+          dlg.AddLocalizedString(1984); // Refresh thumb
+        }
       }
 
       dlg.DoModal(GetID);
@@ -1504,6 +1526,26 @@ namespace MediaPortal.GUI.Video
           break;
         case 1263: // Set deault grabber script
           SetDefaultGrabber();
+          break;
+        case 1984: // Refresh video thumb
+          Log.Debug("Thumb refresh from context menu: {0}", item.Path);
+          if (Util.Utils.FileExistsInCache(item.Path))
+          {
+            string strThumbPath = Util.Utils.GetVideosThumbPathname(item.Path);
+            Util.Utils.SetThumbnails(ref item);
+            bool success = Util.VideoThumbCreator.CreateVideoThumb(item.Path, strThumbPath, true, true);
+            if (success)
+            {
+              Log.Debug("Refresh success!");
+              if (facadeLayout.ListLayout.ListItems.Count > 0 && !string.IsNullOrEmpty(_currentFolder))
+              {
+                selectedIndex = facadeLayout.SelectedListItemIndex;
+                LoadDirectory(_currentFolder, false);
+                facadeLayout.SelectedListItemIndex = selectedIndex;
+              }
+            }
+          }
+
           break;
         case 1264: // Get media info (refresh mediainfo and duration)
           if (item != null)
@@ -2804,13 +2846,13 @@ namespace MediaPortal.GUI.Video
             {
               if (selectDvdHandler.IsDvdDirectory(item.Path))
               {
-                item.Label2 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                item.Label3 = string.Empty;
+                item.Label3 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                item.Label2 = string.Empty;
               }
               else
               {
-                item.Label2 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                item.Label3 = string.Empty;
+                item.Label3 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                item.Label2 = string.Empty;
               }
             }
             else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
@@ -2927,13 +2969,13 @@ namespace MediaPortal.GUI.Video
                 {
                   if (selectDvdHandler.IsDvdDirectory(item.Path))
                   {
-                    item.Label2 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                    item.Label3 = string.Empty;
+                    item.Label3 = MediaTypes.DVD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                    item.Label2 = string.Empty;
                   }
                   else
                   {
-                    item.Label2 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
-                    item.Label3 = string.Empty;
+                    item.Label3 = MediaTypes.BD.ToString() + " " + percentWatched + "% #" + timesWatched;
+                    item.Label2 = string.Empty;
                   }
                 }
                 else if (VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))

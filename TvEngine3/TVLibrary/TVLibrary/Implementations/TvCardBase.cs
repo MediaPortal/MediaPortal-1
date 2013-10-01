@@ -70,14 +70,18 @@ namespace TvLibrary.Implementations
       _graphState = GraphState.Idle;
       _device = device;
       _tunerDevice = device;
-      _name = device.Name;
-      _devicePath = device.DevicePath;
 
-      //get preload card value
-      if (_devicePath != null)
+      if (device != null)
       {
-        GetPreloadBitAndCardId();
-        GetSupportsPauseGraph();
+        _name = device.Name;
+        _devicePath = device.DevicePath;
+
+        //get preload card value
+        if (_devicePath != null)
+        {
+          GetPreloadBitAndCardId();
+          GetSupportsPauseGraph();
+        }
       }
     }
 
@@ -549,7 +553,7 @@ namespace TvLibrary.Implementations
       }
     }
 
-    private void GetSupportsPauseGraph()
+    protected void GetSupportsPauseGraph()
     {
       //fetch stopgraph value from db and apply it.
       IList<Card> cardsInDbs = Card.ListAll();
@@ -726,7 +730,7 @@ namespace TvLibrary.Implementations
       }
       else
       {
-        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {0}, continuing graph", _mapSubChannels.Count);
       }
     }
 
@@ -793,5 +797,13 @@ namespace TvLibrary.Implementations
     }
 
     #endregion
+
+    /// <summary>
+    /// Register to receive EPG related events.
+    /// </summary>
+    /// <param name="eventListener">The event listener.</param>
+    public virtual void RegisterEpgEventListener(IEpgEvents eventListener)
+    {
+    }
   }
 }

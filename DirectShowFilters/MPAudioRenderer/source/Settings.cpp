@@ -24,6 +24,7 @@
 #include "alloctracing.h"
 
 extern void Log(const char *fmt, ...);
+extern void StartLogger();
 extern void LogRotate();
 
 unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512, 576, 640};
@@ -131,8 +132,9 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bReleaseDeviceOnStop(false),
   m_bExpandMonoToStereo(true)
 {
+  StartLogger();
   LogRotate();
-  Log("MP Audio Renderer - v1.1.5");
+  Log("MP Audio Renderer - v1.1.6");
 
   LoadSettingsFromRegistry();
 }

@@ -90,6 +90,7 @@
     <Compile Include="Implementations\VideoStream\VideoStream.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
+    <Compile Include="Interfaces\IDeviceEventListener.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />

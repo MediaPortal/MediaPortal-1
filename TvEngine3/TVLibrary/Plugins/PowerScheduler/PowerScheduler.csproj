@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -34,7 +34,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -42,7 +42,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;SERVER</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -50,7 +50,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -69,33 +69,47 @@
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Handlers\ActiveNetworkHandler.cs" />
-    <Compile Include="Handlers\ActiveSharesHandler.cs" />
-    <Compile Include="Handlers\ActiveStreamsHandler.cs" />
-    <Compile Include="Handlers\ControllerActiveHandler.cs" />
+    <Compile Include="Handlers\ActiveNetworkStandbyHandler.cs" />
+    <Compile Include="Handlers\ActiveSharesStandbyHandler.cs" />
+    <Compile Include="Handlers\ActiveStreamsStandbyHandler.cs" />
+    <Compile Include="Handlers\ControllerActiveStandbyHandler.cs" />
+    <Compile Include="Handlers\ProcessActiveStandbyHandler.cs" />
+    <Compile Include="Handlers\RebootWakeupHandler.cs" />
+    <Compile Include="Handlers\RemoteClientStandbyHandler.cs" />
     <Compile Include="Handlers\XmlTvImportWakeupHandler.cs" />
-    <Compile Include="Handlers\EpgGrabbingHandler.cs" />
-    <Compile Include="Handlers\GenericStandbyHandler.cs" />
-    <Compile Include="Handlers\GenericWakeupHandler.cs" />
-    <Compile Include="Handlers\ProcessActiveHandler.cs" />
-    <Compile Include="Handlers\RemoteStandbyHandler.cs" />
-    <Compile Include="Handlers\RemoteWakeupHandler.cs" />
-    <Compile Include="Handlers\ScheduledRecordingsHandler.cs" />
+    <Compile Include="Handlers\EpgGrabbingStandbyWakeupHandler.cs" />
+    <Compile Include="Handlers\PowerControllerStandbyHandler.cs" />
+    <Compile Include="Handlers\PowerControllerWakeupHandler.cs" />
+    <Compile Include="Handlers\LocalClientStandbyHandler.cs" />
+    <Compile Include="Handlers\LocalClientWakeupHandler.cs" />
+    <Compile Include="Handlers\ScheduledRecordingsWakeupHandler.cs" />
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerFactory.cs" />
     <Compile Include="PowerSchedulerPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectProcessForm.cs">
+    <Compile Include="Setup\PowerSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SelectProcessForm.designer.cs">
-      <DependentUpon>SelectProcessForm.cs</DependentUpon>
+    <Compile Include="Setup\PowerSettingsForm.Designer.cs">
+      <DependentUpon>PowerSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PowerSchedulerMasterSetup.cs">
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup\PowerSchedulerSetup.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PowerSchedulerMasterSetup.Designer.cs">
-      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
+    <Compile Include="Setup\PowerSchedulerSetup.Designer.cs">
+      <DependentUpon>PowerSchedulerSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\SelectProcessForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\SelectProcessForm.designer.cs">
+      <DependentUpon>SelectProcessForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\SelectShareForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\SelectShareForm.designer.cs">
+      <DependentUpon>SelectShareForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowsController.cs" />
   </ItemGroup>
@@ -178,16 +192,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SelectProcessForm.resx">
-      <DependentUpon>SelectProcessForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PowerSchedulerMasterSetup.resx">
-      <DependentUpon>PowerSchedulerMasterSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="TheAlgorithm.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Setup\PowerSchedulerSetup.resx">
+      <DependentUpon>PowerSchedulerSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(ProjectDir)..\..\..\..\mediaportal\PowerSchedulerClientPlugin\Setup\*" "$(ProjectDir)Setup" /D /Y
+xcopy "$(ProjectDir)Setup\*" "$(ProjectDir)..\..\..\..\mediaportal\PowerSchedulerClientPlugin\Setup" /D /Y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

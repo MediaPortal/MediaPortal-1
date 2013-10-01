@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
 <controls>
-
 	<control>
 		<animation effect="slide" start="-60,0" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="-60,0" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
@@ -13,7 +12,6 @@
 		<texture>hiddenmenu_tab.png</texture>
 		<visible>[facadeview.list|facadeview.smallicons|facadeview.largeicons]+Control.HasFocus(50) + !string.contains(#Titan.HiddenMenu, false)</visible>
 	</control>
-
 	<control>
 		<id>1</id>
 		<type>image</type>
@@ -24,7 +22,6 @@
 		<animation effect="slide" start="0,-60" end="0,0" tween="quadratic" easing="in" time="250" delay="400">WindowOpen</animation>
 		<animation effect="slide" start="0,0" end="0,-60" tween="quadratic" easing="in" time="250" delay="100">WindowClose</animation>
 	</control>
-
 	<control>
 		<type>actiongroup</type>
 		<description>action menu</description>
@@ -35,7 +32,6 @@
 		<buttonY>155</buttonY>
 		<buttonwidth>499</buttonwidth>
 		<buttonheight>1080</buttonheight>
-		
 			<control>
 				<type>image</type>
 				<id>0</id>
@@ -46,7 +42,6 @@
 				<animation effect="fade" time="450">visible</animation>
 				<animation effect="fade" time="400">hidden</animation>
 			</control>
-		
 			<control>
 				<type>image</type>
 				<id>1</id>
@@ -61,11 +56,10 @@
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
-		
 			<control>
 				<type>image</type>
 				<id>0</id>
-				<posY>306</posY>
+				<posY>296</posY>
 				<posX>116</posX>
 				<width>369</width>
 				<height>1</height>
@@ -76,7 +70,6 @@
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
-			
 			<control>
 				<description>Menu label</description>
 				<type>label</type>
@@ -92,13 +85,12 @@
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 	    </control>
-			
 			<control>
 				<description>Jump to label</description>
 				<type>label</type>
 				<id>1</id>
 				<posX>116</posX>
-				<posY>326</posY>
+				<posY>311</posY>
 				<label>1065</label>
 				<font>fontB12</font>
 				<textcolor>393939</textcolor>
@@ -108,7 +100,6 @@
 	    	<animation effect="fade" time="50">visible</animation>
 	    	<animation effect="fade" time="0">hidden</animation>
 			</control>
-	    
 			<control>
 	    	<type>group</type>
 	      <description>group element</description>
@@ -120,207 +111,193 @@
 	      <posX>53</posX>
 	      <posY>155</posY>
 	      <layout>StackLayout(0, Vertical, true)</layout>	
-					
-					<control>
-						<description>View-As</description>
-						<type>menubutton</type>
-						<id>2</id>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>
-						<label></label>	
-						<mode>dialoglist</mode>				
-						<dialogTitle>792</dialogTitle> 					
-						<valueTextInButton>yes</valueTextInButton>
-						<valuePrefixText>95</valuePrefixText>
-						<onright>50</onright>
-						<onleft>50</onleft>
-	          <ondown>3</ondown>
-	          <onup>1143</onup>
-					</control>
-		
-					<control>
-						<type>sortbutton</type>
-						<id>3</id>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<onup>2</onup>
-						<ondown>6</ondown>
-						<label>620</label>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>	
-						<offsetSortButtonX>280</offsetSortButtonX>
-						<offsetSortButtonY>27</offsetSortButtonY>
-					</control>
-		
-          <control>
-          	<description>Empty button</description>
-            <type>button</type>
-            <id>0</id>
-    			  <textureFocus>-</textureFocus>
-    			  <textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-            <label>-</label>
-            <visible>true</visible>
-      		</control>
-		
-					<control>
-						<description>Previous</description>
-						<type>button</type>
-						<id>6</id>
-						<label>210</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<onup>3</onup>
-						<ondown>7</ondown>
-						<action>15</action>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>				
-					</control>
-		
-					<control>
-						<description>Next</description>
-						<type>button</type>
-						<id>7</id>
-						<label>209</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<onup>6</onup>
-						<ondown>8</ondown>
-						<action>14</action>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>					
-					</control>
-		
-					<control>
-						<description>Radio Guide</description>
-						<type>button</type>
-						<id>8</id>
-						<label>533</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>9</ondown>
-						<onup>7</onup>
-						<hyperlink>762</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>				
-					</control>
-		
-					<control>
-						<description>Radio Recordings</description>
-						<type>button</type>
-						<id>9</id>
-						<label>914</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>10</ondown>
-						<onup>8</onup>
-						<hyperlink>763</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>				
-					</control>
-		
-					<control>
-						<description>Radio Search</description>
-						<type>button</type>
-						<id>10</id>
-						<label>137</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>11</ondown>
-						<onup>9</onup>
-						<hyperlink>8900</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>			
-					</control>
-		            
-		      <control>
-		      	<description>Now playing button</description>
-		        <type>button</type>
-		        <id>11</id>
-		        <label>4540</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>1142</ondown>
-						<onup>10</onup>
-		        <hyperlink>510</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>	
-      		</control>
-		            
-		      <control>
-		      	<description>My Lyrics</description>
-		        <type>button</type>
-		        <id>1142</id>
-		        <label>Lyrics</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>1143</ondown>
-						<onup>11</onup>
-		        <hyperlink>90478</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>	
-		        <visible>plugin.isenabled(My Lyrics)</visible>
-      		</control>
-		            
-		      <control>
-		      	<description>Last.FM</description>
-		        <type>button</type>
-		        <id>1143</id>
-		        <label>Last.Fm Radio</label>
-						<onleft>50</onleft>
-						<onright>50</onright>
-						<ondown>2</ondown>
-						<onup>1142</onup>
-		        <hyperlink>7890</hyperlink>
-						<textureFocus>hiddenmenu_item_selected.png</textureFocus>
-						<textureNoFocus>-</textureNoFocus>
-						<width>499</width>
-						<height>69</height>
-						<textXOff>62</textXOff>
-						<textYOff>16</textYOff>	
-		        <visible>plugin.isenabled(Last.fm Radio)</visible>
+				<control>
+					<description>View-As</description>
+					<type>menubutton</type>
+					<id>2</id>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>
+					<label></label>	
+					<mode>dialoglist</mode>				
+					<dialogTitle>792</dialogTitle> 					
+					<valueTextInButton>yes</valueTextInButton>
+					<valuePrefixText>95</valuePrefixText>
+					<onright>50</onright>
+					<onleft>50</onleft>
+	        <ondown>3</ondown>
+	        <onup>1143</onup>
+				</control>
+				<control>
+					<type>sortbutton</type>
+					<id>3</id>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>2</onup>
+					<ondown>6</ondown>
+					<label>620</label>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+					<offsetSortButtonX>280</offsetSortButtonX>
+					<offsetSortButtonY>27</offsetSortButtonY>
+				</control>
+		    <control>
+         	<description>Empty button</description>
+          <type>button</type>
+          <id>0</id>
+    		  <textureFocus>-</textureFocus>
+    		  <textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+          <label>-</label>
+          <visible>true</visible>
+      	</control>
+				<control>
+					<description>Previous</description>
+					<type>button</type>
+					<id>6</id>
+					<label>210</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>3</onup>
+					<ondown>7</ondown>
+					<action>15</action>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>				
+				</control>
+				<control>
+					<description>Next</description>
+					<type>button</type>
+					<id>7</id>
+					<label>209</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<onup>6</onup>
+					<ondown>8</ondown>
+					<action>14</action>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>					
+				</control>
+				<control>
+					<description>Radio Guide</description>
+					<type>button</type>
+					<id>8</id>
+					<label>533</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>9</ondown>
+					<onup>7</onup>
+					<hyperlink>762</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>				
+				</control>
+				<control>
+					<description>Radio Recordings</description>
+					<type>button</type>
+					<id>9</id>
+					<label>914</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>10</ondown>
+					<onup>8</onup>
+					<hyperlink>763</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>				
+				</control>
+				<control>
+					<description>Radio Search</description>
+					<type>button</type>
+					<id>10</id>
+					<label>137</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>11</ondown>
+					<onup>9</onup>
+					<hyperlink>8900</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>			
+				</control>
+		    <control>
+		      <description>Now playing button</description>
+		      <type>button</type>
+		      <id>11</id>
+		      <label>4540</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>1142</ondown>
+					<onup>10</onup>
+		      <hyperlink>510</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+      	</control>
+		    <control>
+		     	<description>My Lyrics</description>
+		      <type>button</type>
+		      <id>1142</id>
+		      <label>Lyrics</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>1143</ondown>
+					<onup>11</onup>
+		      <hyperlink>90478</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+		      <visible>plugin.isenabled(My Lyrics)</visible>
+      	</control>
+		    <control>
+		     	<description>Last.FM</description>
+		      <type>button</type>
+		      <id>1143</id>
+		      <label>Last.Fm Radio</label>
+					<onleft>50</onleft>
+					<onright>50</onright>
+					<ondown>2</ondown>
+					<onup>1142</onup>
+		      <hyperlink>7890</hyperlink>
+					<textureFocus>hiddenmenu_item_selected.png</textureFocus>
+					<textureNoFocus>-</textureNoFocus>
+					<width>499</width>
+					<height>64</height>
+					<textXOff>62</textXOff>
+					<textYOff>16</textYOff>	
+		      <visible>plugin.isenabled(Last.fm Radio)</visible>
    			</control>
-			
+			</control>
 		</control>
-		
-	</control>
-	
-</controls>
+	</controls>
 </window>

@@ -206,7 +206,7 @@ namespace WindowPlugins
           message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
       {
         // Respond to the correct control.  The value is retrived directly from the control by the called handler.
-        if (message.TargetControlId == btnLayouts.GetID)
+        if (message.SenderControlId == btnLayouts.GetID)
         {
           // Set the new layout and select the currently selected item in the layout.
           SetLayout((Layout)btnLayouts.SelectedItemValue);
@@ -217,7 +217,7 @@ namespace WindowPlugins
 
           msgHandled = true;
         }
-        else if (btnViews != null && message.TargetControlId == btnViews.GetID)
+        else if (btnViews != null && message.SenderControlId == btnViews.GetID)
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
