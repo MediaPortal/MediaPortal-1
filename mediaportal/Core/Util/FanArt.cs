@@ -159,10 +159,17 @@ namespace MediaPortal.Util
       _fanartList.Clear();
       InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbFanartApiScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
-      if (tmdbFanartApiScraper.LoadScript())
+      try
       {
-        _fanartList = tmdbFanartApiScraper.MovieImagesGrabber.
-          GetTmdbFanartByApi(movieId, imdbTT, title, random, countFA, strSearch, out _fileFanArtDefault, out _fanartUrl);
+        if (tmdbFanartApiScraper.LoadScript())
+        {
+          _fanartList = tmdbFanartApiScraper.MovieImagesGrabber.
+            GetTmdbFanartByApi(movieId, imdbTT, title, random, countFA, strSearch, out _fileFanArtDefault, out _fanartUrl);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util Fanart GetTmdbFanartByApi error: {0}", ex.Message);
       }
 
       tmdbFanartApiScraper = null;

@@ -70,12 +70,19 @@ namespace MediaPortal.Util
       
       _imageList.Clear();
       InternalCSScriptGrabbersLoader.Movies.ImagesGrabber imdbImageScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
-      
-      if (imdbImageScraper.LoadScript())
-      {
-        _imageList = imdbImageScraper.MovieImagesGrabber.GetIMDBImages(imdbID, defaultOnly);
-      }
 
+      try
+      {
+        if (imdbImageScraper.LoadScript())
+        {
+          _imageList = imdbImageScraper.MovieImagesGrabber.GetIMDBImages(imdbID, defaultOnly);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util IMDBSearchCovers error: {0}", ex.Message);
+      }
+      
       imdbImageScraper = null;
     }
   }

@@ -18,7 +18,9 @@
 
 #endregion
 
+using System;
 using System.Collections;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -62,11 +64,18 @@ namespace MediaPortal.Util
       InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbImageScraper =
         new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
-      if (tmdbImageScraper.LoadScript())
+      try
       {
-        _imageList = tmdbImageScraper.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
+        if (tmdbImageScraper.LoadScript())
+        {
+          _imageList = tmdbImageScraper.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
+        }
       }
-
+      catch (Exception ex)
+      {
+        Log.Error("Util TMDBCoverSearch error: {0}", ex.Message);
+      }
+      
       tmdbImageScraper = null;
 
     }
@@ -82,9 +91,16 @@ namespace MediaPortal.Util
       InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbActorImageScraper =
         new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
-      if (tmdbActorImageScraper.LoadScript())
+      try
       {
-        actorThumbs = tmdbActorImageScraper.MovieImagesGrabber.GetTmdbActorImage(actorName);
+        if (tmdbActorImageScraper.LoadScript())
+        {
+          actorThumbs = tmdbActorImageScraper.MovieImagesGrabber.GetTmdbActorImage(actorName);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util TMDBSearchActorImage error: {0}", ex.Message);
       }
 
       tmdbActorImageScraper = null;

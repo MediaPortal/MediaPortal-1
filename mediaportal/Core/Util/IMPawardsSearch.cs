@@ -23,6 +23,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -65,10 +66,17 @@ namespace MediaPortal.Util
 
       _imageList.Clear();
       InternalCSScriptGrabbersLoader.Movies.ImagesGrabber impAwardsImageScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
-      
-      if (impAwardsImageScraper.LoadScript())
+
+      try
       {
-        _imageList = impAwardsImageScraper.MovieImagesGrabber.GetIMPAwardsImages(movieName, imdbMovieID);
+        if (impAwardsImageScraper.LoadScript())
+        {
+          _imageList = impAwardsImageScraper.MovieImagesGrabber.GetIMPAwardsImages(movieName, imdbMovieID);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Util IMPAwardSearchCovers error: {0}", ex.Message);
       }
 
       impAwardsImageScraper = null;

@@ -2268,7 +2268,7 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Util: FileDelete(string strFile) error: {0}", ex.Message);
+        Log.Error("Util: FileDelete {0} error: {1}", strFile , ex.Message);
       }
       return false;
     }
@@ -2320,7 +2320,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Info("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
+          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
@@ -2340,7 +2340,10 @@ namespace MediaPortal.Util
         {
           File.Copy(file, strFile, true);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("Util DownLoadAndCacheImage: error copying cached thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
+        }
         return;
       }
       DownLoadImage(strURL, file);
@@ -2356,7 +2359,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndCacheImage: error copying downloaded thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2376,6 +2379,7 @@ namespace MediaPortal.Util
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      FileDelete(file);
       DownLoadImage(strURL, file);
       
       if (File.Exists(file))
@@ -2386,7 +2390,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
