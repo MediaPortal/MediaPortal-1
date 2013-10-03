@@ -142,7 +142,7 @@
     <value>Instalación One Click</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Todas la aplicaciones requeridas serán instaladas en su destino por defecto  usando sus valores por defecto. La contraseña (password) de la base de datos es "MediaPortal".</value>
+    <value>Todas la aplicaciones requeridas serán instaladas en su destino por defecto usando sus valores por defecto. La contraseña (password) de la base de datos es "MediaPortal".</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Realizar la instalación avanzada.</value>
@@ -282,7 +282,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Ha fallado la instalación de la aplicación [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Pulsa "Instalar" para que se realicen todas las acciones necesarias para instalar tu configuración</value>
+    <value>Pulsa "Instalar" para que se realicen todas las acciones necesarias para finalizar tu configuración</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Descargando...</value>
@@ -481,7 +481,7 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
     <value>Detectado {0} MediaPortal</value>
   </data>
   <data name="Upgrade_labelSectionHeader_GIT" xml:space="preserve">
-    <value>Detectado  MediaPortal {0} (build {1})</value>
+    <value>Detectado MediaPortal {0} (build {1}) .</value>
   </data>
   <data name="Upgrade_no" xml:space="preserve">
     <value>Nueva instalación</value>
@@ -510,5 +510,26 @@ Activar AERO puede reducir el consumo de recursos, haciendo que tu HTPC funcione
   <data name="Reboot_Required" xml:space="preserve">
     <value>Un componente de Microsoft necesita reiniciar el ordenador.
 Por favor, hazlo antes de continuar con la instalación de MediaPortal.</value>
+  </data>
+  <data name="ExtensionChoice_LAV" xml:space="preserve">
+    <value>Instalar LAV Filters para reproducir los formatos de audio y vídeo más comunes</value>
+  </data>
+  <data name="SkinChoice_labelSectionHeader" xml:space="preserve">
+    <value>Elige un Skin</value>
+  </data>
+  <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
+    <value>Usar Skin actual (Se comprobará su compatibilidad)</value>
+  </data>
+  <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
+    <value>Más información</value>
+  </data>
+  <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
+    <value>Explorar otras extensiones</value>
+  </data>
+  <data name="ExtensionChoice_Titan" xml:space="preserve">
+    <value>Instalar extensión que añade soporte para otros plugins populares </value>
+  </data>
+  <data name="ExtensionChoice_Title" xml:space="preserve">
+    <value>Extensiones recomendadas</value>
   </data>
 </root>

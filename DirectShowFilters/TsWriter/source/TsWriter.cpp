@@ -444,7 +444,7 @@ STDMETHODIMP CMpOobSiFilterPin::Receive(IMediaSample *pSample)
 
     CSection s;
     s.table_id = pbData[0];
-    s.section_length = sampleLength;
+    s.section_length = sampleLength - 3;  // 1 for the table_id, 2 for the section_length bytes
     memcpy(s.Data, pbData, sampleLength);
 
     if (m_rawSectionWriter != NULL)

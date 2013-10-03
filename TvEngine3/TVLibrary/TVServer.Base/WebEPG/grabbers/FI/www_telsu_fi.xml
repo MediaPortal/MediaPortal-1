@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fi" availableDays="14" timezone="FLE Standard Time" version="1.0" />
+  <Channels>
+		<Channel id="Yle TV1" siteId="yle1" />
+		<Channel id="Yle TV2" siteId="yle2" />
+		<Channel id="MTV3" siteId="mtv3" />
+		<Channel id="Nelonen" siteId="nelonen" />
+		<Channel id="Yle Fem" siteId="ylefem" />
+		<Channel id="Sub" siteId="subtv" />
+		<Channel id="Yle Teema" siteId="yleteema" />
+		<Channel id="Jim" siteId="jim" />
+		<Channel id="Liv" siteId="liv" />
+		<Channel id="TV5" siteId="viisi" />
+		<Channel id="Kutonen" siteId="kutonen" />
+		<Channel id="FOX" siteId="fox" />
+		<Channel id="AVA" siteId="mtv3ava" />
+		<Channel id="MTV3 MAX" siteId="mtv3max" />
+		<Channel id="MTV3 Fakta" siteId="mtv3fakta" />
+		<Channel id="MTV3 Leffa" siteId="mtv3leffa" />
+		<Channel id="MTV3 Juniori" siteId="mtv3juniori" />
+		<Channel id="MTV3 Komedia" siteId="mtv3komedia" />
+		<Channel id="MTV3 Sarja" siteId="mtv3sarja" />
+		<Channel id="MTV3 Fakta XL" siteId="mtv3faktaxl" />
+		<Channel id="Nelonen Prime" siteId="nelonenkino" />
+		<Channel id="Nelonen Maailma" siteId="nelonenmaailma" />
+		<Channel id="Nelonen Nappula" siteId="nelonenperhe" />
+		<Channel id="Nelonen Pro 1" siteId="nelonenpro1" />
+		<Channel id="Nelonen Pro 2" siteId="nelonenpro2" />
+		<Channel id="C More First" siteId="cmore_first" />
+		<Channel id="C More Series" siteId="cmore_series" />
+		<Channel id="C More Hits" siteId="cmore_hits" />
+		<Channel id="C More Action" siteId="cmore_action" />
+		<Channel id="C More Emotion" siteId="cmore_emotion" />
+		<Channel id="C More Kids" siteId="cmore_kids" />
+		<Channel id="SF Kanalen" siteId="cmore_sfkanalen" />
+		<Channel id="C More First HD" siteId="cmore_firsthd" />
+		<Channel id="C More Series HD" siteId="cmore_serieshd" />
+		<Channel id="C More Hits HD" siteId="cmore_hitshd" />
+		<Channel id="MTV3 MAX Sport 1" siteId="cmore_urheilu" />
+		<Channel id="MTV3 MAX Sport 2" siteId="cmore_aitio" />
+		<Channel id="C More Tennis" siteId="cmore_tennis" />
+		<Channel id="C More Extreme" siteId="cmore_extreme" />
+		<Channel id="C More Sport HD" siteId="cmore_sporthd" />
+		<Channel id="MTV3 MAX Sport 1 HD" siteId="cmore_urheiluhd" />
+		<Channel id="MTV3 MAX Premier HD" siteId="cmore_premierhd" />
+		<Channel id="Viasat Film" siteId="viasat_film" />
+		<Channel id="Viasat Film Action" siteId="viasat_action" />
+		<Channel id="Viasat Film Nordic" siteId="viasat_nordic" />
+		<Channel id="Viasat Film Drama" siteId="viasat_drama" />
+		<Channel id="Viasat Film Family" siteId="viasat_family" />
+		<Channel id="Viasat Film Classic" siteId="viasat_classic" />
+		<Channel id="Viasat 3D" siteId="viasat_3d" />
+		<Channel id="Viasat Sport" siteId="viasat_sport" />
+		<Channel id="Viasat Golf" siteId="viasat_golf" />
+		<Channel id="Viasat Hockey" siteId="viasat_hockey" />
+		<Channel id="Viasat Hockey Finland" siteId="viasat_hockey_fi" />
+		<Channel id="Viasat Explorer" siteId="viasat_explorer" />
+		<Channel id="Viasat History" siteId="viasat_history" />
+		<Channel id="Viasat Nature/Crime" siteId="viasat_nature" />
+		<Channel id="Eurosport" siteId="eurosport" />
+		<Channel id="Eurosport 2" siteId="eurosport2" />
+		<Channel id="URHOtv" siteId="urho" />
+		<Channel id="TV7" siteId="tv7" />
+		<Channel id="TV Finland" siteId="tvfinland" />
+		<Channel id="Yle HD" siteId="ylehd" />
+		<Channel id="Discovery Channel" siteId="discovery" />
+		<Channel id="National Geographic Channel" siteId="nationalgeo" />
+		<Channel id="MTV" siteId="musictv" />
+		<Channel id="Disney Channel" siteId="disney" />
+		<Channel id="Nickelodeon" siteId="nickelodeon" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telsu.fi/[YYYY][MM][DD]/[ID]" post="" external="false" encoding="ISO-8859-1" />
+    <Html>
+      <Template name="default" start="&lt;/th&gt;" end="&lt;th&gt;">
+        <SectionTemplate tags="HD">
+          <TemplateText>
+		  &lt;h1&gt;&lt;#TITLE&gt;&lt;/h1&gt;&lt;h2&gt;&lt;#START&gt; - &lt;#END&gt;&lt;div&gt;&lt;div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/h2&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/div&gt;
+		  </TemplateText>
+        </SectionTemplate>
+      </Template>
+    <Searches>
+		<Search match="[Oo]hjaaja:" field="#GENRE" remove="false"/>
+		<Search match="[Oo]hjaus:" field="#GENRE" remove="false"/>
+		<Search match="[Oo]:" field="#GENRE" remove="false"/>
+		<Search match="[Pp]ääosissa:" field="#GENRE" remove="false"/>
+		<Search match="[Pp]:" field="#GENRE" remove="false"/>
+	  </Searches>
+    </Html>
+  </Listing>
+  <Actions>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]hjaaja:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Oo]hjaus:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Pp]ääosissa:">Movie</Modify>
+	<Modify field="#GENRE" action="Replace" channel="*" search="[Pp]:">Movie</Modify>
+  </Actions>
+</Grabber>
