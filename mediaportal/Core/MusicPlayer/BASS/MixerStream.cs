@@ -285,6 +285,8 @@ namespace MediaPortal.MusicPlayer.BASS
             _wasapiShared = true;
           }
 
+          Log.Debug("BASS: Try to init WASAPI with a Frequency of {0} and {1} channels", stream.ChannelInfo.freq, outputChannels);
+
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, outputChannels,
                                       initFlags, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
