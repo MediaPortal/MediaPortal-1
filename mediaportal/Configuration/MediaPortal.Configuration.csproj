@@ -260,6 +260,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Plugins.cs" />
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -705,7 +706,6 @@
     <EmbeddedResource Include="Sections\BDZoom.resx">
       <DependentUpon>BDZoom.cs</DependentUpon>
     </EmbeddedResource>
-
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
       <SubType>Designer</SubType>
