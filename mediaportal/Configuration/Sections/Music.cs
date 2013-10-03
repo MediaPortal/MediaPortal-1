@@ -298,11 +298,15 @@ namespace MediaPortal.Configuration.Sections
                                                 vizPreset);
         }
 
+        ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+        soniqueRenderTiming.Value = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+        comboViewPortSizes.SelectedIndex = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+
         if (vizType == (int) VisualizationInfo.PluginType.Sonique)
         {
-          ckUseOpenGL.Checked = VizPluginInfo.UseOpenGL = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
-          soniqueRenderTiming.Value = VizPluginInfo.RenderTiming = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
-          comboViewPortSizes.SelectedIndex = VizPluginInfo.ViewPortSize = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+          VizPluginInfo.UseOpenGL = ckUseOpenGL.Checked;
+          VizPluginInfo.RenderTiming = soniqueRenderTiming.Value;
+          VizPluginInfo.ViewPortSize = comboViewPortSizes.SelectedIndex;
         }
 
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
