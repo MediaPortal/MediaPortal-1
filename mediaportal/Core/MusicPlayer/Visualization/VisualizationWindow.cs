@@ -1846,7 +1846,7 @@ namespace MediaPortal.Visualization
         int sleepMS = 100;
         bool threadShutDown = true;
 
-        while (VizRenderThread.IsAlive)
+        while (VizRenderThread != null && VizRenderThread.IsAlive)
         {
           Thread.Sleep(sleepMS);
           maxWaitMS -= sleepMS;
