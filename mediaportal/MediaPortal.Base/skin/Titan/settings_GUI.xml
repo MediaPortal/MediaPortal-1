@@ -127,7 +127,7 @@
 				<type>button</type>
 				<id>18</id>
 				<label>300059</label>
-				<ondown>800</ondown>
+				<ondown>100</ondown>
 			</control>
 		</control>
 		
