@@ -3435,7 +3435,7 @@ namespace MediaPortal.Player
 
     public static bool ShowFullScreenWindowVideoDefault()
     {
-      if (!HasVideo && !IsMusic)
+      if (!HasVideo && !IsMusic && !IsRadio)
       {
         return false;
       }
