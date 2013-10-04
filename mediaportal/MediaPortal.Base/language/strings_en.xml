@@ -2332,5 +2332,6 @@
     <String id="300229">Minimize to tray on focus loss</String>
     <String id="300230">Stop playback on removal of an audio renderer</String>
     <String id="300231">Reduce frame rate when not being in focus</String>
+	<String id="300232">Only update files after {0}</String>
    </Section>
 </Language>
