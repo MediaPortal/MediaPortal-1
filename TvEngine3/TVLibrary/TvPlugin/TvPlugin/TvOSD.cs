@@ -137,6 +137,7 @@ namespace TvPlugin
     private Program previousProgram = null;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
+    private bool _confirmTimeshiftStop = true;
 
     private IList listTvChannels;
 
@@ -156,6 +157,7 @@ namespace TvPlugin
       {
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
+        _confirmTimeshiftStop = xmlreader.GetValueAsBool("mytv", "confirmTimeshiftStop", true);
       }
       bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvOSD.xml"));
       return bResult;
@@ -288,29 +290,15 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_STOP:
           {
-            if (g_Player.IsTimeShifting)
-            {
-              Log.Debug("TvOSD: user request to stop");
-              GUIDialogPlayStop dlgPlayStop =
-                (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
-              if (dlgPlayStop != null)
-              {
-                dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
-                dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
-                dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
-                dlgPlayStop.SetDefaultToStop(false);
-                dlgPlayStop.DoModal(GetID);
-                if (dlgPlayStop.IsStopConfirmed)
-                {
-                  Log.Debug("TvOSD: stop confirmed");
-                  g_Player.Stop();
-                }
-              }
-            }
             if (g_Player.IsTVRecording)
             {
-                Log.Debug("TvOSD: stop from recorded TV");
-                g_Player.Stop();
+              Log.Debug("TvOSD: stop from recorded TV");
+              g_Player.Stop();
+            }
+            if (g_Player.IsTimeShifting && CanStopTimeshifting())
+            {
+              Log.Debug("TvOSD: stop confirmed");
+              g_Player.Stop();
             }
             GUIWindowManager.IsPauseOsdVisible = false;
             return;
@@ -382,6 +370,38 @@ namespace TvPlugin
         }
       }
       base.OnAction(action);
+    }
+
+    private bool CanStopTimeshifting()
+    {
+      if (!_confirmTimeshiftStop)
+      {
+        // Can always stop timeshift when confirmation is not required
+        return true;
+      }
+
+      // Get dialog to ask the user for confirmation
+      Log.Debug("TvOSD: user request to stop");
+      GUIDialogPlayStop dlgPlayStop =
+        (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
+      if (dlgPlayStop == null)
+      {
+        // Return true to avoid dead end on missing dialog
+        return true;
+      }
+
+      dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
+      dlgPlayStop.SetLine(1, GUILocalizeStrings.Get(2550));
+      dlgPlayStop.SetLine(2, GUILocalizeStrings.Get(2551));
+      dlgPlayStop.SetDefaultToStop(false);
+      dlgPlayStop.DoModal(GetID);
+      if (dlgPlayStop.IsStopConfirmed)
+      {
+        Log.Debug("TvOSD: stop confirmed");
+        return true;
+      }
+
+      return false;
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -1849,19 +1869,22 @@ namespace TvPlugin
           VirtualCard card;
           TvServer server = new TvServer();
 
-          if (server.IsRecording(GetChannel().IdChannel, out card))
+          if (GetChannel() != null)
           {
-            if (g_Player.IsTVRecording)
+            if (server.IsRecording(GetChannel().IdChannel, out card))
             {
-              Recording rec = TvRecorded.ActiveRecording();
-              if (rec != null)
+              if (g_Player.IsTVRecording)
               {
-                isRecording = TvRecorded.IsLiveRecording();
+                Recording rec = TvRecorded.ActiveRecording();
+                if (rec != null)
+                {
+                  isRecording = TvRecorded.IsLiveRecording();
+                }
               }
-            }
-            else
-            {
-              isRecording = true;
+              else
+              {
+                isRecording = true;
+              }
             }
           }
 

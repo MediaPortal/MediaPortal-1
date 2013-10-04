@@ -519,8 +519,17 @@ namespace MediaPortal.Configuration.Sections
           {
             if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
             {
-              itemTag.IsEnabled =
-                xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+              // Enable PowerScheduler if PS++ is enabled
+              if (itemTag.SetupForm.PluginName() == "PowerScheduler" &&
+                xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
+              {
+                itemTag.IsEnabled = true;
+              }
+              else
+              {
+                itemTag.IsEnabled =
+                  xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+              }
             }
             else
             {
@@ -582,6 +591,12 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
         }
+
+        // Remove PS++ entries
+        xmlwriter.RemoveEntry("plugins", "PowerScheduler++");
+        xmlwriter.RemoveEntry("home", "PowerScheduler++");
+        xmlwriter.RemoveEntry("myplugins", "PowerScheduler++");
+        xmlwriter.RemoveEntry("pluginswindows", "PowerScheduler++");
       }
     }
 

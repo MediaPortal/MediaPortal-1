@@ -106,123 +106,128 @@ namespace MediaPortal.Util
       {
         try
         {
-          theImage = ImageFast.FromFile(strPic);
-          Log.Debug("Picture: Fast loaded texture {0}", strPic);
-        }
-        catch (Exception)
-        {
-          theImage = Image.FromFile(strPic);
-          Log.Warn("Picture: Fallback loaded texture {0}", strPic);
-        }
-        if (theImage == null)
-          return null;
-        if (iRotate > 0)
-        {
-          RotateFlipType fliptype;
-          switch (iRotate)
+          using (FileStream fs = new FileStream(strPic, FileMode.Open, FileAccess.Read))
           {
-            case 1:
-              fliptype = RotateFlipType.Rotate90FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 2:
-              fliptype = RotateFlipType.Rotate180FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            case 3:
-              fliptype = RotateFlipType.Rotate270FlipNone;
-              theImage.RotateFlip(fliptype);
-              break;
-            default:
-              fliptype = RotateFlipType.RotateNoneFlipNone;
-              break;
-          }
-        }
-        iWidth = theImage.Size.Width;
-        iHeight = theImage.Size.Height;
-
-        int iBitmapWidth = iWidth;
-        int iBitmapHeight = iHeight;
-
-        bool bResize = false;
-        float fOutputFrameAR;
-        if (bZoom)
-        {
-          bResize = true;
-          iBitmapWidth = iMaxWidth;
-          iBitmapHeight = iMaxHeight;
-          while (iWidth < iMaxWidth || iHeight < iMaxHeight)
-          {
-            iWidth *= 2;
-            iHeight *= 2;
-          }
-          int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
-          int iOffsetY1 = GUIGraphicsContext.OverScanTop;
-          int iScreenWidth = GUIGraphicsContext.OverScanWidth;
-          int iScreenHeight = GUIGraphicsContext.OverScanHeight;
-          float fPixelRatio = GUIGraphicsContext.PixelRatio;
-          float fSourceFrameAR = ((float)iWidth) / ((float)iHeight);
-          fOutputFrameAR = fSourceFrameAR / fPixelRatio;
-        }
-        else
-        {
-          fOutputFrameAR = ((float)iWidth) / ((float)iHeight);
-        }
-
-        if (iWidth > iMaxWidth)
-        {
-          bResize = true;
-          iWidth = iMaxWidth;
-          iHeight = (int)(((float)iWidth) / fOutputFrameAR);
-        }
-
-        if (iHeight > (int)iMaxHeight)
-        {
-          bResize = true;
-          iHeight = iMaxHeight;
-          iWidth = (int)(fOutputFrameAR * ((float)iHeight));
-        }
-
-        if (!bOversized)
-        {
-          iBitmapWidth = iWidth;
-          iBitmapHeight = iHeight;
-        }
-        else
-        {
-          // Adjust width/height 2 pixcels for smoother zoom actions at the edges
-          iBitmapWidth = iWidth + 2;
-          iBitmapHeight = iHeight + 2;
-          bResize = true;
-        }
-
-        if (bResize)
-        {
-          using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
-          {
-            using (Graphics g = Graphics.FromImage(result))
+            using (theImage = Image.FromStream(fs, true, false))
             {
-              g.CompositingQuality = Thumbs.Compositing;
-              g.InterpolationMode = Thumbs.Interpolation;
-              g.SmoothingMode = Thumbs.Smoothing;
-              if (bOversized)
+              Log.Debug("Picture: Fast loaded texture {0}", strPic);
+              if (theImage == null)
+                return null;
+              if (iRotate > 0)
               {
-                // Set picture at center position
-                int xpos = 1; // (iMaxWidth-iWidth)/2;
-                int ypos = 1; // (iMaxHeight-iHeight)/2;
-                g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                RotateFlipType fliptype;
+                switch (iRotate)
+                {
+                  case 1:
+                    fliptype = RotateFlipType.Rotate90FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  case 2:
+                    fliptype = RotateFlipType.Rotate180FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  case 3:
+                    fliptype = RotateFlipType.Rotate270FlipNone;
+                    theImage.RotateFlip(fliptype);
+                    break;
+                  default:
+                    fliptype = RotateFlipType.RotateNoneFlipNone;
+                    break;
+                }
+              }
+              iWidth = theImage.Size.Width;
+              iHeight = theImage.Size.Height;
+
+              int iBitmapWidth = iWidth;
+              int iBitmapHeight = iHeight;
+
+              bool bResize = false;
+              float fOutputFrameAR;
+              if (bZoom)
+              {
+                bResize = true;
+                iBitmapWidth = iMaxWidth;
+                iBitmapHeight = iMaxHeight;
+                while (iWidth < iMaxWidth || iHeight < iMaxHeight)
+                {
+                  iWidth *= 2;
+                  iHeight *= 2;
+                }
+                int iOffsetX1 = GUIGraphicsContext.OverScanLeft;
+                int iOffsetY1 = GUIGraphicsContext.OverScanTop;
+                int iScreenWidth = GUIGraphicsContext.OverScanWidth;
+                int iScreenHeight = GUIGraphicsContext.OverScanHeight;
+                float fPixelRatio = GUIGraphicsContext.PixelRatio;
+                float fSourceFrameAR = ((float) iWidth)/((float) iHeight);
+                fOutputFrameAR = fSourceFrameAR/fPixelRatio;
               }
               else
               {
-                g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                fOutputFrameAR = ((float) iWidth)/((float) iHeight);
+              }
+
+              if (iWidth > iMaxWidth)
+              {
+                bResize = true;
+                iWidth = iMaxWidth;
+                iHeight = (int) (((float) iWidth)/fOutputFrameAR);
+              }
+
+              if (iHeight > (int) iMaxHeight)
+              {
+                bResize = true;
+                iHeight = iMaxHeight;
+                iWidth = (int) (fOutputFrameAR*((float) iHeight));
+              }
+
+              if (!bOversized)
+              {
+                iBitmapWidth = iWidth;
+                iBitmapHeight = iHeight;
+              }
+              else
+              {
+                // Adjust width/height 2 pixcels for smoother zoom actions at the edges
+                iBitmapWidth = iWidth + 2;
+                iBitmapHeight = iHeight + 2;
+                bResize = true;
+              }
+
+
+              if (bResize)
+              {
+                using (Bitmap result = new Bitmap(iBitmapWidth, iBitmapHeight))
+                {
+                  using (Graphics g = Graphics.FromImage(result))
+                  {
+                    g.CompositingQuality = Thumbs.Compositing;
+                    g.InterpolationMode = Thumbs.Interpolation;
+                    g.SmoothingMode = Thumbs.Smoothing;
+                    if (bOversized)
+                    {
+                      // Set picture at center position
+                      int xpos = 1; // (iMaxWidth-iWidth)/2;
+                      int ypos = 1; // (iMaxHeight-iHeight)/2;
+                      g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
+                    }
+                    else
+                    {
+                      g.DrawImage(theImage, new Rectangle(0, 0, iWidth, iHeight));
+                    }
+                  }
+                  texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
+                }
+              }
+              else
+              {
+                texture = Picture.ConvertImageToTexture((Bitmap) theImage, out iWidth, out iHeight);
               }
             }
-            texture = Picture.ConvertImageToTexture(result, out iWidth, out iHeight);
           }
         }
-        else
+        catch (Exception)
         {
-          texture = Picture.ConvertImageToTexture((Bitmap)theImage, out iWidth, out iHeight);
+          Log.Warn("Picture: exception loading {0}", strPic);
         }
       }
       catch (ThreadAbortException ext)
@@ -808,7 +813,7 @@ namespace MediaPortal.Util
                                        int aThumbHeight, int iRotate, bool aFastMode)
     {
       return CreateThumbnail(thumbnailImageSource, thumbnailImageDest, aThumbWidth,
-                             aThumbHeight, iRotate, aFastMode, false, true);
+                             aThumbHeight, iRotate, aFastMode, true, true);
     }
 
     private static bool BitmapFromSource(BitmapSource bitmapsource, string thumbnailImageDest)
@@ -870,13 +875,18 @@ namespace MediaPortal.Util
       {
         try
         {
-          myImage = ImageFast.FromFile(aInputFilename);
+          using (FileStream fs = new FileStream(aInputFilename, FileMode.Open, FileAccess.Read))
+          {
+            using (myImage = Image.FromStream(fs, true, false))
+            {
+              result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+            }
+          }
         }
         catch (FileNotFoundException)
         {
           result = false;
         }
-        result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
       catch (Exception)
       {
@@ -886,13 +896,16 @@ namespace MediaPortal.Util
         {
           try
           {
-            myImage = ImageFast.FromFile(aInputFilename);
-            result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+            using (FileStream fs = new FileStream(aInputFilename, FileMode.Open, FileAccess.Read))
+            {
+              using (myImage = Image.FromStream(fs, true, false))
+              {
+                result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+              }
+            }
           }
           catch (Exception)
           {
-            myImage = Image.FromFile(aInputFilename, true);
-            result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
           }
         }
         catch (FileNotFoundException)
@@ -932,7 +945,7 @@ namespace MediaPortal.Util
     /// 1 = rotate 90 degrees
     /// 2 = rotate 180 degrees
     /// 3 = rotate 270 degrees
-    /// <param name="fallBack">Needed if generated file need to be delete (for ex in temp folder)</param>
+    /// <param name="fallBack">Set to true to generated file that need to be deleted (for ex in temp folder)</param>
     /// </param>
     /// <returns>Whether the thumb has been successfully created</returns>
     public static bool CreateThumbnail(string thumbnailImageSource, string thumbnailImageDest, int aThumbWidth,
@@ -1155,13 +1168,18 @@ namespace MediaPortal.Util
         {
           try
           {
-            myImage = ImageFast.FromFile(thumbnailImageSource);
+            using (FileStream fs = new FileStream(thumbnailImageSource, FileMode.Open, FileAccess.Read))
+            {
+              using (myImage = Image.FromStream(fs, true, false))
+              {
+                result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+              }
+            }
           }
           catch (FileNotFoundException)
           {
             result = false;
           }
-          result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
         }
         catch (Exception)
         {
@@ -1171,13 +1189,16 @@ namespace MediaPortal.Util
           {
             try
             {
-              myImage = ImageFast.FromFile(thumbnailImageDest);
-              result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+              using (FileStream fs = new FileStream(thumbnailImageDest, FileMode.Open, FileAccess.Read))
+              {
+                using (myImage = Image.FromStream(fs, true, false))
+                {
+                  result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
+                }
+              }
             }
             catch (Exception)
             {
-              myImage = Image.FromFile(thumbnailImageDest, true);
-              result = CreateThumbnail(myImage, thumbnailImageDest, aThumbWidth, aThumbHeight, iRotate, aFastMode);
             }
           }
           catch (FileNotFoundException)
@@ -1431,13 +1452,17 @@ namespace MediaPortal.Util
     {
       try
       {
-        Image image = ImageFast.FromFile(imageFile);
-        return GetRotateByExif(image);
+        using (FileStream fs = new FileStream(imageFile, FileMode.Open, FileAccess.Read))
+        {
+          using (Image image = Image.FromStream(fs, true, false))
+          {
+            return GetRotateByExif(image);
+          }
+        }
       }
-      catch (Exception)
+      catch
       {
-        Image image = Image.FromFile(imageFile);
-        return GetRotateByExif(image);
+        return 0;
       }
     }
 

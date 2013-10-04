@@ -586,7 +586,7 @@ namespace OSInfo
 
       if (VerifyDesktopOSMinRequirement(5, 1, 2600, NT_WORKSTATION, 3))
       { // XP SP3
-        return OsSupport.FullySupported;
+        return OsSupport.NotSupported;
       }
       if (VerifyDesktopOSMinRequirement(6, 0, 6000, NT_WORKSTATION, 2))
       { // Vista SP2
@@ -602,6 +602,10 @@ namespace OSInfo
       }
       if (VerifyDesktopOSMinRequirement(6, 3, 9431, NT_WORKSTATION, 0))
       { // Windows 8.1 Preview
+        return OsSupport.FullySupported;
+      }
+      if (VerifyDesktopOSMinRequirement(6, 3, 9600, NT_WORKSTATION, 0))
+      { // Windows 8.1 RTM
         return OsSupport.FullySupported;
       }
       if (IsServer())
@@ -660,6 +664,16 @@ namespace OSInfo
     public static bool Win8OrLater()
     {
       return VerifyVersionGreaterEqual(6, 2);
+    }
+
+    /// <summary>
+    /// Return if running on Windows8.1 or later
+    /// </summary>
+    /// <returns>true means Windows8.1 or later</returns>
+    /// <returns>false means Win8 or previous</returns>
+    public static bool Win81OrLater()
+    {
+      return VerifyVersionGreaterEqual(6, 3);
     }
 
     /// <summary>

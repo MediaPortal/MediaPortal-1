@@ -27,6 +27,19 @@
 	</control>
 	
 	<control>
+		<description>Plot DUMMY</description>
+		<type>textboxscrollup</type>
+		<id>38</id>
+    <posX>-2000</posX>
+    <posY>168</posY>
+    <width>1120</width>
+    <height>0</height>
+		<label>#TV.View.description</label>
+		<font>TitanLight16</font>
+		<textcolor>ff393939</textcolor>
+	</control>
+	
+	<control>
 		<description>OSD Background</description>
 		<type>image</type>
 		<id>0</id>
@@ -55,7 +68,7 @@
    	<posX>588</posX>
    	<posY>907</posY>
    	<width>737</width>
-   	<height>18</height>
+   	<height>17</height>
 		<texture>osd_progress_bg.png</texture>
 	</control>
     
@@ -81,10 +94,13 @@
 		<filltexture1>osd_progress_mid.png</filltexture1>
 		<filltexture2>osd_progress_mid.png</filltexture2>
 		<filltexture3>osd_progress_mid_orange.png</filltexture3>
+		<markertexture>osd_progress_comskip_marker.png</markertexture>
 		<fillheight>15</fillheight>
 		<label>#TV.Record.percent1</label>
 		<label1>#TV.Record.percent2</label1>
 		<label2>#TV.Record.percent3</label2>
+		<labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
+        <labelmarkerends>#TV.Record.chapters</labelmarkerends>
 		<startlabel />
 		<endlabel />
 		<toplabel />
@@ -260,7 +276,7 @@
 	<control>
 		<description>Plot</description>
 		<type>textboxscrollup</type>
-		<id>38</id>
+		<id>1</id>
     <posX>497</posX>
     <posY>168</posY>
     <width>1120</width>

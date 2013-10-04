@@ -151,6 +151,7 @@ namespace MediaPortal
     private bool                       _wasPlayingVideo;          //
     private bool                       _alwaysOnTop;              // tracks the always on top state
     private bool                       _firstTimeWindowDisplayed; // set to true when MP becomes Active the 1st time
+    private bool                       _firstTimeActivated;       // needed to focus on first start
     private int                        _lastActiveWindow;         //
     private long                       _lastTime;                 //
     private double                     _currentPlayerPos;         //
@@ -191,6 +192,7 @@ namespace MediaPortal
     protected D3D()
     {
       _firstTimeWindowDisplayed  = true;
+      _firstTimeActivated       = true;
       MinimizeOnStartup         = false;
       MinimizeOnGuiExit         = false;
       MinimizeOnFocusLoss       = false;
@@ -610,6 +612,15 @@ namespace MediaPortal
           Thread.Sleep(100);
         }
       }
+
+      if (_firstTimeActivated && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        Log.Debug("D3D FullRender: MP focus");
+        Activate();
+        TopMost = true; // important
+        TopMost = false; // important
+        Focus();
+      }
     }
 
 
@@ -749,6 +760,9 @@ namespace MediaPortal
         WindowState = FormWindowState.Normal;
         Activate();
 
+        // Enable _firstTimeActivated to focus on restore
+        _firstTimeActivated = true;
+
         // resume player and restore volume
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
         {
@@ -819,6 +833,9 @@ namespace MediaPortal
         {
           HideTaskBar(false);
         }
+
+        // Enable _firstTimeActivated to focus on restore
+        _firstTimeActivated = false;
 
         MouseCursor = true;
         MouseTimeOutTimer = DateTime.Now;
@@ -1864,6 +1881,11 @@ namespace MediaPortal
       FullRender();
       Activate();
 
+      // needed to focus on first run.
+      this.WindowState = FormWindowState.Minimized;
+      this.Show();
+      this.WindowState = FormWindowState.Normal;
+
       _isLoaded = true;
     }
 
@@ -1923,6 +1945,16 @@ namespace MediaPortal
         OnProcess();
         FrameMove();
         FullRender();
+        if (_firstTimeActivated && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          Log.Debug("D3D OnIdle: MP focus done");
+          Activate();
+          TopMost = true; // important
+          TopMost = false; // important
+          Focus();
+          BringToFront();
+          _firstTimeActivated = false;
+        }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           break;
@@ -2136,6 +2168,7 @@ namespace MediaPortal
         ShowMouseCursor(false);
       }
       _lostFocus = false;
+      _firstTimeActivated = true;
       base.OnGotFocus(e);
     }
 
