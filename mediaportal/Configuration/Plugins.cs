@@ -15,10 +15,42 @@ namespace MediaPortal.Configuration
 {
   public static class Plugins
   {
-    public static ArrayList loadedPlugins = new ArrayList();
-    public static ArrayList availablePlugins = new ArrayList();
-    public static bool wasLastLoadAdvanced = false;
-    public static bool isLoaded = false;
+    #region Private Variables
+    private static ArrayList loadedPlugins = new ArrayList();
+    private static ArrayList availablePlugins = new ArrayList();
+    private static bool wasLastLoadAdvanced = false;
+    private static bool isLoaded = false;
+    #endregion
+
+    #region Accessors
+    public static ArrayList LoadedPlugins
+    {
+      get
+      {
+        return loadedPlugins;
+      }
+    }
+    public static bool WasLastLoadAdvanced
+    {
+      get
+      {
+        return wasLastLoadAdvanced;
+      }
+    }
+    public static bool IsLoaded
+    {
+      get
+      {
+        return isLoaded;
+      }
+      set
+      {
+        isLoaded = value;
+      }
+    }
+    #endregion
+
+    #region Public Methods
     public static void LoadPlugins()
     {
       foreach (string pluginFile in availablePlugins)
@@ -178,6 +210,7 @@ namespace MediaPortal.Configuration
       availablePlugins.Clear();
       loadedPlugins.Clear();
     }
+
     public static void EnumeratePlugins()
     {
       // Save to determine whether the mode has changed
@@ -189,6 +222,10 @@ namespace MediaPortal.Configuration
       EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "externalplayers"));
       EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
     }
+
+    #endregion
+
+    #region Private Methods
     private static void EnumeratePluginDirectory(string directory)
     {
       if (Directory.Exists(directory))
@@ -207,7 +244,7 @@ namespace MediaPortal.Configuration
         }
       }
     }
-
+    #endregion
   }
   public class ItemTag
   {
