@@ -55,15 +55,15 @@ namespace MediaPortal.Configuration.Sections
 
     public void LoadAll()
     {
-      if (!Plugins.isLoaded || (Plugins.wasLastLoadAdvanced != SettingsForm.AdvancedMode))
+      if (!Plugins.IsLoaded || (Plugins.WasLastLoadAdvanced != SettingsForm.AdvancedMode))
       {
         Plugins.ClearLoadedPlugins();
-        Plugins.isLoaded = true;
+        Plugins.IsLoaded = true;
         Plugins.EnumeratePlugins();
         Plugins.LoadPlugins();       
       }
       loadedPlugins.Clear();
-      foreach (ItemTag tag in Plugins.loadedPlugins)
+      foreach (ItemTag tag in Plugins.LoadedPlugins)
       {
         loadedPlugins.Add(tag);
       }
