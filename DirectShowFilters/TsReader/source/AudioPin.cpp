@@ -455,7 +455,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         bool HasTimestamp ;
         double fTime = 0.0;
         double clock = 0.0;
-        double stallPoint = 1.5;
+        double stallPoint = AUDIO_STALL_POINT;
         //check if it has a timestamp
         if ((HasTimestamp=buffer->MediaTime(RefTime)))
         {

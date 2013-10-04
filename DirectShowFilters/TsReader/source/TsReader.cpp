@@ -485,6 +485,10 @@ CTsReaderFilter::~CTsReaderFilter()
   //stop duration thread
   StopThread(5000);
   
+  //stop demux flush/read ahead thread
+  m_demultiplexer.m_bShuttingDown = true;
+  m_demultiplexer.StopThread(5000);
+  
   HRESULT hr = m_pAudioPin->Disconnect();
   delete m_pAudioPin;
 
@@ -1894,10 +1898,11 @@ void CTsReaderFilter::ThreadProc()
           CRefTime firstVideo, lastVideo;
           int cntA = m_demultiplexer.GetAudioBufferPts(firstAudio, lastAudio);
           int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo);
+          long rtspBuffSize = m_demultiplexer.GetRTSPBufferSize();
                   
-          if ((cntA > 300) || (cntV > 300) || m_bEnableBufferLogging)
+          if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
           {
-            LogDebug("Buffers : A/V = %d/%d, A last : %03.3f, V Last : %03.3f", cntA, cntV, (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f);
+            LogDebug("Buffers : A/V = %d/%d, RTSP = %d, A last : %03.3f, V Last : %03.3f", cntA, cntV, rtspBuffSize, (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f);
           }
         }
                           
