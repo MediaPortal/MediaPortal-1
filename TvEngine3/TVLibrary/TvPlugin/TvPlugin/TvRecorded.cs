@@ -302,15 +302,48 @@ namespace TvPlugin
 
       base.OnPageLoad();
       InitViewSelections();
-      DeleteInvalidRecordings();
 
-      if (btnCompress != null)
+      // launch DeleteInvalidRecordings async for instant start of GUI screen - refresh GUI later, if recordings have been deleted
+      bool recordingsDeleted = false;
+      Object loadFacadeLock = new Object();
+
+      new Thread(delegate()
       {
-        btnCompress.Visible = false;
-      }
+        {
+          try
+          {
+            recordingsDeleted = DeleteInvalidRecordings();
+          }
+          catch (Exception ex)
+          {
+            Log.Debug("DeleteInvalidRecordings - error: " + ex.Message);
+          }
+        }
+        GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) =>
+        {
+          {
+            if (recordingsDeleted)
+            {
+              Log.Debug("TvRecorded: recordings were deleted -> now update GUI");
+              lock (loadFacadeLock)
+              {
+                UpdateGUI();
+              }
+            }
+            else
+            {
+              Log.Debug("TvRecorded: no recordings were deleted -> skip GUI update");
+            }
+          }
+          return 0;
+        }, 0, 0, null);
+      }) { Name = "DeleteInvalidRecordings", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
 
       LoadSettings();
-      LoadDirectory();
+      lock (loadFacadeLock)
+      {
+        LoadDirectory();
+      }
 
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
@@ -715,59 +748,59 @@ namespace TvPlugin
               break;
           }
 
-          foreach (var folder in groups)
+          foreach (Recording folder in groups)
           {
-            var i = new GUIListItem();
+            GUIListItem item = new GUIListItem();
             switch (_currentDbView)
             {
               case DBView.History:
-                i.Label = GetSpokenViewDate(folder.StartTime);
-                i.Label2 = string.Empty;
+                item.Label = GetSpokenViewDate(folder.StartTime);
+                item.Label2 = string.Empty;
                 break;
               case DBView.Recordings:
                 singleRecording = (recordings.Count(r => r.Title == folder.Title) == 1);
                 if (singleRecording)
                 {
-                  i = BuildItemFromRecording(folder);
-                  var ts = folder.EndTime - folder.StartTime;
-                  i.Label2 = String.Format("{0} ({1})",
+                  item = BuildItemFromRecording(folder);
+                  TimeSpan ts = folder.EndTime - folder.StartTime;
+                  item.Label2 = String.Format("{0} ({1})",
                                            Utils.GetNamedDate(folder.StartTime),
                                            Utils.SecondsToHMString((int)ts.TotalSeconds));
                 }
                 else
                 {
-                  i.Label = folder.Title;
-                  i.Label2 = GetSpokenViewDate(folder.StartTime);
+                  item.Label = folder.Title;
+                  item.Label2 = GetSpokenViewDate(folder.StartTime);
                 }
 
                 break;
               case DBView.Channel:
                 // recordings can be linked to channels that no longer exist.
-                i.Label = folder.ReferencedChannel() == null ? GUILocalizeStrings.Get(1507) : folder.ReferencedChannel().DisplayName;
-                i.Label2 = GetSpokenViewDate(folder.StartTime);
+                item.Label = folder.ReferencedChannel() == null ? GUILocalizeStrings.Get(1507) : folder.ReferencedChannel().DisplayName;
+                item.Label2 = GetSpokenViewDate(folder.StartTime);
                 break;
               case DBView.Genre:
-                i.Label = folder.Genre;
-                i.Label2 = GetSpokenViewDate(folder.StartTime);
+                item.Label = folder.Genre;
+                item.Label2 = GetSpokenViewDate(folder.StartTime);
                 break;
             }
-            i.Label2 = GetSpokenViewDate(folder.StartTime);
-            i.TVTag = folder;
-            i.IsFolder = !singleRecording;
-            if (activerecordings.Contains(folder)) i.PinImage = Thumbs.TvRecordingIcon;
-            Utils.SetDefaultIcons(i);
-            i.ThumbnailImage = i.IconImageBig;
-            facadeLayout.Add(i);
+            item.Label2 = GetSpokenViewDate(folder.StartTime);
+            item.TVTag = folder;
+            item.IsFolder = !singleRecording;
+            if (activerecordings.Contains(folder)) item.PinImage = Thumbs.TvRecordingIcon;
+            Utils.SetDefaultIcons(item);
+            item.ThumbnailImage = item.IconImageBig;
+            facadeLayout.Add(item);
             
-            if (string.IsNullOrEmpty(i.Label)) 	
+            if (string.IsNullOrEmpty(item.Label)) 	
             {
-              i.Label = GUILocalizeStrings.Get(2014); //unknown
+              item.Label = GUILocalizeStrings.Get(2014); //unknown
             }
           }
         }
         else
         {
-          // Showing a folders content
+          #region Showing a folders content
 
           // add parent item
           var item = new GUIListItem("..") {IsFolder = true};
@@ -786,15 +819,13 @@ namespace TvPlugin
                 break;
               case DBView.Recordings:
                 addToList = rec.Title.Equals(_currentLabel, StringComparison.InvariantCultureIgnoreCase) ||
-                            TVUtil.GetDisplayTitle(rec).Equals(actualLabel,
-                                                               StringComparison.InvariantCultureIgnoreCase);
+                            TVUtil.GetDisplayTitle(rec).Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Channel:
                 // possible that recording links to a channel that no longer exists
                 // make sure we pick those up if that value is selected
                 addToList = actualLabel.Equals(GUILocalizeStrings.Get(1507)) && rec.ReferencedChannel() == null ||
-                            GetRecordingDisplayName(rec).Equals(actualLabel,
-                                                                StringComparison.InvariantCultureIgnoreCase);
+                            GetRecordingDisplayName(rec).Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
                 break;
               case DBView.Genre:
                 addToList = rec.Genre.Equals(actualLabel, StringComparison.InvariantCultureIgnoreCase);
@@ -815,6 +846,7 @@ namespace TvPlugin
             item.Label2 = strTime;
             facadeLayout.Add(item);
           }
+          #endregion
         }
       }
       catch (Exception ex)
@@ -1209,9 +1241,18 @@ namespace TvPlugin
       
       TryDeleteRecordingAndNotifyUser(rec);
 
+      UpdateGUI();
+
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
+    }
+
+    private void UpdateGUI()
+    {
       CacheManager.Clear();
 
       LoadDirectory();
+
       while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
         _iSelectedItem--;
@@ -1226,10 +1267,7 @@ namespace TvPlugin
         _rootItem = 0;
       }
 
-      _resetSMSsearchDelay = DateTime.Now;
-      _resetSMSsearch = true;
     }
-
 
     private void TryDeleteRecordingAndNotifyUser(Recording rec)
     {
@@ -1329,9 +1367,13 @@ namespace TvPlugin
       RemoteControl.Instance.DeleteWatchedRecordings(currentTitle);
     }
 
-    private void DeleteInvalidRecordings()
+    private bool DeleteInvalidRecordings()
     {
-      RemoteControl.Instance.DeleteInvalidRecordings();
+      Stopwatch watch = new Stopwatch(); watch.Reset(); watch.Start();
+      bool deletedrecordings = RemoteControl.Instance.DeleteInvalidRecordings();
+      watch.Stop();
+      Log.Debug("DeleteInvalidRecordings() - finished after '" + watch.ElapsedMilliseconds + "' ms., deletedrecordings = '" + deletedrecordings + "'");
+      return deletedrecordings;
     }
 
     private void UpdateProperties()
