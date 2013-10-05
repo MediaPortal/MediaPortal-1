@@ -2258,17 +2258,20 @@ namespace MediaPortal.Util
 
     public static bool FileDelete(string strFile)
     {
-      if (String.IsNullOrEmpty(strFile)) return true;
+      if (String.IsNullOrEmpty(strFile)) return false;
       try
       {
         if (!File.Exists(strFile))
-          return true;
+        {
+          return false;
+        }
         File.Delete(strFile);
+        Log.Debug("Util: FileDelete {0} successful.", strFile);
         return true;
       }
       catch (Exception ex)
       {
-        Log.Error("Util: FileDelete {0} error: {1}", strFile , ex.Message);
+        Log.Error("Util: FileDelete {0} error: {1}", strFile, ex.Message);
       }
       return false;
     }

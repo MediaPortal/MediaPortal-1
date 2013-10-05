@@ -392,6 +392,7 @@ namespace MediaPortal.GUI.Video
         titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        
         Util.Utils.FileDelete(coverArtImage);
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
@@ -883,7 +884,31 @@ namespace MediaPortal.GUI.Video
                 Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", largeCoverArtImage);
                 Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage,
                   (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,Thumbs.SpeedThumbsLarge);
-                
+
+                // Create folder thumb (movie is DVD or BD)
+                if (FolderForThumbs != string.Empty)
+                //edited by BoelShit
+                {
+                  // copy icon to folder also;
+                  string strFolderImage = string.Empty;
+
+                  strFolderImage = Path.GetFullPath(FolderForThumbs);
+                  strFolderImage += "\\folder.jpg";
+                  
+                  try
+                  {
+                    Util.Utils.FileDelete(strFolderImage);
+
+                    if (!File.Exists(strFolderImage))
+                    {
+                      File.Copy(largeCoverArtImage, strFolderImage, true); //edited by BoelShit
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Info("GUIVideoInfo: Error creating folder thumb {0}", ex.Message);
+                  }
+                }
               }
               
               // Delete original image temp file from a temp folder
