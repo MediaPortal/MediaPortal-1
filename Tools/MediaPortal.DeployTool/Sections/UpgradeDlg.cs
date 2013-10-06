@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.InstallationChecks;
 using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool.Sections
@@ -38,6 +39,25 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
       rbReinstallChecked = false;
+      // Check if MySQL need to be upgraded
+      IInstallationPackage package = new MySQLChecker();
+      CheckResult resultMySQL56 = package.CheckStatus();
+      CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
+      bool MySQL51 = resultMySQL51.state == CheckState.INSTALLED;
+      bool MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
+      if (MySQL51 && MySQL56)
+      {
+        // Set SQL setting needed for MySQL upgrade
+        InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
+        InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
+        InstallationProperties.Instance.Set("ConfigureDBMSFirewall", "1");
+        InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
+        // Default DBMS
+        InstallationProperties.Instance.Set("DBMSType", "mysql");
+        InstallationProperties.Instance.Set("DBMSDir",
+                                            InstallationProperties.Instance["ProgramFiles"] +
+                                            "\\MySQL\\MySQL Server 5.6");
+      }
       UpdateUI();
     }
 

@@ -35,7 +35,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
     private static readonly string prg = "MySQL56" + _arch;
-    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+    private static readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
                                        "\\MySQL\\MySQL Server 5.6";
@@ -368,6 +368,47 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (key == null)
       {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      }
+      if (key == null)
+      {
+        result.state = CheckState.NOT_INSTALLED;
+      }
+      else
+      {
+        key.Close();
+        result.state = CheckState.INSTALLED;
+      }
+      return result;
+    }
+
+    public static CheckResult CheckStatusMySQL51()
+    {
+      RegistryKey key = null;
+      CheckResult result;
+      result.needsDownload = true;
+      FileInfo mySqlFile = new FileInfo(_fileName);
+
+      if (mySqlFile.Exists && mySqlFile.Length != 0)
+        result.needsDownload = false;
+
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
+      }
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
+            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+      if (key == null)
+      {
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
       }
       if (key == null)
       {
