@@ -275,7 +275,7 @@ namespace MediaPortal.Visualization
       }
 
       string vizPath = VizPluginInfo.FilePath;
-      string configFile = Path.Combine(Path.GetDirectoryName(vizPath), "vis.ini");     
+      string configFile = Path.Combine(System.Windows.Forms.Application.StartupPath, @"musicplayer\plugins\visualizations\Sonique\vis.ini");     
 
       try
       {
