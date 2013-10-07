@@ -312,7 +312,7 @@ namespace TvLibrary.Implementations
       tuningSpace.put_FriendlyName("DVB-S TuningSpace");
       tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
       ((IDVBSTuningSpace)tuningSpace).put_SystemType(DVBSystemType.Satellite);
-      locator = (ILocator)new DVBTLocator();
+      locator = (ILocator)new DVBSLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
       locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);

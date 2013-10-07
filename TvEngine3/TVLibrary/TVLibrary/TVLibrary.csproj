@@ -97,7 +97,6 @@
     <Compile Include="DebugSettings.cs" />
     <Compile Include="DeviceSorter.cs" />
     <Compile Include="Implementations\Analog\Components\Capture.cs" />
-    <Compile Include="Implementations\Analog\Components\TeletextComponent.cs" />
     <Compile Include="Implementations\Analog\Components\Crossbar.cs" />
     <Compile Include="Implementations\Analog\Components\Encoder.cs" />
     <Compile Include="Implementations\Analog\Components\Tuner.cs" />

@@ -29,10 +29,28 @@ namespace TvLibrary.Implementations.Analog.Components
 {
   internal class Encoder
   {
+    #region constants
+
     [ComImport, Guid("511d13f0-8a56-42fa-b151-b72a325cf71a")]
     private class MpTsMuxer
     {
     }
+
+    private static readonly HashSet<string> CYBERLINK_MULTIPLEXERS = new HashSet<string>
+    {
+      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{370e9701-9dc5-42c8-be29-4e75f0629eed}",
+      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{6770e328-9b73-40c5-91e6-e2f321aede57}",
+      @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{7f2bbeaf-e11c-4d39-90e8-938fb5a86045}"
+    };
+
+    private static IList<AMMediaType> CAPTURE_MEDIA_TYPES = new List<AMMediaType>();
+    private static IList<AMMediaType> VIDEO_MEDIA_TYPES = new List<AMMediaType>();
+    private static IList<AMMediaType> AUDIO_MEDIA_TYPES = new List<AMMediaType>();
+    private static IList<AMMediaType> VBI_MEDIA_TYPES = new List<AMMediaType>();
+    private static IList<AMMediaType> TELETEXT_MEDIA_TYPES = new List<AMMediaType>();
+    private static IList<AMMediaType> CLOSED_CAPTIONS_MEDIA_TYPES = new List<AMMediaType>();
+
+    #endregion
 
     #region variables
 
@@ -62,7 +80,7 @@ namespace TvLibrary.Implementations.Analog.Components
     private DsDevice _multiplexerDevice = null;
 
     /// <summary>
-    /// The hardware or software video (or combined video-audio) encoder filter.
+    /// The hardware or software video (or combined video-audio) encoder/multiplexer filter.
     /// </summary>
     private IBaseFilter _filterVideoEncoder = null;
 
@@ -72,7 +90,7 @@ namespace TvLibrary.Implementations.Analog.Components
     private IBaseFilter _filterAudioEncoder = null;
 
     /// <summary>
-    /// The hardware multiplexer/encoder filter.
+    /// The hardware multiplexer/encoder or software multiplexer filter.
     /// </summary>
     private IBaseFilter _filterMultiplexer = null;
 
@@ -80,6 +98,11 @@ namespace TvLibrary.Implementations.Analog.Components
     /// The MediaPortal transport stream multiplexer filter.
     /// </summary>
     private IBaseFilter _filterTsMultiplexer = null;
+
+    /// <summary>
+    /// The VBI or WST codec/splitter filter.
+    /// </summary>
+    private IBaseFilter _filterVbiSplitter = null;
 
     #endregion
 
@@ -120,7 +143,46 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #endregion
 
-    #region Dispose
+    public Encoder()
+    {
+      AMMediaType mt1 = new AMMediaType();
+      mt1.majorType = MediaType.Stream;
+      mt1.subType = MediaSubType.Null;
+      AMMediaType mt2 = new AMMediaType();
+      mt2.majorType = MediaType.Video;
+      mt2.subType = MediaSubType.Mpeg2Transport;
+      AMMediaType mt3 = new AMMediaType();
+      mt3.majorType = MediaType.Video;
+      mt3.subType = MediaSubType.Mpeg2Program;
+      AMMediaType mt4 = new AMMediaType();
+      mt4.majorType = MediaType.Video;
+      mt4.subType = MediaSubType.Null;
+      AMMediaType mt5 = new AMMediaType();
+      mt5.majorType = MediaType.Audio;
+      mt5.subType = MediaSubType.Null;
+      AMMediaType mt6 = new AMMediaType();
+      mt6.majorType = MediaType.VBI;
+      mt6.subType = MediaSubType.Null;
+      AMMediaType mt7 = new AMMediaType();
+      mt7.majorType = MediaType.VBI;
+      mt7.subType = MediaSubType.TELETEXT;
+      AMMediaType mt8 = new AMMediaType();
+      mt8.majorType = MediaType.AuxLine21Data;
+      mt8.subType = MediaSubType.Line21_BytePair;
+
+      if (CAPTURE_MEDIA_TYPES.Count == 0)
+      {
+        CAPTURE_MEDIA_TYPES.Add(mt1);
+        CAPTURE_MEDIA_TYPES.Add(mt2);
+        CAPTURE_MEDIA_TYPES.Add(mt3);
+
+        VIDEO_MEDIA_TYPES.Add(mt4);
+        AUDIO_MEDIA_TYPES.Add(mt5);
+        VBI_MEDIA_TYPES.Add(mt6);
+        TELETEXT_MEDIA_TYPES.Add(mt7);
+        CLOSED_CAPTIONS_MEDIA_TYPES.Add(mt8);
+      }
+    }
 
     public void Dispose()
     {
@@ -143,6 +205,11 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         Release.ComObject(_filterTsMultiplexer);
         _filterTsMultiplexer = null;
+      }
+      if (_filterVbiSplitter != null)
+      {
+        Release.ComObject(_filterVbiSplitter);
+        _filterVbiSplitter = null;
       }
       if (_videoEncoderDevice != null)
       {
@@ -171,8 +238,6 @@ namespace TvLibrary.Implementations.Analog.Components
       }
     }
 
-    #endregion
-
     private static string GetPinName(IPin pin)
     {
       PinInfo pinInfo;
@@ -186,22 +251,23 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
-    /// Creates the encoder component.
+    /// Creates the encoder and teletext component.
     /// This function handles a huge variety of filter and pin connection
     /// arrangements, including:
     /// - 1 or 2 capture filters
     /// - 1 or 2 encoder filters
-    /// - hardware multiplexer filter
     /// - hardware or software encoders
+    /// - hardware or software multiplexer filter
     /// - combined or separate video and/or audio paths throughout
-    /// The objective is to connect a combination of required (ie. hardware
-    /// filters) and optional filters, such that we can eventually connect our
-    /// transport stream multiplexer.
+    /// The objective is to connect a combination of required (ie. hardware)
+    /// and optional filters (including teletext and/or closed captions
+    /// filters), such that we can eventually connect our transport stream
+    /// multiplexer.
     /// </summary>
-    /// <param name="graph">The graph builder</param>
-    /// <param name="crossbar">The crossbar component</param>
-    /// <param name="capture">The capture component</param>
-    /// <returns>true, if the building was successful; false otherwise</returns>
+    /// <param name="graph">The graph builder.</param>
+    /// <param name="crossbar">The crossbar component.</param>
+    /// <param name="capture">The capture component.</param>
+    /// <returns><c>true</c> if graph building was successful, otherwise <c>false</c></returns>
     public bool CreateFilterInstance(IFilterGraph2 graph, Crossbar crossbar, Capture capture)
     {
       // ------------------------------------------------
@@ -216,169 +282,55 @@ namespace TvLibrary.Implementations.Analog.Components
         Log.Log.Debug("encoder: required device path section = {0}", requiredDevicePathSection);
       }
 
-      // Connect hardware encoder filter(s).
-      Log.Log.Debug("encoder: add hardware encoder(s)");
-      if (capture.VideoFilter != null)
-      {
-        AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingEncoderDevices, graph, capture.VideoFilter, requiredDevicePathSection, out _filterVideoEncoder, out _videoEncoderDevice);
-      }
-      if (capture.AudioFilter != null)
-      {
-        // If we have a separate audio capture filter, try to connect the video
-        // encoder filter in case it also handles audio. Otherwise, attempt to
-        // connect another filter.
-        if (_filterVideoEncoder == null || ConnectFiltersByPinName(graph, capture.AudioFilter, _filterVideoEncoder) == 0)
-        {
-          AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingEncoderDevices, graph, capture.AudioFilter, requiredDevicePathSection, out _filterAudioEncoder, out _audioEncoderDevice);
-        }
-      }
-
-      // Connect a hardware multiplexer filter.
-      Log.Log.Debug("encoder: add hardware multiplexer");
-      IBaseFilter videoFilter = _filterVideoEncoder ?? capture.VideoFilter;
-      if (videoFilter != null)
-      {
-        AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingMultiplexerDevices, graph, videoFilter, requiredDevicePathSection, out _filterMultiplexer, out _multiplexerDevice);
-      }
-      if (_filterAudioEncoder != null || capture.AudioFilter != null)
-      {
-        // If we have a separate audio chain, try to connect it into the
-        // multiplexer.
-        IBaseFilter audioFilter = _filterAudioEncoder ?? capture.AudioFilter;
-        if (_filterMultiplexer != null || ConnectFiltersByPinName(graph, audioFilter, _filterMultiplexer) == 0)
-        {
-          AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingMultiplexerDevices, graph, audioFilter, requiredDevicePathSection, out _filterMultiplexer, out _multiplexerDevice);
-        }
-      }
-
-      // ------------------------------------------------
-      // STAGE 2
-      // Add software encoders if necessary.
-      // ------------------------------------------------
-      AMMediaType mt1 = new AMMediaType();
-      mt1.majorType = MediaType.Stream;
-      mt1.subType = MediaSubType.Null;
-      AMMediaType mt2 = new AMMediaType();
-      mt2.majorType = MediaType.Video;
-      mt2.subType = MediaSubType.Mpeg2Transport;
-      AMMediaType mt3 = new AMMediaType();
-      mt3.majorType = MediaType.Video;
-      mt3.subType = MediaSubType.Mpeg2Program;
-      AMMediaType mt4 = new AMMediaType();
-      mt4.majorType = MediaType.Video;
-      mt4.subType = MediaSubType.Null;
-      AMMediaType mt5 = new AMMediaType();
-      mt5.majorType = MediaType.Audio;
-      mt5.subType = MediaSubType.Null;
-      IList<AMMediaType> captureMediaTypes = new List<AMMediaType>();
-      captureMediaTypes.Add(mt1);
-      captureMediaTypes.Add(mt2);
-      captureMediaTypes.Add(mt3);
-      IList<AMMediaType> videoMediaTypes = new List<AMMediaType>();
-      videoMediaTypes.Add(mt4);
-      IList<AMMediaType> audioMediaTypes = new List<AMMediaType>();
-      audioMediaTypes.Add(mt5);
-      Guid g1;
-      Guid g2;
+      AddAndConnectHardwareFilters(graph, capture, requiredDevicePathSection);
 
       IPin capturePin = null;
-      Guid captureMediaMajorType = Guid.Empty;
-      Guid captureMediaSubType = Guid.Empty;
       IPin videoPin = null;
       IPin audioPin = null;
+      IPin teletextPin = null;
+      IPin closedCaptionPin = null;
       try
       {
-        if (_filterMultiplexer == null && _filterVideoEncoder == null && _filterAudioEncoder == null)
+        // ------------------------------------------------
+        // STAGE 2
+        // Add VBI splitter/decoders for teletext and
+        // closed caption support.
+        // ------------------------------------------------
+        if (capture.VideoFilter != null)
         {
-          // We have no hardware filters. If the capture filter doesn't have an
-          // MPEG PS or TS output (ie. capture filter is not an encoder filter)
-          // then we need software encoders. There are a couple of special cases
-          // too.
-          if (capture.VideoFilter == null || capture.AudioFilter == null)
-          {
-            IBaseFilter captureFilter = capture.VideoFilter ?? capture.AudioFilter;
-            FindPinByMediaType(captureFilter, captureMediaTypes, out capturePin, out captureMediaMajorType, out captureMediaSubType);
-          }
-          if (capturePin == null)
-          {
-            // Software encoder(s) required.
-            Log.Log.Debug("encoder: add software encoder(s)");
-            if (capture.VideoFilter != null)
-            {
-              if (!FindPinByMediaType(capture.VideoFilter, videoMediaTypes, out videoPin, out g1, out g2))
-              {
-                throw new TvExceptionGraphBuildingFailed("Failed to locate capture or video pin on video capture filter.");
-              }
-            }
-            IBaseFilter audioCaptureFilter = capture.AudioFilter ?? capture.VideoFilter;
-            if (audioCaptureFilter != null)
-            {
-              FindPinByMediaType(audioCaptureFilter, audioMediaTypes, out audioPin, out g1, out g2);
-            }
-
-            // The Plextor capture filter is a video encoder filter, but not an
-            // audio encoder filter.
-            TvBusinessLayer layer = new TvBusinessLayer();
-            if (videoPin != null && !capture.VideoName.StartsWith("Plextor ConvertX"))
-            {
-              Log.Log.Debug("encoder: add video encoder...");
-              if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.VideoCompressorCategory, layer.GetSofwareEncodersVideo(), videoPin, out _filterVideoEncoder, out _videoCompressorDevice))
-              {
-                throw new TvExceptionSWEncoderMissing("Failed to add a software video encoder.");
-              }
-            }
-            if (audioPin != null)
-            {
-              // Sometimes the video encoder may also encode audio.
-              // Unfortunately the encoders I've seen don't usually advertise
-              // the supported media types on their input pins. We're forced to
-              // check the pin name to confirm that the second pin is not a
-              // closed caption pin.
-              bool connectedAudio = false;
-              if (_filterVideoEncoder != null)
-              {
-                IPin inputPin = DsFindPin.ByDirection(_filterVideoEncoder, PinDirection.Input, 1);
-                if (inputPin != null)
-                {
-                  try
-                  {
-                    Log.Log.Debug("encoder: detected additional input pin on video encoder");
-                    if (!GetPinName(inputPin).ToLowerInvariant().Contains("cc"))
-                    {
-                      Log.Log.Debug("encoder: connect...");
-                      if (graph.ConnectDirect(audioPin, inputPin, null) == 0)
-                      {
-                        Log.Log.Debug("encoder: connected!");
-                        connectedAudio = true;
-                      }
-                    }
-                  }
-                  finally
-                  {
-                    Release.ComObject(inputPin);
-                  }
-                }
-              }
-              if (!connectedAudio)
-              {
-                Log.Log.Debug("encoder: add audio encoder...");
-                if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.AudioCompressorCategory, layer.GetSofwareEncodersAudio(), audioPin, out _filterAudioEncoder, out _audioCompressorDevice))
-                {
-                  throw new TvExceptionSWEncoderMissing("Failed to add a software audio encoder.");
-                }
-              }
-            }
-          }
+          AddAndConnectVbiFilter(graph, capture, out teletextPin, out closedCaptionPin);
         }
 
         // ------------------------------------------------
         // STAGE 3
+        // Add software encoders if necessary.
+        // ------------------------------------------------
+        if (_filterMultiplexer == null && _filterVideoEncoder == null && _filterAudioEncoder == null)
+        {
+          // We have no hardware filters. If the capture filter doesn't have an
+          // MPEG PS or TS output (ie. capture filter is not an encoder filter)
+          // then we need software encoders.
+          if (capture.VideoFilter == null || capture.AudioFilter == null)
+          {
+            IBaseFilter captureFilter = capture.VideoFilter ?? capture.AudioFilter;
+            FindPinByCategoryOrMediaType(captureFilter, Guid.Empty, CAPTURE_MEDIA_TYPES, out capturePin);
+          }
+          if (capturePin == null)
+          {
+            // Software encoder(s) (and maybe a multiplexer for compatibility)
+            // are required.
+            AddAndConnectSoftwareFilters(graph, capture, closedCaptionPin, out videoPin, out audioPin);
+          }
+        }
+
+        // ------------------------------------------------
+        // STAGE 4
         // Find pins to connect to the TS multiplexer.
         // ------------------------------------------------
-        Log.Log.Debug("encoder: find pin(s) for TS multiplexer");
+        Log.Log.Debug("encoder: find pin(s) for multiplexer");
         if (_filterMultiplexer != null)
         {
-          if (!FindPinByMediaType(_filterMultiplexer, captureMediaTypes, out capturePin, out captureMediaMajorType, out captureMediaSubType))
+          if (!FindPinByCategoryOrMediaType(_filterMultiplexer, Guid.Empty, CAPTURE_MEDIA_TYPES, out capturePin))
           {
             throw new TvExceptionGraphBuildingFailed("Failed to locate capture pin on multiplexer filter.");
           }
@@ -388,14 +340,14 @@ namespace TvLibrary.Implementations.Analog.Components
           if (_filterVideoEncoder == null || _filterAudioEncoder == null)
           {
             IBaseFilter encoderFilter = _filterVideoEncoder ?? _filterAudioEncoder;
-            FindPinByMediaType(encoderFilter, captureMediaTypes, out capturePin, out captureMediaMajorType, out captureMediaSubType);
+            FindPinByCategoryOrMediaType(encoderFilter, Guid.Empty, CAPTURE_MEDIA_TYPES, out capturePin);
           }
 
           if (capturePin == null)
           {
             if (_filterVideoEncoder != null)
             {
-              if (!FindPinByMediaType(_filterVideoEncoder, videoMediaTypes, out videoPin, out g1, out g2))
+              if (!FindPinByCategoryOrMediaType(_filterVideoEncoder, Guid.Empty, VIDEO_MEDIA_TYPES, out videoPin))
               {
                 throw new TvExceptionGraphBuildingFailed("Failed to locate capture or video pin on video encoder filter.");
               }
@@ -403,16 +355,36 @@ namespace TvLibrary.Implementations.Analog.Components
             IBaseFilter audioEncoderFilter = _filterAudioEncoder ?? _filterVideoEncoder;
             if (audioEncoderFilter != null)
             {
-              FindPinByMediaType(audioEncoderFilter, audioMediaTypes, out audioPin, out g1, out g2);
+              FindPinByCategoryOrMediaType(audioEncoderFilter, Guid.Empty, AUDIO_MEDIA_TYPES, out audioPin);
             }
           }
         }
 
         // ------------------------------------------------
-        // STAGE 4
+        // STAGE 5
         // Add and connect the MediaPortal multiplexer.
         // ------------------------------------------------
-        if (!AddAndConnectTsMultiplexer(graph, videoPin, audioPin, capturePin, captureMediaSubType))
+        IList<IPin> pinsToConnect = new List<IPin>();
+        if (teletextPin != null)
+        {
+          pinsToConnect.Add(teletextPin);
+        }
+        if (capturePin != null)
+        {
+          pinsToConnect.Add(capturePin);
+        }
+        else
+        {
+          if (videoPin != null)
+          {
+            pinsToConnect.Add(videoPin);
+          }
+          if (audioPin != null)
+          {
+            pinsToConnect.Add(audioPin);
+          }
+        }
+        if (!AddAndConnectTsMultiplexer(graph, pinsToConnect))
         {
           throw new TvExceptionGraphBuildingFailed("Failed to add and connect TS multiplexer.");
         }
@@ -431,8 +403,280 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           Release.ComObject(audioPin);
         }
+        if (teletextPin != null)
+        {
+          Release.ComObject(teletextPin);
+        }
+        if (closedCaptionPin != null)
+        {
+          Release.ComObject(closedCaptionPin);
+        }
       }
       return true;
+    }
+
+    private void AddAndConnectHardwareFilters(IFilterGraph2 graph, Capture capture, string requiredDevicePathSection)
+    {
+      Log.Log.Info("encoder: add hardware encoder(s)");
+      if (capture.VideoFilter != null)
+      {
+        AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingEncoderDevices, graph, capture.VideoFilter, requiredDevicePathSection, out _filterVideoEncoder, out _videoEncoderDevice);
+      }
+      if (capture.AudioFilter != null)
+      {
+        // If we have a separate audio capture filter, try to connect the video
+        // encoder filter in case it also handles audio. Otherwise, attempt to
+        // connect another filter.
+        if (_filterVideoEncoder == null || ConnectFiltersByPinName(graph, capture.AudioFilter, _filterVideoEncoder) == 0)
+        {
+          AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingEncoderDevices, graph, capture.AudioFilter, requiredDevicePathSection, out _filterAudioEncoder, out _audioEncoderDevice);
+        }
+      }
+
+      // Connect a hardware multiplexer filter.
+      Log.Log.Info("encoder: add hardware multiplexer");
+      IBaseFilter videoFilter = _filterVideoEncoder ?? capture.VideoFilter;
+      if (videoFilter != null)
+      {
+        AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingMultiplexerDevices, graph, videoFilter, requiredDevicePathSection, out _filterMultiplexer, out _multiplexerDevice);
+      }
+      if (_filterAudioEncoder != null || capture.AudioFilter != null)
+      {
+        // If we have a separate audio chain, try to connect it into the
+        // multiplexer.
+        IBaseFilter audioFilter = _filterAudioEncoder ?? capture.AudioFilter;
+        if (_filterMultiplexer != null || ConnectFiltersByPinName(graph, audioFilter, _filterMultiplexer) == 0)
+        {
+          AddAndConnectFilterFromCategory(FilterCategory.WDMStreamingMultiplexerDevices, graph, audioFilter, requiredDevicePathSection, out _filterMultiplexer, out _multiplexerDevice);
+        }
+      }
+    }
+
+    private void AddAndConnectVbiFilter(IFilterGraph2 graph, Capture capture, out IPin teletextPin, out IPin closedCaptionPin)
+    {
+      teletextPin = null;
+      closedCaptionPin = null;
+      IPin vbiPin = null;
+      if (FindPinByCategoryOrMediaType(capture.VideoFilter, PinCategory.VBI, VBI_MEDIA_TYPES, out vbiPin))
+      {
+        // We have a VBI pin. Connect the VBI codec/splitter filter.
+        Log.Log.Info("encoder: add VBI codec");
+        int hr = 0;
+        try
+        {
+          DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.AMKSMULTIVBICodec);
+          DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AMKSVBICodec);
+          DsDevice[] devices = new DsDevice[devices1.Length + devices2.Length];
+          devices1.CopyTo(devices, 0);
+          devices2.CopyTo(devices, devices1.Length);
+          foreach (DsDevice d in devices)
+          {
+            if (d == null || d.Name == null || (!d.Name.Equals("VBI Codec") && !d.Name.Equals("WST Codec")))
+            {
+              continue;
+            }
+
+            Log.Log.Debug("encoder: attempt to add {0} {1}", d.Name, d.DevicePath);
+            try
+            {
+              hr = graph.AddSourceFilterForMoniker(d.Mon, null, d.Name, out _filterVbiSplitter);
+              DsError.ThrowExceptionForHR(hr);
+            }
+            catch
+            {
+              Log.Log.Debug("encoder: failed to add, hr = 0x{0:x}", hr);
+              _filterVbiSplitter = null;
+              continue;
+            }
+
+            IPin inputPin = null;
+            try
+            {
+              inputPin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
+              hr = graph.ConnectDirect(vbiPin, inputPin, null);
+              DsError.ThrowExceptionForHR(hr);
+              Log.Log.Debug("encoder: connected!");
+              break;
+            }
+            catch
+            {
+              Log.Log.Debug("encoder: failed to connect, hr = 0x{0:x}", hr);
+              graph.RemoveFilter(_filterVbiSplitter);
+              Release.ComObject(_filterVbiSplitter);
+              _filterVbiSplitter = null;
+            }
+            finally
+            {
+              if (inputPin != null)
+              {
+                Release.ComObject(inputPin);
+              }
+            }
+          }
+        }
+        finally
+        {
+          Release.ComObject(vbiPin);
+        }
+      }
+
+      IBaseFilter vbiFilter = _filterVbiSplitter ?? capture.VideoFilter;
+      if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.TeleText, TELETEXT_MEDIA_TYPES, out teletextPin))
+      {
+        Log.Log.Debug("encoder: found teletext pin");
+      }
+      if (FindPinByCategoryOrMediaType(vbiFilter, PinCategory.CC, CLOSED_CAPTIONS_MEDIA_TYPES, out closedCaptionPin))
+      {
+        Log.Log.Debug("encoder: found closed caption pin");
+      }
+    }
+
+    private void AddAndConnectSoftwareFilters(IFilterGraph2 graph, Capture capture, IPin closedCaptionPin, out IPin videoPin, out IPin audioPin)
+    {
+      Log.Log.Info("encoder: add software encoder(s)");
+      videoPin = null;
+      audioPin = null;
+
+      if (capture.VideoFilter != null)
+      {
+        if (!FindPinByCategoryOrMediaType(capture.VideoFilter, Guid.Empty, VIDEO_MEDIA_TYPES, out videoPin))
+        {
+          throw new TvExceptionGraphBuildingFailed("Failed to locate capture or video pin on video capture filter.");
+        }
+      }
+      IBaseFilter audioCaptureFilter = capture.AudioFilter ?? capture.VideoFilter;
+      if (audioCaptureFilter != null)
+      {
+        FindPinByCategoryOrMediaType(audioCaptureFilter, Guid.Empty, AUDIO_MEDIA_TYPES, out audioPin);
+      }
+
+      // The Plextor capture filter is a video encoder filter, but not an audio
+      // encoder filter.
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (videoPin != null && !capture.VideoName.StartsWith("Plextor ConvertX"))
+      {
+        Log.Log.Debug("encoder: add video encoder...");
+        if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.VideoCompressorCategory, layer.GetSofwareEncodersVideo(), videoPin, out _filterVideoEncoder, out _videoCompressorDevice))
+        {
+          throw new TvExceptionSWEncoderMissing("Failed to add a software video encoder.");
+        }
+      }
+      if (audioPin != null || closedCaptionPin != null)
+      {
+        // Sometimes the video encoder may also encode audio or closed
+        // captions. Unfortunately the encoders I've seen don't usually
+        // advertise the supported media types on their input pins. We're
+        // forced to check the pin name...
+        bool connectedAudio = false;
+        if (_filterVideoEncoder != null)
+        {
+          IPin inputPin = DsFindPin.ByDirection(_filterVideoEncoder, PinDirection.Input, 1);
+          if (inputPin != null)
+          {
+            try
+            {
+              string pinName = GetPinName(inputPin);
+              IPin pinToConnect = null;
+              string pinType = string.Empty;
+              Log.Log.Debug("encoder: detected additional input pin {0}, on video encoder", pinName);
+              if (DsUtils.GetPinCategory(inputPin) == PinCategory.CC || pinName.ToLowerInvariant().Contains("cc"))
+              {
+                pinType = "closed caption";
+                pinToConnect = closedCaptionPin;
+              }
+              else
+              {
+                pinType = "audio";
+                pinToConnect = audioPin;
+              }
+              Log.Log.Debug("encoder: pin is {0} pin, connect...", pinType);
+              if (graph.ConnectDirect(pinToConnect, inputPin, null) == 0)
+              {
+                Log.Log.Debug("encoder: connected!");
+                connectedAudio = pinType.Equals("audio");
+              }
+            }
+            finally
+            {
+              Release.ComObject(inputPin);
+            }
+          }
+        }
+        if (!connectedAudio && audioPin != null)
+        {
+          Log.Log.Debug("encoder: add audio encoder...");
+          if (!AddAndConnectSoftwareEncoder(graph, FilterCategory.AudioCompressorCategory, layer.GetSofwareEncodersAudio(), audioPin, out _filterAudioEncoder, out _audioCompressorDevice))
+          {
+            throw new TvExceptionSWEncoderMissing("Failed to add a software audio encoder.");
+          }
+        }
+      }
+
+      // Add and connect a Cyberlink multiplexer. This is required if a
+      // Cyberlink audio encoder is used. If the muxer isn't in the graph, the
+      // audio encoder causes an access violation exception when you attempt to
+      // start the graph. My guess is that the encoder interacts with the
+      // muxer. I tried to mimic interfaces requested via QueryInterface() but
+      // ultimately I never managed to make it work.
+      if (_audioCompressorDevice == null || _audioCompressorDevice.Name == null || !_audioCompressorDevice.Name.ToLowerInvariant().Contains("cyberlink"))
+      {
+        return;
+      }
+      Log.Log.Info("encoder: add software multiplexer");
+      DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
+      int hr = 0;
+      for (int i = 0; i < devices.Length; i++)
+      {
+        DsDevice d = devices[i];
+        if (d == null || d.Name == null || d.DevicePath == null)
+        {
+          continue;
+        }
+        string devicePath = d.DevicePath.ToLowerInvariant();
+        if (!CYBERLINK_MULTIPLEXERS.Contains(devicePath))
+        {
+          continue;
+        }
+
+        try
+        {
+          Log.Log.Debug("encoder: attempt to add {0} {1}", d.Name, d.DevicePath);
+          hr = graph.AddSourceFilterForMoniker(d.Mon, null, d.Name, out _filterMultiplexer);
+          DsError.ThrowExceptionForHR(hr);
+        }
+        catch
+        {
+          Log.Log.Debug("encoder: failed to add, hr = 0x{0:x}", hr);
+          _filterMultiplexer = null;
+          continue;
+        }
+
+        int connectedPinCount = 0;
+        try
+        {
+          if (_filterVideoEncoder != null)
+          {
+            connectedPinCount += ConnectFiltersByPinName(graph, _filterVideoEncoder, _filterMultiplexer);
+          }
+          if (_filterAudioEncoder != null)
+          {
+            connectedPinCount += ConnectFiltersByPinName(graph, _filterAudioEncoder, _filterMultiplexer);
+          }
+          if (connectedPinCount != 0)
+          {
+            break;
+          }
+        }
+        finally
+        {
+          if (connectedPinCount == 0)
+          {
+            graph.RemoveFilter(_filterMultiplexer);
+            Release.ComObject(_filterMultiplexer);
+            _filterMultiplexer = null;
+          }
+        }
+      }
     }
 
     private int AddAndConnectFilterFromCategory(Guid category, IFilterGraph2 graph, IBaseFilter upstreamFilter, string deviceIdentifier, out IBaseFilter filter, out DsDevice device)
@@ -672,11 +916,15 @@ namespace TvLibrary.Implementations.Analog.Components
       return connectedPinCount;
     }
 
-    private bool FindPinByMediaType(IBaseFilter filter, IList<AMMediaType> matchMediaTypes, out IPin matchPin, out Guid matchMediaMajorType, out Guid matchMediaSubType)
+    private bool FindPinByCategoryOrMediaType(IBaseFilter filter, Guid matchCategory, IList<AMMediaType> matchMediaTypes, out IPin matchedPin)
     {
-      matchPin = null;
-      matchMediaMajorType = Guid.Empty;
-      matchMediaSubType = Guid.Empty;
+      if (matchMediaTypes == null)
+      {
+        matchMediaTypes = new List<AMMediaType>();
+      }
+      matchedPin = null;
+      Guid matchMediaMajorType = Guid.Empty;
+      Guid matchMediaSubType = Guid.Empty;
 
       IEnumPins enumPins;
       int hr = filter.EnumPins(out enumPins);
@@ -700,6 +948,13 @@ namespace TvLibrary.Implementations.Analog.Components
               continue;
             }
 
+            // Does the category match?
+            if (matchCategory != Guid.Empty && matchCategory == DsUtils.GetPinCategory(pin))
+            {
+              matchedPin = pin;
+              return true;
+            }
+
             // For each pin media type...
             IEnumMediaTypes enumMediaTypes;
             hr = pin.EnumMediaTypes(out enumMediaTypes);
@@ -717,7 +972,7 @@ namespace TvLibrary.Implementations.Analog.Components
                   {
                     if (mediaType.majorType == mt.majorType && (mediaType.subType == mt.subType || mt.subType == MediaSubType.Null))
                     {
-                      matchPin = pin;
+                      matchedPin = pin;
                       matchMediaMajorType = mediaType.majorType;
                       matchMediaSubType = mediaType.subType;
                       return true;
@@ -741,7 +996,7 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           finally
           {
-            if (matchMediaSubType == Guid.Empty)
+            if (matchedPin == null && pin != null)
             {
               Release.ComObject(pin);
             }
@@ -812,7 +1067,7 @@ namespace TvLibrary.Implementations.Analog.Components
           hr = graph.AddSourceFilterForMoniker(d.Mon, null, d.Name, out filter);
           DsError.ThrowExceptionForHR(hr);
         }
-        catch (Exception)
+        catch
         {
           Log.Log.Debug("encoder: failed to add, hr = 0x{0:x}", hr);
           EncodersInUse.Instance.Remove(d);
@@ -843,7 +1098,7 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           if (!connected)
           {
-            Log.Log.Debug("encoder: failed to connect");
+            Log.Log.Debug("encoder: failed to connect, hr = 0x{0:x}", hr);
             EncodersInUse.Instance.Remove(d);
             graph.RemoveFilter(filter);
             Release.ComObject(filter);
@@ -854,7 +1109,7 @@ namespace TvLibrary.Implementations.Analog.Components
       return false;
     }
 
-    private bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IPin videoOutputPin, IPin audioOutputPin, IPin captureOutputPin, Guid captureMediaSubType)
+    private bool AddAndConnectTsMultiplexer(IFilterGraph2 graph, IList<IPin> pinsToConnect)
     {
       Log.Log.Debug("encoder: add and connect TS multiplexer");
       int hr = 0;
@@ -871,28 +1126,18 @@ namespace TvLibrary.Implementations.Analog.Components
       }
 
       IPin inputPin = null;
-      if (captureOutputPin != null)
+      int pinIndex = 0;
+      foreach (IPin pinToConnect in pinsToConnect)
       {
         try
         {
-          if (captureMediaSubType == MediaSubType.Mpeg2Transport)
-          {
-            inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, 0);
-          }
-          else if (captureMediaSubType == MediaSubType.Mpeg2Program)
-          {
-            inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, 1);
-          }
-          else
-          {
-            Log.Log.Debug("encoder: unexpected capture pin media subtype {0}, not sure how to connect", captureMediaSubType);
-            return false;
-          }
-          hr = graph.ConnectDirect(captureOutputPin, inputPin, null);
+          inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, pinIndex++);
+          hr = graph.ConnectDirect(pinToConnect, inputPin, null);
+          DsError.ThrowExceptionForHR(hr);
         }
         catch
         {
-          Log.Log.Debug("encoder: failed to connect capture pin, hr = 0x{0:x}", hr);
+          Log.Log.Debug("encoder: failed to connect pin {0}, hr = 0x{1:x}", pinIndex, hr);
           return false;
         }
         finally
@@ -900,51 +1145,6 @@ namespace TvLibrary.Implementations.Analog.Components
           if (inputPin != null)
           {
             Release.ComObject(inputPin);
-          }
-        }
-      }
-      else
-      {
-        if (videoOutputPin != null)
-        {
-          try
-          {
-            inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, 2);
-            hr = graph.ConnectDirect(videoOutputPin, inputPin, null);
-            DsError.ThrowExceptionForHR(hr);
-          }
-          catch
-          {
-            Log.Log.Debug("encoder: failed to connect video pin, hr = 0x{0:x}", hr);
-            return false;
-          }
-          finally
-          {
-            if (inputPin != null)
-            {
-              Release.ComObject(inputPin);
-            }
-          }
-        }
-        if (audioOutputPin != null)
-        {
-          try
-          {
-            inputPin = DsFindPin.ByDirection(_filterTsMultiplexer, PinDirection.Input, 3);
-            hr = graph.ConnectDirect(audioOutputPin, inputPin, null);
-            DsError.ThrowExceptionForHR(hr);
-          }
-          catch
-          {
-            Log.Log.Debug("encoder: failed to connect audio pin, hr = 0x{0:x}", hr);
-            return false;
-          }
-          finally
-          {
-            if (inputPin != null)
-            {
-              Release.ComObject(inputPin);
-            }
           }
         }
       }

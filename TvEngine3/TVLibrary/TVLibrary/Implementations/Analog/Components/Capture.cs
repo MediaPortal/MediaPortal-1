@@ -107,11 +107,6 @@ namespace TvLibrary.Implementations.Analog.Components
     private readonly List<String> _badCaptureDevices;
 
     /// <summary>
-    /// The teletext output pin
-    /// </summary>
-    private IPin _pinVBI;
-
-    /// <summary>
     /// The current image width
     /// </summary>
     private int _imageWidth = 720;
@@ -192,22 +187,6 @@ namespace TvLibrary.Implementations.Analog.Components
       }
     }
 
-    /// <summary>
-    /// Gets the teletext ping
-    /// </summary>
-    public IPin VBIPin
-    {
-      get { return _pinVBI; }
-    }
-
-    /// <summary>
-    /// Gets if the capture device supports teletext
-    /// </summary>
-    public bool SupportsTeletext
-    {
-      get { return _pinVBI != null; }
-    }
-
     #endregion
 
     #region ctor
@@ -232,11 +211,6 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     public void Dispose()
     {
-      if (_pinVBI != null)
-      {
-        Release.ComObject("vbipin filter", _pinVBI);
-        _pinVBI = null;
-      }
       if (_filterAudioCapture != null)
       {
         Release.ComObject("audio capture filter", _filterAudioCapture);
@@ -434,11 +408,6 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterVideoCapture != null)
       {
-        if (graph.Capture.TeletextPin != -1)
-        {
-          _pinVBI = DsFindPin.ByDirection(_filterVideoCapture, PinDirection.Output,
-                                          graph.Capture.TeletextPin);
-        }
         _videoProcAmp = _filterVideoCapture as IAMVideoProcAmp;
         _analogVideoDecoder = _filterVideoCapture as IAMAnalogVideoDecoder;
         _streamConfig = _filterVideoCapture as IAMStreamConfig;
@@ -579,65 +548,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterVideoCapture != null)
       {
-        FindVBIPin(graph);
         CheckCapabilities(graph, capBuilder);
       }
       return _filterVideoCapture != null;
-    }
-
-    /// <summary>
-    /// Finds the VBI pin on the video capture device.
-    /// If it existst the pin is stored in _pinVBI
-    /// </summary>
-    /// <param name="graph">The stored graph</param>
-    private void FindVBIPin(Graph graph)
-    {
-      Log.Log.WriteFile("analog: FindVBIPin on VideoCapture");
-      int pinIndex;
-      try
-      {
-        IPin pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VideoPortVBI, 0,
-                                                                    PinDirection.Output, out pinIndex);
-        if (pinVBI != null)
-        {
-          Log.Log.WriteFile("analog: VideoPortVBI pin found");
-          Release.ComObject(pinVBI);
-          return;
-        }
-        pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0,
-                                                               PinDirection.Output, out pinIndex);
-        if (pinVBI != null)
-        {
-          Log.Log.WriteFile("analog: VBI pin found");
-          graph.Capture.TeletextPin = pinIndex;
-          _pinVBI = pinVBI;
-          return;
-        }
-      }
-      catch (COMException ex)
-      {
-        if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
-        {
-          // pin on a NVTV capture filter is named VBI..
-          Log.Log.WriteFile("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
-                            ex.ErrorCode);
-
-          if (_filterVideoCapture == null)
-            return;
-          Log.Log.WriteFile("analog: find VBI pin by name");
-
-          IPin pinVBI = FilterGraphTools.GetPinByName(_filterVideoCapture, "VBI", PinDirection.Output, out pinIndex);
-          if (pinVBI != null)
-          {
-            Log.Log.WriteFile("analog: pin named VBI found");
-            graph.Capture.TeletextPin = pinIndex;
-            _pinVBI = pinVBI;
-            return;
-          }
-        }
-        Log.Log.WriteFile("analog: Error in searching vbi pin - Skipping error");
-      }
-      Log.Log.WriteFile("analog: FindVBIPin on VideoCapture no vbi pin found");
     }
 
     /// <summary>

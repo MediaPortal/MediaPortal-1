@@ -57,7 +57,6 @@ namespace TvLibrary.Implementations.Analog
     private Crossbar _crossbar;
     private Capture _capture;
     private Encoder _encoder;
-    private TeletextComponent _teletext;
     private DsROTEntry _rotEntry;
     private ICaptureGraphBuilder2 _capBuilder;
     private IBaseFilter _tsFileSink;
@@ -506,11 +505,6 @@ namespace TvLibrary.Implementations.Analog
         _encoder.Dispose();
         _encoder = null;
       }
-      if (_teletext != null)
-      {
-        _teletext.Dispose();
-        _teletext = null;
-      }
       if (_tsFileSink != null)
       {
         Release.ComObject("tsFileSink filter", _tsFileSink);
@@ -584,15 +578,6 @@ namespace TvLibrary.Implementations.Analog
         if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
         {
           throw new TvException("Analog: unable to add capture filter");
-        }
-        Configuration.writeConfiguration(_configuration);
-        _teletext = new TeletextComponent();
-        if (_capture.SupportsTeletext)
-        {
-          if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
-          {
-            throw new TvException("Analog: unable to setup teletext filters");
-          }
         }
         Configuration.writeConfiguration(_configuration);
         _encoder = new Encoder();
@@ -688,23 +673,6 @@ namespace TvLibrary.Implementations.Analog
         if (inputPin != null)
         {
           Release.ComObject(inputPin);
-        }
-      }
-      if (_capture.SupportsTeletext)
-      {
-        Log.Log.Debug("analog: connect WST/VBI");
-        inputPin = DsFindPin.ByDirection(_encoder.TsMultiplexerFilter, PinDirection.Input, 4);
-        try
-        {
-          hr = _graphBuilder.ConnectDirect(_teletext.WST_VBI_Pin, inputPin, null);
-          DsError.ThrowExceptionForHR(hr);
-        }
-        finally
-        {
-          if (inputPin != null)
-          {
-            Release.ComObject(inputPin);
-          }
         }
       }
       return true;
