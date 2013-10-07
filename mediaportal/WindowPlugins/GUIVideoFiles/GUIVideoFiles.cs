@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Video
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
     
-    private static IMDB.InternalActorsScriptGrabber _internalGrabber = new IMDB.InternalActorsScriptGrabber();
+    //private static IMDB.InternalActorsScriptGrabber _internalGrabber = new IMDB.InternalActorsScriptGrabber();
 
     #endregion
 
@@ -2489,7 +2489,8 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        _internalGrabber.LoadScript();
+        IMDB.InternalActorsScriptGrabber.ResetGraber();
+        Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
         progressDialog.Close();
       }
 
@@ -2741,10 +2742,10 @@ namespace MediaPortal.GUI.Video
       _virtualDirectory.SetExtensions(extensions);
     }
 
-    public static IMDB.InternalActorsScriptGrabber InternalGrabber
-    {
-      get { return _internalGrabber; }
-    }
+    //public static IMDB.InternalActorsScriptGrabber InternalGrabber
+    //{
+    //  get { return _internalGrabber; }
+    //}
 
     #endregion
 

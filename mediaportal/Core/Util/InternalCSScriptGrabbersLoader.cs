@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.IO;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using CSScriptLibrary;
 
@@ -37,10 +38,28 @@ namespace MediaPortal.Util
 
       public class ImagesGrabber
       {
-        private IInternalMovieImagesGrabber _movieImagesGrabber;
-        private bool _movieImagesGrabberLoaded;
+        private static IInternalMovieImagesGrabber _movieImagesGrabber;
+        private static bool _movieImagesGrabberLoaded;
+        private static AsmHelper _asmHelper;
 
-        public IInternalMovieImagesGrabber MovieImagesGrabber
+        public static void ResetGrabber()
+        {
+          if (_asmHelper != null)
+          {
+            _asmHelper.Dispose();
+            _asmHelper = null;
+          }
+
+          if (_movieImagesGrabber != null)
+          {
+            _movieImagesGrabber.SafeDispose();
+            _movieImagesGrabber = null;
+          }
+
+          _movieImagesGrabberLoaded = false;
+        }
+
+        public static IInternalMovieImagesGrabber MovieImagesGrabber
         {
           get
           {
@@ -59,7 +78,7 @@ namespace MediaPortal.Util
           set { _movieImagesGrabber = value; }
         }
 
-        public bool LoadScript()
+        private static bool LoadScript()
         {
           string scriptFileName = InternalMovieScriptDirectory + @"\InternalMovieImagesGrabber.csscript";
 
@@ -73,8 +92,8 @@ namespace MediaPortal.Util
           try
           {
             Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-            AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
-            MovieImagesGrabber = (IInternalMovieImagesGrabber) script.CreateObject("MovieImagesGrabber");
+            _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+            MovieImagesGrabber = (IInternalMovieImagesGrabber) _asmHelper.CreateObject("MovieImagesGrabber");
           }
           catch (Exception ex)
           {

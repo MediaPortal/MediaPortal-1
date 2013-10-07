@@ -26,6 +26,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using CSScriptLibrary;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
@@ -231,10 +232,28 @@ namespace MediaPortal.Video.Database
 
     public class InternalActorsScriptGrabber
     {
-      private IIMDBInternalActorsScriptGrabber _internalActorsGrabber;
-      private bool _internalActorsGrabberLoaded;
-      
-      public IIMDBInternalActorsScriptGrabber InternalActorsGrabber
+      private static IIMDBInternalActorsScriptGrabber _internalActorsGrabber;
+      private static bool _internalActorsGrabberLoaded;
+      private static AsmHelper _asmHelper;
+
+      public static void ResetGraber()
+      {
+        if (_asmHelper != null)
+        {
+          _asmHelper.Dispose();
+          _asmHelper = null;
+        }
+
+        if (_internalActorsGrabber != null)
+        {
+          _internalActorsGrabber.SafeDispose();
+          _internalActorsGrabber = null;
+        }
+
+        _internalActorsGrabberLoaded = false;
+      }
+
+      public static IIMDBInternalActorsScriptGrabber InternalActorsGrabber
       {
         get
         {
@@ -249,7 +268,7 @@ namespace MediaPortal.Video.Database
         set { _internalActorsGrabber = value; }
       }
 
-      public bool LoadScript()
+      private static bool LoadScript()
       {
         string scriptFileName = InternalScriptDirectory + @"\InternalActorMoviesGrabber.csscript";
 
@@ -263,8 +282,8 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
-          InternalActorsGrabber = (IIMDBInternalActorsScriptGrabber)script.CreateObject("InternalActorsGrabber");
+          _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          InternalActorsGrabber = (IIMDBInternalActorsScriptGrabber) _asmHelper.CreateObject("InternalActorsGrabber");
         }
         catch (Exception ex)
         {
@@ -526,37 +545,25 @@ namespace MediaPortal.Video.Database
     private void FindIMDBActor(string strURL)
     {
       _elements.Clear();
-      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
-      
-      if (internalGrabber.LoadScript())
-      {
-        _elements = internalGrabber.InternalActorsGrabber.FindIMDBActor(strURL);
-      }
-
-      internalGrabber = null;
+      _elements = InternalActorsScriptGrabber.InternalActorsGrabber.FindIMDBActor(strURL);
     }
     
     // Filmograpy and bio
     public bool GetActorDetails(IMDBUrl url, out IMDBActor actor)
     {
       actor = new IMDBActor();
-      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
       
-      if (internalGrabber.LoadScript())
+      if (InternalActorsScriptGrabber.InternalActorsGrabber.GetActorDetails(url, out actor))
       {
-        if (internalGrabber.InternalActorsGrabber.GetActorDetails(url, out actor))
+        // Add filmography
+        if (actor.Count > 0)
         {
-
-          // Add filmography
-          if (actor.Count > 0)
-          {
-            actor.SortActorMoviesByYear();
-          }
-          internalGrabber = null;
-          return true;
+          actor.SortActorMoviesByYear();
         }
+        
+        return true;
       }
-      internalGrabber = null;
+      
       return false;
     }
 
@@ -587,14 +594,8 @@ namespace MediaPortal.Video.Database
         }
       }
 
-      InternalActorsScriptGrabber internalGrabber = new IMDB.InternalActorsScriptGrabber();
-
-      if (internalGrabber.LoadScript())
-      {
-        actorList = internalGrabber.InternalActorsGrabber.GetIMDBMovieActorsList(imdbMovieID, shortActorsListSize);
-      }
-
-      internalGrabber = null;
+      actorList = InternalActorsScriptGrabber.InternalActorsGrabber.GetIMDBMovieActorsList(imdbMovieID,
+        shortActorsListSize);
     }
     
     // Get actor search parser strings

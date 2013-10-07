@@ -2413,22 +2413,28 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
+      
       if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
       }
 
+      IMDB.InternalActorsScriptGrabber.ResetGraber();
+
       _progressDialog.SetLine1("Downloading the InternalImagesGrabberScript file...");
       _progressDialog.SetLine2("Downloading...");
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
+      
       if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
       }
+
+      Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
 
       _progressDialog.CloseProgress();
 

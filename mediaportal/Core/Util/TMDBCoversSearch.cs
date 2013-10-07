@@ -61,22 +61,23 @@ namespace MediaPortal.Util
       }
 
       _imageList.Clear();
-      InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbImageScraper =
-        new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
+      //InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbImageScraper =
+      //  new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
       try
       {
-        if (tmdbImageScraper.LoadScript())
-        {
-          _imageList = tmdbImageScraper.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
-        }
+        //if (tmdbImageScraper.LoadScript())
+        //{
+        //  _imageList = tmdbImageScraper.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
+        //}
+        _imageList  = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetTmdbCoverImages(movieTitle, imdbMovieID);
       }
       catch (Exception ex)
       {
         Log.Error("Util TMDBCoverSearch error: {0}", ex.Message);
       }
       
-      tmdbImageScraper = null;
+      //tmdbImageScraper = null;
 
     }
 
@@ -88,22 +89,23 @@ namespace MediaPortal.Util
       }
 
       actorThumbs.Clear();
-      InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbActorImageScraper =
-        new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
+      //InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbActorImageScraper =
+      //  new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
 
       try
       {
-        if (tmdbActorImageScraper.LoadScript())
-        {
-          actorThumbs = tmdbActorImageScraper.MovieImagesGrabber.GetTmdbActorImage(actorName);
-        }
+        //if (tmdbActorImageScraper.LoadScript())
+        //{
+        //  actorThumbs = tmdbActorImageScraper.MovieImagesGrabber.GetTmdbActorImage(actorName);
+        //}
+        actorThumbs = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetTmdbActorImage(actorName);
       }
       catch (Exception ex)
       {
         Log.Error("Util TMDBSearchActorImage error: {0}", ex.Message);
       }
 
-      tmdbActorImageScraper = null;
+      //tmdbActorImageScraper = null;
     }
   }
 }

@@ -486,8 +486,7 @@ namespace MediaPortal.GUI.Settings
         return;
       }
 
-      IMDB.InternalActorsScriptGrabber internalActorsGrabber = new IMDB.InternalActorsScriptGrabber();
-      internalActorsGrabber.LoadScript();
+      IMDB.InternalActorsScriptGrabber.ResetGraber();
 
       // Internal images grabber script update
       progressDialog.SetHeading("Updating InternalImagesGrabberScript file......");
@@ -496,6 +495,8 @@ namespace MediaPortal.GUI.Settings
       progressDialog.SetLine(2, "Downloading...");
       progressDialog.SetPercentage(100);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+      Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
 
       if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
       {
