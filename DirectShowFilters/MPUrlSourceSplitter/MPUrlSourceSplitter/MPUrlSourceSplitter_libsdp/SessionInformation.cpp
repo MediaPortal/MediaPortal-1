@@ -58,7 +58,7 @@ unsigned int CSessionInformation::Parse(const wchar_t *buffer, unsigned int leng
   if (result != 0)
   {
     // successful parsing of session tag
-    // compare it to out session tag
+    // compare it to our session tag
     result = (wcscmp(this->originalTag, TAG_SESSION_INFORMATION) == 0) ? result : 0;
     result = (this->tagContent != NULL) ? result : 0;
   }

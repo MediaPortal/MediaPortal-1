@@ -333,8 +333,9 @@ HRESULT CSocketContext::Receive(char *buffer, unsigned int length, int flags, un
       result = (lastError == WSAEWOULDBLOCK) ? S_OK : HRESULT_FROM_WIN32(lastError);
       *receivedLength = 0;
     }
-    else
+    else if ((flags & MSG_PEEK) == 0)
     {
+      // not checking incoming data length
       this->receivedDataLength += *receivedLength;
 
       if (sender != NULL)

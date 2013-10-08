@@ -278,21 +278,30 @@ CStreamCollection *CDemuxer::GetStreams(StreamType type)
   return this->streams[type];
 }
 
-REFERENCE_TIME CDemuxer::GetDuration(void)
+int64_t CDemuxer::GetDuration(void)
 {
-  int64_t length = 0;
+  int64_t duration = this->filter->GetDuration();
 
-  if ((this->formatContext->duration == (int64_t)AV_NOPTS_VALUE) || (this->formatContext->duration < 0LL))
+  if (duration == DURATION_UNSPECIFIED)
   {
-    // no duration is available for us
-    return -1;
+    if ((this->formatContext->duration == (int64_t)AV_NOPTS_VALUE) || (this->formatContext->duration < 0LL))
+    {
+      // no duration is available for us
+      duration = -1;
+    }
+    else
+    {
+      duration = this->formatContext->duration;
+    }
+
+    duration = ConvertTimestampToRT(duration, 1, AV_TIME_BASE, 0);
   }
-  else
+  else if (duration != DURATION_LIVE_STREAM)
   {
-    length = this->formatContext->duration;
+    duration *= 10000; // DSHOW_TIME_BASE / 1000
   }
 
-  return ConvertTimestampToRT(length, 1, AV_TIME_BASE, 0);
+  return duration;
 }
 
 const wchar_t *CDemuxer::GetContainerFormat(void)
@@ -349,7 +358,7 @@ HRESULT CDemuxer::GetNextPacket(COutputPinPacket *packet)
       {
         if ((stream->codec->extradata_size == 0) || (stream->codec->extradata[0] != 1) || (AV_RB32(ffmpegPacket.data) == 0x00000001))
         {
-          packet->SetFlags(packet->GetFlags() | FLAG_PACKET_H264_ANNEXB);
+          packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_H264_ANNEXB);
         }
         else
         {
@@ -443,18 +452,18 @@ HRESULT CDemuxer::GetNextPacket(COutputPinPacket *packet)
           else if (this->IsVc1Correction())
           {
             rt = dts;
-            packet->SetFlags(packet->GetFlags() | FLAG_PACKET_PARSED);
+            packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
           }
         }
         else if (stream->codec->codec_id == CODEC_ID_MOV_TEXT)
         {
-          packet->SetFlags(packet->GetFlags() | FLAG_PACKET_MOV_TEXT);
+          packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT);
         }
 
         // mark the packet as parsed, so the forced subtitle parser doesn't hit it
         if (stream->codec->codec_id == CODEC_ID_HDMV_PGS_SUBTITLE)
         {
-          packet->SetFlags(packet->GetFlags() | FLAG_PACKET_PARSED);
+          packet->SetFlags(packet->GetFlags() | OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
         }
 
         packet->SetStartTime(rt);
@@ -548,7 +557,18 @@ HRESULT CDemuxer::GetNextPacket(COutputPinPacket *packet)
 
 void CDemuxer::SetActiveStream(StreamType streamType, int activeStreamId)
 {
-  this->activeStream[streamType] = activeStreamId;
+  CStreamCollection *streams = this->streams[(CDemuxer::StreamType)streamType];
+
+  for (unsigned int i = 0; i < streams->Count(); i++)
+  {
+    CStream *stream = streams->GetItem(i);
+
+    if (stream->GetPid() == activeStreamId)
+    {
+      this->activeStream[streamType] = i;
+      break;
+    }
+  }
 }
 
 /* other methods */
@@ -827,7 +847,6 @@ HRESULT CDemuxer::Seek(REFERENCE_TIME time, unsigned int seekingMethod)
     {
       this->logger->Log(LOGGER_WARNING, L"%s: %s: first seek by position failed: 0x%08X", MODULE_NAME, METHOD_SEEK_NAME, result);
 
-      //result = this->SeekByPosition(time, flags | AVSEEK_FLAG_ANY);
       result = this->SeekByPosition(time, AVSEEK_FLAG_ANY);
       if (FAILED(result))
       {
@@ -958,10 +977,10 @@ HRESULT CDemuxer::InitFormatContext(const wchar_t *streamUrl)
 
       this->formatContext->flags |= AVFMT_FLAG_IGNPARSERSYNC;
 
-      if (this->IsMpegTs())
+      /*if (this->IsMpegTs())
       {
         this->formatContext->max_analyze_duration = (this->formatContext->max_analyze_duration * 3) / 2;
-      }
+      }*/
 
       int ret = avformat_find_stream_info(this->formatContext, NULL);
       CHECK_CONDITION_EXECUTE(ret < 0, result = ret);
@@ -1204,6 +1223,7 @@ HRESULT CDemuxer::InitFormatContext(const wchar_t *streamUrl)
 
             if (result != S_OK)
             {
+              result = S_OK;
               continue;
             }
 
@@ -1474,8 +1494,8 @@ HRESULT CDemuxer::SeekByTime(REFERENCE_TIME time, int flags)
       st->nb_frames = 0;
 
       // seek to time
-      int64_t seekedTime = this->filter->SeekToTime(seek_pts);
-      if ((seekedTime < 0) || (seekedTime > seek_pts))
+      int64_t seekedTime = this->filter->SeekToTime(time / 10000); // (1000 / DSHOW_TIME_BASE)
+      if ((seekedTime < 0) || (seekedTime > (time / 10000)))
       {
         this->logger->Log(LOGGER_ERROR, L"%s: %s: invalid seek time returned: %lld", MODULE_NAME, METHOD_SEEK_BY_TIME_NAME, seekedTime);
         result = -2;
@@ -2229,8 +2249,11 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
 
     if (index < 0)
     {
-      this->logger->Log(LOGGER_ERROR, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index);
-      result = -6;
+      // it's only warning, because we seek to start of stream
+      // it means that we have to read stream from start to find requested timestamp
+      // or change ffmpeg binaries to hold index entries for current stream format
+      this->logger->Log(LOGGER_WARNING, L"%s: %s: index lower than zero: %d", MODULE_NAME, METHOD_SEEK_BY_POSITION_NAME, index);
+      //result = -6;
     }
 
     if (this->IsFlv())
@@ -2262,7 +2285,7 @@ HRESULT CDemuxer::SeekByPosition(REFERENCE_TIME time, int flags)
       }
     }
 
-    if (SUCCEEDED(result))
+    if (SUCCEEDED(result) && (st->index_entries != NULL))
     {
       ie = &st->index_entries[index];
 

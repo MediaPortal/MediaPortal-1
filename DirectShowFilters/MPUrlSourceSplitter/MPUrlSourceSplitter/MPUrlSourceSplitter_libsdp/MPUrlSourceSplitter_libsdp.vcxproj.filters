@@ -122,6 +122,21 @@
     <ClInclude Include="ControlAttribute.h">
       <Filter>Types\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PayloadType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PayloadTypeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownPayloadTypeCollection.h">
+      <Filter>Collections\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalPlayTimeRangeAttribute.h">
+      <Filter>Types\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -200,6 +215,21 @@
       <Filter>Types\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ControlAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PayloadTypeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KnownPayloadTypeCollection.cpp">
+      <Filter>Collections\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeAttribute.cpp">
+      <Filter>Types\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalPlayTimeRangeAttribute.cpp">
       <Filter>Types\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

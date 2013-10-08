@@ -80,7 +80,7 @@ public:
   CStreamCollection *GetStreams(StreamType type);
 
   // gets duration for stream
-  REFERENCE_TIME GetDuration(void);
+  int64_t GetDuration(void);
 
   // gets container format
   // @return : container format or NULL if error

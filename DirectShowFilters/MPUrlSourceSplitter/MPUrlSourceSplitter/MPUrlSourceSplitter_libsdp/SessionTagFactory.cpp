@@ -28,6 +28,8 @@
 #include "ConnectionData.h"
 #include "MediaDescription.h"
 
+#include "NormalPlayTimeRangeAttribute.h"
+#include "RangeAttribute.h"
 #include "ControlAttribute.h"
 #include "RtpMapAttribute.h"
 #include "BinaryAttribute.h"
@@ -69,6 +71,8 @@ CSessionTag *CSessionTagFactory::CreateSessionTag(const wchar_t *buffer, unsigne
       CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_CONNECTION_DATA, CConnectionData, buffer, length, continueParsing, result, (*position));
       CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_MEDIA_DESCRIPTION, CMediaDescription, buffer, length, continueParsing, result, (*position));
 
+      CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_ATTRIBUTE, CNormalPlayTimeRangeAttribute, buffer, length, continueParsing, result, (*position));
+      CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_ATTRIBUTE, CRangeAttribute, buffer, length, continueParsing, result, (*position));
       CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_ATTRIBUTE, CControlAttribute, buffer, length, continueParsing, result, (*position));
       CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_ATTRIBUTE, CRtpMapAttribute, buffer, length, continueParsing, result, (*position));
       CREATE_SPECIFIC_SESSION_TAG(sessionTag, TAG_ATTRIBUTE, CBinaryAttribute, buffer, length, continueParsing, result, (*position));

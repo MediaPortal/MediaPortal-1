@@ -83,6 +83,17 @@ protected:
 
   // holds frag offset
   unsigned int fragOffset;
+
+  /* methods */
+
+  // creates RTP packet instance for cloning
+  // @return : new RTP packet instance or NULL if error
+  virtual CRtpPacket *CreateRtpPacket(void);
+
+  // deeply clones current instance to specified RTP packet
+  // @param rtpPacket : the RTP packet to clone current instance
+  // @result : true if successful, false otherwise
+  virtual bool CloneInternal(CRtpPacket *rtpPacket);
 };
 
 #endif

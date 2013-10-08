@@ -208,6 +208,11 @@ HRESULT CProtocolHoster::ClearSession(void)
   return S_OK;
 }
 
+int64_t CProtocolHoster::GetDuration(void)
+{
+  return (this->activeProtocol != NULL) ? this->activeProtocol->GetDuration() : DURATION_UNSPECIFIED;
+}
+
 // ISeeking interface implementation
 
 unsigned int CProtocolHoster::GetSeekingCapabilities(void)

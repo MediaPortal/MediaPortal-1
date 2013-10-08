@@ -518,6 +518,8 @@ bool CRtspTransportResponseHeader::Parse(const wchar_t *header, unsigned int len
               this->synchronizationSourceIdentifier = RBE32(output, 0);
               this->flags |= FLAG_RTSP_TRANSPORT_RESPONSE_HEADER_SSRC;
             }
+
+            FREE_MEM(output);
           }
         }
         else if (wcsncmp(this->value + position, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MODE, RTSP_TRANSPORT_RESPONSE_HEADER_PARAMETER_MODE_LENGTH) == 0)

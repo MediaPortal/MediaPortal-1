@@ -32,12 +32,24 @@
 #define OUTPUT_PIN_BUFFERS_RECOMMENDED                                32
 #define OUTPUT_PIN_BUFFERS_LENGTH_RECOMMENDED                         524288
 
+#define OUTPUT_PIN_FLAG_NONE                                          0x00000000
+#define OUTPUT_PIN_FLAG_CONTAINER_MPEG_TS                             0x00000001
+#define OUTPUT_PIN_FLAG_CONTAINER_MPEG                                0x00000002
+#define OUTPUT_PIN_FLAG_CONTAINER_WTV                                 0x00000004
+#define OUTPUT_PIN_FLAG_CONTAINER_ASF                                 0x00000008
+#define OUTPUT_PIN_FLAG_CONTAINER_OGG                                 0x00000010
+#define OUTPUT_PIN_FLAG_CONTAINER_MATROSKA                            0x00000020
+#define OUTPUT_PIN_FLAG_CONTAINER_AVI                                 0x00000040
+#define OUTPUT_PIN_FLAG_CONTAINER_MP4                                 0x00000080
+#define OUTPUT_PIN_FLAG_HAS_ACCESS_UNIT_DELIMITERS                    0x00000100
+#define OUTPUT_PIN_FLAG_PGS_DROP_STATE                                0x00000200
+
 class CMPUrlSourceSplitterOutputPin
   : public CBaseOutputPin
   , protected CAMThread
 {
 public:
-  CMPUrlSourceSplitterOutputPin(CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr);
+  CMPUrlSourceSplitterOutputPin(CMediaTypeCollection *mediaTypes, LPCWSTR pName, CBaseFilter *pFilter, CCritSec *pLock, HRESULT *phr, const wchar_t *containerFormat);
   ~CMPUrlSourceSplitterOutputPin();
 
   DECLARE_IUNKNOWN;
@@ -149,11 +161,57 @@ public:
   // @param mediaType : media type to send
   // @return : S_OK if successful, false otherwise
   HRESULT SendMediaType(CMediaType *mediaType);
+
+  // tests if container is MPEG TS
+  // @return : true if container if MPEG TS, false otherwise
+  bool IsContainerMpegTs(void);
+
+  // tests if container is MPEG
+  // @return : true if container if MPEG, false otherwise
+  bool IsContainerMpeg(void);
+
+  // tests if container is WTV
+  // @return : true if container if WTV, false otherwise
+  bool IsContainerWtv(void);
+
+  // tests if container is ASF
+  // @return : true if container if ASF, false otherwise
+  bool IsContainerAsf(void);
+
+  // tests if container is OGG
+  // @return : true if container if OGG, false otherwise
+  bool IsContainerOgg(void);
+
+  // tests if container is MATROSKA
+  // @return : true if container if MATROSKA, false otherwise
+  bool IsContainerMatroska(void);
+
+  // tests if container is AVI
+  // @return : true if container if AVI, false otherwise
+  bool IsContainerAvi(void);
+
+  // tests if container is MP4
+  // @return : true if container if MP4, false otherwise
+  bool IsContainerMp4(void);
+
+  // tests if has access unit delimiters (for H264)
+  // @return : true if has access unit delimiters, false otherwise
+  bool HasAccessUnitDelimiters(void);
+
+  // tests if PGS drop state flag is set
+  // @return : true if PGS drop state flag is set, false otherwise
+  bool IsPGSDropState(void);
+
+  // tests if specific combination of flags is set
+  // @param flags : the combination of flags to test
+  // @return : true if specific combination of flags is set, false otherwise
+  bool IsFlags(unsigned int flags);
  
 protected:
   enum { CMD_EXIT, CMD_BEGIN_FLUSH, CMD_END_FLUSH, CMD_PLAY, CMD_PAUSE };
 
-  DWORD ThreadProc();
+  // holds various flags
+  unsigned int flags;
 
   // lock mutex for access to media packets
   HANDLE mediaPacketsLock;
@@ -176,6 +234,31 @@ protected:
 
   // holds media type to send with next queued packet
   CMediaType *mediaTypeToSend;
+
+  // media type sub type for parser
+  GUID mediaTypeSubType;
+
+  /* data for H264 Annex B stream */
+
+  // holds data for parsing of H264 Annex B stream
+  COutputPinPacket *h264Buffer;
+  COutputPinPacketCollection *h264PacketCollection;
+
+  /* methods */
+
+  DWORD ThreadProc();
+
+  // parses output pin packet
+  // @return : S_OK if successful, error code otherwise
+  HRESULT Parse(GUID subType, COutputPinPacket *packet);
+
+  // sets if has access unit delimiters (for H264)
+  // @param hasAccessUnitDelimiters : true if has access unit delimiters, false otherwise
+  void SetHasAccessUnitDelimiters(bool hasAccessUnitDelimiters);
+
+  // sets PGS drop state
+  // @param pgsDropState : true if PGS drop state, false otherwise
+  void SetPGSDropState(bool pgsDropState);
 };
 
 #endif

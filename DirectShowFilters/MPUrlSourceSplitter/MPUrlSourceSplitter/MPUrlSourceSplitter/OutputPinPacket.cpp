@@ -25,7 +25,7 @@
 COutputPinPacket::COutputPinPacket(void)
 {
   this->buffer = NULL;
-  this->flags = FLAG_NONE;
+  this->flags = OUTPUT_PIN_PACKET_FLAG_NONE;
   this->startTime = COutputPinPacket::INVALID_TIME;
   this->endTime = COutputPinPacket::INVALID_TIME;
   this->mediaType = NULL;
@@ -75,20 +75,20 @@ unsigned int COutputPinPacket::GetFlags(void)
 
 void COutputPinPacket::SetDiscontinuity(bool discontinuity)
 {
-  this->flags &= ~FLAG_DISCONTINUITY;
-  this->flags |= (discontinuity) ? FLAG_DISCONTINUITY : FLAG_NONE;
+  this->flags &= ~OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY;
+  this->flags |= (discontinuity) ? OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY : OUTPUT_PIN_PACKET_FLAG_NONE;
 }
 
 void COutputPinPacket::SetSyncPoint(bool syncPoint)
 {
-  this->flags &= ~FLAG_SYNC_POINT;
-  this->flags |= (syncPoint) ? FLAG_SYNC_POINT : FLAG_NONE;
+  this->flags &= ~OUTPUT_PIN_PACKET_FLAG_SYNC_POINT;
+  this->flags |= (syncPoint) ? OUTPUT_PIN_PACKET_FLAG_SYNC_POINT : OUTPUT_PIN_PACKET_FLAG_NONE;
 }
 
 void COutputPinPacket::SetEndOfStream(bool endOfStream)
 {
-  this->flags &= ~FLAG_END_OF_STREAM;
-  this->flags |= (endOfStream) ? FLAG_END_OF_STREAM : FLAG_NONE;
+  this->flags &= ~OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM;
+  this->flags |= (endOfStream) ? OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM : OUTPUT_PIN_PACKET_FLAG_NONE;
 }
 
 void COutputPinPacket::SetFlags(unsigned int flags)
@@ -120,17 +120,32 @@ void COutputPinPacket::SetStreamPid(unsigned int streamPid)
 
 bool COutputPinPacket::IsDiscontinuity(void)
 {
-  return this->IsSetFlags(FLAG_DISCONTINUITY);
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY);
 }
 
 bool COutputPinPacket::IsSyncPoint(void)
 {
-  return this->IsSetFlags(FLAG_SYNC_POINT);
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_SYNC_POINT);
 }
 
 bool COutputPinPacket::IsEndOfStream(void)
 {
-  return this->IsSetFlags(FLAG_END_OF_STREAM);
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM);
+}
+
+bool COutputPinPacket::IsPacketParsed(void)
+{
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED);
+}
+
+bool COutputPinPacket::IsH264AnnexB(void)
+{
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_PACKET_H264_ANNEXB);
+}
+
+bool COutputPinPacket::IsPacketMovText(void)
+{
+  return this->IsSetFlags(OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT);
 }
 
 bool COutputPinPacket::IsSetFlags(unsigned int flags)

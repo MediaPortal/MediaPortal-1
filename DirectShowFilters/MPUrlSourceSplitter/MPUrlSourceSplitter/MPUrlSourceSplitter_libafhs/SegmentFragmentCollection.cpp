@@ -26,13 +26,13 @@ CSegmentFragmentCollection::CSegmentFragmentCollection(void)
   : CKeyedCollection()
 {
   this->defaultBaseUrl = NULL;
-  this->extraParameters = NULL;
+  this->segmentFragmentUrlExtraParameters = NULL;
 }
 
 CSegmentFragmentCollection::~CSegmentFragmentCollection(void)
 {
   FREE_MEM(this->defaultBaseUrl);
-  FREE_MEM(this->extraParameters);
+  FREE_MEM(this->segmentFragmentUrlExtraParameters);
 }
 
 int CSegmentFragmentCollection::CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context)
@@ -98,7 +98,7 @@ unsigned int CSegmentFragmentCollection::GetFirstNotProcessedSegmentFragment(uns
 
 wchar_t *CSegmentFragmentCollection::GetSegmentFragmentUrl(CSegmentFragment *segmentFragment)
 {
-  return FormatString(L"%sSeg%d-Frag%d%s", this->defaultBaseUrl, segmentFragment->GetSegment(), segmentFragment->GetFragment(), (this->extraParameters == NULL) ? L"" : this->extraParameters);
+  return FormatString(L"%sSeg%d-Frag%d%s", this->defaultBaseUrl, segmentFragment->GetSegment(), segmentFragment->GetFragment(), (this->segmentFragmentUrlExtraParameters == NULL) ? L"" : this->segmentFragmentUrlExtraParameters);
 }
 
 const wchar_t *CSegmentFragmentCollection::GetBaseUrl(void)
@@ -111,12 +111,12 @@ bool CSegmentFragmentCollection::SetBaseUrl(const wchar_t *baseUrl)
   SET_STRING_RETURN_WITH_NULL(this->defaultBaseUrl, baseUrl);
 }
 
-const wchar_t *CSegmentFragmentCollection::GetExtraParameters(void)
+const wchar_t *CSegmentFragmentCollection::GetSegmentFragmentUrlExtraParameters(void)
 {
-  return this->extraParameters;
+  return this->segmentFragmentUrlExtraParameters;
 }
 
-bool CSegmentFragmentCollection::SetExtraParameters(const wchar_t *extraParameters)
+bool CSegmentFragmentCollection::SetSegmentFragmentUrlExtraParameters(const wchar_t *segmentFragmentUrlExtraParameters)
 {
-  SET_STRING_RETURN_WITH_NULL(this->extraParameters, extraParameters);
+  SET_STRING_RETURN_WITH_NULL(this->segmentFragmentUrlExtraParameters, segmentFragmentUrlExtraParameters);
 }

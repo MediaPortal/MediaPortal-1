@@ -133,7 +133,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
         {
           CMediaPacket *mp = this->storedMediaPackets->GetItem(i);
           unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
-          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
+          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace);
           bufferPosition += bufferOccupiedSpace;
         }
 
@@ -596,8 +596,6 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                           CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
                           if (urlParameter != NULL)
                           {
-                            bool invariant = true;
-
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_AFHS_COOKIE);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH);
                             continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT);
@@ -684,7 +682,7 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
 
                             if (continueParsing)
                             {
-                              this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                              this->connectionParameters->Remove(PARAMETER_NAME_URL, true);
                               continueParsing &= this->connectionParameters->Add(urlParameter);
                             }
 
@@ -730,24 +728,22 @@ ParseResult CMPUrlSourceSplitter_Parser_F4M::ParseMediaPackets(CMediaPacketColle
                     mediaCollection->Remove(mediaWithHighestBitstreamIndex);
 
                     // remove all AFHS parameters from connection parameters
-                    bool invariant = true;
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, true);
 
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BASE_URL, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_PART_URL, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MEDIA_METADATA, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_BOOTSTRAP_INFO_URL, (void *)&invariant);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, true);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, true);
 
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIE, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_REFERER, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_USER_AGENT, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_VERSION, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_URL, (void *)&invariant);
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_MANIFEST_CONTENT, (void *)&invariant);
-
-                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, (void *)&invariant);
+                    this->connectionParameters->Remove(PARAMETER_NAME_AFHS_COOKIES_COUNT, true);
                   }
                   else
                   {

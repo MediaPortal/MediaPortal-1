@@ -92,13 +92,13 @@ public:
   // @return : download respose
   virtual CRtmpDownloadResponse *GetRtmpDownloadResponse(void);
 
-  // gets duration of RTMP stream
-  // @return : duration of RTMP stream or RTMP_DURATION_UNSPECIFIED if duration of stream unspecified
+  // gets duration in ms of RTMP stream
+  // @return : duration in ms of RTMP stream or RTMP_DURATION_UNSPECIFIED if duration of stream unspecified
   uint64_t GetDuration(void);
 
 protected:
 
-  // holds duration of RTMP steam
+  // holds duration in ms of RTMP steam
   // UINT64_MAX if not specified
   uint64_t duration;
 

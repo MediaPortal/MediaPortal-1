@@ -64,12 +64,12 @@ public:
 
   // gets extra parameters for all segments and fragment
   // @return : extra parameters for all segments and fragments or NULL if error
-  const wchar_t *GetExtraParameters(void);
+  const wchar_t *GetSegmentFragmentUrlExtraParameters(void);
 
   // sets extra parameters for all segments and fragments
-  // @param extraParameters : extra parameters to set
+  // @param segmentFragmentUrlExtraParameters : segment and fragment URL extra parameters to set
   // @return : true if successful, false otherwise
-  bool SetExtraParameters(const wchar_t *extraParameters);
+  bool SetSegmentFragmentUrlExtraParameters(const wchar_t *segmentFragmentUrlExtraParameters);
 
 protected:
 
@@ -77,7 +77,7 @@ protected:
   wchar_t *defaultBaseUrl;
 
   // holds extra parameters which are added to all segments and fragments
-  wchar_t *extraParameters;
+  wchar_t *segmentFragmentUrlExtraParameters;
 
   // compare two item keys
   // @param firstKey : the first item key to compare

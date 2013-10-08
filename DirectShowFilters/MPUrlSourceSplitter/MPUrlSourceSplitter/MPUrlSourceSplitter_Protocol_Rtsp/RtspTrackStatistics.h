@@ -23,6 +23,9 @@
 #ifndef __RTSP_TRACK_STATISTICS_DEFINED
 #define __RTSP_TRACK_STATISTICS_DEFINED
 
+#define RTSP_TRACK_FLAG_NONE                                          0x00000000
+#define RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER                           0x00000001
+
 class CRtspTrackStatistics
 {
 public:
@@ -62,6 +65,14 @@ public:
   // @return : delay since last sender report
   unsigned int GetDelaySinceLastSenderReport(unsigned int currentTime);
 
+  // gets last received packet count
+  // @return : last received packet count
+  unsigned int GetLastReceivedPacketCount(void);
+
+  // gets previous last received packet count (the state before current last received packet count)
+  // @return : previous last received packet count
+  unsigned int GetPreviousLastReceivedPacketCount(void);
+
   /* set methods */
 
   // sets clock frequency used to compute RTP timestamps
@@ -84,7 +95,18 @@ public:
   // @param currentTime : the current time measured in client environment in ms
   void AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp, unsigned int currentTime);
 
+  // tests if first sequence number is set (tests if we received some RTP packet)
+  // @return : true if first sequence number is set, false otherwise
+  bool IsSetSequenceNumber(void);
+
+  // tests if specific combination of flags is set
+  // @param flags : the set of flags to test
+  // @return : true if set of flags is set, false otherwise
+  bool IsSetFlags(unsigned int flags);
+
 protected:
+
+  unsigned int flags;
 
   /* jitter */
   // jitter is calculated as integer approximation as described in RFC 3550, appendix A.8
@@ -96,8 +118,6 @@ protected:
 
   /* cumulative packet lost count, expected and lost packets, fraction lost */
 
-  bool setSequenceNumber;
-
   unsigned int cycles;
   unsigned int firstSequenceNumber;
   unsigned int lastSequenceNumber;
@@ -105,6 +125,7 @@ protected:
 
   unsigned int lastExpectedSequenceNumber;
   unsigned int lastReceivedPacketCount;
+  unsigned int previousLastReceivedPacketCount;
 
   /* last sender report timestamp and time*/
 

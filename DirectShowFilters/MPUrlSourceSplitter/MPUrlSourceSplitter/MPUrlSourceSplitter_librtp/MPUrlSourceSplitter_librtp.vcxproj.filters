@@ -144,6 +144,9 @@
     <ClInclude Include="Mpeg2TransportStreamRtpPacket.h">
       <Filter>RTP\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtpPacketCollection.h">
+      <Filter>RTP\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -243,6 +246,9 @@
       <Filter>RTP\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mpeg2TransportStreamRtpPacket.cpp">
+      <Filter>RTP\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtpPacketCollection.cpp">
       <Filter>RTP\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

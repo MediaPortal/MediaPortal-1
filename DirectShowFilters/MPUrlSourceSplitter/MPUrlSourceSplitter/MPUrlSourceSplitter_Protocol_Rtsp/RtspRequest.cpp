@@ -216,8 +216,6 @@ bool CRtspRequest::CreateRequest(void)
     wchar_t *requestLine = FormatString(RTSP_REQUEST_LINE_FORMAT, this->GetMethod(), this->GetUri(), this->GetVersion(), RTSP_CRLF);
     result &= (requestLine != NULL);
 
-    // ...
-
     wchar_t *requestHeader = Duplicate(L"\r\n");
     result &= (requestHeader != NULL);
 

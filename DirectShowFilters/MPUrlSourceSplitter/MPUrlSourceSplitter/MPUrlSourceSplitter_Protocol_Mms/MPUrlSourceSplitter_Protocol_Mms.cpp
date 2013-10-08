@@ -267,7 +267,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(CReceiveData *receiveData
     this->StopReceivingData();
 
     // reopen connection
-    // OpenConnection() reset wholeStreamDownloaded
+    // StartReceivingData() reset wholeStreamDownloaded
     this->StartReceivingData(NULL);
 
     this->internalExitRequest = false;
@@ -353,14 +353,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(CReceiveData *receiveData
 
               if (bytesRead != 0)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                if (buffer != NULL)
-                {
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                  this->mmsContext->GetBuffer()->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
-                }
-                FREE_MEM(buffer);
+                this->mmsContext->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData());
+                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
               }
             }
           }
@@ -1014,11 +1008,17 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ClearSession(void)
   this->sequenceNumber = 1;
   this->receivingData = false;
   this->streamEndedLogged = false;
+  this->seekingActive = false;
 
   FREE_MEM_CLASS(this->mmsContext);
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
+}
+
+int64_t CMPUrlSourceSplitter_Protocol_Mms::GetDuration(void)
+{
+  return DURATION_UNSPECIFIED;
 }
 
 // ISeeking interface
@@ -1156,7 +1156,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
       unsigned int chunkPacketLength = 0;
       unsigned int extHeaderLength = 0;
 
-      mmsContext->GetBuffer()->CopyFromBuffer(chunkHeader, CHUNK_HEADER_LENGTH, 0, 0);
+      mmsContext->GetBuffer()->CopyFromBuffer(chunkHeader, CHUNK_HEADER_LENGTH);
 
       chunkType = AV_RL16(chunkHeader);
       chunkDataLength  = AV_RL16(chunkHeader + 2);
@@ -1184,7 +1184,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
 
       if (SUCCEEDED(result))
       {
-        mmsContext->GetBuffer()->CopyFromBuffer(extHeader, extHeaderLength, 0, CHUNK_HEADER_LENGTH);
+        mmsContext->GetBuffer()->CopyFromBuffer(extHeader, extHeaderLength, CHUNK_HEADER_LENGTH);
 
         mmsChunk->SetChunkType(chunkType);
         if (SUCCEEDED(result))
@@ -1193,7 +1193,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
           CHECK_POINTER(result, temp, result, E_OUTOFMEMORY);
           if (SUCCEEDED(result))
           {
-            mmsContext->GetBuffer()->CopyFromBuffer(temp, chunkDataLength - extHeaderLength, 0, CHUNK_HEADER_LENGTH + extHeaderLength);
+            mmsContext->GetBuffer()->CopyFromBuffer(temp, chunkDataLength - extHeaderLength, CHUNK_HEADER_LENGTH + extHeaderLength);
             result = mmsChunk->SetChunkData(temp, chunkDataLength - extHeaderLength) ? result : E_OUTOFMEMORY;
           }
           FREE_MEM(temp);
@@ -1204,7 +1204,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsChunk(MMSContext *mmsContext, M
           CHECK_POINTER(result, temp, result, E_OUTOFMEMORY);
           if (SUCCEEDED(result))
           {
-            mmsContext->GetBuffer()->CopyFromBuffer(temp, extHeaderLength, 0, CHUNK_HEADER_LENGTH);
+            mmsContext->GetBuffer()->CopyFromBuffer(temp, extHeaderLength, CHUNK_HEADER_LENGTH);
             result = mmsChunk->SetExtraHeaderData(temp, extHeaderLength) ? result : E_OUTOFMEMORY;
           }
           FREE_MEM(temp);
@@ -1407,14 +1407,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::GetMmsHeaderData(MMSContext *mmsConte
         unsigned int bytesRead = this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->GetBufferOccupiedSpace();
         if (bytesRead > 0)
         {
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-          if (buffer != 0)
-          {
-            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-            result = (this->mmsContext->GetBuffer()->AddToBufferWithResize(buffer, bytesRead) == bytesRead) ? S_OK : E_OUTOFMEMORY;
-            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
-          }
-          FREE_MEM(buffer);
+          result = (this->mmsContext->GetBuffer()->AddToBufferWithResize(this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()) == bytesRead) ? S_OK : E_OUTOFMEMORY;
+          this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
         }
       }
 

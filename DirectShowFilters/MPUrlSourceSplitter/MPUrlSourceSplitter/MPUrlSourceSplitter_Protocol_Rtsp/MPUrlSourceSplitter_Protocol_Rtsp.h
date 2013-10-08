@@ -25,8 +25,8 @@
 
 #include "Logger.h"
 #include "IProtocolPlugin.h"
-#include "LinearBuffer.h"
 #include "RtspCurlInstance.h"
+#include "RtspStreamTrackCollection.h"
 
 #include <WinSock2.h>
 
@@ -36,6 +36,16 @@
 wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTSP" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
+
+// minimum RTP packet data overlap in bytes
+// we assume that no data (audio/video/etc) packet in RTP packet is less than MINIMUM_RTP_PACKET_OVERLAP in bytes
+#define MINIMUM_RTP_PACKET_OVERLAP                                            100
+
+struct CompareDataResult
+{
+  int position;
+  unsigned int size;
+};
 
 class CMPUrlSourceSplitter_Protocol_Rtsp : public IProtocolPlugin
 {
@@ -100,6 +110,10 @@ public:
   // @return : S_OK if successfull
   HRESULT ClearSession(void);
 
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  int64_t GetDuration(void);
+
   // ISeeking interface
 
   // gets seeking capabilities of protocol
@@ -141,24 +155,14 @@ public:
 protected:
   CLogger *logger;
 
-  // holds received data for filter
-  CLinearBuffer *receivedData;
-
   // holds various parameters supplied by caller
   CParameterCollection *configurationParameters;
 
   // holds receive data timeout
   unsigned int receiveDataTimeout;
 
-  // the lenght of stream
-  LONGLONG streamLength;
-
-  // holds if length of stream was set
-  bool setLength;
-
   // stream time and end stream time
   int64_t streamTime;
-  //int64_t endStreamTime;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
@@ -173,15 +177,40 @@ protected:
   bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
-
+  // specifies if seeking (cleared when first data arrive)
+  bool seekingActive;
   // specifies if filter requested supressing data
   bool supressData;
+  // specifies if working with live stream
+  bool liveStream;
 
   // specifies if we are still connected
   bool isConnected;
 
-  // holds current cookies of CURL instance
-  //CParameterCollection *currentCookies;
+  // holds RTSP stream tracks
+  CRtspStreamTrackCollection *streamTracks;
+
+  // holds last store time of storing stream fragments to file
+  DWORD lastStoreTime;
+
+  // holds SDP from CURL instance
+  CSessionDescription *sessionDescription;
+
+  // gets store file path based on configuration
+  // creates folder structure if not created
+  // @param trackId : the ID of track to get store file path
+  // @return : store file or NULL if error
+  wchar_t *GetStoreFile(unsigned int trackId);
+
+  // fills buffer for processing with fragment data (stored in memory or in store file)
+  // @param fragments : stream fragments collection
+  // @param streamFragmentProcessing : fragment to get data
+  // @param storeFile : the name of store file
+  // @return : buffer for processing with filled data, NULL otherwise
+  CLinearBuffer *FillBufferForProcessing(CRtspStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, const wchar_t *storeFile);
+
+  CompareDataResult CompareData(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
+  CompareDataResult CompareDataReversed(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
 };
 
 #endif

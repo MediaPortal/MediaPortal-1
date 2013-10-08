@@ -29,10 +29,10 @@ CRtspDownloadResponse::CRtspDownloadResponse(void)
   this->sessionDescription = NULL;
   this->contentBaseUrl = NULL;
   this->contentLocationUrl = NULL;
-  this->headers = new CHttpHeaderCollection();
   this->tracks = new CRtspTrackCollection();
   this->rtspRequest = NULL;
   this->rtspResponse = NULL;
+  this->sessionTimeout = UINT_MAX;
 }
 
 CRtspDownloadResponse::~CRtspDownloadResponse(void)
@@ -41,7 +41,6 @@ CRtspDownloadResponse::~CRtspDownloadResponse(void)
   FREE_MEM_CLASS(this->sessionDescription);
   FREE_MEM(this->contentBaseUrl);
   FREE_MEM(this->contentLocationUrl);
-  FREE_MEM_CLASS(this->headers);
   FREE_MEM_CLASS(this->tracks);
   FREE_MEM_CLASS(this->rtspRequest);
   FREE_MEM_CLASS(this->rtspResponse);
@@ -69,11 +68,6 @@ const wchar_t *CRtspDownloadResponse::GetContentLocationUrl(void)
   return this->contentLocationUrl;
 }
 
-CHttpHeaderCollection *CRtspDownloadResponse::GetHeaders(void)
-{
-  return this->headers;
-}
-
 CRtspTrackCollection *CRtspDownloadResponse::GetRtspTracks(void)
 {
   return this->tracks;
@@ -87,6 +81,11 @@ CRtspRequest *CRtspDownloadResponse::GetRtspRequest(void)
 CRtspResponse *CRtspDownloadResponse::GetRtspResponse(void)
 {
   return this->rtspResponse;
+}
+
+unsigned int CRtspDownloadResponse::GetSessionTimeout(void)
+{
+  return this->sessionTimeout;
 }
 
 /* set methods */
@@ -116,6 +115,11 @@ void CRtspDownloadResponse::SetRtspResponse(CRtspResponse *response)
 {
   FREE_MEM_CLASS(this->rtspResponse);
   this->rtspResponse = (response == NULL) ? NULL : response->Clone();
+}
+
+void CRtspDownloadResponse::SetSessionTimeout(unsigned int sessionTimeout)
+{
+  this->sessionTimeout = sessionTimeout;
 }
 
 /* other methods */
@@ -182,6 +186,7 @@ bool CRtspDownloadResponse::CloneInternal(CRtspDownloadResponse *clonedRequest)
     SET_STRING_RESULT_WITH_NULL(clonedRequest->sessionDescriptionRaw, this->sessionDescriptionRaw, result);
     SET_STRING_RESULT_WITH_NULL(clonedRequest->contentBaseUrl, this->contentBaseUrl, result);
     SET_STRING_RESULT_WITH_NULL(clonedRequest->contentLocationUrl, this->contentLocationUrl, result);
+    clonedRequest->sessionTimeout = this->sessionTimeout;
 
     if (this->sessionDescription != NULL)
     {

@@ -213,36 +213,51 @@ unsigned int CLinearBuffer::AddToBufferWithResize(const unsigned char *source, u
   return returnValue;
 }
 
-unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize)
+unsigned int CLinearBuffer::AddToBufferWithResize(CLinearBuffer *buffer)
 {
-  return this->CopyFromBuffer(destination, length, packetSize, 0);
+  return this->AddToBufferWithResize(buffer, 0);
 }
 
-unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start)
+unsigned int CLinearBuffer::AddToBufferWithResize(CLinearBuffer *buffer, unsigned int minBufferSize)
 {
-  int copiedBytes = 0;
+  return this->AddToBufferWithResize(buffer, 0, (buffer != NULL) ? buffer->GetBufferOccupiedSpace() : 0, minBufferSize);
+}
 
+unsigned int CLinearBuffer::AddToBufferWithResize(CLinearBuffer *buffer, unsigned int start, unsigned int length)
+{
+  return this->AddToBufferWithResize(buffer, start, length, 0);
+}
+
+unsigned int CLinearBuffer::AddToBufferWithResize(CLinearBuffer *buffer, unsigned int start, unsigned int length, unsigned int minBufferSize)
+{
+  unsigned int returnValue = 0;
+
+  const unsigned char *dataStart = ((buffer != NULL) && (start < buffer->GetBufferOccupiedSpace())) ? (buffer->dataStart + start) : NULL;
+  unsigned int dataLength = ((dataStart != NULL) && (length != 0) && ((start + length) <= buffer->GetBufferOccupiedSpace())) ? length : 0;
+
+  if ((dataStart != NULL) && (dataLength != 0))
+  {
+    returnValue = this->AddToBufferWithResize(dataStart, dataLength, minBufferSize);
+  }
+
+  return returnValue;
+}
+
+unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length)
+{
+  return this->CopyFromBuffer(destination, length, 0);
+}
+
+unsigned int CLinearBuffer::CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int start)
+{
   // length cannot be greater than buffer occupied space
   length = min(length, this->GetBufferOccupiedSpace() - start);
   if (length > 0)
   {
-    if (packetSize > 0)
-    {
-      copiedBytes = (length / packetSize) * packetSize;
-    }
-    else
-    {
-      copiedBytes = length;
-    }
-
-    // copy to destination only if length is greater than zero
-    if (copiedBytes > 0)
-    {
-      memcpy(destination, this->dataStart + start, copiedBytes);
-    }
+    memcpy(destination, this->dataStart + start, length);
   }
 
-  return copiedBytes;
+  return length;
 }
 
 unsigned int CLinearBuffer::GetFirstPosition(unsigned int start, char c)
@@ -276,7 +291,7 @@ bool CLinearBuffer::ResizeBuffer(unsigned int size)
     if (result)
     {
       // copy content from current buffer to new buffer
-      this->CopyFromBuffer(tempBuffer, occupiedSize, 0);
+      this->CopyFromBuffer(tempBuffer, occupiedSize);
       // delete current buffer
       this->DeleteBuffer();
       // set new buffer pointer

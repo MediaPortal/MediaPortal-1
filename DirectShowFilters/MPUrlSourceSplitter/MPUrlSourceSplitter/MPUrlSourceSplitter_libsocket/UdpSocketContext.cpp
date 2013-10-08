@@ -31,11 +31,12 @@ CUdpSocketContext::CUdpSocketContext(void)
 CUdpSocketContext::CUdpSocketContext(SOCKET socket)
   : CSocketContext(socket)
 {
-  FREE_MEM_CLASS(this->lastSenderIpAddress);
+  this->lastSenderIpAddress = NULL;
 }
 
 CUdpSocketContext::~CUdpSocketContext(void)
 {
+  FREE_MEM_CLASS(this->lastSenderIpAddress);
 }
 
 /* get methods */
@@ -50,7 +51,7 @@ CIpAddress *CUdpSocketContext::GetLastSenderIpAddress(void)
 bool CUdpSocketContext::SetLastSenderIpAddress(CIpAddress *sender)
 {
   FREE_MEM_CLASS(this->lastSenderIpAddress);
-  this->lastSenderIpAddress = sender->Clone();
+  this->lastSenderIpAddress = (sender != NULL) ? (sender->Clone()) : NULL;
 
   return (((this->lastSenderIpAddress == NULL) && (sender == NULL)) || ((this->lastSenderIpAddress != NULL) && (sender != NULL)));
 }
@@ -115,22 +116,24 @@ HRESULT CUdpSocketContext::Receive(char *buffer, unsigned int length, int flags,
 {
   HRESULT result = S_OK;
 
-  FREE_MEM_CLASS(this->lastSenderIpAddress);
-  result = __super::Receive(buffer, length, flags, receivedLength, &this->lastSenderIpAddress);
+  CIpAddress *ipAddress = NULL;
+  result = __super::Receive(buffer, length, flags, receivedLength, &ipAddress);
 
   if (SUCCEEDED(result))
   {
-    if (sender != NULL)
+    if ((*receivedLength) != 0)
     {
-      *sender = this->lastSenderIpAddress->Clone();
+      // we received some data, remember sender
+      result = this->SetLastSenderIpAddress(ipAddress) ? result : E_OUTOFMEMORY;
+    }
+
+    if (SUCCEEDED(result) && (sender != NULL))
+    {
+      *sender = ipAddress->Clone();
       CHECK_POINTER_HRESULT(result, (*sender), result, E_OUTOFMEMORY);
     }
   }
 
-  if (FAILED(result))
-  {
-    FREE_MEM_CLASS(this->lastSenderIpAddress);
-  }
-
+  FREE_MEM_CLASS(ipAddress);
   return result;
 }

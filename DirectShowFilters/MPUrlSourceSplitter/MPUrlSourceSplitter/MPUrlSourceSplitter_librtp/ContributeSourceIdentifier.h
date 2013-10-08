@@ -49,6 +49,10 @@ public:
 
   /* other methods */
 
+  // deeply clones current instance
+  // @result : deep clone of current instance or NULL if error
+  CContributeSourceIdentifier *Clone(void);
+
 protected:
 
   // holds contribute source identifier

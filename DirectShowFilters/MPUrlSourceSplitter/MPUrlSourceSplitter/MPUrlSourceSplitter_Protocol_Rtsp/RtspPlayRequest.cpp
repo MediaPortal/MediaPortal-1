@@ -46,7 +46,7 @@ const wchar_t *CRtspPlayRequest::GetMethod(void)
 
 /* set methods */
 
-bool CRtspPlayRequest::SetStartTime(unsigned int startTime)
+bool CRtspPlayRequest::SetStartTime(uint64_t startTime)
 {
   bool result = (this->requestHeaders != NULL);
 
@@ -94,7 +94,7 @@ bool CRtspPlayRequest::SetStartTime(unsigned int startTime)
   return result;
 }
 
-bool CRtspPlayRequest::SetEndTime(unsigned int endTime)
+bool CRtspPlayRequest::SetEndTime(uint64_t endTime)
 {
   bool result = (this->requestHeaders != NULL);
 

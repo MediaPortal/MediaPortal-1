@@ -147,6 +147,10 @@ public:
   // @return : true if successfully parsed, false otherwise
   virtual bool Parse(const unsigned char *buffer, unsigned int length);
 
+  // deeply clones current instance
+  // @result : deep clone of current instance or NULL if error
+  virtual CRtpPacket *Clone(void);
+
 protected:
 
   // RTP packet header
@@ -160,6 +164,17 @@ protected:
 
   unsigned char *extensionHeader;
   unsigned int extensionHeaderLength;
+
+  /* methods */
+
+  // creates RTP packet instance for cloning
+  // @return : new RTP packet instance or NULL if error
+  virtual CRtpPacket *CreateRtpPacket(void);
+
+  // deeply clones current instance to specified RTP packet
+  // @param rtpPacket : the RTP packet to clone current instance
+  // @result : true if successful, false otherwise
+  virtual bool CloneInternal(CRtpPacket *rtpPacket);
 };
 
 #endif

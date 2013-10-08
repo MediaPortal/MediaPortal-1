@@ -72,6 +72,32 @@ public:
   // @return : count of added data
   unsigned int AddToBufferWithResize(const unsigned char *source, unsigned int length, unsigned int minBufferSize);
 
+  // add content of linear buffer to current buffer
+  // @param buffer : the linear buffer to add content
+  // @return : count of added data
+  unsigned int AddToBufferWithResize(CLinearBuffer *buffer);
+
+  // add content of linear buffer to current buffer
+  // @param buffer : the linear buffer to add content
+  // @param minBufferSize : the minimum buffer size after resizing (if necessary)
+  // @return : count of added data
+  unsigned int AddToBufferWithResize(CLinearBuffer *buffer, unsigned int minBufferSize);
+
+  // add content of linear buffer to current buffer
+  // @param buffer : the linear buffer to add content
+  // @param start : the start position in buffer parameter to add data
+  // @param length : the count of data to add
+  // @return : count of added data
+  unsigned int AddToBufferWithResize(CLinearBuffer *buffer, unsigned int start, unsigned int length);
+
+  // add content of linear buffer to current buffer
+  // @param buffer : the linear buffer to add content
+  // @param start : the start position in buffer parameter to add data
+  // @param length : the count of data to add
+  // @param minBufferSize : the minimum buffer size after resizing (if necessary)
+  // @return : count of added data
+  unsigned int AddToBufferWithResize(CLinearBuffer *buffer, unsigned int start, unsigned int length, unsigned int minBufferSize);
+
   // remove from buffer
   // @param length : the length of data to remove from buffer
   void RemoveFromBuffer(unsigned int length);
@@ -83,17 +109,15 @@ public:
   // copy data from internal buffer to destination, data are copied by packets if specified packetSize
   // @param destination : the reference to destination buffer to copy data
   // @param length : the length of data to copy
-  // @param packetSize : the packet size (if specified, data are copied by blocks)
   // @return : length of copied data
-  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize);
+  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length);
 
-  // copy data from internal buffer to destination starting from start, data are copied by packets if specified packetSize
+  // copy data from internal buffer to destination, data are copied by packets if specified packetSize
   // @param destination : the reference to destination buffer to copy data
   // @param length : the length of data to copy
-  // @param packetSize : the packet size (if specified, data are copied by blocks)
   // @param start : the position from where copying start
   // @return : length of copied data
-  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int packetSize, unsigned int start);
+  unsigned int CopyFromBuffer(unsigned char *destination, unsigned int length, unsigned int start);
 
   // initialize buffer to specified size
   // @param size : required size of buffer

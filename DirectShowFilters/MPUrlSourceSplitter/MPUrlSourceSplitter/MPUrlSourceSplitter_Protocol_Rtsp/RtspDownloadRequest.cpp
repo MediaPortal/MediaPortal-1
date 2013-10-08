@@ -25,6 +25,7 @@
 CRtspDownloadRequest::CRtspDownloadRequest(void)
   : CDownloadRequest()
 {
+  this->startTime = 0;
 }
 
 CRtspDownloadRequest::~CRtspDownloadRequest(void)
@@ -33,7 +34,17 @@ CRtspDownloadRequest::~CRtspDownloadRequest(void)
 
 /* get methods */
 
+uint64_t CRtspDownloadRequest::GetStartTime(void)
+{
+  return this->startTime;
+}
+
 /* set methods */
+
+void CRtspDownloadRequest::SetStartTime(uint64_t startTime)
+{
+  this->startTime = startTime;
+}
 
 /* other methods */
 
@@ -56,6 +67,7 @@ bool CRtspDownloadRequest::CloneInternal(CRtspDownloadRequest *clonedRequest)
 
   if (result)
   {
+    clonedRequest->startTime = this->startTime;
   }
 
   return result;

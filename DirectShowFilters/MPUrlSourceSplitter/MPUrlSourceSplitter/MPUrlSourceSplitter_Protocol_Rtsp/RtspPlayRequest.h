@@ -41,13 +41,13 @@ public:
 
   /* set methods */
 
-  // sets start time in seconds for RTSP PLAY request
-  // @param startTime : the start time in seconds to set
-  virtual bool SetStartTime(unsigned int startTime);
+  // sets start time in ms for RTSP PLAY request
+  // @param startTime : the start time in ms to set
+  virtual bool SetStartTime(uint64_t startTime);
 
-  // sets end time in seconds for RTSP PLAY request
-  // @param endTime : the end time in seconds to set
-  virtual bool SetEndTime(unsigned int endTime);
+  // sets end time in ms for RTSP PLAY request
+  // @param endTime : the end time in ms to set
+  virtual bool SetEndTime(uint64_t endTime);
 
   /* other methods */
 

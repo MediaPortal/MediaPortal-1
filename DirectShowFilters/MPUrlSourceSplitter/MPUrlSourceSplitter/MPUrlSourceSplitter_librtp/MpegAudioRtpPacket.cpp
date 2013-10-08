@@ -88,3 +88,24 @@ bool CMpegAudioRtpPacket::Parse(const unsigned char *buffer, unsigned int length
 
   return result;
 }
+
+/* protected methods */
+
+CRtpPacket *CMpegAudioRtpPacket::CreateRtpPacket(void)
+{
+  return new CMpegAudioRtpPacket();
+}
+
+bool CMpegAudioRtpPacket::CloneInternal(CRtpPacket *rtpPacket)
+{
+  bool result = __super::CloneInternal(rtpPacket);
+  CMpegAudioRtpPacket *mpegAudioRtpPacket = dynamic_cast<CMpegAudioRtpPacket *>(rtpPacket);
+  result &= (mpegAudioRtpPacket != NULL);
+
+  if (result)
+  {
+    mpegAudioRtpPacket->fragOffset = this->fragOffset;
+  }
+
+  return result;
+}

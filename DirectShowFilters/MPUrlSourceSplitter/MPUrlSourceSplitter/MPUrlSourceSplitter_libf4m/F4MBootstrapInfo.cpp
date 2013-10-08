@@ -279,7 +279,7 @@ HRESULT CF4MBootstrapInfo::DownloadBootstrapInfo(CLogger *logger, const wchar_t 
 
           if (SUCCEEDED(result))
           {
-            curlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(this->decodedValue, this->decodedLength, 0, 0);
+            curlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(this->decodedValue, this->decodedLength);
 
             char *base64EncodedValue = NULL;
             result = base64_encode(this->decodedValue, this->decodedLength, &base64EncodedValue);

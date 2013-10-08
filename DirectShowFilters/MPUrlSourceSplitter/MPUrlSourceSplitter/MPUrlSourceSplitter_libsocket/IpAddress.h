@@ -151,7 +151,7 @@ protected:
 
   /* methods */
 
-  // initializes a new instance of CIpAddress class with specified ADDRINFOW structure
+  // initializes a new instance of CIpAddress class
   CIpAddress();
 };
 

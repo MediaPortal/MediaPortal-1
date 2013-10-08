@@ -24,18 +24,12 @@
 #define __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_PARAMETERS_DEFINED
 
 #define PARAMETER_NAME_RTSP_RECEIVE_DATA_TIMEOUT                      L"RtspReceiveDataTimeout"
-//#define PARAMETER_NAME_RTSP_REFERER                                   L"RtspReferer"
-//#define PARAMETER_NAME_RTSP_USER_AGENT                                L"RtspUserAgent"
-
-//#define PARAMETER_NAME_RTSP_COOKIES_COUNT                             L"RtspCookiesCount"
-//#define RTSP_COOKIE_FORMAT_PARAMETER_NAME                             L"RtspCookie%08u"
-
 #define PARAMETER_NAME_RTSP_MULTICAST_PREFERENCE                      L"RtspMulticastPreference"
 #define PARAMETER_NAME_RTSP_UDP_PREFERENCE                            L"RtspUdpPreference"
 #define PARAMETER_NAME_RTSP_SAME_CONNECTION_TCP_PREFERENCE            L"RtspSameConnectionTcpPreference"
-
 #define PARAMETER_NAME_RTSP_CLIENT_PORT_MIN                           L"RtspClientPortMin"
 #define PARAMETER_NAME_RTSP_CLIENT_PORT_MAX                           L"RtspClientPortMax"
+#define PARAMETER_NAME_RTSP_IGNORE_RTP_PAYLOAD_TYPE                   L"RtspIgnoreRtpPayloadType"
 
 // we should get data in twenty seconds
 #define RTSP_RECEIVE_DATA_TIMEOUT_DEFAULT                             20000
@@ -46,5 +40,7 @@
 
 #define RTSP_CLIENT_PORT_MIN_DEFAULT                                  50000
 #define RTSP_CLIENT_PORT_MAX_DEFAULT                                  65535
+
+#define RTSP_IGNORE_RTP_PAYLOAD_TYPE_DEFAULT                          false
 
 #endif

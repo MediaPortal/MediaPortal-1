@@ -432,7 +432,9 @@ CMPUrlSourceSplitter::~CMPUrlSourceSplitter()
   FREE_MEM_CLASS(this->configuration);
   FREE_MEM(this->downloadFileName);
 
+  this->logger->Log(LOGGER_INFO, L"%s: %s: instance reference count: %u", MODULE_NAME, METHOD_DESTRUCTOR_NAME, this->m_cRef);
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, MODULE_NAME, METHOD_DESTRUCTOR_NAME);
+
   FREE_MEM_CLASS(this->logger);
 }
 
@@ -552,6 +554,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
 
+  this->flags &= ~FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED;
+
   this->pauseSeekStopRequest = true;
   CAMThread::CallWorker(CMD_EXIT);
   this->pauseSeekStopRequest = false;
@@ -559,6 +563,12 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
   this->DeliverBeginFlush();
   CAMThread::Close();
   this->DeliverEndFlush();
+
+  if (!this->IsEnabledMethodActive())
+  {
+    // if we are not changing streams stop receiving data, data are not needed
+    this->parserHoster->StopReceivingData();
+  }
 
   HRESULT result = __super::Stop();
 
@@ -603,6 +613,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Run(REFERENCE_TIME tStart)
   HRESULT result = __super::Run(tStart);
 
   CHECK_CONDITION_EXECUTE(SUCCEEDED(result), CAMThread::CallWorker(CMD_PLAY));
+  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED;
 
   this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_RUN_NAME, result);
   return S_OK;
@@ -645,7 +656,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
           this->configuration->Append(suppliedParameters);
           if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
           {
-            this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
+            result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
           }
 
           FREE_MEM_CLASS(suppliedParameters);
@@ -654,8 +665,15 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         {
           // parameters are not supplied, just set current url as only one parameter in configuration
           this->configuration->Clear();
-          this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
+          result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
         }
+      }
+
+      if (SUCCEEDED(result))
+      {
+        // IPTV is always live stream, remove live stream flag and create new one
+        this->configuration->Remove(PARAMETER_NAME_LIVE_STREAM, true);
+        result = this->configuration->Add(PARAMETER_NAME_LIVE_STREAM, L"1") ? result : E_OUTOFMEMORY;
       }
 
       if (SUCCEEDED(result))
@@ -694,7 +712,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
 
       if (SUCCEEDED(result))
       {
-        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"Output", this, this, &result);
+        CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(mediaTypes, L"Output", this, this, &result, L"mpegts");
         CHECK_POINTER_HRESULT(result, outputPin, result, E_OUTOFMEMORY);
 
         CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->outputPins->Add(outputPin)) ? result : E_OUTOFMEMORY);
@@ -745,7 +763,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
           this->configuration->Append(suppliedParameters);
           if (!this->configuration->Contains(PARAMETER_NAME_URL, true))
           {
-            this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
+            result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
           }
 
           FREE_MEM_CLASS(suppliedParameters);
@@ -754,7 +772,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
         {
           // parameters are not supplied, just set current url as only one parameter in configuration
           this->configuration->Clear();
-          this->configuration->Add(new CParameter(PARAMETER_NAME_URL, url));
+          result = this->configuration->Add(PARAMETER_NAME_URL, url) ? result : E_OUTOFMEMORY;
         }
       }
 
@@ -826,6 +844,8 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
   this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME);
   HRESULT result = S_OK;
 
+  // in case of splitter we process all media packets
+  // in case of IPTV we assume that CMD_PLAY request come ASAP after Load() method is finished
   {
     CLockMutex lock(this->mediaPacketMutex, INFINITE);
     HRESULT result = S_OK;
@@ -924,12 +944,12 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
           FREE_MEM_CLASS(region);
 
           // delete processed media packet
-          delete unprocessedMediaPacket;
+          FREE_MEM_CLASS(unprocessedMediaPacket);
         }
       }
 
       // media packets collection is not longer needed
-      delete unprocessedMediaPackets;
+      FREE_MEM_CLASS(unprocessedMediaPackets);
     }
   }
 
@@ -1117,7 +1137,7 @@ STDMETHODIMP CMPUrlSourceSplitter::GetDuration(LONGLONG* pDuration)
   CheckPointer(pDuration, E_POINTER);
   CheckPointer(this->demuxer, E_UNEXPECTED);
   
-  *pDuration = this->demuxer->GetDuration();
+  *pDuration = (this->IsLiveStream() ? (-1) : this->demuxer->GetDuration());
 
   return (*pDuration < 0) ? E_FAIL : S_OK;
 }
@@ -1349,6 +1369,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
 
             CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, L"%s: %s: cannot get IMediaControl interface, result: 0x%08X", MODULE_NAME, METHOD_ENABLE_NAME, result));
 
+            this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_ENABLED_METHOD_ACTIVE;
+
             if (SUCCEEDED(result))
             {
               FILTER_STATE oldState;
@@ -1464,6 +1486,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Enable(long lIndex, DWORD dwFlags)
             }
 
             COM_SAFE_RELEASE(mediaControl);
+
+            this->flags &= ~FLAG_MP_URL_SOURCE_SPLITTER_ENABLED_METHOD_ACTIVE;
           }
           else
           {
@@ -1782,6 +1806,11 @@ HRESULT CMPUrlSourceSplitter::GetAvailableLength(int64_t *availableLength)
   return result;
 }
 
+int64_t CMPUrlSourceSplitter::GetDuration(void)
+{
+  return (this->parserHoster != NULL) ? this->parserHoster->GetDuration() : DURATION_UNSPECIFIED;
+}
+
 // IFilterState
 
 HRESULT CMPUrlSourceSplitter::IsFilterReadyToConnectPins(bool *ready)
@@ -1869,7 +1898,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       this->demuxStart = this->demuxNewStart;
       this->demuxStop = this->demuxNewStop;
 
-      if (this->IsSplitter())
+      if (this->IsSplitter() && ((this->demuxStart != 0) || this->IsPlaybackStarted()))
       {
         // in case of live stream, seek by position (slightly forward or backward in stream)
         // in live stream we can't receive seek request from graph to skip forward or backward
@@ -1960,7 +1989,6 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
           if (this->IsSplitter())
           {
-
             for (unsigned int i = 0; i < this->outputPins->Count(); i++)
             {
               CMPUrlSourceSplitterOutputPin *outputPin = this->outputPins->GetItem(i);
@@ -1999,8 +2027,11 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
           {
             // if pin is not connected, then demuxed packets will only store in its internal output collection and don't go anywhere
             // in this case it only occupy memory and it is never freed (except destroying pin, flushing, etc.)
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = pin->IsConnected() ? result : E_FAIL);
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = pin->QueuePacket(packet, 100));
+
+            if (pin->IsConnected())
+            {
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = pin->QueuePacket(packet, 100));
+            }
 
             if (SUCCEEDED(result))
             {
@@ -2008,9 +2039,9 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
               packet = NULL;
             }
 
-            if (result == VFW_E_TIMEOUT)
+            if (FAILED(result))
             {
-              // timeout occured
+              // timeout or any other error occured while trying to add output packet to output pin
               // hold packet and try later
 
               result = S_OK;
@@ -2067,6 +2098,8 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
     }
   }
 
+  // delete pending packet (if necessary)
+  FREE_MEM_CLASS(packet);
   return S_OK;
 }
 
@@ -2225,6 +2258,16 @@ bool CMPUrlSourceSplitter::IsAvi(void)
   return this->IsSetFlag(FLAG_MP_URL_SOURCE_SPLITTER_AVI);
 }
 
+bool CMPUrlSourceSplitter::IsEnabledMethodActive(void)
+{
+  return this->IsSetFlag(FLAG_MP_URL_SOURCE_SPLITTER_ENABLED_METHOD_ACTIVE);
+}
+
+bool CMPUrlSourceSplitter::IsPlaybackStarted(void)
+{
+  return this->IsSetFlag(FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED);
+}
+
 HRESULT CMPUrlSourceSplitter::GetParserHosterStatus(void)
 {
   if (this->parserHoster != NULL)
@@ -2303,6 +2346,8 @@ unsigned int WINAPI CMPUrlSourceSplitter::CreateDemuxerWorker(LPVOID lpParam)
           caller->demuxerContext = NULL;
           caller->demuxerContextBufferPosition = 0;
         }
+
+        caller->outputPins->Clear();
       }
     }
 
@@ -2327,22 +2372,6 @@ HRESULT CMPUrlSourceSplitter::CreateCreateDemuxerWorker(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_CREATE_DEMUXER_WORKER_NAME);
 
   this->createDemuxerWorkerShouldExit = false;
-
-  //this->createDemuxerWorkerThread = CreateThread( 
-  //  NULL,                                                 // default security attributes
-  //  0,                                                    // use default stack size  
-  //  &CMPUrlSourceSplitter::CreateDemuxerWorker,           // thread function name
-  //  this,                                                 // argument to thread function 
-  //  0,                                                    // use default creation flags 
-  //  NULL);                                                // returns the thread identifier
-
-  //if (this->createDemuxerWorkerThread == NULL)
-  //{
-  //  // thread not created
-  //  result = HRESULT_FROM_WIN32(GetLastError());
-  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_CREATE_DEMUXER_WORKER_NAME, result);
-  //  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_CREATE_DEMUXER_WORKER_FINISHED;
-  //}
 
   this->createDemuxerWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::CreateDemuxerWorker, this, 0, NULL);
 
@@ -2676,7 +2705,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                   else if (request->GetBuffer() != NULL)
                   {
                     // media packet is stored in memory
-                    mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, 0, mediaPacketDataStart);
+                    mediaPacket->GetBuffer()->CopyFromBuffer(requestBuffer, mediaPacketDataLength, mediaPacketDataStart);
                   }
 
                   // update length of data
@@ -2969,7 +2998,7 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                     unsigned int length = (unsigned int)(mediaPacketEndPosition + 1 - mediaPacketStartPosition);
 
                     ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                    if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                    if (mediaPacket->GetBuffer()->CopyFromBuffer(buffer, length) == length)
                     {
                       DWORD written = 0;
                       if (WriteFile(hTempFile, buffer, length, &written, NULL))
@@ -3066,21 +3095,6 @@ HRESULT CMPUrlSourceSplitter::CreateDemuxerReadRequestWorker(void)
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME);
 
   this->demuxerReadRequestWorkerShouldExit = false;
-
-  //this->demuxerReadRequestWorkerThread = CreateThread( 
-  //  NULL,                                                 // default security attributes
-  //  0,                                                    // use default stack size  
-  //  &CMPUrlSourceSplitter::DemuxerReadRequestWorker,      // thread function name
-  //  this,                                                 // argument to thread function 
-  //  0,                                                    // use default creation flags 
-  //  NULL);                                                // returns the thread identifier
-
-  //if (this->demuxerReadRequestWorkerThread == NULL)
-  //{
-  //  // thread not created
-  //  result = HRESULT_FROM_WIN32(GetLastError());
-  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", MODULE_NAME, METHOD_CREATE_DEMUXER_READ_REQUEST_WORKER_NAME, result);
-  //}
 
   this->demuxerReadRequestWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CMPUrlSourceSplitter::DemuxerReadRequestWorker, this, 0, NULL);
 
@@ -3223,7 +3237,7 @@ HRESULT CMPUrlSourceSplitter::InitDemuxer(void)
     CStream *videoStream = this->demuxer->SelectVideoStream();
     if (videoStream != NULL)
     {
-      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(videoStream->GetStreamInfo()->GetMediaTypes(), L"Video", this, this, &result);
+      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(videoStream->GetStreamInfo()->GetMediaTypes(), L"Video", this, this, &result, this->demuxer->GetContainerFormat());
 
       if (SUCCEEDED(result))
       {
@@ -3239,7 +3253,7 @@ HRESULT CMPUrlSourceSplitter::InitDemuxer(void)
     CStream *audioStream = this->demuxer->SelectAudioStream();
     if (audioStream != NULL)
     {
-      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(audioStream->GetStreamInfo()->GetMediaTypes(), L"Audio", this, this, &result);
+      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(audioStream->GetStreamInfo()->GetMediaTypes(), L"Audio", this, this, &result, this->demuxer->GetContainerFormat());
 
       if (SUCCEEDED(result))
       {
@@ -3256,7 +3270,7 @@ HRESULT CMPUrlSourceSplitter::InitDemuxer(void)
     CStream *subtitleStream = (this->demuxer->GetStreams(CDemuxer::Subpic)->Count() != 0) ? this->demuxer->GetStreams(CDemuxer::Subpic)->GetItem(0) : NULL;
     if (subtitleStream != NULL)
     {
-      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(subtitleStream->GetStreamInfo()->GetMediaTypes(), L"Subtitle", this, this, &result);
+      CMPUrlSourceSplitterOutputPin *outputPin = new CMPUrlSourceSplitterOutputPin(subtitleStream->GetStreamInfo()->GetMediaTypes(), L"Subtitle", this, this, &result, this->demuxer->GetContainerFormat());
 
       if (SUCCEEDED(result))
       {
@@ -3293,31 +3307,9 @@ HRESULT CMPUrlSourceSplitter::GetNextPacket(COutputPinPacket *packet)
       {
         CMediaPacket *mediaPacket = this->mediaPacketCollection->GetItem(0);
 
-        if (SUCCEEDED(result))
-        {
-          result = packet->CreateBuffer(mediaPacket->GetBuffer()->GetBufferOccupiedSpace()) ? result : E_OUTOFMEMORY;
-        }
-
-        if (SUCCEEDED(result))
-        {
-          unsigned int size = mediaPacket->GetBuffer()->GetBufferOccupiedSpace();
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, size, 0);
-          CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-
-          if (SUCCEEDED(result))
-          {
-            mediaPacket->GetBuffer()->CopyFromBuffer(buffer, size, 0, 0);
-
-            result = (packet->GetBuffer()->AddToBufferWithResize(buffer, size) == size) ? result : E_OUTOFMEMORY;
-          }
-
-          FREE_MEM(buffer);
-        }
-
-        if (SUCCEEDED(result))
-        {
-          this->mediaPacketCollection->Remove(0);
-        }
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = packet->CreateBuffer(mediaPacket->GetBuffer()->GetBufferOccupiedSpace()) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (packet->GetBuffer()->AddToBufferWithResize(mediaPacket->GetBuffer()) == mediaPacket->GetBuffer()->GetBufferOccupiedSpace()) ? result : E_OUTOFMEMORY);
+        CHECK_CONDITION_EXECUTE(SUCCEEDED(result), this->mediaPacketCollection->Remove(0));
       }
     }
 
@@ -3347,6 +3339,7 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
   // error messages are written to log file in debug
 
   bool isAvi = false;
+  bool isMpegTs = false;
   AVFormatContext *formatContext = (AVFormatContext *)ptr;
 
   CLogger *loggerInstance =  ffmpegLoggerInstance;
@@ -3356,6 +3349,7 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
     filter = (CMPUrlSourceSplitter *)formatContext->pb->opaque;
     loggerInstance = filter->logger;
     isAvi = filter->IsAvi();
+    isMpegTs = filter->IsMpegTs();
   }
 
   if ((loggerInstance != NULL) && (!isAvi))
@@ -3375,16 +3369,25 @@ void CMPUrlSourceSplitter::FFmpegLogCallback(void *ptr, int log_level, const cha
         char *trimmed = TrimA(buffer);
         if (trimmed != NULL)
         {
-          if ((filter != NULL) && (!isAvi))
+          if ((filter != NULL) && (!isAvi) && (!isMpegTs))
           {
             filter->flags |= (strcmp("Format avi probed with size=2048 and score=100", trimmed) == 0) ? FLAG_MP_URL_SOURCE_SPLITTER_AVI : FLAG_MP_URL_SOURCE_SPLITTER_NONE;
             isAvi = filter->IsAvi();
           }
 
+          if ((filter != NULL) && (!isAvi) && (!isMpegTs))
+          {
+            filter->flags |= (strcmp("Format mpegts probed with size=2048 and score=100", trimmed) == 0) ? FLAG_MP_URL_SOURCE_SPLITTER_MPEG_TS : FLAG_MP_URL_SOURCE_SPLITTER_NONE;
+            isMpegTs = filter->IsMpegTs();
+          }
+
           wchar_t *logLine = ConvertToUnicodeA(trimmed);
           if (logLine != NULL)
           {
-            loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+            if ((!isMpegTs) || (isMpegTs && (strncmp("first_dts", trimmed, 9) != 0)))
+            {
+              loggerInstance->Log(LOGGER_VERBOSE, L"%s: %s: log level: %d, message: %s", MODULE_NAME, L"ffmpeg_log_callback()", log_level, logLine);
+            }
           }
 
           FREE_MEM(logLine);

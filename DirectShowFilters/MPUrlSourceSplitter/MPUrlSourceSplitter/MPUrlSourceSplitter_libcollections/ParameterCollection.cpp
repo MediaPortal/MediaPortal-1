@@ -210,3 +210,8 @@ bool CParameterCollection::CopyParameter(const wchar_t *parameterName, bool inva
 
   return continueAdding;
 }
+
+bool CParameterCollection::Remove(const wchar_t *name, bool invariant)
+{
+  return __super::Remove(name, (void *)&invariant);
+}

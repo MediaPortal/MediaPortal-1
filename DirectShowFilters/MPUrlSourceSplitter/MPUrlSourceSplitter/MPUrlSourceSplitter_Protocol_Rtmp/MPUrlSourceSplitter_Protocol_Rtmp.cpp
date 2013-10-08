@@ -302,7 +302,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
 
                 if (SUCCEEDED(result))
                 {
-                  this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferSize, 0, 0);
+                  this->mainCurlInstance->GetRtmpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferSize);
                 }
               }
 
@@ -1023,7 +1023,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
                 unsigned int length = streamFragment->GetLength();
 
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length)
                 {
                   DWORD written = 0;
                   if (WriteFile(hTempFile, buffer, length, &written, NULL))
@@ -1128,7 +1128,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StartReceivingData(CParameterCollect
         first->SetFragmentStartTimestamp(0, false);
         first->SetFragmentEndTimestamp(UINT64_MAX);
 
-        result = (this->rtmpStreamFragments->Add(first)) ? result : E_FAIL;
+        result = (this->rtmpStreamFragments->Add(first)) ? result : E_OUTOFMEMORY;
       }
 
       if (FAILED(result))
@@ -1240,9 +1240,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ClearSession(void)
   this->additionalCorrection = 0;
   this->duration = UINT64_MAX;
   this->liveStream = false;
+  this->seekingActive = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
+}
+
+int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetDuration(void)
+{
+  return (this->liveStream) ? DURATION_LIVE_STREAM : DURATION_UNSPECIFIED;
 }
 
 // ISeeking interface
@@ -1269,19 +1275,16 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::SeekToTime(int64_t time)
 
   // find fragment to process
   this->streamFragmentProcessing = this->rtmpStreamFragments->Count();
-  if (this->rtmpStreamFragments != NULL)
+  for (unsigned int i = 0; i < this->rtmpStreamFragments->Count(); i++)
   {
-    for (unsigned int i = 0; i < this->rtmpStreamFragments->Count(); i++)
-    {
-      CRtmpStreamFragment *segFrag = this->rtmpStreamFragments->GetItem(i);
+    CRtmpStreamFragment *segFrag = this->rtmpStreamFragments->GetItem(i);
 
-      if ((segFrag->GetFragmentStartTimestamp() <= (uint64_t)time) &&
-        (segFrag->GetFragmentEndTimestamp() >= (uint64_t)time))
-      {
-        this->streamFragmentProcessing = i;
-        result = segFrag->GetFragmentStartTimestamp();
-        break;
-      }
+    if ((segFrag->GetFragmentStartTimestamp() <= (uint64_t)time) &&
+      (segFrag->GetFragmentEndTimestamp() >= (uint64_t)time))
+    {
+      this->streamFragmentProcessing = i;
+      result = segFrag->GetFragmentStartTimestamp();
+      break;
     }
   }
 
@@ -1496,7 +1499,7 @@ CLinearBuffer *CMPUrlSourceSplitter_Protocol_Rtmp::FillBufferForProcessing(CRtmp
           else if (!fragment->IsStoredToFile())
           {
             // fragment is stored in memory
-            if (fragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+            if (fragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength) != bufferLength)
             {
               // error occured while copying data
               FREE_MEM(buffer);

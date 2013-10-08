@@ -24,12 +24,13 @@
 
 CRtspTrackStatistics::CRtspTrackStatistics()
 {
+  this->flags = RTSP_TRACK_FLAG_NONE;
+
   this->jitter = 0;
   this->lastTime = 0;
   this->lastRtpPacketTimestamp = 0;
   this->clockFrequency = 0;
 
-  this->setSequenceNumber = false;
   this->cycles = 0;
   this->lastSequenceNumber = 0;
   this->firstSequenceNumber = 0;
@@ -37,6 +38,7 @@ CRtspTrackStatistics::CRtspTrackStatistics()
 
   this->lastExpectedSequenceNumber = 0;
   this->lastReceivedPacketCount = 0;
+  this->previousLastReceivedPacketCount = 0;
 
   this->lastSenderReportTimestamp = 0;
   this->lastSenderReportTime = 0;
@@ -67,6 +69,7 @@ unsigned int CRtspTrackStatistics::GetFractionLost()
     fraction /= (unsigned int)expectedDifference;
   }
 
+  this->previousLastReceivedPacketCount = this->lastReceivedPacketCount;
   this->lastExpectedSequenceNumber = expectedSequenceNumber;
   this->lastReceivedPacketCount = this->receivedPacketCount;
 
@@ -118,6 +121,16 @@ unsigned int CRtspTrackStatistics::GetClockFrequency(void)
   return this->clockFrequency;
 }
 
+unsigned int CRtspTrackStatistics::GetLastReceivedPacketCount(void)
+{
+  return this->lastReceivedPacketCount;
+}
+
+unsigned int CRtspTrackStatistics::GetPreviousLastReceivedPacketCount(void)
+{
+  return this->previousLastReceivedPacketCount;
+}
+
 /* set methods */
 
 void CRtspTrackStatistics::SetClockFrequency(unsigned int clockFrequency)
@@ -132,40 +145,48 @@ void CRtspTrackStatistics::AdjustJitter(unsigned int currentTime, unsigned int r
   // jitter is calculated as integer approximation as described in RFC 3550, appendix A.8
   if (this->clockFrequency != 0)
   {
-    // there can be overflow in times
-    uint64_t calculatedRtpTimestampDifference = (currentTime < this->lastTime) ? 0x0000000100000000 : 0;
-    calculatedRtpTimestampDifference += (uint64_t)currentTime - (uint64_t)this->lastTime;
-    calculatedRtpTimestampDifference *= this->clockFrequency;
-    // calculated RTP timestamp difference can be greater than UINT_MAX
+    if (this->lastTime != 0)
+    {
+      // there can be overflow in times
+      uint64_t calculatedRtpTimestampDifference = (currentTime < this->lastTime) ? 0x0000000100000000 : 0;
+      calculatedRtpTimestampDifference += (uint64_t)currentTime - (uint64_t)this->lastTime;
+      calculatedRtpTimestampDifference *= this->clockFrequency;
+      // clock frequency is per second
+      calculatedRtpTimestampDifference /= 1000;
+      // calculated RTP timestamp difference can be greater than UINT_MAX
 
-    // there can be overflow in RTP packet timestamps
-    uint64_t rtpTimestampDifference = (rtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0;
-    rtpTimestampDifference += (uint64_t)rtpPacketTimestamp - (uint64_t)this->lastRtpPacketTimestamp;
-    // RTP timestamp difference can be at maximum UINT_MAX
+      // there can be overflow in RTP packet timestamps
+      uint64_t rtpTimestampDifference = (rtpPacketTimestamp < this->lastRtpPacketTimestamp) ? 0x0000000100000000 : 0;
+      rtpTimestampDifference += (uint64_t)rtpPacketTimestamp - (uint64_t)this->lastRtpPacketTimestamp;
+      // RTP timestamp difference can be at maximum UINT_MAX
 
-    // jitter difference can be lower or greater than zero, so we use int64_t
-    int64_t jitterDifference = (calculatedRtpTimestampDifference < rtpTimestampDifference) ? (int64_t)(rtpTimestampDifference - calculatedRtpTimestampDifference) : (int64_t)(calculatedRtpTimestampDifference - rtpPacketTimestamp);
-    // jitter difference is now still greater or equal to zero
-    // maximum current jitter value must be lower by 8, because we need to add 8 to current jitter
-    jitterDifference -= (int64_t)((min(this->jitter, 0xFFFFFFFF - 0x00000008) + 8) >> 4);
-    // jitter difference cannot be lower than -1/16 of current jitter
-    // jitter difference must be lower or equal to current jitter
-    jitterDifference = min(jitterDifference, (int64_t)this->jitter);   // lower or equal to current jitter
+      // jitter difference can be lower or greater than zero, so we use int64_t
+      int64_t jitterDifference = (calculatedRtpTimestampDifference < rtpTimestampDifference) ? (int64_t)(rtpTimestampDifference - calculatedRtpTimestampDifference) : (int64_t)(calculatedRtpTimestampDifference - rtpTimestampDifference);
+      // jitter difference is now still greater or equal to zero
+      // maximum current jitter value must be lower by 8, because we need to add 8 to current jitter
+      jitterDifference -= (int64_t)((min(this->jitter, 0xFFFFFFFF - 0x00000008) + 8) >> 4);
+      // jitter difference must be grateer than or equal to -1/16 of current jitter
+      jitterDifference = max(jitterDifference, (-(int64_t)(this->jitter >> 4)));
 
-    this->jitter = (unsigned int)((int64_t)this->jitter - jitterDifference);
+      this->jitter = (unsigned int)((int64_t)this->jitter + jitterDifference);
+    }
+
+    this->lastTime = currentTime;
+    this->lastRtpPacketTimestamp = rtpPacketTimestamp;
   }
 }
 
 void CRtspTrackStatistics::AdjustExpectedAndLostPacketCount(unsigned int sequenceNumber)
 {
-  if (!this->setSequenceNumber)
+  if (!this->IsSetSequenceNumber())
   {
     this->cycles = 0;
     this->lastSequenceNumber = 0;
     this->firstSequenceNumber = sequenceNumber;
-    this->setSequenceNumber = true;
     this->receivedPacketCount = 0;
     this->lastReceivedPacketCount = 0;
+    this->previousLastReceivedPacketCount = 0;
+    this->flags |= RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER;
   }
   else
   {
@@ -190,4 +211,14 @@ void CRtspTrackStatistics::AdjustLastSenderReportTimestamp(uint64_t ntpTimestamp
 {
   this->lastSenderReportTime = currentTime;
   this->lastSenderReportTimestamp = (unsigned int)((ntpTimestamp & 0x0000FFFFFFFF0000) >> 16);
+}
+
+bool CRtspTrackStatistics::IsSetSequenceNumber(void)
+{
+  return this->IsSetFlags(RTSP_TRACK_FLAG_SET_SEQUENCE_NUMBER);
+}
+
+bool CRtspTrackStatistics::IsSetFlags(unsigned int flags)
+{
+  return ((this->flags & flags) == flags);
 }

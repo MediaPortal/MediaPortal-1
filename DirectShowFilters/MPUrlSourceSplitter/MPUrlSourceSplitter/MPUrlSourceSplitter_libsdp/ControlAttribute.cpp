@@ -58,7 +58,7 @@ unsigned int CControlAttribute::Parse(const wchar_t *buffer, unsigned int length
   if (result != 0)
   {
     // successful parsing of session tag
-    // compare it to out session tag
+    // compare it to our session tag
     result = (wcscmp(this->originalTag, TAG_ATTRIBUTE) == 0) ? result : 0;
     result = (this->tagContent != NULL) ? result : 0;
 
@@ -73,7 +73,7 @@ unsigned int CControlAttribute::Parse(const wchar_t *buffer, unsigned int length
     result = (this->instanceTag != NULL) ? result : 0;
 
     this->controlUrl = Duplicate(this->value);
-    result = (this->value != NULL) ? result : 0;
+    result = (this->controlUrl != NULL) ? result : 0;
 
     if (result != 0)
     {

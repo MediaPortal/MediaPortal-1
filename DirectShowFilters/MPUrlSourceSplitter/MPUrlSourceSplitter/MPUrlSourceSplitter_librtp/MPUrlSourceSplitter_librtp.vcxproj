@@ -99,6 +99,7 @@
     <ClInclude Include="ReportBlockCollection.h" />
     <ClInclude Include="RtcpPacket.h" />
     <ClInclude Include="RtpPacket.h" />
+    <ClInclude Include="RtpPacketCollection.h" />
     <ClInclude Include="SenderReportRtcpPacket.h" />
     <ClInclude Include="SourceDescriptionChunk.h" />
     <ClInclude Include="SourceDescriptionChunkCollection.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="ReportBlockCollection.cpp" />
     <ClCompile Include="RtcpPacket.cpp" />
     <ClCompile Include="RtpPacket.cpp" />
+    <ClCompile Include="RtpPacketCollection.cpp" />
     <ClCompile Include="SenderReportRtcpPacket.cpp" />
     <ClCompile Include="SourceDescriptionChunk.cpp" />
     <ClCompile Include="SourceDescriptionChunkCollection.cpp" />

@@ -51,3 +51,15 @@ void CContributeSourceIdentifier::SetIdentifier(unsigned int identifier)
 }
 
 /* other methods */
+
+CContributeSourceIdentifier *CContributeSourceIdentifier::Clone(void)
+{
+  CContributeSourceIdentifier *result = new CContributeSourceIdentifier();
+
+  if (result != NULL)
+  {
+    result->identifier = this->identifier;
+  }
+
+  return result;
+}

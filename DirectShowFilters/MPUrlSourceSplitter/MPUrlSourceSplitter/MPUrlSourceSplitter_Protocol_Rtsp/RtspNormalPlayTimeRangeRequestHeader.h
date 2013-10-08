@@ -29,11 +29,11 @@
 #define FLAG_NORMAL_PLAY_TIME_START                                   0x00000001
 #define FLAG_NORMAL_PLAY_TIME_END                                     0x00000002
 
-#define TIME_UNSPECIFIED                                              UINT_MAX
+#define TIME_UNSPECIFIED                                              UINT64_MAX
 
-#define NORMAL_PLAY_TIME_END_VALUE_FORMAT                             L"npt=-%u"
-#define NORMAL_PLAY_TIME_START_VALUE_FORMAT                           L"npt=%u-"
-#define NORMAL_PLAY_TIME_START_END_VALUE_FORMAT                       L"npt=%u-%u"
+#define NORMAL_PLAY_TIME_END_VALUE_FORMAT                             L"npt=-%llu.%03llu"
+#define NORMAL_PLAY_TIME_START_VALUE_FORMAT                           L"npt=%llu.%03llu-"
+#define NORMAL_PLAY_TIME_START_END_VALUE_FORMAT                       L"npt=%llu.%03llu-%llu.%03llu"
 
 class CRtspNormalPlayTimeRangeRequestHeader : public CRtspRangeRequestHeader
 {
@@ -47,13 +47,13 @@ public:
   // @return : RTSP header value
   virtual const wchar_t *GetValue(void);
 
-  // gets start time in seconds
-  // @return : start time in seconds or TIME_UNSPECIFIED if not specified
-  virtual unsigned int GetStartTime(void);
+  // gets start time in ms
+  // @return : start time in ms or TIME_UNSPECIFIED if not specified
+  virtual uint64_t GetStartTime(void);
 
-  // gets end time in seconds
-  // @return : end time in seconds or TIME_UNSPECIFIED if not specified
-  virtual unsigned int GetEndTime(void);
+  // gets end time in ms
+  // @return : end time in ms or TIME_UNSPECIFIED if not specified
+  virtual uint64_t GetEndTime(void);
 
   // gets flags
   // @return : flags
@@ -66,13 +66,13 @@ public:
   // @return : true if successful, false otherwise
   virtual bool SetValue(const wchar_t *value);
 
-  // sets start time in seconds
-  // @param startTime : the start time in seconds to set
-  virtual void SetStartTime(unsigned int startTime);
+  // sets start time in ms
+  // @param startTime : the start time in ms to set
+  virtual void SetStartTime(uint64_t startTime);
 
-  // sets end time in seconds
-  // @param endTime : the end time in seconds to set
-  virtual void SetEndTime(unsigned int endTime);
+  // sets end time in ms
+  // @param endTime : the end time in ms to set
+  virtual void SetEndTime(uint64_t endTime);
 
   // sets flags
   // @param flags : the flags to set
@@ -101,8 +101,8 @@ protected:
 
   unsigned int flags;
 
-  unsigned int startTime;
-  unsigned int endTime;
+  uint64_t startTime;
+  uint64_t endTime;
 
   // deeply clones current instance to cloned header
   // @param  clonedHeader : cloned header to hold clone of current instance

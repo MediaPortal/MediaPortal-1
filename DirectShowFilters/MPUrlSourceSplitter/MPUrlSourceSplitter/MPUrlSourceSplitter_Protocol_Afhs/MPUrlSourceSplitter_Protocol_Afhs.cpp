@@ -344,7 +344,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
                 if (buffer != NULL)
                 {
-                  bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
+                  bufferForBoxProcessing->CopyFromBuffer(buffer, length);
                   if (box->Parse(buffer, length))
                   {
                     unsigned int boxSize = (unsigned int)box->GetSize();
@@ -743,7 +743,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
 
               if (continueWithBootstrapInfo)
               {
-                this->bootstrapInfoCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, length, 0, 0);
+                this->bootstrapInfoCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, length);
 
                 CBootstrapInfoBox *bootstrapInfoBox = new CBootstrapInfoBox();
                 continueWithBootstrapInfo &= (bootstrapInfoBox != NULL);
@@ -962,7 +962,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
                 unsigned int length = segmentFragment->GetLength();
 
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                if (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                if (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, length) == length)
                 {
                   DWORD written = 0;
                   if (WriteFile(hTempFile, buffer, length, &written, NULL))
@@ -1361,9 +1361,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   this->addedHeader = false;
   FREE_MEM_CLASS(this->manifest);
   FREE_MEM_CLASS(this->cookies);
+  this->seekingActive = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
+}
+
+int64_t CMPUrlSourceSplitter_Protocol_Afhs::GetDuration(void)
+{
+  return DURATION_UNSPECIFIED;
 }
 
 // ISeeking interface
@@ -1684,7 +1690,7 @@ CSegmentFragmentCollection *CMPUrlSourceSplitter_Protocol_Afhs::GetSegmentsFragm
     if (SUCCEEDED(result))
     {
       result = (segmentsFragments->SetBaseUrl(qualityUrl)) ? result : E_OUTOFMEMORY;
-      result = (segmentsFragments->SetExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
+      result = (segmentsFragments->SetSegmentFragmentUrlExtraParameters(configurationParameters->GetValue(PARAMETER_NAME_AFHS_SEGMENT_FRAGMENT_URL_EXTRA_PARAMETERS, true, NULL))) ? result : E_OUTOFMEMORY;
     }
             
     if (SUCCEEDED(result))
@@ -1913,7 +1919,7 @@ CLinearBuffer *CMPUrlSourceSplitter_Protocol_Afhs::FillBufferForProcessing(CSegm
           else if (!segmentFragment->IsStoredToFile())
           {
             // segment and fragment is stored in memory
-            if (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+            if (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bufferLength) != bufferLength)
             {
               // error occured while copying data
               FREE_MEM(buffer);

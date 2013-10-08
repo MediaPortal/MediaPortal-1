@@ -96,7 +96,7 @@ CMediaPacket *CMediaPacket::CreateMediaPacketBasedOnPacket(int64_t start, int64_
 
     if (success)
     {
-      success = (this->GetBuffer()->CopyFromBuffer(buffer, length, 0, (unsigned int)(start - this->start)) == length);
+      success = (this->GetBuffer()->CopyFromBuffer(buffer, length, (unsigned int)(start - this->start)) == length);
     }
 
     if (success)

@@ -125,7 +125,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketColle
         {
           CMediaPacket *mp = this->storedMediaPackets->GetItem(i); 
           unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
-          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
+          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace);
           bufferPosition += bufferOccupiedSpace;
         }
 
@@ -196,8 +196,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketColle
                                   CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, w_url);
                                   if (urlParameter != NULL)
                                   {
-                                    bool invariant = true;
-                                    this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                                    this->connectionParameters->Remove(PARAMETER_NAME_URL, true);
                                     this->connectionParameters->Add(urlParameter);
 
                                     result = ParseResult_Known;
@@ -279,8 +278,7 @@ ParseResult CMPUrlSourceSplitter_Parser_Asx::ParseMediaPackets(CMediaPacketColle
                               CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
                               if (urlParameter != NULL)
                               {
-                                bool invariant = true;
-                                this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                                this->connectionParameters->Remove(PARAMETER_NAME_URL, true);
                                 this->connectionParameters->Add(urlParameter);
 
                                 result = ParseResult_Known;

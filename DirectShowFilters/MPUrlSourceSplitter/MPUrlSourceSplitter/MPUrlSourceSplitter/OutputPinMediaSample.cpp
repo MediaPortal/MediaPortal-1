@@ -145,7 +145,7 @@ STDMETHODIMP COutputPinMediaSample::SetPacket(IMediaSample *mediaSample, COutput
     {
       unsigned int bufferSizeOccupied = min((unsigned long)mediaSample->GetSize(), packet->GetBuffer()->GetBufferOccupiedSpace());
 
-      packet->GetBuffer()->CopyFromBuffer(buffer, bufferSizeOccupied, 0, 0);
+      packet->GetBuffer()->CopyFromBuffer(buffer, bufferSizeOccupied);
 
       bool timeValid = packet->GetStartTime() != COutputPinPacket::INVALID_TIME;
       REFERENCE_TIME rtStart = packet->GetStartTime();

@@ -242,3 +242,61 @@ void CRtpPacket::Clear(void)
   this->profileSpecificExtensionHeaderId = UINT_MAX;
   this->extensionHeaderLength = UINT_MAX;
 }
+
+CRtpPacket *CRtpPacket::Clone(void)
+{
+  CRtpPacket *result = this->CreateRtpPacket();
+
+  if (result != NULL)
+  {
+    if (!this->CloneInternal(result))
+    {
+      FREE_MEM_CLASS(result);
+    }
+  }
+
+  return result;
+}
+
+/* protected methods */
+
+CRtpPacket *CRtpPacket::CreateRtpPacket(void)
+{
+  return new CRtpPacket();
+}
+
+bool CRtpPacket::CloneInternal(CRtpPacket *rtpPacket)
+{
+  bool result = true;
+
+  rtpPacket->baseType = this->baseType;
+  rtpPacket->extensionHeaderLength = this->extensionHeaderLength;
+  rtpPacket->flags = this->flags;
+  rtpPacket->paddingSize = this->paddingSize;
+  rtpPacket->payloadSize = this->payloadSize;
+  rtpPacket->payloadType = this->payloadType;
+  rtpPacket->profileSpecificExtensionHeaderId = this->profileSpecificExtensionHeaderId;
+  rtpPacket->sequenceNumber = this->sequenceNumber;
+  rtpPacket->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
+  rtpPacket->timestamp = this->timestamp;
+  rtpPacket->version = this->version;
+
+  result &= rtpPacket->contributeSourceIdentifiers->Append(this->contributeSourceIdentifiers);
+
+  if (this->IsExtended())
+  {
+    rtpPacket->extensionHeader = ALLOC_MEM_SET(rtpPacket->extensionHeader, unsigned char, rtpPacket->extensionHeaderLength, 0);
+    result &= (rtpPacket->extensionHeader != NULL);
+
+    CHECK_CONDITION_EXECUTE(result, memcpy(rtpPacket->extensionHeader, this->extensionHeader, rtpPacket->extensionHeaderLength));
+  }
+  if (rtpPacket->payloadSize != 0)
+  {
+    rtpPacket->payload = ALLOC_MEM_SET(rtpPacket->payload, unsigned char, rtpPacket->payloadSize, 0);
+    result &= (rtpPacket->payload != NULL);
+
+    CHECK_CONDITION_EXECUTE(result, memcpy(rtpPacket->payload, this->payload, rtpPacket->payloadSize));
+  }
+
+  return result;
+}

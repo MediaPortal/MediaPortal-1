@@ -51,3 +51,19 @@ bool CMpeg2TransportStreamRtpPacket::Parse(const unsigned char *buffer, unsigned
 
   return result;
 }
+
+/* protected methods */
+
+CRtpPacket *CMpeg2TransportStreamRtpPacket::CreateRtpPacket(void)
+{
+  return new CMpeg2TransportStreamRtpPacket();
+}
+
+bool CMpeg2TransportStreamRtpPacket::CloneInternal(CRtpPacket *rtpPacket)
+{
+  bool result = __super::CloneInternal(rtpPacket);
+  CMpeg2TransportStreamRtpPacket *mpeg2TransportStreamRtpPacket = dynamic_cast<CMpeg2TransportStreamRtpPacket *>(rtpPacket);
+  result &= (mpeg2TransportStreamRtpPacket != NULL);
+
+  return result;
+}

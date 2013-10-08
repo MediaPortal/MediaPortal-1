@@ -33,5 +33,5 @@ CContributeSourceIdentifierCollection::~CContributeSourceIdentifierCollection(vo
 
 CContributeSourceIdentifier *CContributeSourceIdentifierCollection::Clone(CContributeSourceIdentifier *item)
 {
-  return NULL;
+  return item->Clone();
 }

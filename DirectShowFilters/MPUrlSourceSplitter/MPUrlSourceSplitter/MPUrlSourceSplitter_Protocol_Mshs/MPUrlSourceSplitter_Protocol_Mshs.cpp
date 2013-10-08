@@ -321,17 +321,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
 
             if (SUCCEEDED(result))
             {
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-              CHECK_POINTER_HRESULT(result, buffer, result, E_OUTOFMEMORY);
-              if (SUCCEEDED(result))
-              {
-                result = (header->CopyFromBuffer(buffer, length, 0, 0) == length) ? result : E_FAIL;
-                if (SUCCEEDED(result))
-                {
-                  result = (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length) ? result : E_FAIL;
-                }
-              }
-              FREE_MEM(buffer);
+              result = (this->bufferForProcessing->AddToBufferWithResize(header) == length) ? result : E_FAIL;
             }
           }
         }
@@ -384,14 +374,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
 
               if (bytesRead != 0)
               {
-                ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-                if (buffer != NULL)
-                {
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-                  linearBuffer->AddToBuffer(buffer, bytesRead);
-                  this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
-                }
-                FREE_MEM(buffer);
+                linearBuffer->AddToBufferWithResize(this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData());
+                this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
               }
             }
           }
@@ -435,24 +419,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
             unsigned int length = bufferForBoxProcessing->GetBufferOccupiedSpace();
             if (length > 0)
             {
-              ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-              if (buffer != NULL)
-              {
-                bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0);
-                continueProcessing = true;
-
-                if (continueProcessing)
-                {
-                  continueProcessing &= (this->bufferForProcessing->AddToBufferWithResize(buffer, length) == length);
-                }
-
-                if (continueProcessing)
-                {
-                  bufferForBoxProcessing->RemoveFromBufferAndMove(length);
-                  continueProcessing = true;
-                }
-              }
-              FREE_MEM(buffer);
+              continueProcessing = (this->bufferForProcessing->AddToBufferWithResize(bufferForBoxProcessing) == length);
+              CHECK_CONDITION_EXECUTE(continueProcessing, bufferForBoxProcessing->RemoveFromBufferAndMove(length));
             }
           } while (continueProcessing);
 
@@ -493,29 +461,32 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
 
         if (length > 0)
         {
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-          if (buffer != NULL)
+          this->seekingActive = false;
+
+          CMediaPacket *mediaPacket = new CMediaPacket();
+          if (mediaPacket != NULL)
           {
-            this->bufferForProcessing->CopyFromBuffer(buffer, length, 0, 0);
+            if (mediaPacket->GetBuffer()->AddToBufferWithResize(this->bufferForProcessing) == length)
+            {
+              mediaPacket->SetStart(this->bytePosition);
+              mediaPacket->SetEnd(this->bytePosition + length - 1);
 
-            CMediaPacket *mediaPacket = new CMediaPacket();
-            mediaPacket->GetBuffer()->InitializeBuffer(length);
-            mediaPacket->GetBuffer()->AddToBuffer(buffer, length);
-            mediaPacket->SetStart(this->bytePosition);
-            mediaPacket->SetEnd(this->bytePosition + length - 1);
-
-            if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+              if (!receiveData->GetMediaPacketCollection()->Add(mediaPacket))
+              {
+                FREE_MEM_CLASS(mediaPacket);
+              }
+              else
+              {
+                this->bytePosition += length;
+                lastPosition = this->bytePosition;
+                this->bufferForProcessing->RemoveFromBufferAndMove(length);
+              }
+            }
+            else
             {
               FREE_MEM_CLASS(mediaPacket);
             }
-
-            this->bytePosition += length;
-            lastPosition = this->bytePosition;
-            this->seekingActive = false;
-            this->bufferForProcessing->RemoveFromBufferAndMove(length);
           }
-
-          FREE_MEM(buffer);
         }
       }
 
@@ -641,7 +612,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
 
               if (SUCCEEDED(result))
               {
-                result = (streamFragment->GetBuffer()->CopyFromBuffer(inputBuffer, inputLength, 0, 0) == inputLength) ? result : E_FAIL;
+                result = (streamFragment->GetBuffer()->CopyFromBuffer(inputBuffer, inputLength) == inputLength) ? result : E_FAIL;
               }
 
               // first processing - get size for output buffer
@@ -976,7 +947,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ReceiveData(CReceiveData *receiveDat
                 unsigned int length = streamFragment->GetLength();
 
                 ALLOC_MEM_DEFINE_SET(buffer, unsigned char, length, 0);
-                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length, 0, 0) == length)
+                if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, length) == length)
                 {
                   DWORD written = 0;
                   if (WriteFile(hTempFile, buffer, length, &written, NULL))
@@ -1253,9 +1224,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mshs::ClearSession(void)
   FREE_MEM_CLASS(this->audioTrackFragmentHeaderBox);
   this->reconstructedHeader = false;
   this->lastTrackID = 0;
+  this->seekingActive = false;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
+}
+
+int64_t CMPUrlSourceSplitter_Protocol_Mshs::GetDuration(void)
+{
+  return DURATION_UNSPECIFIED;
 }
 
 // ISeeking interface
@@ -1698,7 +1675,7 @@ CTrackFragmentHeaderBox *CMPUrlSourceSplitter_Protocol_Mshs::GetTrackFragmentHea
 
     if (tempBuffer != NULL)
     {
-      buffer->CopyFromBuffer(tempBuffer, bytesRead, 0, 0);
+      buffer->CopyFromBuffer(tempBuffer, bytesRead);
 
       CMovieFragmentBox *movieFragmentBox = new CMovieFragmentBox();
 
@@ -3031,7 +3008,7 @@ CLinearBuffer *CMPUrlSourceSplitter_Protocol_Mshs::FillBufferForProcessing(CStre
             // stream fragment is stored in memory
             if (streamFragment->GetBuffer() != NULL)
             {
-              if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength, 0, 0) != bufferLength)
+              if (streamFragment->GetBuffer()->CopyFromBuffer(buffer, bufferLength) != bufferLength)
               {
                 // error occured while copying data
                 FREE_MEM(buffer);

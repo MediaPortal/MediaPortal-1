@@ -206,3 +206,26 @@ bool CMpeg1OrMpeg2VideoRtpPacket::Parse(const unsigned char *buffer, unsigned in
 
   return result;
 }
+
+/* protected methods */
+
+CRtpPacket *CMpeg1OrMpeg2VideoRtpPacket::CreateRtpPacket(void)
+{
+  return new CMpeg1OrMpeg2VideoRtpPacket();
+}
+
+bool CMpeg1OrMpeg2VideoRtpPacket::CloneInternal(CRtpPacket *rtpPacket)
+{
+  bool result = __super::CloneInternal(rtpPacket);
+  CMpeg1OrMpeg2VideoRtpPacket *mpeg1OrMpeg2VideoRtpPacket = dynamic_cast<CMpeg1OrMpeg2VideoRtpPacket *>(rtpPacket);
+  result &= (mpeg1OrMpeg2VideoRtpPacket != NULL);
+
+  if (result)
+  {
+    mpeg1OrMpeg2VideoRtpPacket->temporalReference = this->temporalReference;
+    mpeg1OrMpeg2VideoRtpPacket->pictureType = this->pictureType;
+    mpeg1OrMpeg2VideoRtpPacket->lastByte = this->lastByte;
+  }
+
+  return result;
+}

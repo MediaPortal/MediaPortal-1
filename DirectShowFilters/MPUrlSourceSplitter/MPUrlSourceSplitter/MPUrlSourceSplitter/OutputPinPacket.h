@@ -25,17 +25,16 @@
 
 #include "LinearBuffer.h"
 
-#define FLAG_NONE                                                 0x00000000
-#define FLAG_DISCONTINUITY                                        0x00000001
-#define FLAG_SYNC_POINT                                           0x00000002
-#define FLAG_END_OF_STREAM                                        0x00000004
+#define OUTPUT_PIN_PACKET_FLAG_NONE                                   0x00000000
+#define OUTPUT_PIN_PACKET_FLAG_DISCONTINUITY                          0x00000001
+#define OUTPUT_PIN_PACKET_FLAG_SYNC_POINT                             0x00000002
+#define OUTPUT_PIN_PACKET_FLAG_END_OF_STREAM                          0x00000004
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_H264_ANNEXB                     0x00000008
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_PARSED                          0x00000010
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT                        0x00000020
+#define OUTPUT_PIN_PACKET_FLAG_PACKET_FORCED_SUBTITLE                 0x00000040
 
-#define FLAG_PACKET_H264_ANNEXB                                   0x00000008
-#define FLAG_PACKET_PARSED                                        0x00000010
-#define FLAG_PACKET_MOV_TEXT                                      0x00000020
-#define FLAG_PACKET_FORCED_SUBTITLE                               0x00000040
-
-#define STREAM_PID_UNSPECIFIED                                    UINT_MAX
+#define STREAM_PID_UNSPECIFIED                                        UINT_MAX
 
 class COutputPinPacket
 {
@@ -118,6 +117,18 @@ public:
   // tests if packet signalize end of stream
   // @return : true if packet signalize end of stream, false otherwise
   bool IsEndOfStream(void);
+
+  // tests if packet is parsed
+  // @return : true if packet is parsed, false otherwise
+  bool IsPacketParsed(void);
+
+  // tests if packet is H264 Annex B
+  // @return : true if packet is H264 Annex B, false otherwise
+  bool IsH264AnnexB(void);
+
+  // tests if packet has set OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT flags
+  // @return : true if packet has set OUTPUT_PIN_PACKET_FLAG_PACKET_MOV_TEXT flag, false otherwise
+  bool IsPacketMovText(void);
 
   // tests if specific set of flags is set
   // @param flags : the flags to test

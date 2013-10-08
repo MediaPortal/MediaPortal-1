@@ -29,7 +29,7 @@
 #define PARAMETER_NAME_AFHS_COOKIE                                            L"AfhsCookie"
 #define PARAMETER_NAME_AFHS_VERSION                                           L"AfhsVersion"
 #define PARAMETER_NAME_AFHS_IGNORE_CONTENT_LENGTH                             L"AfhsIgnoreContentLength"
-#define PARAMETER_NAME_AFHS_EXTRA_PARAMETERS                                  L"AfhsExtraParameters"
+#define PARAMETER_NAME_AFHS_SEGMENT_FRAGMENT_URL_EXTRA_PARAMETERS             L"AfhsSegmentFragmentUrlExtraParameters"
 
 #define PARAMETER_NAME_AFHS_BOOTSTRAP_INFO                                    L"AfhsBootstrapInfo"
 #define PARAMETER_NAME_AFHS_BASE_URL                                          L"AfhsBaseUrl"

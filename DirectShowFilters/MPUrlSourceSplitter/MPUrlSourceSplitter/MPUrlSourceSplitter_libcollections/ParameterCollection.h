@@ -35,7 +35,7 @@ class CParameterCollection : public CKeyedCollection<CParameter, const wchar_t *
 {
 public:
   CParameterCollection(void);
-  ~CParameterCollection(void);
+  virtual ~CParameterCollection(void);
 
   // add parameter to collection
   // @param item : the reference to parameter to add
@@ -121,6 +121,12 @@ public:
   // @param newParameterName : the name of new parameter to create
   // @return : true if parameter created, false otherwise
   bool CopyParameter(const wchar_t *parameterName, bool invariant, const wchar_t *newParameterName);
+
+  // remove parameter with specified name from collection
+  // @param name : the name of parameter to remove
+  // @param invariant : specifies if parameter name shoud be find with invariant casing
+  // @return : true if removed, false otherwise
+  virtual bool Remove(const wchar_t *name, bool invariant);
 
 protected:
   // compare two item keys

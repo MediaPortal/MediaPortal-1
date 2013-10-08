@@ -33,7 +33,15 @@ public:
 
   /* get methods */
 
+  // gets RTSP start time in ms
+  // @return : RTSP start time in ms
+  uint64_t GetStartTime(void);
+
   /* set methods */
+
+  // sets RTSP start time
+  // @return : RTSP start time in ms to set
+  void SetStartTime(uint64_t startTime);
 
   /* other methods */
 
@@ -43,7 +51,10 @@ public:
 
 protected:
 
-  // RTMP protocol specific variables
+  // RTSP protocol specific variables
+
+  // holds start time
+  uint64_t startTime;
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance

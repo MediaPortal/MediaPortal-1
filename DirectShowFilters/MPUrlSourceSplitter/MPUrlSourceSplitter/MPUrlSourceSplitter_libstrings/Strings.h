@@ -340,7 +340,6 @@ struct LineEnding
 {
   int position;
   unsigned int size;
-
 };
 
 // line ending can be CR, LF, CRLF or LFCR

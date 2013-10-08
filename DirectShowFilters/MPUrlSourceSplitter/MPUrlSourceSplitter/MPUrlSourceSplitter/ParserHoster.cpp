@@ -572,6 +572,11 @@ HRESULT CParserHoster::ClearSession(void)
   return S_OK;
 }
 
+int64_t CParserHoster::GetDuration(void)
+{
+  return (this->protocolHoster != NULL) ? this->protocolHoster->GetDuration() : DURATION_UNSPECIFIED;
+}
+
 // ISeeking interface implementation
 
 unsigned int CParserHoster::GetSeekingCapabilities(void)
@@ -605,21 +610,6 @@ HRESULT CParserHoster::CreateReceiveDataWorker(void)
 {
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME);
-
-  //this->hReceiveDataWorkerThread = CreateThread( 
-  //  NULL,                                   // default security attributes
-  //  0,                                      // use default stack size  
-  //  &CParserHoster::ReceiveDataWorker,      // thread function name
-  //  this,                                   // argument to thread function 
-  //  0,                                      // use default creation flags 
-  //  NULL);                                  // returns the thread identifier
-
-  //if (this->hReceiveDataWorkerThread == NULL)
-  //{
-  //  // thread not created
-  //  result = HRESULT_FROM_WIN32(GetLastError());
-  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->moduleName, METHOD_CREATE_RECEIVE_DATA_WORKER_NAME, result);
-  //}
 
   this->hReceiveDataWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CParserHoster::ReceiveDataWorker, this, 0, NULL);
 

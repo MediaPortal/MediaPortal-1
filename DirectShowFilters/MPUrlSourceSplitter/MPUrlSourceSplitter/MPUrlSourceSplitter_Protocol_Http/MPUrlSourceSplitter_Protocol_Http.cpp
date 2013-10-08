@@ -239,7 +239,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
     this->StopReceivingData();
 
     // reopen connection
-    // OpenConnection() reset wholeStreamDownloaded
+    // StartReceivingData() reset wholeStreamDownloaded
     this->StartReceivingData(NULL);
 
     this->internalExitRequest = false;
@@ -314,14 +314,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
 
         if (bytesRead != 0)
         {
-          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bytesRead, 0);
-          if (buffer != NULL)
-          {
-            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(buffer, bytesRead, 0, 0);
-            this->receivedData->AddToBuffer(buffer, bytesRead);
-            this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
-          }
-          FREE_MEM(buffer);
+          this->receivedData->AddToBufferWithResize(this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData());
+          this->mainCurlInstance->GetHttpDownloadResponse()->GetReceivedData()->RemoveFromBufferAndMove(bytesRead);
         }
       }
     }
@@ -329,15 +323,12 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
     unsigned int bufferOccupiedSpace = this->receivedData->GetBufferOccupiedSpace();
     if (bufferOccupiedSpace > 0)
     {
-      ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferOccupiedSpace, 0);
-      if (buffer != NULL)
+      // create media packet
+      // set values of media packet
+
+      CMediaPacket *mediaPacket = new CMediaPacket();
+      if (mediaPacket->GetBuffer()->AddToBufferWithResize(this->receivedData) == bufferOccupiedSpace)
       {
-        this->receivedData->CopyFromBuffer(buffer, bufferOccupiedSpace, 0, 0);
-        // create media packet
-        // set values of media packet
-        CMediaPacket *mediaPacket = new CMediaPacket();
-        mediaPacket->GetBuffer()->InitializeBuffer(bufferOccupiedSpace);
-        mediaPacket->GetBuffer()->AddToBuffer(buffer, bufferOccupiedSpace);
         mediaPacket->SetStart(this->streamTime);
         mediaPacket->SetEnd(this->streamTime + bufferOccupiedSpace - 1);
 
@@ -345,11 +336,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ReceiveData(CReceiveData *receiveDat
         {
           FREE_MEM_CLASS(mediaPacket);
         }
-
-        this->streamTime += bufferOccupiedSpace;
-        this->receivedData->RemoveFromBufferAndMove(bufferOccupiedSpace);
+        else
+        {
+          this->streamTime += bufferOccupiedSpace;
+          this->receivedData->RemoveFromBufferAndMove(bufferOccupiedSpace);
+        }
       }
-      FREE_MEM(buffer);
+      else
+      {
+        FREE_MEM_CLASS(mediaPacket);
+      }
     }
 
     if (this->mainCurlInstance->GetCurlState() == CURL_STATE_RECEIVED_ALL_DATA)
@@ -662,6 +658,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_Http::ClearSession(void)
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
+}
+
+int64_t CMPUrlSourceSplitter_Protocol_Http::GetDuration(void)
+{
+  return DURATION_UNSPECIFIED;
 }
 
 // ISeeking interface

@@ -28,13 +28,15 @@ CRtspTrack::CRtspTrack(void)
   this->serverDataPort = PORT_UNSPECIFIED;
   this->clientControlPort = PORT_UNSPECIFIED;
   this->clientDataPort = PORT_UNSPECIFIED;
-  this->downloadResponse = new CDownloadResponse();
   this->trackUrl = NULL;
   this->dataServer = NULL;
   this->controlServer = NULL;
   this->transportResponseHeader = NULL;
   this->lastReceiverReportTime = 0;
   this->receiverReportInterval = 0;
+  this->payloadType = new CPayloadType();
+  this->rtpPackets = new CRtpPacketCollection();
+  this->flags = RTSP_TRACK_FLAG_NONE;
 
   // create GUID and set SSRC to its first 4 bytes (Data1)
   GUID guid;
@@ -44,19 +46,19 @@ CRtspTrack::CRtspTrack(void)
   }
 
   this->senderSynchronizationSourceIdentifier = 0;
-  this->senderSynchronizationSourceIdentifierSet = false;
 
   this->statistics = new CRtspTrackStatistics();
 }
 
 CRtspTrack::~CRtspTrack(void)
 {
-  FREE_MEM_CLASS(this->downloadResponse);
   FREE_MEM(this->trackUrl);
   FREE_MEM_CLASS(this->dataServer);
   FREE_MEM_CLASS(this->controlServer);
   FREE_MEM_CLASS(this->transportResponseHeader);
   FREE_MEM_CLASS(this->statistics);
+  FREE_MEM_CLASS(this->payloadType);
+  FREE_MEM_CLASS(this->rtpPackets);
 }
 
 /* get methods */
@@ -79,11 +81,6 @@ unsigned int CRtspTrack::GetClientDataPort(void)
 unsigned int CRtspTrack::GetClientControlPort(void)
 {
   return this->clientControlPort;
-}
-
-CDownloadResponse *CRtspTrack::GetDownloadResponse(void)
-{
-  return this->downloadResponse;
 }
 
 const wchar_t *CRtspTrack::GetTrackUrl(void)
@@ -129,6 +126,16 @@ unsigned int CRtspTrack::GetSenderSynchronizationSourceIdentifier(void)
 CRtspTrackStatistics *CRtspTrack::GetStatistics(void)
 {
   return this->statistics;
+}
+
+CPayloadType *CRtspTrack::GetPayloadType(void)
+{
+  return this->payloadType;
+}
+
+CRtpPacketCollection *CRtspTrack::GetRtpPackets(void)
+{
+  return this->rtpPackets;
 }
 
 /* set methods */
@@ -200,7 +207,13 @@ void CRtspTrack::SetSynchronizationSourceIdentifier(unsigned int synchronization
 void CRtspTrack::SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier)
 {
   this->senderSynchronizationSourceIdentifier = senderSynchronizationSourceIdentifier;
-  this->senderSynchronizationSourceIdentifierSet = true;
+  this->flags |= RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET;
+}
+
+void CRtspTrack::SetEndOfStream(bool endOfStream)
+{
+  this->flags &= ~RTSP_TRACK_FLAG_END_OF_STREAM;
+  this->flags |= (endOfStream) ? RTSP_TRACK_FLAG_END_OF_STREAM : RTSP_TRACK_FLAG_NONE;
 }
 
 /* other methods */
@@ -227,40 +240,47 @@ bool CRtspTrack::IsClientControlPort(unsigned int port)
 
 bool CRtspTrack::IsSetSenderSynchronizationSourceIdentifier(void)
 {
-  return this->senderSynchronizationSourceIdentifierSet;
+  return this->IsFlags(RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET);
 }
 
 CRtspTrack *CRtspTrack::Clone(void)
 {
-  bool res = true;
-  CRtspTrack *result = new CRtspTrack();
+  CRtspTrack *clone = new CRtspTrack();
+  bool result = (clone != NULL);
 
-  if (result != NULL)
+  if (result)
   {
-    result->clientControlPort = this->clientControlPort;
-    result->clientDataPort = this->clientDataPort;
-    result->serverControlPort = this->serverControlPort;
-    result->serverDataPort = this->serverDataPort;
-    result->lastReceiverReportTime = this->lastReceiverReportTime;
-    result->receiverReportInterval = this->receiverReportInterval;
-    result->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
-    result->senderSynchronizationSourceIdentifier = this->senderSynchronizationSourceIdentifier;
+    clone->clientControlPort = this->clientControlPort;
+    clone->clientDataPort = this->clientDataPort;
+    clone->serverControlPort = this->serverControlPort;
+    clone->serverDataPort = this->serverDataPort;
+    clone->lastReceiverReportTime = this->lastReceiverReportTime;
+    clone->receiverReportInterval = this->receiverReportInterval;
+    clone->synchronizationSourceIdentifier = this->synchronizationSourceIdentifier;
+    clone->senderSynchronizationSourceIdentifier = this->senderSynchronizationSourceIdentifier;
+    clone->flags = this->flags;
 
-    result->downloadResponse = this->downloadResponse->Clone();
-    res &= (result->downloadResponse != NULL);
-
-    SET_STRING_AND_RESULT_WITH_NULL(result->trackUrl, this->trackUrl, res);
+    SET_STRING_AND_RESULT_WITH_NULL(clone->trackUrl, this->trackUrl, result);
 
     if (this->transportResponseHeader != NULL)
     {
-      result->transportResponseHeader = this->transportResponseHeader->Clone();
+      clone->transportResponseHeader = this->transportResponseHeader->Clone();
+      result &= (clone->transportResponseHeader != NULL);
     }
+
+    result &= clone->rtpPackets->Append(this->rtpPackets);
   }
 
-  if (!res)
-  {
-    FREE_MEM_CLASS(result);
-  }
+  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
+  return clone;
+}
 
-  return result;
+bool CRtspTrack::IsEndOfStream(void)
+{
+  return this->IsFlags(RTSP_TRACK_FLAG_END_OF_STREAM);
+}
+
+bool CRtspTrack::IsFlags(unsigned int flags)
+{
+  return ((this->flags & flags) == flags);
 }

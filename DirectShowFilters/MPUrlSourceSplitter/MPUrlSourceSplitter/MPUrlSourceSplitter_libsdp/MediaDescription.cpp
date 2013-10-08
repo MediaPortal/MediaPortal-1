@@ -25,6 +25,7 @@
 #include "conversions.h"
 #include "BinaryAttribute.h"
 #include "RtpMapAttribute.h"
+#include "KnownPayloadTypeCollection.h"
 
 CMediaDescription::CMediaDescription(void)
   : CSessionTag()
@@ -137,7 +138,7 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
   if (result != 0)
   {
     // successful parsing of session tag
-    // compare it to out session tag
+    // compare it to our session tag
     result = (wcscmp(this->originalTag, TAG_MEDIA_DESCRIPTION) == 0) ? result : 0;
     result = (this->tagContent != NULL) ? result : 0;
   }
@@ -301,11 +302,36 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
         this->flags |= FLAG_MEDIA_DESCRIPTION_TRANSPORT_PROTOCOL_UDP;
       }
 
+      CKnownPayloadTypeCollection *knownPayloadTypes = new CKnownPayloadTypeCollection();
+      result = (knownPayloadTypes != NULL) ? result : 0;
+
+      CHECK_CONDITION_EXECUTE(result != 0, result = (knownPayloadTypes->Count() != 0) ? result : 0);
+
       // update media formats
       for (unsigned int i = 0; ((result != 0) && (i < this->mediaFormats->Count())); i++)
       {
         CMediaFormat *mediaFormat = this->mediaFormats->GetItem(i);
         result = mediaFormat->SetType(this->mediaType) ? result : 0;
+
+        if (result != 0)
+        {
+          // try to find known media type for media format
+
+          if (mediaFormat->GetPayloadType() != MEDIA_FORMAT_PAYLOAD_TYPE_UNSPECIFIED)
+          {
+            for (unsigned int j = 0; ((result != 0) && (j < knownPayloadTypes->Count())); j++)
+            {
+              CPayloadType *knownPayloadType = knownPayloadTypes->GetItem(j);
+
+              if (mediaFormat->GetPayloadType() == knownPayloadType->GetId())
+              {
+                result = mediaFormat->SetName(knownPayloadType->GetEncodingName()) ? result : 0;
+                mediaFormat->SetChannels((knownPayloadType->GetChannels() == PAYLOAD_TYPE_CHANNELS_VARIABLE) ? MEDIA_FORMAT_CHANNELS_UNSPECIFIED : knownPayloadType->GetChannels());
+                mediaFormat->SetClockRate((knownPayloadType->GetClockRate() == PAYLOAD_TYPE_CLOCK_RATE_VARIABLE) ? MEDIA_FORMAT_CLOCK_RATE_UNSPECIFIED : knownPayloadType->GetClockRate());
+              }
+            }
+          }
+        }
 
         if (result != 0)
         {
@@ -340,6 +366,8 @@ unsigned int CMediaDescription::Parse(const wchar_t *buffer, unsigned int length
           }
         }
       }
+
+      FREE_MEM_CLASS(knownPayloadTypes);
     }
   }
 

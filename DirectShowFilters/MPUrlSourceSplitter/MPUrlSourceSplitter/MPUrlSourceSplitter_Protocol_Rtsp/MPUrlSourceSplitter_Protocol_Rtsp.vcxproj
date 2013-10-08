@@ -178,6 +178,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="RtspDescribeRequest.h" />
     <ClInclude Include="RtspDownloadRequest.h" />
     <ClInclude Include="RtspDownloadResponse.h" />
+    <ClInclude Include="RtspGetParameterRequest.h" />
     <ClInclude Include="RtspLocationResponseHeader.h" />
     <ClInclude Include="RtspNormalPlayTimeRangeRequestHeader.h" />
     <ClInclude Include="RtspOptionsRequest.h" />
@@ -198,6 +199,10 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClInclude Include="RtspSessionRequestHeader.h" />
     <ClInclude Include="RtspSessionResponseHeader.h" />
     <ClInclude Include="RtspSetupRequest.h" />
+    <ClInclude Include="RtspStreamFragment.h" />
+    <ClInclude Include="RtspStreamFragmentCollection.h" />
+    <ClInclude Include="RtspStreamTrack.h" />
+    <ClInclude Include="RtspStreamTrackCollection.h" />
     <ClInclude Include="RtspTeardownRequest.h" />
     <ClInclude Include="RtspTrack.h" />
     <ClInclude Include="RtspTrackCollection.h" />
@@ -231,6 +236,7 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="RtspDescribeRequest.cpp" />
     <ClCompile Include="RtspDownloadRequest.cpp" />
     <ClCompile Include="RtspDownloadResponse.cpp" />
+    <ClCompile Include="RtspGetParameterRequest.cpp" />
     <ClCompile Include="RtspLocationResponseHeader.cpp" />
     <ClCompile Include="RtspNormalPlayTimeRangeRequestHeader.cpp" />
     <ClCompile Include="RtspOptionsRequest.cpp" />
@@ -251,6 +257,10 @@ echo #endif &gt;&gt; VersionInfo.h</Command>
     <ClCompile Include="RtspSessionRequestHeader.cpp" />
     <ClCompile Include="RtspSessionResponseHeader.cpp" />
     <ClCompile Include="RtspSetupRequest.cpp" />
+    <ClCompile Include="RtspStreamFragment.cpp" />
+    <ClCompile Include="RtspStreamFragmentCollection.cpp" />
+    <ClCompile Include="RtspStreamTrack.cpp" />
+    <ClCompile Include="RtspStreamTrackCollection.cpp" />
     <ClCompile Include="RtspTeardownRequest.cpp" />
     <ClCompile Include="RtspTrack.cpp" />
     <ClCompile Include="RtspTrackCollection.cpp" />

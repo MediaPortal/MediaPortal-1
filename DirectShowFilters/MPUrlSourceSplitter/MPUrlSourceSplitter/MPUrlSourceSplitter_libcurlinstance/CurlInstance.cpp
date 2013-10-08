@@ -346,24 +346,6 @@ HRESULT CCurlInstance::CreateCurlWorker(void)
   // clear curl error code
   this->downloadResponse->SetResultCode(CURLE_OK);
 
-  //if (this->hCurlWorkerThread == NULL)
-  //{
-  //  this->hCurlWorkerThread = CreateThread( 
-  //    NULL,                                   // default security attributes
-  //    0,                                      // use default stack size  
-  //    &CCurlInstance::CurlWorker,             // thread function name
-  //    this,                                   // argument to thread function 
-  //    0,                                      // use default creation flags 
-  //    NULL);                                  // returns the thread identifier
-  //}
-
-  //if (this->hCurlWorkerThread == NULL)
-  //{
-  //  // thread not created
-  //  result = HRESULT_FROM_WIN32(GetLastError());
-  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->protocolName, METHOD_CREATE_CURL_WORKER_NAME, result);
-  //}
-
   if (this->hCurlWorkerThread == NULL)
   {
     this->hCurlWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CCurlInstance::CurlWorker, this, 0, NULL);

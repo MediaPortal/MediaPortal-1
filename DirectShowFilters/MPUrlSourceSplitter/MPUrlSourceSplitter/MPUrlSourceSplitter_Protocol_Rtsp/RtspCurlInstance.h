@@ -47,6 +47,10 @@ struct SupportedPayloadType
 #define TOTAL_SUPPORTED_PAYLOAD_TYPES                       1
 static struct SupportedPayloadType SUPPORTED_PAYLOAD_TYPES[TOTAL_SUPPORTED_PAYLOAD_TYPES] = { { 33, L"MP2T" } };
 
+#define RTSP_CURL_INSTANCE_FLAG_NONE                                  0x00000000
+#define RTSP_CURL_INSTANCE_FLAG_REQUEST_COMMAND_FINISHED              0x00000001
+#define RTSP_CURL_INSTANCE_FLAG_IGNORE_RTP_PAYLOAD_TYPE               0x00000002
+
 class CRtspCurlInstance :
   public CCurlInstance
 {
@@ -109,7 +113,21 @@ public:
   // @param clientPortMax : RTSP maximum client port to set
   virtual void SetRtspClientPortMax(unsigned int clientPortMax);
 
+  // sets ignore RTP payload type flag
+  // specifies if RTP payload type have to be ignored while processing RTP packets for RTSP tracks
+  // @param ignoreRtpPayloadType : ignore RTP payload type flag to set
+  virtual void SetIgnoreRtpPayloadType(bool ignoreRtpPayloadType);
+
   /* other methods */
+
+  // tests if ignore RTP payload type flag is set
+  // @return : true if ignore RTP payload type flag is set, false otherwise
+  virtual bool IsIgnoreRtpPayloadTypeFlag(void);
+
+  // tests if specific combination of flags is set
+  // @param flags : the combination of flags to test
+  // @return : true if specific combination of flags is set, false otherwise
+  virtual bool IsFlags(unsigned int flags);
 
   // initializes CURL instance
   // @param downloadRequest : download request
@@ -122,6 +140,9 @@ public:
 
 protected:
 
+  // holds various flags
+  unsigned int flags;
+
   // holds RTSP download request
   // never created and never destroyed
   // initialized in constructor by deep cloning
@@ -130,13 +151,32 @@ protected:
   // holds RTSP download response
   CRtspDownloadResponse *rtspDownloadResponse;
 
-  // gets new instance of download response
-  // @return : new download response or NULL if error
-  virtual CDownloadResponse *GetNewDownloadResponse(void);
-
   // holds min and max port for transport connection parameter
   unsigned int clientPortMin;
   unsigned int clientPortMax;
+
+  // holds request command
+  // command is cleared when request is done
+  unsigned int requestCommand;
+
+  // holds last successful command
+  unsigned int lastCommand;
+
+  // holds preferences for each type of transmission
+  unsigned int sameConnectionTcpPreference;
+  unsigned int multicastPreference;
+  unsigned int udpPreference;
+
+  // holds last sequence number (increased with every request)
+  unsigned int lastSequenceNumber;
+  // holds session ID (if specified by any response)
+  wchar_t *sessionId;
+
+  /* methods */
+
+  // gets new instance of download response
+  // @return : new download response or NULL if error
+  virtual CDownloadResponse *GetNewDownloadResponse(void);
 
   // process received base RTP packets
   // @param track : RTSP track to process packets
@@ -156,24 +196,6 @@ protected:
 
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);
-
-  // holds request command
-  // command is cleared when request is done
-  unsigned int requestCommand;
-  bool requestCommandFinished;
-
-  // holds last successful command
-  unsigned int lastCommand;
-
-  // holds preferences for each type of transmission
-  unsigned int sameConnectionTcpPreference;
-  unsigned int multicastPreference;
-  unsigned int udpPreference;
-
-  // holds last sequence number (increased with every request)
-  unsigned int lastSequenceNumber;
-  // holds session ID (if specified by any response)
-  wchar_t *sessionId;
 
   CURLcode SendAndReceive(CRtspRequest *request, CURLcode errorCode, const wchar_t *rtspMethodName, const wchar_t *functionName);
 };

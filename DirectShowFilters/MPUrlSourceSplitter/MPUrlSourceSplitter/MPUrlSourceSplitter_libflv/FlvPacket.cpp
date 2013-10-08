@@ -163,7 +163,7 @@ int CFlvPacket::ParsePacket(CLinearBuffer *buffer)
 
     if (sizeBuffer != NULL)
     {
-      buffer->CopyFromBuffer(sizeBuffer, FLV_PACKET_HEADER_LENGTH, 0, 0);
+      buffer->CopyFromBuffer(sizeBuffer, FLV_PACKET_HEADER_LENGTH);
       possibleSize = this->GetPossiblePacketSize(sizeBuffer, FLV_PACKET_HEADER_LENGTH);
     }
     FREE_MEM(sizeBuffer);
@@ -178,7 +178,7 @@ int CFlvPacket::ParsePacket(CLinearBuffer *buffer)
 
       if (buf != NULL)
       {
-        buffer->CopyFromBuffer(buf, possibleSize, 0, 0);
+        buffer->CopyFromBuffer(buf, possibleSize);
         result = this->ParsePacket(buf, possibleSize);
       }
       FREE_MEM(buf);
@@ -468,7 +468,7 @@ int CFlvPacket::FindPacket(CLinearBuffer *buffer, unsigned int minimumFlvPackets
 
     if (buf != NULL)
     {
-      buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace(), 0, 0);
+      buffer->CopyFromBuffer(buf, buffer->GetBufferOccupiedSpace());
       result = this->FindPacket(buf, buffer->GetBufferOccupiedSpace(), minimumFlvPacketsToCheck);
     }
     FREE_MEM(buf);

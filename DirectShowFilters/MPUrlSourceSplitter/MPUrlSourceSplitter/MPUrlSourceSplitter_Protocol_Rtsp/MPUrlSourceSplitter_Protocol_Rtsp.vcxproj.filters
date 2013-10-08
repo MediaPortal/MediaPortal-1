@@ -165,6 +165,21 @@
     <ClInclude Include="RtspTrackStatistics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RtspStreamFragment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamFragmentCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamTrack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspStreamTrackCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RtspGetParameterRequest.h">
+      <Filter>RtspRequest\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -295,6 +310,21 @@
     </ClCompile>
     <ClCompile Include="RtspTrackStatistics.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamFragment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamFragmentCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamTrack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspStreamTrackCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RtspGetParameterRequest.cpp">
+      <Filter>RtspRequest\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

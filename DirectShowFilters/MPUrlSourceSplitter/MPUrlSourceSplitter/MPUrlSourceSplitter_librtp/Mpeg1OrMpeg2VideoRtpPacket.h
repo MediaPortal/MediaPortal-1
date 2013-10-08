@@ -177,6 +177,17 @@ protected:
 
   // holds last byte value (necessary if picture type is not from specified picture types)
   unsigned int lastByte;
+
+  /* methods */
+
+  // creates RTP packet instance for cloning
+  // @return : new RTP packet instance or NULL if error
+  virtual CRtpPacket *CreateRtpPacket(void);
+
+  // deeply clones current instance to specified RTP packet
+  // @param rtpPacket : the RTP packet to clone current instance
+  // @result : true if successful, false otherwise
+  virtual bool CloneInternal(CRtpPacket *rtpPacket);
 };
 
 #endif

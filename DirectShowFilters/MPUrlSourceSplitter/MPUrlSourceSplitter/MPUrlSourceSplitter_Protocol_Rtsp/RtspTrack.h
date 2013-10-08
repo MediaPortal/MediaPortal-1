@@ -23,169 +23,192 @@
 #ifndef __RTSP_TRACK_DEFINED
 #define __RTSP_TRACK_DEFINED
 
-#include "DownloadResponse.h"
 #include "SimpleServer.h"
 #include "RtspTransportResponseHeader.h"
 #include "IpAddress.h"
 #include "RtspTrackStatistics.h"
+#include "PayloadType.h"
+#include "RtpPacketCollection.h"
 
 #define PORT_UNSPECIFIED                                              UINT_MAX
 // receiver report minimum time is 5000 ms
 #define RECEIVER_REPORT_MIN_TIME                                      5000
+
+#define RTSP_TRACK_FLAG_NONE                                          0x00000000
+#define RTSP_TRACK_FLAG_SENDER_SYNCHRONIZATION_SOURCE_IDENTIFIER_SET  0x00000001
+#define RTSP_TRACK_FLAG_END_OF_STREAM                                 0x00000002
 
 class CRtspTrack
 {
 public:
   // initializes a new instance of CRtspTrack class
   CRtspTrack(void);
-  virtual ~CRtspTrack(void);
+  ~CRtspTrack(void);
 
   /* get methods */
 
   // gets server data port
   // @return : server data port or PORT_UNSPECIFIED if error
-  virtual unsigned int GetServerDataPort(void);
+  unsigned int GetServerDataPort(void);
 
   // gets server control port
   // @return : server control port or PORT_UNSPECIFIED if error
-  virtual unsigned int GetServerControlPort(void);
+  unsigned int GetServerControlPort(void);
 
   // gets client data port
   // @return : client data port or PORT_UNSPECIFIED if error
-  virtual unsigned int GetClientDataPort(void);
+  unsigned int GetClientDataPort(void);
 
   // gets client control port
   // @return : client control port or PORT_UNSPECIFIED if error
-  virtual unsigned int GetClientControlPort(void);
-
-  // gets download response associated with RTSP track
-  // @return : download response or NULL if error
-  virtual CDownloadResponse *GetDownloadResponse(void);
+  unsigned int GetClientControlPort(void);
 
   // gets track URL
   // @return : track URL or NULL if error
-  virtual const wchar_t *GetTrackUrl(void);
+  const wchar_t *GetTrackUrl(void);
 
   // gets data server
   // @return : data server or NULL if not specified
-  virtual CSimpleServer *GetDataServer(void);
+  CSimpleServer *GetDataServer(void);
 
   // gets control server
   // @return : control server or NULL if not specified
-  virtual CSimpleServer *GetControlServer(void);
+  CSimpleServer *GetControlServer(void);
 
   // gets RTSP transport response header
   // @return : RTSP transport response header or NULL if not specified
-  virtual CRtspTransportResponseHeader *GetTransportResponseHeader(void);
+  CRtspTransportResponseHeader *GetTransportResponseHeader(void);
 
   // gets last receiver report time
   // @return : last receiver report time
-  virtual DWORD GetLastReceiverReportTime(void);
+  DWORD GetLastReceiverReportTime(void);
 
   // gets receiver report interval
   // @return : receiver report interval
-  virtual DWORD GetReceiverReportInterval(void);
+  DWORD GetReceiverReportInterval(void);
 
   // gets track synchronization source identifier
   // SSRC for track is generated when created class
   // @return : synchronization source identifier
-  virtual unsigned int GetSynchronizationSourceIdentifier(void);
+  unsigned int GetSynchronizationSourceIdentifier(void);
 
   // gets sender synchronization source identifier
   // SSRC for track is generated when created class
   // @return : sender synchronization source identifier
-  virtual unsigned int GetSenderSynchronizationSourceIdentifier(void);
+  unsigned int GetSenderSynchronizationSourceIdentifier(void);
 
   // gets RTSP track statistical information
   // @return : RTSP strack statistical information
-  virtual CRtspTrackStatistics *GetStatistics(void);
+  CRtspTrackStatistics *GetStatistics(void);
+
+  // gets payload type from media description
+  // @return : payload type
+  CPayloadType *GetPayloadType(void);
+
+  // gets received RTP packets for current track
+  // @return : RTP packets for current track
+  CRtpPacketCollection *GetRtpPackets(void);
 
   /* set methods */
 
   // sets server data port
   // @param serverDataPort : server data port to set
-  virtual void SetServerDataPort(unsigned int serverDataPort);
+  void SetServerDataPort(unsigned int serverDataPort);
 
   // sets server control port
   // @param serverControlPort : server control port to set
-  virtual void SetServerControlPort(unsigned int serverControlPort);
+  void SetServerControlPort(unsigned int serverControlPort);
 
   // sets client data port
   // @param clientDataPort : client data port to set
-  virtual void SetClientDataPort(unsigned int clientDataPort);
+  void SetClientDataPort(unsigned int clientDataPort);
 
   // sets client control port
   // @param clientControlPort : client control port to set
-  virtual void SetClientControlPort(unsigned int clientControlPort);
+  void SetClientControlPort(unsigned int clientControlPort);
 
   // sets track URL
   // @param trackUrl : track URL to set
   // @return : true if successful, false otherwise
-  virtual bool SetTrackUrl(const wchar_t *trackUrl);
+  bool SetTrackUrl(const wchar_t *trackUrl);
 
   // sets data server to track
   // @param dataServer : data server to set
   // @return : true if successful, false otherwise
-  virtual void SetDataServer(CSimpleServer *dataServer);
+  void SetDataServer(CSimpleServer *dataServer);
 
   // sets control server to track
   // @param controlServer : control server to set
   // @return : true if successful, false otherwise
-  virtual void SetControlServer(CSimpleServer *controlServer);
+  void SetControlServer(CSimpleServer *controlServer);
 
   // sets RTSP transport response header
   // @param header : RTSP transport response header to set
   // @return : true if successful, false otherwise
-  virtual bool SetTransportResponseHeader(CRtspTransportResponseHeader *header);
+  bool SetTransportResponseHeader(CRtspTransportResponseHeader *header);
 
   // sets last receiver report time
   // @param lastReceiverReportTime : last receiver report time to set
-  virtual void SetLastReceiverReportTime(DWORD lastReceiverReportTime);
+  void SetLastReceiverReportTime(DWORD lastReceiverReportTime);
 
   // sets receiver report interval
   // @param receiverReportInterval : receiver report interval to set
-  virtual void SetReceiverReportInterval(DWORD receiverReportInterval);
+  void SetReceiverReportInterval(DWORD receiverReportInterval);
 
   // sets synchronization source identifier
   // @param synchronizationSourceIdentifier : synchronization source identifier to set
-  virtual void SetSynchronizationSourceIdentifier(unsigned int synchronizationSourceIdentifier);
+  void SetSynchronizationSourceIdentifier(unsigned int synchronizationSourceIdentifier);
 
   // sets sender synchronization source identifier
   // @param senderSynchronizationSourceIdentifier : sender synchronization source identifier to set
-  virtual void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
+  void SetSenderSynchronizationSourceIdentifier(unsigned int senderSynchronizationSourceIdentifier);
+
+  // sets end of stream flag
+  // @param endOfStream : the end of stream flag to set
+  void SetEndOfStream(bool endOfStream);
 
   /* other methods */
 
   // tests if specified port is server data port
   // @param port : the port to test
   // @return : true if tested port is server data port, false otherwise
-  virtual bool IsServerDataPort(unsigned int port);
+  bool IsServerDataPort(unsigned int port);
 
   // tests if specified port is client data port
   // @param port : the port to test
   // @return : true if tested port is client data port, false otherwise
-  virtual bool IsClientDataPort(unsigned int port);
+  bool IsClientDataPort(unsigned int port);
 
   // tests if specified port is server control port
   // @param port : the port to test
   // @return : true if tested port is server control port, false otherwise
-  virtual bool IsServerControlPort(unsigned int port);
+  bool IsServerControlPort(unsigned int port);
 
   // tests if specified port is client control port
   // @param port : the port to test
   // @return : true if tested port is client control port, false otherwise
-  virtual bool IsClientControlPort(unsigned int port);
+  bool IsClientControlPort(unsigned int port);
 
   // tests if sender synchronization source identifier is set or not
   // @return : true if SSRC is set, false otherwise
-  virtual bool IsSetSenderSynchronizationSourceIdentifier(void);
+  bool IsSetSenderSynchronizationSourceIdentifier(void);
 
   // deeply clones current instance
   // curl handle is not cloned
   // @result : deep clone of current instance or NULL if error
-  virtual CRtspTrack *Clone(void);
+  CRtspTrack *Clone(void);
+
+  // tests if end of stream is set
+  // @return : true if end of stream is set, false otherwise
+  bool IsEndOfStream(void);
+
+  // tests if specific combination of flags is set
+  // @return : true if specific combination of flags is set, false otherwise
+  bool IsFlags(unsigned int flags);
 
 protected:
+  // holds flags
+  unsigned int flags;
 
   // holds remote server data and control ports
   unsigned int serverDataPort;
@@ -194,9 +217,6 @@ protected:
   // holds our data and server ports
   unsigned int clientDataPort;
   unsigned int clientControlPort;
-
-  // holds download response
-  CDownloadResponse *downloadResponse;
 
   // holds track URL
   wchar_t *trackUrl;
@@ -217,9 +237,14 @@ protected:
   unsigned int synchronizationSourceIdentifier;
   // holds sender SSRC
   unsigned int senderSynchronizationSourceIdentifier;
-  bool senderSynchronizationSourceIdentifierSet;
 
   CRtspTrackStatistics *statistics;
+
+  // holds payload type from SDP media description
+  CPayloadType *payloadType;
+
+  // holds collection of received and unprocessed RTP packets
+  CRtpPacketCollection *rtpPackets;
 };
 
 #endif

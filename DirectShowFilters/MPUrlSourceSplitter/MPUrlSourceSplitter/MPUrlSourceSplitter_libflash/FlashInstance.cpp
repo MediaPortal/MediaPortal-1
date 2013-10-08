@@ -127,21 +127,6 @@ HRESULT CFlashInstance::CreateFlashWorker(void)
   HRESULT result = S_OK;
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME);
 
-  //this->hFlashWorkerThread = CreateThread( 
-  //  NULL,                                   // default security attributes
-  //  0,                                      // use default stack size  
-  //  &CFlashInstance::FlashWorker,           // thread function name
-  //  this,                                   // argument to thread function 
-  //  0,                                      // use default creation flags 
-  //  NULL);                                  // returns the thread identifier
-
-  //if (this->hFlashWorkerThread == NULL)
-  //{
-  //  // thread not created
-  //  result = HRESULT_FROM_WIN32(GetLastError());
-  //  this->logger->Log(LOGGER_ERROR, L"%s: %s: CreateThread() error: 0x%08X", this->instanceName, METHOD_CREATE_FLASH_WORKER_NAME, result);
-  //}
-
   this->hFlashWorkerThread = (HANDLE)_beginthreadex(NULL, 0, &CFlashInstance::FlashWorker, this, 0, NULL);
 
   if (this->hFlashWorkerThread == NULL)

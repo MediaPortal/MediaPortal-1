@@ -55,10 +55,6 @@ public:
   // @return : content location URL or NULL if not specified
   virtual const wchar_t *GetContentLocationUrl(void);
 
-  // gets RTSP response headers
-  // @return : RTSP response headers
-  virtual CHttpHeaderCollection *GetHeaders(void);
-
   // gets RTSP tracks
   // @return : RTSP track collection or NULL if error
   virtual CRtspTrackCollection *GetRtspTracks(void);
@@ -70,6 +66,10 @@ public:
   // gets RTSP response received from remote server
   // @return : RTSP response received from remote server or NULL if none
   virtual CRtspResponse *GetRtspResponse(void);
+
+  // gets RTSP session timeout
+  // @return : session timeout in ms
+  virtual unsigned int GetSessionTimeout(void);
 
   /* set methods */
 
@@ -94,6 +94,10 @@ public:
   // sets RTSP response received from remote server (by default is empty reponse)
   // @param response : RTSP response received from remote server
   virtual void SetRtspResponse(CRtspResponse *response);
+
+  // sets RTSP session timeout
+  // @param sessionTimeout : the session timeout in ms to set
+  virtual void SetSessionTimeout(unsigned int sessionTimeout);
 
   /* other methods */
 
@@ -133,15 +137,15 @@ protected:
   // holds content location URL
   wchar_t *contentLocationUrl;
 
-  // holds RTSP response headers
-  CHttpHeaderCollection *headers;
-
   // holds tracks
   CRtspTrackCollection *tracks;
 
   // holds RTSP request and response pair
   CRtspRequest *rtspRequest;
   CRtspResponse *rtspResponse;
+
+  // holds session timeout
+  unsigned int sessionTimeout;
 };
 
 #endif

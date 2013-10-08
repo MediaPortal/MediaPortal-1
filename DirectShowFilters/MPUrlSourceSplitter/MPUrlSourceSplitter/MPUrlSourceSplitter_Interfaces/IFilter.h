@@ -28,6 +28,13 @@
 
 #include <stdint.h>
 
+#ifndef DURATION_UNSPECIFIED
+
+#define DURATION_UNSPECIFIED                                                  -2
+#define DURATION_LIVE_STREAM                                                  -1
+
+#endif
+
 // defines interface for filter
 struct IFilter : public ISeeking
 {
@@ -44,6 +51,10 @@ struct IFilter : public ISeeking
   // @param availableLength : reference to available length variable
   // @return : S_OK if success, error code if error
   virtual HRESULT GetAvailableLength(int64_t *availableLength) = 0;
+
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  virtual int64_t GetDuration(void) = 0;
 };
 
 #endif

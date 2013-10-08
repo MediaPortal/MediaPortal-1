@@ -460,7 +460,7 @@ HRESULT CMPUrlSourceSplitter_Afhs_Decryption_Akamai::ProcessSegmentsAndFragments
 
                       if (SUCCEEDED(result))
                       {
-                        result = (receivedData->CopyFromBuffer(buffer, (uint32_t)box->GetSize(), 0, position)) ? result : E_FAIL;
+                        result = (receivedData->CopyFromBuffer(buffer, (uint32_t)box->GetSize(), position)) ? result : E_FAIL;
                       }
                       if (SUCCEEDED(result))
                       {
@@ -595,7 +595,7 @@ void CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetDecryptionKeyFromSegmentFra
 
       if (continueExtracting)
       {
-        continueExtracting &= (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(*key, *keyLength, 0, 0) == (*keyLength));
+        continueExtracting &= (segmentFragment->GetHttpDownloadResponse()->GetReceivedData()->CopyFromBuffer(*key, *keyLength) == (*keyLength));
       }
     }
   }
@@ -742,7 +742,7 @@ DecryptionResult CMPUrlSourceSplitter_Afhs_Decryption_Akamai::Supported(CAfhsDec
           ALLOC_MEM_DEFINE_SET(buffer, uint8_t, akamaiResource->GetBufferOccupiedSpace(), 0);
           if (buffer != NULL)
           {
-            if (akamaiResource->CopyFromBuffer(buffer, akamaiResource->GetBufferOccupiedSpace(), 0, 0) == akamaiResource->GetBufferOccupiedSpace())
+            if (akamaiResource->CopyFromBuffer(buffer, akamaiResource->GetBufferOccupiedSpace()) == akamaiResource->GetBufferOccupiedSpace())
             {
               // write data to swf file file
               DWORD written = 0;
@@ -835,7 +835,7 @@ CBoxCollection *CMPUrlSourceSplitter_Afhs_Decryption_Akamai::GetBoxes(CSegmentFr
 
   if (continueProcessing)
   {
-    continueProcessing &= (bufferForBoxProcessing->CopyFromBuffer(buffer, length, 0, 0) == length);
+    continueProcessing &= (bufferForBoxProcessing->CopyFromBuffer(buffer, length) == length);
   }
 
   if (continueProcessing)

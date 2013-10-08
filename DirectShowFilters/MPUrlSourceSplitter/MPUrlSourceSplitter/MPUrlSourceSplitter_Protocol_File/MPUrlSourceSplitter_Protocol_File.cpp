@@ -494,6 +494,11 @@ HRESULT CMPUrlSourceSplitter_Protocol_File::ClearSession(void)
   return S_OK;
 }
 
+int64_t CMPUrlSourceSplitter_Protocol_File::GetDuration(void)
+{
+  return DURATION_UNSPECIFIED;
+}
+
 // ISeeking interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_File::GetSeekingCapabilities(void)

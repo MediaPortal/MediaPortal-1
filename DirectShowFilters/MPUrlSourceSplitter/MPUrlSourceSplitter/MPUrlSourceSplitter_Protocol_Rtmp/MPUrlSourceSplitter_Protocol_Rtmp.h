@@ -102,6 +102,10 @@ public:
   // @return : S_OK if successfull
   HRESULT ClearSession(void);
 
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  int64_t GetDuration(void);
+
   // ISeeking interface
 
   // gets seeking capabilities of protocol
@@ -226,7 +230,7 @@ protected:
   // holds additional correction after seeking to known start timestamp
   int additionalCorrection;
 
-  // holds duration of RTMP stream (used in total length guess)
+  // holds duration in ms of RTMP stream (used in total length guess)
   // RTMP_DURATION_UNSPECIFIED if not specified
   uint64_t duration;
 };

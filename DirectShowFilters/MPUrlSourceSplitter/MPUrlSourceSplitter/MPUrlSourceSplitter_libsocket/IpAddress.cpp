@@ -61,7 +61,7 @@ CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
 
     if (this->length != 0)
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, this->length, 0);
+      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
       result &= (this->addr != NULL);
 
       CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addrInfo->ai_addr, this->length));
@@ -72,12 +72,12 @@ CIpAddress::CIpAddress(const ADDRINFOW *addrInfo, const wchar_t *canonicalName)
   {
     if (this->IsIP())
     {
-      DWORD length = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, length, 0);
+      DWORD addressStringLength = 128;
+      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
       
       if (this->addressString != NULL)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &length)))
+        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
         {
           FREE_MEM(this->addressString);
         }
@@ -118,7 +118,7 @@ CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
 
     if (this->length != 0)
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, this->length, 0);
+      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
       result &= (this->addr != NULL);
 
       CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addr, this->length));
@@ -129,12 +129,12 @@ CIpAddress::CIpAddress(const SOCKADDR_STORAGE *addr, unsigned int length)
   {
     if (this->IsIP())
     {
-      DWORD length = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, length, 0);
+      DWORD addressStringLength = 128;
+      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
       
       if (this->addressString != NULL)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &length)))
+        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
         {
           FREE_MEM(this->addressString);
         }
@@ -175,7 +175,7 @@ CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
 
     if (this->length != 0)
     {
-      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, this->length, 0);
+      this->addr = ALLOC_MEM_SET(this->addr, SOCKADDR_STORAGE, 1, 0);
       result &= (this->addr != NULL);
 
       CHECK_CONDITION_EXECUTE(result, memcpy(this->addr, addr, this->length));
@@ -186,12 +186,12 @@ CIpAddress::CIpAddress(const struct sockaddr *addr, unsigned int length)
   {
     if (this->IsIP())
     {
-      DWORD length = 128;
-      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, length, 0);
+      DWORD addressStringLength = 128;
+      this->addressString = ALLOC_MEM_SET(this->addressString, wchar_t, addressStringLength, 0);
       
       if (this->addressString != NULL)
       {
-        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &length)))
+        if (FAILED(WSAAddressToString((LPSOCKADDR)this->GetAddressIP(), this->length, NULL, this->addressString, &addressStringLength)))
         {
           FREE_MEM(this->addressString);
         }
@@ -298,7 +298,6 @@ void CIpAddress::SetProtocol(int protocol)
 {
   this->protocol = protocol;
 }
-
   
 bool CIpAddress::SetPort(unsigned short port)
 {

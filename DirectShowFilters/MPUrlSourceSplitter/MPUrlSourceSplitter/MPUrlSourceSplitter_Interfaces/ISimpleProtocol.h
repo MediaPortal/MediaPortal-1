@@ -34,6 +34,13 @@
 #define METHOD_QUERY_STREAM_PROGRESS_NAME                                     L"QueryStreamProgress()"
 #define METHOD_CLEAR_SESSION_NAME                                             L"ClearSession()"
 
+#ifndef DURATION_UNSPECIFIED
+
+#define DURATION_UNSPECIFIED                                                  -2
+#define DURATION_LIVE_STREAM                                                  -1
+
+#endif
+
 // defines interface for simple stream protocol
 struct ISimpleProtocol : public ISeeking
 {
@@ -65,6 +72,10 @@ public:
   // clear current session
   // @return : S_OK if successfull
   virtual HRESULT ClearSession(void) = 0;
+
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  virtual int64_t GetDuration(void) = 0;
 };
 
 typedef ISimpleProtocol* PISimpleProtocol;

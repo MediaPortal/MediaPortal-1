@@ -135,7 +135,7 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
         {
           CMediaPacket *mp = this->storedMediaPackets->GetItem(i); 
           unsigned int bufferOccupiedSpace = mp->GetBuffer()->GetBufferOccupiedSpace();
-          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace, 0, 0);
+          mp->GetBuffer()->CopyFromBuffer(buffer + bufferPosition, bufferOccupiedSpace);
           bufferPosition += bufferOccupiedSpace;
         }
 
@@ -444,8 +444,6 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
                       CParameter *urlParameter = new CParameter(PARAMETER_NAME_URL, replacedUrl);
                       if (urlParameter != NULL)
                       {
-                        bool invariant = true;
-
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_COOKIE, true, PARAMETER_NAME_MSHS_COOKIE);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_IGNORE_CONTENT_LENGTH, true, PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH);
                         continueParsing &= this->connectionParameters->CopyParameter(PARAMETER_NAME_HTTP_RECEIVE_DATA_TIMEOUT, true, PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT);
@@ -455,7 +453,7 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
 
                         if (continueParsing)
                         {
-                          this->connectionParameters->Remove(PARAMETER_NAME_URL, (void *)&invariant);
+                          this->connectionParameters->Remove(PARAMETER_NAME_URL, true);
                           continueParsing &= this->connectionParameters->Add(urlParameter);
                         }
 
@@ -492,17 +490,15 @@ ParseResult CMPUrlSourceSplitter_Parser_MSHS::ParseMediaPackets(CMediaPacketColl
                 if (!continueParsing)
                 {
                   // remove all MSHS parameters from connection parameters
-                  bool invariant = true;
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_BASE_URL, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_MANIFEST, true);
 
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_BASE_URL, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_MANIFEST, (void *)&invariant);
-
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_COOKIE, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_REFERER, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_USER_AGENT, (void *)&invariant);
-                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_VERSION, (void *)&invariant);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_COOKIE, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_IGNORE_CONTENT_LENGTH, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_RECEIVE_DATA_TIMEOUT, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_REFERER, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_USER_AGENT, true);
+                  this->connectionParameters->Remove(PARAMETER_NAME_MSHS_VERSION, true);
                 }
               }
               else

@@ -101,6 +101,10 @@ public:
   // @return : S_OK if successfull
   HRESULT ClearSession(void);
 
+  // gets duration of stream in ms
+  // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
+  int64_t GetDuration(void);
+
   // ISeeking interface
 
   // gets seeking capabilities of protocol
