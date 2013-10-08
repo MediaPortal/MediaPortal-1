@@ -80,7 +80,8 @@ namespace SetupTv.Sections
     {
       if (_needRestart)
       {
-        // RemoteControl.Instance.Restart();
+        MessageBox.Show(this, "The activated plugins will be started after you restart the TVService manually",
+          "Plugin activation", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
       base.OnSectionDeActivated();
     }
