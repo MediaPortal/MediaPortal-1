@@ -828,13 +828,13 @@ CStream *CDemuxer::SelectAudioStream(void)
   return result;
 }
 
-HRESULT CDemuxer::Seek(REFERENCE_TIME time, unsigned int seekingMethod)
+HRESULT CDemuxer::Seek(REFERENCE_TIME time)
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_SEEK_NAME);
   this->logger->Log(LOGGER_INFO, L"%s: %s: seeking to time: %lld", MODULE_NAME, METHOD_SEEK_NAME, time);
 
   // get seeking capabilities from filter
-  unsigned int seekingCapabilities = (seekingMethod == SEEKING_METHOD_NONE) ? this->filter->GetSeekingCapabilities() : seekingMethod;
+  unsigned int seekingCapabilities = this->filter->GetSeekingCapabilities();
   bool seeked = false;
   // we prefer seeking by position, it's simplier and buffer is also based on position
 

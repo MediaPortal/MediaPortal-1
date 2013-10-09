@@ -72,12 +72,6 @@ void CRtspStreamFragment::SetDownloaded(bool downloaded)
   this->flags |= (downloaded ? RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED : RTSP_STREAM_FRAGMENT_FLAG_NONE);
 }
 
-void CRtspStreamFragment::SetProcessed(bool processed)
-{
-  this->flags &= ~RTSP_STREAM_FRAGMENT_FLAG_PROCESSED;
-  this->flags |= (processed ? RTSP_STREAM_FRAGMENT_FLAG_PROCESSED : RTSP_STREAM_FRAGMENT_FLAG_NONE);
-}
-
 void CRtspStreamFragment::SetStoredToFile(int64_t position)
 {
   this->flags &= ~RTSP_STREAM_FRAGMENT_FLAG_STORED_TO_FILE;
@@ -111,11 +105,6 @@ bool CRtspStreamFragment::IsStoredToFile(void)
 bool CRtspStreamFragment::IsDownloaded(void)
 {
   return this->IsFlags(RTSP_STREAM_FRAGMENT_FLAG_DOWNLOADED);
-}
-
-bool CRtspStreamFragment::IsProcessed(void)
-{
-  return this->IsFlags(RTSP_STREAM_FRAGMENT_FLAG_PROCESSED);
 }
 
 bool CRtspStreamFragment::IsFlags(unsigned int flags)

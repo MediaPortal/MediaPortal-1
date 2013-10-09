@@ -665,6 +665,10 @@ int64_t CMPUrlSourceSplitter_Protocol_Http::GetDuration(void)
   return DURATION_UNSPECIFIED;
 }
 
+void CMPUrlSourceSplitter_Protocol_Http::ReportStreamTime(uint64_t streamTime)
+{
+}
+
 // ISeeking interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Http::GetSeekingCapabilities(void)

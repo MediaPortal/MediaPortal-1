@@ -76,6 +76,10 @@ public:
   // gets duration of stream in ms
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   virtual int64_t GetDuration(void) = 0;
+
+  // reports actual stream time to protocol
+  // @param streamTime : the actual stream time in ms to report to protocol
+  virtual void ReportStreamTime(uint64_t streamTime) = 0;
 };
 
 typedef ISimpleProtocol* PISimpleProtocol;

@@ -104,6 +104,10 @@ public:
   // @return : stream duration in ms or DURATION_LIVE_STREAM in case of live stream or DURATION_UNSPECIFIED if duration is unknown
   int64_t GetDuration(void);
 
+  // reports actual stream time to protocol
+  // @param streamTime : the actual stream time in ms to report to protocol
+  void ReportStreamTime(uint64_t streamTime);
+
   // ISeeking interface
 
   // gets seeking capabilities of protocol

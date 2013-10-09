@@ -72,6 +72,8 @@ const GUID GUID_MP_URL_SOURCE_SPLITTER    = { 0x59ED045A, 0xA938, 0x4A09, 0xA8, 
 #define FLAG_MP_URL_SOURCE_SPLITTER_ENABLED_METHOD_ACTIVE             0x00004000
 // specifies that playback started and is not stopped
 #define FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED                  0x00008000
+// specifies that filter can report stream time to protocol
+#define FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME                0x00010000
 
 class CMPUrlSourceSplitter 
   : public CBaseFilter
@@ -433,6 +435,10 @@ protected:
   // tests if FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED flag is set
   // @return : true if flag is set, false otherwise
   bool IsPlaybackStarted(void);
+
+  // tests if FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME flag is set
+  // @return : true if flag is set, false otherwise
+  bool CanReportStreamTime(void);
 
   // gets parser hoster status
   // @return : one of STATUS_* values or error code if error

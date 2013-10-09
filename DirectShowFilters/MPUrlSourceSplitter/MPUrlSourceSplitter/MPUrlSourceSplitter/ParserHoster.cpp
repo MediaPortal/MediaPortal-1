@@ -577,6 +577,14 @@ int64_t CParserHoster::GetDuration(void)
   return (this->protocolHoster != NULL) ? this->protocolHoster->GetDuration() : DURATION_UNSPECIFIED;
 }
 
+void CParserHoster::ReportStreamTime(uint64_t streamTime)
+{
+  if (this->protocolHoster != NULL)
+  {
+    this->protocolHoster->ReportStreamTime(streamTime);
+  }
+}
+
 // ISeeking interface implementation
 
 unsigned int CParserHoster::GetSeekingCapabilities(void)

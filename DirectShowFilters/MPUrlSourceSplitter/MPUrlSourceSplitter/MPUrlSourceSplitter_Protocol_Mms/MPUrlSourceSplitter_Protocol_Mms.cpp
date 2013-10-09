@@ -1021,6 +1021,10 @@ int64_t CMPUrlSourceSplitter_Protocol_Mms::GetDuration(void)
   return DURATION_UNSPECIFIED;
 }
 
+void CMPUrlSourceSplitter_Protocol_Mms::ReportStreamTime(uint64_t streamTime)
+{
+}
+
 // ISeeking interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Mms::GetSeekingCapabilities(void)

@@ -554,7 +554,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_STOP_NAME);
 
-  this->flags &= ~FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED;
+  this->flags &= ~(FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED | FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME);
 
   this->pauseSeekStopRequest = true;
   CAMThread::CallWorker(CMD_EXIT);
@@ -579,6 +579,8 @@ STDMETHODIMP CMPUrlSourceSplitter::Stop()
 STDMETHODIMP CMPUrlSourceSplitter::Pause()
 {
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_PAUSE_NAME);
+
+  this->flags &= ~FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME;
 
   this->pauseSeekStopRequest = true;
   CAMThread::CallWorker(CMD_PAUSE);
@@ -613,7 +615,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Run(REFERENCE_TIME tStart)
   HRESULT result = __super::Run(tStart);
 
   CHECK_CONDITION_EXECUTE(SUCCEEDED(result), CAMThread::CallWorker(CMD_PLAY));
-  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED;
+  this->flags |= FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED | FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME;
 
   this->logger->Log(SUCCEEDED(result) ? LOGGER_INFO : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_RUN_NAME, result);
   return S_OK;
@@ -1900,11 +1902,11 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
       if (this->IsSplitter() && ((this->demuxStart != 0) || this->IsPlaybackStarted()))
       {
-        // in case of live stream, seek by position (slightly forward or backward in stream)
+        // in case of live stream, seek by position or time (mostly slightly backward in stream)
         // in live stream we can't receive seek request from graph to skip forward or backward
         // we can only seek in case of starting playback (created thread, not CMD_PLAY request) or in case of changing stream (probably audio or subtitle stream)
-        // TO DO : changing stream in live stream will probably not work (at least it is not tested)
-        this->demuxer->Seek(max(this->demuxStart, 0), this->IsLiveStream() ? SEEKING_METHOD_POSITION : SEEKING_METHOD_NONE);
+
+        this->demuxer->Seek(max(this->demuxStart, 0));
       }
 
       if (cmd != (DWORD)-1)
@@ -1953,6 +1955,7 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
 
     bool endOfStream = false;
 
+    unsigned int lastReportStreamTime = 0;
     while (!CheckRequest(&cmd))
     {
       if ((cmd == CMD_PAUSE) || (cmd == CMD_SEEK) || (this->pauseSeekStopRequest))
@@ -2084,6 +2087,17 @@ DWORD CMPUrlSourceSplitter::ThreadProc()
       {
         // no CMD_PAUSE, no CMD_SEEK, no pauseSeekStopRequest, endOfStream is set
         Sleep(1);
+      }
+
+      if (this->CanReportStreamTime() && ((GetTickCount() - lastReportStreamTime) > 1000))
+      {
+        lastReportStreamTime = GetTickCount();
+
+        CRefTime refTime;
+        if (SUCCEEDED(this->StreamTime(refTime)))
+        {
+          this->parserHoster->ReportStreamTime((uint64_t)(this->demuxStart / 10000 + refTime.Millisecs()));
+        }
       }
     }
     
@@ -2266,6 +2280,11 @@ bool CMPUrlSourceSplitter::IsEnabledMethodActive(void)
 bool CMPUrlSourceSplitter::IsPlaybackStarted(void)
 {
   return this->IsSetFlag(FLAG_MP_URL_SOURCE_SPLITTER_PLAYBACK_STARTED);
+}
+
+bool CMPUrlSourceSplitter::CanReportStreamTime(void)
+{
+  return this->IsSetFlag(FLAG_MP_URL_SOURCE_SPLITTER_REPORT_STREAM_TIME);
 }
 
 HRESULT CMPUrlSourceSplitter::GetParserHosterStatus(void)

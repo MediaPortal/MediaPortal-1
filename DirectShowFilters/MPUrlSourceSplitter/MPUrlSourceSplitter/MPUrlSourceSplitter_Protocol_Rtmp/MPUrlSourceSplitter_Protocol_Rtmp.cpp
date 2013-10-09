@@ -1251,6 +1251,10 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetDuration(void)
   return (this->liveStream) ? DURATION_LIVE_STREAM : DURATION_UNSPECIFIED;
 }
 
+void CMPUrlSourceSplitter_Protocol_Rtmp::ReportStreamTime(uint64_t streamTime)
+{
+}
+
 // ISeeking interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtmp::GetSeekingCapabilities(void)

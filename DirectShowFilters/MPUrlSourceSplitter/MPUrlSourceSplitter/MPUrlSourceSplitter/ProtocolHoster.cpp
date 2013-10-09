@@ -213,6 +213,14 @@ int64_t CProtocolHoster::GetDuration(void)
   return (this->activeProtocol != NULL) ? this->activeProtocol->GetDuration() : DURATION_UNSPECIFIED;
 }
 
+void CProtocolHoster::ReportStreamTime(uint64_t streamTime)
+{
+  if (this->activeProtocol != NULL)
+  {
+    this->activeProtocol->ReportStreamTime(streamTime);
+  }
+}
+
 // ISeeking interface implementation
 
 unsigned int CProtocolHoster::GetSeekingCapabilities(void)

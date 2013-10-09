@@ -101,6 +101,7 @@ CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CParamete
   this->liveStream = false;
   this->seekingActive = false;
   this->sessionDescription = NULL;
+  this->reportedStreamTime = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 }
@@ -1100,6 +1101,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
 
             if (SUCCEEDED(result))
             {
+              fragment->SetFragmentStartTimestamp(this->reportedStreamTime);
               track->SetStreamFragmentToDownload(0);
             }
             else
@@ -1208,8 +1210,8 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
         }
       }
 
-      // in case of live stream remove all downloaded and processed stream fragments
-      /*if (this->liveStream)
+      // in case of live stream remove all downloaded and processed stream fragments before reported stream time
+      if (this->liveStream)
       {
         for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
         {
@@ -1217,21 +1219,42 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
 
           while (track->GetStreamFragmentProcessing() != 0)
           {
-            track->GetStreamFragments()->Remove(0);
+            CRtspStreamFragment *fragment = track->GetStreamFragments()->GetItem(0);
 
-            track->SetStreamFragmentProcessing(track->GetStreamFragmentProcessing() - 1);
-
-            if (track->GetStreamFragmentDownloading() != UINT_MAX)
+            if (fragment->IsDownloaded() && (fragment->GetFragmentStartTimestamp() < this->reportedStreamTime))
             {
-              track->SetStreamFragmentDownloading(track->GetStreamFragmentDownloading() - 1);
+              // remove fragment
+              track->GetStreamFragments()->Remove(0);
+
+              track->SetStreamFragmentProcessing(track->GetStreamFragmentProcessing() - 1);
+
+              if (track->GetStreamFragmentDownloading() != UINT_MAX)
+              {
+                track->SetStreamFragmentDownloading(track->GetStreamFragmentDownloading() - 1);
+              }
+
+              if (track->GetStreamFragmentToDownload() != UINT_MAX)
+              {
+                track->SetStreamFragmentToDownload(track->GetStreamFragmentToDownload() - 1);
+              }
+
+              if (track->GetLastRtpPacketStreamFragmentIndex() > 0)
+              {
+                track->SetLastRtpPacketStreamFragmentIndex(track->GetLastRtpPacketStreamFragmentIndex() - 1);
+              }
+              else
+              {
+                track->SetLastRtpPacketStreamFragmentIndex(0);
+                track->SetLastRtpPacketFragmentReceivedDataPosition(0);
+              }
             }
-            if (track->GetStreamFragmentToDownload() != UINT_MAX)
+            else
             {
-              track->SetStreamFragmentToDownload(track->GetStreamFragmentToDownload() - 1);
+              break;
             }
           }
         }
-      }*/
+      }
     }
   }
 
@@ -1398,6 +1421,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ClearSession(void)
   this->liveStream = false;
   this->seekingActive = false;
   FREE_MEM_CLASS(this->sessionDescription);
+  this->reportedStreamTime = 0;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1437,6 +1461,11 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::GetDuration(void)
   return result;
 }
 
+void CMPUrlSourceSplitter_Protocol_Rtsp::ReportStreamTime(uint64_t streamTime)
+{
+  this->reportedStreamTime = streamTime;
+}
+
 // ISeeking interface
 
 unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetSeekingCapabilities(void)
@@ -1446,7 +1475,7 @@ unsigned int CMPUrlSourceSplitter_Protocol_Rtsp::GetSeekingCapabilities(void)
     // lock access to stream
     CLockMutex lock(this->lockMutex, INFINITE);
 
-    result = (this->liveStream) ? SEEKING_METHOD_NONE : SEEKING_METHOD_TIME;
+    result = SEEKING_METHOD_TIME;
   }
   return result;
 }
