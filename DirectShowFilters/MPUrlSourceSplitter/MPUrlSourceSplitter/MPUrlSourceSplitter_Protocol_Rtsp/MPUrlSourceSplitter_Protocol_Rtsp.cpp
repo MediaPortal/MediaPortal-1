@@ -879,17 +879,25 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
         // error occured while downloading
         // download stream fragment again or download scheduled stream fragment
 
-        //this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: %d, restarting download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetDownloadResponse()->GetResultCode());
-        //this->streamFragmentToDownload = (this->streamFragmentToDownload != UINT_MAX) ? this->streamFragmentDownloading : this->streamFragmentToDownload;
-        //this->streamFragmentDownloading = UINT_MAX;
-
         this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: %d, restarting download", PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, this->mainCurlInstance->GetDownloadResponse()->GetResultCode());
-        this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME, L"restarting download is not implemented");
+
+        if (this->liveStream)
+        {
+          // we can't restart download in live stream
+          this->streamTracks->Clear();
+        }
+        else
+        {
+          for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
+          {
+            CRtspStreamTrack *track = this->streamTracks->GetItem(i);
+
+            track->SetStreamFragmentToDownload(track->GetStreamFragmentDownloading());
+            track->SetStreamFragmentDownloading(UINT_MAX);
+          }
+        }
 
         FREE_MEM_CLASS(this->mainCurlInstance);
-        this->isConnected = false;
-
-        result = E_FAIL;
       }
     }
 
@@ -1108,6 +1116,13 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
           // we are downloading stream fragment, so reset scheduled download
           track->SetStreamFragmentToDownload(UINT_MAX);
         }
+      }
+
+      if (FAILED(result))
+      {
+        // ignore error and try again
+        result = S_OK;
+        this->isConnected = false;
       }
     }
 
