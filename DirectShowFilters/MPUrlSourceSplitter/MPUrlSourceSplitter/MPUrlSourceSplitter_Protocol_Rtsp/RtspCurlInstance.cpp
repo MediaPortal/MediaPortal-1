@@ -1103,7 +1103,7 @@ bool CRtspCurlInstance::ProcessReceivedBaseRtpPackets(CRtspTrack *track, unsigne
           // we received good bye RTCP packet
           // stream is finished
           
-          this->logger->Log(LOGGER_INFO, L"%s: %s: received GOOD BYE RTCP packet, track '%s', reason: %s", this->protocolName, METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME, track->GetTrackUrl(), (goodBye->GetReason() == NULL) ? L"" : goodBye->GetReason());
+          this->logger->Log(LOGGER_INFO, L"%s: %s: received GOOD BYE RTCP packet, track '%s', reason: '%s'", this->protocolName, METHOD_PROCESS_RECEIVED_BASE_RTP_PACKETS_NAME, track->GetTrackUrl(), (goodBye->GetReason() == NULL) ? L"" : goodBye->GetReason());
           track->SetEndOfStream(true);
         }
       }
@@ -1898,7 +1898,7 @@ unsigned int CRtspCurlInstance::CurlWorker(void)
         endOfStreamReached &= track->IsEndOfStream();
       }
 
-      if (endOfStreamReached && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
+      if (endOfStreamReached && (this->state != CURL_STATE_RECEIVED_ALL_DATA) && (rtspRequest == NULL))
       {
         // we have end of stream on all tracks, we can't do more
         // report error code and wait for destroying CURL instance

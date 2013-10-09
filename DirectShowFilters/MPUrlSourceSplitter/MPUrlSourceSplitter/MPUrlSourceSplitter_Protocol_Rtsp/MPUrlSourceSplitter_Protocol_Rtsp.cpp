@@ -1097,7 +1097,15 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
             CHECK_POINTER_HRESULT(result, fragment, result, E_OUTOFMEMORY);
 
             CHECK_CONDITION_HRESULT(result, track->GetStreamFragments()->Add(fragment), result, E_OUTOFMEMORY);
-            CHECK_CONDITION_EXECUTE(FAILED(result), FREE_MEM_CLASS(fragment));
+
+            if (SUCCEEDED(result))
+            {
+              track->SetStreamFragmentToDownload(0);
+            }
+            else
+            {
+              FREE_MEM_CLASS(fragment);
+            }
           }
         }
 
@@ -1201,7 +1209,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
       }
 
       // in case of live stream remove all downloaded and processed stream fragments
-      if (this->liveStream)
+      /*if (this->liveStream)
       {
         for (unsigned int i = 0; i < this->streamTracks->Count(); i++)
         {
@@ -1223,7 +1231,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtsp::ReceiveData(CReceiveData *receiveDat
             }
           }
         }
-      }
+      }*/
     }
   }
 
@@ -1499,6 +1507,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtsp::SeekToTime(int64_t time)
       // split stream fragment
 
       downloadedFragment = false;
+      result = time;
 
       // create new fragment within found fragment
       CRtspStreamFragment *fragment = new CRtspStreamFragment(time);
