@@ -46,11 +46,18 @@ namespace MpeCore.Classes.PathProvider
       string fontsDir = Environment.GetEnvironmentVariable("windir");
 
       if (fontsDir == null)
-        fontsDir = "c:\\windows\\fonts";
+      {
+        fontsDir = "C:\\WINDOWS\\Fonts";
+      }
       else
-        fontsDir = Path.Combine(fontsDir, "fonts");
+      {
+        fontsDir = Path.Combine(fontsDir, "Fonts");
+      }
 
-      _paths.Add("%Fonts%", fontsDir);
+      if (!_paths.ContainsValue(fontsDir))
+      {
+        _paths.Add("%Fonts%", fontsDir);
+      }
       _paths.Add("%Temp%", Path.GetTempPath());
     }
 
