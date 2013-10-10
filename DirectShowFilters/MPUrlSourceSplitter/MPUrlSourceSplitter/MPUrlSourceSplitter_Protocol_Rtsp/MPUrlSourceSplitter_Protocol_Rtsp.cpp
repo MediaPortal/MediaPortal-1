@@ -48,9 +48,9 @@
 
 #define METHOD_FILL_BUFFER_FOR_PROCESSING_NAME                          L"FillBufferForProcessing()"
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Protocol_Rtsp(configuration);
+  return new CMPUrlSourceSplitter_Protocol_Rtsp(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -62,7 +62,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CLogger *logger, CParameterCollection *configuration)
 {
   this->configurationParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -70,7 +70,7 @@ CMPUrlSourceSplitter_Protocol_Rtsp::CMPUrlSourceSplitter_Protocol_Rtsp(CParamete
     this->configurationParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->configurationParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP);

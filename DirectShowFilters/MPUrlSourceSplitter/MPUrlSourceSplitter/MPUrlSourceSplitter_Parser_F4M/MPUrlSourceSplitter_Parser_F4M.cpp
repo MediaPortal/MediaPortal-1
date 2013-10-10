@@ -46,9 +46,9 @@
 #define PARSER_IMPLEMENTATION_NAME                                            L"MPUrlSourceSplitter_Parser_F4M"
 #endif
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Parser_F4M(configuration);
+  return new CMPUrlSourceSplitter_Parser_F4M(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -60,7 +60,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(CLogger *logger, CParameterCollection *configuration)
 {
   this->connectionParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -68,7 +68,7 @@ CMPUrlSourceSplitter_Parser_F4M::CMPUrlSourceSplitter_Parser_F4M(CParameterColle
     this->connectionParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->connectionParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_F4M);

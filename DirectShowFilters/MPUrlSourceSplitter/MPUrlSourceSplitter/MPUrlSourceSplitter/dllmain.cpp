@@ -34,11 +34,13 @@
 #define wszUrlSourceSplitter                                    L"MediaPortal Url Source Splitter"
 
 #include "MPUrlSourceSplitter.h"
+#include "StaticLogger.h"
 #include <curl/curl.h>
 
 #pragma warning(pop)
 
 extern "C++" CLogger *ffmpegLoggerInstance;
+extern "C++" CStaticLogger *staticLogger = NULL;
 
 // Filter setup data
 const AMOVIESETUP_MEDIATYPE sudIptvMediaTypes[] =
@@ -149,6 +151,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   switch (ul_reason_for_call)
   {
   case DLL_PROCESS_ATTACH:
+    staticLogger = new CStaticLogger();
     curl_global_init(CURL_GLOBAL_ALL);
     break;
   case DLL_THREAD_ATTACH:
@@ -156,11 +159,9 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   case DLL_THREAD_DETACH:
     break;
   case DLL_PROCESS_DETACH:
-    // free FFmpeg logger instance (is created)
-    if (ffmpegLoggerInstance != NULL)
-    {
-      FREE_MEM_CLASS(ffmpegLoggerInstance);
-    }
+    // free FFmpeg logger instance
+    FREE_MEM_CLASS(ffmpegLoggerInstance);
+    FREE_MEM_CLASS(staticLogger);
     curl_global_cleanup();
     break;
   }

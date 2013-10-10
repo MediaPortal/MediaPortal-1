@@ -24,6 +24,7 @@
 #define __IPLUGIN_DEFINED
 
 #include "ParameterCollection.h"
+#include "Logger.h"
 
 #include <streams.h>
 
@@ -59,8 +60,8 @@ typedef IPlugin* PIPlugin;
 
 extern "C"
 {
-  PIPlugin CreatePluginInstance(CParameterCollection *configuration);
-  typedef PIPlugin (*CREATEPLUGININSTANCE)(CParameterCollection *configuration);
+  PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration);
+  typedef PIPlugin (*CREATEPLUGININSTANCE)(CLogger *logger, CParameterCollection *configuration);
 
   void DestroyPluginInstance(PIPlugin pPlugin);
   typedef void (*DESTROYPLUGININSTANCE)(PIPlugin);

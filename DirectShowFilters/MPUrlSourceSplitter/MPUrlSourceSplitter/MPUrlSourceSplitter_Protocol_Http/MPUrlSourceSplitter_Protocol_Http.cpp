@@ -44,9 +44,9 @@
 #define PROTOCOL_IMPLEMENTATION_NAME                                    L"MPUrlSourceSplitter_Protocol_Http"
 #endif
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Protocol_Http(configuration);
+  return new CMPUrlSourceSplitter_Protocol_Http(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -58,7 +58,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CLogger *logger, CParameterCollection *configuration)
 {
   this->configurationParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -66,7 +66,7 @@ CMPUrlSourceSplitter_Protocol_Http::CMPUrlSourceSplitter_Protocol_Http(CParamete
     this->configurationParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->configurationParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_HTTP);

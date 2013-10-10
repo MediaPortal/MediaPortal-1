@@ -112,6 +112,7 @@ static volatile bool ffmpegLogCallbackSet = false;
 static volatile bool ffmpegInitialized = false;
 
 extern "C++" CLogger *ffmpegLoggerInstance = NULL;
+extern "C++" CStaticLogger *staticLogger;
 
 #define SHOW_VERSION                                              2
 #define SHOW_CONFIG                                               4
@@ -242,7 +243,7 @@ CMPUrlSourceSplitter::CMPUrlSourceSplitter(LPCSTR pName, LPUNKNOWN pUnk, const I
 
   if (SUCCEEDED(*phr))
   {
-    this->logger = new CLogger(loggerParameters);
+    this->logger = new CLogger(staticLogger, loggerParameters);
     CHECK_POINTER_HRESULT(*phr, this->logger, *phr, E_OUTOFMEMORY);
   }
 

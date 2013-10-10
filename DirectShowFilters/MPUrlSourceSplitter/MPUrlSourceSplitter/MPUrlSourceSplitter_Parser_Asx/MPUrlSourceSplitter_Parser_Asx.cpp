@@ -38,9 +38,9 @@
 #define PARSER_IMPLEMENTATION_NAME                                      L"MPUrlSourceSplitter_Parser_Asx"
 #endif
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Parser_Asx(configuration);
+  return new CMPUrlSourceSplitter_Parser_Asx(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -52,7 +52,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Parser_Asx::CMPUrlSourceSplitter_Parser_Asx(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Parser_Asx::CMPUrlSourceSplitter_Parser_Asx(CLogger *logger, CParameterCollection *configuration)
 {
   this->connectionParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -60,7 +60,7 @@ CMPUrlSourceSplitter_Parser_Asx::CMPUrlSourceSplitter_Parser_Asx(CParameterColle
     this->connectionParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->connectionParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PARSER_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PARSER_ASX, DATE_INFO_MP_URL_SOURCE_SPLITTER_PARSER_ASX);

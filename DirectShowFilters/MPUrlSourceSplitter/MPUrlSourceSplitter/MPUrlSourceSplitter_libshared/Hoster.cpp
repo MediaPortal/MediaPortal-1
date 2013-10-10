@@ -139,7 +139,7 @@ void CHoster::LoadPlugins(void)
             if (result)
             {
               // create plugin instance
-              pIPlugin = (PIPlugin)createPluginInstance(this->configuration);
+              pIPlugin = (PIPlugin)createPluginInstance(this->logger, this->configuration);
               if (pIPlugin == NULL)
               {
                 this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, this->moduleName, METHOD_LOAD_PLUGINS_NAME, L"cannot create plugin implementation instance");

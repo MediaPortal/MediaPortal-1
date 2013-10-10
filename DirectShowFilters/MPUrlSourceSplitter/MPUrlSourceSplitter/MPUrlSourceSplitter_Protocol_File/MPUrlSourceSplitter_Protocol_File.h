@@ -43,7 +43,7 @@ class CMPUrlSourceSplitter_Protocol_File : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_File class
-  CMPUrlSourceSplitter_Protocol_File(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_File(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_File(void);

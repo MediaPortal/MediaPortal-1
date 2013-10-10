@@ -53,7 +53,7 @@ class CMPUrlSourceSplitter_Protocol_Afhs : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Afhs class
-  CMPUrlSourceSplitter_Protocol_Afhs(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Afhs(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Afhs(void);

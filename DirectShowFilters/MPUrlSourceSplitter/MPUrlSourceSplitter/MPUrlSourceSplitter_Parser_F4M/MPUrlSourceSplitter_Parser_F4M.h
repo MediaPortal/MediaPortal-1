@@ -32,7 +32,7 @@ class CMPUrlSourceSplitter_Parser_F4M : public IParserPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Parser_F4M class
-  CMPUrlSourceSplitter_Parser_F4M(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Parser_F4M(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Parser_F4M(void);

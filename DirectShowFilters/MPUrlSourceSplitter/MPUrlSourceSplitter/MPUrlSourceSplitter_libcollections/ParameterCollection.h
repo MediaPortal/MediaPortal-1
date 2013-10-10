@@ -128,6 +128,11 @@ public:
   // @return : true if removed, false otherwise
   virtual bool Remove(const wchar_t *name, bool invariant);
 
+  // remove parameter with specified index from collection
+  // @param index : the index of parameter to remove
+  // @return : true if removed, false otherwise
+  virtual bool Remove(unsigned int index);
+
 protected:
   // compare two item keys
   // @param firstKey : the first item key to compare

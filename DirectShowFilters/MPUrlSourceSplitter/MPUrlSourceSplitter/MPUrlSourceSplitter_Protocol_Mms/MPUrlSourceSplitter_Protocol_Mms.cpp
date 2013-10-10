@@ -68,9 +68,9 @@
       (uint64_t)((const uint8_t*)(x))[0])
 #endif
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Protocol_Mms(configuration);
+  return new CMPUrlSourceSplitter_Protocol_Mms(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -82,7 +82,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CLogger *logger, CParameterCollection *configuration)
 {
   this->configurationParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -90,7 +90,7 @@ CMPUrlSourceSplitter_Protocol_Mms::CMPUrlSourceSplitter_Protocol_Mms(CParameterC
     this->configurationParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->configurationParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_MMS, DATE_INFO_MP_URL_SOURCE_SPLITTER_PROTOCOL_MMS);

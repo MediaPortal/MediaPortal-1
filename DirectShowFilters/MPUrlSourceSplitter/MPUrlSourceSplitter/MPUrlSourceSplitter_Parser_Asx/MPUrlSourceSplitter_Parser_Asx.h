@@ -32,7 +32,7 @@ class CMPUrlSourceSplitter_Parser_Asx : public IParserPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Parser_Asx class
-  CMPUrlSourceSplitter_Parser_Asx(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Parser_Asx(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Parser_Asx(void);

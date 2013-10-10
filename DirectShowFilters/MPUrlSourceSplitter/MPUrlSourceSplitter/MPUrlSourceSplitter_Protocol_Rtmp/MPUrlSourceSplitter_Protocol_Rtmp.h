@@ -44,7 +44,7 @@ class CMPUrlSourceSplitter_Protocol_Rtmp : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Rtmp class
-  CMPUrlSourceSplitter_Protocol_Rtmp(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Rtmp(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Rtmp(void);

@@ -40,7 +40,7 @@ class CMPUrlSourceSplitter_Parser_MSHS : public IParserPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Parser_MSHS class
-  CMPUrlSourceSplitter_Parser_MSHS(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Parser_MSHS(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Parser_MSHS(void);

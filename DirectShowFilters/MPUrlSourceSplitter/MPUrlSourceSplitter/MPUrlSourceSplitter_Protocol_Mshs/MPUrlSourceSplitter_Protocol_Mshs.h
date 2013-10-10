@@ -75,7 +75,7 @@ class CMPUrlSourceSplitter_Protocol_Mshs : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Mshs class
-  CMPUrlSourceSplitter_Protocol_Mshs(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Mshs(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Mshs(void);

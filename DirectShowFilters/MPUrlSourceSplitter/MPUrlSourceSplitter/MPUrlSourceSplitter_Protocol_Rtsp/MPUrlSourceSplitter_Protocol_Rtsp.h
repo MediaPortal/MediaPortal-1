@@ -52,7 +52,7 @@ class CMPUrlSourceSplitter_Protocol_Rtsp : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Rtsp class
-  CMPUrlSourceSplitter_Protocol_Rtsp(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Rtsp(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Rtsp(void);

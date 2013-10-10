@@ -49,13 +49,15 @@
 #define METHOD_MESSAGE_FORMAT                                                 L"%s: %s: %s"
 
 class CParameterCollection;
+class CStaticLogger;
 
 class CLogger
 {
 public:
   // initializes a new instance of CLogger class
+  // @param staticLogger : the instance of static logger
   // @param configuration : the collection of configuration parameters to initialize logger (verbosity and max log size)
-  CLogger(CParameterCollection *configuration);
+  CLogger(CStaticLogger *staticLogger, CParameterCollection *configuration);
 
   // initializes a new instance of CLogger class with specified CLogger instance
   // new logger instance have same mutex, verbosity, log file and max log size
@@ -71,10 +73,6 @@ public:
 
   void SetParameters(CParameterCollection *configuration);
 
-  // sets allowed log verbosity
-  // @param allowedLogVerbosity : allowed log verbosity level to set
-  //void SetAllowedLogVerbosity(unsigned int allowedLogVerbosity);
-
   // gets logger instance ID
   // @return : logger instance ID
   GUID GetLoggerInstanceId(void);
@@ -84,16 +82,10 @@ protected:
   HANDLE mutex;
   // the logger identifier
   GUID loggerInstance;
-  // max log file size
-  DWORD maxLogSize;
   // allowed verbosity (messages with higher verbosity are not logged)
   unsigned int allowedLogVerbosity;
-  // log file name (with full path)
-  wchar_t *logFile;
-  // backup log file name (with full path)
-  wchar_t *logBackupFile;
-  // global mutex name
-  wchar_t *globalMutexName;
+  // holds instance of static logger
+  CStaticLogger *staticLogger;
 
   // get human-readable value of log level
   // @param level : the level of message
@@ -104,6 +96,7 @@ protected:
 
   void LogMessage(unsigned int logLevel, const wchar_t *message);
   void Log(unsigned int logLevel, const wchar_t *format, va_list vl);
+
 private:
 };
 

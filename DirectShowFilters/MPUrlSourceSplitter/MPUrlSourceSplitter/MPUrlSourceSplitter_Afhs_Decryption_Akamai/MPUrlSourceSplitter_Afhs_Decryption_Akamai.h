@@ -41,7 +41,7 @@ class CMPUrlSourceSplitter_Afhs_Decryption_Akamai : public IAfhsDecryptionPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Afhs_Decryption_Akamai class
-  CMPUrlSourceSplitter_Afhs_Decryption_Akamai(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Afhs_Decryption_Akamai(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Afhs_Decryption_Akamai(void);

@@ -215,3 +215,8 @@ bool CParameterCollection::Remove(const wchar_t *name, bool invariant)
 {
   return __super::Remove(name, (void *)&invariant);
 }
+
+bool CParameterCollection::Remove(unsigned int index)
+{
+  return __super::Remove(index);
+}

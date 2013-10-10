@@ -77,11 +77,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="StaticLogger.h" />
+    <ClInclude Include="StaticLoggerContext.h" />
+    <ClInclude Include="StaticLoggerContextCollection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="StaticLogger.cpp" />
+    <ClCompile Include="StaticLoggerContext.cpp" />
+    <ClCompile Include="StaticLoggerContextCollection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -20,37 +20,24 @@
 
 #pragma once
 
-#ifndef __LINEAR_BUFFER_COLLECTION_DEFINED
-#define __LINEAR_BUFFER_COLLECTION_DEFINED
+#ifndef __STATIC_LOGGER_CONTEXT_COLLECTION_DEFINED
+#define __STATIC_LOGGER_CONTEXT_COLLECTION_DEFINED
 
-#include "KeyedCollection.h"
-#include "LinearBuffer.h"
+#include "Collection.h"
+#include "StaticLoggerContext.h"
 
-class CLinearBufferCollection : public CKeyedCollection<CLinearBuffer, const wchar_t *>
+class CStaticLoggerContextCollection : public CCollection<CStaticLoggerContext>
 {
 public:
-  CLinearBufferCollection(void);
-  virtual ~CLinearBufferCollection(void);
+  CStaticLoggerContextCollection(void);
+  ~CStaticLoggerContextCollection(void);
 
 protected:
-
-  // compare two item keys
-  // @param firstKey : the first item key to compare
-  // @param secondKey : the second item key to compare
-  // @param context : the reference to user defined context
-  // @return : 0 if keys are equal, lower than zero if firstKey is lower than secondKey, greater than zero if firstKey is greater than secondKey
-  int CompareItemKeys(const wchar_t *firstKey, const wchar_t *secondKey, void *context);
-
-  // gets key for item
-  // @param item : the item to get key
-  // @return : the key of item
-  const wchar_t *GetKey(CLinearBuffer *item);
 
   // clones specified item
   // @param item : the item to clone
   // @return : deep clone of item or NULL if not implemented
-  CLinearBuffer *Clone(CLinearBuffer *item);
+  CStaticLoggerContext *Clone(CStaticLoggerContext *item);
 };
-
 
 #endif

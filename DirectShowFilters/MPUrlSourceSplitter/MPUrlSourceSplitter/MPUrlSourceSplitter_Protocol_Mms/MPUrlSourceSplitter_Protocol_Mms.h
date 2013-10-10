@@ -57,7 +57,7 @@ class CMPUrlSourceSplitter_Protocol_Mms : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Mms class
-  CMPUrlSourceSplitter_Protocol_Mms(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Mms(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Mms(void);

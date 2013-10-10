@@ -42,9 +42,9 @@
 #define PLUGIN_IMPLEMENTATION_NAME                                            L"MPUrlSourceSplitter_Afhs_Decryption_Akamai"
 #endif
 
-PIPlugin CreatePluginInstance(CParameterCollection *configuration)
+PIPlugin CreatePluginInstance(CLogger *logger, CParameterCollection *configuration)
 {
-  return new CMPUrlSourceSplitter_Afhs_Decryption_Akamai(configuration);
+  return new CMPUrlSourceSplitter_Afhs_Decryption_Akamai(logger, configuration);
 }
 
 void DestroyPluginInstance(PIPlugin pProtocol)
@@ -56,7 +56,7 @@ void DestroyPluginInstance(PIPlugin pProtocol)
   }
 }
 
-CMPUrlSourceSplitter_Afhs_Decryption_Akamai::CMPUrlSourceSplitter_Afhs_Decryption_Akamai(CParameterCollection *configuration)
+CMPUrlSourceSplitter_Afhs_Decryption_Akamai::CMPUrlSourceSplitter_Afhs_Decryption_Akamai(CLogger *logger, CParameterCollection *configuration)
 {
   this->configurationParameters = new CParameterCollection();
   if (configuration != NULL)
@@ -64,7 +64,7 @@ CMPUrlSourceSplitter_Afhs_Decryption_Akamai::CMPUrlSourceSplitter_Afhs_Decryptio
     this->configurationParameters->Append(configuration);
   }
 
-  this->logger = new CLogger(this->configurationParameters);
+  this->logger = new CLogger(logger);
   this->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, PLUGIN_IMPLEMENTATION_NAME, METHOD_CONSTRUCTOR_NAME);
 
   wchar_t *version = GetVersionInfo(COMMIT_INFO_MP_URL_SOURCE_SPLITTER_AFHS_DECRYPTION_AKAMAI, DATE_INFO_MP_URL_SOURCE_SPLITTER_AFHS_DECRYPTION_AKAMAI);

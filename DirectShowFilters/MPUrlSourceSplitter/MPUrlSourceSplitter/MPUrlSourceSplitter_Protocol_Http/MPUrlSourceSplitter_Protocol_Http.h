@@ -42,7 +42,7 @@ class CMPUrlSourceSplitter_Protocol_Http : public IProtocolPlugin
 public:
   // constructor
   // create instance of CMPUrlSourceSplitter_Protocol_Http class
-  CMPUrlSourceSplitter_Protocol_Http(CParameterCollection *configuration);
+  CMPUrlSourceSplitter_Protocol_Http(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
   ~CMPUrlSourceSplitter_Protocol_Http(void);
