@@ -167,34 +167,21 @@ namespace MediaPortal.Video.Database
     {
       private string _id;
       private int _limit = DEFAULT_SEARCH_LIMIT;
-      private IIMDBScriptGrabber _grabber;
-      private bool _grabberLoaded;
+      private static IIMDBScriptGrabber _grabber;
+      //private static bool _grabberLoaded;
+      private static AsmHelper _asmHelper;
+      private static Dictionary<string, IIMDBScriptGrabber> _grabbers = new Dictionary<string, IIMDBScriptGrabber>();
 
       public string ID
       {
         get { return _id; }
         set { _id = value; }
       }
-
+      
       public int Limit
       {
         get { return _limit; }
         set { _limit = value; }
-      }
-
-      public IIMDBScriptGrabber Grabber
-      {
-        get
-        {
-          if (!_grabberLoaded)
-          {
-            if (!LoadScript())
-              Grabber = null;
-            _grabberLoaded = true; // only try to load it once
-          }
-          return _grabber;
-        }
-        set { _grabber = value; }
       }
 
       public MovieInfoDatabase(string id, int limit)
@@ -203,9 +190,52 @@ namespace MediaPortal.Video.Database
         Limit = limit;
       }
 
-      public bool LoadScript()
+      public IIMDBScriptGrabber Grabber
       {
-        string scriptFileName = ScriptDirectory + @"\" + ID + ".csscript";
+        get
+        {
+          if (!_grabbers.ContainsKey(ID))
+          {
+            //if (!_grabberLoaded)
+            //{
+              if (!LoadScript(ID))
+              {
+                Grabber = null;
+              }
+              else
+              {
+                _grabbers[ID] = _grabber;
+              }
+              //_grabberLoaded = true; // only try to load it once
+            //}
+            return _grabber;
+          }
+          return _grabbers[ID];
+        }
+        set { _grabber = value; }
+      }
+
+      public static void ResetGrabber()
+      {
+        if (_asmHelper != null)
+        {
+          _asmHelper.Dispose();
+          _asmHelper = null;
+        }
+
+        if (_grabber != null)
+        {
+          _grabber.SafeDispose();
+          _grabber = null;
+        }
+
+        _grabbers.Clear();
+        //_grabberLoaded = false;
+      }
+
+      private static bool LoadScript(string dbId)
+      {
+        string scriptFileName = ScriptDirectory + @"\" + dbId + ".csscript";
 
         // Script support script.csscript
         if (!File.Exists(scriptFileName))
@@ -217,8 +247,8 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
-          Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          _grabber = (IIMDBScriptGrabber)_asmHelper.CreateObject("Grabber");
         }
         catch (Exception ex)
         {
@@ -236,7 +266,7 @@ namespace MediaPortal.Video.Database
       private static bool _internalActorsGrabberLoaded;
       private static AsmHelper _asmHelper;
 
-      public static void ResetGraber()
+      public static void ResetGrabber()
       {
         if (_asmHelper != null)
         {
@@ -545,25 +575,39 @@ namespace MediaPortal.Video.Database
     private void FindIMDBActor(string strURL)
     {
       _elements.Clear();
-      _elements = InternalActorsScriptGrabber.InternalActorsGrabber.FindIMDBActor(strURL);
+      
+      try
+      {
+        _elements = InternalActorsScriptGrabber.InternalActorsGrabber.FindIMDBActor(strURL);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDB FindIMDBActor error: {0}", ex.Message);
+      }
     }
     
     // Filmograpy and bio
     public bool GetActorDetails(IMDBUrl url, out IMDBActor actor)
     {
       actor = new IMDBActor();
-      
-      if (InternalActorsScriptGrabber.InternalActorsGrabber.GetActorDetails(url, out actor))
+
+      try
       {
-        // Add filmography
-        if (actor.Count > 0)
+        if (InternalActorsScriptGrabber.InternalActorsGrabber.GetActorDetails(url, out actor))
         {
-          actor.SortActorMoviesByYear();
+          // Add filmography
+          if (actor.Count > 0)
+          {
+            actor.SortActorMoviesByYear();
+          }
+
+          return true;
         }
-        
-        return true;
       }
-      
+      catch (Exception ex)
+      {
+        Log.Error("IMDB GetActorDetails Error: {0}", ex.Message);
+      }
       return false;
     }
 
@@ -594,8 +638,15 @@ namespace MediaPortal.Video.Database
         }
       }
 
-      actorList = InternalActorsScriptGrabber.InternalActorsGrabber.GetIMDBMovieActorsList(imdbMovieID,
-        shortActorsListSize);
+      try
+      {
+        actorList = InternalActorsScriptGrabber.InternalActorsGrabber.GetIMDBMovieActorsList(imdbMovieID,
+        	shortActorsListSize);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("IMDB GetIMDBMovieActorsList error: {0}", ex.Message);
+      }
     }
     
     // Get actor search parser strings

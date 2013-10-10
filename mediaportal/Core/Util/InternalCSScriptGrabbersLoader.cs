@@ -123,9 +123,9 @@ namespace MediaPortal.Util
         // TMDB ActorImage
         ArrayList GetTmdbActorImage(string actorName);
       }
-
     }
 
     #endregion
+    
   }
 }
