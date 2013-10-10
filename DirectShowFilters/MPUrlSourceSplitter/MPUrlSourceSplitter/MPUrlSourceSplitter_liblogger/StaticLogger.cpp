@@ -26,6 +26,8 @@
 #include <process.h>
 #include <stdio.h>
 
+//extern "C++" CStaticLogger *staticLogger;
+
 CStaticLogger::CStaticLogger(void)
 {
   this->loggerContexts = new CStaticLoggerContextCollection();
@@ -132,75 +134,92 @@ unsigned int WINAPI CStaticLogger::LoggerWorker(LPVOID lpParam)
     if (caller->loggerWorkerShouldExit || ((GetTickCount() - lastFlushTime) > 10000))
     {
       lastFlushTime = GetTickCount();
-      // write messages to log file
 
-      unsigned int contextCount = caller->loggerContexts->Count();
-      for (unsigned int i = 0; i < contextCount; i++)
       {
-        CStaticLoggerContext *context = caller->loggerContexts->GetItem(i);
+        CLockMutex lock(caller->mutex, 10);
 
-        unsigned int messagesCount = context->GetMessages()->Count();
-        if (messagesCount > 0)
+        if (lock.IsLocked())
         {
-          if (context->GetLogFile() != NULL)
-          {
-            LARGE_INTEGER size;
-            size.QuadPart = 0;
-
-            // open or create file
-            HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
-            if (hLogFile != INVALID_HANDLE_VALUE)
-            {
-              if (!GetFileSizeEx(hLogFile, &size))
-              {
-                // error occured while getting file size
-                size.QuadPart = 0;
-              }
-
-              CloseHandle(hLogFile);
-              hLogFile = INVALID_HANDLE_VALUE;
-            }
-
-            //if (((size.LowPart + wcslen(message)) > this->maxLogSize) && (this->logBackupFile != NULL) )
-            //{
-            //  // log file exceedes maximum log size
-            //  DeleteFile(this->logBackupFile);
-            //  MoveFile(this->logFile, this->logBackupFile);
-            //}
-
-            hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-            if (hLogFile != INVALID_HANDLE_VALUE)
-            {
-              // move to end of log file
-              LARGE_INTEGER distanceToMove;
-              distanceToMove.QuadPart = 0;
-              SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
-
-              for (unsigned int j = 0; j < messagesCount; j++)
-              {
-                const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
-
-                // write data to log file
-                DWORD written = 0;
-                WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
-              }
-
-              CloseHandle(hLogFile);
-              hLogFile = INVALID_HANDLE_VALUE;
-            }
-          }
-
-          {
-            CLockMutex lock(context->GetMutex(), INFINITE);
-
-            for (unsigned int j = 0; j < messagesCount; j++)
-            {
-              context->GetMessages()->Remove(0);
-            }
-          }
+          caller->Flush();
         }
       }
+
+      // write messages to log file
+
+      //unsigned int contextCount = caller->loggerContexts->Count();
+      //for (unsigned int i = 0; i < contextCount; i++)
+      //{
+      //  CStaticLoggerContext *context = caller->loggerContexts->GetItem(i);
+
+      //  unsigned int messagesCount = 0;
+
+      //  {
+      //    CLockMutex lock(context->GetMutex(), INFINITE);
+
+      //    messagesCount = context->GetMessages()->Count();
+      //  }
+
+      //  if (messagesCount > 0)
+      //  {
+      //    if (context->GetLogFile() != NULL)
+      //    {
+      //      LARGE_INTEGER size;
+      //      size.QuadPart = 0;
+
+      //      // open or create file
+      //      HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+      //      if (hLogFile != INVALID_HANDLE_VALUE)
+      //      {
+      //        if (!GetFileSizeEx(hLogFile, &size))
+      //        {
+      //          // error occured while getting file size
+      //          size.QuadPart = 0;
+      //        }
+
+      //        CloseHandle(hLogFile);
+      //        hLogFile = INVALID_HANDLE_VALUE;
+      //      }
+
+      //      //if (((size.LowPart + wcslen(message)) > this->maxLogSize) && (this->logBackupFile != NULL) )
+      //      //{
+      //      //  // log file exceedes maximum log size
+      //      //  DeleteFile(this->logBackupFile);
+      //      //  MoveFile(this->logFile, this->logBackupFile);
+      //      //}
+
+      //      hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+      //      if (hLogFile != INVALID_HANDLE_VALUE)
+      //      {
+      //        // move to end of log file
+      //        LARGE_INTEGER distanceToMove;
+      //        distanceToMove.QuadPart = 0;
+      //        SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
+
+      //        for (unsigned int j = 0; j < messagesCount; j++)
+      //        {
+      //          const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
+
+      //          // write data to log file
+      //          DWORD written = 0;
+      //          WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
+      //        }
+
+      //        CloseHandle(hLogFile);
+      //        hLogFile = INVALID_HANDLE_VALUE;
+      //      }
+      //    }
+
+      //    {
+      //      CLockMutex lock(context->GetMutex(), INFINITE);
+
+      //      for (unsigned int j = 0; j < messagesCount; j++)
+      //      {
+      //        context->GetMessages()->Remove(0);
+      //      }
+      //    }
+      //  }
+      //}
     }
 
     if (caller->loggerWorkerShouldExit)
@@ -280,5 +299,85 @@ void CStaticLogger::Remove(void)
   if (this->referencies <= 1)
   {
     this->DestroyLoggerWorker();
+  }
+}
+
+void CStaticLogger::Flush(void)
+{
+  CLockMutex lock(this->mutex, INFINITE);
+
+  unsigned int contextCount = this->loggerContexts->Count();
+  for (unsigned int i = 0; i < contextCount; i++)
+  {
+    CStaticLoggerContext *context = this->loggerContexts->GetItem(i);
+
+    unsigned int messagesCount = 0;
+
+    {
+      CLockMutex lock(context->GetMutex(), INFINITE);
+
+      messagesCount = context->GetMessages()->Count();
+    }
+
+    if (messagesCount > 0)
+    {
+      if (context->GetLogFile() != NULL)
+      {
+        LARGE_INTEGER size;
+        size.QuadPart = 0;
+
+        // open or create file
+        HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+        if (hLogFile != INVALID_HANDLE_VALUE)
+        {
+          if (!GetFileSizeEx(hLogFile, &size))
+          {
+            // error occured while getting file size
+            size.QuadPart = 0;
+          }
+
+          CloseHandle(hLogFile);
+          hLogFile = INVALID_HANDLE_VALUE;
+        }
+
+        //if (((size.LowPart + wcslen(message)) > this->maxLogSize) && (this->logBackupFile != NULL) )
+        //{
+        //  // log file exceedes maximum log size
+        //  DeleteFile(this->logBackupFile);
+        //  MoveFile(this->logFile, this->logBackupFile);
+        //}
+
+        hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+        if (hLogFile != INVALID_HANDLE_VALUE)
+        {
+          // move to end of log file
+          LARGE_INTEGER distanceToMove;
+          distanceToMove.QuadPart = 0;
+          SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
+
+          for (unsigned int j = 0; j < messagesCount; j++)
+          {
+            const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
+
+            // write data to log file
+            DWORD written = 0;
+            WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
+          }
+
+          CloseHandle(hLogFile);
+          hLogFile = INVALID_HANDLE_VALUE;
+        }
+      }
+
+      {
+        CLockMutex lock(context->GetMutex(), INFINITE);
+
+        for (unsigned int j = 0; j < messagesCount; j++)
+        {
+          context->GetMessages()->Remove(0);
+        }
+      }
+    }
   }
 }

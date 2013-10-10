@@ -55,6 +55,7 @@ public:
 
   void Add(void);
   void Remove(void);
+  void Flush(void);
 
 protected:
   CStaticLoggerContextCollection *loggerContexts;

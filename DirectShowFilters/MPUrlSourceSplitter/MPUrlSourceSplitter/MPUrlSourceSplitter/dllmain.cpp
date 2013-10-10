@@ -42,6 +42,11 @@
 extern "C++" CLogger *ffmpegLoggerInstance;
 extern "C++" CStaticLogger *staticLogger = NULL;
 
+// holds reference to exception handler returned in registration
+PVOID exceptionHandler = NULL;
+// exception handler for any unhandled exception in process
+static LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo);
+
 // Filter setup data
 const AMOVIESETUP_MEDIATYPE sudIptvMediaTypes[] =
 {
@@ -151,20 +156,56 @@ BOOL APIENTRY DllMain(HMODULE hModule,
   switch (ul_reason_for_call)
   {
   case DLL_PROCESS_ATTACH:
-    staticLogger = new CStaticLogger();
-    curl_global_init(CURL_GLOBAL_ALL);
+    {
+      if (exceptionHandler == NULL)
+      {
+        // register exception handler
+        exceptionHandler = AddVectoredExceptionHandler(1, ExceptionHandler);
+      }
+
+      staticLogger = new CStaticLogger();
+      curl_global_init(CURL_GLOBAL_ALL);
+    }
     break;
   case DLL_THREAD_ATTACH:
     break;
   case DLL_THREAD_DETACH:
     break;
   case DLL_PROCESS_DETACH:
-    // free FFmpeg logger instance
-    FREE_MEM_CLASS(ffmpegLoggerInstance);
-    FREE_MEM_CLASS(staticLogger);
-    curl_global_cleanup();
+    {
+      if (exceptionHandler != NULL)
+      {
+        RemoveVectoredExceptionHandler(exceptionHandler);
+        exceptionHandler = NULL;
+      }
+
+      // free FFmpeg logger instance
+      FREE_MEM_CLASS(ffmpegLoggerInstance);
+      FREE_MEM_CLASS(staticLogger);
+      curl_global_cleanup();
+    }
     break;
   }
 
   return DllEntryPoint((HINSTANCE)(hModule), ul_reason_for_call, lpReserved);
+}
+
+LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
+{
+  // we received some unhandled exception
+  // flush logs and continue with processing exception
+
+  if (staticLogger != NULL)
+  {
+    staticLogger->Flush();
+  }
+
+  if (exceptionHandler != NULL)
+  {
+    // remove exception handler
+    RemoveVectoredExceptionHandler(exceptionHandler);
+    exceptionHandler = NULL;
+  }
+
+  return EXCEPTION_CONTINUE_SEARCH;
 }
