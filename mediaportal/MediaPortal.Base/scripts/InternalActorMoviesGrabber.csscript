@@ -966,12 +966,11 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         strBody = sr.ReadToEnd();
       }
 
-
       absoluteUri = result.ResponseUri.AbsoluteUri;
     }
     catch (Exception ex)
     {
-      MediaPortal.GUI.Library.Log.Error("InternalActorsScriptGrabber Error retrieving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode, ex.Message, ex.StackTrace);
+      MediaPortal.GUI.Library.Log.Error("InternalActorsScriptGrabber Error retrieving WebPage: {0} err:{1}", strUrl, ex.Message);
     }
     finally
     {

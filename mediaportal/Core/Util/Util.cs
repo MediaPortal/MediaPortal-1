@@ -2342,10 +2342,11 @@ namespace MediaPortal.Util
         try
         {
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying previously cached image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndCacheImage: error copying cached thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util DownLoadAndCacheImage: error copying cached image {0} to {1} - {2}", file, strFile, ex.Message);
         }
         return;
       }
@@ -2359,10 +2360,11 @@ namespace MediaPortal.Util
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying downloaded image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndCacheImage: error copying downloaded thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util DownLoadAndCacheImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2393,7 +2395,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded thumbnail {0} to {1} - {2}", file, strFile, ex.Message);
+          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }

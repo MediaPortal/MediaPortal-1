@@ -593,8 +593,11 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
       // Encoding: depends on selected page
       Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
-      sr = new StreamReader(receiveStream, encode);
-      strBody = sr.ReadToEnd();
+			
+			using (sr = new StreamReader(receiveStream, encode))
+      {
+        strBody = sr.ReadToEnd();
+      }
 
       absoluteUri = result.ResponseUri.AbsoluteUri;
     }
