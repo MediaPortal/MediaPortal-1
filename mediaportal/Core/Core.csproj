@@ -360,6 +360,7 @@
     <Compile Include="guilib\IDialogbox2.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
     <Compile Include="guilib\GUIThemeManager.cs" />
+    <Compile Include="guilib\RepeatBehavior.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
@@ -467,12 +468,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Ripper\Win32Functions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\RepeatBehavior.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Media.Animation\RepeatBehaviorConverter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
@@ -1338,9 +1333,6 @@
     <Compile Include="System.Windows.Dispatcher\DispatcherSynchronizationContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Dispatcher\DispatcherTimer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1357,9 +1349,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Input\CommandConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Input\IFrameworkInputElement.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Input\InputGestureCollection.cs">

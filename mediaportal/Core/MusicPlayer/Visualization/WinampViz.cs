@@ -41,7 +41,9 @@ namespace MediaPortal.Visualization
     private bool RenderStarted = false;
     private bool firstRun = true;
 
+#pragma warning disable 649
     private IntPtr hwndChild; // Handle to the Winamp Child Window.
+#pragma warning restore 649
     private BASSVIS_PARAM _tmpVisParam = null;
 
     private MusicTag trackTag = null;
