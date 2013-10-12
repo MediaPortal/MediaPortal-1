@@ -802,7 +802,6 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
         DetailPrint "Microsoft .NET Framework 4.0 is at least SP1."
     ${Else}
         DetailPrint "Microsoft .NET Framework 4.0 SP1 not installed."
-        !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
     ${LOG_TEXT} "INFO" "============================"
     ${EndIf}
     ${If} ${DOTNETVER_4_0} HasDotNetClientProfile 1
@@ -813,7 +812,6 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     ${EndIf}
     ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 0
         DetailPrint "Microsoft .NET Framework 4.0 (Full Profile) not available."
-        !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
     ${LOG_TEXT} "INFO" "============================"
     ${EndIf}
   ${Else}
