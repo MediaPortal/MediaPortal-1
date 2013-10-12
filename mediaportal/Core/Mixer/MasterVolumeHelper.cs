@@ -54,83 +54,83 @@ namespace MediaPortal.Mixer
   {
     #region struct fields
 
-    private ushort vt;
-    private ushort wReserved1;
-    private ushort wReserved2;
-    private ushort wReserved3;
-    private IntPtr p;
-    private int p2;
+    ushort vt;
+    ushort wReserved1;
+    ushort wReserved2;
+    ushort wReserved3;
+    IntPtr p;
+    int p2;
 
     #endregion
 
     #region union members
 
-    private sbyte cVal // CHAR cVal;
+    sbyte cVal // CHAR cVal;
     {
-      get { return (sbyte) GetDataBytes()[0]; }
+      get { return (sbyte)GetDataBytes()[0]; }
     }
 
-    private byte bVal // UCHAR bVal;
+    byte bVal // UCHAR bVal;
     {
       get { return GetDataBytes()[0]; }
     }
 
-    private short iVal // SHORT iVal;
+    short iVal // SHORT iVal;
     {
       get { return BitConverter.ToInt16(GetDataBytes(), 0); }
     }
 
-    private ushort uiVal // USHORT uiVal;
+    ushort uiVal // USHORT uiVal;
     {
       get { return BitConverter.ToUInt16(GetDataBytes(), 0); }
     }
 
-    private int lVal // LONG lVal;
+    int lVal // LONG lVal;
     {
       get { return BitConverter.ToInt32(GetDataBytes(), 0); }
     }
 
-    private uint ulVal // ULONG ulVal;
+    uint ulVal // ULONG ulVal;
     {
       get { return BitConverter.ToUInt32(GetDataBytes(), 0); }
     }
 
-    private long hVal // LARGE_INTEGER hVal;
+    long hVal // LARGE_INTEGER hVal;
     {
       get { return BitConverter.ToInt64(GetDataBytes(), 0); }
     }
 
-    private ulong uhVal // ULARGE_INTEGER uhVal;
+    ulong uhVal // ULARGE_INTEGER uhVal;
     {
       get { return BitConverter.ToUInt64(GetDataBytes(), 0); }
     }
 
-    private float fltVal // FLOAT fltVal;
+    float fltVal // FLOAT fltVal;
     {
       get { return BitConverter.ToSingle(GetDataBytes(), 0); }
     }
 
-    private double dblVal // DOUBLE dblVal;
+    double dblVal // DOUBLE dblVal;
     {
       get { return BitConverter.ToDouble(GetDataBytes(), 0); }
     }
 
-    private bool boolVal // VARIANT_BOOL boolVal;
+    bool boolVal // VARIANT_BOOL boolVal;
     {
       get { return (iVal == 0 ? false : true); }
     }
 
-    private int scode // SCODE scode;
+    int scode // SCODE scode;
     {
       get { return lVal; }
     }
 
-    private decimal cyVal // CY cyVal;
+    decimal cyVal // CY cyVal;
     {
       get { return decimal.FromOACurrency(hVal); }
     }
 
-    private DateTime date // DATE date;
+    DateTime date // DATE date;
     {
       get { return DateTime.FromOADate(dblVal); }
     }
@@ -139,7 +139,7 @@ namespace MediaPortal.Mixer
 
     private byte[] GetDataBytes()
     {
-      var ret = new byte[IntPtr.Size + sizeof (int)];
+      byte[] ret = new byte[IntPtr.Size + sizeof(int)];
       if (IntPtr.Size == 4)
         BitConverter.GetBytes(p.ToInt32()).CopyTo(ret, 0);
       else if (IntPtr.Size == 8)
@@ -149,14 +149,14 @@ namespace MediaPortal.Mixer
     }
 
     [DllImport("ole32.dll")]
-    private static extern int PropVariantClear(ref PropVariant pvar);
+    private extern static int PropVariantClear(ref PropVariant pvar);
 
     public void Clear()
     {
       PropVariant var = this;
       PropVariantClear(ref var);
 
-      vt = (ushort) VarEnum.VT_EMPTY;
+      vt = (ushort)VarEnum.VT_EMPTY;
       wReserved1 = wReserved2 = wReserved3 = 0;
       p = IntPtr.Zero;
       p2 = 0;
@@ -164,14 +164,14 @@ namespace MediaPortal.Mixer
 
     public VarEnum Type
     {
-      get { return (VarEnum) vt; }
+      get { return (VarEnum)vt; }
     }
 
     public object Value
     {
       get
       {
-        switch ((VarEnum) vt)
+        switch ((VarEnum)vt)
         {
           case VarEnum.VT_I1:
             return cVal;
@@ -208,7 +208,7 @@ namespace MediaPortal.Mixer
           case VarEnum.VT_BSTR:
             return Marshal.PtrToStringBSTR(p);
           case VarEnum.VT_BLOB:
-            var blobData = new byte[lVal];
+            byte[] blobData = new byte[lVal];
             IntPtr pBlobData;
             if (IntPtr.Size == 4)
             {
@@ -216,7 +216,7 @@ namespace MediaPortal.Mixer
             }
             else if (IntPtr.Size == 8)
             {
-              pBlobData = new IntPtr(BitConverter.ToInt64(GetDataBytes(), sizeof (int)));
+              pBlobData = new IntPtr(BitConverter.ToInt64(GetDataBytes(), sizeof(int)));
             }
             else
               throw new NotSupportedException();
@@ -239,7 +239,7 @@ namespace MediaPortal.Mixer
 
   //Windows Communication Foundation Allmost ready made enumerator.
   [Flags]
-  internal enum CTX : uint
+  enum CTX : uint
   {
     INPROC_SERVER = 0x1,
     INPROC_HANDLER = 0x2,
@@ -279,11 +279,10 @@ namespace MediaPortal.Mixer
   //00488     };
 
   [Guid("0BD7A1BE-7A1A-44DB-8397-CC5392387B5E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IMMDeviceCollection
+  interface IMMDeviceCollection
   {
     [PreserveSig]
     int GetCount(out uint pcDevices);
-
     [PreserveSig]
     int Item(uint nDevice, out IMMDevice ppDevice);
   }
@@ -329,20 +328,16 @@ namespace MediaPortal.Mixer
   //00686     };
 
   [Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IMMDeviceEnumerator
+  interface IMMDeviceEnumerator
   {
     [PreserveSig]
     int EnumAudioEndpoints(uint dataFlow, devstatus StateMask, out IMMDeviceCollection device);
-
     [PreserveSig]
     int GetDefaultAudioEndpoint(uint dataFlow, uint role, out IMMDevice endpoint);
-
     [PreserveSig]
     int GetDevice(string pwstrId, out IMMDevice device);
-
     [PreserveSig]
     int RegisterEndpointNotificationCallback(IntPtr pclient);
-
     [PreserveSig]
     int UnregisterEndpointNotificationCallback(IntPtr pclient);
   }
@@ -359,7 +354,7 @@ namespace MediaPortal.Mixer
 
   //The method permits a client running as an administrator to open a store for read-only, write-only, or read/write access. A client that is not running as an administrator is restricted to read-only access. For more information about STGM constants, see the Windows SDK documentation.
 
-  internal enum Stgmacces
+  enum Stgmacces
   {
     STGM_READ = 0x00000000,
     STGM_WRITE = 0x00000001,
@@ -371,8 +366,14 @@ namespace MediaPortal.Mixer
     DWORD pid;
   } PROPERTYKEY;*/
 
-  internal struct PROPERTYKEY
+  struct PROPERTYKEY
   {
+// ReSharper disable InconsistentNaming
+    public Guid id;
+// ReSharper restore InconsistentNaming
+// ReSharper disable InconsistentNaming
+    public int pid;
+// ReSharper restore InconsistentNaming
   };
 
   //         MIDL_INTERFACE("886d8eeb-8cf2-4446-8d02-cdba1dbdcf99")
@@ -399,20 +400,16 @@ namespace MediaPortal.Mixer
   //00442     };
 
   [Guid("886d8eeb-8cf2-4446-8d02-cdba1dbdcf99"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IPropertyStore
+  interface IPropertyStore
   {
     [PreserveSig]
     int GetCount(out Int32 count);
-
     [PreserveSig]
     int GetAt(int Prop, out PROPERTYKEY pkey);
-
     [PreserveSig]
     int GetValue(ref PROPERTYKEY pkey, out PropVariant ppv);
-
     [PreserveSig]
     int SetValue(ref PROPERTYKEY pkey, ref PropVariant ppropvar);
-
     [PreserveSig]
     int Commit();
   };
@@ -473,18 +470,14 @@ namespace MediaPortal.Mixer
   //00369     };
 
   [Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IMMDevice
+  interface IMMDevice
   {
     [PreserveSig]
-    int Activate(ref Guid iid, CTX dwClsCtx, IntPtr pActivationParams,
-                 [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
-
+    int Activate(ref Guid iid, CTX dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
     [PreserveSig]
     int OpenPropertyStore(Stgmacces stgmAccess, out IPropertyStore propertyStore);
-
     [PreserveSig]
     int GetId([MarshalAs(UnmanagedType.LPWStr)] out string ppstrId);
-
     [PreserveSig]
     int GetState(out devstatus pdwState);
   }
@@ -499,7 +492,7 @@ namespace MediaPortal.Mixer
   //00118     };   
 
   [Guid("657804FA-D6AD-4496-8A60-352752AF4F89"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IAudioEndpointVolumeCallback
+  interface IAudioEndpointVolumeCallback
   {
     [PreserveSig]
     int OnNotify(IntPtr pNotifyData);
@@ -599,59 +592,42 @@ namespace MediaPortal.Mixer
   //00281     };
 
   [Guid("5CDF2C82-841E-4546-9722-0CF74078229A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IAudioEndpointVolume
+  interface IAudioEndpointVolume
   {
     [PreserveSig]
     int RegisterControlChangeNotify(IAudioEndpointVolumeCallback pNotify);
-
     [PreserveSig]
     int UnregisterControlChangeNotify(IAudioEndpointVolumeCallback pNotify);
-
     [PreserveSig]
     int GetChannelCount(out int pnChannelCount);
-
     [PreserveSig]
     int SetMasterVolumeLevel(float fLevelDB, Guid pguidEventContext);
-
     [PreserveSig]
     int SetMasterVolumeLevelScalar(float fLevel, Guid pguidEventContext);
-
     [PreserveSig]
     int GetMasterVolumeLevel(out float pfLevelDB);
-
     [PreserveSig]
     int GetMasterVolumeLevelScalar(out float pfLevel);
-
     [PreserveSig]
     int SetChannelVolumeLevel(uint nChannel, float fLevelDB, Guid pguidEventContext);
-
     [PreserveSig]
     int SetChannelVolumeLevelScalar(uint nChannel, float fLevel, Guid pguidEventContext);
-
     [PreserveSig]
     int GetChannelVolumeLevel(uint nChannel, out float pfLevelDB);
-
     [PreserveSig]
     int GetChannelVolumeLevelScalar(uint nChannel, out float pfLevel);
-
     [PreserveSig]
     int SetMute([MarshalAs(UnmanagedType.Bool)] Boolean bMute, Guid pguidEventContext);
-
     [PreserveSig]
     int GetMute(out bool pbMute);
-
     [PreserveSig]
     int GetVolumeStepInfo(out uint pnStep, out uint pnStepCount);
-
     [PreserveSig]
     int VolumeStepUp(Guid pguidEventContext);
-
     [PreserveSig]
     int VolumeStepDown(Guid pguidEventContext);
-
     [PreserveSig]
     int QueryHardwareSupport(out uint pdwHardwareSupportMask);
-
     [PreserveSig]
     int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
   }
@@ -660,18 +636,56 @@ namespace MediaPortal.Mixer
   //00914 MMDeviceEnumerator;
 
   [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
-  internal class _AEDeviceEnumerator
+  class _AEDeviceEnumerator
   {
   }
 
   public class AudioVolumeNotificationData
   {
-    private readonly float[] _ChannelVolume;
-    private readonly int _Channels;
-    private readonly Guid _EventContext;
-    private readonly float _MasterVolume;
-    private readonly bool _Muted;
+    private Guid _EventContext;
+    private bool _Muted;
+    private float _MasterVolume;
+    private int _Channels;
+    private float[] _ChannelVolume;
 
+    public Guid EventContext
+    {
+      get
+      {
+        return _EventContext;
+      }
+    }
+
+    public bool Muted
+    {
+      get
+      {
+        return _Muted;
+      }
+    }
+
+    public float MasterVolume
+    {
+      get
+      {
+        return _MasterVolume;
+      }
+    }
+    public int Channels
+    {
+      get
+      {
+        return _Channels;
+      }
+    }
+
+    public float[] ChannelVolume
+    {
+      get
+      {
+        return _ChannelVolume;
+      }
+    }
     public AudioVolumeNotificationData(Guid eventContext, bool muted, float masterVolume, float[] channelVolume)
     {
       _EventContext = eventContext;
@@ -680,40 +694,15 @@ namespace MediaPortal.Mixer
       _Channels = channelVolume.Length;
       _ChannelVolume = channelVolume;
     }
-
-    public Guid EventContext
-    {
-      get { return _EventContext; }
-    }
-
-    public bool Muted
-    {
-      get { return _Muted; }
-    }
-
-    public float MasterVolume
-    {
-      get { return _MasterVolume; }
-    }
-
-    public int Channels
-    {
-      get { return _Channels; }
-    }
-
-    public float[] ChannelVolume
-    {
-      get { return _ChannelVolume; }
-    }
   }
 
   internal struct AUDIO_VOLUME_NOTIFICATION_DATA
   {
-    public float ChannelVolume;
+    public Guid guidEventContext;
     public bool bMuted;
     public float fMasterVolume;
-    public Guid guidEventContext;
     public uint nChannels;
+    public float ChannelVolume;
 
     private void FixCS0649()
     {
@@ -727,7 +716,7 @@ namespace MediaPortal.Mixer
 
   internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback
   {
-    private readonly AEDev _Parent;
+    private AEDev _Parent;
 
     internal AudioEndpointVolumeCallback(AEDev parent)
     {
@@ -742,39 +731,38 @@ namespace MediaPortal.Mixer
       //to get all data, thats why it is split up into two steps, first the static
       //data is marshalled into the data structure, then with some IntPtr math the
       //remaining floats are read from memory.
-      var data =
-        (AUDIO_VOLUME_NOTIFICATION_DATA) Marshal.PtrToStructure(NotifyData, typeof (AUDIO_VOLUME_NOTIFICATION_DATA));
+      AUDIO_VOLUME_NOTIFICATION_DATA data = (AUDIO_VOLUME_NOTIFICATION_DATA)Marshal.PtrToStructure(NotifyData, typeof(AUDIO_VOLUME_NOTIFICATION_DATA));
 
       //Determine offset in structure of the first float
-      IntPtr Offset = Marshal.OffsetOf(typeof (AUDIO_VOLUME_NOTIFICATION_DATA), "ChannelVolume");
+      IntPtr Offset = Marshal.OffsetOf(typeof(AUDIO_VOLUME_NOTIFICATION_DATA), "ChannelVolume");
       //Determine offset in memory of the first float
-      var FirstFloatPtr = (IntPtr) ((long) NotifyData + (long) Offset);
+      IntPtr FirstFloatPtr = (IntPtr)((long)NotifyData + (long)Offset);
 
-      var voldata = new float[data.nChannels];
+      float[] voldata = new float[data.nChannels];
 
       //Read all floats from memory.
       for (int i = 0; i < data.nChannels; i++)
       {
-        voldata[i] = (float) Marshal.PtrToStructure(FirstFloatPtr, typeof (float));
+        voldata[i] = (float)Marshal.PtrToStructure(FirstFloatPtr, typeof(float));
       }
 
       //Create combined structure and Fire Event in parent class.
-      var NotificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted, data.fMasterVolume,
-                                                             voldata);
+      AudioVolumeNotificationData NotificationData = new AudioVolumeNotificationData(data.guidEventContext, data.bMuted, data.fMasterVolume, voldata);
       _Parent.FireNotification(NotificationData);
       return 0; //S_OK
     }
   }
-
+  
   public class AEDev : IDisposable
   {
+    private IMMDevice _RealDevice;
     // private AudEVol _AudioEndpointVolume;
-    private static Guid IID_IAudioEndpointVolume = typeof (IAudioEndpointVolume).GUID;
-    private static string _devId = String.Empty;
-    private readonly IAudioEndpointVolume _AudioEndPointVolume;
-    private readonly IMMDevice _RealDevice;
-    private readonly IMMDeviceEnumerator _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+    private static Guid IID_IAudioEndpointVolume = typeof(IAudioEndpointVolume).GUID;
+    private IMMDeviceEnumerator _realEnumerator = new _AEDeviceEnumerator() as IMMDeviceEnumerator;
+    private IAudioEndpointVolume _AudioEndPointVolume;
     private AudioEndpointVolumeCallback _CallBack;
+    public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
+    private static string _devId = String.Empty;
 
     public AEDev()
     {
@@ -800,6 +788,24 @@ namespace MediaPortal.Mixer
       Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
     }
 
+    public void Dispose()
+    {
+      if (_CallBack != null)
+      {
+        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
+        _CallBack = null;
+      }
+    }
+
+    internal void FireNotification(AudioVolumeNotificationData NotificationData)
+    {
+      AudioEndpointVolumeNotificationDelegate del = OnVolumeNotification;
+      if (del != null)
+      {
+        del(NotificationData);
+      }
+    }
+
     public float MasterVolume
     {
       get
@@ -808,7 +814,10 @@ namespace MediaPortal.Mixer
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevelScalar(out result));
         return result;
       }
-      set { Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty)); }
+      set
+      {
+        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
+      }
     }
 
     public bool Muted
@@ -819,26 +828,9 @@ namespace MediaPortal.Mixer
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMute(out result));
         return result;
       }
-      set { Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty)); }
-    }
-
-    public void Dispose()
-    {
-      if (_CallBack != null)
+      set
       {
-        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
-        _CallBack = null;
-      }
-    }
-
-    public event AudioEndpointVolumeNotificationDelegate OnVolumeNotification;
-
-    internal void FireNotification(AudioVolumeNotificationData NotificationData)
-    {
-      AudioEndpointVolumeNotificationDelegate del = OnVolumeNotification;
-      if (del != null)
-      {
-        del(NotificationData);
+        Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
       }
     }
   }
