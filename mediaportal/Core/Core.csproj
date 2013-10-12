@@ -1657,9 +1657,7 @@
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="System.Windows.Threading\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
