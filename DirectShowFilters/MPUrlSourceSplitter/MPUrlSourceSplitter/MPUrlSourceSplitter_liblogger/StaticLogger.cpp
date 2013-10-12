@@ -53,6 +53,11 @@ CStaticLogger::~CStaticLogger(void)
 
 /* get methods */
 
+CStaticLoggerContextCollection *CStaticLogger::GetLoggerContexts(void)
+{
+  return this->loggerContexts;
+}
+
 /* set methods */
 
 /* other methods */

@@ -33,6 +33,10 @@ public:
 
   /* get methods */
 
+  // gets static logger context collection
+  // @return : static logger context collection
+  CStaticLoggerContextCollection *GetLoggerContexts(void);
+
   /* set methods */
 
   /* other methods */
