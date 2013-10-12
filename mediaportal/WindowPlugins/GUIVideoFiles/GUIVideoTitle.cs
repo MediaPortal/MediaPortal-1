@@ -928,7 +928,7 @@ namespace MediaPortal.GUI.Video
             item.Label3 = movie.WatchedPercent + "% #" + movie.WatchedCount;
           }
         }
-        catch (Exception ex){}
+        catch (Exception){}
         
         item.OnItemSelected += OnItemSelected;
         SetLabel(item);

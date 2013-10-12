@@ -79,8 +79,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public delegate void CrossFadeHandler(object sender, string filePath);
 
-    public event CrossFadeHandler CrossFade;
-
     public delegate void PlaybackStateChangedDelegate(object sender, PlayState oldState, PlayState newState);
 
     public event PlaybackStateChangedDelegate PlaybackStateChanged;

@@ -266,6 +266,7 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
