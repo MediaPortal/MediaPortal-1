@@ -65,22 +65,15 @@ namespace MediaPortal.Util
       }
 
       _imageList.Clear();
-      //InternalCSScriptGrabbersLoader.Movies.ImagesGrabber impAwardsImageScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
-
+      
       try
       {
-        //if (impAwardsImageScraper.LoadScript())
-        //{
-        //  _imageList = impAwardsImageScraper.MovieImagesGrabber.GetIMPAwardsImages(movieName, imdbMovieID);
-        //}
         _imageList = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetIMPAwardsImages(movieName, imdbMovieID);
       }
       catch (Exception ex)
       {
         Log.Error("Util IMPAwardSearchCovers error: {0}", ex.Message);
       }
-
-      //impAwardsImageScraper = null;
     }
   }
 }

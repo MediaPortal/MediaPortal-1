@@ -191,8 +191,6 @@ namespace MediaPortal.GUI.Video
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
     
-    //private static IMDB.InternalActorsScriptGrabber _internalGrabber = new IMDB.InternalActorsScriptGrabber();
-
     #endregion
 
     #region constructors
@@ -2766,12 +2764,7 @@ namespace MediaPortal.GUI.Video
     {
       _virtualDirectory.SetExtensions(extensions);
     }
-
-    //public static IMDB.InternalActorsScriptGrabber InternalGrabber
-    //{
-    //  get { return _internalGrabber; }
-    //}
-
+    
     #endregion
 
     #region Private methods

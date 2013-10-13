@@ -69,22 +69,15 @@ namespace MediaPortal.Util
       if (!imdbID.StartsWith("tt")) return;
       
       _imageList.Clear();
-      //InternalCSScriptGrabbersLoader.Movies.ImagesGrabber imdbImageScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
-
+      
       try
       {
-        //if (imdbImageScraper.LoadScript())
-        //{
-        //  _imageList = imdbImageScraper.MovieImagesGrabber.GetIMDBImages(imdbID, defaultOnly);
-        //}
         _imageList = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetIMDBImages(imdbID, defaultOnly);
       }
       catch (Exception ex)
       {
         Log.Error("Util IMDBSearchCovers error: {0}", ex.Message);
       }
-      
-      //imdbImageScraper = null;
     }
   }
 }

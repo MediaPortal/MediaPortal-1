@@ -168,7 +168,6 @@ namespace MediaPortal.Video.Database
       private string _id;
       private int _limit = DEFAULT_SEARCH_LIMIT;
       private static IIMDBScriptGrabber _grabber;
-      //private static bool _grabberLoaded;
       private static AsmHelper _asmHelper;
       private static Dictionary<string, IIMDBScriptGrabber> _grabbers = new Dictionary<string, IIMDBScriptGrabber>();
 
@@ -196,18 +195,15 @@ namespace MediaPortal.Video.Database
         {
           if (!_grabbers.ContainsKey(ID))
           {
-            //if (!_grabberLoaded)
-            //{
-              if (!LoadScript(ID))
-              {
-                Grabber = null;
-              }
-              else
-              {
-                _grabbers[ID] = _grabber;
-              }
-              //_grabberLoaded = true; // only try to load it once
-            //}
+            if (!LoadScript(ID))
+            {
+              Grabber = null;
+            }
+            else
+            {
+              _grabbers[ID] = _grabber;
+            }
+            
             return _grabber;
           }
           return _grabbers[ID];
@@ -230,7 +226,6 @@ namespace MediaPortal.Video.Database
         }
 
         _grabbers.Clear();
-        //_grabberLoaded = false;
       }
 
       private static bool LoadScript(string dbId)

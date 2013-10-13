@@ -157,15 +157,9 @@ namespace MediaPortal.Util
       }
       
       _fanartList.Clear();
-      //InternalCSScriptGrabbersLoader.Movies.ImagesGrabber tmdbFanartApiScraper = new InternalCSScriptGrabbersLoader.Movies.ImagesGrabber();
-
+      
       try
       {
-        //if (tmdbFanartApiScraper.LoadScript())
-        //{
-        //  _fanartList = tmdbFanartApiScraper.MovieImagesGrabber.
-        //    GetTmdbFanartByApi(movieId, imdbTT, title, random, countFA, strSearch, out _fileFanArtDefault, out _fanartUrl);
-        //}
         _fanartList = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetTmdbFanartByApi(
           movieId, imdbTT, title, random, countFA, strSearch, out _fileFanArtDefault, out _fanartUrl);
       }
@@ -173,8 +167,6 @@ namespace MediaPortal.Util
       {
         Log.Error("Util Fanart GetTmdbFanartByApi error: {0}", ex.Message);
       }
-
-      //tmdbFanartApiScraper = null;
     }
 
     /// <summary>
