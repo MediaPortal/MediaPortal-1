@@ -394,36 +394,36 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
 
-          //bool supportedPayloadType = false;
-          //for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
-          //{
-          //  SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+          bool supportedPayloadType = false;
+          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          {
+            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
 
-          //  if (mediaDescription->GetMediaFormats()->Count() == 1)
-          //  {
-          //    // there must be only one media format
-          //    CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            {
+              // there must be only one media format
+              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-          //    if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-          //        (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
-          //    {
-          //      supportedPayloadType = true;
-          //    }
-          //    else
-          //    {
-          //      this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
-          //    }
-          //  }
-          //  else
-          //  {
-          //    this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
-          //  }
-          //}
+              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
+                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              {
+                supportedPayloadType = true;
+              }
+              else
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+            }
+          }
 
-          //if (!supportedPayloadType)
-          //{
-          //  continue;
-          //}
+          if (!supportedPayloadType)
+          {
+            continue;
+          }
 
           // find control attribute
           CAttributeCollection *attributes = mediaDescription->GetAttributes();
@@ -625,36 +625,36 @@ bool CRtspCurlInstance::Initialize(CDownloadRequest *downloadRequest)
         {
           CMediaDescription *mediaDescription = this->rtspDownloadResponse->GetSessionDescription()->GetMediaDescriptions()->GetItem(i);
 
-          //bool supportedPayloadType = false;
-          //for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
-          //{
-          //  SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
+          bool supportedPayloadType = false;
+          for (unsigned int j = 0; ((error == CURLE_OK) && (!supportedPayloadType) && (j < TOTAL_SUPPORTED_PAYLOAD_TYPES)); j++)
+          {
+            SupportedPayloadType payloadType = SUPPORTED_PAYLOAD_TYPES[j];
 
-          //  if (mediaDescription->GetMediaFormats()->Count() == 1)
-          //  {
-          //    // there must be only one media format
-          //    CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
+            if (mediaDescription->GetMediaFormats()->Count() == 1)
+            {
+              // there must be only one media format
+              CMediaFormat *mediaFormat = mediaDescription->GetMediaFormats()->GetItem(0);
 
-          //    if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
-          //        (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
-          //    {
-          //      supportedPayloadType = true;
-          //    }
-          //    else
-          //    {
-          //      this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
-          //    }
-          //  }
-          //  else
-          //  {
-          //    this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
-          //  }
-          //}
+              if ((mediaFormat->GetPayloadType() == payloadType.payloadType) ||
+                  (CompareWithNull(mediaFormat->GetName(), payloadType.name) == 0))
+              {
+                supportedPayloadType = true;
+              }
+              else
+              {
+                this->logger->Log(LOGGER_WARNING, L"%s: %s: media description format not supported: %d, %s", this->protocolName, METHOD_INITIALIZE_NAME, mediaFormat->GetPayloadType(), (mediaFormat->GetName() == NULL) ? L"unknown" : mediaFormat->GetName());
+              }
+            }
+            else
+            {
+              this->logger->Log(LOGGER_ERROR, L"%s: %s: media description specify more media formats as allowed: '%s'", this->protocolName, METHOD_INITIALIZE_NAME, mediaDescription->GetTagContent());
+            }
+          }
 
-          //if (!supportedPayloadType)
-          //{
-          //  continue;
-          //}
+          if (!supportedPayloadType)
+          {
+            continue;
+          }
 
           // find control attribute
           CAttributeCollection *attributes = mediaDescription->GetAttributes();
