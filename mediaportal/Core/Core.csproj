@@ -315,6 +315,7 @@
     <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterFromFile.cs" />
     <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
       <SubType>Code</SubType>
     </Compile>
