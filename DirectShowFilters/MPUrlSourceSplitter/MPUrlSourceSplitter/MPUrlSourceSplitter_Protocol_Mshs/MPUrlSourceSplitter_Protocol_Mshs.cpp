@@ -1259,6 +1259,8 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
   // MSHS protocol can seek to ms
   // time is in ms
 
+  time = time * this->streamingMedia->GetTimeScale() / 1000;
+
   // find stream fragment to process
   if (this->streamFragments != NULL)
   {
@@ -1316,6 +1318,11 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::SeekToTime(int64_t time)
   else
   {
     this->streamTime = result;
+  }
+
+  if (result >= 0)
+  {
+    result = result * 1000 / this->streamingMedia->GetTimeScale();
   }
 
   this->logger->Log(LOGGER_VERBOSE, METHOD_END_INT64_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_SEEK_TO_TIME_NAME, result);
@@ -1524,6 +1531,7 @@ CStreamFragmentCollection *CMPUrlSourceSplitter_Protocol_Mshs::GetStreamFragment
       {
         lastTimestamp = fragmentTime;
 
+        //CStreamFragment *streamFragment = new CStreamFragment(url, fragmentDuration * 1000 / manifest->GetTimeScale(), fragmentTime * 1000 / manifest->GetTimeScale(), fragmentType);
         CStreamFragment *streamFragment = new CStreamFragment(url, fragmentDuration, fragmentTime, fragmentType);
         CHECK_POINTER_HRESULT(result, streamFragment, result, E_OUTOFMEMORY);
 
