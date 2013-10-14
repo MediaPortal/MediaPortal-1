@@ -1116,6 +1116,13 @@ namespace MediaPortal.MusicPlayer.BASS
         VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
                                               vizPreset);
 
+        if (vizType == (int)VisualizationInfo.PluginType.Sonique)
+        {
+          VizPluginInfo.UseOpenGL = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+          VizPluginInfo.RenderTiming = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+          VizPluginInfo.ViewPortSize = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+        }
+
         VizFPS = xmlreader.GetValueAsInt("musicvisualization", "fps", 30);
       }
     }
@@ -1377,7 +1384,7 @@ namespace MediaPortal.MusicPlayer.BASS
     internal int GetCurrentVizStream()
     {
       // Return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      return _streamcopy.Stream;
+      return _streamcopy.ChannelHandle;
     }
 
     /// <summary>
@@ -2349,19 +2356,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Debug("BASS: Fullscreen");
 
-        _VideoPositionX = GUIGraphicsContext.OverScanLeft + GUIGraphicsContext.OffsetX;
-        _VideoPositionY = GUIGraphicsContext.OverScanTop + GUIGraphicsContext.OffsetY;
-
-        _VideoWidth =
-          (int)Math.Round((float)GUIGraphicsContext.OverScanWidth * (float)GUIGraphicsContext.ZoomHorizontal);
-        _VideoHeight =
-          (int)Math.Round((float)GUIGraphicsContext.OverScanHeight * (float)GUIGraphicsContext.ZoomVertical);
-
-        VizWindow.Location = new Point(_VideoPositionX, _VideoPositionY);
-        //VizWindow.Visible = false;
-
-        _videoRectangle = new Rectangle(_VideoPositionX, _VideoPositionY, _VideoWidth, _VideoHeight);
-        _sourceRectangle = _videoRectangle;
+        _VideoWidth = GUIGraphicsContext.form.ClientRectangle.Width;
+        _VideoHeight = GUIGraphicsContext.form.ClientRectangle.Height;
 
         VizWindow.Size = new Size(_VideoWidth, _VideoHeight);
         VizWindow.Visible = true;

@@ -363,6 +363,7 @@
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
+    <Compile Include="MusicPlayer\Visualization\BassboxViz.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
