@@ -233,7 +233,21 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
 
           if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, MiniDumpWithDataSegs, &minidumpException, NULL, NULL) == TRUE)
           {
-            staticLogger->LogMessage(context->GetMutex(), LOGGER_ERROR, dumpFileName);
+            wchar_t *guid = ConvertGuidToString(GUID_NULL);
+
+            wchar_t *message = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
+              currentLocalTime.wDay, currentLocalTime.wMonth, currentLocalTime.wYear,
+              currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond,
+              currentLocalTime.wMilliseconds,
+              GetCurrentThreadId(),
+              guid,
+              L"[Error]  ",
+              dumpFileName);
+
+            staticLogger->LogMessage(context->GetMutex(), LOGGER_ERROR, message);
+
+            FREE_MEM(guid);
+            FREE_MEM(message);
           }
 
           CloseHandle(dumpFile);

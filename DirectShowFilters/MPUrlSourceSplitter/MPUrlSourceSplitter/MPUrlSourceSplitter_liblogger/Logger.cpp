@@ -167,7 +167,7 @@ wchar_t *CLogger::GetLogMessage(unsigned int level, const wchar_t *format, va_li
 
   wchar_t *logRow = FormatString(L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%4x] [%s] %s %s\r\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
     systemTime.wMilliseconds,
     GetCurrentThreadId(),
     guid,
