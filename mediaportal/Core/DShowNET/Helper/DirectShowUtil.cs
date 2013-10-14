@@ -935,11 +935,27 @@ namespace DShowNET.Helper
             {
               if (pinName == "Audio")
               {
-                VolumeHandler vh = VolumeHandler.Instance;
-                // vh.Volume = 19660500 that means Audio endpoint device are not available.
-                if (vh.Volume != 19660500)
+                try
                 {
-                  hr = graphBuilder.Render(pins[0]);
+                  #pragma warning disable 168
+                  VolumeHandler vh = VolumeHandler.Instance;
+                  #pragma warning restore 168
+                  // vh.Volume = 19660500 that means Audio endpoint device are not available.
+                  if (vh.Volume == 19660500) // Check if new audio device is connected
+                  {
+                    VolumeHandler.Dispose();
+                    #pragma warning disable 168
+                    vh = VolumeHandler.Instance;
+                    #pragma warning restore 168
+                  }
+                  if (vh.Volume != 19660500)
+                  {
+                    hr = graphBuilder.Render(pins[0]);
+                  }
+                }
+                catch (Exception exception)
+                {
+                  Log.Warn("DirectShowUtil: Could not initialize volume handler (don't connect Audio Pin) : ", exception.Message);
                 }
               }
               else
@@ -947,7 +963,7 @@ namespace DShowNET.Helper
                 hr = graphBuilder.Render(pins[0]);
               }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
               // Can't handle pin out
             }

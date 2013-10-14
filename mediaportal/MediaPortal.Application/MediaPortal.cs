@@ -1751,8 +1751,6 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-                // Need time to dispose Audio Device
-                Thread.Sleep(2000);
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
                 #pragma warning restore 168
@@ -1776,8 +1774,6 @@ public class MediaPortalApp : D3D, IRender
               try
               {
                 VolumeHandler.Dispose();
-                // Need time to dispose Audio Device
-                Thread.Sleep(2000);
                 #pragma warning disable 168
                 VolumeHandler vh = VolumeHandler.Instance;
                 #pragma warning restore 168
