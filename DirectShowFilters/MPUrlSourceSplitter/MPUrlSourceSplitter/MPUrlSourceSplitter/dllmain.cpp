@@ -198,7 +198,9 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
   // we received some unhandled exception
   // flush logs and continue with processing exception
 
-  if ((exceptionInfo->ExceptionRecord->ExceptionCode != 0xE0434F4D) && (exceptionHandler != NULL))
+  // 0xE0434F4D - COM exception
+  // 0x406D1388 - exception thrown in SetThreadName
+  if ((exceptionInfo->ExceptionRecord->ExceptionCode != 0xE0434F4D) && (exceptionInfo->ExceptionRecord->ExceptionCode != 0x406D1388) && (exceptionHandler != NULL))
   {
     // remove exception handler
     RemoveVectoredExceptionHandler(exceptionHandler);
