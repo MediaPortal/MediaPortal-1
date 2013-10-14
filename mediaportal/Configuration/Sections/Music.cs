@@ -126,6 +126,8 @@ namespace MediaPortal.Configuration.Sections
     private string _soundDevice = null;
     private string _soundDeviceID = "";
 
+    private bool _initialising = true;
+
     #endregion
 
     #region ctor
@@ -179,6 +181,7 @@ namespace MediaPortal.Configuration.Sections
     {
       base.OnLoad(e);
 
+      _initialising = true;
       trackBarBuffering_Scroll(null, null);
       trackBarCrossfade_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
@@ -217,13 +220,15 @@ namespace MediaPortal.Configuration.Sections
 
         #region General Bass Player Settings
 
+        // Remove the Event Handler, so that the settings for Crossfading a preserved
+        GaplessPlaybackChkBox.CheckedChanged -= GaplessPlaybackChkBox_CheckedChanged;
+
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
         if (crossFadeMS < 0)
         {
           crossFadeMS = 4000;
         }
-
         else if (crossFadeMS > trackBarCrossfade.Maximum)
         {
           crossFadeMS = trackBarCrossfade.Maximum;
@@ -237,7 +242,6 @@ namespace MediaPortal.Configuration.Sections
         {
           bufferingMS = trackBarBuffering.Minimum;
         }
-
         else if (bufferingMS > trackBarBuffering.Maximum)
         {
           bufferingMS = trackBarBuffering.Maximum;
@@ -250,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
+        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
 
         cbUpmixMono.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
         cbUpmixStereo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
@@ -261,6 +265,9 @@ namespace MediaPortal.Configuration.Sections
         tbResumeAfter.Text = xmlreader.GetValueAsString("audioplayer", "resumeAfter", "0");
         cbResumeSelect.Text = xmlreader.GetValueAsString("audioplayer", "resumeSelect", "");
         tbResumeSearchValue.Text = xmlreader.GetValueAsString("audioplayer", "resumeSearch", "");
+
+        // Re-add the previously removed Event Handler
+        GaplessPlaybackChkBox.CheckedChanged += GaplessPlaybackChkBox_CheckedChanged;
 
         #endregion
 
@@ -994,8 +1001,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void trackBarCrossfade_Scroll(object sender, EventArgs e)
     {
-      float xFadeSecs = 0;
-      xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
+      float xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
 
@@ -1088,6 +1094,25 @@ namespace MediaPortal.Configuration.Sections
       CrossFadingLbl.Enabled = !gaplessEnabled;
       trackBarCrossfade.Enabled = !gaplessEnabled;
       CrossFadeSecondsLbl.Enabled = !gaplessEnabled;
+      
+      if (_initialising)
+      {
+        _initialising = false;
+        return;
+      }
+
+      if (!gaplessEnabled)
+      {
+        trackBarCrossfade.Value = 4000;  // Set 4 seconds as default for fading
+        trackBarCrossfade_Scroll(trackBarCrossfade, new EventArgs());
+        FadeOnStartStopChkbox.Checked = true;
+      }
+      else
+      {
+        trackBarCrossfade.Value = 0;
+        trackBarCrossfade_Scroll(trackBarCrossfade, new EventArgs());
+        FadeOnStartStopChkbox.Checked = false;
+      }
     }
 
     private void EnableStatusOverlaysChkBox_CheckedChanged(object sender, EventArgs e)
