@@ -1051,26 +1051,34 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
 
     if (this->liveStream)
     {
-
+      // in case of live stream remove all downloaded fragments before reported stream time
       if ((this->rtmpStreamFragments->Count() > 0) && (this->streamFragmentProcessing != UINT_MAX))
       {
         // leave last fragment in collection in order to not add downloaded and processed fragments
         while ((this->streamFragmentProcessing > 0) && (this->rtmpStreamFragments->Count() > 1))
         {
-          this->rtmpStreamFragments->Remove(0);
-          this->streamFragmentProcessing--;
+          CRtmpStreamFragment *fragment = this->rtmpStreamFragments->GetItem(0);
 
-          if (this->streamFragmentDownloading != UINT_MAX)
+          if (fragment->IsDownloaded() && (fragment->GetFragmentStartTimestamp() < this->reportedStreamTime))
           {
-            this->streamFragmentDownloading--;
+            this->rtmpStreamFragments->Remove(0);
+            this->streamFragmentProcessing--;
+
+            if (this->streamFragmentDownloading != UINT_MAX)
+            {
+              this->streamFragmentDownloading--;
+            }
+            if (this->streamFragmentToDownload != UINT_MAX)
+            {
+              this->streamFragmentToDownload--;
+            }
           }
-          if (this->streamFragmentToDownload != UINT_MAX)
+          else
           {
-            this->streamFragmentToDownload--;
+            break;
           }
         }
       }
-
     }
   }
 
@@ -1253,6 +1261,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Rtmp::GetDuration(void)
 
 void CMPUrlSourceSplitter_Protocol_Rtmp::ReportStreamTime(uint64_t streamTime)
 {
+  this->reportedStreamTime = streamTime;
 }
 
 // ISeeking interface

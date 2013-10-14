@@ -237,6 +237,9 @@ protected:
   // holds duration in ms of RTMP stream (used in total length guess)
   // RTMP_DURATION_UNSPECIFIED if not specified
   uint64_t duration;
+
+  // holds filter actual stream time
+  uint64_t reportedStreamTime;
 };
 
 #endif

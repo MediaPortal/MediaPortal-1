@@ -143,7 +143,7 @@ long CParameterCollection::GetValueUnsignedInt(const wchar_t *name, bool invaria
 {
   const wchar_t *value = this->GetValue(name, invariant, L"");
   wchar_t *end = NULL;
-  long valueLong = wcstol(value, &end, 10);
+  unsigned long valueLong = wcstoul(value, &end, 10);
   if ((valueLong == 0) && (value == end))
   {
     // error while converting

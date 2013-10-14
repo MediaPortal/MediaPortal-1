@@ -1237,6 +1237,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Mshs::GetDuration(void)
 
 void CMPUrlSourceSplitter_Protocol_Mshs::ReportStreamTime(uint64_t streamTime)
 {
+  this->reportedStreamTime = streamTime;
 }
 
 // ISeeking interface

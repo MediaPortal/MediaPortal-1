@@ -269,6 +269,12 @@ protected:
 
   // specifies if FLV header was added or not
   bool addedHeader;
+
+  // holds filter actual stream time
+  uint64_t reportedStreamTime;
+
+  // holds timestamp of zero time, UINT64_MAX means not set
+  uint64_t zeroTimeSegmentFragmentTimestamp;
 };
 
 #endif

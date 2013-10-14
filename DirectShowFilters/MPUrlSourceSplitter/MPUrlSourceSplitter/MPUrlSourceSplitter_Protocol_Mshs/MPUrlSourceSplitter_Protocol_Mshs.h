@@ -341,6 +341,9 @@ protected:
 
   // holds last used track ID
   unsigned int lastTrackID;
+
+  // holds filter actual stream time
+  uint64_t reportedStreamTime;
 };
 
 #endif

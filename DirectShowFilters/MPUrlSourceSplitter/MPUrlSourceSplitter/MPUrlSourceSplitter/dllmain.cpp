@@ -198,56 +198,56 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
   // we received some unhandled exception
   // flush logs and continue with processing exception
 
-  if (staticLogger != NULL)
-  {
-    SYSTEMTIME currentLocalTime;
-    MINIDUMP_EXCEPTION_INFORMATION minidumpException;
-    GetLocalTime(&currentLocalTime);
-
-    for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
-    {
-      CStaticLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
-
-      wchar_t *contextLogFile = Duplicate(context->GetLogFile());
-      PathRemoveFileSpec(contextLogFile);
-
-      // files with 'dmp' extension are known for Visual Studio
-
-      wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
-        currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
-        currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
-
-      HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
-
-      if (dumpFile != INVALID_HANDLE_VALUE)
-      {
-        minidumpException.ThreadId = GetCurrentThreadId();
-        minidumpException.ExceptionPointers = exceptionInfo;
-        minidumpException.ClientPointers = TRUE;
-
-        if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, MiniDumpWithDataSegs, &minidumpException, NULL, NULL) == TRUE)
-        {
-          staticLogger->LogMessage(context->GetMutex(), LOGGER_ERROR, dumpFileName);
-        }
-
-        CloseHandle(dumpFile);
-      }
-
-      FREE_MEM(dumpFileName);
-      FREE_MEM(contextLogFile);
-    }
-  }
-
-  if (staticLogger != NULL)
-  {
-    staticLogger->Flush();
-  }
-
-  if (exceptionHandler != NULL)
+  if ((exceptionInfo->ExceptionRecord->ExceptionCode != 0xE0434F4D) && (exceptionHandler != NULL))
   {
     // remove exception handler
     RemoveVectoredExceptionHandler(exceptionHandler);
     exceptionHandler = NULL;
+
+    if (staticLogger != NULL)
+    {
+      SYSTEMTIME currentLocalTime;
+      MINIDUMP_EXCEPTION_INFORMATION minidumpException;
+      GetLocalTime(&currentLocalTime);
+
+      for (unsigned int i = 0; i < staticLogger->GetLoggerContexts()->Count(); i++)
+      {
+        CStaticLoggerContext *context = staticLogger->GetLoggerContexts()->GetItem(i);
+
+        wchar_t *contextLogFile = Duplicate(context->GetLogFile());
+        PathRemoveFileSpec(contextLogFile);
+
+        // files with 'dmp' extension are known for Visual Studio
+
+        wchar_t *dumpFileName = FormatString(L"%s\\MPUrlSourceSplitter-%04.4d-%02.2d-%02.2d-%02.2d-%02.2d-%02.2d-%03.3d.dmp", contextLogFile,
+          currentLocalTime.wYear, currentLocalTime.wMonth, currentLocalTime.wDay,
+          currentLocalTime.wHour, currentLocalTime.wMinute, currentLocalTime.wSecond, currentLocalTime.wMilliseconds);
+
+        HANDLE dumpFile = CreateFile(dumpFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+
+        if (dumpFile != INVALID_HANDLE_VALUE)
+        {
+          minidumpException.ThreadId = GetCurrentThreadId();
+          minidumpException.ExceptionPointers = exceptionInfo;
+          minidumpException.ClientPointers = TRUE;
+
+          if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), dumpFile, MiniDumpWithDataSegs, &minidumpException, NULL, NULL) == TRUE)
+          {
+            staticLogger->LogMessage(context->GetMutex(), LOGGER_ERROR, dumpFileName);
+          }
+
+          CloseHandle(dumpFile);
+        }
+
+        FREE_MEM(dumpFileName);
+        FREE_MEM(contextLogFile);
+      }
+    }
+
+    if (staticLogger != NULL)
+    {
+      staticLogger->Flush();
+    }
   }
 
   return EXCEPTION_CONTINUE_SEARCH;

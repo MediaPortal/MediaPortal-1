@@ -35,6 +35,7 @@ public:
   // initializes a new instance of CSegmentFragment class
   // @param segment : segment ID
   // @param fragment : fragment ID
+  // @param fragmentTimestamp : the timestamp of segment and fragment in ms
   CSegmentFragment(unsigned int segment, unsigned int fragment, uint64_t fragmentTimestamp);
 
   // destructor
@@ -50,8 +51,8 @@ public:
   // @return : fragment ID
   unsigned int GetFragment(void);
 
-  // gets fragment timestamp
-  // @return : fragment timestamp
+  // gets fragment timestamp in ms
+  // @return : fragment timestamp in ms
   uint64_t GetFragmentTimestamp(void);
 
   // gets position of start of segment and fragment within store file

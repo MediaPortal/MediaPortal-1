@@ -34,12 +34,12 @@ public:
 
   /* get methods */
 
-  // gets fragment start timestamp
-  // @return : fragment start timestamp
+  // gets fragment start timestamp in ms
+  // @return : fragment start timestamp in ms
   uint64_t GetFragmentStartTimestamp(void);
 
-  // gets fragment end timestamp
-  // @return : fragment end timestamp
+  // gets fragment end timestamp in ms
+  // @return : fragment end timestamp in ms
   uint64_t GetFragmentEndTimestamp(void);
 
   // gets position of start of fragment within store file
@@ -61,12 +61,12 @@ public:
   /* set methods */
 
   // sets fragment start timestamp
-  // @param fragmentStartTimestamp : fragment start timestamp to set
+  // @param fragmentStartTimestamp : fragment start timestamp in ms to set
   // @param setStartTimestamp : specifies if start timestamp is set by received data
   void SetFragmentStartTimestamp(uint64_t fragmentStartTimestamp, bool setStartTimestamp);
 
   // sets fragment end timestamp
-  // @param fragmentEndTimestamp : fragment end timestamp to set
+  // @param fragmentEndTimestamp : fragment end timestamp in ms to set
   void SetFragmentEndTimestamp(uint64_t fragmentEndTimestamp);
 
   // sets if fragment is downloaded

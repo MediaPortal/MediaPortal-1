@@ -125,6 +125,7 @@ CMPUrlSourceSplitter_Protocol_Afhs::CMPUrlSourceSplitter_Protocol_Afhs(CLogger *
   this->manifest = NULL;
   this->cookies = NULL;
   this->addedHeader = false;
+  this->zeroTimeSegmentFragmentTimestamp = UINT64_MAX;
 
   this->decryptionHoster = new CAfhsDecryptionHoster(this->logger, this->configurationParameters);
   if (this->decryptionHoster != NULL)
@@ -994,21 +995,31 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ReceiveData(CReceiveData *receiveDat
 
     if (this->live)
     {
+      // in case of live stream remove all downloaded segments and fragments before reported stream time
       if ((this->segmentsFragments->Count() > 0) && (this->segmentFragmentProcessing != UINT_MAX))
       {
         // leave last segment and fragment in collection in order to not add downloaded and processed segments and fragments
         while ((this->segmentFragmentProcessing > 0) && (this->segmentsFragments->Count() > 1))
         {
-          this->segmentsFragments->Remove(0);
-          this->segmentFragmentProcessing--;
+          CSegmentFragment *segmentFragment = this->segmentsFragments->GetItem(0);
 
-          if (this->segmentFragmentDownloading != UINT_MAX)
+          if (segmentFragment->IsDownloaded() && segmentFragment->IsProcessed() && ((segmentFragment->GetFragmentTimestamp() - this->zeroTimeSegmentFragmentTimestamp) < this->reportedStreamTime))
           {
-            this->segmentFragmentDownloading--;
+            this->segmentsFragments->Remove(0);
+            this->segmentFragmentProcessing--;
+
+            if (this->segmentFragmentDownloading != UINT_MAX)
+            {
+              this->segmentFragmentDownloading--;
+            }
+            if (this->segmentFragmentToDownload != UINT_MAX)
+            {
+              this->segmentFragmentToDownload--;
+            }
           }
-          if (this->segmentFragmentToDownload != UINT_MAX)
+          else
           {
-            this->segmentFragmentToDownload--;
+            break;
           }
         }
       }
@@ -1179,6 +1190,16 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::StartReceivingData(CParameterCollect
         }
       }
     }
+  }
+
+  if (this->zeroTimeSegmentFragmentTimestamp == UINT64_MAX)
+  {
+    // zero time timestamp is not set
+    // we are starting receiving data, we must set timestamp for zero time (because we are in zero time)
+
+    CSegmentFragment *segFrag = this->segmentsFragments->GetItem(this->segmentFragmentProcessing);
+
+    this->zeroTimeSegmentFragmentTimestamp = segFrag->GetFragmentTimestamp();
   }
 
   if (SUCCEEDED(result) && (this->bufferForProcessing == NULL))
@@ -1362,6 +1383,7 @@ HRESULT CMPUrlSourceSplitter_Protocol_Afhs::ClearSession(void)
   FREE_MEM_CLASS(this->manifest);
   FREE_MEM_CLASS(this->cookies);
   this->seekingActive = false;
+  this->zeroTimeSegmentFragmentTimestamp = UINT64_MAX;
 
   this->logger->Log(LOGGER_INFO, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_CLEAR_SESSION_NAME);
   return S_OK;
@@ -1374,6 +1396,7 @@ int64_t CMPUrlSourceSplitter_Protocol_Afhs::GetDuration(void)
 
 void CMPUrlSourceSplitter_Protocol_Afhs::ReportStreamTime(uint64_t streamTime)
 {
+  this->reportedStreamTime = streamTime;
 }
 
 // ISeeking interface
