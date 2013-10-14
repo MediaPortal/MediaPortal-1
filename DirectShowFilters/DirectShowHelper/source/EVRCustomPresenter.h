@@ -179,7 +179,15 @@ class MPEVRCustomPresenter :
 {
 
 public:
-  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter** EVRFilter, BOOL pIsWin7);
+  MPEVRCustomPresenter(IVMR9Callback* pCallback, 
+                       IDirect3DDevice9* direct3dDevice, 
+                       HMONITOR monitor, 
+                       IBaseFilter** EVRFilter, 
+                       BOOL pIsWin7, 
+                       int monitorIdx, 
+                       bool disVsyncCorr, 
+                       bool disMparCorr);
+                       
   virtual ~MPEVRCustomPresenter();
 
   //IQualProp (stub)
@@ -344,7 +352,7 @@ protected:
   void           ReturnSample(IMFSample* pSample, BOOL tryNotify, BOOL isWorker);
   HRESULT        PresentSample(IMFSample* pSample);
   void           VideoFpsFromSample(IMFSample* pSample);
-  void           GetRealRefreshRate();
+  void           GetRealRefreshRate(int monitorIdx);
   LONGLONG       GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime);
   void           DwmEnableMMCSSOnOff(bool enable);
   bool           BufferMoreSamples();
@@ -457,6 +465,9 @@ protected:
   int                               m_regFPSLimV;
   int                               m_regFPSLimH;
   bool                              m_bOddFrame;
+  int                               m_monitorIdx;
+  bool                              m_bDisVsyncCorr;
+  bool                              m_bDisMparCorr; 
  
   int       m_nNextSyncOffset;
   LONGLONG  nsSampleTime;
