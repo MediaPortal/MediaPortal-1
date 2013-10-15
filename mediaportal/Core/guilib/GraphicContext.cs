@@ -130,6 +130,7 @@ namespace MediaPortal.GUI.Library
     private static bool _vmr9Allowed = true;
     private static DateTime _lastActivity = DateTime.Now;
     private static Screen _currentScreen;
+    private static int _currentMonitorIdx = -1;
     private static readonly bool IsDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _allowRememberLastFocusedItem = true;
 
@@ -280,6 +281,20 @@ namespace MediaPortal.GUI.Library
         return _currentScreen ?? Screen.PrimaryScreen;
       }
       set { _currentScreen = value; }
+    }
+
+    /// <summary>
+    /// Property to get and set current monitor index for refreshrate setting
+    /// </summary>
+    // ReSharper disable InconsistentNaming
+    public static int currentMonitorIdx
+    // ReSharper restore InconsistentNaming
+    {
+      get
+      {
+        return _currentMonitorIdx;
+      }
+      set { _currentMonitorIdx = value; }
     }
 
     /// <summary>

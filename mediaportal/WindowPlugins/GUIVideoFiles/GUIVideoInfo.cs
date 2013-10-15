@@ -20,8 +20,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -238,7 +240,7 @@ namespace MediaPortal.GUI.Video
         GUIControl.SelectItemControl(GetID, spinDisc.GetID, iItem);
       }
 
-      Refresh(false);
+      Refresh();
       SetActorGUIListItems();
       Update();
       LoadState();
@@ -390,6 +392,7 @@ namespace MediaPortal.GUI.Video
         titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+        
         Util.Utils.FileDelete(coverArtImage);
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
@@ -397,7 +400,7 @@ namespace MediaPortal.GUI.Video
         Util.Utils.DoInsertNonExistingFileIntoCache(coverArtImage);
         //
         Util.Utils.FileDelete(largeCoverArtImage);
-        Refresh(false);
+        Refresh();
         Update();
         int idMovie = _currentMovie.ID;
         
@@ -809,18 +812,18 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    //Changed - covers and same movie names
-    private void Refresh(bool forceFolderThumb)
+    private void Refresh()
     {
+      // If spin button is pressed, small and large thumb are deleted before it calls Refresh()
       string coverArtImage = string.Empty;
-      string largeCoverArtImage = string.Empty; //added by BoelShit
-      
+      string largeCoverArtImage = string.Empty;
+
       try
       {
         string imageUrl = _currentMovie.ThumbURL;
-        string titleExt = string.Empty;
+        string titleCoverFilename = string.Empty;
         string imageExt = string.Empty;
-        
+
         if (imageUrl.Length > 7 && 
           !imageUrl.Substring(0, 7).Equals("file://") &&
           !imageUrl.Substring(0, 7).Equals("http://"))
@@ -832,162 +835,120 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (imageUrl.Length > 0)
+        if (imageUrl.Length > 7 && (imageUrl.Substring(0, 7).Equals("file://") ||
+                                    imageUrl.Substring(0, 7).Equals("http://")))
         {
-          titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
-          coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-          largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-          //added by BoelShit
-          string largeCoverArtImageConvert = Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
+          // Set cover thumb filename (movieTitle{movieId})
+          titleCoverFilename = _currentMovie.Title + "{" + _currentMovie.ID + "}";
+          // Set small thumb filename (C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Videos\Title\movieTitle{movieId}.jpg)
+          coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleCoverFilename);
+          // Set large thumb filename (C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Videos\Title\movieTitle{movieId}L.jpg)
+          largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleCoverFilename);
 
           if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
+            Log.Debug("GUIVideoInfo: Refresh image: New Image url -> {0}", imageUrl);
+            // Get image file extension from origin
             string imageExtension = Path.GetExtension(imageUrl);
+            
             if (!string.IsNullOrEmpty(imageExtension))
             {
+              // Creates a temporary file with a .TMP extension (this will be downloaded image path+filename 
+              // before conversion to small and large thumb)
               string temporaryFilename = Path.GetTempFileName();
               string tmpFile = temporaryFilename;
+              // Add image extension to temporary filename (this is small temp thumb)
               temporaryFilename += imageExtension;
-              string temporaryFilenameLarge = Util.Utils.ConvertToLargeCoverArt(temporaryFilename);
-              temporaryFilenameLarge += imageExtension;
+              // Delete tmp file (we just needed rnd tmp filename)
               Util.Utils.FileDelete(tmpFile);
-              Util.Utils.FileDelete(temporaryFilenameLarge);
               
+              //If image is local image (file) copy it as temporary file (one we get above)
               if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
               {
-                // Local image, don't download, just copy
                 File.Copy(imageUrl.Substring(7), temporaryFilename);
                 File.SetAttributes(temporaryFilename, FileAttributes.Normal);
               }
-              else
+              else // Dowload image if it is url link to a temporary file
               {
+                Log.Debug("GUIVideoInfo Refresh image: Downloading image, new Image url -> {0}", imageUrl);
                 Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              
-              if (File.Exists(temporaryFilename))
-              // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
-              {
-                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
-                                             (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (File.Exists(temporaryFilenameLarge))
-                // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
+              if (File.Exists(temporaryFilename))
+              {
+                // Create small thumb
+                Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", coverArtImage);
+                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int) Thumbs.ThumbResolution,
+                  (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                // Create large thumb
+                Log.Debug("GUIVideoInfo Refresh image: Creating new image -> {0}", largeCoverArtImage);
+                Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage,
+                  (int) Thumbs.ThumbLargeResolution, (int) Thumbs.ThumbLargeResolution, 0,Thumbs.SpeedThumbsLarge);
+
+                // Create folder thumb (movie is DVD or BD)
+                if (FolderForThumbs != string.Empty)
+                //edited by BoelShit
                 {
-                  Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
-                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
-                                               Thumbs.SpeedThumbsLarge); //edited by Boelshit              
-                }
-                else
-                {
-                  Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImageConvert,
-                                               (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
-                                               Thumbs.SpeedThumbsLarge); //edited by Boelshit              
+                  // copy icon to folder also;
+                  string strFolderImage = string.Empty;
+
+                  strFolderImage = Path.GetFullPath(FolderForThumbs);
+                  strFolderImage += "\\folder.jpg";
+                  
+                  try
+                  {
+                    Util.Utils.FileDelete(strFolderImage);
+
+                    if (!File.Exists(strFolderImage))
+                    {
+                      File.Copy(largeCoverArtImage, strFolderImage, true); //edited by BoelShit
+                    }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Info("GUIVideoInfo: Error creating folder thumb {0}", ex.Message);
+                  }
                 }
               }
               
+              // Delete original image temp file from a temp folder
               Util.Utils.FileDelete(temporaryFilename);
-            } //if ( strExtension.Length>0)
+            }
             else
             {
               Log.Info("image has no extension:{0}", imageUrl);
             }
           }
-          if (!Util.Utils.FileExistsInCache(coverArtImage))
-          {
-            int idMovie = _currentMovie.ID;
-            System.Collections.ArrayList movies = new System.Collections.ArrayList();
-
-            VideoDatabase.GetFilesForMovie(idMovie, ref movies);
-            
-            if (movies.Count > 0)
-            {
-              for (int i = 0; i < movies.Count; i++)
-              {
-                string thumbFile = Util.Utils.EncryptLine((string)movies[i]);
-                coverArtImage = Util.Utils.GetCoverArtName(Thumbs.Videos, thumbFile);
-                largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.Videos, thumbFile);
-                
-                if (Util.Utils.FileExistsInCache(largeCoverArtImage))
-                {
-                  _currentMovie.ThumbURL = "file://" + largeCoverArtImage;
-                  Refresh(forceFolderThumb);
-                  break;
-                }
-              }
-            }
-          }
-
-          if (((Util.Utils.FileExistsInCache(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) ||
-              forceFolderThumb)
-          //edited by BoelShit
-          {
-            // copy icon to folder also;
-            string strFolderImage = string.Empty;
-            
-            if (forceFolderThumb)
-            {
-              strFolderImage = Path.GetFullPath(_currentMovie.Path);
-            }
-            else
-            {
-              strFolderImage = Path.GetFullPath(FolderForThumbs);
-            }
-
-            strFolderImage += "\\folder.jpg"; //TODO                  
-            try
-            {
-              Util.Utils.FileDelete(strFolderImage);
-              
-              if (forceFolderThumb)
-              {
-                if (Util.Utils.FileExistsInCache(largeCoverArtImage))
-                {
-                  File.Copy(largeCoverArtImage, strFolderImage, true);
-                }
-
-                else if (Util.Utils.FileExistsInCache(largeCoverArtImageConvert)) //edited by BoelShit
-                {
-                  File.Copy(largeCoverArtImageConvert, strFolderImage, true); //edited by BoelShit
-                }
-                else //edited by BoelShit
-                {
-                  File.Copy(coverArtImage, strFolderImage, true); //edited by BoelShit
-                }
-              }
-              else
-              {
-                if (!File.Exists(strFolderImage))
-                {
-                  File.Copy(largeCoverArtImage, strFolderImage, false); //edited by BoelShit
-                }
-              }
-              //File.Copy(coverArtImage, strFolderImage, false); //edited by BoelShit
-            }
-            catch (Exception ex1)
-            {
-              Log.Info("GUIVideoInfo: Creating folder thumb {0}", ex1.Message);
-            }
-          }
+        }
+        else
+        {
+          Log.Error("GUIVideoInfo Refresh image: New cover image link is not valid -> {0}", imageUrl);
+          return;
         }
       }
       catch (Exception ex2)
       {
-        Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
+        Log.Error("GUIVideoInfo Refresh image: Error creating new thumbs for {0} - {1}", _currentMovie.ThumbURL, ex2.Message);
       }
-      
+
+      SetProperties();
+    }
+
+    private void SetProperties()
+    {
       ArrayList files = new ArrayList();
       VideoDatabase.GetFilesForMovie(_currentMovie.ID, ref files);
-        
+
       if (files.Count > 0)
       {
-        _currentMovie.SetProperties(false, (string) files[0]);
+        _currentMovie.SetProperties(false, (string)files[0]);
       }
       else
       {
         _currentMovie.SetProperties(false, string.Empty);
       }
     }
-
+    
     private void  RenameTitle ()
     {
       if (!_addToDatabase)
@@ -1055,6 +1016,8 @@ namespace MediaPortal.GUI.Video
           GUIVideoFiles.CurrentSelectedGUIItem.ThumbnailImage = newLargeThumb;
         }
       }
+
+      Refresh();
     }
 
     private void ResetSpinControl()
@@ -1073,6 +1036,17 @@ namespace MediaPortal.GUI.Video
       {
         if (aThumbArray.Length > 0)
         {
+          List<string> coverlist = new List<string>();
+
+          for (int i = 0; i < aThumbArray.Count(); i++)
+          {
+            if (!coverlist.Contains(aThumbArray[i]))
+            {
+              coverlist.Add(aThumbArray[i]);
+            }
+          }
+
+          aThumbArray = coverlist.ToArray();
           _coverArtUrls = null;
           _coverArtUrls = new string[aThumbArray.Length];
           aThumbArray.CopyTo(_coverArtUrls, 0);
@@ -1204,7 +1178,12 @@ namespace MediaPortal.GUI.Video
         
         GUIListItem item = listActors.SelectedListItem;
         item.AlbumInfoTag = _currentMovie;
-        IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        
+        if (Win32API.IsConnectedToInternet())
+        {
+          IMDBFetcher.FetchMovieActor(this, _currentMovie, selectedActor, item.ItemId);
+        }
+
         actor = VideoDatabase.GetActorInfo(item.ItemId);
 
         if (actor == null)
@@ -1705,7 +1684,15 @@ namespace MediaPortal.GUI.Video
         tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
         // IMPAward search
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
-        impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+        
+        if (movie.Year > 1900)
+        {
+          impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+        }
+        else
+        {
+          impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+        }
 
         int thumb = 0;
 
@@ -1757,6 +1744,7 @@ namespace MediaPortal.GUI.Video
         {
           thumbUrls[pictureIndex++] = movie.ThumbURL;
         }
+        
         // IMP Award check and add
         if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
         {
@@ -2094,7 +2082,7 @@ namespace MediaPortal.GUI.Video
 
       ResetSpinControl();
 
-      Refresh(false);
+      Refresh();
       SetActorGUIListItems();
       Update();
       // Start images search thread
@@ -2111,9 +2099,9 @@ namespace MediaPortal.GUI.Video
         listActors.Clear();
       }
 
-      if (imgActorArt != null)
+      if (imgCoverArt != null)
       {
-        imgActorArt.Dispose();
+        imgCoverArt.Dispose();
       }
 
       if (imgActorArt != null)

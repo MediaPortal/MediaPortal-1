@@ -214,6 +214,7 @@ namespace MediaPortal.GUI.Music
       g_Player.PlayBackStarted += OnPlayBackStarted;
       g_Player.PlayBackStopped += OnPlayBackStopped;
       g_Player.PlayBackEnded += OnPlayBackEnded;
+      MusicPlayer.BASS.BassAudioEngine.PlaybackStart += OnPlayBackStarted;
 
       LoadSettings();
     }

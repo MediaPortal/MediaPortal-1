@@ -179,6 +179,17 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Detect if the specified url is an url.
+    /// </summary>
+    /// <param name="url">The url to test</param>
+    /// <returns>True if it's url format</returns>
+    private bool IsAbsoluteUrl(string url)
+    {
+      Uri result;
+      return Uri.TryCreate(url, UriKind.Absolute, out result);
+    }
+
+    /// <summary>
     /// Tune to channel
     /// </summary>
     /// <param name="subChannelId"></param>
@@ -252,7 +263,10 @@ namespace TvLibrary.Implementations.DVB
 
         try
         {
-          RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          if (dvbipChannel.Url != _defaultUrl && IsAbsoluteUrl(dvbipChannel.Url))
+          {
+            RunGraph(ch.SubChannelId, dvbipChannel.Url);
+          }
         }
         catch (TvExceptionNoPMT)
         {

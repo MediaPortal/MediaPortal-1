@@ -51,6 +51,7 @@ using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.Util;
 using MediaPortal.Services;
+using MediaPortal.Visualization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -1286,7 +1287,7 @@ public class MediaPortalApp : D3D, IRender
     {
       UpdateStats();
 
-      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
+      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
       {
         if (_showStats != _showStatsPrevious)
         {
@@ -1797,6 +1798,10 @@ public class MediaPortalApp : D3D, IRender
   private void OnDisplayChange(ref Message msg)
   {
     Log.Debug("Main: WM_DISPLAYCHANGE");
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    {
+      VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
+    }
     Screen screen = Screen.FromControl(this);
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
     {
@@ -2020,6 +2025,12 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
+          // send new resolution to VisualizationWindow so the Winproc can work with it 
+          if (VisualizationBase.VisualizationWindow != null)
+          {
+            VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+            VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+          }
         }
         else
         {
@@ -2039,6 +2050,11 @@ public class MediaPortalApp : D3D, IRender
       
       case SIZE_MAXIMIZED:
         Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
+        if (VisualizationBase.VisualizationWindow != null)
+        {
+          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+        }
         break;
       
       case SIZE_MAXSHOW:
