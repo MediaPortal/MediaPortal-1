@@ -48,9 +48,22 @@ namespace TvLibrary.Implementations.Analog
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
     private class MpTsAnalyzer {}
 
+    // The MediaPortal TS muxer delivers a DVB stream containing a single
+    // service with a fixed service ID. The PMT PID starts at 0x20 and is
+    // incremented with each channel change up to the fixed limit 0x90 after
+    // which it is reset to 0x20. This is done in order to clearly signal
+    // channel change transitions. TsWriter suppresses changes in PMT version
+    // so we had to be a bit more radical.
+    private const int SERVICE_ID = 1;
+    private const int PMT_PID_FIRST = 0x20;
+    private const int PMT_PID_MAX = 0x90;
+
     #endregion
 
     #region variables
+
+    private Guid _mainComponentCategory = Guid.Empty;
+    private int _expectedPmtPid = PMT_PID_FIRST;
 
     private Tuner _tuner;
     private TvAudio _tvAudio;
@@ -68,10 +81,11 @@ namespace TvLibrary.Implementations.Analog
     #region ctor
 
     ///<summary>
-    /// Constrcutor for the analog
+    /// Constructor for the device.
     ///</summary>
-    ///<param name="device">Tuner Device</param>
-    public TvCardAnalog(DsDevice device)
+    ///<param name="device">The main device component.</param>
+    ///<param name="deviceCategory">The filter/device category associated with the device component.</param>
+    public TvCardAnalog(DsDevice device, Guid deviceCategory)
       : base(device)
     {
       _parameters = new ScanParameters();
@@ -85,6 +99,7 @@ namespace TvLibrary.Implementations.Analog
       _epgGrabbing = false;
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
       Configuration.writeConfiguration(_configuration);
+      _mainComponentCategory = deviceCategory;
     }
 
     #endregion
@@ -97,10 +112,17 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
     {
-      if ((channel as AnalogChannel) == null)
+      if (!(channel is AnalogChannel))
+      {
         return false;
+      }
       if (channel.IsRadio)
       {
+        if (_mainComponentCategory == FilterCategory.AMKSCrossbar)
+        {
+          // I think the HD-PVR and Colossus aren't capable of audio-only capture.
+          return false;
+        }
         if (string.IsNullOrEmpty(_configuration.Graph.Tuner.Name))
         {
           BuildGraph();
@@ -286,6 +308,16 @@ namespace TvLibrary.Implementations.Analog
       }
       subChannel.CurrentChannel = channel;
       subChannel.OnBeforeTune();
+      AnalogSubChannel analogSubChannel = subChannel as AnalogSubChannel;
+      if (analogSubChannel != null)
+      {
+        _expectedPmtPid++;
+        if (_expectedPmtPid == PMT_PID_MAX)
+        {
+          _expectedPmtPid = PMT_PID_FIRST;
+        }
+        analogSubChannel.SetServiceParameters(SERVICE_ID, _expectedPmtPid);
+      }
       PerformTuning(channel);
       subChannel.OnAfterTune();
       try
@@ -313,7 +345,7 @@ namespace TvLibrary.Implementations.Analog
       int id = _subChannelId++;
       Log.Log.Info("analog:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
-      HDPVRChannel subChannel = new HDPVRChannel(this, id, _tsFileSink, _graphBuilder, _tvAudio);
+      AnalogSubChannel subChannel = new AnalogSubChannel(this, id, _tsFileSink, _graphBuilder, _tvAudio);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
@@ -371,6 +403,12 @@ namespace TvLibrary.Implementations.Analog
     ///<returns></returns>
     public override void LockInOnSignal()
     {
+      // Capture devices don't have a tuner component to lock.
+      if (_tuner == null)
+      {
+        return;
+      }
+
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
       TimeSpan ts = timeStart - timeStart;
@@ -404,17 +442,21 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     protected override void UpdateSignalQuality(bool force)
     {
-      _tunerLocked = false;
-      _signalLevel = 0;
-      _signalQuality = 0;
       if (!force)
       {
         TimeSpan ts = DateTime.Now - _lastSignalUpdate;
-        if (ts.TotalMilliseconds < 5000 || _graphState == GraphState.Idle)
+        if (ts.TotalMilliseconds < 5000)
         {
-          _tunerLocked = false;
           return;
         }
+      }
+
+      if (_graphState == GraphState.Idle)
+      {
+        _tunerLocked = false;
+        _signalLevel = 0;
+        _signalQuality = 0;
+        return;
       }
 
       if (_tuner != null)
@@ -424,6 +466,13 @@ namespace TvLibrary.Implementations.Analog
         _signalLevel = _tuner.SignalLevel;
         _signalQuality = _tuner.SignalQuality;
       }
+      else
+      {
+        _tunerLocked = true;
+        _signalLevel = 100;
+        _signalQuality = 100;
+      }
+      _lastSignalUpdate = DateTime.Now;
     }
 
     /// <summary>
@@ -554,24 +603,30 @@ namespace TvLibrary.Implementations.Analog
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         Graph graph = _configuration.Graph;
-        _tuner = new Tuner(_device);
-        if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
+        if (_mainComponentCategory == FilterCategory.AMKSTVTuner)
         {
-          throw new TvException("Analog: unable to add tv tuner filter");
+          _tuner = new Tuner(_device);
+          if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
+          {
+            throw new TvException("Analog: unable to add tv tuner filter");
+          }
+          _minChannel = _tuner.MinChannel;
+          _maxChannel = _tuner.MaxChannel;
         }
-        _minChannel = _tuner.MinChannel;
-        _maxChannel = _tuner.MaxChannel;
         //add the wdm crossbar device and connect tvtuner->crossbar
-        _crossbar = new Crossbar();
+        _crossbar = new Crossbar(_device);
         if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
         {
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
-        //add the tv audio tuner device and connect it to the crossbar
-        _tvAudio = new TvAudio();
-        if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
+        if (_mainComponentCategory == FilterCategory.AMKSTVTuner)
         {
-          throw new TvException("Analog: unable to add tv audio tuner filter");
+          //add the tv audio tuner device and connect it to the crossbar
+          _tvAudio = new TvAudio();
+          if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
+          {
+            throw new TvException("Analog: unable to add tv audio tuner filter");
+          }
         }
         //add the tv capture device and connect it to the crossbar
         _capture = new Capture();
@@ -581,7 +636,7 @@ namespace TvLibrary.Implementations.Analog
         }
         Configuration.writeConfiguration(_configuration);
         _encoder = new Encoder();
-        if (!_encoder.CreateFilterInstance(_graphBuilder, _crossbar, _capture))
+        if (!_encoder.CreateFilterInstance(_graphBuilder, _capture))
         {
           throw new TvException("Analog: unable to add encoder filter(s)");
         }
@@ -747,11 +802,15 @@ namespace TvLibrary.Implementations.Analog
     private void PerformTuning(IChannel channel)
     {
       AnalogChannel analogChannel = channel as AnalogChannel;
-      _tuner.PerformTune(analogChannel);
-      _minChannel = _tuner.MinChannel;
-      _maxChannel = _tuner.MaxChannel;
+      if (_tuner != null)
+      {
+        _tuner.PerformTune(analogChannel);
+        _minChannel = _tuner.MinChannel;
+        _maxChannel = _tuner.MaxChannel;
+      }
       _crossbar.PerformTune(analogChannel);
       _capture.PerformTune(analogChannel);
+      _encoder.PerformTune(analogChannel);
       _lastSignalUpdate = DateTime.MinValue;
       if (_graphState == GraphState.Idle)
         _graphState = GraphState.Created;
@@ -769,7 +828,14 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The video frequency.</value>
     public int VideoFrequency
     {
-      get { return _tuner.VideoFrequency; }
+      get
+      {
+        if (_tuner != null)
+        {
+          return _tuner.VideoFrequency;
+        }
+        return 0;
+      }
     }
 
     /// <summary>
@@ -778,7 +844,14 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The audio frequency.</value>
     public int AudioFrequency
     {
-      get { return _tuner.AudioFrequency; }
+      get
+      {
+        if (_tuner != null)
+        {
+          return _tuner.AudioFrequency;
+        }
+        return 0;
+      }
     }
 
     #endregion

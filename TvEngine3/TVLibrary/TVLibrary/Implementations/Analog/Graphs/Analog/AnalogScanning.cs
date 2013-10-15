@@ -29,7 +29,7 @@ using TvLibrary.Implementations.DVB;
 namespace TvLibrary.Implementations.Analog
 {
   /// <summary>
-  /// Class which implements scanning for tv/radio channels for DVB-T BDA cards
+  /// Class which implements scanning for analog WDM TV and FM radio tuners.
   /// </summary>
   public class AnalogScanning : DvbBaseScanning
   {

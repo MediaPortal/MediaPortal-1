@@ -27,6 +27,8 @@
 
 using namespace std;
 
+#define NOT_RECEIVING -1
+
 #define STREAM_TYPE_TELETEXT 6
 #define STREAM_TYPE_UNKNOWN -1
 #define STREAM_TYPE_MPEG1_SYSTEM_STREAM -2
@@ -104,7 +106,7 @@ const int INPUT_MEDIA_TYPE_COUNT = (MPEG1_VIDEO_INPUT_MEDIA_TYPE_COUNT + MPEG1_A
 class CMuxInputPin : public CRenderedInputPin, public IMuxInputPin
 {
   public:
-    CMuxInputPin(byte pinIndex, IStreamMultiplexer* multiplexer, CBaseFilter* filter, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
+    CMuxInputPin(byte id, IStreamMultiplexer* multiplexer, CBaseFilter* filter, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr);
 
     HRESULT BreakConnect();
     HRESULT CheckMediaType(const CMediaType* mediaType);
@@ -118,13 +120,12 @@ class CMuxInputPin : public CRenderedInputPin, public IMuxInputPin
 
     byte GetId();
     int GetStreamType();
-    bool IsReceiving();
+    DWORD GetReceiveTickCount();
 
   private:
-    byte m_pinIndex;
+    byte m_pinId;
     int m_streamType;
-    bool m_isReceiving;
-    DWORD m_prevReceiveTickCount;
+    DWORD m_receiveTickCount;
     CCritSec* m_receiveLock;
 
     IStreamMultiplexer* m_multiplexer;

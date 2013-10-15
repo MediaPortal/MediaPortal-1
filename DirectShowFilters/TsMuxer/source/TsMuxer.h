@@ -57,6 +57,7 @@ struct StreamInfo
   unsigned short originalPid;
 
   bool isIgnored;
+  bool isCompatible;
   DWORD prevReceiveTickCount;
 
   unsigned short pid;
@@ -71,10 +72,25 @@ struct StreamInfo
 struct ProgramStreamInfo
 {
   byte pinId;
-  bool isIgnored;
+  bool isCompatible;
   byte videoBound;
   byte audioBound;
   byte currentMapVersion;
+};
+
+struct TransportStreamInfo
+{
+  byte pinId;
+  bool isCompatible;
+  unsigned short transportStreamId;
+  unsigned short serviceId;
+  unsigned short pmtPid;
+  unsigned short pcrPid;
+  byte streamCount;
+  byte patVersion;
+  byte patContinuityCounter;
+  byte pmtVersion;
+  byte pmtContinuityCounter;
 };
 
 
@@ -94,11 +110,16 @@ class CTsMuxerFilter : public CBaseFilter
     STDMETHODIMP Run(REFERENCE_TIME startTime);
     STDMETHODIMP Stop();
 
+    static void __cdecl StreamingMonitorThreadFunction(void* arg);
+
   private:
     IStreamMultiplexer* const m_tsMuxer;
     CTsOutputPin* m_outputPin;          // MPEG 2 transport stream output pin
     vector<CMuxInputPin*> m_inputPins;  // input pins
     CCritSec* m_receiveLock;            // sample receive lock
+
+    HANDLE m_streamingMonitorThread;
+    HANDLE m_streamingMonitorThreadStopEvent;
 };
 
 
@@ -118,19 +139,25 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 
     HRESULT BreakConnect(IMuxInputPin* pin);
     HRESULT CompleteConnect(IMuxInputPin* pin);
+    bool IsStarted();
     HRESULT Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
+    HRESULT Reset();
     HRESULT StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int newStreamType);
     STDMETHODIMP SetActiveComponents(bool video, bool audio, bool teletext);
 
   private:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID iid, void** ppv);
     bool CanDeliver();
+    HRESULT ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
     HRESULT ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime);
-    HRESULT ReadProgramOrSystemPackInfo(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, int* length, REFERENCE_TIME* systemClockReference);
-    HRESULT ReadProgramOrSystemHeaderInfo(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive);
-    HRESULT ReadProgramStreamMapInfo(PBYTE data, long dataLength, ProgramStreamInfo* info);
+    HRESULT ReadProgramAssociationTable(PBYTE data, long dataLength, TransportStreamInfo* info);
+    HRESULT ReadProgramMapTable(PBYTE data, long dataLength, TransportStreamInfo* info);
+    HRESULT ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, int* length, REFERENCE_TIME* systemClockReference);
+    HRESULT ReadProgramOrSystemHeader(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive);
+    HRESULT ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStreamInfo* info);
     HRESULT ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* info);
     HRESULT ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* info);
+    HRESULT UpdatePat();
     HRESULT UpdatePmt();
     HRESULT UpdateSdt();
     HRESULT WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long inputDataLength, REFERENCE_TIME systemClockReference, PBYTE* outputData, long* outputDataLength);
@@ -152,6 +179,7 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 
     byte m_pmtPacket[TS_PACKET_LENGTH];
     byte m_pmtContinuityCounter;
+    unsigned short m_pmtPid;
     byte m_pmtVersion;
 
     byte m_sdtPacket[TS_PACKET_LENGTH];
@@ -163,7 +191,11 @@ class CTsMuxer : public CUnknown, public IStreamMultiplexer, public ITsMuxer
 
     int m_packetCounter;
     int m_pcrPid;
+    unsigned short m_nextStreamPid;
+    byte m_nextVideoStreamId;
+    byte m_nextAudioStreamId;
 
-    map<unsigned int, StreamInfo*> m_streamInfo;        // key = (original PID << 16) | (original stream ID << 8) | pin ID
-    map<byte, ProgramStreamInfo*> m_programStreamInfo;  // key = pin ID
+    map<unsigned int, StreamInfo*> m_streamInfo;            // key = (original PID << 16) | (original stream ID << 8) | pin ID
+    map<byte, ProgramStreamInfo*> m_programStreamInfo;      // key = pin ID
+    map<byte, TransportStreamInfo*> m_transportStreamInfo;  // key = pin ID
 };

@@ -20,8 +20,6 @@
  */
 #pragma once
 #include <streams.h>
-
-// TODO debug
 #include <fstream>
 
 const AMOVIESETUP_MEDIATYPE OUTPUT_MEDIA_TYPES[] =
@@ -49,8 +47,6 @@ class CTsOutputPin : public CBaseOutputPin
   private:
     bool m_isConnected;
 
-    // TODO debug
     std::ofstream m_debugOutFile;
-    int m_debugBytes;
 };
 

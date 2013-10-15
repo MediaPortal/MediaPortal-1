@@ -353,7 +353,7 @@ namespace TvLibrary.Implementations
         OnStartRecording(fileName);
         _recordingFileName = fileName;
 
-        if (this is HDPVRChannel)
+        if (this is AnalogSubChannel)
         {
           Log.Log.Info("Analog subch:{0} Started recording", _subChannelId);
         }
@@ -492,7 +492,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public void Decompose()
     {
-      if (this is HDPVRChannel)
+      if (this is AnalogSubChannel)
       {
         Log.Log.Info("Analog subch:{0} Decompose", _subChannelId);
       }

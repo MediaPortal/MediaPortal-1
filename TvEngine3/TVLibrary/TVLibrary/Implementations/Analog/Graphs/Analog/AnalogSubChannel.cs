@@ -36,24 +36,22 @@ namespace TvLibrary.Implementations.Analog
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles analog tv cards
   /// </summary>
-  public class HDPVRChannel : TvDvbChannel, ITvSubChannel, IVideoAudioObserver, IPMTCallback
+  public class AnalogSubChannel : TvDvbChannel, ITvSubChannel, IVideoAudioObserver, IPMTCallback
   {
-    #region constants
+    #region variables
 
     private readonly ITVCard _card;
     private readonly TvAudio _tvAudio;
 
-    // The Hauppauge HD PVR and Colossus deliver a DVB stream with a single service on a fixed
-    // service ID with a fixed PMT PID.
-    private const int SERVICE_ID = 1;
-    private const int PMT_PID = 0x10;
+    private int _expectedServiceId;
+    private int _expectedPmtPid;
 
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HDPVRChannel"/> class.
+    /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    public HDPVRChannel(ITVCard card, Int32 subchannelId, IBaseFilter filterTsWriter, IFilterGraph2 graphBuilder, TvAudio tvAudio)
+    public AnalogSubChannel(ITVCard card, Int32 subchannelId, IBaseFilter filterTsWriter, IFilterGraph2 graphBuilder, TvAudio tvAudio)
     {
       _eventPMT = new ManualResetEvent(false);
       _graphState = GraphState.Created;
@@ -83,7 +81,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Destructor
     /// </summary>
-    ~HDPVRChannel()
+    ~AnalogSubChannel()
     {
       if (_eventPMT != null)
       {
@@ -151,19 +149,19 @@ namespace TvLibrary.Implementations.Analog
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected override bool WaitForPMT()
     {
-      int pid = PMT_PID;
+      int pid = _expectedPmtPid;
       bool pmtFound = false;
       TimeSpan waitLength = TimeSpan.MinValue;
       while (!pmtFound)
       {
-        SetupPmtGrabber(pid, SERVICE_ID);
+        SetupPmtGrabber(pid, _expectedServiceId);
         _pmtRequested = true;
         DateTime dtStartWait = DateTime.Now;
         pmtFound = _eventPMT.WaitOne(_parameters.TimeOutPMT * 1000, true);
         waitLength = DateTime.Now - dtStartWait;
         if (!pmtFound)
         {
-          Log.Log.Debug("HDPVR: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
+          Log.Log.Debug("analog: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
           if (pid == 0)
           {
             Log.Log.Debug("Giving up waiting for PMT. You might need to increase the PMT timeout value.");
@@ -177,7 +175,7 @@ namespace TvLibrary.Implementations.Analog
         }
       }
 
-      Log.Log.Debug("HDPVR: found PMT after {0} seconds", waitLength.TotalSeconds);
+      Log.Log.Debug("analog: found PMT after {0} seconds", waitLength.TotalSeconds);
       return HandlePmt();
     }
 
@@ -201,7 +199,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override int OnPMTReceived(int pmtPid)
     {
-      Log.Log.WriteFile("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
+      Log.Log.WriteFile("analog: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
       _pmtPid = pmtPid;
       if (_eventPMT != null)
       {
@@ -231,10 +229,10 @@ namespace TvLibrary.Implementations.Analog
         Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
         int version = ((_pmtData[5] >> 1) & 0x1F);
         int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
-        Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
-        if (pmtProgramNumber != SERVICE_ID)
+        Log.Log.Info("analog: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
+        if (pmtProgramNumber != _expectedServiceId)
         {
-          throw new TvException("HDPVRChannel: PMT program number doesn't match expected service ID");
+          throw new TvException("analog: PMT program number doesn't match expected service ID");
         }
 
         // Get the program PIDs.
@@ -253,5 +251,56 @@ namespace TvLibrary.Implementations.Analog
     }
 
     #endregion
+
+    #region audio streams
+
+    /// <summary>
+    /// returns the list of available audio streams
+    /// </summary>
+    public override List<IAudioStream> AvailableAudioStreams
+    {
+      get
+      {
+        if (_tvAudio != null)
+        {
+          return _tvAudio.GetAvailableAudioStreams();
+        }
+        return base.AvailableAudioStreams;
+      }
+    }
+
+    /// <summary>
+    /// get/set the current selected audio stream
+    /// </summary>
+    public override IAudioStream CurrentAudioStream
+    {
+      get
+      {
+        if (_tvAudio != null)
+        {
+          return _tvAudio.CurrentAudioStream;
+        }
+        return base.CurrentAudioStream;
+      }
+      set
+      {
+        if (_tvAudio != null)
+        {
+          _tvAudio.CurrentAudioStream = value;
+        }
+        else
+        {
+          base.CurrentAudioStream = value;
+        }
+      }
+    }
+
+    #endregion
+
+    public void SetServiceParameters(int serviceId, int pmtPid)
+    {
+      _expectedServiceId = serviceId;
+      _expectedPmtPid = pmtPid;
+    }
   }
 }

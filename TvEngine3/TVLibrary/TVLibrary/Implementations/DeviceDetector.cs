@@ -422,7 +422,7 @@ namespace TvLibrary.Implementations
           if (!previouslyKnownDevices.Contains(devicePath))
           {
             Log.Log.Info("Detected new Hauppauge capture device {0} {1)", name, devicePath);
-            TvCardHDPVR captureDevice = new TvCardHDPVR(connectedDevice);
+            TvCardAnalog captureDevice = new TvCardAnalog(connectedDevice, FilterCategory.AMKSCrossbar);
             _deviceEventListener.OnDeviceAdded(captureDevice);
           }
         }
@@ -443,7 +443,7 @@ namespace TvLibrary.Implementations
           if (!previouslyKnownDevices.Contains(devicePath))
           {
             Log.Log.Info("Detected new analog tuner device {0} {1}", name, devicePath);
-            TvCardAnalog analogTuner = new TvCardAnalog(connectedDevice);
+            TvCardAnalog analogTuner = new TvCardAnalog(connectedDevice, FilterCategory.AMKSTVTuner);
             _deviceEventListener.OnDeviceAdded(analogTuner);
           }
         }

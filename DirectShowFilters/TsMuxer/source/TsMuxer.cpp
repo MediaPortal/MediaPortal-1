@@ -24,47 +24,51 @@
 #include "..\..\shared\DvbUtil.h"
 #include "Hamming.h"
 
-const byte STREAM_ID_END_OF_STREAM = 0xb9;
-const byte STREAM_ID_PACK = 0xba;
-const byte STREAM_ID_SYSTEM_HEADER = 0xbb;
-const byte STREAM_ID_PROGRAM_STREAM_MAP = 0xbc;
-const byte STREAM_ID_TELETEXT = 0xbd;  // private stream 1
-const byte STREAM_ID_PADDING = 0xbe;
-const byte STREAM_ID_AUDIO_FIRST = 0xc0;
-byte STREAM_ID_AUDIO_NEXT = STREAM_ID_AUDIO_FIRST;
-const byte STREAM_ID_VIDEO_FIRST = 0xe0;
-byte STREAM_ID_VIDEO_NEXT = STREAM_ID_VIDEO_FIRST;
+#define STREAM_ID_END_OF_STREAM 0xb9
+#define STREAM_ID_PACK 0xba
+#define STREAM_ID_SYSTEM_HEADER 0xbb
+#define STREAM_ID_PROGRAM_STREAM_MAP 0xbc
+#define STREAM_ID_TELETEXT 0xbd   // private stream 1
+#define STREAM_ID_PADDING 0xbe
+#define STREAM_ID_AUDIO_FIRST 0xc0
+#define STREAM_ID_VIDEO_FIRST 0xe0
 
-const int PID_PAT = 0;
-const int PID_PMT = 0x10;//0x20; TODO
-const int PID_SDT = 0x11;
-const int PID_STREAM_FIRST = 0x90;
-int PID_STREAM_NEXT = PID_STREAM_FIRST;
+#define PID_NOT_SET -1
+#define PID_PAT 0
+#define PID_PMT_FIRST 0x20
+#define PID_SDT 0x11
+#define PID_STREAM_FIRST 0x90
 
-const byte TABLE_ID_PAT = 0;
-const byte TABLE_ID_PMT = 2;
-const byte TABLE_ID_SDT = 0x42;
+#define TABLE_ID_PAT 0
+#define TABLE_ID_PMT 2
+#define TABLE_ID_SDT 0x42
 
-const byte SERVICE_TYPE_TELEVISION = 1;
-const byte SERVICE_TYPE_RADIO = 2;
+#define SERVICE_TYPE_NOT_SET -1
+#define SERVICE_TYPE_TELEVISION 1
+#define SERVICE_TYPE_RADIO 2
 
-const int SERVICE_ID = 1;//0x1234; TODO
-const int TRANSPORT_STREAM_ID = 1;
-const int ORIGINAL_NETWORK_ID = 1;
+#define DESCRIPTOR_DVB_SERVICE 0x48
 
-const int STREAM_IDLE_TIMEOUT = 1000;
-const int TELETEXT_SERVICE_NAME_TIMEOUT = 5000;
+#define SERVICE_ID 1
+#define TRANSPORT_STREAM_ID 1
+#define ORIGINAL_NETWORK_ID 1
 
-const int TS_HEADER_LENGTH = 4;
-const byte TS_SYNC_BYTE = 0x47;
-const byte PTS_LENGTH = 5;
-const byte PCR_LENGTH = 6;
+#define STREAM_IDLE_TIMEOUT 1000
+#define TELETEXT_SERVICE_NAME_TIMEOUT 5000
 
-const byte DESCRIPTOR_DVB_SERVICE = 0x48;
-const byte TELETEXT_DATA_IDENTIFIER = 0x10;   // EBU data
-const byte TELETEXT_DATA_UNIT_ID = 0x02;      // EBU teletext non-subtitle data
-const byte VBI_LINE_LENGTH = 43;
-const byte TELETEXT_PES_STUFFING_LENGTH = 31;
+#define TS_HEADER_LENGTH 4
+#define TS_SYNC_BYTE 0x47
+#define PTS_LENGTH 5
+#define PCR_LENGTH 6
+
+#define VERSION_NOT_SET -1
+#define TIME_NOT_SET -1
+
+#define TELETEXT_DATA_IDENTIFIER 0x10     // EBU data
+#define TELETEXT_DATA_UNIT_ID 0x02        // EBU teletext non-subtitle data
+#define VBI_LINE_LENGTH 43
+#define TELETEXT_PES_STUFFING_LENGTH 31
+
 // Table for inverting/reversing bit ordering of teletext/VBI bytes.
 const byte REVERSE_BITS[256] =
 {
@@ -243,6 +247,12 @@ CTsMuxerFilter::CTsMuxerFilter(CTsMuxer* tsMuxer, LPUNKNOWN unk, CCritSec* filte
     *hr = E_OUTOFMEMORY;
     return;
   }
+  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
+  m_streamingMonitorThreadStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  if (m_streamingMonitorThreadStopEvent == NULL)
+  {
+    *hr = GetLastError();
+  }
 
   *hr = AddPin();
   LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", *hr);
@@ -264,6 +274,11 @@ CTsMuxerFilter::~CTsMuxerFilter()
   {
     delete m_outputPin;
     m_outputPin = NULL;
+  }
+
+  if (m_streamingMonitorThreadStopEvent != NULL)
+  {
+    CloseHandle(m_streamingMonitorThreadStopEvent);
   }
   LogDebug(L"CTsMuxerFilter: completed");
 }
@@ -327,6 +342,7 @@ HRESULT CTsMuxerFilter::AddPin()
 
 int CTsMuxerFilter::GetPinCount()
 {
+  CAutoLock filterLock(m_pLock);
   return 1 + m_inputPins.size();
 }
 
@@ -350,16 +366,18 @@ STDMETHODIMP CTsMuxerFilter::Run(REFERENCE_TIME startTime)
   LogDebug(L"CTsMuxerFilter: run");
   CAutoLock filterLock(m_pLock);
 
-  // TODO stream monitoring
-  /*LogDebug(L"Start data monitor thread...");
-  m_monitorThread = (HANDLE)_beginthread(&DataMonitorThreadFunction, 0, (void*)this);
-  if (m_monitorThread == INVALID_HANDLE_VALUE)
+  LogDebug(L"CTsMuxerFilter: starting stream monitor thread...");
+  ResetEvent(m_streamingMonitorThreadStopEvent);
+  m_streamingMonitorThread = (HANDLE)_beginthread(&CTsMuxerFilter::StreamingMonitorThreadFunction, 0, (void*)this);
+  if (m_streamingMonitorThread == INVALID_HANDLE_VALUE)
   {
     return E_POINTER;
-  }*/
+  }
+
+  HRESULT hr = m_tsMuxer->Reset();
 
   LogDebug(L"CTsMuxerFilter: starting filter...");
-  HRESULT hr = CBaseFilter::Run(startTime);
+  hr |= CBaseFilter::Run(startTime);
   LogDebug(L"CTsMuxerFilter: completed, hr = 0x%x", hr);
   return hr;
 }
@@ -369,9 +387,9 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   LogDebug(L"CTsMuxerFilter: stop");
   CAutoLock filterLock(m_pLock);
 
-  // TODO stream monitoring
-  //LogDebug(L"Stop data monitor thread...");
-  //SetEvent(m_monitorThreadStopEvent);
+  LogDebug(L"CTsMuxerFilter: stopping stream monitor thread...");
+  SetEvent(m_streamingMonitorThreadStopEvent);
+  m_streamingMonitorThread = INVALID_HANDLE_VALUE;
 
   LogDebug(L"CTsMuxerFilter: stopping filter...");
   HRESULT hr = CBaseFilter::Stop();
@@ -379,25 +397,60 @@ STDMETHODIMP CTsMuxerFilter::Stop()
   return hr;
 }
 
-// TODO stream monitoring?
-/*void __cdecl CTsMuxerFilter::DataMonitorThreadFunction(void* arg)
+void __cdecl CTsMuxerFilter::StreamingMonitorThreadFunction(void* arg)
 {
+  LogDebug(L"CTsMuxerFilter: monitor thread started");
   CTsMuxerFilter* filter = (CTsMuxerFilter*)arg;
+  IStreamMultiplexer* muxer = filter->m_tsMuxer;
+  map<byte, bool> pinStates;
+  bool isFirst = true;
   while (true)
   {
-    DWORD result = WaitForSingleObject(filter->m_monitorThreadStopEvent, 3000);
+    DWORD result = WaitForSingleObject(filter->m_streamingMonitorThreadStopEvent, STREAM_IDLE_TIMEOUT);
     if (result != WAIT_TIMEOUT)
     {
+      // event was set
       break;
     }
 
-    if (filter != NULL && filter->m_tsMuxer != NULL)
+    if (muxer != NULL && muxer->IsStarted())
     {
-      CTsMuxer* muxer = filter->m_tsMuxer;
-      muxer->m_tsInputPin->IsReceiving();
+      CAutoLock filterLock(filter->m_pLock);
+      vector<CMuxInputPin*>::iterator it = filter->m_inputPins.begin();
+      if (isFirst)
+      {
+        while (it != filter->m_inputPins.end())
+        {
+          CMuxInputPin* pin = *it;
+          pinStates[pin->GetId()] = true;
+          it++;
+        }
+        isFirst = false;
+      }
+      else
+      {
+        while (it != filter->m_inputPins.end())
+        {
+          CMuxInputPin* pin = *it;
+          byte pinId = pin->GetId();
+          bool wasReceiving = pinStates[pinId];
+          bool isReceiving = true;
+          if (pin->GetReceiveTickCount() == NOT_RECEIVING || GetTickCount() - pin->GetReceiveTickCount() >= STREAM_IDLE_TIMEOUT)
+          {
+            isReceiving = false;
+          }
+          if (wasReceiving != isReceiving)
+          {
+            LogDebug(L"CTsMuxerFilter: pin %d changed receiving state, %d => %d", pinId, wasReceiving, isReceiving);
+          }
+          pinStates[pinId] = isReceiving;
+          it++;
+        }
+      }
     }
   }
-}*/
+  LogDebug(L"CTsMuxerFilter: monitor thread stopped");
+}
 
 
 //-----------------------------------------------------------------------------
@@ -415,7 +468,7 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   }
 
   m_isStarted = false;
-  m_isVideoActive = true;
+  m_isVideoActive = false;
   m_isAudioActive = true;
   m_isTeletextActive = true;
 
@@ -437,8 +490,8 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   *pointer++ = 0;     // last section number
   *pointer++ = (SERVICE_ID >> 8);
   *pointer++ = (SERVICE_ID & 0xff);
-  *pointer++ = 0xe0;
-  *pointer++ = PID_PMT;
+  *pointer++ = 0xe0 | (PID_PMT_FIRST >> 8);
+  *pointer++ = (PID_PMT_FIRST & 0xff);
   DWORD crc = crc32((char*)&m_patPacket[5], 12);
   *pointer++ = (crc >> 24);
   *pointer++ = ((crc >> 16) & 0xff);
@@ -448,8 +501,8 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
 
   pointer = &m_pmtPacket[0];
   *pointer++ = TS_SYNC_BYTE;
-  *pointer++ = payloadStartFlag | (PID_PMT >> 8);
-  *pointer++ = (PID_PMT & 0xff);
+  *pointer++ = payloadStartFlag | (PID_PMT_FIRST >> 8);
+  *pointer++ = (PID_PMT_FIRST & 0xff);
   *pointer++ = 0x10;
   *pointer++ = 0;     // pointer byte
   *pointer++ = TABLE_ID_PMT;
@@ -489,15 +542,22 @@ CTsMuxer::CTsMuxer(LPUNKNOWN unk, HRESULT* hr)
   *pointer++ = 0;     // descriptor loop length
 
   m_patContinuityCounter = 0;
+
   m_pmtContinuityCounter = 0;
+  m_pmtPid = PID_PMT_FIRST;
   m_pmtVersion = 0;
+
   m_sdtContinuityCounter = 0;
-  m_sdtVersion = -1;
+  m_sdtVersion = VERSION_NOT_SET;
   memset(m_serviceName, 0, SERVICE_NAME_LENGTH + 1);
-  m_serviceType = -1;
-  m_sdtResetTime = -1;
+  m_serviceType = SERVICE_TYPE_NOT_SET;
+  m_sdtResetTime = TIME_NOT_SET;
+
   m_packetCounter = 0;
-  m_pcrPid = -1;
+  m_pcrPid = PID_NOT_SET;
+  m_nextStreamPid = PID_STREAM_FIRST;
+  m_nextVideoStreamId = STREAM_ID_VIDEO_FIRST;
+  m_nextAudioStreamId = STREAM_ID_AUDIO_FIRST;
 
   LogDebug(L"CTsMuxer: completed");
 }
@@ -517,6 +577,15 @@ CTsMuxer::~CTsMuxer()
     sIt++;
   }
   m_streamInfo.clear();
+
+  map<byte, TransportStreamInfo*>::iterator tsIt = m_transportStreamInfo.begin();
+  while (tsIt != m_transportStreamInfo.end())
+  {
+    delete tsIt->second;
+    tsIt->second = NULL;
+    tsIt++;
+  }
+  m_transportStreamInfo.clear();
 
   map<byte, ProgramStreamInfo*>::iterator psIt = m_programStreamInfo.begin();
   while (psIt != m_programStreamInfo.end())
@@ -556,7 +625,7 @@ HRESULT CTsMuxer::BreakConnect(IMuxInputPin* pin)
   {
     if (sIt->second->pinId == pinId)
     {
-      removedActiveStream = !(sIt->second->isIgnored);
+      removedActiveStream = !(sIt->second->isIgnored) && sIt->second->isCompatible;
       if (sIt->second->pmtDescriptorBytes != NULL)
       {
         delete[] sIt->second->pmtDescriptorBytes;
@@ -571,19 +640,26 @@ HRESULT CTsMuxer::BreakConnect(IMuxInputPin* pin)
     }
   }
 
-  // If the pin was carrying a program stream, remove the program stream info.
-  map<byte, ProgramStreamInfo*>::iterator psIt = m_programStreamInfo.begin();
-  while (psIt != m_programStreamInfo.end())
+  // If the pin was carrying a program, system or transport stream, remove the
+  // extra info.
+  if (pin->GetStreamType() == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
   {
-    if (psIt->second->pinId == pinId)
+    map<byte, TransportStreamInfo*>::iterator tsIt = m_transportStreamInfo.find(pin->GetId());
+    if (tsIt != m_transportStreamInfo.end())
+    {
+      delete tsIt->second;
+      tsIt->second = NULL;
+      m_transportStreamInfo.erase(tsIt++);
+    }
+  }
+  else if (pin->GetStreamType() == STREAM_TYPE_MPEG1_SYSTEM_STREAM || pin->GetStreamType() == STREAM_TYPE_MPEG2_PROGRAM_STREAM)
+  {
+    map<byte, ProgramStreamInfo*>::iterator psIt = m_programStreamInfo.find(pin->GetId());
+    if (psIt != m_programStreamInfo.end())
     {
       delete psIt->second;
       psIt->second = NULL;
       m_programStreamInfo.erase(psIt++);
-    }
-    else
-    {
-      psIt++;
     }
   }
 
@@ -592,13 +668,6 @@ HRESULT CTsMuxer::BreakConnect(IMuxInputPin* pin)
   if (removedActiveStream)
   {
     UpdatePmt();
-    if (m_filter->IsActive() && CanDeliver())
-    {
-      m_pmtContinuityCounter = ((m_pmtContinuityCounter + 1) & 0xf);
-      m_pmtPacket[3] &= 0xf0;
-      m_pmtPacket[3] |= m_pmtContinuityCounter;
-      return m_filter->Deliver(&m_pmtPacket[0], TS_PACKET_LENGTH);
-    }
   }
   return S_OK;
 }
@@ -606,6 +675,11 @@ HRESULT CTsMuxer::BreakConnect(IMuxInputPin* pin)
 HRESULT CTsMuxer::CompleteConnect(IMuxInputPin* pin)
 {
   return m_filter->AddPin();
+}
+
+bool CTsMuxer::IsStarted()
+{
+  return m_isStarted;
 }
 
 HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime)
@@ -619,16 +693,19 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
   }
 
   // Update the SDT if we timed out waiting for the service name.
-  if (m_sdtVersion == -1 && GetTickCount() - m_sdtResetTime >= TELETEXT_SERVICE_NAME_TIMEOUT)
+  if (m_sdtVersion == VERSION_NOT_SET && GetTickCount() - m_sdtResetTime >= TELETEXT_SERVICE_NAME_TIMEOUT)
   {
     UpdateSdt();
   }
 
-  if (streamType == STREAM_TYPE_MPEG1_SYSTEM_STREAM || streamType == STREAM_TYPE_MPEG2_PROGRAM_STREAM)
+  if (streamType == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
+  {
+    return ReceiveTransportStream(pin, data, dataLength, dataStartTime);
+  }
+  else if (streamType == STREAM_TYPE_MPEG1_SYSTEM_STREAM || streamType == STREAM_TYPE_MPEG2_PROGRAM_STREAM)
   {
     return ReceiveProgramOrSystemStream(pin, data, dataLength, dataStartTime);
   }
-  // TODO handle transport streams?
 
   // We're processing an elementary stream. Find or create a StreamInfo
   // instance for the pin.
@@ -639,52 +716,79 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
   if (it == m_streamInfo.end())
   {
     info = new StreamInfo();
+    if (info == NULL)
+    {
+      return E_OUTOFMEMORY;
+    }
     info->pinId = pinId;
     info->streamType = streamType;
-    info->pid = PID_STREAM_NEXT++;
+    info->pid = m_nextStreamPid++;
     info->continuityCounter = 0;
+    info->isCompatible = true;  // default assumption
+    info->pmtDescriptorLength = 0;
+    info->pmtDescriptorBytes = NULL;
     m_streamInfo[pinId] = info;
 
     // Log interesting info.
     if (streamType == SERVICE_TYPE_AUDIO_MPEG1 || streamType == SERVICE_TYPE_AUDIO_MPEG2)
     {
       info->isIgnored = !m_isAudioActive;
-      info->streamId = STREAM_ID_AUDIO_NEXT++;
+      info->streamId = m_nextAudioStreamId++;
       hr = ReadAudioStreamInfo(data, dataLength, info);
     }
     else if (streamType == SERVICE_TYPE_VIDEO_MPEG1 || streamType == SERVICE_TYPE_VIDEO_MPEG2)
     {
       info->isIgnored = !m_isVideoActive;
-      info->streamId = STREAM_ID_VIDEO_NEXT++;
+      info->streamId = m_nextVideoStreamId++;
       hr = ReadVideoStreamInfo(data, dataLength, info);
     }
     else if (streamType == STREAM_TYPE_TELETEXT)
     {
+      LogDebug(L"CTsMuxer: pin %d teletext stream", pinId);
+      LogDebug(L"  sample size  = %d bytes", dataLength);
       info->isIgnored = !m_isTeletextActive;
       info->streamId = STREAM_ID_TELETEXT;
       info->pmtDescriptorLength = 2;
       info->pmtDescriptorBytes = new byte[2];
+      if (info->pmtDescriptorBytes == NULL)
+      {
+        return E_OUTOFMEMORY;
+      }
       info->pmtDescriptorBytes[0] = DESCRIPTOR_DVB_TELETEXT; // tag
       info->pmtDescriptorBytes[1] = 0;    // length (no page info)
     }
     else
     {
       LogDebug(L"CTsMuxer: pin %d elementary stream with type 0x%x is not supported", pinId, streamType);
-      info->isIgnored = true;
+      info->isIgnored = false;
+      info->isCompatible = false;
       info->streamType = STREAM_TYPE_UNKNOWN;
     }
+
     // If we fail to parse the stream info or for whatever reason can't be sure
     // that we are able to handle this stream then we won't process it.
     if (!SUCCEEDED(hr))
     {
-      info->isIgnored = true;
+      info->isCompatible = false;
     }
+
+    if (info->isIgnored && info->isCompatible)
+    {
+      LogDebug(L"CTsMuxer: pin %d ignoring stream due to active stream type settings", pinId);
+    }
+
     updatePmt = !info->isIgnored;
   }
   else
   {
     info = it->second;
-    if (!info->isIgnored && (GetTickCount() - info->prevReceiveTickCount) >= STREAM_IDLE_TIMEOUT)
+    if (!info->isIgnored &&
+      info->isCompatible &&
+      (
+        info->prevReceiveTickCount == NOT_RECEIVING ||
+        GetTickCount() - info->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT
+      )
+    )
     {
       updatePmt = true;   // stream is restarting
     }
@@ -697,19 +801,20 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
 
   if (info->isIgnored)
   {
-    if (info->streamType == STREAM_TYPE_UNKNOWN)
+    return S_OK;
+  }
+  else if (!info->isCompatible)
+  {
+    // TODO debug
+    /*LogDebug(L"debug: pin %d incompatible stream type %d frame", pinId, info->streamType);
+    long offset = 0;
+    while (offset + 16 < dataLength)
     {
-      // TODO debug
-      /*LogDebug(L"debug: pin %d unknown stream type frame", pinId);
-      long offset = 0;
-      while (offset + 16 < dataLength)
-      {
-        LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-          data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
-          data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
-        offset += 16;
-      }*/
-    }
+      LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+        data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
+        data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
+      offset += 16;
+    }*/
     return S_OK;
   }
 
@@ -722,9 +827,9 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
 
   // Convert our sample time (10 MHz <=> 100 ns) to a system clock reference
   // (27 MHz <=> ~37 ns).
-  REFERENCE_TIME systemClockReference = -1;
-  REFERENCE_TIME ptsScr = -1;
-  if (dataStartTime != -1)
+  REFERENCE_TIME systemClockReference = TIME_NOT_SET;
+  REFERENCE_TIME ptsScr = TIME_NOT_SET;
+  if (dataStartTime != TIME_NOT_SET)
   {
     systemClockReference = dataStartTime * 27 / 10;
     ptsScr = systemClockReference + 10000000;   // offset PTS from PCR by ~370 ms to give time for demuxing and decoding
@@ -756,6 +861,21 @@ HRESULT CTsMuxer::Receive(IMuxInputPin* pin, PBYTE data, long dataLength, REFERE
   return hr;
 }
 
+HRESULT CTsMuxer::Reset()
+{
+  CAutoLock lock(&m_receiveLock);
+  LogDebug(L"CTsMuxer: reset");
+  m_isStarted = false;
+  m_sdtVersion = VERSION_NOT_SET;
+  map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
+  while (sIt != m_streamInfo.end())
+  {
+    sIt->second->prevReceiveTickCount = NOT_RECEIVING;
+    sIt++;
+  }
+  return S_OK;
+}
+
 HRESULT CTsMuxer::StreamTypeChange(IMuxInputPin* pin, int oldStreamType, int newStreamType)
 {
   // The easiest way to handle a change of stream type is to treat it like
@@ -779,41 +899,38 @@ STDMETHODIMP CTsMuxer::SetActiveComponents(bool video, bool audio, bool teletext
   {
     if (sIt->second->streamType == SERVICE_TYPE_VIDEO_MPEG1 || sIt->second->streamType == SERVICE_TYPE_VIDEO_MPEG2)
     {
-      changedActiveStream = sIt->second->isIgnored == m_isVideoActive;
+      changedActiveStream = (sIt->second->isIgnored == m_isVideoActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isVideoActive;
       m_serviceType = m_isVideoActive ? SERVICE_TYPE_TELEVISION : SERVICE_TYPE_RADIO;
     }
     else if (sIt->second->streamType == SERVICE_TYPE_AUDIO_MPEG1 || sIt->second->streamType == SERVICE_TYPE_AUDIO_MPEG2)
     {
-      changedActiveStream = sIt->second->isIgnored == m_isAudioActive;
+      changedActiveStream = (sIt->second->isIgnored == m_isAudioActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isAudioActive;
     }
     else if (sIt->second->streamType == STREAM_TYPE_TELETEXT)
     {
-      changedActiveStream = sIt->second->isIgnored == m_isTeletextActive;
+      changedActiveStream = (sIt->second->isIgnored == m_isTeletextActive && sIt->second->isCompatible);
       sIt->second->isIgnored = !m_isTeletextActive;
     }
     sIt++;
   }
 
-  // Clear our service details.
-  m_sdtVersion = -1;
+  // Clear our SDT details.
+  m_sdtVersion = VERSION_NOT_SET;
   memset(m_serviceName, 0, SERVICE_NAME_LENGTH);
   m_sdtResetTime = GetTickCount();
 
-  // Notify the playback chain if we're running and added or removed one or
-  // more active streams.
-  if (changedActiveStream)
+  // Update our PMT PID.
+  m_pmtPid++;
+  if (m_pmtPid == PID_STREAM_FIRST)
   {
-    UpdatePmt();
-    if (m_filter->IsActive() && CanDeliver())
-    {
-      m_pmtContinuityCounter = ((m_pmtContinuityCounter + 1) & 0xf);
-      m_pmtPacket[3] &= 0xf0;
-      m_pmtPacket[3] |= m_pmtContinuityCounter;
-      return m_filter->Deliver(&m_pmtPacket[0], TS_PACKET_LENGTH);
-    }
+    m_pmtPid = PID_PMT_FIRST;
   }
+
+  // Update the PAT and PMT.
+  UpdatePat();
+  UpdatePmt();
   return S_OK;
 }
 
@@ -859,46 +976,80 @@ bool CTsMuxer::CanDeliver()
       hr = pin->QueryDirection(&direction);
       if (SUCCEEDED(hr) && direction == PINDIR_INPUT)
       {
-        // Check that the pin is receiving (even if we're ignoring the stream).
-        if (!pin->IsReceiving())
+        // Check that the pin is receiving. We must be receiving even if the
+        // stream is incompatible or we're ignoring it.
+        DWORD receiveTickCount = pin->GetReceiveTickCount();
+        if (receiveTickCount == NOT_RECEIVING || GetTickCount() - receiveTickCount >= STREAM_IDLE_TIMEOUT)
         {
           return false;
         }
 
-        // Check that we're receiving each substream. How many substreams do we
-        // expect?
-        int expectedStreamCount = 1;
-        if (pin->GetStreamType() == STREAM_TYPE_MPEG1_SYSTEM_STREAM || pin->GetStreamType() == STREAM_TYPE_MPEG2_PROGRAM_STREAM)
+        // Check that we're receiving each substream.
+        // How many substreams do we expect from this pin?
+        int expectedStreamCount = 0;
+        if (pin->GetStreamType() == STREAM_TYPE_MPEG2_TRANSPORT_STREAM)
+        {
+          map<byte, TransportStreamInfo*>::iterator tsIt = m_transportStreamInfo.find(pin->GetId());
+          if (tsIt == m_transportStreamInfo.end())
+          {
+            // This should never happen.
+            return false;
+          }
+
+          if (tsIt->second->isCompatible && tsIt->second->streamCount > 0)
+          {
+            expectedStreamCount = tsIt->second->streamCount;
+          }
+        }
+        else if (pin->GetStreamType() == STREAM_TYPE_MPEG1_SYSTEM_STREAM || pin->GetStreamType() == STREAM_TYPE_MPEG2_PROGRAM_STREAM)
         {
           map<byte, ProgramStreamInfo*>::iterator psIt = m_programStreamInfo.find(pin->GetId());
           if (psIt == m_programStreamInfo.end())
           {
-            // If we haven't got any information about the PS then it means we
-            // haven't processed any samples yet.
+            // This should never happen.
             return false;
           }
-          expectedStreamCount = psIt->second->videoBound + psIt->second->audioBound;
-          if (expectedStreamCount < 0)
+
+          if (psIt->second->isCompatible)
           {
-            // We don't know how many streams are expected.
-            expectedStreamCount = 0;
+            expectedStreamCount = psIt->second->videoBound + psIt->second->audioBound;
+            if (expectedStreamCount < 0)
+            {
+              // We don't know how many streams are expected because we haven't
+              // seen a system header or program stream map yet. This is odd
+              // because usually we expect a system header immediately after
+              // the first pack. Assume we've seen all streams.
+              expectedStreamCount = 0;
+            }
           }
         }
-
-        // How many substreams are we receiving?
-        int receivedStreamCount = 0;
-        map<unsigned int, StreamInfo*>::iterator stIt = m_streamInfo.begin();
-        while (stIt != m_streamInfo.end())
+        else
         {
-          if (stIt->second->pinId == pin->GetId())
+          expectedStreamCount = 1;
+        }
+
+        // How many substreams are we actually receiving from this pin?
+        int receivedStreamCount = 0;
+        map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
+        while (sIt != m_streamInfo.end())
+        {
+          if (sIt->second->pinId == pin->GetId())
           {
-            if (!stIt->second->isIgnored && GetTickCount() - stIt->second->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT)
+            // Any non-ignored compatible stream that we're not receiving is an
+            // immediate fail.
+            if (!sIt->second->isIgnored &&
+              sIt->second->isCompatible &&
+              (
+                sIt->second->prevReceiveTickCount == NOT_RECEIVING ||
+                GetTickCount() - sIt->second->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT
+              )
+            )
             {
               return false;
             }
             receivedStreamCount++;
           }
-          stIt++;
+          sIt++;
         }
 
         if (receivedStreamCount < expectedStreamCount)
@@ -911,14 +1062,177 @@ bool CTsMuxer::CanDeliver()
 
   LogDebug(L"CTsMuxer: starting to deliver...");
   m_isStarted = true;
-  //TODO must reset this when the filter is stopped
 
   // Waiting for SDT?
-  if (m_sdtVersion == -1)
+  if (m_sdtVersion == VERSION_NOT_SET)
   {
     m_sdtResetTime = GetTickCount();
   }
   return true;
+}
+
+HRESULT CTsMuxer::ReceiveTransportStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime)
+{
+  // Find or create a TransportStreamInfo instance for the pin.
+  byte pinId = pin->GetId();
+  bool isFirstReceive = false;
+  TransportStreamInfo* tsInfo = NULL;
+  map<byte, TransportStreamInfo*>::iterator it = m_transportStreamInfo.find(pinId);
+  if (it == m_transportStreamInfo.end())
+  {
+    tsInfo = new TransportStreamInfo();
+    if (tsInfo == NULL)
+    {
+      return E_OUTOFMEMORY;
+    }
+    tsInfo->pinId = pinId;
+    tsInfo->isCompatible = true;
+    tsInfo->pmtPid = PID_NOT_SET;
+    tsInfo->patVersion = VERSION_NOT_SET;
+    tsInfo->pmtVersion = VERSION_NOT_SET;
+    m_transportStreamInfo[pinId] = tsInfo;
+  }
+  else
+  {
+    tsInfo = it->second;
+  }
+
+  // Skip all processing if we previously determined that this transport stream
+  // is incompatible.
+  if (isFirstReceive && data[0] != TS_SYNC_BYTE)
+  {
+    tsInfo->isCompatible = false;
+  }
+  if (dataLength % TS_PACKET_LENGTH != 0)
+  {
+    tsInfo->isCompatible = false;
+  }
+  if (!tsInfo->isCompatible)
+  {
+    return S_OK;
+  }
+
+  byte* outputBuffer = new byte[dataLength];
+  if (outputBuffer == NULL)
+  {
+    return E_OUTOFMEMORY;
+  }
+  long outputOffset = 0;
+
+  StreamInfo* info = NULL;
+  unsigned short previousPid = PID_NOT_SET;
+  long inputOffset = 0;
+  HRESULT hr = S_OK;
+  while (dataLength >= TS_PACKET_LENGTH)
+  {
+    unsigned short pid = ((data[inputOffset + 1] << 8) & 0x1f) + data[inputOffset + 2];
+
+    if (pid == PID_PAT || (tsInfo->pmtPid != PID_NOT_SET && tsInfo->pmtPid == pid))
+    {
+      // Flush our buffer in case the PMT changes.
+      if (CanDeliver() && outputOffset != 0)
+      {
+        hr = DeliverTransportStreamData(outputBuffer, outputOffset);
+        if (hr != S_OK)
+        {
+          delete[] outputBuffer;
+          return hr;
+        }
+      }
+      outputOffset = 0;
+
+      if (pid == PID_PAT)
+      {
+        hr = ReadProgramAssociationTable(&data[inputOffset + 5], TS_PACKET_LENGTH - 5, tsInfo);
+      }
+      else
+      {
+        hr = ReadProgramMapTable(&data[inputOffset + 5], TS_PACKET_LENGTH - 5, tsInfo);
+        // Change of PMT could have changed the details for any PID, so unset
+        // our cached PID details.
+        info = NULL;
+        previousPid = PID_NOT_SET;
+      }
+
+      if (hr != S_OK)
+      {
+        delete[] outputBuffer;
+        return hr;
+      }
+    }
+    else
+    {
+      if (pid != previousPid)
+      {
+        unsigned int streamKey = (pid << 8) + pin->GetId();
+        map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.find(streamKey);
+        if (sIt != m_streamInfo.end())
+        {
+          info = sIt->second;
+        }
+        else
+        {
+          info = NULL;    // ignore this stream - not part of the service
+        }
+      }
+
+      if (info != NULL && info->isCompatible && (!info->isIgnored || tsInfo->pcrPid == pid))
+      {
+        // If we're ignoring the stream that contains PCR then overwrite the
+        // content of the packet with padding and inject the packet into our
+        // selected PCR stream.
+        if (info->isIgnored)
+        {
+          byte adaptationFieldControl = ((data[inputOffset + 3] >> 4) & 0x03);
+          byte adaptationFieldLength = data[inputOffset + TS_HEADER_LENGTH];
+          if ((adaptationFieldControl & 0x2) != 0 && adaptationFieldLength > 0 && (data[inputOffset + 5] & 0x10) != 0)
+          {
+            memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LENGTH);
+
+            // Fix the PID, adaptation field control and continuity counter.
+            outputBuffer[outputOffset + 1] = (m_pcrPid >> 8);
+            outputBuffer[outputOffset + 2] = (m_pcrPid & 0xff);
+            map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
+            while (sIt != m_streamInfo.end())
+            {
+              if (sIt->second->pid == m_pcrPid)
+              {
+                outputBuffer[outputOffset + 3] = 0x20 | sIt->second->continuityCounter;    // adaptation field only, not scrambled
+              }
+              sIt++;
+            }
+
+            // Overwrite the content with padding.
+            byte fullAdaptationByteCount = TS_PACKET_LENGTH - TS_HEADER_LENGTH - 1;   // - 1 for adaptation field length
+            byte additionalPaddingByteCount = fullAdaptationByteCount - adaptationFieldLength;
+            outputBuffer[outputOffset + TS_HEADER_LENGTH] = fullAdaptationByteCount;
+            if (additionalPaddingByteCount > 0)
+            {
+              memset(&outputBuffer[outputOffset + TS_HEADER_LENGTH + adaptationFieldLength], 0xff, additionalPaddingByteCount);
+            }
+          }
+        }
+        else
+        {
+          memcpy(&outputBuffer[outputOffset], &data[inputOffset], TS_PACKET_LENGTH);
+        }
+
+        outputOffset += TS_PACKET_LENGTH;
+      }
+
+      previousPid = pid;
+    }
+
+    dataLength -= TS_PACKET_LENGTH;
+    inputOffset += TS_PACKET_LENGTH;
+  }
+
+  if (outputOffset != 0)
+  {
+    hr = DeliverTransportStreamData(outputBuffer, outputOffset);
+  }
+  delete[] outputBuffer;
+  return hr;
 }
 
 HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, long dataLength, REFERENCE_TIME dataStartTime)
@@ -932,11 +1246,15 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
   {
     isFirstReceive = true;
     psInfo = new ProgramStreamInfo();
+    if (psInfo == NULL)
+    {
+      return E_OUTOFMEMORY;
+    }
     psInfo->pinId = pinId;
-    psInfo->isIgnored = false;
+    psInfo->isCompatible = true;
     psInfo->videoBound = -1;
     psInfo->audioBound = -1;
-    psInfo->currentMapVersion = -1;
+    psInfo->currentMapVersion = VERSION_NOT_SET;
     m_programStreamInfo[pinId] = psInfo;
   }
   else
@@ -945,14 +1263,14 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
   }
 
   // Update the SDT if we timed out waiting for the service name.
-  if (m_sdtVersion == -1 && GetTickCount() - m_sdtResetTime >= TELETEXT_SERVICE_NAME_TIMEOUT)
+  if (m_sdtVersion == VERSION_NOT_SET && GetTickCount() - m_sdtResetTime >= TELETEXT_SERVICE_NAME_TIMEOUT)
   {
     UpdateSdt();
   }
 
   // Skip all processing if we previously determined that this program/system
   // stream is incompatible.
-  if (psInfo->isIgnored)
+  if (!psInfo->isCompatible)
   {
     return S_OK;
   }
@@ -960,14 +1278,14 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
   // Process each program or system stream frame.
   long offset = 0;
   long remainingDataLength = dataLength;
-  REFERENCE_TIME systemClockReference = -1;
+  REFERENCE_TIME systemClockReference = TIME_NOT_SET;
   while (remainingDataLength >= 4)
   {
     // All samples must be aligned to frame boundaries.
     if (data[offset] != 0 || data[offset + 1] != 0 || data[offset + 2] != 1)
     {
       LogDebug(L"CTsMuxer: pin %d program/system stream sample not frame-aligned", pinId);
-      psInfo->isIgnored = true;
+      psInfo->isCompatible = false;
       return VFW_E_BADALIGN;
     }
     byte streamId = data[offset + 3];
@@ -983,7 +1301,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
     else if (streamId == STREAM_ID_PACK)
     {
       int length = 0;
-      hr = ReadProgramOrSystemPackInfo(&data[offset], remainingDataLength, psInfo, isFirstReceive, &length, &systemClockReference);
+      hr = ReadProgramOrSystemPack(&data[offset], remainingDataLength, psInfo, isFirstReceive, &length, &systemClockReference);
       offset += length;
       remainingDataLength -= length;
     }
@@ -992,24 +1310,25 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
       if (remainingDataLength < 6)
       {
         LogDebug(L"CTsMuxer: pin %d program/system stream packet with length %d is too small to contain a system header, program stream map, padding or data", pinId, remainingDataLength);
-        psInfo->isIgnored = true;
+        psInfo->isCompatible = false;
         return E_NOT_SUFFICIENT_BUFFER;
       }
+      // Ideally we'd have a way to validate that the packet length is correct.
       unsigned short packetLength = (data[offset + 4] << 8) + data[offset + 5];
       if (remainingDataLength < packetLength + 6)
       {
         LogDebug(L"CTsMuxer: pin %d program/system stream appears to spread packets across samples, not compatible", pinId);
-        psInfo->isIgnored = true;
+        psInfo->isCompatible = false;
         return VFW_E_UNSUPPORTED_STREAM;
       }
 
       if (streamId == STREAM_ID_SYSTEM_HEADER)
       {
-        hr = ReadProgramOrSystemHeaderInfo(&data[offset], remainingDataLength, psInfo, isFirstReceive);
+        hr = ReadProgramOrSystemHeader(&data[offset], remainingDataLength, psInfo, isFirstReceive);
       }
       else if (streamId == STREAM_ID_PROGRAM_STREAM_MAP)
       {
-        hr = ReadProgramStreamMapInfo(&data[offset], remainingDataLength, psInfo);
+        hr = ReadProgramStreamMap(&data[offset], remainingDataLength, psInfo);
       }
       else if (streamId == STREAM_ID_PADDING)
       {
@@ -1026,43 +1345,63 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
         if (it == m_streamInfo.end())
         {
           info = new StreamInfo();
+          if (info == NULL)
+          {
+            return E_OUTOFMEMORY;
+          }
           info->pinId = pinId;
-          info->pid = PID_STREAM_NEXT++;
+          info->pid = m_nextStreamPid++;
           info->continuityCounter = 0;
+          info->isCompatible = true;  // default assumption
+          info->pmtDescriptorLength = 0;
+          info->pmtDescriptorBytes = NULL;
           m_streamInfo[streamKey] = info;
 
-          int offsetToPesData = offset + 9 + data[offset + 8];  // TODO safety
+          int offsetToPesData = offset + 9 + data[offset + 8];
           if ((streamId & 0xe0) == STREAM_ID_AUDIO_FIRST)
           {
             info->isIgnored = !m_isAudioActive;
-            info->streamId = STREAM_ID_AUDIO_NEXT++;
-            hr = ReadAudioStreamInfo(&data[offsetToPesData], remainingDataLength, info);
+            info->streamId = m_nextAudioStreamId++;
+            hr = ReadAudioStreamInfo(&data[offsetToPesData], remainingDataLength - offsetToPesData, info);
           }
           else if ((streamId & 0xf0) == STREAM_ID_VIDEO_FIRST)
           {
             info->isIgnored = !m_isVideoActive;
-            info->streamId = STREAM_ID_VIDEO_NEXT++;
-            hr = ReadVideoStreamInfo(&data[offsetToPesData], remainingDataLength, info);
+            info->streamId = m_nextVideoStreamId++;
+            hr = ReadVideoStreamInfo(&data[offsetToPesData], remainingDataLength - offsetToPesData, info);
           }
           else
           {
             // other unsupported stream types - private, ECM, EMM, DCMCC, MHEG etc.
             LogDebug(L"CTsMuxer: pin %d program/system stream PES packet with stream ID 0x%x is not supported", pinId, streamId);
-            info->isIgnored = true;
+            info->isIgnored = false;
+            info->isCompatible = false;
           }
 
           // If we fail to parse the stream info or for whatever reason can't be sure
           // that we are able to handle this stream then we won't process it.
           if (!SUCCEEDED(hr))
           {
-            info->isIgnored = true;
+            info->isCompatible = false;
           }
+
+          if (info->isIgnored && info->isCompatible)
+          {
+            LogDebug(L"CTsMuxer: pin %d ignoring substream %d due to active stream type settings", pinId, streamId);
+          }
+
           updatePmt = !info->isIgnored;
         }
         else
         {
           info = it->second;
-          if (!info->isIgnored && (GetTickCount() - info->prevReceiveTickCount) >= STREAM_IDLE_TIMEOUT)
+          if (!info->isIgnored &&
+            info->isCompatible &&
+            (
+              info->prevReceiveTickCount == NOT_RECEIVING ||
+              GetTickCount() - info->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT
+            )
+          )
           {
             updatePmt = true;   // stream is restarting
           }
@@ -1074,26 +1413,23 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
         }
 
         // Wrap the PES packet into transport stream packets and deliver them.
-        if (info->isIgnored)
+        if (!info->isCompatible)
         {
-          if (info->streamType == STREAM_TYPE_UNKNOWN)
+          /*LogDebug(L"debug: pin %d incompatible program/system substream %d frame", pinId, streamId);
+          long offset = 0;
+          while (offset + 16 < dataLength)
           {
-            /*LogDebug(L"debug: pin %d program/system substream %d frame", pinId, streamId);
-            long offset = 0;
-            while (offset + 16 < dataLength)
-            {
-              LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
-                data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
-                data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
-              offset += 16;
-            }*/
-          }
+            LogDebug(L"debug: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x",
+              data[offset], data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5], data[offset + 6], data[offset + 7],
+              data[offset + 8], data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13], data[offset + 14], data[offset + 15]);
+            offset += 16;
+          }*/
         }
-        else if (CanDeliver())
+        else if (!info->isIgnored && CanDeliver())
         {
           PBYTE tsData = NULL;
           long tsDataLength = 0;
-          systemClockReference = info->pid == m_pcrPid ? systemClockReference : -1;   // only put PCR into the PCR stream
+          systemClockReference = info->pid == m_pcrPid ? systemClockReference : TIME_NOT_SET;   // only put PCR into the PCR stream
           hr = WrapPacketisedElementaryStreamData(info, &data[offset], packetLength + 6, systemClockReference, &tsData, &tsDataLength);
           if (SUCCEEDED(hr) && tsDataLength > 0)
           {
@@ -1101,7 +1437,7 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
             delete[] tsData;
           }
         }
-        systemClockReference = -1;    // PCR applies to the first frame
+        systemClockReference = TIME_NOT_SET;    // PCR applies to the first frame
       }
 
       // Move on to the next frame...
@@ -1118,7 +1454,182 @@ HRESULT CTsMuxer::ReceiveProgramOrSystemStream(IMuxInputPin* pin, PBYTE data, lo
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramOrSystemPackInfo(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, int* length, REFERENCE_TIME* systemClockReference)
+HRESULT CTsMuxer::ReadProgramAssociationTable(PBYTE data, long dataLength, TransportStreamInfo* info)
+{
+  byte version = ((data[5] >> 1) & 0x1f);
+  if (info->patVersion == version)
+  {
+    return S_OK;
+  }
+  info->patVersion = version;
+
+  unsigned short transportStreamId = (data[3] << 8) + data[4];
+  LogDebug(L"TsMuxer: pin %d new program association table, version = %d, transport stream ID = 0x%x", info->pinId, version, transportStreamId);
+  info->transportStreamId = transportStreamId;
+
+  unsigned short sectionLength = ((data[1] & 0x0f) << 8) + data[2];
+  unsigned short offset = 8;
+  unsigned short endOfServices = offset + (sectionLength - 4 - 5);  // - 4 for CRC, - 5 for other fixed length fields
+  byte serviceCount = 0;
+  while (offset + 3 < endOfServices)
+  {
+    unsigned short serviceId = (data[offset] << 8) + data[offset + 1];
+    unsigned short pmtPid = ((data[offset + 2] & 0x1f) << 8) + data[offset + 3];
+    LogDebug(L"  service, service ID = 0x%x, PMT PID = 0x%x", serviceId, pmtPid);
+    if (serviceId != 0)
+    {
+      serviceCount++;
+      // We can only handle transport streams containing one service. Take the
+      // first real service (service ID 0 points to the DVB NIT PID).
+      if (serviceCount == 1)
+      {
+        info->serviceId = serviceId;
+        info->pmtPid = pmtPid;
+      }
+    }
+    offset += 4;
+  }
+  return S_OK;
+}
+
+HRESULT CTsMuxer::ReadProgramMapTable(PBYTE data, long dataLength, TransportStreamInfo* info)
+{
+  byte version = ((data[5] >> 1) & 0x1f);
+  unsigned short serviceId = (data[3] << 8) + data[4];
+  if (info->pmtVersion == version || info->serviceId != serviceId)
+  {
+    return S_OK;
+  }
+  info->pmtVersion = version;
+
+  unsigned short pcrPid = ((data[8] & 0x1f) << 8) + data[9];
+  LogDebug(L"TsMuxer: pin %d new program map table, version = %d, service ID = 0x%x, PCR PID = 0x%x", info->pinId, version, serviceId, pcrPid);
+  info->pcrPid = pcrPid;
+
+  // Set a "marker" on all substreams for this pin so we can remove inactive
+  // streams at the end.
+  map<unsigned int, StreamInfo*>::iterator sIt = m_streamInfo.begin();
+  while (sIt != m_streamInfo.end())
+  {
+    if (sIt->second->pinId == info->pinId)
+    {
+      sIt->second->isIgnored = true;
+      sIt->second->streamId = 1;
+    }
+    sIt++;
+  }
+
+  unsigned short sectionLength = ((data[1] & 0x0f) << 8) + data[2];
+  unsigned short programInfoLength = ((data[1] & 0x0f) << 8) + data[2];
+  long offset = 12;
+  long endOfDescriptors = offset + programInfoLength;
+  while (offset + 1 < endOfDescriptors)
+  {
+    byte tag = data[offset++];
+    byte length = data[offset++];
+    offset += length;
+    LogDebug(L"  program descriptor, tag = 0x%x, length = %d", tag, length);
+  }
+
+  long endOfStreams = offset + (sectionLength - programInfoLength - 4 - 9);   // - 4 for CRC, - 9 for other fixed length fields
+  while (offset + 4 < endOfStreams)
+  {
+    byte streamType = data[offset++];
+    unsigned short elementaryStreamPid = ((data[offset] & 0x1f) << 8) + data[offset + 1];
+    offset += 2;
+
+    unsigned int streamKey = (elementaryStreamPid << 8) + info->pinId;
+    StreamInfo* streamInfo = NULL;
+    sIt = m_streamInfo.find(streamKey);
+    if (sIt == m_streamInfo.end())
+    {
+      streamInfo = new StreamInfo();
+      if (streamInfo == NULL)
+      {
+        return E_OUTOFMEMORY;
+      }
+      streamInfo->originalPid = elementaryStreamPid;
+      streamInfo->continuityCounter = -1;
+      streamInfo->isCompatible = true;
+      streamInfo->isIgnored = true;
+      streamInfo->pid = m_nextStreamPid++;
+      streamInfo->pinId = info->pinId;
+      streamInfo->prevReceiveTickCount = NOT_RECEIVING;
+      m_streamInfo[streamKey] = streamInfo;
+    }
+    else
+    {
+      streamInfo = sIt->second;
+    }
+    streamInfo->streamId = 0;   // unset marker
+    streamInfo->streamType = streamType;
+
+    if (streamType == SERVICE_TYPE_VIDEO_MPEG1 || streamType == SERVICE_TYPE_VIDEO_MPEG2 || streamType == SERVICE_TYPE_VIDEO_H264)
+    {
+      streamInfo->isIgnored = !m_isVideoActive;
+    }
+    else if (streamType == SERVICE_TYPE_AUDIO_MPEG1 || streamType == SERVICE_TYPE_AUDIO_MPEG2 || streamType == SERVICE_TYPE_AUDIO_AAC || streamType == SERVICE_TYPE_AUDIO_LATM_AAC || streamType == SERVICE_TYPE_AUDIO_AC3 || streamType == SERVICE_TYPE_AUDIO_E_AC3)
+    {
+      streamInfo->isIgnored = !m_isAudioActive;
+    }
+    else
+    {
+      // assume other streams - subtitles, teletext etc. - should be active
+      streamInfo->isIgnored = false;
+    }
+    LogDebug(L"  elementary stream, PID = 0x%x, type = 0x%x, active = %d", elementaryStreamPid, streamType, !streamInfo->isIgnored);
+
+    unsigned short elementaryStreamInfoLength = (data[offset] << 8) + data[offset + 1];
+    offset += 2;
+    if (streamInfo->pmtDescriptorBytes != NULL)
+    {
+      delete[] streamInfo->pmtDescriptorBytes;
+      streamInfo->pmtDescriptorBytes = NULL;
+    }
+    if (elementaryStreamInfoLength != 0)
+    {
+      streamInfo->pmtDescriptorLength = elementaryStreamInfoLength;
+      streamInfo->pmtDescriptorBytes = new byte[elementaryStreamInfoLength];
+      if (streamInfo->pmtDescriptorBytes == NULL)
+      {
+        return E_OUTOFMEMORY;
+      }
+      memcpy(streamInfo->pmtDescriptorBytes, &data[offset], elementaryStreamInfoLength);
+    }
+    endOfDescriptors = offset + elementaryStreamInfoLength;
+    while (offset + 1 < endOfDescriptors)
+    {
+      byte tag = data[offset++];
+      byte length = data[offset++];
+      offset += length;
+      LogDebug(L"    elementary stream descriptor, tag = 0x%x, length = %d", tag, length);
+    }
+  }
+
+  // Remove streams that are no longer part of the program.
+  sIt = m_streamInfo.begin();
+  while (sIt != m_streamInfo.end())
+  {
+    if (sIt->second->pinId == info->pinId && sIt->second->streamId == 1)
+    {
+      if (sIt->second->pmtDescriptorBytes != NULL)
+      {
+        delete[] sIt->second->pmtDescriptorBytes;
+      }
+      delete sIt->second;
+      sIt->second = NULL;
+      m_streamInfo.erase(sIt++);
+    }
+    else
+    {
+      sIt++;
+    }
+  }
+
+  return UpdatePmt();
+}
+
+HRESULT CTsMuxer::ReadProgramOrSystemPack(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive, int* length, REFERENCE_TIME* systemClockReference)
 {
   if (isFirstReceive)
   {
@@ -1196,7 +1707,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemPackInfo(PBYTE data, long dataLength, Progr
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramOrSystemHeaderInfo(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive)
+HRESULT CTsMuxer::ReadProgramOrSystemHeader(PBYTE data, long dataLength, ProgramStreamInfo* info, bool isFirstReceive)
 {
   int rateBound = ((data[6] & 0x7f) << 15);
   rateBound += (data[7] << 7);
@@ -1237,7 +1748,7 @@ HRESULT CTsMuxer::ReadProgramOrSystemHeaderInfo(PBYTE data, long dataLength, Pro
   return S_OK;
 }
 
-HRESULT CTsMuxer::ReadProgramStreamMapInfo(PBYTE data, long dataLength, ProgramStreamInfo* info)
+HRESULT CTsMuxer::ReadProgramStreamMap(PBYTE data, long dataLength, ProgramStreamInfo* info)
 {
   bool currentNextIndicator = ((data[6] & 0x80) != 0);
   byte programStreamMapVersion = (data[6] & 0x1f);
@@ -1247,6 +1758,7 @@ HRESULT CTsMuxer::ReadProgramStreamMapInfo(PBYTE data, long dataLength, ProgramS
   }
   LogDebug(L"CTsMuxer: pin %d program stream map version changed, %d => %d", info->pinId, info->currentMapVersion, programStreamMapVersion);
   info->currentMapVersion = programStreamMapVersion;
+
   unsigned short programStreamInfoLength = (data[8] << 8) + data[9];
   long offset = 10;
   long endOfDescriptors = offset + programStreamInfoLength;
@@ -1257,6 +1769,7 @@ HRESULT CTsMuxer::ReadProgramStreamMapInfo(PBYTE data, long dataLength, ProgramS
     offset += length;
     LogDebug(L"  program stream map descriptor, tag = 0x%x, length = %d", tag, length);
   }
+
   unsigned short elementaryStreamMapLength = (data[offset] << 8) + data[offset + 1];
   offset += 2;
   long endOfStreams = offset + elementaryStreamMapLength;
@@ -1264,9 +1777,9 @@ HRESULT CTsMuxer::ReadProgramStreamMapInfo(PBYTE data, long dataLength, ProgramS
   {
     byte streamType = data[offset++];
     byte elementaryStreamId = data[offset++];
-    LogDebug(L"  elementary stream 0x%x, type = 0x%x", elementaryStreamId, streamType);
+    LogDebug(L"  elementary stream, stream ID = 0x%x, type = 0x%x", elementaryStreamId, streamType);
     unsigned short elementaryStreamInfoLength = (data[offset] << 8) + data[offset + 1];
-    offset += 4;
+    offset += 2;
     endOfDescriptors = offset + elementaryStreamInfoLength;
     while (offset + 1 < endOfDescriptors)
     {
@@ -1289,7 +1802,7 @@ HRESULT CTsMuxer::ReadVideoStreamInfo(PBYTE data, long dataLength, StreamInfo* i
     return VFW_E_BADALIGN;
   }
 
-  if (data[3] == 0xb3)  // sequence heade
+  if (data[3] == 0xb3)  // sequence header
   {
     int horizontalResolution = (data[4] << 4) + (data[5] >> 4);
     int verticalResolution = ((data[5] & 0xf) << 8) + data[6];
@@ -1350,20 +1863,40 @@ HRESULT CTsMuxer::ReadAudioStreamInfo(PBYTE data, long dataLength, StreamInfo* i
   return S_OK;
 }
 
+HRESULT CTsMuxer::UpdatePat()
+{
+  // Update the PMT PID for our service.
+  byte* pointer = &m_patPacket[15];
+  *pointer++ = 0xe0 | (m_pmtPid >> 8);
+  *pointer++ = (m_pmtPid & 0xff);
+  DWORD crc = crc32((char*)&m_patPacket[5], 12);
+  *pointer++ = (crc >> 24);
+  *pointer++ = ((crc >> 16) & 0xff);
+  *pointer++ = ((crc >> 8) & 0xff);
+  *pointer++ = (crc & 0xff);
+
+  m_packetCounter = 0;  // trigger PAT to be delivered before the next content
+  return S_OK;
+}
+
 HRESULT CTsMuxer::UpdatePmt()
 {
   int sectionLength = 13;   // size of fixed-length parts of the section (including CRC)
 
-  // Append stream info to the PMT.
+  // Append stream info to the PMT and decide which PID should be the PCR PID.
   byte activeStreamCount = 0;
-  m_pcrPid = -1;
+  m_pcrPid = PID_NOT_SET;
   bool pcrPidIsVideo = false;
   byte* pointer = &m_pmtPacket[17];
   map<unsigned int, StreamInfo*>::iterator it = m_streamInfo.begin();
   while (it != m_streamInfo.end())
   {
     StreamInfo* info = it->second;
-    if (info->isIgnored || GetTickCount() - info->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT)
+    if (info->isIgnored ||
+      !info->isCompatible ||
+      info->prevReceiveTickCount == NOT_RECEIVING ||
+      GetTickCount() - info->prevReceiveTickCount >= STREAM_IDLE_TIMEOUT
+    )
     {
       it++;
       continue;
@@ -1390,7 +1923,7 @@ HRESULT CTsMuxer::UpdatePmt()
 
     // Update the PCR PID. We select the first non-teletext stream by default
     // but we prefer a video stream.
-    if ((m_pcrPid == -1 && info->streamType != STREAM_TYPE_TELETEXT) ||
+    if ((m_pcrPid == PID_NOT_SET && info->streamType != STREAM_TYPE_TELETEXT) ||
       (!pcrPidIsVideo && (info->streamType == SERVICE_TYPE_VIDEO_MPEG1 || info->streamType == SERVICE_TYPE_VIDEO_MPEG2))
     )
     {
@@ -1400,6 +1933,9 @@ HRESULT CTsMuxer::UpdatePmt()
 
     it++;
   }
+
+  m_pmtPacket[1] = 0x40 | (m_pmtPid >> 8);  // payload start
+  m_pmtPacket[2] = (m_pmtPid & 0xff);
 
   m_pmtPacket[6] = 0xb0 | (sectionLength >> 8);
   m_pmtPacket[7] = (sectionLength & 0xff);
@@ -1430,7 +1966,8 @@ HRESULT CTsMuxer::UpdatePmt()
     UpdateSdt();
   }
 
-  LogDebug(L"CTsMuxer: updated PMT, active stream count = %d, version = %d, service type = %d", activeStreamCount, m_pmtVersion, m_serviceType);
+  LogDebug(L"CTsMuxer: updated PMT, PID = 0x%x, active stream count = %d, version = %d, service type = %d", m_pmtPid, activeStreamCount, m_pmtVersion, m_serviceType);
+  m_packetCounter = 0;  // trigger PMT to be delivered before the next content
   return S_OK;
 }
 
@@ -1469,6 +2006,7 @@ HRESULT CTsMuxer::UpdateSdt()
     return E_FAIL;
   }
   memset(pointer, 0xff, stuffingLength);
+  m_packetCounter = 0;  // trigger SDT to be delivered before the next content
   return S_OK;
 }
 
@@ -1476,7 +2014,7 @@ HRESULT CTsMuxer::WrapVbiTeletextData(StreamInfo* info, PBYTE inputData, long in
 {
   *outputDataLength = 0;
   *outputData = NULL;
-  if (inputDataLength == 0 || systemClockReference == -1)   // we must have a PTS for teletext packets, therefore we must have an SCR
+  if (inputDataLength == 0 || systemClockReference == TIME_NOT_SET)   // we must have a PTS for teletext packets, therefore we must have an SCR
   {
     return S_OK;
   }
@@ -1584,7 +2122,7 @@ HRESULT CTsMuxer::WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, lo
 
   int packetLength = inputDataLength + 3; // + 3 for flags and header length
   byte alignmentFlag = 0;   // We assume that the stream is frame aligned if the sample time is set.
-  if (systemClockReference != -1)
+  if (systemClockReference != TIME_NOT_SET)
   {
     packetLength += PTS_LENGTH;
     alignmentFlag = 0x04;   // aligned
@@ -1615,7 +2153,7 @@ HRESULT CTsMuxer::WrapElementaryStreamData(StreamInfo* info, PBYTE inputData, lo
   *pointer++ = (packetLength >> 8);
   *pointer++ = (packetLength & 0xff);
   *pointer++ = alignmentFlag | 0x81;    // not scrambled, not high priority, not copyright, not copy
-  if (systemClockReference == -1)
+  if (systemClockReference == TIME_NOT_SET)
   {
     *pointer++ = 0;           // no extra info
     *pointer++ = 0;           // header length
@@ -1653,7 +2191,7 @@ HRESULT CTsMuxer::WrapPacketisedElementaryStreamData(StreamInfo* info, PBYTE inp
 
   bool writePcr = false;
   long outputBufferSize = inputDataLength;
-  if (systemClockReference != -1 && info->pid == m_pcrPid)
+  if (systemClockReference != TIME_NOT_SET && info->pid == m_pcrPid)
   {
     writePcr = true;
     outputBufferSize += 2 + PCR_LENGTH;   // + 2 for adaptation field length and flags
@@ -1781,7 +2319,7 @@ HRESULT CTsMuxer::DeliverTransportStreamData(PBYTE inputData, long inputDataLeng
       }
 
       // Only inject the SDT when we've had the chance to set it.
-      if (m_sdtVersion != -1)
+      if (m_sdtVersion != TIME_NOT_SET)
       {
         m_sdtContinuityCounter = ((m_sdtContinuityCounter + 1) & 0xf);
         m_sdtPacket[3] &= 0xf0;

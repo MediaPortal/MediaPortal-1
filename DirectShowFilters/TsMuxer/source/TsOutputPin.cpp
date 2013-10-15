@@ -18,11 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "TsOutPutPin.h"
-
-// TODO debug
 #include <shlobj.h>
 #include <iostream>
+#include "TsOutPutPin.h"
 
 extern void LogDebug(const wchar_t* fmt, ...) ;
 

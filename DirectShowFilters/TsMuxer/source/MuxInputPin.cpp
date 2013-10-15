@@ -22,13 +22,12 @@
 
 extern void LogDebug(const wchar_t* fmt, ...);
 
-CMuxInputPin::CMuxInputPin(byte pinIndex, IStreamMultiplexer* multiplexer, CBaseFilter* filter, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr)
+CMuxInputPin::CMuxInputPin(byte id, IStreamMultiplexer* multiplexer, CBaseFilter* filter, CCritSec* filterLock, CCritSec* receiveLock, HRESULT* hr)
   : CRenderedInputPin(NAME("Input"), filter, filterLock, hr, L"Input")
 {
-  m_pinIndex = pinIndex;
+  m_pinId = id;
   m_streamType = STREAM_TYPE_UNKNOWN;
-  m_isReceiving = FALSE;
-  m_prevReceiveTickCount = -1;
+  m_receiveTickCount = NOT_RECEIVING;
   m_receiveLock = receiveLock;
   m_multiplexer = multiplexer;
 }
@@ -36,10 +35,9 @@ CMuxInputPin::CMuxInputPin(byte pinIndex, IStreamMultiplexer* multiplexer, CBase
 HRESULT CMuxInputPin::BreakConnect()
 {
   CAutoLock lock(m_receiveLock);
-  LogDebug(L"CMuxInputPin: pin %d break connect", m_pinIndex);
+  LogDebug(L"CMuxInputPin: pin %d break connect", m_pinId);
   m_streamType = STREAM_TYPE_UNKNOWN;
-  m_isReceiving = FALSE;
-  m_prevReceiveTickCount = -1;
+  m_receiveTickCount = NOT_RECEIVING;
   HRESULT hr = m_multiplexer->BreakConnect(this);
   if (SUCCEEDED(hr))
   {
@@ -64,7 +62,7 @@ HRESULT CMuxInputPin::CheckMediaType(const CMediaType* mediaType)
 HRESULT CMuxInputPin::CompleteConnect(IPin* receivePin)
 {
   CAutoLock lock(m_receiveLock);
-  LogDebug(L"CMuxInputPin: pin %d complete connect", m_pinIndex);
+  LogDebug(L"CMuxInputPin: pin %d complete connect", m_pinId);
   HRESULT hr = m_multiplexer->CompleteConnect(this);
   if (SUCCEEDED(hr))
   {
@@ -109,20 +107,20 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
   {
     if (sample == NULL)
     {
-      LogDebug(L"CMuxInputPin: pin %d received NULL sample", m_pinIndex);
+      LogDebug(L"CMuxInputPin: pin %d received NULL sample", m_pinId);
       return E_POINTER;
     }
 
     CAutoLock lock(m_receiveLock);
     if (IsStopped())
     {
-      LogDebug(L"CMuxInputPin: pin %d received sample when stopped", m_pinIndex);
+      LogDebug(L"CMuxInputPin: pin %d received sample when stopped", m_pinId);
       return VFW_E_NOT_RUNNING;
     }
 
     if (m_bAtEndOfStream)
     {
-      LogDebug(L"CMuxInputPin: pin %d received sample after end of stream", m_pinIndex);
+      LogDebug(L"CMuxInputPin: pin %d received sample after end of stream", m_pinId);
       return VFW_E_SAMPLE_REJECTED_EOS;
     }
 
@@ -136,7 +134,7 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
     HRESULT hr = sample->GetPointer(&data);
     if (FAILED(hr))
     {
-      LogDebug(L"CMuxInputPin: pin %d failed to get sample pointer, hr = 0x%x", m_pinIndex, hr);
+      LogDebug(L"CMuxInputPin: pin %d failed to get sample pointer, hr = 0x%x", m_pinId, hr);
       return E_POINTER;
     }
 
@@ -147,22 +145,21 @@ STDMETHODIMP CMuxInputPin::Receive(IMediaSample* sample)
     {
       startTime = -1;
     }
-    /*else if (!m_isReceiving)
+    /*else if (m_receiveTickCount == NOT_RECEIVING)
     {
-      LogDebug(L"CMuxInputPin: pin %d sample size = %d, start time = %lld, stop time = %lld", m_pinIndex, sampleLength, startTime, stopTime);
+      LogDebug(L"CMuxInputPin: pin %d sample size = %d, start time = %lld, stop time = %lld", m_pinId, sampleLength, startTime, stopTime);
     }*/
 
-    if (!m_isReceiving)
+    if (m_receiveTickCount == NOT_RECEIVING)
     {
-      LogDebug(L"CMuxInputPin: pin %d stream started", m_pinIndex);
+      LogDebug(L"CMuxInputPin: pin %d stream started", m_pinId);
     }
-    m_isReceiving = true;
-    m_prevReceiveTickCount = GetTickCount();
+    m_receiveTickCount = GetTickCount();
     return m_multiplexer->Receive(this, data, sampleLength, startTime);
   }
   catch (...)
   {
-    LogDebug(L"CMuxInputPin: pin %d unhandled exception in Receive()", m_pinIndex);
+    LogDebug(L"CMuxInputPin: pin %d unhandled exception in Receive()", m_pinId);
     return E_FAIL;
   }
 }
@@ -176,7 +173,7 @@ HRESULT CMuxInputPin::SetMediaType(const CMediaType* mediaType)
 {
   CAutoLock lock(m_receiveLock);
   /*LogDebug(L"debug: pin %d set media type %08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x  %08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-      m_pinIndex, mediaType->majortype.Data1, mediaType->majortype.Data2, mediaType->majortype.Data3,
+      m_pinId, mediaType->majortype.Data1, mediaType->majortype.Data2, mediaType->majortype.Data3,
       mediaType->majortype.Data4[0], mediaType->majortype.Data4[1], mediaType->majortype.Data4[2],
       mediaType->majortype.Data4[3], mediaType->majortype.Data4[4], mediaType->majortype.Data4[5],
       mediaType->majortype.Data4[6], mediaType->majortype.Data4[7],
@@ -193,10 +190,9 @@ HRESULT CMuxInputPin::SetMediaType(const CMediaType* mediaType)
       m_streamType = STREAM_TYPES[i];
       if (oldStreamType != m_streamType && oldStreamType != STREAM_TYPE_UNKNOWN)
       {
-        LogDebug(L"CMuxInputPin: pin %d change media type, %d -> %d", m_pinIndex, oldStreamType, m_streamType);
+        LogDebug(L"CMuxInputPin: pin %d change media type, %d => %d", m_pinId, oldStreamType, m_streamType);
         m_multiplexer->StreamTypeChange(this, oldStreamType, m_streamType);
-        m_isReceiving = false;
-        m_prevReceiveTickCount = -1;
+        m_receiveTickCount = NOT_RECEIVING;
       }
       return S_OK;
     }
@@ -206,7 +202,7 @@ HRESULT CMuxInputPin::SetMediaType(const CMediaType* mediaType)
 
 byte CMuxInputPin::GetId()
 {
-  return m_pinIndex;
+  return m_pinId;
 }
 
 int CMuxInputPin::GetStreamType()
@@ -214,16 +210,7 @@ int CMuxInputPin::GetStreamType()
   return m_streamType;
 }
 
-bool CMuxInputPin::IsReceiving()
+DWORD CMuxInputPin::GetReceiveTickCount()
 {
-  DWORD milliseconds = GetTickCount() - m_prevReceiveTickCount;
-  if (milliseconds >= 1000)
-  {
-    if (m_isReceiving)
-    {
-      LogDebug(L"CMuxInputPin: pin %d stream stopped...", m_pinIndex);
-    }
-    m_isReceiving = FALSE;
-  }
-  return m_isReceiving;
+  return m_receiveTickCount;
 }

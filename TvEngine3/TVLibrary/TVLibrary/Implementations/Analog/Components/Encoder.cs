@@ -36,6 +36,25 @@ namespace TvLibrary.Implementations.Analog.Components
     {
     }
 
+    /// <summary>
+    /// Interface on the MediaPortal TS multiplexer.
+    /// </summary>
+    [ComVisible(true), ComImport,
+     Guid("8533d2d1-1be1-4262-b70a-432df592b903"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface ITsMuxer
+    {
+      /// <summary>
+      /// Set the components for multiplexer to operate on.
+      /// </summary>
+      /// <param name="video">Should video streams be multiplexed into the output transport stream.</param>
+      /// <param name="audio">Should audio streams be multiplexed into the output transport stream.</param>
+      /// <param name="teletext">Should teletext streams be multiplexed into the output transport stream.</param>
+      /// <returns>an HRESULT value indicating whether the call succeeded</returns>
+      [PreserveSig]
+      int SetActiveComponents([MarshalAs(UnmanagedType.I1)] bool video, [MarshalAs(UnmanagedType.I1)] bool audio, [MarshalAs(UnmanagedType.I1)] bool teletext);
+    }
+
     private static readonly HashSet<string> CYBERLINK_MULTIPLEXERS = new HashSet<string>
     {
       @"@device:sw:{083863f1-70de-11d0-bd40-00a0c911ce86}\{370e9701-9dc5-42c8-be29-4e75f0629eed}",
@@ -145,6 +164,11 @@ namespace TvLibrary.Implementations.Analog.Components
 
     public Encoder()
     {
+      if (CAPTURE_MEDIA_TYPES.Count != 0)
+      {
+        return;
+      }
+
       AMMediaType mt1 = new AMMediaType();
       mt1.majorType = MediaType.Stream;
       mt1.subType = MediaSubType.Null;
@@ -170,18 +194,15 @@ namespace TvLibrary.Implementations.Analog.Components
       mt8.majorType = MediaType.AuxLine21Data;
       mt8.subType = MediaSubType.Line21_BytePair;
 
-      if (CAPTURE_MEDIA_TYPES.Count == 0)
-      {
-        CAPTURE_MEDIA_TYPES.Add(mt1);
-        CAPTURE_MEDIA_TYPES.Add(mt2);
-        CAPTURE_MEDIA_TYPES.Add(mt3);
+      CAPTURE_MEDIA_TYPES.Add(mt1);
+      CAPTURE_MEDIA_TYPES.Add(mt2);
+      CAPTURE_MEDIA_TYPES.Add(mt3);
 
-        VIDEO_MEDIA_TYPES.Add(mt4);
-        AUDIO_MEDIA_TYPES.Add(mt5);
-        VBI_MEDIA_TYPES.Add(mt6);
-        TELETEXT_MEDIA_TYPES.Add(mt7);
-        CLOSED_CAPTIONS_MEDIA_TYPES.Add(mt8);
-      }
+      VIDEO_MEDIA_TYPES.Add(mt4);
+      AUDIO_MEDIA_TYPES.Add(mt5);
+      VBI_MEDIA_TYPES.Add(mt6);
+      TELETEXT_MEDIA_TYPES.Add(mt7);
+      CLOSED_CAPTIONS_MEDIA_TYPES.Add(mt8);
     }
 
     public void Dispose()
@@ -251,6 +272,23 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
+    /// Tune to a given channel.
+    /// </summary>
+    /// <param name="channel">The channel to tune to.</param>
+    public void PerformTune(AnalogChannel channel)
+    {
+      ITsMuxer muxer = _filterTsMultiplexer as ITsMuxer;
+      if (channel.IsTv)
+      {
+        muxer.SetActiveComponents(true, true, true);
+      }
+      else
+      {
+        muxer.SetActiveComponents(false, true, false);
+      }
+    }
+
+    /// <summary>
     /// Creates the encoder and teletext component.
     /// This function handles a huge variety of filter and pin connection
     /// arrangements, including:
@@ -265,17 +303,16 @@ namespace TvLibrary.Implementations.Analog.Components
     /// multiplexer.
     /// </summary>
     /// <param name="graph">The graph builder.</param>
-    /// <param name="crossbar">The crossbar component.</param>
     /// <param name="capture">The capture component.</param>
     /// <returns><c>true</c> if graph building was successful, otherwise <c>false</c></returns>
-    public bool CreateFilterInstance(IFilterGraph2 graph, Crossbar crossbar, Capture capture)
+    public bool CreateFilterInstance(IFilterGraph2 graph, Capture capture)
     {
       // ------------------------------------------------
       // STAGE 1
       // Add all hardware filters.
       // ------------------------------------------------
       string requiredDevicePathSection = string.Empty;
-      string[] devicePathSections = crossbar.DevicePath.Split('#');
+      string[] devicePathSections = capture.DevicePath.Split('#');
       if (devicePathSections.Length == 4 && !devicePathSections[0].Contains("stream"))
       {
         requiredDevicePathSection = devicePathSections[2];

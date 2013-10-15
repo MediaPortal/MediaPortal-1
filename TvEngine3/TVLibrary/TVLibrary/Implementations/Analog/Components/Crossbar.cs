@@ -122,14 +122,6 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
-    /// Gets the crossbar device path
-    /// </summary>
-    public String DevicePath
-    {
-      get { return _crossBarDevice.DevicePath; }
-    }
-
-    /// <summary>
     /// Gets the crossbar filter
     /// </summary>
     public IBaseFilter Filter
@@ -143,6 +135,19 @@ namespace TvLibrary.Implementations.Analog.Components
     public IPin AudioTunerIn
     {
       get { return _audioTunerIn; }
+    }
+
+    #endregion
+
+    #region ctor
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="crossbarDevice">The crossbar device</param>
+    public Crossbar(DsDevice crossbarDevice)
+    {
+      _crossBarDevice = crossbarDevice;
     }
 
     #endregion
@@ -222,22 +227,32 @@ namespace TvLibrary.Implementations.Analog.Components
       string deviceName = graph.Crossbar.Name;
       _audioTunerIn = null;
       DsDevice[] devices;
-      //get list of all crossbar devices installed on this system
-      try
+
+      if (_crossBarDevice == null || tuner != null)
       {
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
-        devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
+        //get list of all crossbar devices installed on this system
+        try
+        {
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
+          devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
+        }
+        catch (Exception)
+        {
+          Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+          return false;
+        }
+        if (devices == null || devices.Length == 0)
+        {
+          Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+          return false;
+        }
       }
-      catch (Exception)
+      else
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
-        return false;
+        Log.Log.WriteFile("analog: detected capture device, skipping tuner connections");
+        devices = new DsDevice[] { _crossBarDevice };
       }
-      if (devices == null || devices.Length == 0)
-      {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
-        return false;
-      }
+
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
@@ -284,16 +299,19 @@ namespace TvLibrary.Implementations.Analog.Components
           continue;
         }
         //connect tv tuner->crossbar
-        IPin tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
-                                              graph.Tuner.VideoPin);
-        if (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
-            FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
+        IPin tunerOut = null;
+        if (tuner != null)
+        {
+          tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output, graph.Tuner.VideoPin);
+        }
+        if (tuner == null || (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
+            FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner])))
         {
           // Got it, we're done
           _filterCrossBar = tmp;
           _crossBarDevice = devices[i];
           DevicesInUse.Instance.Add(_crossBarDevice);
-          if (_audioTunerIn == null)
+          if (tuner != null && _audioTunerIn == null)
           {
             _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
                                                   _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
@@ -332,22 +350,31 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       _audioTunerIn = null;
       DsDevice[] devices;
-      //get list of all crossbar devices installed on this system
-      try
+      if (_crossBarDevice == null || tuner != null)
       {
-        devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
-        devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
+        //get list of all crossbar devices installed on this system
+        try
+        {
+          devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
+          devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
+        }
+        catch (Exception)
+        {
+          Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+          return false;
+        }
+        if (devices == null || devices.Length == 0)
+        {
+          Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
+          return false;
+        }
       }
-      catch (Exception)
+      else
       {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
-        return false;
+        Log.Log.WriteFile("analog: detected capture device, skipping tuner connections");
+        devices = new DsDevice[] { _crossBarDevice };
       }
-      if (devices == null || devices.Length == 0)
-      {
-        Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
-        return false;
-      }
+
       //try each crossbar
       for (int i = 0; i < devices.Length; i++)
       {
@@ -388,33 +415,37 @@ namespace TvLibrary.Implementations.Analog.Components
           continue;
         }
 
-        // Check that the crossbar has a tuner video input pin.
         IPin pinIn = null;
-        if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
+        if (tuner != null)
         {
-          pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
-        }
-        if (pinIn == null)
-        {
-          // no pin found, continue with next crossbar
-          Log.Log.WriteFile("analog: AddCrossBarFilter no video tuner input pin detected");
-          if (tmp != null)
+          // Check that the crossbar has a tuner video input pin.
+          if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
           {
-            graphBuilder.RemoveFilter(tmp);
-            _crossBarFilter = null;
-            Release.ComObject("CrossBarFilter", tmp);
+            pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
           }
-          continue;
+          if (pinIn == null)
+          {
+            // no pin found, continue with next crossbar
+            Log.Log.WriteFile("analog: AddCrossBarFilter no video tuner input pin detected");
+            if (tmp != null)
+            {
+              graphBuilder.RemoveFilter(tmp);
+              _crossBarFilter = null;
+              Release.ComObject("CrossBarFilter", tmp);
+            }
+            continue;
+          }
         }
+
         //connect tv tuner->crossbar
-        int tempVideoPinIndex;
-        if (FilterGraphTools.ConnectFilter(graphBuilder, tuner.Filter, pinIn, out tempVideoPinIndex))
+        int tempVideoPinIndex = 0;
+        if (tuner == null || FilterGraphTools.ConnectFilter(graphBuilder, tuner.Filter, pinIn, out tempVideoPinIndex))
         {
           // Got it, we're done
           _filterCrossBar = tmp;
           _crossBarDevice = devices[i];
           DevicesInUse.Instance.Add(_crossBarDevice);
-          if (_audioTunerIn == null)
+          if (tuner != null && _audioTunerIn == null)
           {
             _audioTunerIn = DsFindPin.ByDirection(_filterCrossBar, PinDirection.Input,
                                                   _audioPinMap[AnalogChannel.AudioInputType.Tuner]);
@@ -636,57 +667,35 @@ namespace TvLibrary.Implementations.Analog.Components
     #region public methods
 
     /// <summary>
-    /// Indicates if it is a special plextor card
+    /// Tune to a given channel.
     /// </summary>
-    /// <returns>true, if it is a special plextor card</returns>
+    /// <param name="channel">The channel to tune to.</param>
     public void PerformTune(AnalogChannel channel)
     {
-      if (_currentChannel != null)
+      // Video
+      if ((_currentChannel == null || _currentChannel.VideoSource != channel.VideoSource) &&
+        _videoPinMap.ContainsKey(channel.VideoSource))
       {
-        bool updateRequired = _currentChannel.IsTv == channel.IsTv;
-        if (updateRequired ||
-            (_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource)))
-        {
-          _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
-          updateRequired = true;
-        }
-        if (_audioOutPinIndex == -1)
-        {
-          return;
-        }
-        if (updateRequired || _currentChannel.AudioSource != channel.AudioSource)
-        {
-          if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic &&
-              _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
-          {
-            _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
-          }
-          else if (_audioPinMap.ContainsKey(channel.AudioSource))
-          {
-            _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
-          }
-        }
+        Log.Log.WriteFile("crossbar:   video input -> {0}", channel.VideoSource);
+        _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
       }
-      else
+
+      // Audio
+      if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic)
       {
-        if (_videoPinMap.ContainsKey(channel.VideoSource))
+        if (_videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
         {
-          _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
-        }
-        if (_audioOutPinIndex == -1)
-        {
-          return;
-        }
-        if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic &&
-            _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
-        {
+          Log.Log.WriteFile("crossbar:   audio input -> (auto)");
           _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
         }
-        else if (_audioPinMap.ContainsKey(channel.AudioSource))
-        {
-          _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
-        }
       }
+      else if ((_currentChannel == null || _currentChannel.AudioSource != channel.AudioSource) &&
+        _audioPinMap.ContainsKey(channel.AudioSource))
+      {
+        Log.Log.WriteFile("crossbar:   audio input -> {0}", channel.AudioSource);
+        _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
+      }
+
       _currentChannel = channel;
     }
 

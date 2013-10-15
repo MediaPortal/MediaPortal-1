@@ -103,14 +103,13 @@
     <Compile Include="Implementations\Analog\Components\TvAudio.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\AnalogScanning.cs" />
     <Compile Include="Implementations\Analog\QualityControl\Hauppauge.cs" />
-    <Compile Include="Implementations\Analog\Graphs\HDPVR\HDPVRChannel.cs" />
+    <Compile Include="Implementations\Analog\Graphs\Analog\AnalogSubChannel.cs" />
     <Compile Include="Implementations\Analog\QualityControl\CodecAPIControl.cs" />
     <Compile Include="Implementations\Analog\QualityControl\BaseControl.cs" />
     <Compile Include="Implementations\Analog\QualityControl\EncoderAPIControl.cs" />
     <Compile Include="Implementations\Analog\QualityControl\QualityControlFactory.cs" />
     <Compile Include="Implementations\Analog\QualityControl\VideoEncoderControl.cs" />
     <Compile Include="Implementations\Analog\Graphs\Analog\TvCardAnalog.cs" />
-    <Compile Include="Implementations\Analog\Graphs\HDPVR\TVCardHDPVR.cs" />
     <Compile Include="Implementations\BaseSubChannel.cs" />
     <Compile Include="Implementations\Dri\Parser\LvctParser.cs" />
     <Compile Include="Implementations\Dri\Parser\MgtParser.cs" />

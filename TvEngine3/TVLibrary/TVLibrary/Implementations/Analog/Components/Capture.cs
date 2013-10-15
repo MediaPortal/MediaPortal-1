@@ -156,6 +156,25 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
+    /// Gets the capture device path.
+    /// </summary>
+    public string DevicePath
+    {
+      get
+      {
+        if (_videoCaptureDevice != null)
+        {
+          return _videoCaptureDevice.DevicePath;
+        }
+        if (_audioCaptureDevice != null)
+        {
+          return _audioCaptureDevice.DevicePath;
+        }
+        return string.Empty;
+      }
+    }
+
+    /// <summary>
     /// Gets the video capture filter
     /// </summary>
     public IBaseFilter VideoFilter
@@ -296,7 +315,7 @@ namespace TvLibrary.Implementations.Analog.Components
       //get a list of all video capture devices
       try
       {
-        if (tuner.TunerName == "Adaptec USB TvTuner")
+        if (tuner != null && tuner.TunerName == "Adaptec USB TvTuner")
         {
           Log.Log.WriteFile("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
@@ -304,7 +323,7 @@ namespace TvLibrary.Implementations.Analog.Components
         else
         {
           devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture); //shouldn't be VideoInputDevice
-          devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
+          devices = DeviceSorter.Sort(devices, tuner != null ? tuner.TunerName : null, tvAudio != null ? tvAudio.TvAudioName : null, crossbar.CrossBarName);
         }
       }
       catch (Exception)
@@ -441,7 +460,7 @@ namespace TvLibrary.Implementations.Analog.Components
       //get a list of all video capture devices
       try
       {
-        if (tuner.TunerName == "Adaptec USB TvTuner")
+        if (tuner != null && tuner.TunerName == "Adaptec USB TvTuner")
         {
           Log.Log.WriteFile("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
@@ -449,7 +468,7 @@ namespace TvLibrary.Implementations.Analog.Components
         else
         {
           devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
-          devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
+          devices = DeviceSorter.Sort(devices, tuner != null ? tuner.TunerName : null, tvAudio != null ? tvAudio.TvAudioName : null, crossbar.CrossBarName);
         }
       }
       catch (Exception)

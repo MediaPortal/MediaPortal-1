@@ -26,5 +26,5 @@ class IMuxInputPin
   public:
     virtual byte GetId() = 0;
     virtual int GetStreamType() = 0;
-    virtual bool IsReceiving() = 0;
+    virtual DWORD GetReceiveTickCount() = 0;
 };
