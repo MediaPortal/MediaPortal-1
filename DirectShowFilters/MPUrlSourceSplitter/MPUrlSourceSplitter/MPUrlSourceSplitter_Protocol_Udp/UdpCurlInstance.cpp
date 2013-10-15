@@ -23,8 +23,11 @@
 #include "UdpCurlInstance.h"
 #include "UdpServer.h"
 #include "UdpSocketContext.h"
+#include "MulticastUdpServer.h"
 #include "LockMutex.h"
 #include "conversions.h"
+#include "Dns.h"
+#include "IpAddress.h"
 
 CUdpCurlInstance::CUdpCurlInstance(CLogger *logger, HANDLE mutex, const wchar_t *protocolName, const wchar_t *instanceName)
   : CCurlInstance(logger, mutex, protocolName, instanceName)
@@ -135,76 +138,114 @@ unsigned int CUdpCurlInstance::CurlWorker(void)
   ALLOC_MEM_DEFINE_SET(buffer, unsigned char, BUFFER_LENGTH_DEFAULT, 0);
   CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (buffer != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
 
-  CUdpServer *server = new CUdpServer();
-  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (server != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
-  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->Initialize(AF_UNSPEC, this->localPort, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
-  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->StartListening()) ? errorCode : CURLE_FAILED_INIT);
+  // local address can be address of some network interface, can be localhost or can be mutlicast address
+  // check if local address is mutlicast or unicast address
 
-  while (!this->curlWorkerShouldExit)
+  CIpAddressCollection *localIpAddresses = new CIpAddressCollection();
+  CIpAddressCollection *sourceIpAddresses = new CIpAddressCollection();
+
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (localIpAddresses != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (sourceIpAddresses != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(CDns::GetIpAddresses(this->localAddress, this->localPort, AF_UNSPEC, SOCK_DGRAM, IPPROTO_UDP, 0, localIpAddresses)) ? errorCode : CURLE_FAILED_INIT);
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK && (this->sourceAddress != NULL), errorCode = SUCCEEDED(CDns::GetIpAddresses(this->sourceAddress, this->sourcePort, AF_UNSPEC, SOCK_DGRAM, IPPROTO_UDP, 0, sourceIpAddresses)) ? errorCode : CURLE_FAILED_INIT);
+
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (localIpAddresses->Count() == 1) ? errorCode : CURLE_FAILED_INIT);
+  CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK && (this->sourceAddress != NULL), errorCode = (sourceIpAddresses->Count() == 1) ? errorCode : CURLE_FAILED_INIT);
+
+  // local address collection must contain only one IP address - local unicast IP address or multicast address
+  CUdpServer *server = NULL;
+
+  if (errorCode == CURLE_OK)
   {
-    if (errorCode == CURLE_OK)
+    server = localIpAddresses->GetItem(0)->IsMulticast() ? new CMulticastUdpServer() : new CUdpServer();
+    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = (server != NULL) ? errorCode : CURLE_OUT_OF_MEMORY);
+
+    if ((errorCode == CURLE_OK) && (localIpAddresses->GetItem(0)->IsMulticast()))
     {
-      // only one thread can work with UDP data in one time
-      CLockMutex lock(this->mutex, INFINITE);
+      CMulticastUdpServer *multicastServer = dynamic_cast<CMulticastUdpServer *>(server);
 
-      for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < server->GetServers()->Count())); i++)
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(multicastServer->Initialize(AF_UNSPEC, localIpAddresses->GetItem(0), (this->sourceAddress != NULL) ? sourceIpAddresses->GetItem(0) : NULL, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
+    }
+    else if ((errorCode == CURLE_OK) && (!localIpAddresses->GetItem(0)->IsMulticast()))
+    {
+      CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->Initialize(AF_UNSPEC, this->localPort, this->networkInterfaces)) ? errorCode : CURLE_FAILED_INIT);
+    }
+    else
+    {
+      errorCode = CURLE_FAILED_INIT;
+    }
+    
+    CHECK_CONDITION_EXECUTE(errorCode == CURLE_OK, errorCode = SUCCEEDED(server->StartListening()) ? errorCode : CURLE_FAILED_INIT);
+
+    while (!this->curlWorkerShouldExit)
+    {
+      if (errorCode == CURLE_OK)
       {
-        CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
+        // only one thread can work with UDP data in one time
+        CLockMutex lock(this->mutex, INFINITE);
 
-        unsigned int pendingIncomingDataLength = 0;
-        HRESULT result = S_OK;
-        do
+        for (unsigned int i = 0; ((errorCode == CURLE_OK) && (i < server->GetServers()->Count())); i++)
         {
-          result = udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength);
+          CUdpSocketContext *udpContext = (CUdpSocketContext *)(server->GetServers()->GetItem(i));
 
-          if (SUCCEEDED(result) && (pendingIncomingDataLength != 0))
+          unsigned int pendingIncomingDataLength = 0;
+          HRESULT result = S_OK;
+          do
           {
-            // allocate buffer and receive data
-            unsigned int receivedLength = 0;
+            result = udpContext->GetPendingIncomingDataLength(&pendingIncomingDataLength);
 
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = udpContext->Receive((char *)buffer, pendingIncomingDataLength, &receivedLength));
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (pendingIncomingDataLength == receivedLength) ? result : E_NOT_VALID_STATE);
-            CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
+            if (SUCCEEDED(result) && (pendingIncomingDataLength != 0))
+            {
+              // allocate buffer and receive data
+              unsigned int receivedLength = 0;
+
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = udpContext->Receive((char *)buffer, pendingIncomingDataLength, &receivedLength));
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (pendingIncomingDataLength == receivedLength) ? result : E_NOT_VALID_STATE);
+              CHECK_CONDITION_EXECUTE(SUCCEEDED(result), result = (this->udpDownloadResponse->GetReceivedData()->AddToBufferWithResize(buffer, pendingIncomingDataLength) == pendingIncomingDataLength) ? result : E_OUTOFMEMORY);
+            }
+          }
+          while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
+
+          if (FAILED(result))
+          {
+            this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result);
+            errorCode = CURLE_READ_ERROR;
           }
         }
-        while (SUCCEEDED(result) && (pendingIncomingDataLength != 0));
-
-        if (FAILED(result))
-        {
-          this->logger->Log(LOGGER_ERROR, L"%s: %s: error while receiving data: 0x%08X", this->protocolName, METHOD_CURL_WORKER_NAME, result);
-          errorCode = CURLE_READ_ERROR;
-        }
       }
+
+
+
+      //    if (endOfStreamReached && (this->state != CURL_STATE_RECEIVED_ALL_DATA) && (rtspRequest == NULL))
+      //    {
+      //      // we have end of stream on all tracks, we can't do more
+      //      // report error code and wait for destroying CURL instance
+
+      //      CLockMutex lock(this->mutex, INFINITE);
+
+      //      this->rtspDownloadResponse->SetResultCode(errorCode);
+      //      this->state = CURL_STATE_RECEIVED_ALL_DATA;
+      //    }
+      //  }
+
+      if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
+      {
+        // we have some error, we can't do more
+        // report error code and wait for destroying CURL instance
+
+        CLockMutex lock(this->mutex, INFINITE);
+
+        this->udpDownloadResponse->SetResultCode(errorCode);
+        this->state = CURL_STATE_RECEIVED_ALL_DATA;
+      }
+
+      Sleep(1);
     }
-
-  
-
-  //    if (endOfStreamReached && (this->state != CURL_STATE_RECEIVED_ALL_DATA) && (rtspRequest == NULL))
-  //    {
-  //      // we have end of stream on all tracks, we can't do more
-  //      // report error code and wait for destroying CURL instance
-
-  //      CLockMutex lock(this->mutex, INFINITE);
-
-  //      this->rtspDownloadResponse->SetResultCode(errorCode);
-  //      this->state = CURL_STATE_RECEIVED_ALL_DATA;
-  //    }
-  //  }
-
-    if ((errorCode != CURLE_OK) && (this->state != CURL_STATE_RECEIVED_ALL_DATA))
-    {
-      // we have some error, we can't do more
-      // report error code and wait for destroying CURL instance
-
-      CLockMutex lock(this->mutex, INFINITE);
-
-      this->udpDownloadResponse->SetResultCode(errorCode);
-      this->state = CURL_STATE_RECEIVED_ALL_DATA;
-    }
-
-    Sleep(1);
   }
 
+  FREE_MEM_CLASS(localIpAddresses);
+  FREE_MEM_CLASS(sourceIpAddresses);
   FREE_MEM(buffer);
 
   CHECK_CONDITION_EXECUTE(errorCode != CURLE_OK, this->ReportCurlErrorMessage(LOGGER_ERROR, this->protocolName, METHOD_CURL_WORKER_NAME, L"error while sending, receiving or processing data", errorCode));

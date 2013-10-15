@@ -20,18 +20,18 @@
 
 #pragma once
 
-#ifndef __TCP_SERVER_DEFINED
-#define __TCP_SERVER_DEFINED
+#ifndef __MULTICAST_UDP_SERVER_DEFINED
+#define __MULTICAST_UDP_SERVER_DEFINED
 
-#include "SimpleServer.h"
+#include "UdpServer.h"
 
-#define SERVER_TYPE_TCP                                               0x00000001
+#define SERVER_TYPE_MULTICAST_UDP                                     0x00000003
 
-class CTcpServer : public CSimpleServer
+class CMulticastUdpServer : public CUdpServer
 {
 public:
-  CTcpServer(void);
-  virtual ~CTcpServer(void);
+  CMulticastUdpServer(void);
+  virtual ~CMulticastUdpServer(void);
 
   /* get methods */
 
@@ -39,27 +39,23 @@ public:
 
   /* other methods */
 
-  // initializes TCP server on specified interfaces
+  // initializes multicast UDP server on specified interfaces
   // @param family : socket family (AF_INET, AF_INET6, ...)
-  // @param port : port to bind server
-  // @param networkInterfaces : network interfaces to initialize TCP server
+  // @param multicastAddress : multicast address to bind server
+  // @param multicastPort : multicast port to bind server
+  // @param sourceAddress : the address of source (can be NULL if not specified)
+  // @param sourcePort : the port of source (ignored if sourceAddress is NULL)
+  // @param networkInterfaces : network interfaces to initialize multicast UDP server
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
-  virtual HRESULT Initialize(int family, WORD port, CNetworkInterfaceCollection *networkInterfaces);
+  virtual HRESULT Initialize(int family, const wchar_t *multicastAddress, WORD multicastPort, const wchar_t *sourceAddress, WORD sourcePort, CNetworkInterfaceCollection *networkInterfaces);
 
-  // initializes TCP server on all network interfaces
+  // initializes multicast UDP server on specified interfaces
   // @param family : socket family (AF_INET, AF_INET6, ...)
-  // @param port : port to bind server
-  // @param connections : the maximum length of the queue of pending connections
+  // @param multicastAddress : multicast IP address to bind server
+  // @param sourceAddress : the IP address of source (can be NULL if not specified)
+  // @param networkInterfaces : network interfaces to initialize multicast UDP server
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
-  virtual HRESULT Initialize(int family, WORD port, int connections);
-
-  // initializes TCP server on specified interfaces
-  // @param family : socket family (AF_INET, AF_INET6, ...)
-  // @param port : port to bind server
-  // @param connections : the maximum length of the queue of pending connections
-  // @param networkInterfaces : network interfaces to initialize TCP server
-  // @return : S_OK if successful, error code otherwise (can be system or WSA)
-  virtual HRESULT Initialize(int family, WORD port, int connections, CNetworkInterfaceCollection *networkInterfaces);
+  virtual HRESULT Initialize(int family, CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterfaceCollection *networkInterfaces);
 
   // starts listening to incoming connections
   // @return : S_OK if successful, error code otherwise (can be system or WSA)

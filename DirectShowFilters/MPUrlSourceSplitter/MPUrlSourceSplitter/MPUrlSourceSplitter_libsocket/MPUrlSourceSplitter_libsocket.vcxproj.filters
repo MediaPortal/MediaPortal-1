@@ -57,6 +57,12 @@
     <ClInclude Include="SimpleServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MulticastUdpServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MulticastUdpSocketContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +102,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MulticastUdpServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MulticastUdpSocketContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

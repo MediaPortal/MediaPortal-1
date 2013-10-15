@@ -39,10 +39,10 @@ public:
 
   /* other methods */
 
-  // initializes simple server on specified interfaces
+  // initializes UDP server on specified interfaces
   // @param family : socket family (AF_INET, AF_INET6, ...)
   // @param port : port to bind server
-  // @param networkInterfaces : network interfaces to initialize simple server
+  // @param networkInterfaces : network interfaces to initialize UDP server
   // @return : S_OK if successful, error code otherwise (can be system or WSA)
   virtual HRESULT Initialize(int family, WORD port, CNetworkInterfaceCollection *networkInterfaces);
 

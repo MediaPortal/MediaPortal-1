@@ -258,7 +258,7 @@ const struct sockaddr *CIpAddress::GetAddressIP(void)
 
 const struct sockaddr_in *CIpAddress::GetAddressIPv4(void)
 {
-  return (this->IsIPv6()) ? (struct sockaddr_in *)this->addr : NULL;
+  return (this->IsIPv4()) ? (struct sockaddr_in *)this->addr : NULL;
 }
 
 const struct sockaddr_in6 *CIpAddress::GetAddressIPv6(void)
