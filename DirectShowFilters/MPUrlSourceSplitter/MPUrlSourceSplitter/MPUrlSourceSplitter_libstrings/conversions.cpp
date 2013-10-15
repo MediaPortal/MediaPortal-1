@@ -27,7 +27,7 @@ unsigned int GetValueUnsignedIntA(const char *input, unsigned int defaultValue)
   if (!IsNullOrEmptyOrWhitespaceA(input))
   {
     char *end = NULL;
-    long valueLong = strtol(input, &end, 10);
+    long valueLong = strtoul(input, &end, 10);
     if ((valueLong == 0) && (input == end))
     {
       // error while converting
@@ -47,7 +47,7 @@ unsigned int GetValueUnsignedIntW(const wchar_t *input, unsigned int defaultValu
   if (!IsNullOrEmptyOrWhitespaceW(input))
   {
     wchar_t *end = NULL;
-    long valueLong = wcstol(input, &end, 10);
+    long valueLong = wcstoul(input, &end, 10);
     if ((valueLong == 0) && (input == end))
     {
       // error while converting

@@ -635,7 +635,7 @@ STDMETHODIMP CMPUrlSourceSplitter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TY
     CHECK_POINTER_DEFAULT_HRESULT(result, pszFileName);
 
     // FAKE for UDP protocol request from MediaPortal
-    if (_wcsnicmp(pszFileName, L"udp", 3) != 0)
+    if (_wcsnicmp(pszFileName, L"udp://@0.0.0.0:1234", 19) != 0)
     {
       CHECK_POINTER_DEFAULT_HRESULT(result, this->parserHoster);
 

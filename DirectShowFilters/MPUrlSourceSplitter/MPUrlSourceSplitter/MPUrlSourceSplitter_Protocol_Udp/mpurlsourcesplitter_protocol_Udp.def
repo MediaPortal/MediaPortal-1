@@ -1,0 +1,5 @@
+LIBRARY     mpurlsourcesplitter_protocol_udp.dll
+
+EXPORTS
+			CreatePluginInstance		PRIVATE
+			DestroyPluginInstance		PRIVATE

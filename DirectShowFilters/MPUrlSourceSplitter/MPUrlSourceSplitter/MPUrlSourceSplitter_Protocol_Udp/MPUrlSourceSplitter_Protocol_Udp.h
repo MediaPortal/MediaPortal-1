@@ -20,42 +20,29 @@
 
 #pragma once
 
-#ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED
-#define __MP_URL_SOURCE_SPLITTER_PROTOCOL_RTSP_DEFINED
+#ifndef __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_DEFINED
+#define __MP_URL_SOURCE_SPLITTER_PROTOCOL_UDP_DEFINED
 
 #include "Logger.h"
 #include "IProtocolPlugin.h"
-#include "RtspCurlInstance.h"
-#include "RtspStreamTrackCollection.h"
+#include "UdpCurlInstance.h"
 
-#include <WinSock2.h>
-
-#define PROTOCOL_NAME                                                         L"RTSP"
+#define PROTOCOL_NAME                                                         L"UDP"
 
 #define TOTAL_SUPPORTED_PROTOCOLS                                             1
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"RTSP" };
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"UDP" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
-// minimum RTP packet data overlap in bytes
-// we assume that no data (audio/video/etc) packet in RTP packet is less than MINIMUM_RTP_PACKET_OVERLAP in bytes
-#define MINIMUM_RTP_PACKET_OVERLAP                                            100
-
-struct CompareDataResult
-{
-  int position;
-  unsigned int size;
-};
-
-class CMPUrlSourceSplitter_Protocol_Rtsp : public IProtocolPlugin
+class CMPUrlSourceSplitter_Protocol_Udp : public IProtocolPlugin
 {
 public:
   // constructor
-  // create instance of CMPUrlSourceSplitter_Protocol_Rtsp class
-  CMPUrlSourceSplitter_Protocol_Rtsp(CLogger *logger, CParameterCollection *configuration);
+  // create instance of CMPUrlSourceSplitter_Protocol_Udp class
+  CMPUrlSourceSplitter_Protocol_Udp(CLogger *logger, CParameterCollection *configuration);
 
   // destructor
-  ~CMPUrlSourceSplitter_Protocol_Rtsp(void);
+  ~CMPUrlSourceSplitter_Protocol_Udp(void);
 
   // IProtocol interface
 
@@ -165,8 +152,14 @@ protected:
   // holds receive data timeout
   unsigned int receiveDataTimeout;
 
-  // stream time
-  int64_t streamTime;
+  // stream length
+  int64_t streamLength;
+  // byte position
+  int64_t bytePosition;
+  // holds if length of stream was set
+  bool setLength;
+  // holds if end of stream was set
+  bool setEndOfStream;
 
   // mutex for locking access to file, buffer, ...
   HANDLE lockMutex;
@@ -175,49 +168,18 @@ protected:
   HANDLE lockCurlMutex;
 
   // main instance of CURL
-  CRtspCurlInstance *mainCurlInstance;
+  CUdpCurlInstance *mainCurlInstance;
 
   // internal variable for requests to interrupt transfers
   bool internalExitRequest;
   // specifies if whole stream is downloaded
   bool wholeStreamDownloaded;
-  // specifies if seeking (cleared when first data arrive)
-  bool seekingActive;
+  //// specifies if seeking (cleared when first data arrive)
+  //bool seekingActive;
   // specifies if filter requested supressing data
   bool supressData;
-  // specifies if working with live stream
-  bool liveStream;
-
   // specifies if we are still connected
   bool isConnected;
-
-  // holds RTSP stream tracks
-  CRtspStreamTrackCollection *streamTracks;
-
-  // holds last store time of storing stream fragments to file
-  DWORD lastStoreTime;
-
-  // holds SDP from CURL instance
-  CSessionDescription *sessionDescription;
-
-  // holds filter actual stream time
-  uint64_t reportedStreamTime;
-
-  // gets store file path based on configuration
-  // creates folder structure if not created
-  // @param trackId : the ID of track to get store file path
-  // @return : store file or NULL if error
-  wchar_t *GetStoreFile(unsigned int trackId);
-
-  // fills buffer for processing with fragment data (stored in memory or in store file)
-  // @param fragments : stream fragments collection
-  // @param streamFragmentProcessing : fragment to get data
-  // @param storeFile : the name of store file
-  // @return : buffer for processing with filled data, NULL otherwise
-  CLinearBuffer *FillBufferForProcessing(CRtspStreamFragmentCollection *fragments, unsigned int streamFragmentProcessing, const wchar_t *storeFile);
-
-  CompareDataResult CompareData(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
-  CompareDataResult CompareDataReversed(CRtspStreamTrack *track, unsigned int fragmentIndex, unsigned int fragmentReceivedDataPosition, CRtpPacket *rtpPacket, unsigned int rtpPacketPosition, bool onlyInFragmentReceivedDataPosition);
 };
 
 #endif
