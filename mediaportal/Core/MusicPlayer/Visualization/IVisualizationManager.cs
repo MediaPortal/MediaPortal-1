@@ -41,5 +41,7 @@ namespace MediaPortal.Visualization
     void InitWinampVis();
     void InitSoniqueVis();
     void InitBassboxVis();
+    void GetNextVis();
+    void GetPrevVis();
   }
 }

@@ -583,6 +583,26 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Playback changed to {0}", type);
             break;
           }
+
+        case Action.ActionType.ACTION_PAGE_UP:
+          {
+            if (FullScreen)
+            {
+              Log.Debug("BASS: Switch to Previous Vis");
+              VizManager.GetPrevVis();
+            }
+            break;
+          }
+
+        case Action.ActionType.ACTION_PAGE_DOWN:
+          {
+            if (FullScreen)
+            {
+              Log.Info("BASS: Switch to Next Vis");
+              VizManager.GetNextVis();
+            }
+            break;
+          }
       }
     }
 

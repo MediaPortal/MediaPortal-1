@@ -45,7 +45,7 @@ namespace MediaPortal.Visualization
     private IVisualization Viz = null;
     private string VizPath = string.Empty;
     private VisualizationWindow VizRenderWindow = null;
-
+    private string CurrentViz = null;
     private int _TargetFPS = 20;
     private BASSVIS_PARAM _visParam = null;
 
@@ -105,6 +105,8 @@ namespace MediaPortal.Visualization
       Bass = bass;
       VisualizationBase.Bass = Bass;
       VizRenderWindow = vizWindow;
+
+      GetVisualizationPluginsInfo();
 
       if (bass != null)
       {
@@ -188,46 +190,6 @@ namespace MediaPortal.Visualization
     {
       // No support yet!
       return false;
-    }
-
-    private VisualizationInfo.PluginType GetVisualizationTypeFromPath(string path)
-    {
-      Log.Info("Visualization Manager: Getting visualization type from path - {0}", path);
-
-      VisualizationInfo.PluginType vizType = VisualizationInfo.PluginType.None;
-
-      if (path.Length == 0)
-      {
-        vizType = VisualizationInfo.PluginType.None;
-      }
-
-      else if (Path.GetExtension(path).ToLowerInvariant().CompareTo(".svp") == 0)
-      {
-        vizType = VisualizationInfo.PluginType.Sonique;
-      }
-
-      else if (path.ToLowerInvariant().CompareTo("g-force") == 0)
-      {
-        vizType = VisualizationInfo.PluginType.GForce;
-      }
-
-      else if (path.ToLowerInvariant().CompareTo("whitecap") == 0)
-      {
-        vizType = VisualizationInfo.PluginType.WhiteCap;
-      }
-
-      else if (path.ToLowerInvariant().CompareTo("softskies") == 0)
-      {
-        vizType = VisualizationInfo.PluginType.SoftSkies;
-      }
-
-      else
-      {
-        vizType = VisualizationInfo.PluginType.Unknown;
-      }
-
-      Log.Info("Visualization Manager: Visualization type is {0}", vizType);
-      return vizType;
     }
 
     private void SetVisualizationFPS(int targetFPS)
@@ -538,6 +500,7 @@ namespace MediaPortal.Visualization
     {
       CloseCurrentVisualization();
       CurrentVizType = vizPluginInfo.VisualizationType;
+      CurrentViz = vizPluginInfo.Name;
 
       switch (CurrentVizType)
       {
@@ -722,6 +685,42 @@ namespace MediaPortal.Visualization
       if (Viz.IsSoniqueVis())
       {
         Viz.SetOutputContext(VizRenderWindow.OutputContextType);
+      }
+    }
+
+    private int GetCurrentVizIndex()
+    {
+      int i = -1;
+      foreach (VisualizationInfo visInfo in _VisualizationPluginsInfo)
+      {
+        i++;
+        if (visInfo.Name == CurrentViz)
+        {
+          break;
+        }
+      }
+      return i;
+    }
+
+    public void GetNextVis()
+    {
+      int i = GetCurrentVizIndex();
+
+      if (i > -1 && i < _VisualizationPluginsInfo.Count - 1)
+      {
+        CreateVisualization(_VisualizationPluginsInfo[i + 1]);
+        VizRenderWindow.Run = true;
+      }
+    }
+
+    public void GetPrevVis()
+    {
+      int i = GetCurrentVizIndex();
+
+      if (i > 0)
+      {
+        CreateVisualization(_VisualizationPluginsInfo[i - 1]);
+        VizRenderWindow.Run = true;
       }
     }
 
