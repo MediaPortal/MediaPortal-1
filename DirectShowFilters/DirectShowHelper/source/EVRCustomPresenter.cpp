@@ -60,7 +60,14 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter** EVRFilter, BOOL pIsWin7):
+MPEVRCustomPresenter::MPEVRCustomPresenter( IVMR9Callback* pCallback, 
+                                            IDirect3DDevice9* direct3dDevice, 
+                                            HMONITOR monitor, 
+                                            IBaseFilter** EVRFilter, 
+                                            BOOL pIsWin7, 
+                                            int monitorIdx, 
+                                            bool disVsyncCorr, 
+                                            bool disMparCorr):
   CUnknown(NAME("MPEVRCustomPresenter"), NULL),
   m_refCount(1), 
   m_qScheduledSamples(MAX_SURFACES),
@@ -91,14 +98,17 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     if (NO_MP_AUD_REND)
     {
-      Log("--- v1.6.%d Unicode with DWM queue support --- instance 0x%x", DSHOWHELPER_VERSION, this);
+      Log("--- v1.7.%d Unicode with DWM queue support --- instance 0x%x", DSHOWHELPER_VERSION, this);
     }
     else
     {
-      Log("--- v1.6.%d Unicode with DWM queue support --- instance 0x%x", DSHOWHELPER_VERSION, this);
+      Log("--- v1.7.%d Unicode with DWM queue support --- instance 0x%x", DSHOWHELPER_VERSION, this);
       Log("---------- audio renderer enabled ------------- instance 0x%x", this);
     }
+    m_monitorIdx = monitorIdx;
     m_hMonitor = monitor;
+    m_bDisVsyncCorr = disVsyncCorr;
+    m_bDisMparCorr = disMparCorr;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
     if (FAILED(hr))
@@ -1782,9 +1792,19 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
           break;
         }
         
-        // Apply display vsync correction.     
-        LONGLONG offsetTime = delErr; //used to widen vsync correction window
-        LONGLONG rasterDelay = GetDelayToRasterTarget( pTargetTime, &offsetTime);
+        LONGLONG offsetTime = 0;
+        LONGLONG rasterDelay = 0;
+        if (m_bDisVsyncCorr)
+        {
+          *pTargetTime = 0;
+          offsetTime = (displayTime*2)/3;
+        }
+        else
+        {
+          // Apply display vsync correction.     
+          offsetTime = delErr; //used to widen vsync correction window
+          rasterDelay = GetDelayToRasterTarget( pTargetTime, &offsetTime);
+        }
 
         if (rasterDelay > 0)
         {
@@ -1804,9 +1824,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         {
           m_earliestPresentTime = systemTime + (displayTime * (m_rawFRRatio - 1)) + offsetTime;
         }    
-        
-
-      
+            
         if (nextSampleTime > (max(frameTime, displayTime) + earlyLimit))
         {      
           if ((systemTime - m_lastPresentTime < (500*10000)) && (m_lastPresentTime > 0))
@@ -1874,7 +1892,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         //Clamp within limits - because of hystersis, the range of realSampleTime
         //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
         //the -0.5 to +0.5 allowable range 
-        if (m_bDVDMenu || m_bScrubbing || (m_frameRateRatX2 == 0 && m_dBias == 1.0))
+        if (m_bDVDMenu || m_bScrubbing || (m_frameRateRatX2 == 0 && m_dBias == 1.0) || m_bDisMparCorr)
         {
           nstPhaseDiff = 0.0;
         }
@@ -3605,7 +3623,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings(int numFrames, int threadPrior
     dParams.dDetectedScanlineTime = scanLineTime / 10000.0; 
 
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
-    GetRealRefreshRate(); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
+    GetRealRefreshRate(m_monitorIdx); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
     
     if ((dParams.dEstRefreshCycle < 5.0) || (dParams.dEstRefreshCycle > 100.0)) // just in case it's gone badly wrong...
     {
@@ -3864,7 +3882,14 @@ double MPEVRCustomPresenter::GetRefreshRate()
 // Get the best estimate of the display cycle time in milliseconds
 double MPEVRCustomPresenter::GetDisplayCycle()
 {
-  return m_displayParams.dEstRefreshCycle;
+  if (m_bDisVsyncCorr)
+  {
+    return m_dD3DRefreshCycle;
+  }
+  else
+  {
+    return m_displayParams.dEstRefreshCycle;
+  }
 }
 
 // Get detected frame duration in seconds
@@ -3956,7 +3981,6 @@ double MPEVRCustomPresenter::GetVideoFramePeriod(FPS_SOURCE_METHOD fpsSource)
 double MPEVRCustomPresenter::GetRealFramePeriod()
 {
   double rtimePerFrame ;
-  double currentDispCycle = GetDisplayCycle(); // in ms
   
   if (m_DetectedFrameTime > DFT_THRESH) 
   {
@@ -4013,7 +4037,7 @@ void MPEVRCustomPresenter::GetFrameRateRatio()
     m_frameRateRatX2 = F4DRatX2P6;
   }
  
-  if ((m_DetectedFrameTime <= DFT_THRESH) || (m_iFramesDrawn < FRAME_PROC_THRESH) )
+  if ((m_DetectedFrameTime <= DFT_THRESH) || (m_iFramesDrawn < FRAME_PROC_THRESH))
   {
     //Force to zero until playback has settled down and we know the real video frame rate
     m_frameRateRatio = 0;
@@ -4263,12 +4287,12 @@ void MPEVRCustomPresenter::VideoFpsFromSample(IMFSample* pSample)
 
 
 // get driver refresh rate
-void MPEVRCustomPresenter::GetRealRefreshRate()
+void MPEVRCustomPresenter::GetRealRefreshRate(int monitorIdx)
 {
   // Win7
   if (m_bIsWin7 && m_pW7GetRefreshRate)
   {
-    m_dD3DRefreshRate = m_pW7GetRefreshRate();
+    m_dD3DRefreshRate = m_pW7GetRefreshRate(monitorIdx);
 
     if (m_dD3DRefreshRate == -1)
     {
@@ -4278,6 +4302,20 @@ void MPEVRCustomPresenter::GetRealRefreshRate()
   else // XP or Vista
   {
     m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+    
+    //Lets's assume more accurate values for common refresh rates...
+    if (m_displayMode.RefreshRate == 59)
+    {
+      m_dD3DRefreshRate = 59.94;
+    }
+    else if (m_displayMode.RefreshRate == 29)
+    {
+      m_dD3DRefreshRate = 29.97;
+    }
+    else if (m_displayMode.RefreshRate == 23)
+    {
+      m_dD3DRefreshRate = 23.976;
+    }
   }
   m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // in ms
 }
@@ -4600,7 +4638,14 @@ void MPEVRCustomPresenter::SetupAudioRenderer()
     m_bBiasAdjustmentDone && m_dBias != calculatedBias)
     return;
 
-  m_dBias = calculatedBias;
+  if (m_bDisMparCorr)
+  {
+    m_dBias = 1.0;
+  }
+  else
+  {
+    m_dBias = calculatedBias;
+  }
 
   LOG_NOSCRUB("SetupAudioRenderer: cycleDiff: %1.10f", cycleDiff);
 

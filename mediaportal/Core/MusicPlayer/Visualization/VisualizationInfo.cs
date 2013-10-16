@@ -33,11 +33,16 @@ namespace MediaPortal.Visualization
       SoftSkies,
       Winamp,
       Sonique,
+      Bassbox,
       WMP,
     } ;
 
     private string[] BlackList = new string[]
-                                   {
+                                   {                                     
+                                     "{6870D1D8-5018-454f-8DBE-4EE920743B8B}",
+                                     // Windows Media 9 Series (Rhythm and Wave) not work without IWMPEffects2 interface, we don't need this one
+                                     "{B0D32936-2E7A-4a69-8AB8-40FB4E83A0D0}",
+                                     // Windows Media Player 10 (Energy Bliss) not work without IWMPEffects2 interface, we don't need this one
                                      "{BFA29983-66E4-11d7-A75D-0000B4908923}",
                                      // The WMP version the the G-Force plugin.  Since we support G-Force natively, we don't need this one
                                      "{3DC95765-154D-11d8-A75D-0000B4908923}",
@@ -58,6 +63,9 @@ namespace MediaPortal.Visualization
     private bool _IsCOMPlugin = false;
     private bool _IsDummyPlugin = false;
     private bool _IsBlackListed = false;
+    private bool _useOpenGL = false;
+    private int _renderTiming = 0;
+    private int _viewPortSize = 0;
 
     public PluginType VisualizationType
     {
@@ -143,6 +151,70 @@ namespace MediaPortal.Visualization
       set { _IsBlackListed = value; }
     }
 
+    public bool UseOpenGL
+    {
+      get { return _useOpenGL; }
+      set { _useOpenGL = value; }
+    }
+
+    public int RenderTiming
+    {
+      get { return _renderTiming; }
+      set { _renderTiming = value; }
+    }
+
+    public int ViewPortSize
+    {
+      get { return _viewPortSize; }
+      set { _viewPortSize = value; }
+    }
+
+    public int ViewPortSizeX
+    {
+      get
+      {
+        switch (_viewPortSize)
+        {
+          case 0:
+            return 512;
+
+          case 1:
+            return 600;
+
+          case 2:
+            return 800;
+
+          case 3:
+            return 1024;
+        }
+
+        return 512;
+      }
+    }
+
+    public int ViewPortSizeY
+    {
+      get
+      {
+        switch (_viewPortSize)
+        {
+          case 0:
+            return 384;
+
+          case 1:
+            return 480;
+
+          case 2:
+            return 600;
+
+          case 3:
+            return 786;
+        }
+
+        return 384;
+      }
+    }
+
     public VisualizationInfo(PluginType vizType, string path, string name, string clsid, List<string> presets)
     {
       _IsBlackListed = IsBlackListedVisualization(clsid) || IsBlackListedVisualization(name);
@@ -198,7 +270,7 @@ namespace MediaPortal.Visualization
     /// <param name="vizInfo"></param>
     /// <returns>true if data is identical</returns>
     /// </summary>
-    public bool IsIdenticalTo(VisualizationInfo vizInfo, bool doSimpleCheck)
+    public bool IsIdenticalTo(VisualizationInfo vizInfo)
     {
       if (this._Name != vizInfo._Name)
       {
@@ -225,36 +297,9 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (this.PresetIndex != vizInfo.PresetIndex)
-      {
-        return false;
-      }
-
       if (this.VisualizationType != vizInfo.VisualizationType)
       {
         return false;
-      }
-
-      if (!doSimpleCheck)
-      {
-        if (this.HasPresets != vizInfo.HasPresets)
-        {
-          return false;
-        }
-
-
-        if (this.PresetNames.Count != vizInfo.PresetNames.Count)
-        {
-          return false;
-        }
-
-        for (int i = 0; i < this.PresetNames.Count; i++)
-        {
-          if (this.PresetNames[i] != vizInfo.PresetNames[i])
-          {
-            return false;
-          }
-        }
       }
 
       return true;
@@ -279,6 +324,10 @@ namespace MediaPortal.Visualization
 
         case PluginType.Winamp:
           sVizType = " (Winamp)";
+          break;
+
+        case PluginType.Bassbox:
+          sVizType = " (Bassbox)";
           break;
 
         case PluginType.WMP:

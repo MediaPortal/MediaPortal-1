@@ -216,6 +216,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\BassVisAPI.Net.dll</HintPath>
     </Reference>
+    <Reference Include="CSScriptLibrary">
+      <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
@@ -360,6 +363,7 @@
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\MixerStream.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
+    <Compile Include="MusicPlayer\Visualization\BassboxViz.cs" />
     <Compile Include="Player\BDOSDRenderer.cs" />
     <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Mixer\MasterVolumeHelper.cs" />
@@ -511,6 +515,7 @@
     <Compile Include="Util\HTMLParser.cs" />
     <Compile Include="Util\IMDBSearch.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
+    <Compile Include="Util\InternalCSScriptGrabbersLoader.cs" />
     <Compile Include="Util\NativeFileSystemOperations.cs" />
     <Compile Include="Util\Network.cs" />
     <Compile Include="Util\NetworkShares.cs" />

@@ -1183,6 +1183,7 @@
     <String id="1976">rpm</String>
     <String id="1977">File system</String>
     <String id="1978">Virtual Memory</String>
+    <String id="1984">Refresh video thumb</String>
     <String id="2005">Delete</String>
     <String id="2006">Title</String>
     <String id="2007">Yield</String>
@@ -2331,5 +2332,6 @@
     <String id="300229">Minimize to tray on focus loss</String>
     <String id="300230">Stop playback on removal of an audio renderer</String>
     <String id="300231">Reduce frame rate when not being in focus</String>
+	<String id="300232">Only update files after {0}</String>
    </Section>
 </Language>

@@ -21,9 +21,12 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include <commdlg.h>
-#include <bdatypes.h>
 #include <time.h>
 #include <streams.h>
+#include <Ks.h>
+#include <KsMedia.h>
+#include <bdatypes.h>
+#include <bdamedia.h>
 #include <initguid.h>
 #include <shlobj.h>
 #include <tchar.h>
@@ -55,8 +58,9 @@ const AMOVIESETUP_MEDIATYPE sudPinTypes =
 	&MEDIASUBTYPE_MPEG2_TRANSPORT   // Minor type
 };
 
-const AMOVIESETUP_PIN sudPins =
+const AMOVIESETUP_PIN sudPins[] =
 {
+  {
     L"Input",                   // Pin string name
     FALSE,                      // Is it rendered
     FALSE,                      // Is it an output
@@ -66,6 +70,18 @@ const AMOVIESETUP_PIN sudPins =
     L"Output",                  // Connects to pin
     1,                          // Number of types
     &sudPinTypes                // Pin information
+  },
+  {
+    L"OOB SI",                  // Pin string name
+    FALSE,                      // Is it rendered
+    FALSE,                      // Is it an output
+    FALSE,                      // Allowed none
+    FALSE,                      // Likewise many
+    &CLSID_NULL,                // Connects to filter
+    L"Output",                  // Connects to pin
+    1,                          // Number of types
+    &sudPinTypes                // Pin information
+  }
 };
 
 const AMOVIESETUP_FILTER sudDump =
@@ -73,9 +89,9 @@ const AMOVIESETUP_FILTER sudDump =
     &CLSID_MpTsFilter,          // Filter CLSID
     L"MediaPortal Ts Writer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
-    1,                          // Number pins
-    &sudPins,                   // Pin details
-    CLSID_LegacyAmFilterCategory
+    2,                          // Number pins
+    sudPins,                    // Pin details
+    CLSID_LegacyAmFilterCategory// Filter category
 };
 
 void DumpTs(byte* tspacket)
@@ -156,7 +172,11 @@ CBasePin * CMpTsFilter::GetPin(int n)
   if (n == 0) 
 	{
     return m_pWriterFilter->m_pPin;
-  } 
+  }
+  else if (n == 1)
+  {
+    return m_pWriterFilter->m_pOobSiPin;
+  }
 	else 
 	{
     return NULL;
@@ -169,7 +189,7 @@ CBasePin * CMpTsFilter::GetPin(int n)
 //
 int CMpTsFilter::GetPinCount()
 {
-  return 1;
+  return 2;
 }
 
 
@@ -310,8 +330,12 @@ STDMETHODIMP CMpTsFilterPin::Receive(IMediaSample *pSample)
 			return S_OK;
 		}
 		if (m_rawPaketWriter!=NULL)
+    {
 			if (!m_rawPaketWriter->IsFileInvalid())
-				m_rawPaketWriter->Write(pbData,sampleLen);
+      {
+        m_rawPaketWriter->Write(pbData,sampleLen);
+      }
+    }
 		OnRawData(pbData, sampleLen);
 	}
 	catch(...)
@@ -353,11 +377,119 @@ void CMpTsFilterPin::AssignRawPaketWriter(FileWriter *rawPaketWriter)
 	m_rawPaketWriter=rawPaketWriter;
 }
 
+
+//================================================================================================
+//================================================================================================
+// Definition of CMpOobSiFilterPin
+CMpOobSiFilterPin::CMpOobSiFilterPin(CMpTs* pDump, LPUNKNOWN pUnk, CBaseFilter* pFilter, CCritSec* pLock, CCritSec* pReceiveLock, HRESULT* phr)
+  : CRenderedInputPin(NAME("CMpOobSiFilterPin"), pFilter, pLock, phr, L"OOB SI Input"),
+    m_pReceiveLock(pReceiveLock),
+    m_pWriterFilter(pDump)
+{
+  LogDebug("CMpOobSiFilterPin: ctor");
+  m_rawSectionWriter = NULL;
+}
+
+// Check if the pin can connect to another pin and accept samples of the given type.
+HRESULT CMpOobSiFilterPin::CheckMediaType(const CMediaType* pMediaType)
+{
+  if (pMediaType == NULL)
+  {
+    return S_FALSE;
+  }
+  // Only allow connection to pins that pass samples with the format that we support.
+  if (IsEqualGUID(pMediaType->majortype, KSDATAFORMAT_TYPE_MPEG2_SECTIONS) &&
+    IsEqualGUID(pMediaType->subtype, KSDATAFORMAT_SUBTYPE_BDA_OPENCABLE_OOB_PSIP))
+  {
+    return S_OK;
+  }
+  return S_FALSE;
+}
+
+// Disconnect the pin.
+HRESULT CMpOobSiFilterPin::BreakConnect()
+{
+  return CRenderedInputPin::BreakConnect();
+}
+
+// We don't hold up threads that call Receive().
+STDMETHODIMP CMpOobSiFilterPin::ReceiveCanBlock()
+{
+  return S_FALSE;
+}
+
+// Receive data and do something with it.
+STDMETHODIMP CMpOobSiFilterPin::Receive(IMediaSample *pSample)
+{
+  try
+  {
+    if (pSample == NULL) 
+    {
+      LogDebug("CMpOobSiFilterPin: received NULL sample");
+      return S_OK;
+    }
+    long sampleLength = pSample->GetActualDataLength();
+    if (sampleLength <= 0)
+    {
+      return S_OK;
+    }
+
+    PBYTE pbData = NULL;
+    HRESULT hr = pSample->GetPointer(&pbData);
+    if (FAILED(hr)) 
+    {
+      LogDebug("CMpOobSiFilterPin: failed to get sample pointer in Receive()");
+      return S_OK;
+    }
+
+    CSection s;
+    s.table_id = pbData[0];
+    s.section_length = sampleLength - 3;  // 1 for the table_id, 2 for the section_length bytes
+    memcpy(s.Data, pbData, sampleLength);
+
+    if (m_rawSectionWriter != NULL)
+    {
+      if (!m_rawSectionWriter->IsFileInvalid())
+      {
+        m_rawSectionWriter->Write((BYTE*)&sampleLength, 4);
+        m_rawSectionWriter->Write(pbData, sampleLength);
+      }
+    }
+    m_pWriterFilter->AnalyzeOobSiSection(s);
+  }
+  catch (...)
+  {
+    LogDebug("CMpOobSiFilterPin: receive exception");
+  }
+  return S_OK;
+}
+
+STDMETHODIMP CMpOobSiFilterPin::EndOfStream(void)
+{
+  CAutoLock lock(m_pReceiveLock);
+  return CRenderedInputPin::EndOfStream();
+}
+
+// Called when we are seeked.
+STDMETHODIMP CMpOobSiFilterPin::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
+{
+  // Seeking is not supported.
+  return S_OK;
+}
+
+void CMpOobSiFilterPin::AssignRawSectionWriter(FileWriter* rawSectionWriter)
+{
+  m_rawSectionWriter = rawSectionWriter;
+}
+//================================================================================================
+//================================================================================================
+
+
 //
 //  CMpTs class
 //
 CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr) 
-:CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL)
+:CUnknown(NAME("CMpTs"), pUnk),m_pFilter(NULL),m_pPin(NULL),m_pOobSiPin(NULL)
 {
   m_id=0;
 
@@ -381,17 +513,27 @@ CMpTs::CMpTs(LPUNKNOWN pUnk, HRESULT *phr)
     return;
   }
 
+  m_pOobSiPin = new CMpOobSiFilterPin(this,GetOwner(),m_pFilter,&m_Lock,&m_ReceiveLock,phr);
+  if (m_pOobSiPin == NULL) 
+  {
+    if (phr)
+      *phr = E_OUTOFMEMORY;
+    return;
+  }
+
   m_pChannelScanner= new CChannelScan(GetOwner(),phr,m_pFilter);
   m_pEpgScanner = new CEpgScanner(GetOwner(),phr);
   m_pChannelLinkageScanner = new CChannelLinkageScanner(GetOwner(),phr);
   m_rawPaketWriter=new FileWriter();
   m_pPin->AssignRawPaketWriter(m_rawPaketWriter);
+  //m_pOobSiPin->AssignRawSectionWriter(m_rawPaketWriter);
 }
 
 // Destructor
 CMpTs::~CMpTs()
 {
   delete m_pPin;
+  delete m_pOobSiPin;
   delete m_pFilter;
 	delete m_pChannelScanner;
 	delete m_pEpgScanner;
@@ -519,6 +661,18 @@ void CMpTs::AnalyzeTsPacket(byte* tsPacket)
 	}
 }
 
+void CMpTs::AnalyzeOobSiSection(CSection& section)
+{
+	try
+	{
+    CAutoLock lock(&m_Lock);
+		m_pChannelScanner->OnOobSiSection(section);
+	}
+	catch(...)
+	{
+		LogDebug("exception in AnalyzeOobSiSection");
+	}
+}
 
 STDMETHODIMP CMpTs::AddChannel( int* handle)
 {

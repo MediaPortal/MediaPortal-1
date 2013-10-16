@@ -28,6 +28,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using MediaPortal.DeployTool.Sections;
 using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool
@@ -290,7 +291,18 @@ namespace MediaPortal.DeployTool
 
         if (_IsInstalled == 1)
         {
-          result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
+            result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
         }
         else
         {
@@ -553,7 +565,7 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 3;
+          minor = 4;
           revision = 100;
           break;
       }
@@ -565,6 +577,25 @@ namespace MediaPortal.DeployTool
     {
       if (pkgVer.CompareTo(GetPackageVersion("min")) >= 0 &&
           pkgVer.CompareTo(GetPackageVersion("max")) <= 0)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    public static Version GetCurrentPackageVersion()
+    {
+      int major = 1;
+      int minor = 5;
+      int revision = 0;
+
+      Version ver = new Version(major, minor, revision);
+      return ver;
+    }
+
+    public static bool IsCurrentPackageUpdatabled(Version pkgVer)
+    {
+      if (pkgVer.CompareTo(GetCurrentPackageVersion()) >= 0)
       {
         return true;
       }
@@ -604,7 +635,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.4.0";
+      return "1.5.0";
     }
 
     /// <summary>

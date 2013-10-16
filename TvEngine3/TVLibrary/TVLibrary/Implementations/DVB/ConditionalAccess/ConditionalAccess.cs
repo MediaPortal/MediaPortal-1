@@ -27,6 +27,8 @@ using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Hardware;
+using TvLibrary.Implementations.Dri;
+using TvLibrary.Implementations.Dri.Service;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -62,6 +64,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly TunerDri _tunerDri;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -115,6 +118,12 @@ namespace TvLibrary.Implementations.DVB
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
+        TunerDri driTuner = card as TunerDri;
+        if (driTuner != null)
+        {
+          _tunerDri = driTuner;
+          _ciMenu = driTuner;
+        }
         if (tunerFilter == null && analyzerFilter == null)
           return;
         //DVB checks. Conditional Access & DiSEqC etc.
@@ -411,6 +420,12 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!_useCam)
           return true;
+
+        if (_tunerDri != null)
+        {
+          return _tunerDri.CardStatus == DriCasCardStatus.Inserted;
+        }
+
         if (_knc != null)
         {
           //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());

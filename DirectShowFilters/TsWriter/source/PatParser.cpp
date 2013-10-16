@@ -18,26 +18,15 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#pragma warning(disable : 4995)
-#include <windows.h>
-#include <commdlg.h>
-#include <bdatypes.h>
-#include <time.h>
-#include <streams.h>
-#include <initguid.h>
-#include "..\..\shared\dvbutil.h"
 #include "PatParser.h"
-
 
 void LogDebug(const char *fmt, ...) ;
 
 //*****************************************************************************
 CPatParser::CPatParser(void)
 {
-	m_finished=false;
-	m_waitForVCT=false;
-  Reset(NULL,false);
   SetPid(PID_PAT);
+  Reset(true);
 }
 
 //*****************************************************************************
@@ -58,58 +47,46 @@ void  CPatParser::CleanUp()
 		++it;
 	}
 	m_pmtParsers.clear();
+  itChannels it2=m_mapChannels.begin();
+	while (it2!=m_mapChannels.end())
+	{
+		CChannelInfo* info=it2->second;
+		delete info;
+		info = NULL;
+		++it2;
+	}
   m_mapChannels.clear();
   m_bDumped=false;
 }
 
 //*****************************************************************************
-void  CPatParser::Reset(IChannelScanCallback* callback, bool waitForVCT)
+void  CPatParser::Reset(bool isDvbScan)
 {
 //	Dump();
 	CEnterCriticalSection enter(m_section);
-	m_waitForVCT=waitForVCT;
-	LogDebug("PatParser:Reset(%d)",m_pCallback);
+	LogDebug("PatParser::Reset");
+	m_bIsDvbScan = isDvbScan;
 	CSectionDecoder::Reset();
-	SetPid(PID_PAT);
   CleanUp();
-  m_vctParser.Reset();
+
   m_sdtParser.Reset();
 	m_nitDecoder.Reset();
 
-  m_sdtParser.SetCallback(this);
-  m_vctParser.SetCallback(this);
-	
-	m_pCallback=callback;
-
-  m_tickCount = GetTickCount();
-	m_finished=false;
+	m_sdtParser.SetCallback(this);
+	m_bIsReady = false;
 	LogDebug("PatParser::Reset done");
 }
 
 //*****************************************************************************
 BOOL CPatParser::IsReady()
 {
-	if (m_nitDecoder.Ready()==false) 
+	if (m_bIsDvbScan && !m_nitDecoder.Ready())
 	{
 		//LogDebug("nit not ready");
 		return FALSE;
 	}
-  
-	int x=0;
-	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
-  {
-		CChannelInfo& info=it->second;
-		if (!info.PmtReceived || !info.SdtReceived) 
-		{
-			//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
-			//	x,info.PmtReceived,info.SdtReceived,info.OtherMux,info.ServiceName,
-			//	info.NetworkId,info.TransportId,info.ServiceId);
-			return FALSE;
-		}
-		x++;
-	}
-	m_finished=true;
-	return TRUE;
+
+	return m_bIsReady;
 }
 
 //*****************************************************************************
@@ -119,15 +96,14 @@ int CPatParser::Count()
 }
 
 //*****************************************************************************
-bool CPatParser::GetChannel(int index, CChannelInfo& info)
+bool CPatParser::GetChannel(int index, CChannelInfo** info)
 {
-	static CChannelInfo unknownChannel;
-  if (index < 0 || index > Count()) 
+  if (index < 0 || index >= Count()) 
 	{
 	  LogDebug("GetChannel:%d invalid", index);
 		return false;
 	}
-  if (index==0) Dump();
+  if (index==0 && m_bIsDvbScan) Dump();
 
   itChannels it=m_mapChannels.begin();
   while (index) 
@@ -135,45 +111,23 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
     it++;
     index--;
   }
-  info = it->second;
-	info.LCN=m_nitDecoder.GetLogicialChannelNumber(info.NetworkId,info.TransportId,info.ServiceId);
+  CChannelInfo* toReturn = it->second;
+	toReturn->LCN=m_nitDecoder.GetLogicialChannelNumber(toReturn->NetworkId,toReturn->TransportId,toReturn->ServiceId);
 
-  if (info.NetworkId==0)
+  if (toReturn->NetworkId==0)
   {
       for (itChannels it2=m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
       {
-        if ( (it2->second).NetworkId!=0)
+        if ( (it2->second)->NetworkId!=0)
         {
-          info.NetworkId=(it2->second).NetworkId;
+          toReturn->NetworkId=(it2->second)->NetworkId;
           break;
         }
     }
   }
 
+  *info = toReturn;
 	return true;
-}
-
-
-//*****************************************************************************
-void CPatParser::OnChannel(const CChannelInfo& info)
-{
-  LogDebug("onch: %s", info.ServiceName /*,info.PidTable.VideoPid,info.PidTable.AC3Pid*/);
-  //info.PidTable.LogPIDs();
-
-	// check if we really have a channel with this sid
-	itChannels it=m_mapChannels.find(info.ServiceId);
-	if (it==m_mapChannels.end()) return;
-
-	m_mapChannels[info.ServiceId].Frequency=info.Frequency;
-	m_mapChannels[info.ServiceId].MajorChannel=info.MajorChannel;
-	m_mapChannels[info.ServiceId].MinorChannel=info.MinorChannel;
-	strcpy(m_mapChannels[info.ServiceId].ProviderName,info.ProviderName);
-	strcpy(m_mapChannels[info.ServiceId].ServiceName,info.ServiceName);
-	m_mapChannels[info.ServiceId].FreeCAMode=info.FreeCAMode;
-	m_mapChannels[info.ServiceId].Modulation=info.Modulation;
-	m_mapChannels[info.ServiceId].ServiceType=info.ServiceType;
-	m_mapChannels[info.ServiceId].OtherMux=info.OtherMux;
-	m_mapChannels[info.ServiceId].SdtReceived=true;
 }
 
 //*****************************************************************************
@@ -184,21 +138,35 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 	// check if we really have a channel with this sid
   if (it==m_mapChannels.end()) return;
 
-  CChannelInfo& info=it->second;
+  CChannelInfo* info=it->second;
 
 	// check if we already set the sdt for this channel
-	if (info.SdtReceived) return;
+	if (info->SdtReceived) return;
 
-	m_tickCount = GetTickCount();
-	info.NetworkId=sdtInfo.NetworkId;
-	info.TransportId=sdtInfo.TransportId;
-	info.ServiceId=sdtInfo.ServiceId;
-	info.FreeCAMode=sdtInfo.FreeCAMode;
-	info.ServiceType=sdtInfo.ServiceType;
-	info.OtherMux=sdtInfo.OtherMux;
-	info.SdtReceived=true;
-	strcpy(info.ProviderName,sdtInfo.ProviderName);
-	strcpy(info.ServiceName,sdtInfo.ServiceName);
+	info->NetworkId=sdtInfo.NetworkId;
+	info->TransportId=sdtInfo.TransportId;
+	info->ServiceId=sdtInfo.ServiceId;
+	info->FreeCAMode=sdtInfo.FreeCAMode;
+	info->ServiceType=sdtInfo.ServiceType;
+	info->OtherMux=sdtInfo.OtherMux;
+	info->SdtReceived=true;
+	strcpy(info->ProviderName,sdtInfo.ProviderName);
+	strcpy(info->ServiceName,sdtInfo.ServiceName);
+
+	int x=0;
+	for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
+	{
+		CChannelInfo* info=it->second;
+		if (!info->PmtReceived || (m_bIsDvbScan && !info->SdtReceived))
+		{
+			//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
+			//	x,info->PmtReceived,info->SdtReceived,info->OtherMux,info->ServiceName,
+			//	info->NetworkId,info->TransportId,info->ServiceId);
+			return;
+		}
+		x++;
+	}
+	m_bIsReady = true;
 }
 
 void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,bool hasCaDescriptor,vector<PidInfo2> pidInfo)
@@ -206,13 +174,27 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,bool hasCaDescr
   itChannels it=m_mapChannels.find(serviceId);
   if (it!=m_mapChannels.end())
   {
-    CChannelInfo& info=it->second;
-		if (!info.PmtReceived) 
+    CChannelInfo* info=it->second;
+		if (!info->PmtReceived) 
 		{
-			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
-			info.hasCaDescriptor = hasCaDescriptor ? 1 : 0;
-			info.PmtReceived=true;
-      m_tickCount = GetTickCount();
+			AnalyzePidInfo(pidInfo,info->hasVideo,info->hasAudio);
+			info->hasCaDescriptor = hasCaDescriptor ? 1 : 0;
+			info->PmtReceived=true;
+
+			int x=0;
+			for (itChannels it=m_mapChannels.begin(); it !=m_mapChannels.end();++it)
+			{
+				CChannelInfo* info=it->second;
+				if (!info->PmtReceived || (m_bIsDvbScan && !info->SdtReceived))
+				{
+					//LogDebug("ch:%d pmt:%d sdt:%d othermux:%d %s onid:%x tsid:%x sid:%x",
+					//	x,info->PmtReceived,info->SdtReceived,info->OtherMux,info->ServiceName,
+					//	info->NetworkId,info->TransportId,info->ServiceId);
+					return;
+				}
+				x++;
+			}
+			m_bIsReady = true;
 		}
 	}
 }
@@ -260,38 +242,20 @@ bool CPatParser::PmtParserExists(int pid,int serviceId)
 void CPatParser::OnTsPacket(byte* tsPacket)
 {
 	CEnterCriticalSection enter(m_section);
-	//if (m_finished) return;
   int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-
-	if (m_pCallback!=NULL)
-	{
-		if (IsReady() )
-    {
-			LogDebug("Scanner finished. Triggering callback");
-			m_pCallback->OnScannerDone();
-      m_pCallback=NULL;
-			return;
-    }
-	}	
+  if (pid==PID_PAT)
+  {
+		CSectionDecoder::OnTsPacket(tsPacket);
+    return;
+  }
   if (pid==PID_NIT) 
   {
     m_nitDecoder.OnTsPacket(tsPacket);
     return;
   }
-  if (pid==PID_VCT) 
-  {
-    m_vctParser.OnTsPacket(tsPacket);
-    return;
-  }
-	
 	if (pid==PID_SDT)
   {
     m_sdtParser.OnTsPacket(tsPacket);
-    return;
-  }
-  if (pid==PID_PAT)
-  {
-		CSectionDecoder::OnTsPacket(tsPacket);
     return;
   }
 	itPmtParser it=m_pmtParsers.begin();
@@ -338,12 +302,12 @@ void CPatParser::OnNewSection(CSection& sections)
 			itChannels it =m_mapChannels.find(serviceId);
 			if (it==m_mapChannels.end())
 			{
-				CChannelInfo info;
-				info.TransportId=sections.table_id_extension;
-				info.ServiceId=serviceId;
-        info.PidTable.PmtPid=pmtPid;
-				info.PmtReceived=false;
-				info.SdtReceived=false;
+				CChannelInfo* info = new CChannelInfo();
+				info->TransportId=sections.table_id_extension;
+				info->ServiceId=serviceId;
+        info->PidTable.PmtPid=pmtPid;
+				info->PmtReceived=false;
+				info->SdtReceived=false;
 				m_mapChannels[serviceId]=info;
 			//	LogDebug("pat: tsid:%x sid:%x pmt:%x", transport_stream_id,serviceId,pmtPid);
 			}
@@ -355,7 +319,6 @@ void CPatParser::OnNewSection(CSection& sections)
 				m_pmtParsers.push_back(parser);
 				LogDebug("PatParser: Added pmt parser for pmt: 0x%x sid: 0x%x",pmtPid,serviceId);
 			}
-			m_tickCount = GetTickCount();
     }
   }
 }
@@ -403,10 +366,10 @@ void CPatParser::Dump()
   itChannels it=m_mapChannels.begin();
   while (it!=m_mapChannels.end()) 
   {
-    CChannelInfo& info=it->second;
-		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d hasCaDescriptor:%d",i,
-            info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-            info.ServiceType,info.PidTable.PmtPid,info.OtherMux,info.FreeCAMode,info.hasVideo,info.hasAudio,info.hasCaDescriptor);
+    CChannelInfo* info=it->second;
+		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d hasCaDescriptor:%d",i,
+            info->ProviderName,info->ServiceName,info->NetworkId,info->TransportId,info->ServiceId,
+            info->ServiceType,info->PidTable.PmtPid,info->OtherMux,info->FreeCAMode,info->hasVideo,info->hasAudio,info->hasCaDescriptor);
 
     it++;
     i++;

@@ -19,10 +19,12 @@
 #endregion
 
 using System;
-using TvLibrary.Interfaces;
-using TvLibrary.Interfaces.Analyzer;
+using System.Collections.Generic;
+using DirectShowLib.BDA;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using TvLibrary.Interfaces;
+using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -57,7 +59,30 @@ namespace TvLibrary.Implementations.DVB
     public ATSCScanning(TvCardDvbBase card)
       : base(card)
     {
-      _enableWaitForVCT = true;
+    }
+
+    /// <summary>
+    /// Scans the specified transponder.
+    /// </summary>
+    /// <param name="channel">The channel.</param>
+    /// <param name="settings">The settings.</param>
+    /// <returns></returns>
+    public override List<IChannel> Scan(IChannel channel, ScanParameters settings)
+    {
+      ATSCChannel atscChannel = channel as ATSCChannel;
+      if (atscChannel == null)
+      {
+        _transportStreamStandard = TransportStreamStandard.Default;
+      }
+      else if (atscChannel.ModulationType == ModulationType.Mod8Vsb || atscChannel.ModulationType == ModulationType.Mod16Vsb)
+      {
+        _transportStreamStandard = TransportStreamStandard.Atsc;
+      }
+      else
+      {
+        _transportStreamStandard = TransportStreamStandard.Scte;
+      }
+      return base.Scan(channel, settings);
     }
 
     /// <summary>
@@ -70,12 +95,32 @@ namespace TvLibrary.Implementations.DVB
     {
       ATSCChannel tuningChannel = (ATSCChannel)channel;
       ATSCChannel atscChannel = new ATSCChannel();
+      // When scanning with a CableCARD tuner and/or NIT or VCT frequency info
+      // has been received and it looks plausible...
+      if (tuningChannel.PhysicalChannel == 0 ||
+        (info.freq > 1750 && tuningChannel.Frequency > 0 && info.freq != tuningChannel.Frequency))
+      {
+        atscChannel.PhysicalChannel = ATSCChannel.GetPhysicalChannelFromFrequency(info.freq);
+        // Convert from centre frequency to the analog video carrier
+        // frequency. This is a BDA convention.
+        atscChannel.Frequency = info.freq - 1750;
+      }
+      else
+      {
+        atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
+        atscChannel.Frequency = tuningChannel.Frequency;
+      }
+      if (info.minorChannel == 0)
+      {
+        atscChannel.LogicalChannelNumber = info.majorChannel;
+      }
+      else
+      {
+        atscChannel.LogicalChannelNumber = (info.majorChannel * 1000) + info.minorChannel;
+      }
       atscChannel.Name = info.service_name;
-      atscChannel.LogicalChannelNumber = info.LCN;
       atscChannel.Provider = info.service_provider_name;
       atscChannel.ModulationType = tuningChannel.ModulationType;
-      atscChannel.Frequency = tuningChannel.Frequency;
-      atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
       atscChannel.MajorChannel = info.majorChannel;
       atscChannel.MinorChannel = info.minorChannel;
       atscChannel.IsTv = IsTvService(info.serviceType);
@@ -91,20 +136,17 @@ namespace TvLibrary.Implementations.DVB
 
     protected override void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
     {
-      if (((ATSCChannel)channel).Frequency > 0)
+      if (info.minorChannel > 0)
       {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                     ((ATSCChannel)channel).Frequency, info.serviceID);
-        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
-                                          info.serviceID);
+        // Standard ATSC two part channel number available.
+        info.service_name = String.Format("Unknown {0}-{1}", info.majorChannel, info.minorChannel);
       }
       else
       {
-        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
-                     ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
-        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
-                                          info.serviceID);
+        // QAM channel number. Informal standard used by TVs and other clear QAM equipment when PSIP is not available.
+        info.service_name = String.Format("Unknown {0}-{1}", ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
       }
+      Log.Log.Info("ATSC: service name is not available, so set to {0}", info.service_name);
     }
 
     protected override bool IsRadioService(int serviceType)

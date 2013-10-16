@@ -79,7 +79,7 @@ namespace TvThumbnails
 
     private static ImageCodecInfo _currentImageCodecInfo;
     private static EncoderParameters _currentEncoderParams;
-
+    private static int _TimeOffset = 1;
     public static void LoadSettings()
     {
       Log.Debug("Thumbs.LoadSettings()");
@@ -97,28 +97,35 @@ namespace TvThumbnails
 
         _previewRows = Convert.ToInt32(layer.GetSetting("TVThumbnailsRows", "1").Value);
 
+        _TimeOffset = Convert.ToInt32(layer.GetSetting("TimeOffset", "1").Value);
+
         int configQuality = Convert.ToInt32(layer.GetSetting("TVThumbnailsQuality", "4").Value);
         Log.Debug("Thumbs.LoadSettings: Thumbs quality: {0}", configQuality);
         switch (configQuality)
         {
           case 0:
             Quality = ThumbQuality.fastest;
+            SetEncoderParams(25);
             Log.Info("Thumbs.LoadSettings: using the fastest thumbnail mode");
             break;
           case 1:
             Quality = ThumbQuality.fast;
+            SetEncoderParams(33);
             Log.Info("Thumbs.LoadSettings: using fast thumbnails");
             break;
           case 2:
             Quality = ThumbQuality.average;
+            SetEncoderParams(50);
             Log.Info("Thumbs.LoadSettings: using average thumbnails");
             break;
           case 3:
             Quality = ThumbQuality.higher;
+            SetEncoderParams(77);
             Log.Info("Thumbs.LoadSettings: using high quality thumbnails");
             break;
           case 4:
             Quality = ThumbQuality.highest;
+            SetEncoderParams(97);
             Log.Info("Thumbs.LoadSettings: using highest quality thumbnail mode");
             break;
         }
@@ -169,6 +176,11 @@ namespace TvThumbnails
       get { return _previewRows; }
     }
 
+    public static int TimeOffset
+    {
+      get { return _TimeOffset; }
+    }
+
     public static string ThumbnailFolder
     {
       get { return _recTvThumbsFolder; }
@@ -216,6 +228,22 @@ namespace TvThumbnails
             return true;
         }
       }
+    }
+
+    public static string GetThumbExtension()
+    {
+      if (Thumbs.ThumbFormat == ImageFormat.Jpeg)
+        return ".jpg";
+      else if (Thumbs.ThumbFormat == ImageFormat.Png)
+        return ".png";
+      else if (Thumbs.ThumbFormat == ImageFormat.Gif)
+        return ".gif";
+      else if (Thumbs.ThumbFormat == ImageFormat.Icon)
+        return ".ico";
+      else if (Thumbs.ThumbFormat == ImageFormat.Bmp)
+        return ".bmp";
+
+      return ".jpg";
     }
 
     /// <summary>
@@ -275,6 +303,37 @@ namespace TvThumbnails
     }
 
     #endregion
+
+    private static void SetEncoderParams(int aQuality)
+    {
+      if (aQuality < 1 || aQuality > 100)
+        return;
+
+      // This will specify the image quality to the encoder
+      EncoderParameter epQuality = new EncoderParameter(Encoder.Quality, aQuality);
+      // Get all image codecs that are available
+      ImageCodecInfo[] ImgEncoders = ImageCodecInfo.GetImageEncoders();
+      // Store the quality parameter in the list of encoder parameters
+      _currentEncoderParams = new EncoderParameters(1);
+      _currentEncoderParams.Param[0] = epQuality;
+
+      // Loop through all the image codecs
+      for (int i = 0; i < ImgEncoders.Length; i++)
+      {
+        // Until the one that we are interested in is found, which might be "*.JPG;*.JPEG;*.JPE;*.JFIF"
+        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new[] { ';' },
+                                                                             StringSplitOptions.RemoveEmptyEntries);
+        foreach (string ext in possibleExtensions)
+        {
+          // .jpg in *.JPG ?
+          if (ext.ToUpperInvariant().Contains(GetThumbExtension().ToUpperInvariant()))
+          {
+            _currentImageCodecInfo = ImgEncoders[i];
+            break;
+          }
+        }
+      }
+    }
 
     private static void SetQualityParams(ThumbQuality quality_)
     {

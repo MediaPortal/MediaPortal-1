@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.Sections;
+using System.Xml;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
@@ -94,14 +96,51 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
       }
 
+      // Remove PowerScheduler++ information from installed extensions
+      string InstalledMpesPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\Installer\V2\InstalledExtensions.xml";
+      XmlDocument doc = new XmlDocument();
+      try
+      {
+        // Load the installed extensions file
+        doc.Load(InstalledMpesPath);
+
+        // Get all PackageClass nodes
+        XmlNodeList packageClassNodes = doc.SelectNodes("/ExtensionCollection/Items/PackageClass");
+        foreach (XmlNode packageClassNode in packageClassNodes)
+        {
+          // Remove node if GeneralInfo/Name is PowerSchedeuler++
+          XmlNode idNode = packageClassNode.SelectSingleNode("GeneralInfo/Id");
+          if (idNode.InnerText == "9b9bc24e-69ca-4abc-8810-f8f95bd4bbe6")
+          {
+            packageClassNode.ParentNode.RemoveChild(packageClassNode);
+            doc.Save(InstalledMpesPath);
+            break;
+          }
+        }
+      }
+      catch (Exception)
+      {
+      }
+
       string targetDir = InstallationProperties.Instance["MPDir"];
 
       //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
 
+      Process setup = null;
+
+      if (UpgradeDlg.reInstallForce)
+      {
+        setup = Process.Start(_fileName,
+                              String.Format("/S /DeployMode --DeployMode /UpdateMode"));
+      }
+      else
+      {
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Remember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+        setup = Process.Start(_fileName,
+                                      String.Format("/S /DeployMode --DeployMode {0} /D={1}", UpdateMode, targetDir));
+      }
       if (setup != null)
       {
         setup.WaitForExit();
@@ -186,8 +225,19 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
         if (MpPath != null && File.Exists(MpPath))
         {
+          if (UpgradeDlg.reInstallForce)
+          {
+            result.state = Utils.IsCurrentPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
+          }
+          else if (UpgradeDlg.freshForce)
+          {
+            result.state = CheckState.VERSION_MISMATCH;
+          }
+          else
+          {
           result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
         }
+      }
       }
       return result;
     }

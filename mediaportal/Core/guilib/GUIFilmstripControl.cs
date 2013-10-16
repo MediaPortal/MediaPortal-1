@@ -2061,8 +2061,14 @@ namespace MediaPortal.GUI.Library
           if (ValidItem(_cursorX + 1))
           {
             _cursorX++;
+            OnSelectionChanged();
           }
-          OnSelectionChanged();
+          else
+          {
+            _listType = GUIListControl.ListType.CONTROL_LIST;
+            this.Focus = true;
+            base.OnAction(action);
+          }
         }
       }
       else if (_upDownControl != null)
@@ -2195,7 +2201,16 @@ namespace MediaPortal.GUI.Library
         _listType = GUIListControl.ListType.CONTROL_UPDOWN;
         if (_upDownControl != null)
         {
-          _upDownControl.Focus = true;
+          if (_spinCanFocus)
+          {
+            _upDownControl.Focus = true;
+          }
+          else
+          {
+            _listType = GUIListControl.ListType.CONTROL_LIST;
+            this.Focus = true;
+            base.OnAction(action);
+          }
         }
       }
       else if (_upDownControl != null)

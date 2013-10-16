@@ -51,6 +51,7 @@ using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
 using MediaPortal.Util;
 using MediaPortal.Services;
+using MediaPortal.Visualization;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -765,7 +766,7 @@ public class MediaPortalApp : D3D, IRender
         
         if (_waitForTvServer)
         {
-          Log.Debug("Main: Wait for TV service requested. Checking if installed...");
+          Log.Debug("Main: Wait for TV service requested");
           ServiceController ctrl;
           try
           {
@@ -774,7 +775,23 @@ public class MediaPortalApp : D3D, IRender
           catch (Exception)
           {
             ctrl = null;
-            Log.Debug("Main: TV service not installed - proceeding...");
+            Log.Debug("Main: Create ServiceController for TV service failed - proceeding...");
+          }
+
+          if (ctrl != null)
+          {
+            //Sanity check for existance of TV service
+            ServiceControllerStatus status = ServiceControllerStatus.Stopped;
+            try
+            {
+              status = ctrl.Status;
+            }
+            catch (Exception)
+            {
+              Log.Debug("Main: Failed to retrieve TV service status");
+              ctrl.Close();
+              ctrl = null;
+            }
           }
 
           if (ctrl != null)
@@ -1271,7 +1288,7 @@ public class MediaPortalApp : D3D, IRender
     {
       UpdateStats();
 
-      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
+      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo && GUIGraphicsContext.Vmr9Active)
       {
         if (_showStats != _showStatsPrevious)
         {
@@ -1666,7 +1683,7 @@ public class MediaPortalApp : D3D, IRender
 
       case WA_ACTIVE:
       case WA_CLICKACTIVE:
-        Log.Info("Main: Activation reuqest received");
+        Log.Info("Main: Activation request received");
         RestoreFromTray();
         break;
     }
@@ -1782,6 +1799,10 @@ public class MediaPortalApp : D3D, IRender
   private void OnDisplayChange(ref Message msg)
   {
     Log.Debug("Main: WM_DISPLAYCHANGE");
+    if (VMR9Util.g_vmr9 != null && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsEvr)
+    {
+      VMR9Util.g_vmr9.UpdateEVRDisplayFPS(); // Update FPS
+    }
     Screen screen = Screen.FromControl(this);
     if (Created && !Equals(screen, GUIGraphicsContext.currentScreen))
     {
@@ -2005,6 +2026,12 @@ public class MediaPortalApp : D3D, IRender
               x + border.Width, y + border.Height, x + border.Width, height + border.Height, x, height);
             ClientSize = new Size(x, height);
           }
+          // send new resolution to VisualizationWindow so the Winproc can work with it 
+          if (VisualizationBase.VisualizationWindow != null)
+          {
+            VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+            VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+        }
         }
         else
         {
@@ -2024,6 +2051,11 @@ public class MediaPortalApp : D3D, IRender
       
       case SIZE_MAXIMIZED:
         Log.Debug("Main: WM_SIZE (SIZE_MAXIMIZED: {0}x{1})", x, y);
+        if (VisualizationBase.VisualizationWindow != null)
+        {
+          VisualizationBase.VisualizationWindow.Height = ClientRectangle.Width;
+          VisualizationBase.VisualizationWindow.Width = ClientRectangle.Height;
+        }
         break;
       
       case SIZE_MAXSHOW:
@@ -3599,9 +3631,16 @@ public class MediaPortalApp : D3D, IRender
 
           // Jump to Music Now Playing
           case Action.ActionType.ACTION_JUMP_MUSIC_NOW_PLAYING:
-            if (g_Player.IsMusic && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+            if (g_Player.IsMusic)
             {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              {
+                GUIWindowManager.ShowPreviousWindow();
+            }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              }
             }
             break;
 
