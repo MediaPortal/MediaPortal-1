@@ -24,12 +24,13 @@
 #define __MULTICAST_UDP_SOCKET_CONTEXT_DEFINED
 
 #include "UdpSocketContext.h"
+#include "NetworkInterface.h"
 
 class CMulticastUdpSocketContext : public CUdpSocketContext
 {
 public:
-  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress);
-  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, SOCKET socket);
+  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface);
+  CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket);
   virtual ~CMulticastUdpSocketContext(void);
 
   /* get methods */
@@ -42,18 +43,32 @@ public:
   // @return : S_OK if successful, false otherwise
   virtual HRESULT SubscribeToMulticastGroup(void);
 
+  // unsubscribes from multicast group
+  // @return : S_OK if successful, false otherwise
+  virtual HRESULT UnsubscribeFromMulticastGroup(void);
+
   // joins to multicast group (IPV4)
   // @return : S_OK if successful, false otherwise
   virtual HRESULT JoinMulticastGroupIPv4(void);
 
-  // subscribes to multicast group (IPV6)
+  // joins to multicast group (IPV6)
   // @return : S_OK if successful, false otherwise
   virtual HRESULT JoinMulticastGroupIPv6(void);
 
+  // leaves multicast group (IPV4)
+  // @return : S_OK if successful, false otherwise
+  virtual HRESULT LeaveMulticastGroupIPv4(void);
+
+  // leaves multicast group (IPV6)
+  // @return : S_OK if successful, false otherwise
+  virtual HRESULT LeaveMulticastGroupIPv6(void);
+
 protected:
 
+  bool subscribedToMulticastGroup;
   CIpAddress *multicastAddress;
   CIpAddress *sourceAddress;
+  CNetworkInterface *networkInterface;
 };
 
 #endif

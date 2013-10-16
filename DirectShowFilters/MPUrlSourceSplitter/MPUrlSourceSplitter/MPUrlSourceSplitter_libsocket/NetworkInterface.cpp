@@ -163,7 +163,29 @@ void CNetworkInterface::SetOperationalStatus(IF_OPER_STATUS operationalStatus)
 
 CNetworkInterface *CNetworkInterface::Clone(void)
 {
-  return NULL;
+  CNetworkInterface *clone = new CNetworkInterface();
+  bool result = (clone != NULL);
+
+  if (result)
+  {
+    clone->flags = this->flags;
+    clone->ipv4Index = this->ipv4Index;
+    clone->ipv6Index = this->ipv6Index;
+    clone->maximumTransmissionUnit = this->maximumTransmissionUnit;
+    clone->operationalStatus = this->operationalStatus;
+    SET_STRING_AND_RESULT_WITH_NULL(clone->adapterName, this->adapterName, result);
+    SET_STRING_AND_RESULT_WITH_NULL(clone->description, this->description, result);
+    SET_STRING_AND_RESULT_WITH_NULL(clone->dnsSuffix, this->dnsSuffix, result);
+    SET_STRING_AND_RESULT_WITH_NULL(clone->friendlyName, this->friendlyName, result);
+
+    result &= clone->anycastAddresses->Append(this->anycastAddresses);
+    result &= clone->dnsServerAddresses->Append(this->dnsServerAddresses);
+    result &= clone->multicastAddresses->Append(this->multicastAddresses);
+    result &= clone->unicastAddresses->Append(this->unicastAddresses);
+  }
+
+  CHECK_CONDITION_EXECUTE(!result, FREE_MEM_CLASS(clone));
+  return clone;
 }
 
 HRESULT CNetworkInterface::GetAllNetworkInterfaces(CNetworkInterfaceCollection *interfaces)

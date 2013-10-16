@@ -22,25 +22,35 @@
 
 #include "MulticastUdpSocketContext.h"
 
-CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress)
+CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface)
   : CUdpSocketContext()
 {
   this->multicastAddress = (multicastAddress != NULL) ? multicastAddress->Clone() : NULL;
   this->sourceAddress = (sourceAddress != NULL) ? sourceAddress->Clone() : NULL;
+  this->networkInterface = (networkInterface != NULL) ? networkInterface->Clone() : NULL;
+  this->subscribedToMulticastGroup = false;
 }
 
-CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, SOCKET socket)
+CMulticastUdpSocketContext::CMulticastUdpSocketContext(CIpAddress *multicastAddress, CIpAddress *sourceAddress, CNetworkInterface *networkInterface, SOCKET socket)
   : CUdpSocketContext(socket)
 {
   this->multicastAddress = (multicastAddress != NULL) ? multicastAddress->Clone() : NULL;
   this->sourceAddress = (sourceAddress != NULL) ? sourceAddress->Clone() : NULL;
+  this->networkInterface = (networkInterface != NULL) ? networkInterface->Clone() : NULL;
+  this->subscribedToMulticastGroup = false;
 }
 
 
 CMulticastUdpSocketContext::~CMulticastUdpSocketContext(void)
 {
+  if (this->subscribedToMulticastGroup)
+  {
+    this->UnsubscribeFromMulticastGroup();
+  }
+
   FREE_MEM_CLASS(this->multicastAddress);
   FREE_MEM_CLASS(this->sourceAddress);
+  FREE_MEM_CLASS(this->networkInterface);
 }
 
 /* get methods */
@@ -53,6 +63,8 @@ HRESULT CMulticastUdpSocketContext::SubscribeToMulticastGroup(void)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
   unsigned int interfaceId = 0;
   unsigned int level = 0;
 
@@ -61,11 +73,11 @@ HRESULT CMulticastUdpSocketContext::SubscribeToMulticastGroup(void)
     switch (this->multicastAddress->GetFamily())
     {
     case AF_INET:
-      //interfaceId = (networkInterface != NULL) ? networkInterface->GetIpv4Index() : 0;
+      interfaceId = networkInterface->GetIpv4Index();
       level = IPPROTO_IP;
       break;
     case AF_INET6:
-      //interfaceId = (networkInterface != NULL) ? networkInterface->GetIpv6Index() : 0;
+      interfaceId = networkInterface->GetIpv6Index();
       level = IPPROTO_IPV6;
       break;
     default:
@@ -136,6 +148,99 @@ HRESULT CMulticastUdpSocketContext::SubscribeToMulticastGroup(void)
     }
   }
 
+  this->subscribedToMulticastGroup = SUCCEEDED(result);
+  return result;
+}
+
+HRESULT CMulticastUdpSocketContext::UnsubscribeFromMulticastGroup(void)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
+  unsigned int interfaceId = 0;
+  unsigned int level = 0;
+
+  if (SUCCEEDED(result))
+  {
+    switch (this->multicastAddress->GetFamily())
+    {
+    case AF_INET:
+      interfaceId = networkInterface->GetIpv4Index();
+      level = IPPROTO_IP;
+      break;
+    case AF_INET6:
+      interfaceId = networkInterface->GetIpv6Index();
+      level = IPPROTO_IPV6;
+      break;
+    default:
+      result = E_FAIL;
+    }
+  }
+
+  if (SUCCEEDED(result))
+  {
+    union
+    {
+      struct group_req groupReq;
+      struct group_source_req groupSourceReq;
+    } socketOption;
+    socklen_t socketOptionLength;
+
+    memset(&socketOption, 0, sizeof(socketOption));
+
+    if (this->sourceAddress != NULL)
+    {
+      if ((this->multicastAddress->GetAddressLength() > sizeof (socketOption.groupSourceReq.gsr_group)) || (this->sourceAddress->GetAddressLength() > sizeof (socketOption.groupSourceReq.gsr_source)))
+      {
+        result = E_FAIL;
+      }
+
+      if (SUCCEEDED(result))
+      {
+        socketOption.groupSourceReq.gsr_interface = interfaceId;
+        memcpy(&socketOption.groupSourceReq.gsr_source, this->sourceAddress->GetAddress(), this->sourceAddress->GetAddressLength());
+        memcpy(&socketOption.groupSourceReq.gsr_group, this->multicastAddress->GetAddress(), this->multicastAddress->GetAddressLength());
+        socketOptionLength = sizeof(socketOption.groupSourceReq);
+      }
+    }
+    else
+    {
+      if (this->multicastAddress->GetAddressLength() > sizeof (socketOption.groupReq.gr_group))
+      {
+        result = E_FAIL;
+      }
+
+      if (SUCCEEDED(result))
+      {
+        socketOption.groupReq.gr_interface = interfaceId;
+        memcpy(&socketOption.groupReq.gr_group, this->multicastAddress->GetAddress(), this->multicastAddress->GetAddressLength());
+        socketOptionLength = sizeof(socketOption.groupReq);
+      }
+    }
+
+    if (SUCCEEDED(result))
+    {
+      if (FAILED(this->SetOption(level, (this->sourceAddress != NULL) ? MCAST_LEAVE_SOURCE_GROUP : MCAST_LEAVE_GROUP, (char *)&socketOption, socketOptionLength)))
+      {
+        // unsubscribe from multicast group was not successful, fallback to IPv-specific APIs
+
+        if (this->multicastAddress->IsIPv4())
+        {
+          result = this->LeaveMulticastGroupIPv4();
+        }
+        else if (this->multicastAddress->IsIPv6())
+        {
+          result = this->LeaveMulticastGroupIPv6();
+        }
+        else
+        {
+          result = E_FAIL;
+        }
+      }
+    }
+  }
+
   return result;
 }
 
@@ -143,6 +248,8 @@ HRESULT CMulticastUdpSocketContext::JoinMulticastGroupIPv4(void)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
   CHECK_CONDITION_HRESULT(result, this->multicastAddress->IsIPv4(), result, E_INVALIDARG);
   CHECK_CONDITION_HRESULT(result, (this->sourceAddress == NULL) || ((this->sourceAddress != NULL) && (this->sourceAddress->IsIPv4())), result, E_INVALIDARG);
 
@@ -155,34 +262,39 @@ HRESULT CMulticastUdpSocketContext::JoinMulticastGroupIPv4(void)
     } socketOption;
     socklen_t socketOptionLength;
 
-    //struct in_addr id;
-
-    /*if (networkInterface != NULL)
+    CIpAddress *networkInterfaceIpAddress = NULL;
+    for (unsigned int i = 0; i < networkInterface->GetUnicastAddresses()->Count(); i++)
     {
-      id = ((sockaddr_in *)networkInterface->ai_addr)->sin_addr;
+      CIpAddress *address = networkInterface->GetUnicastAddresses()->GetItem(i);
+
+      if (address->IsIPv4())
+      {
+        networkInterfaceIpAddress = address;
+        break;
+      }
     }
-    else
-    {
-      id.s_addr = INADDR_ANY;
-    }*/
+    CHECK_POINTER_HRESULT(result, networkInterfaceIpAddress, result, E_INVALIDARG);
 
-    memset(&socketOption, 0, sizeof(socketOption));
-
-    if (this->sourceAddress != NULL)
+    if (SUCCEEDED(result))
     {
-      socketOption.gsr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
-      socketOption.gsr4.imr_sourceaddr = this->sourceAddress->GetAddressIPv4()->sin_addr;
-      //socketOption.gsr4.imr_interface = id;
-      socketOptionLength = sizeof (socketOption.gsr4);
+      memset(&socketOption, 0, sizeof(socketOption));
+
+      if (this->sourceAddress != NULL)
+      {
+        socketOption.gsr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gsr4.imr_sourceaddr = this->sourceAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gsr4.imr_interface = networkInterfaceIpAddress->GetAddressIPv4()->sin_addr;
+        socketOptionLength = sizeof (socketOption.gsr4);
+      }
+      else
+      {
+        socketOption.gr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gr4.imr_interface = networkInterfaceIpAddress->GetAddressIPv4()->sin_addr;
+        socketOptionLength = sizeof(socketOption.gr4);
+      }
+
+      result = this->SetOption(IPPROTO_IP, (this->sourceAddress != NULL) ? IP_ADD_SOURCE_MEMBERSHIP : IP_ADD_MEMBERSHIP, (char *)&socketOption, socketOptionLength);
     }
-    else
-    {
-      socketOption.gr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
-      //socketOption.gr4.imr_interface = id;
-      socketOptionLength = sizeof(socketOption.gr4);
-    }
-
-    result = this->SetOption(IPPROTO_IP, (this->sourceAddress != NULL) ? IP_ADD_SOURCE_MEMBERSHIP : IP_ADD_MEMBERSHIP, (char *)&socketOption, socketOptionLength);
   }
 
   return result;
@@ -192,16 +304,95 @@ HRESULT CMulticastUdpSocketContext::JoinMulticastGroupIPv6(void)
 {
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
   CHECK_CONDITION_HRESULT(result, this->multicastAddress->IsIPv6(), result, E_INVALIDARG);
 
   if (SUCCEEDED(result))
   {
     struct ipv6_mreq gr6;
     memset(&gr6, 0, sizeof(gr6));
-    gr6.ipv6mr_interface = this->multicastAddress->GetAddressIPv6()->sin6_scope_id;
     memcpy(&gr6.ipv6mr_multiaddr, &this->multicastAddress->GetAddressIPv6()->sin6_addr, 16);
+    gr6.ipv6mr_interface = this->networkInterface->GetIpv6Index();
 
     result = this->SetOption(IPPROTO_IPV6, IPV6_JOIN_GROUP, (char *)&gr6, sizeof(gr6));
+  }
+
+  return result;
+}
+
+HRESULT CMulticastUdpSocketContext::LeaveMulticastGroupIPv4(void)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
+  CHECK_CONDITION_HRESULT(result, this->multicastAddress->IsIPv4(), result, E_INVALIDARG);
+  CHECK_CONDITION_HRESULT(result, (this->sourceAddress == NULL) || ((this->sourceAddress != NULL) && (this->sourceAddress->IsIPv4())), result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    union
+    {
+      struct ip_mreq gr4;
+      struct ip_mreq_source gsr4;
+    } socketOption;
+    socklen_t socketOptionLength;
+
+    CIpAddress *networkInterfaceIpAddress = NULL;
+    for (unsigned int i = 0; i < networkInterface->GetUnicastAddresses()->Count(); i++)
+    {
+      CIpAddress *address = networkInterface->GetUnicastAddresses()->GetItem(i);
+
+      if (address->IsIPv4())
+      {
+        networkInterfaceIpAddress = address;
+        break;
+      }
+    }
+    CHECK_POINTER_HRESULT(result, networkInterfaceIpAddress, result, E_INVALIDARG);
+
+    if (SUCCEEDED(result))
+    {
+      memset(&socketOption, 0, sizeof(socketOption));
+
+      if (this->sourceAddress != NULL)
+      {
+        socketOption.gsr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gsr4.imr_sourceaddr = this->sourceAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gsr4.imr_interface = networkInterfaceIpAddress->GetAddressIPv4()->sin_addr;
+        socketOptionLength = sizeof (socketOption.gsr4);
+      }
+      else
+      {
+        socketOption.gr4.imr_multiaddr = this->multicastAddress->GetAddressIPv4()->sin_addr;
+        socketOption.gr4.imr_interface = networkInterfaceIpAddress->GetAddressIPv4()->sin_addr;
+        socketOptionLength = sizeof(socketOption.gr4);
+      }
+
+      result = this->SetOption(IPPROTO_IP, (this->sourceAddress != NULL) ? IP_DROP_SOURCE_MEMBERSHIP : IP_DROP_MEMBERSHIP, (char *)&socketOption, socketOptionLength);
+    }
+  }
+
+  return result;
+}
+
+HRESULT CMulticastUdpSocketContext::LeaveMulticastGroupIPv6(void)
+{
+  HRESULT result = S_OK;
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->multicastAddress);
+  CHECK_POINTER_DEFAULT_HRESULT(result, this->networkInterface);
+
+  CHECK_CONDITION_HRESULT(result, this->multicastAddress->IsIPv6(), result, E_INVALIDARG);
+
+  if (SUCCEEDED(result))
+  {
+    struct ipv6_mreq gr6;
+    memset(&gr6, 0, sizeof(gr6));
+    memcpy(&gr6.ipv6mr_multiaddr, &this->multicastAddress->GetAddressIPv6()->sin6_addr, 16);
+    gr6.ipv6mr_interface = this->networkInterface->GetIpv6Index();
+
+    result = this->SetOption(IPPROTO_IPV6, IPV6_LEAVE_GROUP, (char *)&gr6, sizeof(gr6));
   }
 
   return result;

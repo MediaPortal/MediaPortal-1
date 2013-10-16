@@ -95,7 +95,7 @@ HRESULT CMulticastUdpServer::Initialize(int family, CIpAddress *multicastAddress
               ipAddr->SetSockType(SOCK_DGRAM);
               ipAddr->SetProtocol(IPPROTO_UDP);
 
-              CMulticastUdpSocketContext *server = new CMulticastUdpSocketContext(multicastAddress, sourceAddress);
+              CMulticastUdpSocketContext *server = new CMulticastUdpSocketContext(multicastAddress, sourceAddress, nic);
               CHECK_POINTER_HRESULT(result, server, result, E_OUTOFMEMORY);
 
               CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetIpAddress(ipAddr), result);
