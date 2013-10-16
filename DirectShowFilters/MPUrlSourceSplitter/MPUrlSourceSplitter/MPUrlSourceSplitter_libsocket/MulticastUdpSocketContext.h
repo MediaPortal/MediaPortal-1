@@ -63,6 +63,11 @@ public:
   // @return : S_OK if successful, false otherwise
   virtual HRESULT LeaveMulticastGroupIPv6(void);
 
+  // sets reusing address
+  // @param reuseAddress : true if address can be reused, false otherwise
+  // @return : S_OK if successful, false otherwise
+  virtual HRESULT SetReuseAddress(bool reuseAddress);
+
 protected:
 
   bool subscribedToMulticastGroup;

@@ -130,6 +130,9 @@ HRESULT CMulticastUdpServer::StartListening(void)
     // set non-blocking mode
     CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetBlockingMode(false), result);
 
+    // set reuse address
+    CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->SetReuseAddress(true), result);
+
     // bind socket to local address and port
     CHECK_CONDITION_EXECUTE_RESULT(SUCCEEDED(result), server->Bind(), result);
 

@@ -397,3 +397,11 @@ HRESULT CMulticastUdpSocketContext::LeaveMulticastGroupIPv6(void)
 
   return result;
 }
+
+HRESULT CMulticastUdpSocketContext::SetReuseAddress(bool reuseAddress)
+{
+  DWORD reuse = (reuseAddress) ? TRUE : FALSE;
+  int reuseLength = sizeof(reuse);
+
+  return this->SetOption(SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse, reuseLength);
+}
