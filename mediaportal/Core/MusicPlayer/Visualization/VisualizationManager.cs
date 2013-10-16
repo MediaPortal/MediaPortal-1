@@ -705,22 +705,42 @@ namespace MediaPortal.Visualization
     public void GetNextVis()
     {
       int i = GetCurrentVizIndex();
-
+      
       if (i > -1 && i < _VisualizationPluginsInfo.Count - 1)
       {
-        CreateVisualization(_VisualizationPluginsInfo[i + 1]);
-        VizRenderWindow.Run = true;
+        if (CreateVisualization(_VisualizationPluginsInfo[i + 1]))
+        {
+          VizRenderWindow.Run = true;
+          VisualizationInfo currentVis = _VisualizationPluginsInfo[i+1];
+          SaveCurrentViz(currentVis);
+        }
       }
     }
 
     public void GetPrevVis()
     {
       int i = GetCurrentVizIndex();
-
+      
       if (i > 0)
       {
-        CreateVisualization(_VisualizationPluginsInfo[i - 1]);
-        VizRenderWindow.Run = true;
+        if (CreateVisualization(_VisualizationPluginsInfo[i - 1]))
+        {
+          VizRenderWindow.Run = true;
+          VisualizationInfo currentVis = _VisualizationPluginsInfo[i-1];
+          SaveCurrentViz(currentVis);
+        }
+      }
+    }
+
+    private void SaveCurrentViz(VisualizationInfo vizPluginInfo)
+    {
+      using (Profile.Settings xmlwriter = new Profile.MPSettings())
+      {
+        xmlwriter.SetValue("musicvisualization", "name", vizPluginInfo.Name);
+        xmlwriter.SetValue("musicvisualization", "vizType", ((int)vizPluginInfo.VisualizationType).ToString());
+        xmlwriter.SetValue("musicvisualization", "path", vizPluginInfo.FilePath);
+        xmlwriter.SetValue("musicvisualization", "clsid", vizPluginInfo.CLSID);
+        xmlwriter.SetValue("musicvisualization", "preset", vizPluginInfo.PresetIndex.ToString());
       }
     }
 
