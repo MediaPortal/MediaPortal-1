@@ -720,8 +720,8 @@ namespace MediaPortal.Visualization
     public void GetPrevVis()
     {
       int i = GetCurrentVizIndex();
-      
-      if (i > 0)
+
+      if (i > 1) // We still have "None" in the List
       {
         if (CreateVisualization(_VisualizationPluginsInfo[i - 1]))
         {
