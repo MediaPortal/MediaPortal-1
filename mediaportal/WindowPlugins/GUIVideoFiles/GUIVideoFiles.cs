@@ -1085,7 +1085,8 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              movieDetails.SearchString = pItem.Label;
+              // Remove extension from label if exist (when "Do not show file extesnion setting" is inactive)
+              movieDetails.SearchString = Util.Utils.GetFilename(pItem.Label, true);
             }
 
             movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
