@@ -30,7 +30,6 @@
 #define LOGGER_WARNING                                                        2
 #define LOGGER_INFO                                                           3
 #define LOGGER_VERBOSE                                                        4
-#define LOGGER_DATA                                                           5
 
 // logging constants
 

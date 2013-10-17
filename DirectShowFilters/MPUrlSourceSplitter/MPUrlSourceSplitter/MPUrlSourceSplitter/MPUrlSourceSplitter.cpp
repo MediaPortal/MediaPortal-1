@@ -844,7 +844,6 @@ HRESULT CMPUrlSourceSplitter::SetTotalLength(int64_t total, bool estimate)
 
 HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPackets)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME);
   HRESULT result = S_OK;
 
   // in case of splitter we process all media packets
@@ -867,7 +866,6 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
       {
         int64_t start = mediaPacket->GetStart();
         int64_t stop = mediaPacket->GetEnd();
-        this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %016llu, length: %08u", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, mediaPacket->GetBuffer()->GetBufferOccupiedSpace());
 
         result = S_OK;
         while ((unprocessedMediaPackets->Count() != 0) && (result == S_OK))
@@ -889,8 +887,6 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
           {
             if ((region->GetStart() == 0) && (region->GetEnd() == 0))
             {
-              this->logger->Log(LOGGER_DATA, L"%s: %s: no overlapped region", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME);
-
               // there isn't overlapping media packet
               // whole packet can be added to collection
               result = (this->mediaPacketCollection->Add(unprocessedMediaPacket->Clone())) ? S_OK : E_FAIL;
@@ -904,16 +900,12 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
               int64_t overlappingRegionStart = region->GetStart();
               int64_t overlappingRegionEnd = region->GetEnd();
 
-              this->logger->Log(LOGGER_DATA, L"%s: %s: overlapped region, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, overlappingRegionStart, overlappingRegionEnd);
-
               if (SUCCEEDED(result) && (unprocessedMediaPacketStart < overlappingRegionStart))
               {
                 // initialize part
                 int64_t start = unprocessedMediaPacketStart;
                 int64_t end = overlappingRegionStart - 1;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, end);
 
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
@@ -928,8 +920,6 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
                 int64_t start = overlappingRegionEnd + 1;
                 int64_t end = unprocessedMediaPacketEnd;
                 CMediaPacket *part = unprocessedMediaPacket->CreateMediaPacketBasedOnPacket(start, end);
-
-                this->logger->Log(LOGGER_DATA, L"%s: %s: creating packet, start: %016llu, end: %016llu", MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, start, end);
 
                 result = (part != NULL) ? S_OK : E_POINTER;
                 if (SUCCEEDED(result))
@@ -956,7 +946,7 @@ HRESULT CMPUrlSourceSplitter::PushMediaPackets(CMediaPacketCollection *mediaPack
     }
   }
 
-  this->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, result);
+  CHECK_CONDITION_EXECUTE(FAILED(result), this->logger->Log(LOGGER_ERROR, METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_PUSH_MEDIA_PACKETS_NAME, result));
   return result;
 }
 
@@ -2438,8 +2428,6 @@ int CMPUrlSourceSplitter::DemuxerRead(void *opaque, uint8_t *buf, int buf_size)
 {
   CMPUrlSourceSplitter *filter = static_cast<CMPUrlSourceSplitter *>(opaque);
 
-  filter->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_READ_NAME);
-
   HRESULT result = S_OK;
   CHECK_CONDITION(result, buf_size >= 0, S_OK, E_INVALIDARG);
   CHECK_POINTER_DEFAULT_HRESULT(result, buf);
@@ -2470,7 +2458,6 @@ int CMPUrlSourceSplitter::DemuxerRead(void *opaque, uint8_t *buf, int buf_size)
         // if ranges are not supported than we must wait for data
 
         result = VFW_E_TIMEOUT;
-        filter->logger->Log(LOGGER_DATA, L"%s: %s: requesting data from position: %llu, length: %lu", MODULE_NAME, METHOD_DEMUXER_READ_NAME, filter->demuxerContextBufferPosition, buf_size);
 
         // wait until request is completed or cancelled
         while (!filter->demuxerReadRequestWorkerShouldExit)
@@ -2494,7 +2481,6 @@ int CMPUrlSourceSplitter::DemuxerRead(void *opaque, uint8_t *buf, int buf_size)
             {
               // request is completed, return error or readed data length
               result = SUCCEEDED(filter->demuxerReadRequest->GetErrorCode()) ? filter->demuxerReadRequest->GetBufferLength() : filter->demuxerReadRequest->GetErrorCode();
-              filter->logger->Log(LOGGER_DATA, L"%s: %s: returned data length: %lu, result: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_NAME, filter->demuxerReadRequest->GetBufferLength(), result);
               break;
             }
             else if (filter->demuxerReadRequest->GetState() == CAsyncRequest::WaitingIgnoreTimeout)
@@ -2541,7 +2527,7 @@ int CMPUrlSourceSplitter::DemuxerRead(void *opaque, uint8_t *buf, int buf_size)
     }
   }
 
-  filter->logger->Log(SUCCEEDED(result) ? LOGGER_DATA : LOGGER_ERROR, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DEMUXER_READ_NAME, result);
+  CHECK_CONDITION_EXECUTE(FAILED(result), filter->logger->Log(LOGGER_ERROR, METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_DEMUXER_READ_NAME, result));
 
   if (SUCCEEDED(result))
   {
@@ -2556,7 +2542,7 @@ int64_t CMPUrlSourceSplitter::DemuxerSeek(void *opaque,  int64_t offset, int whe
 {
   CMPUrlSourceSplitter *filter = static_cast<CMPUrlSourceSplitter *>(opaque);
 
-  CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_SEEK_NAME));
+  CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_DEMUXER_SEEK_NAME));
 
   int64_t pos = 0;
   LONGLONG total = 0;
@@ -2569,23 +2555,23 @@ int64_t CMPUrlSourceSplitter::DemuxerSeek(void *opaque,  int64_t offset, int whe
   if (whence == SEEK_SET)
   {
 	  filter->demuxerContextBufferPosition = offset;
-    CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_SET", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
+    CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_SET", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
   }
   else if (whence == SEEK_CUR)
   {
     filter->demuxerContextBufferPosition += offset;
-    CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_CUR", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
+    CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_CUR", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
   }
   else if (whence == SEEK_END)
   {
     filter->demuxerContextBufferPosition = total - offset;
-    CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, SEEK_END", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
+    CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, SEEK_END", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
   }
   else if (whence == AVSEEK_SIZE)
   {
     result = total;
     resultSet = true;
-    CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: offset: %lld, AVSEEK_SIZE", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
+    CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, L"%s: %s: offset: %lld, AVSEEK_SIZE", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, offset));
   }
   else
   {
@@ -2600,7 +2586,7 @@ int64_t CMPUrlSourceSplitter::DemuxerSeek(void *opaque,  int64_t offset, int whe
     resultSet = true;
   }
 
-  CHECK_CONDITION_EXECUTE(!filter->IsAvi(), filter->logger->Log((filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_INFO : LOGGER_DATA, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, result));
+  CHECK_CONDITION_EXECUTE((!filter->IsAvi()) && (filter->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), filter->logger->Log(LOGGER_INFO, L"%s: %s: End, result: %lld", MODULE_NAME, METHOD_DEMUXER_SEEK_NAME, result));
   return result;
 }
 
@@ -2673,7 +2659,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                   int64_t positionEnd = mediaPacket->GetEnd();
 
                   // copy data from media packet to request buffer
-                  caller->logger->Log(LOGGER_DATA, L"%s: %s: copy data from media packet '%u' to async request '%u', start: %u, data length: %u, request buffer position: %u, request buffer length: %lu", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, packetIndex, request->GetRequestId(), mediaPacketDataStart, mediaPacketDataLength, foundDataLength, request->GetBufferLength());
                   unsigned char *requestBuffer = request->GetBuffer() + foundDataLength;
                   if (mediaPacket->IsStoredToFile() && (request->GetBuffer() != NULL))
                   {
@@ -2736,7 +2721,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                     // find another media packet after end of this media packet
                     startPosition = positionEnd + 1;
                     packetIndex = caller->mediaPacketCollection->GetMediaPacketIndexBetweenPositions(startPosition);
-                    caller->logger->Log(LOGGER_DATA, L"%s: %s: next media packet '%u'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, packetIndex);
                   }
                   else
                   {
@@ -2781,7 +2765,6 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                 else if (foundDataLength == request->GetBufferLength())
                 {
                   // found data length is equal than requested, return S_OK
-                  caller->logger->Log(LOGGER_DATA, L"%s: %s: request '%u' complete status: 0x%08X", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, request->GetRequestId(), S_OK);
                   request->SetBufferLength(foundDataLength);
                   request->Complete(S_OK);
                 }
@@ -2846,14 +2829,13 @@ unsigned int WINAPI CMPUrlSourceSplitter::DemuxerReadRequestWorker(LPVOID lpPara
                 // current stream position is within current request
                 // we are receiving data, do nothing, just wait for all data
                 request->WaitAndIgnoreTimeout();
-                caller->logger->Log(LOGGER_DATA, L"%s: %s: request '%u', start '%llu' (size '%lu') waiting for data and ignoring timeout, current stream position '%llu'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
               }
               else
               {
                 // if request start is before current stream position than we have to issue seek request
                 if (request->GetRequestId() != lastWaitingRequestId)
                 {
-                  caller->logger->Log(caller->IsAvi() ? LOGGER_DATA : LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition);
+                  CHECK_CONDITION_EXECUTE(!caller->IsAvi(), caller->logger->Log(LOGGER_VERBOSE, L"%s: %s: request '%u', start '%llu' (size '%lu') before current stream position '%llu'", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, request->GetRequestId(), request->GetStart(), request->GetBufferLength(), currentStreamPosition));
                   lastWaitingRequestId = request->GetRequestId();
                 }
               }
@@ -3175,9 +3157,6 @@ HRESULT CMPUrlSourceSplitter::CheckValues(CAsyncRequest *request, CMediaPacket *
     {
       int64_t mediaPacketStart = mediaPacket->GetStart();
       int64_t mediaPacketEnd = mediaPacket->GetEnd();
-
-      this->logger->Log(LOGGER_DATA, L"%s: %s: demuxer read request start: %llu, end: %llu, start time: %llu", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, requestStart, requestEnd, startPosition);
-      this->logger->Log(LOGGER_DATA, L"%s: %s: media packet start: %llu, end: %llu", MODULE_NAME, METHOD_DEMUXER_READ_REQUEST_WORKER_NAME, mediaPacketStart, mediaPacketEnd);
 
       if (SUCCEEDED(result))
       {
@@ -3679,7 +3658,7 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
 
 STDMETHODIMP CMPUrlSourceSplitter::Length(LONGLONG *total, LONGLONG *available)
 {
-  CHECK_CONDITION_EXECUTE(!this->IsAvi(), this->logger->Log((this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME));
+  CHECK_CONDITION_EXECUTE((!this->IsAvi()) && (this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), this->logger->Log(LOGGER_VERBOSE, METHOD_START_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME));
 
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
@@ -3735,10 +3714,10 @@ STDMETHODIMP CMPUrlSourceSplitter::Length(LONGLONG *total, LONGLONG *available)
     FREE_MEM_CLASS(availableLength);
 
     result = (this->IsEstimateTotalLength()) ? VFW_S_ESTIMATED : S_OK;
-    CHECK_CONDITION_EXECUTE(!this->IsAvi(), this->logger->Log((this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, L"%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u", MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->IsEstimateTotalLength()) ? 1 : 0, mediaPacketCount));
+    CHECK_CONDITION_EXECUTE((!this->IsAvi()) && (this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), this->logger->Log(LOGGER_VERBOSE, L"%s: %s: total length: %llu, available length: %llu, estimate: %u, media packets: %u", MODULE_NAME, METHOD_LENGTH_NAME, this->totalLength, *available, (this->IsEstimateTotalLength()) ? 1 : 0, mediaPacketCount));
   }
 
-  CHECK_CONDITION_EXECUTE(!this->IsAvi(), this->logger->Log((this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY) ? LOGGER_VERBOSE : LOGGER_DATA, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result));
+  CHECK_CONDITION_EXECUTE((!this->IsAvi()) && (this->lastCommand != CMPUrlSourceSplitter::CMD_PLAY), this->logger->Log(LOGGER_VERBOSE, SUCCEEDED(result) ? METHOD_END_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, MODULE_NAME, METHOD_LENGTH_NAME, result));
   return result;
 }
 

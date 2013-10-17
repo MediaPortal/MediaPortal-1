@@ -119,8 +119,6 @@ const wchar_t *CLogger::GetLogLevel(unsigned int level)
     return L"[Info]   ";
   case LOGGER_VERBOSE:
     return L"[Verbose]";
-  case LOGGER_DATA:
-    return L"[Data]   ";
   default:
     return L"         ";
   }

@@ -261,7 +261,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ParseUrl(const CParameterCollection 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveData)
 {
   HRESULT result = S_OK;
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
 
   CLockMutex lock(this->lockMutex, INFINITE);
 
@@ -1082,7 +1081,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::ReceiveData(CReceiveData *receiveDat
     }
   }
 
-  this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   return result;
 }
 
@@ -1175,8 +1173,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::StopReceivingData(void)
 
 HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
-
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
   CHECK_POINTER_DEFAULT_HRESULT(result, current);
@@ -1192,7 +1188,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Rtmp::QueryStreamProgress(LONGLONG *total,
     }
   }
 
-  this->logger->Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
   return result;
 }
   

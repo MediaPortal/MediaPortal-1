@@ -256,8 +256,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ParseUrl(const CParameterCollection *
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(CReceiveData *receiveData)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
-
   CLockMutex lock(this->lockMutex, INFINITE);
 
   if (this->internalExitRequest)
@@ -539,7 +537,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::ReceiveData(CReceiveData *receiveData
     }
   }
 
-  this->logger->Log(LOGGER_DATA, METHOD_END_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_RECEIVE_DATA_NAME);
   return S_OK;
 }
 
@@ -946,8 +943,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::StopReceivingData(void)
 
 HRESULT CMPUrlSourceSplitter_Protocol_Mms::QueryStreamProgress(LONGLONG *total, LONGLONG *current)
 {
-  this->logger->Log(LOGGER_DATA, METHOD_START_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME);
-
   HRESULT result = S_OK;
   CHECK_POINTER_DEFAULT_HRESULT(result, total);
   CHECK_POINTER_DEFAULT_HRESULT(result, current);
@@ -963,7 +958,6 @@ HRESULT CMPUrlSourceSplitter_Protocol_Mms::QueryStreamProgress(LONGLONG *total, 
     }
   }
 
-  this->logger->Log(LOGGER_DATA, (SUCCEEDED(result)) ? METHOD_END_HRESULT_FORMAT : METHOD_END_FAIL_HRESULT_FORMAT, PROTOCOL_IMPLEMENTATION_NAME, METHOD_QUERY_STREAM_PROGRESS_NAME, result);
   return result;
 }
   

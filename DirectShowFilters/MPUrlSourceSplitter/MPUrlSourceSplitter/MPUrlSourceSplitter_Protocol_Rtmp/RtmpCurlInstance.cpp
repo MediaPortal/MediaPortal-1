@@ -182,7 +182,7 @@ void CRtmpCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, 
   // convert buffer to wchar_t
   wchar_t *convertedBuffer = ConvertToUnicodeA(buffer);
 
-  int loggerLevel = LOGGER_NONE;
+  unsigned int loggerLevel = UINT_MAX;
 
   switch (level)
   {
@@ -212,10 +212,10 @@ void CRtmpCurlInstance::RtmpLogCallback(RTMP *r, int level, const char *format, 
     }
     break;
   case RTMP_LOGDEBUG:
-    loggerLevel = (caller->state == CURL_STATE_RECEIVING_DATA) ? LOGGER_DATA : LOGGER_VERBOSE;
+    loggerLevel = (caller->state == CURL_STATE_RECEIVING_DATA) ? UINT_MAX : LOGGER_VERBOSE;
     break;
   case RTMP_LOGDEBUG2:
-    loggerLevel = LOGGER_DATA;
+    loggerLevel = UINT_MAX;
     break;
   default:
     loggerLevel = LOGGER_NONE;
