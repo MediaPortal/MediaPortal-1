@@ -30,6 +30,10 @@
 
 #define PORT_UNSPECIFIED                                              UINT_MAX
 
+#define UDP_CURL_INSTANCE_FLAG_NONE                                   0x00000000
+#define UDP_CURL_INSTANCE_FLAG_TRANSPORT_UDP                          0x00000001
+#define UDP_CURL_INSTANCE_FLAG_TRANSPORT_RTP                          0x00000002
+
 class CUdpCurlInstance
   : public CCurlInstance
 {
@@ -61,6 +65,8 @@ public:
 
 protected:
 
+  unsigned int flags;
+
   wchar_t *localAddress;
   wchar_t *sourceAddress;
 
@@ -83,6 +89,11 @@ protected:
 
   // virtual CurlWorker() method is called from static CurlWorker() method
   virtual unsigned int CurlWorker(void);
+
+  // tests if specific combination of flags is set
+  // @param flags : the set of flags to test
+  // @return : true if set of flags is set, false otherwise
+  bool IsSetFlags(unsigned int flags);
 };
 
 #endif

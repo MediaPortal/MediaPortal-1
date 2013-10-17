@@ -29,8 +29,8 @@
 
 #define PROTOCOL_NAME                                                         L"UDP"
 
-#define TOTAL_SUPPORTED_PROTOCOLS                                             1
-wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"UDP" };
+#define TOTAL_SUPPORTED_PROTOCOLS                                             2
+wchar_t *SUPPORTED_PROTOCOLS[TOTAL_SUPPORTED_PROTOCOLS] =                     { L"UDP", L"RTP" };
 
 #define MINIMUM_RECEIVED_DATA_FOR_SPLITTER                                    1 * 1024 * 1024
 
