@@ -3610,8 +3610,8 @@ namespace MediaPortal.GUI.Video
 
       // Reset playlist
       _playlistPlayer.Reset();
-      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
-      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
       tmpPlayList.Clear();
 
       // Do sorting
