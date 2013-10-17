@@ -120,9 +120,9 @@ wchar_t *GetStoreFilePath(const wchar_t *folder, CParameterCollection *configura
     {
       // get new folder in local app data
       // get common application data folder
-      if (SHGetSpecialFolderPath(NULL, storeFolder, CSIDL_LOCAL_APPDATA, FALSE))
+      if (SHGetSpecialFolderPath(NULL, storeFolder, CSIDL_COMMON_APPDATA, FALSE))
       {
-        wcscat_s(storeFolder, MAX_PATH, L"\\");
+        wcscat_s(storeFolder, MAX_PATH, L"\\Team MediaPortal\\");
         wcscat_s(storeFolder, MAX_PATH, folder);
         wcscat_s(storeFolder, MAX_PATH, L"\\");
       }
