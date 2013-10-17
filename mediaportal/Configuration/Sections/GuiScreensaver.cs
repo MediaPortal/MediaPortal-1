@@ -110,7 +110,10 @@ namespace MediaPortal.Configuration.Sections
         xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);
         xmlreader.SetValueAsBool("general", "IdleBlanking", radioBtnBlankScreen.Checked);
         xmlreader.SetValueAsBool("general", "IdlePlugin", radioButtonLoadPlugin.Checked);
-        xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
+        if (loadedPlugins.Count > 0 & pluginsComboBox.SelectedIndex > -1)
+        {
+          xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
+        }
       }
     }
 
