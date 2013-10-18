@@ -53,6 +53,8 @@ using namespace std;
 #define ENABLE_DWM_INIT_SLEEP true
 //Enable DWM init for 24Hz true
 #define ENABLE_DWM_FOR_24Hz true
+//Enable LogAllFrameDrops when true
+#define LOG_ALL_FRAME_DROPS false
 
 //Maximum FPS rate limiter default settings
 #define FPS_LIM_RATE 0
@@ -98,6 +100,10 @@ using namespace std;
 
 // magic numbers
 #define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
+
+//Threshold for excessive (standard deviation) sample timestamp jitter in hns units - default is 1000 (0.1 ms)
+#define SDEV_JITTER_THRESH 1000.0
+#define LOW_JITT_CNT_LIM 128
 
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
@@ -187,8 +193,7 @@ public:
                        int monitorIdx, 
                        bool disVsyncCorr, 
                        bool disMparCorr);
-                       
-  virtual ~MPEVRCustomPresenter();
+   virtual ~MPEVRCustomPresenter();
 
   //IQualProp (stub)
   virtual HRESULT STDMETHODCALLTYPE get_FramesDroppedInRenderer(int *pcFrames);
@@ -274,6 +279,7 @@ public:
   double         GetRealFramePeriod();
   double         GetVideoFramePeriod(FPS_SOURCE_METHOD fpsSource);
   void           GetFrameRateRatio();
+  void           GetTempFRRatio(LONGLONG sampleDuration, int* frameRateRatio, int* rawFRRatio);
   int            CheckQueueCount();
   void           NotifyTimer(LONGLONG targetTime);
   void           NotifySchedulerTimer();
@@ -287,6 +293,7 @@ public:
   void           ResetEVRStatCounters();
   void           ResetTraceStats(); // Reset tracing stats
   void           ResetFrameStats(); // Reset frame stats
+  void           LogRenderStats();
   
   void           NotifyRateChange(double pRate);
   void           NotifyDVDMenuState(bool pIsInMenu);
@@ -344,6 +351,7 @@ protected:
   void           DoFlush(BOOL forced);
   void           ScheduleSample(IMFSample* pSample);
   IMFSample*     PeekSample();
+  IMFSample*     PeekNextSample();
   BOOL           PopSample();
   BOOL           PutSample(IMFSample* pSample);
   bool           SampleAvailable();
@@ -542,6 +550,7 @@ protected:
   double        m_DetectedFrameTimeStdDev;
   bool          m_DetectedLock;
   double        m_DetFrameTimeAve;
+  int           m_LowSampTimeJitterCnt;
 
   // Used for detecting the average video sample duration
   LONGLONG      m_DetSampleHistory[NB_DFTHSIZE];
@@ -549,7 +558,6 @@ protected:
   double        m_DetSampleAve;
 
   int           m_frameRateRatio;
-  int           m_frameRateRatX2;
   int           m_rawFRRatio;
   
   int           m_qGoodPutCnt;
@@ -574,6 +582,7 @@ protected:
   bool          m_bLateDWMInit;
   bool          m_bDWMInitSleep;
   double        m_dDWMRefreshThresh;
+  bool          m_bLogAllFrameDrops;
   
   char          m_filterNames[FILTER_LIST_SIZE][MAX_FILTER_NAME];
   int           m_numFilters;
