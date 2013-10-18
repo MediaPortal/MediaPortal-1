@@ -79,12 +79,6 @@
 // Name of live stream to subscribe to. Defaults to playpath.
 #define PARAMETER_NAME_RTMP_SUBSCRIBE                                          L"RtmpSubscribe"
 
-// Start at num seconds into the stream. Not valid for live streams.
-#define PARAMETER_NAME_RTMP_START                                              L"RtmpStart"
-
-// Stop at num seconds into the stream.
-#define PARAMETER_NAME_RTMP_STOP                                               L"RtmpStop"
-
 // Set buffer time to num milliseconds.
 #define PARAMETER_NAME_RTMP_BUFFER                                             L"RtmpBuffer"
 
@@ -110,12 +104,6 @@
 // By default, the cached info will be used for 30 days before re-checking. 
 #define PARAMETER_NAME_RTMP_SWF_VERIFY                                         L"RtmpSwfVerify"
 
-// Specify how many days to use the cached SWF info before re-checking.
-// Use 0 to always check the SWF URL.
-// Note that if the check shows that the SWF file has the same modification timestamp as before,
-// it will not be retrieved again. 
-#define PARAMETER_NAME_RTMP_SWF_AGE                                           L"RtmpSwfAge"
-
 // we should get data in twenty seconds
 #define RTMP_RECEIVE_DATA_TIMEOUT_DEFAULT                                     20000
 
@@ -138,6 +126,5 @@
 #define RTMP_TOKEN_DEFAULT                                                    NULL
 #define RTMP_JTV_DEFAULT                                                      NULL
 #define RTMP_SWF_VERIFY_DEFAULT                                               false
-#define RTMP_SWF_AGE_DEFAULT                                                  0
 
 #endif

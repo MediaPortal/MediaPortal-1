@@ -109,10 +109,6 @@ bool CRtmpCurlInstance::Initialize(CDownloadRequest *downloadRequest)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SUBSCRIBE, this->rtmpDownloadRequest->GetRtmpSubscribe(), true);
       }
-      if (this->rtmpDownloadRequest->GetRtmpSwfAge() != RTMP_SWF_AGE_DEFAULT)
-      {
-        this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_AGE, this->rtmpDownloadRequest->GetRtmpSwfAge());
-      }
       if (this->rtmpDownloadRequest->GetRtmpSwfUrl() != RTMP_SWF_URL_DEFAULT)
       {
         this->AddToRtmpConnectionString(&connectionString, RTMP_TOKEN_SWF_URL, this->rtmpDownloadRequest->GetRtmpSwfUrl(), true);

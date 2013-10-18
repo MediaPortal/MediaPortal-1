@@ -59,7 +59,6 @@
 #define RTMP_TOKEN_TOKEN                                    L"token"
 #define RTMP_TOKEN_JTV                                      L"jtv"
 #define RTMP_TOKEN_SWF_VERIFY                               L"swfVfy"
-#define RTMP_TOKEN_SWF_AGE                                  L"swfAge"
 
 // Special characters in values may need to be escaped to prevent misinterpretation by the option parser.
 // The escape encoding uses a backslash followed by two hexadecimal digits representing the ASCII value of the character.

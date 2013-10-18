@@ -51,7 +51,6 @@ public:
   virtual const wchar_t *GetRtmpToken(void);
   virtual const wchar_t *GetRtmpJtv(void);
   virtual bool GetRtmpSwfVerify(void);
-  virtual unsigned int GetRtmpSwfAge(void);
 
   /* set methods */
 
@@ -73,7 +72,6 @@ public:
   virtual void SetRtmpToken(const wchar_t *rtmpToken);
   virtual void SetRtmpJtv(const wchar_t *rtmpJtv);
   virtual void SetRtmpSwfVerify(bool rtmpSwfVerify);
-  virtual void SetRtmpSwfAge(unsigned int rtmpSwfAge);
 
   /* other methods */
 
@@ -160,13 +158,6 @@ protected:
   // by default, the cached info will be used for 30 days before re-checking
   // the default value is RTMP_SWF_VERIFY_DEFAULT
   bool rtmpSwfVerify;
-
-  // specify how many days to use the cached SWF info before re-checking
-  // use 0 to always check the SWF URL
-  // note that if the check shows that the SWF file has the same modification timestamp as before,
-  // it will not be retrieved again
-  // the default value is RTMP_SWF_AGE_DEFAULT
-  unsigned int rtmpSwfAge;
 
   // deeply clones current instance to cloned request
   // @param  clonedRequest : cloned request to hold clone of current instance

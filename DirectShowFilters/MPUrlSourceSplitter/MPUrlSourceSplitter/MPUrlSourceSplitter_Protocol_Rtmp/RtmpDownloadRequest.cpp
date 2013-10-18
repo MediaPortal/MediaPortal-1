@@ -40,7 +40,6 @@ CRtmpDownloadRequest::CRtmpDownloadRequest(void)
   this->rtmpStart = RTMP_START_DEFAULT;
   this->rtmpStop = RTMP_STOP_DEFAULT;
   this->rtmpSubscribe = RTMP_SUBSCRIBE_DEFAULT;
-  this->rtmpSwfAge = RTMP_SWF_AGE_DEFAULT;
   this->rtmpSwfUrl = RTMP_SWF_URL_DEFAULT;
   this->rtmpSwfVerify = RTMP_SWF_VERIFY_DEFAULT;
   this->rtmpTcUrl = RTMP_TC_URL_DEFAULT;
@@ -149,11 +148,6 @@ bool CRtmpDownloadRequest::GetRtmpSwfVerify(void)
   return this->rtmpSwfVerify;
 }
 
-unsigned int CRtmpDownloadRequest::GetRtmpSwfAge(void)
-{
-  return this->rtmpSwfAge;
-}
-
 /* set methods */
 
 void CRtmpDownloadRequest::SetRtmpApp(const wchar_t *rtmpApp)
@@ -252,11 +246,6 @@ void CRtmpDownloadRequest::SetRtmpSwfVerify(bool rtmpSwfVerify)
   this->rtmpSwfVerify = rtmpSwfVerify;
 }
 
-void CRtmpDownloadRequest::SetRtmpSwfAge(unsigned int rtmpSwfAge)
-{
-  this->rtmpSwfAge = rtmpSwfAge;
-}
-
 /* other methods */
 
 CRtmpDownloadRequest *CRtmpDownloadRequest::Clone(void)
@@ -303,7 +292,6 @@ bool CRtmpDownloadRequest::CloneInternal(CRtmpDownloadRequest *clonedRequest)
     clonedRequest->rtmpStart = this->rtmpStart;
     clonedRequest->rtmpStop = this->rtmpStop;
     clonedRequest->rtmpSubscribe = Duplicate(this->rtmpSubscribe);
-    clonedRequest->rtmpSwfAge = this->rtmpSwfAge;
     clonedRequest->rtmpSwfUrl = Duplicate(this->rtmpSwfUrl);
     clonedRequest->rtmpSwfVerify = this->rtmpSwfVerify;
     clonedRequest->rtmpTcUrl = Duplicate(this->rtmpTcUrl);
