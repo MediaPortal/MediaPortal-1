@@ -748,10 +748,30 @@ namespace SetupTv
       return ReplaceTag(line, tag, value, string.Empty);
     }
 
+    public static ulong GetDiskSpace(string drive)
+    {
+      if (drive.StartsWith(@"\"))
+      {
+        return GetShareSpace(drive);
+      }
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        drive[0] + @":\",
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return totalNumberOfBytes;
+    }
+    
     public static ulong GetFreeDiskSpace(string drive)
     {
-      if (drive == null)
-        return 0;
+      if (drive.StartsWith(@"\"))
+      {
+        return GetFreeShareSpace(drive);
+      }
       ulong freeBytesAvailable;
       ulong totalNumberOfBytes;
       ulong totalNumberOfFreeBytes;
@@ -762,6 +782,34 @@ namespace SetupTv
         out totalNumberOfBytes,
         out totalNumberOfFreeBytes);
       return freeBytesAvailable;
+    }
+
+    public static ulong GetFreeShareSpace(string UNCPath)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        System.IO.Path.GetPathRoot(UNCPath),
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return freeBytesAvailable;
+    }
+
+    public static ulong GetShareSpace(string UNCPath)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+        System.IO.Path.GetPathRoot(UNCPath),
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
+      return totalNumberOfBytes;
     }
 
     public static bool HibernateSystem(bool forceShutDown)
