@@ -179,9 +179,9 @@ namespace MediaPortal.GUI.Library
     // singleton. Don't allow any instance of this class
     private GUIGraphicsContext() {}
 
-    static GUIGraphicsContext() 
+    static GUIGraphicsContext()
     {
-        Render3DMode = eRender3DMode.None;
+      Render3DMode = eRender3DMode.None;
     }
 
     /// <summary>
@@ -272,36 +272,23 @@ namespace MediaPortal.GUI.Library
 
     public static eRender3DMode Render3DMode
     {
-        get { return _render3DMode; }
-        set
+      get { return _render3DMode; }
+      set
+      {
+        lock (RenderModeSwitch)
         {
-            lock (RenderModeSwitch)
-            {
-                _render3DMode = value;
-            }
+          _render3DMode = value;
         }
+      }
     }
 
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
 
-    public static eRender3DModeHalf Render3DModeHalf
-    {
-        get;
-        set;
-    }
+    public static eRender3DModeHalf Render3DModeHalf { get; set; }
 
-    public static bool Render3DSubtitle
-    {
-        get;
-        set;
-    }
+    public static bool Render3DSubtitle { get; set; }
 
-    public static int Render3DSubtitleDistance
-    {
-        get;
-        set;
-    }
-
+    public static int Render3DSubtitleDistance { get; set; }
 
     /// <summary>
     /// Property to enable/disable animations
@@ -397,19 +384,19 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static void ResetAuto3D()    
+    public static void ResetAuto3D()
     {
-        if (Auto3DSurface != null)
-        {
-            Auto3DSurface.ReleaseGraphics();
-            Auto3DSurface = null;
-        }
+      if (Auto3DSurface != null)
+      {
+        Auto3DSurface.ReleaseGraphics();
+        Auto3DSurface = null;
+      }
 
-        if (Auto3DTexture != null)
-        {            
-            Auto3DTexture.Dispose();
-            Auto3DTexture = null;
-        }        
+      if (Auto3DTexture != null)
+      {
+        Auto3DTexture.Dispose();
+        Auto3DTexture = null;
+      }
     }
 
     /// <summary>
