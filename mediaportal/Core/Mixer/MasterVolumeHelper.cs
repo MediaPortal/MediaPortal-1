@@ -40,15 +40,10 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace MediaPortal.Mixer
 {
@@ -373,8 +368,12 @@ namespace MediaPortal.Mixer
 
   struct PROPERTYKEY
   {
+// ReSharper disable InconsistentNaming
     public Guid id;
+// ReSharper restore InconsistentNaming
+// ReSharper disable InconsistentNaming
     public int pid;
+// ReSharper restore InconsistentNaming
   };
 
   //         MIDL_INTERFACE("886d8eeb-8cf2-4446-8d02-cdba1dbdcf99")

@@ -18,9 +18,12 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
+using System.Windows.Media.Animation;
 
-namespace System.Windows.Media.Animation
+
+namespace MediaPortal.GUI.Library
 {
   [TypeConverter(typeof (RepeatBehaviorConverter))]
   public struct RepeatBehavior

@@ -471,7 +471,7 @@ namespace MediaPortal.MusicImport
       {
         Directory.Delete(tempPath, true);
       }
-      catch (Exception e)
+      catch (Exception)
       {
         Log.Warn("MusicImporter: Failed to delete temporary folder '{0}'", tempPath);
       }

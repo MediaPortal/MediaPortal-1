@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
 # additional path definitions
 !define TVSERVER.BASE "${git_TVServer}\TVServer.Base"
@@ -920,6 +922,8 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
