@@ -97,7 +97,7 @@ namespace TvThumbnails
 
         _previewRows = Convert.ToInt32(layer.GetSetting("TVThumbnailsRows", "1").Value);
 
-        _TimeOffset = Convert.ToInt32(layer.GetSetting("TimeOffset", "1").Value);
+        _TimeOffset = Convert.ToInt32(layer.GetSetting("TVThumbnailsTimeOffset", "1").Value);
 
         int configQuality = Convert.ToInt32(layer.GetSetting("TVThumbnailsQuality", "4").Value);
         Log.Debug("Thumbs.LoadSettings: Thumbs quality: {0}", configQuality);
