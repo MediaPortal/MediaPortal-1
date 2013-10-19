@@ -202,6 +202,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       BackupDB();
+
+      if (MySQL51)
+      {
+        // Uninstall current MySQL 5.1
+        Utils.UninstallMSI("{561AB451-B967-475C-80E0-3B6679C38B52}");
+      }
+
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
@@ -291,8 +298,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
           mysqladmin.WaitForExit();
           if (mysqladmin.ExitCode != 0)
           {
-            MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
-            return false;
+            cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
+            mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+            if (mysqladmin != null)
+            {
+              mysqladmin.WaitForExit();
+              if (mysqladmin.ExitCode != 0)
+              {
+                MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
+                return false;
+              }
+            }
           }
         }
       }
