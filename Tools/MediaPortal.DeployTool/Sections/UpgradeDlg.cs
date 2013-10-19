@@ -45,7 +45,7 @@ namespace MediaPortal.DeployTool.Sections
       CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
       bool MySQL51 = resultMySQL51.state == CheckState.INSTALLED;
       bool MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
-      if (MySQL51 && MySQL56)
+      if (MySQL56)
       {
         // Set SQL setting needed for MySQL upgrade
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");

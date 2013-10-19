@@ -41,6 +41,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
                                        "\\MySQL\\MySQL Server 5.6";
 
     private static bool MySQL51 = false;
+    private static string strMySQL = "";
 
     private void PrepareMyIni(string iniFile)
     {
@@ -83,14 +84,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
       return (result == DialogResult.OK);
     }
 
-    public bool BackupDB()
+    private bool IsMySQL51Installed()
     {
       RegistryKey key = null;
-      string strMySqlDump = null;
       try
       {
         key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
-            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
       }
       catch
       {
@@ -98,31 +98,43 @@ namespace MediaPortal.DeployTool.InstallationChecks
         // security permissions requested)
       }
       if (key == null)
+      {
         key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      }
       if (key != null)
       {
-        string strMySQL = key.GetValue("Location").ToString();
+        strMySQL = key.GetValue("Location").ToString();
         if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.1"))
         {
           key.Close();
-          strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
-          MySQL51 = true;
-          string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
-                           " --all-databases --flush-logs";
-          cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
-          Process setup = Process.Start(strMySqlDump, cmdLine);
-          try
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public bool BackupDB()
+    {
+      if (string.IsNullOrEmpty(strMySQL))
+      {
+        string strMySqlDump = null;
+        strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
+        string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
+                         " --all-databases --flush-logs";
+        cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
+        Process setup = Process.Start(strMySqlDump, cmdLine);
+        try
+        {
+          if (setup != null)
           {
-            if (setup != null)
-            {
-              setup.WaitForExit();
-            }
-          }
-          catch
-          {
-            return false;
+            setup.WaitForExit();
           }
         }
+        catch
+        {
+          return false;
+        }
+
         const string ServiceName = "MySQL";
         ServiceController ctrl = new ServiceController(ServiceName);
         try
@@ -134,9 +146,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
           MessageBox.Show("MySQL - stop service exception");
           //return false;
         }
-        
+
         string cmdExe = Environment.SystemDirectory + "\\sc.exe";
-        string cmdParam = "delete " + ServiceName;// +"\"";
+        string cmdParam = "delete " + ServiceName; // +"\"";
 #if DEBUG
         string ff = "c:\\mysql-srv.bat";
         StreamWriter a = new StreamWriter(ff);
@@ -145,13 +157,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
         a.Close();
         Process svcInstaller = Process.Start(ff);
 #else
-      Process svcInstaller = Process.Start(cmdExe, cmdParam);
+        Process svcInstaller = Process.Start(cmdExe, cmdParam);
 #endif
         if (svcInstaller != null)
         {
           svcInstaller.WaitForExit();
         }
-        return true;
       }
       return true;
     }
@@ -201,11 +212,12 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      BackupDB();
+      MySQL51 = IsMySQL51Installed();
 
       if (MySQL51)
       {
-        // Uninstall current MySQL 5.1
+        // Backup MySQL 5.1 Database and uninstall current MySQL 5.1
+        BackupDB();
         Utils.UninstallMSI("{561AB451-B967-475C-80E0-3B6679C38B52}");
       }
 
