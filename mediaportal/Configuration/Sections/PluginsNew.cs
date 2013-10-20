@@ -41,7 +41,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ImageList imageListLargePlugins;
 		private System.Windows.Forms.ImageList imageListContextMenu;
 		private System.Windows.Forms.ImageList imageListMPInstaller;
-   
+    private bool pluginsLoadedOnPage = false;
 
     public PluginsNew()
       : this("Plugins") {}
@@ -112,15 +112,21 @@ namespace MediaPortal.Configuration.Sections
         Plugins.ClearLoadedPlugins();
         Plugins.IsLoaded = true;
         Plugins.EnumeratePlugins();
-        Plugins.LoadPlugins();        
+        Plugins.LoadPlugins();
+        pluginsLoadedOnPage = false;
       }
-      listViewPlugins.Items.Clear();
-      foreach (ItemTag tag in Plugins.LoadedPlugins)
+
+      if (!pluginsLoadedOnPage)
       {
-        LoadPluginImages(tag.expType, tag);
+        listViewPlugins.Items.Clear();
+        foreach (ItemTag tag in Plugins.LoadedPlugins)
+        {
+          LoadPluginImages(tag.expType, tag);
+        }
+        LoadSettings();
+        PopulateListView();
+        pluginsLoadedOnPage = true;
       }
-      LoadSettings();
-      PopulateListView();
     }
 
     private Image OverlayImage(Image targetImage, Image overlay)
