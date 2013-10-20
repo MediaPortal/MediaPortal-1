@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       int windowid = 0;
+
       using (Settings xmlreader = new MPSettings())
       {
         checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "IdleTimer", true);

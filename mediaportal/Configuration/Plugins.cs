@@ -36,11 +36,14 @@ namespace MediaPortal.Configuration
   public static class Plugins
   {
     #region Private Variables
+
     private static ArrayList loadedPlugins = new ArrayList();
     private static ArrayList availablePlugins = new ArrayList();
     private static bool wasLastLoadAdvanced = false;
     private static bool isLoaded = false;
+
     #endregion
+
 
     #region Accessors
     public static ArrayList LoadedPlugins
@@ -70,7 +73,9 @@ namespace MediaPortal.Configuration
     }
     #endregion
 
+
     #region Public Methods
+
     public static void LoadPlugins()
     {
       foreach (string pluginFile in availablePlugins)
@@ -245,7 +250,9 @@ namespace MediaPortal.Configuration
 
     #endregion
 
+
     #region Private Methods
+
     private static void EnumeratePluginDirectory(string directory)
     {
       if (Directory.Exists(directory))
@@ -264,8 +271,10 @@ namespace MediaPortal.Configuration
         }
       }
     }
+
     #endregion
   }
+
   public class ItemTag
   {
     public string DllName;
@@ -297,4 +306,5 @@ namespace MediaPortal.Configuration
       set { inactiveImage = value; }
     }
   }
+
 }
