@@ -5997,25 +5997,137 @@ namespace MediaPortal.Video.Database
 
             XmlNodeList userGroups = nodeMovie.SelectNodes("set");
             
+            // Main node as <set> ---- </set> with subnodes name, rule, image
             foreach (XmlNode nodeUserGroup in userGroups)
             {
-              string strUserGroup = string.Empty;
-              
-              if (nodeUserGroup != null && nodeUserGroup.InnerText != null)
+              if (nodeUserGroup != null)
               {
-                strUserGroup = nodeUserGroup.InnerText;
+                string name = string.Empty;
+                string description = string.Empty;
+                string rule = string.Empty;
+                string image = string.Empty;
+                XmlNode nodeSetName = nodeUserGroup.SelectSingleNode("setname");
+                XmlNode nodeSetDescription = nodeUserGroup.SelectSingleNode("setdescription");
+                XmlNode nodeSetRule = nodeUserGroup.SelectSingleNode("setrule");
+                XmlNode nodeSetImage = nodeUserGroup.SelectSingleNode("setimage");
 
-                if (!string.IsNullOrEmpty(strUserGroup))
+                if (nodeSetName != null && nodeSetName.InnerText != null)
                 {
-                  int iUserGroup = AddUserGroup(strUserGroup);
+                  name = nodeSetName.InnerText;
+                }
+
+                if (nodeSetDescription != null && nodeSetDescription.InnerText != null)
+                {
+                  description = nodeSetDescription.InnerText;
+                }
+
+                if (nodeSetRule != null && nodeSetRule.InnerText != null)
+                {
+                  rule = nodeSetRule.InnerText;
+                }
+
+                if (nodeSetImage != null && nodeSetImage.InnerText != null)
+                {
+                  image = nodeSetImage.InnerText;
+                  image = string.Format("{0}/{1}", path, image);
+                }
+                
+                if (!string.IsNullOrEmpty(name))
+                {
+                  int iUserGroup = AddUserGroup(name);
                   AddUserGroupToMovie(movie.ID, iUserGroup);
+
+                  if (!string.IsNullOrEmpty(description))
+                  {
+                    AddUserGroupDescription(name, description);
+                  }
+
+                  if (!string.IsNullOrEmpty(rule))
+                  {
+                    bool error = false;
+                    string errorMessage = string.Empty;
+
+                    VideoDatabase.ExecuteSql(rule, out error, out errorMessage);
+
+                    if (!error)
+                    {
+                      AddUserGroupRuleByGroupId(iUserGroup, rule);
+                    }
+                    else
+                    {
+                      Log.Error("VideoDatabase nfo import: error adding user group {0} rule: {1}", name, rule);
+                    }
+                  }
+
+                  // Only local image
+                  if (!string.IsNullOrEmpty(image) && File.Exists(image))
+                  {
+                    string smallThumb = Util.Utils.GetCoverArtName(Thumbs.MovieUserGroups, Path.GetFileNameWithoutExtension(image));
+                    string largeThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieUserGroups, Path.GetFileNameWithoutExtension(image));
+                    Util.Utils.FileDelete(smallThumb);
+                    Util.Utils.FileDelete(largeThumb);
+
+                    if (Util.Picture.CreateThumbnail(image, smallThumb, (int) Thumbs.ThumbResolution,
+                      (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    {
+                      Util.Picture.CreateThumbnail(image, largeThumb, (int) Thumbs.ThumbLargeResolution,
+                        (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                    }
+                  }
+                }
+                else // Single node as <set>setname</set>
+                {
+                  name = nodeUserGroup.InnerText;
+
+                  if (!string.IsNullOrEmpty(name))
+                  {
+                    int iUserGroup = AddUserGroup(name);
+                    AddUserGroupToMovie(movie.ID, iUserGroup);
+                  }
+                }
+              }
+            }
+
+            VideoDatabase.SetMovieInfoById(id, ref movie, true);
+
+            // Add groups with rules
+            ArrayList groups = new ArrayList();
+            VideoDatabase.GetUserGroups(groups);
+
+            foreach (string group in groups)
+            {
+              string rule = VideoDatabase.GetUserGroupRule(group);
+
+              if (!string.IsNullOrEmpty(rule))
+              {
+                try
+                {
+                  ArrayList values = new ArrayList();
+                  bool error = false;
+                  string errorMessage = string.Empty;
+                  values = VideoDatabase.ExecuteRuleSql(rule, "movieinfo.idMovie", out error, out errorMessage);
+
+                  if (error)
+                  {
+                    Log.Error("VideoDatabase nfo import: error executing rule {0} syntax, {1}", rule, errorMessage);
+                    continue;
+                  }
+
+                  if (values.Count > 0 && values.Contains(movie.ID.ToString()))
+                  {
+                    VideoDatabase.AddUserGroupToMovie(movie.ID, VideoDatabase.AddUserGroup(group));
+                  }
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("VideoDatabase nfo import: error importing usergroup rule {0} - {1}", rule, ex.Message);
                 }
               }
             }
 
             #endregion
 
-            VideoDatabase.SetMovieInfoById(id, ref movie, true);
+            
           }
         }
       }
@@ -6264,12 +6376,31 @@ namespace MediaPortal.Video.Database
           // User groups
           ArrayList userGroups = new ArrayList();
           GetMovieUserGroups(movieId, userGroups);
-
+          
           if (userGroups.Count > 0)
           {
             foreach (string userGroup in userGroups)
             {
-              CreateXmlNode(mainNode, doc, "set", userGroup);
+              subNode = doc.CreateElement("set");
+              CreateXmlNode(subNode, doc, "setname", userGroup);
+
+              string rule = GetUserGroupRule(userGroup);
+              string description = GetUserGroupDescriptionById(GetUserGroupId(userGroup));
+
+              if (!string.IsNullOrEmpty(rule))
+              {
+                CreateXmlNode(subNode, doc, "setrule", rule);
+              }
+
+              if (!string.IsNullOrEmpty(description))
+              {
+                CreateXmlNode(subNode, doc, "setdescription", description);
+              }
+
+              // Image is not exportable beacuse it is already resized and not in original quality
+              //CreateXmlNode(subNode, doc, "setimage", string.Empty);
+
+              mainNode.AppendChild(subNode);
             }
           }
 
@@ -6306,6 +6437,8 @@ namespace MediaPortal.Video.Database
       movie.ThumbURL = coverImage;
       string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
       string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+      Util.Utils.FileDelete(largeCoverArt);
+      Util.Utils.FileDelete(coverArt);
 
       if (Util.Picture.CreateThumbnail(coverImage, largeCoverArt, (int)Thumbs.ThumbLargeResolution,
                                        (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
@@ -6336,7 +6469,7 @@ namespace MediaPortal.Video.Database
           xmlReaderWriter.SetValueAsBool("thumbnails", "videoondemand", false);
         }
 
-        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true, false);
         
         foreach (GUIListItem item in items)
         {
