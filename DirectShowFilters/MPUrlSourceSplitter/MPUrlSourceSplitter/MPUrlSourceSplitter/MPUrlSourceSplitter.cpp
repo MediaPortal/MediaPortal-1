@@ -3584,7 +3584,8 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
                   // CURL library cannot handle wchar_t characters
                   // convert to mutli-byte character set
 
-                  char *curlValue = ConvertToMultiByte(value);
+                  wchar_t *replacedValue = ReplaceString(value, L"+", L"%20");
+                  char *curlValue = ConvertToMultiByte(replacedValue);
                   if (curlValue == NULL)
                   {
                     this->logger->Log(LOGGER_ERROR, METHOD_MESSAGE_FORMAT, MODULE_NAME, METHOD_PARSE_PARAMETERS_NAME, L"not enough memory for value for CURL library");
@@ -3627,6 +3628,7 @@ CParameterCollection *CMPUrlSourceSplitter::ParseParameters(const wchar_t *param
                   }
 
                   FREE_MEM(curlValue);
+                  FREE_MEM(replacedValue);
                 }
 
                 FREE_MEM(name);
