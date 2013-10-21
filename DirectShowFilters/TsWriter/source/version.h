@@ -21,7 +21,7 @@
 #define TSWRITER_VERSION 28
 #define TSWRITER_VERSION_STR "3.0.28.0\0"
 
-#define MP_VERSION 1,5,000,0
-#define MP_VERSION_STR "1.5.000.0\0"
+#define MP_VERSION 1,6,000,0
+#define MP_VERSION_STR "1.6.000.0\0"
 
 
