@@ -139,6 +139,7 @@ namespace MediaPortal.GUI.Video
     private bool _fileMenuEnabled;
     private string _fileMenuPinCode = string.Empty;
 
+    private bool _addVideoFilesToDb; // add automatically video files to database for show video duration in list view
     private bool _scanning;
     private int _scanningFileNumber = 1;
     private int _scanningFileTotal = 1;
@@ -333,6 +334,8 @@ namespace MediaPortal.GUI.Video
           VideoState.View = "369";
         }
 
+
+        _addVideoFilesToDb = xmlreader.GetValueAsBool("gui", "addVideoFilesToDb", false);
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
@@ -3185,7 +3188,7 @@ namespace MediaPortal.GUI.Video
 
 
       // if have new item we close the previous thread and start a new one 
-      if (itemlist2.Count != 0)
+      if (_addVideoFilesToDb && itemlist2.Count != 0)
       {
         try
         {
