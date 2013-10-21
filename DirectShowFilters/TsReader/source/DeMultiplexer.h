@@ -91,6 +91,7 @@ public:
   int        GetVideoBufferCnt();
   int        GetVideoBuffCntFt(double* frameTime);
   void       GetBufferCounts(int* ACnt, int* VCnt);
+  int        GetRTSPBufferSize();
 
   bool       SetAudioStream(__int32 stream);
   bool       GetAudioStream(__int32 &stream);
@@ -159,6 +160,7 @@ public:
   long m_AVDataLowCount;
   DWORD m_targetAVready;
   bool  m_bSubtitleCompensationSet;
+  bool m_bShuttingDown;
 
 private:
   struct stAudioStream
@@ -286,7 +288,6 @@ private:
   float m_MinAudioDelta;
   float m_MinVideoDelta;
 
-  bool m_bShuttingDown;
   
   int m_lastVidResX;
   int m_lastVidResY;
