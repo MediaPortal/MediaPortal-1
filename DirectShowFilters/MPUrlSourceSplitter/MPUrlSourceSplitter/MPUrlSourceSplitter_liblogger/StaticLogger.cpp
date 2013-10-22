@@ -252,49 +252,52 @@ void CStaticLogger::Flush(void)
     {
       if (context->GetLogFile() != NULL)
       {
-        LARGE_INTEGER size;
-        size.QuadPart = 0;
-
-        // open or create file
-        HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-
+        HANDLE hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
         if (hLogFile != INVALID_HANDLE_VALUE)
         {
+          // move to end of log file
+          LARGE_INTEGER distanceToMove;
+          LARGE_INTEGER size;
+
+          distanceToMove.QuadPart = 0;
           if (!GetFileSizeEx(hLogFile, &size))
           {
             // error occured while getting file size
             size.QuadPart = 0;
           }
 
-          CloseHandle(hLogFile);
-          hLogFile = INVALID_HANDLE_VALUE;
-        }
-
-        //if (((size.LowPart + wcslen(message)) > this->maxLogSize) && (this->logBackupFile != NULL) )
-        //{
-        //  // log file exceedes maximum log size
-        //  DeleteFile(this->logBackupFile);
-        //  MoveFile(this->logFile, this->logBackupFile);
-        //}
-
-        hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-        if (hLogFile != INVALID_HANDLE_VALUE)
-        {
-          // move to end of log file
-          LARGE_INTEGER distanceToMove;
-          distanceToMove.QuadPart = 0;
           SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
 
           for (unsigned int j = 0; j < messagesCount; j++)
           {
             const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
 
+            if (((size.LowPart + wcslen(message)) > context->GetMaxLogSize()) && (context->GetLogBackupFile() != NULL))
+            {
+              size.QuadPart = 0;
+
+              CloseHandle(hLogFile);
+              hLogFile = INVALID_HANDLE_VALUE;
+
+              // log file exceedes maximum log size
+              DeleteFile(context->GetLogBackupFile());
+              MoveFile(context->GetLogFile(), context->GetLogBackupFile());
+
+              hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+              if (hLogFile == INVALID_HANDLE_VALUE)
+              {
+                messagesCount = j;
+                break;
+              }
+            }
+
             // write data to log file
             DWORD written = 0;
             WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
+            size.QuadPart += written;
           }
 
-          CloseHandle(hLogFile);
+          CHECK_CONDITION_EXECUTE(hLogFile != INVALID_HANDLE_VALUE, CloseHandle(hLogFile));
           hLogFile = INVALID_HANDLE_VALUE;
         }
       }
