@@ -219,6 +219,13 @@ namespace TvControl
     string GetRecordingChapters(int idRecording);
 
     /// <summary>
+    /// Returns the framerate of a file if possible
+    /// </summary>
+    /// <param name="idRecording">id of recording</param>
+    /// <returns>The framerate of the recording</returns>
+    double GetFramerate(int idRecording);
+
+    /// <summary>
     /// Deletes the recording from database and disk
     /// </summary>
     /// <param name="idRecording">The id recording.</param>

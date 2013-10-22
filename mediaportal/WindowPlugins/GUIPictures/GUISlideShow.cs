@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Pictures
         _loadVideoPlayback = true;
 
         g_Player.Stop();
-        g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true);
+        g_Player.Play(GUIPictures.fileNameCheck, g_Player.MediaType.Video, null, true, 0, false, true, 0);
         GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (dlg != null)
         {

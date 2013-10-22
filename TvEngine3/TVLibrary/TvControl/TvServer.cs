@@ -543,6 +543,24 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Returns the framerate (if possible) for a recording
+    /// </summary>
+    /// <param name="idRecording">The id of the recording</param>
+    /// <returns>the framerate of the recording</returns>
+    public double GetFramerateForFileName(int idRecording)
+    {
+      try
+      {
+        return RemoteControl.Instance.GetFramerate(idRecording);
+      }
+      catch (Exception e)
+      {
+        HandleFailure("GetFramerateForFileName", e);
+      }
+      return 0;
+    }
+
+    /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      
