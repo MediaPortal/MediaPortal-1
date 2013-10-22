@@ -1079,13 +1079,13 @@ namespace MediaPortal.GUI.Library
 
         case "#duration":
           if (item.Duration == 0)
-            {
-              label = "";
-            }
-            else
-            {
-          label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
-            }
+          {
+            label = string.Empty;
+          }
+          else
+          {
+            label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
+          }
           break;
 
         case "#shortduration":

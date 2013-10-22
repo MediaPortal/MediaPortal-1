@@ -119,9 +119,9 @@ namespace MediaPortal.GUI.Video
     
     #region variables
 
-    public static int GetMediaInfoThreadNumber = 0;
-    public static Thread _GetMediaInfoThread;
-    private static bool _GetMediaInfoThreadAbort = false;
+    public static int _getMediaInfoThreadNumber = 0;
+    public static Thread _getMediaInfoThread;
+    private static bool _getMediaInfoThreadAbort = false;
     private static bool _askBeforePlayingDVDImage;
     private static VirtualDirectory _virtualDirectory;
     private static string _currentFolder = string.Empty;
@@ -3192,24 +3192,26 @@ namespace MediaPortal.GUI.Video
       {
         try
         {
-          if (_GetMediaInfoThread.IsAlive)
+          if (_getMediaInfoThread.IsAlive)
           {
             // dont want to abort, rather send a signal and wait to finish, it is a clean exit
             Log.Debug("GetMediaInfoThread: send an exit signal to the last thread and waiting for exit.");
-            _GetMediaInfoThreadAbort = true;
-            _GetMediaInfoThread.Join();
+            _getMediaInfoThreadAbort = true;
+            _getMediaInfoThread.Join();
             Log.Debug("GetMediaInfoThread: after join.");
           }
         }
         catch (Exception) { }
 
-        _GetMediaInfoThreadAbort = false;
-        GetMediaInfoThreadNumber++;
-        _GetMediaInfoThread = new Thread(GetMediaInfoThread);
-        _GetMediaInfoThread.Priority = ThreadPriority.Lowest;
-        _GetMediaInfoThread.IsBackground = true;
-        _GetMediaInfoThread.Name = "GetMediaInfoThread " + GetMediaInfoThreadNumber;
-        _GetMediaInfoThread.Start(itemlist2);
+        _getMediaInfoThreadAbort = false;
+
+        // The last _getMediaInfoThread is closed we can start a new one
+        _getMediaInfoThreadNumber++;
+        _getMediaInfoThread = new Thread(GetMediaInfoThread);
+        _getMediaInfoThread.Priority = ThreadPriority.Lowest;
+        _getMediaInfoThread.IsBackground = true;
+        _getMediaInfoThread.Name = "GetMediaInfoThread " + _getMediaInfoThreadNumber;
+        _getMediaInfoThread.Start(itemlist2);
       }
 
       GUIWaitCursor.Hide();
@@ -3223,9 +3225,9 @@ namespace MediaPortal.GUI.Video
 
       foreach (GUIListItem item in itemlist)
       {
-        if (_GetMediaInfoThreadAbort)
+        if (_getMediaInfoThreadAbort)
         {
-          Log.Debug("GetMediaInfoThread: finished with _GetMediaInfoThreadAbort signal.");
+          Log.Debug("GetMediaInfoThread: finished with _getMediaInfoThreadAbort signal.");
           return;
         }
         try
