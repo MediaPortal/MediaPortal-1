@@ -328,7 +328,10 @@ namespace MediaPortal.Mixer
       bool wasMuted = _isMuted;
       int lastVolume = _volume;
       _isMuted = _audioDefaultDevice.Muted;
-      _isMutedVolume = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+      if (_isDigital)
+      {
+        _isMutedVolume = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
+      }
       _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
 
       if (ControlChanged != null && (wasMuted != _isMuted || lastVolume != _volume))
