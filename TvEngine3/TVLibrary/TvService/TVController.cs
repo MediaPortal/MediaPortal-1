@@ -2294,13 +2294,16 @@ namespace TvService
         }
         try
         {
-          MediaInfoWrapper.MediaInfoWrapper mediaInfo = new MediaInfoWrapper.MediaInfoWrapper(recording.FileName);
-          if (mediaInfo != null)
-          {
-            double framerate = mediaInfo.Framerate;
-          }
           string chaptersFile = Path.ChangeExtension(recording.FileName, ".txt");
-          if (File.Exists(chaptersFile))
+          string edlChaptersFile = Path.ChangeExtension(recording.FileName, ".edl");
+          if (File.Exists(edlChaptersFile))
+          {
+            using (StreamReader chapters = new StreamReader(new FileStream(edlChaptersFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+              return chapters.ReadToEnd();
+            }
+          }
+          else if (File.Exists(chaptersFile))
           {
             using (StreamReader chapters = new StreamReader(new FileStream(chaptersFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
@@ -2320,54 +2323,6 @@ namespace TvService
       return "";
     }
 
-    /// <summary>
-    /// Returns the framerate of a file if possible
-    /// </summary>
-    /// <param name="idRecording">id of recording</param>
-    /// <returns>The framerate of the recording</returns>
-    public double GetFramerate(int idRecording)
-    {
-      try
-      {
-        Recording recording = Recording.Retrieve(idRecording);
-        if (recording == null)
-          return 0;
-        if (recording.FileName == null)
-          return 0;
-        if (recording.FileName.Length == 0)
-          return 0;
-        if (!IsLocal(recording.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = recording.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetFramerate(idRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
-            return 0;
-          }
-        }
-        try
-        {
-          MediaInfoWrapper.MediaInfoWrapper mediaInfo = new MediaInfoWrapper.MediaInfoWrapper(recording.FileName);
-          if (mediaInfo != null)
-          {
-            return mediaInfo.Framerate;
-          }          
-        }
-        catch (Exception)
-        {
-          Log.Error("Controller: Can't get recording framerate - First catch");
-        }
-      }
-      catch (Exception)
-      {
-        Log.Error("Controller: Can't get recording framerate - Second catch");
-      }
-      return 0;
-    }
     /// <summary>
     /// Gets the rtsp URL for file located on the tvserver.
     /// </summary>

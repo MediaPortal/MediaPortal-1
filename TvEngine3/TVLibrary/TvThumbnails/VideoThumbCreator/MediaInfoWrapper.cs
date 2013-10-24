@@ -96,16 +96,8 @@ namespace MediaInfoWrapper
         {
           int.TryParse(_mI.Get(StreamKind.Video, 0, "Duration"), out _videoDuration);
         }
-        if (_framerate == 0)
-        {
-          NumberFormatInfo providerNumber = new NumberFormatInfo();
-          providerNumber.NumberDecimalSeparator = ".";
-          double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber,
-                         out _framerate);
-        }
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
         Log.Debug("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
-        Log.Debug("MediaInfoWrapper.MediaInfoWrapper: Framerate    : {0}", _framerate);
       }
       catch (Exception)
       {

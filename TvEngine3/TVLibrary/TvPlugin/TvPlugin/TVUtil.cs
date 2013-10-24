@@ -371,13 +371,11 @@ namespace TvPlugin
     {
       string fileName = GetFileNameForRecording(rec);      
       bool useRTSP = TVHome.UseRTSP();
-      double framerate = 0;
       Log.Debug("TVUtil.PlayRecording() - Starting to play {0}, use RTSP {1}, is Recording {2}", fileName, useRTSP,rec.IsRecording);
       string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
       if (useRTSP & rec.IsRecording)
       {        
-        framerate = TVHome.TvServer.GetFramerateForFileName(rec.IdRecording);
-        Log.Debug("TVUtil.PlayRecording() - Using RTSP and is currently recording, setting up timer to reload commercials, initial framerate {0}",framerate);
+        Log.Debug("TVUtil.PlayRecording() - Using RTSP and is currently recording, setting up timer to reload commercials");
         _reloadCommercialFileTimer = new Timer();
         _reloadCommercialFileTimer.Interval = 60000; //reload once per minute
         _reloadCommercialFileTimer.Elapsed += new ElapsedEventHandler(OnCommercialTimerElapsed);
@@ -385,7 +383,7 @@ namespace TvPlugin
         _reloadCommercialFileTimer.Start();
       }
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, mediaType, chapters, false, framerate)) // Force to use TsReader if true it will use Movie Codec and Splitter
+      if (g_Player.Play(fileName, mediaType, chapters, false)) // Force to use TsReader if true it will use Movie Codec and Splitter
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {
@@ -422,7 +420,6 @@ namespace TvPlugin
       if (_currentlyPlayingRecording != null)
       {
         string chapters = TVHome.TvServer.GetChaptersForFileName(_currentlyPlayingRecording.IdRecording);
-        g_Player.currentFramerate = TVHome.TvServer.GetFramerateForFileName(_currentlyPlayingRecording.IdRecording);
         g_Player.LoadChaptersFromString(chapters);       
       }
       else
