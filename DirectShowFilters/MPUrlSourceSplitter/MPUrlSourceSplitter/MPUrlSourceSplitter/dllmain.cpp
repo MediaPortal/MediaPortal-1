@@ -228,9 +228,11 @@ LONG WINAPI ExceptionHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
   //
   // we care only about errors
   // 0xE0434F4D - COM exception
+  // 0xE0434352 - .NET exception
   // 0x406D1388 - exception thrown in SetThreadName
   if (((exceptionInfo->ExceptionRecord->ExceptionCode & 0xC0000000) == 0xC0000000) &&
        (exceptionInfo->ExceptionRecord->ExceptionCode != 0xE0434F4D) &&
+       (exceptionInfo->ExceptionRecord->ExceptionCode != 0xE0434352) &&
        (exceptionHandler != NULL))
   {
     // remove exception handler
