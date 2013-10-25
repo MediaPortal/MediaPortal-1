@@ -881,6 +881,12 @@ namespace MediaPortal.Configuration.Sections
               }
             }
           }
+          if (soundDeviceComboBox.Items.Count == 0)
+          {
+            // Add default sound device to avoid crash.
+            soundDeviceComboBox.Items.Add(new SoundDeviceItem("Default Sound Device", ""));
+            soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default Sound Device", "");
+          }
           break;
       }
     }
