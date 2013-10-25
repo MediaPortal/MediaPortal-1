@@ -862,7 +862,7 @@ bool CDeMultiplexer::CheckCompensation(CRefTime rtStartTime)
         
         BestCompensation = targFirstAudio - m_filter.m_RandomCompensation - rtStartTime ;
         AddVideoCompensation = firstVideo - targFirstAudio;
-        AddVideoCompensation = (AddVideoCompensation > (2000*10000)) ? (2000*10000) : AddVideoCompensation; //Limit to 2.0 seconds
+        AddVideoCompensation = (AddVideoCompensation > (5000*10000)) ? (5000*10000) : AddVideoCompensation; //Limit to 5.0 seconds
         LogDebug("Compensation : ( Rnd : %d mS ) Audio pts ahead Video pts . Add %03.3f sec of extra video comp to start now !...",(DWORD)m_filter.m_RandomCompensation/10000,(float)AddVideoCompensation.Millisecs()/1000.0f) ;       
       }
       else
