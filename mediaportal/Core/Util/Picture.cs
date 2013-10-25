@@ -954,7 +954,7 @@ namespace MediaPortal.Util
       }
 
       if (string.IsNullOrEmpty(thumbnailImageSource) || string.IsNullOrEmpty(thumbnailImageDest) || aThumbHeight <= 0 ||
-          aThumbHeight <= 0)
+          aThumbWidth <= 0)
       {
         return false;
       }
