@@ -790,7 +790,7 @@ namespace MediaPortal.Mixer
       _CallBack = new AudioEndpointVolumeCallback(this);
       Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
     }
-      catch (Exception ex)
+      catch (Exception)
       {
         // Catch if no device is found or changed device
         try
@@ -808,7 +808,7 @@ namespace MediaPortal.Mixer
           _CallBack = new AudioEndpointVolumeCallback(this);
           Marshal.ThrowExceptionForHR(_AudioEndPointVolume.RegisterControlChangeNotify(_CallBack));
         }
-        catch (Exception ex2)
+        catch (Exception)
         {
           // Catch if no device is found
         }
@@ -823,7 +823,7 @@ namespace MediaPortal.Mixer
         {
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.UnregisterControlChangeNotify(_CallBack));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           // Catch if no device is found
         }
@@ -849,7 +849,7 @@ namespace MediaPortal.Mixer
         {
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMasterVolumeLevelScalar(out result));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           // Catch if no device is found
           return _volumeValueForDeviceNotAvailable;
@@ -862,7 +862,7 @@ namespace MediaPortal.Mixer
         {
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMasterVolumeLevelScalar(value, Guid.Empty));
       }
-        catch (Exception ex)
+        catch (Exception)
         {
           // Catch if no device is found
     }
@@ -878,7 +878,7 @@ namespace MediaPortal.Mixer
         {
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.GetMute(out result));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
           // Catch if no device is found
         }
@@ -890,7 +890,7 @@ namespace MediaPortal.Mixer
         {
         Marshal.ThrowExceptionForHR(_AudioEndPointVolume.SetMute(value, Guid.Empty));
       }
-        catch ( Exception ex)
+        catch ( Exception)
         {
           // Catch if no device is found
     }
