@@ -463,7 +463,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         CRefTime RefTime, cRefTime;
         double fTime = 0.0;
         double clock = 0.0;
-        double stallPoint = 2.5;
+        double stallPoint = VIDEO_STALL_POINT;
         //check if it has a timestamp
         bool HasTimestamp=buffer->MediaTime(RefTime);
         if (HasTimestamp)
@@ -528,7 +528,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //(helps with signal corruption recovery)
             if ((fTime > (ForcePresent ? -1.0 : -0.3)) && (fTime < (stallPoint + 1.0)))
             {
-              //if ((fTime > stallPoint) && (m_pTsReaderFilter->State() == State_Running))
               if ((fTime > stallPoint) && (m_sampleCount > 10))
               {
                 //Too early - stall for a while to avoid over-filling of video pipeline buffers,

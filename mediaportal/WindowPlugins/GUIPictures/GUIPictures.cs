@@ -1444,7 +1444,7 @@ namespace MediaPortal.GUI.Pictures
                                              {
                                                GetThumbnailfile(ref item);
                                              }
-                                             catch (Exception ex)
+                                             catch (Exception)
                                              {
                                                Log.Error(
                                                  "GUIPictures - Error loading next item (OnRetrieveThumbnailFiles)");

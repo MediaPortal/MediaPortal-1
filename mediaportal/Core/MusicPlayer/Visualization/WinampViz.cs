@@ -37,17 +37,14 @@ namespace MediaPortal.Visualization
 
     private BASSVIS_INFO _mediaInfo = null;
     private BassVis.BASSVISSTATE _visCallback;
+    private BASSVIS_PARAM _tmpVisParam = null;
+    private MusicTag trackTag = null;
+    private PlayListPlayer _playlistPlayer = null;
 
     private bool RenderStarted = false;
     private bool firstRun = true;
-
-    private IntPtr hwndChild; // Handle to the Winamp Child Window.
-    private BASSVIS_PARAM _tmpVisParam = null;
-
-    private MusicTag trackTag = null;
     private string _songTitle = "   "; // Title of the song played
     private int _playlistTitlePos;
-    private PlayListPlayer _playlistPlayer = null;
 
     #endregion
 
@@ -187,7 +184,10 @@ namespace MediaPortal.Visualization
           _playlistPlayer = PlayListPlayer.SingletonPlayer;
           PlayListItem curPlaylistItem = _playlistPlayer.GetCurrentItem();
 
-          _mediaInfo.Position = (int)Bass.CurrentPosition;
+          MusicStream streams = Bass.GetCurrentStream();
+          // Do not change this line many Plugins search for Songtitle with a number before.
+          _mediaInfo.SongTitle = (_playlistPlayer.CurrentPlaylistPos + 1) + ". " + _songTitle;
+          _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
           _mediaInfo.Duration = (int)Bass.Duration;
           _mediaInfo.PlaylistLen = 1;
           _mediaInfo.PlaylistPos = _playlistPlayer.CurrentPlaylistPos;
@@ -216,9 +216,20 @@ namespace MediaPortal.Visualization
         {
           stream = (int)Bass.GetCurrentVizStream();
         }
-
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-        RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream);
+        // ckeck is playing
+        int nReturn = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.IsPlaying);
+        if (nReturn == Convert.ToInt32(BASSVIS_PLAYSTATE.Play) && (_visParam.VisHandle != 0))
+        {
+          // Do not Render without playing
+          if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
+          {
+            RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, true);
+      }
+          else
+          {
+          RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, false);
+          }
+        }
       }
 
       catch (Exception) {}
@@ -241,17 +252,19 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        int counter = 0;
 
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
+        BassVis.BASSVIS_Free(_visParam);
+        bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+        if (bFree)
         {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
+          _visParam.VisHandle = 0;
         }
+        else
+        {
+          Log.Warn("Visualization Manager: Failed to unload Winamp viz module - {0}", VizPluginInfo.Name);
         _visParam.VisHandle = 0;
       }
+      }           
 
       int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
@@ -287,7 +300,7 @@ namespace MediaPortal.Visualization
       if (_visParam.VisHandle != 0)
       {
         // Hide the Viswindow, so that we don't see it, while moving
-        Win32API.ShowWindow(hwndChild, Win32API.ShowWindowFlags.Hide);
+        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);        
         _tmpVisParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
         _tmpVisParam.VisGenWinHandle = VisualizationWindow.Handle;
         BassVis.BASSVIS_Resize(_tmpVisParam, 0, 0, newSize.Width, newSize.Height);
@@ -319,37 +332,28 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      if (_visParam.VisHandle != 0)
-      {
-        RenderStarted = false;
-
-        int counter = 0;
-
-        bool bFree = BassVis.BASSVIS_Free(_visParam);
-        while ((!bFree) && (counter <= 10))
-        {
-          bFree = BassVis.BASSVIS_IsFree(_visParam);
-          System.Windows.Forms.Application.DoEvents();
-          counter++;
-        }
-        _visParam.VisHandle = 0;
-      }
-
-
       try
       {
         //Remove existing CallBacks
         BassVis.BASSVIS_WINAMPRemoveCallback();
-        // Create the Visualisation
+
+        // Call Play befor use BASSVIS_ExecutePlugin (moved here)
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+
+        // Hide the Viswindow, so that we don't see it, befor any Render
+        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+
+        // Create the Visualisation 
         BASSVIS_EXEC visExec = new BASSVIS_EXEC(VizPluginInfo.FilePath);
         visExec.AMP_ModuleIndex = VizPluginInfo.PresetIndex;
         visExec.AMP_UseOwnW1 = 1;
         visExec.AMP_UseOwnW2 = 1;
+        // The flag below is needed for the Vis to have it's own message queue
+        // Thus it is avoided that it steals focus from MP.
+        visExec.AMP_UseFakeWindow = true; 
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
         if (_visParam.VisHandle != 0)
         {
-          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-
           // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
           BassVis.BASSVIS_SetVisPort(_visParam,
                                      _visParam.VisGenWinHandle,
@@ -362,11 +366,8 @@ namespace MediaPortal.Visualization
           // Set CallBack for PlayState
           _visCallback = BASSVIS_StateCallback;
           BassVis.BASSVIS_WINAMPSetStateCallback(_visCallback);
-          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 128);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 128); //Reactivated 4096 samples show better
         }
-
-        // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
-        Win32API.SetForegroundWindow(GUIGraphicsContext.form.Handle);
 
         firstRun = false;
       }

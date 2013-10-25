@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
@@ -27,6 +29,9 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _wasapiMixedFreq = 0;
 
     private bool _disposed = false;
+
+    private SYNCPROC _playbackEndProcDelegate = null;
+    private int _syncProc = 0;
 
     #endregion
 
@@ -67,12 +72,18 @@ namespace MediaPortal.MusicPlayer.BASS
     public MixerStream(BassAudioEngine bassPlayer)
     {
       _bassPlayer = bassPlayer;
+      _playbackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
     }
 
     #endregion
 
     #region Public Methods
 
+    /// <summary>
+    /// Create a mixer using the stream attributes
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     public bool CreateMixer(MusicStream stream)
     {
       Log.Debug("BASS: ---------------------------------------------");
@@ -226,9 +237,16 @@ namespace MediaPortal.MusicPlayer.BASS
 
           _wasapiProc = new WASAPIPROC(WasApiCallback);
 
-          int frequency = stream.ChannelInfo.freq;
-          int chans = outputChannels;
           bool wasApiExclusiveSupported = true;
+
+          // Check if we have an uneven number of channels
+          var chkChannels = outputChannels%2;
+          if (chkChannels == 1)
+          {
+            Log.Warn("BASS: Found uneven number of channels {0}. increase output channels.", outputChannels);
+            outputChannels++; // increase the number of output channels
+            wasApiExclusiveSupported = false; // And indicate that we need a new mixer
+          }
 
           // If Exclusive mode is used, check, if that would be supported, otherwise init in shared mode
           if (Config.WasApiExclusiveMode)
@@ -240,7 +258,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
             BASSWASAPIFormat wasapiFormat = BassWasapi.BASS_WASAPI_CheckFormat(_bassPlayer.DeviceNumber,
                                                                                stream.ChannelInfo.freq,
-                                                                               stream.ChannelInfo.chans,
+                                                                               outputChannels,
                                                                                BASSWASAPIInit.BASS_WASAPI_EXCLUSIVE);
             if (wasapiFormat == BASSWASAPIFormat.BASS_WASAPI_FORMAT_UNKNOWN)
             {
@@ -267,8 +285,10 @@ namespace MediaPortal.MusicPlayer.BASS
             _wasapiShared = true;
           }
 
-          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, stream.ChannelInfo.chans,
-                                      initFlags, 0f, 0f, _wasapiProc, IntPtr.Zero))
+          Log.Debug("BASS: Try to init WASAPI with a Frequency of {0} and {1} channels", stream.ChannelInfo.freq, outputChannels);
+  
+          if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, outputChannels,
+                                      initFlags | BASSWASAPIInit.BASS_WASAPI_BUFFER, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
             BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
 
@@ -314,12 +334,23 @@ namespace MediaPortal.MusicPlayer.BASS
       return result;
     }
 
+    /// <summary>
+    /// Attach a stream to the Mixer
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
     public bool AttachStream(MusicStream stream)
     {
       Bass.BASS_ChannelLock(_mixer, true);
+
+      // Set SynyPos at end of stream
+      SetSyncPos(stream, 0.0);
+
       bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                         BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
                                         BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
+
+      Bass.BASS_ChannelLock(_mixer, false);
 
       if (result && _mixingMatrix != null)
       {
@@ -330,8 +361,33 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Error("BASS: Error attaching Mixing Matrix. {0}", Bass.BASS_ErrorGetCode());
         }
       }
-      Bass.BASS_ChannelLock(_mixer, false);
+
       return result;
+    }
+
+    /// <summary>
+    /// Sets a SyncPos on the mixer stream
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <param name="timePos"></param>
+    public void SetSyncPos(MusicStream stream, double timePos)
+    {
+      double fadeOutSeconds = Config.CrossFadeIntervalMs / 1000.0;
+      double totalStreamLen = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, Bass.BASS_ChannelGetLength(stream.BassStream, BASSMode.BASS_POS_BYTES));
+      long mixerPos = Bass.BASS_ChannelGetPosition(_mixer, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_DECODE);
+      long syncPos = mixerPos + Bass.BASS_ChannelSeconds2Bytes(_mixer, totalStreamLen - timePos - fadeOutSeconds);
+
+      if (_syncProc != 0)
+      {
+        Bass.BASS_ChannelRemoveSync(_mixer, _syncProc);
+      }
+
+      GCHandle pFilePath = GCHandle.Alloc(stream);
+
+      _syncProc = Bass.BASS_ChannelSetSync(_mixer,
+        BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME,
+        syncPos, _playbackEndProcDelegate,
+        GCHandle.ToIntPtr(pFilePath));
     }
 
     #endregion
@@ -623,6 +679,36 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       return mixMatrix;
     }
+    #endregion
+
+    #region SyncProcs
+
+    /// <summary>
+    /// End of Playback for a stream has been signaled
+    /// Send event to Bass player to start playback of next song
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="stream"></param>
+    /// <param name="data"></param>
+    /// <param name="userData"></param>
+    private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
+    {
+      try
+      {
+        GCHandle gch = GCHandle.FromIntPtr(userData);
+        MusicStream musicstream = (MusicStream)gch.Target;
+
+        Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
+
+        _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+      }
+      catch (AccessViolationException)
+      {
+        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+      }
+    }
+
+
     #endregion
 
     #region IDisposable Members

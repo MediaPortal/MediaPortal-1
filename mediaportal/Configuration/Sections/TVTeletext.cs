@@ -28,7 +28,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class TVTeletext : SectionSettings
   {
-    private IContainer components = null;
     public int pluginVersion;
 
     public TVTeletext()

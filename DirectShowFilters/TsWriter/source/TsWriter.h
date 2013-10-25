@@ -99,21 +99,22 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 
 class CMpTsFilter : public CBaseFilter
 {
-    CMpTs * const m_pWriterFilter;
 
 public:
 
-    // Constructor
-    CMpTsFilter(CMpTs *pDump,LPUNKNOWN pUnk,CCritSec *pLock,HRESULT *phr);
+    CMpTsFilter(CMpTs* pDump, LPUNKNOWN pUnk, CCritSec* pFilterLock, CCritSec* pReceiveLock, HRESULT* pHr);
 
-    // Pin enumeration
-    CBasePin * GetPin(int n);
+ CBasePin * GetPin(int n);
     int GetPinCount();
 
-    // Open and close the file as necessary
     STDMETHODIMP Run(REFERENCE_TIME tStart);
     STDMETHODIMP Pause();
     STDMETHODIMP Stop();
+
+	private:
+    CMpTs* const m_pWriterFilter;
+    CCritSec* m_pReceiveLock;
+
 };
 
 
@@ -121,35 +122,27 @@ public:
 
 class CMpTsFilterPin : public CRenderedInputPin,public CPacketSync
 {
-    CMpTs*	const	m_pWriterFilter;   // Main renderer object
-    CCritSec*		const	m_pReceiveLock;    // Sample critical section
 public:
-
-    CMpTsFilterPin(CMpTs *pDump,LPUNKNOWN pUnk,CBaseFilter *pFilter,CCritSec *pLock,CCritSec *pReceiveLock,HRESULT *phr);
+	CMpTsFilterPin(CMpTs* pDump, LPUNKNOWN pUnk, CBaseFilter* pFilter, CCritSec* pFilterLock, CCritSec* pReceiveLock, HRESULT* phr);
 
     // Do something with this media sample
     STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP EndOfStream(void);
+    STDMETHODIMP EndOfStream();
     STDMETHODIMP ReceiveCanBlock();
 
-    // Write detailed information about this sample to a file
-//    HRESULT WriteStringInfo(IMediaSample *pSample);
-
-    // Check if the pin can support this specific proposed type and format
-    HRESULT		CheckMediaType(const CMediaType *);
-    // Break connection
+	HRESULT CheckMediaType(const CMediaType* pMediaType);
     HRESULT		BreakConnect();
-		BOOL			IsReceiving();
 		void			Reset();
-    // Track NewSegment
-    STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
+
+	STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 
 		//CPacketSync overrides
 		void OnTsPacket(byte* tsPacket);
-		void AssignRawPaketWriter(FileWriter *rawPaketWriter);
+		void AssignRawPacketWriter(FileWriter* pRawPacketWriter);
 private:
-	CCritSec		m_section;
-	FileWriter *m_rawPaketWriter;
+	CMpTs* const m_pWriterFilter;
+    CCritSec* m_pReceiveLock;
+    FileWriter* m_pRawPacketWriter;
 };
 
 
@@ -157,25 +150,23 @@ private:
 // The format of these sections is specified in ANSI/SCTE 65.
 class CMpOobSiFilterPin : public CRenderedInputPin
 {
-  CMpTs* const m_pWriterFilter;   // Main renderer object
-  CCritSec* const m_pReceiveLock; // Sample critical section
-
   public:
-    CMpOobSiFilterPin(CMpTs* pDump, LPUNKNOWN pUnk, CBaseFilter* pFilter, CCritSec* pLock, CCritSec* pReceiveLock, HRESULT* phr);
+    CMpOobSiFilterPin(CMpTs* pDump, LPUNKNOWN pUnk, CBaseFilter* pFilter, CCritSec* pFilterLock, CCritSec* pReceiveLock, HRESULT* phr);
 
     STDMETHODIMP Receive(IMediaSample *pSample);
-    STDMETHODIMP EndOfStream(void);
+    STDMETHODIMP EndOfStream();
     STDMETHODIMP ReceiveCanBlock();
-    HRESULT CheckMediaType(const CMediaType*);
+	
+    HRESULT CheckMediaType(const CMediaType* pMediaType);
     HRESULT BreakConnect();
-    BOOL IsReceiving();
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
 
-    void AssignRawSectionWriter(FileWriter* rawSectionWriter);
+    void AssignRawSectionWriter(FileWriter* pRawSectionWriter);
 
   private:
-    CCritSec m_section;
-    FileWriter* m_rawSectionWriter;
+    CMpTs* const m_pWriterFilter;
+    CCritSec* m_pReceiveLock;
+    FileWriter* m_pRawSectionWriter;
 };
 
 
@@ -190,8 +181,8 @@ class CMpTs : public CUnknown, public ITSFilter
     CMpTsFilter*	m_pFilter;       // Methods for filter interfaces
     CMpTsFilterPin*	m_pPin;          // A simple rendered input pin
     CMpOobSiFilterPin*	m_pOobSiPin; // A simple rendered input pin for receiving out-of-band SI sections.
-    CCritSec 		m_Lock;                // Main renderer critical section
-    CCritSec 		m_ReceiveLock;         // Sublock for received samples
+    CCritSec m_filterLock;          // Main renderer critical section
+    CCritSec m_receiveLock;         // Streaming critical section
 public:
     DECLARE_IUNKNOWN
 
@@ -254,10 +245,11 @@ private:
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 		CChannelScan*   m_pChannelScanner;
 		CEpgScanner*		m_pEpgScanner;
-		FileWriter* m_rawPaketWriter;
-		bool b_dumpRawPakets;
+		FileWriter* m_pRawPacketWriter;
+        bool b_dumpRawPackets;
 		CChannelLinkageScanner* m_pChannelLinkageScanner;
 		vector<CTsChannel*> m_vecChannels;
+		CCritSec m_channelLock;         // Lock for protecting access to m_vecChannels.
     typedef vector<CTsChannel*>::iterator ivecChannels;
 		int m_id;
 };
