@@ -1846,7 +1846,7 @@ namespace MediaPortal.Visualization
         int sleepMS = 100;
         bool threadShutDown = true;
 
-        while (VizRenderThread.IsAlive)
+        while (VizRenderThread != null && VizRenderThread.IsAlive)
         {
           Thread.Sleep(sleepMS);
           maxWaitMS -= sleepMS;
@@ -1933,14 +1933,20 @@ namespace MediaPortal.Visualization
               {
                 using (Graphics g = Graphics.FromHwnd(Handle))
                 {
-                  int sleepMS = RenderVisualization(g);
-
-                  if (sleepMS < 0)
-                  {
-                    sleepMS = 0;
-                  }
+                  // Fixed High CPU Usage
+                  Thread.Sleep(RenderVisualization(g));
 
                   if (Viz.IsWinampVis())
+                  {
+                    continue;
+                  }
+
+                  if (Viz.IsSoniqueVis())
+                  {
+                    continue;
+                  }
+
+                  if (Viz.IsBassboxVis())
                   {
                     continue;
                   }
@@ -1948,7 +1954,7 @@ namespace MediaPortal.Visualization
                   // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
                   if (IsSoundSpectrumViz)
                   {
-                    Thread.Sleep(sleepMS);
+                    Thread.Sleep(0);
                   }
                   else
                   {
@@ -2025,7 +2031,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis() && !Viz.IsSoniqueVis())
         {
           if (DialogWindowIsActive)
           {

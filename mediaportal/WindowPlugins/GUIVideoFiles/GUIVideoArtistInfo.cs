@@ -229,6 +229,12 @@ namespace MediaPortal.GUI.Video
           }
           catch { }
         }
+        else
+        {
+          _playClicked = false;
+          _forceRefreshAll = true;
+          OnRefreshSingleMovie();
+        }
       }
     }
 
@@ -318,18 +324,18 @@ namespace MediaPortal.GUI.Video
 
     private void SetNewproperties()
     {
+      _currentActor.SortActorMoviesByYear();
+
       for (int i = 0; i < _currentActor.Count; ++i)
       {
         string line = String.Format("{0}. {1} ({2})",
                                     _currentActor[i].Year,
                                     _currentActor[i].MovieTitle,
                                     _currentActor[i].Role);
-        line.Replace("()", string.Empty).Trim();
-
         //List view
         var item = new GUIListItem();
         item.ItemId = i;
-        item.Label = line; // Year+Title+Role (visible on screen item)
+        item.Label = line.Replace("()", string.Empty).Trim(); // Year+Title+Role (visible on screen item)
         
         if (_currentActor[i].MoviePlot == "-" || _currentActor[i].MoviePlot == Strings.Unknown)
         {
@@ -753,8 +759,7 @@ namespace MediaPortal.GUI.Video
             if (count > 0)
             {
               int percCount = (100 * countCurrent) / count;
-              //GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + countCurrent + "/" + count + ")");
-              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + percCount + "%)");
+              GUIPropertyManager.SetProperty("#Actor.Name", _currentActor.Name + "   (" + countCurrent + "/" + count + " - " + +percCount + "%" + ")");
               countCurrent += 1;
             }
             //
@@ -792,6 +797,7 @@ namespace MediaPortal.GUI.Video
 
       string plot = ListItemMovieInfo(item).MoviePlot;
       string cover = item.ThumbnailImage;
+      string mpaa = ListItemMovieInfo(item).MovieMpaaRating;
       string tempItemLabel = item.Label; // To show Downloading on list item then switch to original label
 
       if (_forceRefreshAll)
@@ -803,7 +809,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        if (plot == string.Empty)
+        if (plot == string.Empty || mpaa == string.Empty || mpaa == Strings.Unknown)
         {
           item.Label = GUILocalizeStrings.Get(198) + "...";
           plot = GetPlotImdb(item);
@@ -833,8 +839,7 @@ namespace MediaPortal.GUI.Video
                                     ListItemMovieInfo(item).Year,
                                     ListItemMovieInfo(item).MovieTitle,
                                     ListItemMovieInfo(item).Role);
-      line.Replace("()", string.Empty).Trim();
-      tempItemLabel = line; // Year+Title+Role (visible on screen item)
+      tempItemLabel = line.Replace("()", string.Empty).Trim(); // Year+Title+Role (visible on screen item)
       item.Label = tempItemLabel;
     }
 
@@ -924,6 +929,7 @@ namespace MediaPortal.GUI.Video
     private void SaveCover(string fileImgSource, string fileImgTargetL)
     {
       // Large cover
+      Util.Utils.FileDelete(fileImgTargetL);
       Util.Picture.CreateThumbnail(fileImgSource, fileImgTargetL, (int)Thumbs.ThumbLargeResolution,
                                    (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall);
       
@@ -1080,8 +1086,8 @@ namespace MediaPortal.GUI.Video
         IMDBMovie movie = new IMDBMovie();
         
         movie.IMDBNumber = ListItemMovieInfo(item).MovieImdbID;
-        
-        if(!GUIVideoFiles.InternalGrabber.InternalGrabber.GetPlotImdb(ref movie))
+
+        if (!IMDB.InternalActorsScriptGrabber.InternalActorsGrabber.GetPlotImdb(ref movie))
         {
           return string.Empty;
         }
@@ -1154,7 +1160,7 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
-        string thumb = GUIVideoFiles.InternalGrabber.InternalGrabber.GetThumbImdb(ListItemMovieInfo(item).MovieImdbID);
+        string thumb =  IMDB.InternalActorsScriptGrabber.InternalActorsGrabber.GetThumbImdb(ListItemMovieInfo(item).MovieImdbID);
         return thumb;
       }
       catch (ThreadAbortException)

@@ -895,6 +895,7 @@ namespace SetupTv.Sections
       this.enableDiskQuota.TabIndex = 21;
       this.enableDiskQuota.Text = "Enable disk quota";
       this.enableDiskQuota.UseVisualStyleBackColor = true;
+      this.enableDiskQuota.CheckedChanged += new System.EventHandler(this.enableDiskQuota_CheckedChanged);
       // 
       // mpNumericTextBoxDiskQuota
       // 

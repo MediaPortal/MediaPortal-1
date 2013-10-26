@@ -447,7 +447,7 @@ namespace MediaPortal.Configuration.Sections
                             RegistryValueKind.DWord);
             return true;
           }
-          catch (Exception e)
+          catch (Exception)
           {
             return false;
           }

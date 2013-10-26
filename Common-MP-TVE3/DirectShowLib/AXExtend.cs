@@ -2255,7 +2255,9 @@ namespace DirectShowLib
   [ComImport, SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+#pragma warning disable 612,618
   public interface IVideoEncoder : IEncoderAPI
+#pragma warning restore 612,618
   {
     #region IEncoderAPI Methods
 

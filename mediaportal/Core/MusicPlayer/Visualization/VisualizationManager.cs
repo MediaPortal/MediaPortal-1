@@ -281,6 +281,10 @@ namespace MediaPortal.Visualization
         // Search for Sonique and Winamp Plugins
         string[] soniqueVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_SONIQUE, skinFolderPath, true);
 
+        // Search for Bassbox Plugins
+        skinFolderPath = Path.Combine(Application.StartupPath, @"BBPlugin");
+        string[] bassboxVisPaths = BassVis.BASSVIS_FindPlugins(BASSVISKind.BASSVISKIND_BASSBOX, skinFolderPath, true);
+
         // Note: Recursive Searches for Winamp Plugins are not supported
         // Winamp plugins expect itself to be stored in a folder named Plugins in the root of the executable. This is where we will search
         // So this is the folder where all the MP Plugins are stored as well
@@ -320,7 +324,7 @@ namespace MediaPortal.Visualization
 
         if (soniqueVisPaths != null && soniqueVisPaths[0] != "")
         {
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, VizRenderWindow.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           for (int i = 0; i < soniqueVisPaths.Length; i++)
           {
@@ -332,16 +336,17 @@ namespace MediaPortal.Visualization
 
             if (_visParam.VisHandle != 0)
             {
-              int counter = 0;
-
-              bool bFree = BassVis.BASSVIS_Free(_visParam);
-              while ((!bFree) && (counter <= 10))
+              BassVis.BASSVIS_Free(_visParam);
+              bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+              if (bFree)
               {
-                bFree = BassVis.BASSVIS_IsFree(_visParam);
-                System.Windows.Forms.Application.DoEvents();
-                counter++;
+                _visParam.VisHandle = 0;
               }
-              _visParam.VisHandle = 0;
+              else
+              {
+                Log.Warn("VisualisationManager: Failed to unload Sonique viz module - {0}", name);
+                _visParam.VisHandle = 0;
+              }
             }
 
             BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
@@ -392,6 +397,47 @@ namespace MediaPortal.Visualization
               }
             }
           }
+        }
+
+        if (bassboxVisPaths != null && bassboxVisPaths[0] != "")
+        {
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_BASSBOX, GUIGraphicsContext.form.Handle);
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_BASSBOX);
+          for (int i = 0; i < bassboxVisPaths.Length; i++)
+          {
+            string filePath = bassboxVisPaths[i];
+            string name = Path.GetFileNameWithoutExtension(filePath);
+            BASSVIS_EXEC visExec = new BASSVIS_EXEC(filePath);
+            visExec.BB_Flags = BASSVISFlags.BASSVIS_NOINIT; // don't execute the plugin yet
+
+            if (_visParam.VisHandle != 0)
+            {
+              BassVis.BASSVIS_Free(_visParam);
+              bool bFree = BassVis.BASSVIS_IsFree(_visParam);
+              if (bFree)
+              {
+                _visParam.VisHandle = 0;
+              }
+              else
+              {
+                Log.Warn("VisualisationManager: Failed to unload BassBox viz module - {0}", name);
+                _visParam.VisHandle = 0;
+              }
+            }
+
+            BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
+
+            string pluginname = BassVis.BASSVIS_GetModulePresetName(_visParam, 0, filePath);
+            if (pluginname != null)
+            {
+              name = pluginname;
+            }
+
+            VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Bassbox, filePath, name,
+                                                              string.Empty, null);
+            _VisualizationPluginsInfo.Add(vizInfo);
+          }
+          BassVis.BASSVIS_Quit(_visParam);
         }
       }
       catch (Exception ex)
@@ -534,6 +580,13 @@ namespace MediaPortal.Visualization
             break;
           }
 
+        case VisualizationInfo.PluginType.Bassbox:
+          {
+            Log.Info("Visualization Manager: Creating new Bassbox visualization...");
+            Viz = new BassboxViz(vizPluginInfo, VizRenderWindow);
+            break;
+          }
+
         case VisualizationInfo.PluginType.WMP:
           {
             Log.Info("Visualization Manager: Creating new Windows Media Player visualization...");
@@ -651,6 +704,22 @@ namespace MediaPortal.Visualization
     public void InitWinampVis()
     {
       if (Viz.IsWinampVis())
+      {
+        Viz.SetOutputContext(VizRenderWindow.OutputContextType);
+      }
+    }
+
+    public void InitSoniqueVis()
+    {
+      if (Viz.IsSoniqueVis())
+      {
+        Viz.SetOutputContext(VizRenderWindow.OutputContextType);
+      }
+    }
+
+    public void InitBassboxVis()
+    {
+      if (Viz.IsSoniqueVis())
       {
         Viz.SetOutputContext(VizRenderWindow.OutputContextType);
       }

@@ -24,6 +24,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
@@ -86,7 +87,8 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
-                                              ref IBaseFilter vmr9Filter, uint monitor);
+                                              ref IBaseFilter vmr9Filter, uint monitor, int monitorIdx,
+                                              bool disVsyncCorr, bool disMparCorr);
 
     //, uint dwWindow);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -376,16 +378,54 @@ namespace MediaPortal.Player
 
       if (_useEvr)
       {
-        EvrInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter, (uint)hMonitor.ToInt32());
+        // Fix RDP Screen out of bound (force to use AdapterOrdinal to 0 if adapter number are out of bounds)
+        int AdapterOrdinal = GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal;
+        if (AdapterOrdinal >= Screen.AllScreens.Length)
+        {
+          AdapterOrdinal = Screen.AllScreens.Length - 1;
+          Log.Info("VMR9: adapter number out of bounds");
+        }
+        if (GUIGraphicsContext.currentMonitorIdx != -1)
+        {
+          if ((OSInfo.OSInfo.Win7OrLater() &&
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
+          {
+            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                    GUIGraphicsContext.currentMonitorIdx, false, false);
+          }
+          else
+          {
+            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                    GUIGraphicsContext.currentMonitorIdx, true, true);
+            Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
+                      Screen.AllScreens[AdapterOrdinal].Primary);
+          }
+        }
+        else
+        {
+          if ((OSInfo.OSInfo.Win7OrLater() &&
+               Screen.AllScreens[AdapterOrdinal].Primary) || OSInfo.OSInfo.Win8OrLater())
+          {
+            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                    AdapterOrdinal, false, false);
+          }
+          else
+          {
+            EvrInit(_scene, (uint) upDevice.ToInt32(), ref _vmr9Filter, (uint) hMonitor.ToInt32(),
+                    AdapterOrdinal, true, true);
+            Log.Debug("VMR9: force disable vsync and bias correction for Win7 or lower - current primary is : {0}",
+                      Screen.AllScreens[AdapterOrdinal].Primary);
+          }
+        }
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
         Log.Info("VMR9: added EVR Renderer to graph");
       }
       else
       {
-        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
+        _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
         Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
 
-        Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
+        Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
       }
 

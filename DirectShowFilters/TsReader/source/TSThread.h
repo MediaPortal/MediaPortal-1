@@ -47,6 +47,7 @@ protected:
 	HANDLE m_hWakeEvent;
 
 private:
+  CCritSec  m_ThreadStateLock;
   BOOL   m_bThreadRunning;
 	HANDLE m_threadHandle;
 	 static void __cdecl thread_function(void* p);

@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -20,12 +20,14 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using System.IO;
 using MediaPortal.GUI.Library;
-using Un4seen.Bass;
+using MediaPortal.MusicPlayer.BASS;
+using MediaPortal.TagReader;
+using MediaPortal.Util;
 using BassVis_Api;
+
 
 namespace MediaPortal.Visualization
 {
@@ -33,9 +35,16 @@ namespace MediaPortal.Visualization
   {
     #region Variables
 
-    private IntPtr dataPtr = IntPtr.Zero;
-    private IntPtr fftPtr = IntPtr.Zero;
+    [DllImport("User32.dll")]
+    public static extern IntPtr GetDC(IntPtr hWnd);
+
+    private BASSVIS_INFO _mediaInfo = null;
+
+    private bool RenderStarted = false;
     private bool firstRun = true;
+
+    private MusicTag trackTag = null;
+    private string _songTitle = "   "; // Title of the song played
     private BASSVIS_EXEC visExec;
 
     #endregion
@@ -47,24 +56,28 @@ namespace MediaPortal.Visualization
 
     #endregion
 
-    #region IVisualisation Implementation
+    #region Public Methods
 
     public override bool Initialize()
     {
+      Bass.PlaybackStateChanged += new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
+
+      _mediaInfo = new BASSVIS_INFO("", "");
+
       try
       {
-        Log.Info("Visualization Manager: Initializing Sonique visualization: {0}", VizPluginInfo.Name);
+        Log.Info("Visualization Manager: Initializing {0} visualization...", VizPluginInfo.Name);
 
         if (VizPluginInfo == null)
         {
-          Log.Error("Visualization Manager: Sonique visualization engine initialization failed! Reason:{0}",
-                    "Missing or invalid VisualizationInfo object.");
+          Log.Error("Visualization Manager: {0} visualization engine initialization failed! Reason:{1}",
+                    VizPluginInfo.Name, "Missing or invalid VisualizationInfo object.");
 
           return false;
         }
 
         firstRun = true;
-        BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 25);
+        RenderStarted = false;
         bool result = SetOutputContext(VisualizationWindow.OutputContextType);
         _Initialized = result && _visParam.VisHandle != 0;
       }
@@ -77,8 +90,49 @@ namespace MediaPortal.Visualization
         return false;
       }
 
-      return Initialized;
+      return _Initialized;
     }
+
+    #endregion
+
+    #region Private Methods
+
+    private void PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
+                                      BassAudioEngine.PlayState newState)
+    {
+      Log.Debug("SoniqueViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
+      if (newState == BassAudioEngine.PlayState.Playing)
+      {
+        RenderStarted = false;
+        trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+        if (trackTag != null)
+        {
+          _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+        }
+        else
+        {
+          _songTitle = "   ";
+        }
+
+        _mediaInfo.SongTitle = _songTitle;
+        _mediaInfo.SongFile = Bass.CurrentFile;
+
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+      }
+      else if (newState == BassAudioEngine.PlayState.Paused)
+      {
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
+      }
+      else if (newState == BassAudioEngine.PlayState.Ended)
+      {
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
+        RenderStarted = false;
+      }
+    }
+
+    #endregion
+
+    #region <Base class> Overloads
 
     public override bool InitializePreview()
     {
@@ -88,6 +142,7 @@ namespace MediaPortal.Visualization
 
     public override void Dispose()
     {
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       base.Dispose();
       Close();
     }
@@ -96,20 +151,53 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (VisualizationWindow == null || !VisualizationWindow.Visible)
+        if (VisualizationWindow == null || !VisualizationWindow.Visible || _visParam.VisHandle == 0)
         {
           return 0;
         }
 
-        IntPtr hdc = VisualizationWindow.CompatibleDC;
-
-        int stream = 0;
         if (Bass != null)
         {
-          stream = (int)Bass.GetCurrentVizStream();
+          _mediaInfo.Position = (int) (1000*Bass.CurrentPosition);
+          _mediaInfo.Duration = (int) Bass.Duration;
+        }
+        else
+        {
+          _mediaInfo.Position = 0;
+          _mediaInfo.Duration = 0;
+        }
+        if (IsPreviewVisualization)
+        {
+          _mediaInfo.SongTitle = "Mediaportal Preview";
+        }
+        BassVis.BASSVIS_SetInfo(_visParam, _mediaInfo);
+
+        if (RenderStarted)
+        {
+          return 1;
         }
 
-        BassVis.BASSVIS_SONIQUEVIS_RenderToDC(BASSVISKind.BASSVISKIND_SONIQUE, (IntPtr)_visParam.VisHandle, stream, hdc);
+        int stream = 0;
+
+        if (Bass != null)
+        {
+          stream = (int) Bass.GetCurrentVizStream();
+        }
+        // ckeck is playing
+        int nReturn = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.IsPlaying);
+        if (nReturn == Convert.ToInt32(BASSVIS_PLAYSTATE.Play) && (_visParam.VisHandle != 0))
+        {
+          // Do not Render without playing
+          if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
+          {
+            RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, true);
+          }
+          else
+          {
+            RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, false);
+          }
+        }
+
       }
 
       catch (Exception) {}
@@ -119,36 +207,46 @@ namespace MediaPortal.Visualization
 
     public override bool Close()
     {
-      try
+      if (base.Close())
       {
-        base.Close();
         return true;
       }
+      return false;
+    }
 
-      catch (Exception ex)
-      {
-        Console.WriteLine("Visualization Manager: Sonique Close caused an exception: {0}", ex.Message);
-        return false;
-      }
+    public override bool Config()
+    {
+      return true;
+    }
+
+    public override bool IsSoniqueVis()
+    {
+      return true;
     }
 
     public override bool WindowChanged(VisualizationWindow vizWindow)
     {
       base.WindowChanged(vizWindow);
-
-      if (vizWindow == null)
-      {
-        return false;
-      }
-
-      BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
-
       return true;
     }
 
     public override bool WindowSizeChanged(Size newSize)
     {
-      BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+      // If width or height are 0 the call to CreateVis will fail.  
+      // If width or height are 1 the window is in transition so we can ignore it.
+      if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
+      {
+        return false;
+      }
+
+      // Do a move of the Sonique Viz
+      if (_visParam.VisHandle != 0)
+      {
+        // Hide the Viswindow, so that we don't see it, while moving
+        GUIGraphicsContext.form.Refresh();
+        Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+        BassVis.BASSVIS_Resize(_visParam, 0, 0, newSize.Width, newSize.Height);
+      }
       return true;
     }
 
@@ -164,7 +262,7 @@ namespace MediaPortal.Visualization
         return true;
       }
 
-      // If width or height are 0 the call to BASS_SONIQUEVIS_CreateVis will fail.  
+      // If width or height are 0 the call to CreateVis will fail.  
       // If width or height are 1 the window is in transition so we can ignore it.
       if (VisualizationWindow.Width <= 1 || VisualizationWindow.Height <= 1)
       {
@@ -177,41 +275,49 @@ namespace MediaPortal.Visualization
       }
 
       string vizPath = VizPluginInfo.FilePath;
-      string configFile = Path.Combine(Path.GetDirectoryName(vizPath), "vis.ini");
-
-      if (_visParam.VisHandle != 0)
-      {
-        try
-        {
-          int counter = 0;
-
-          bool bFree = BassVis.BASSVIS_Free(_visParam);
-          while ((!bFree) && (counter <= 10))
-          {
-            bFree = BassVis.BASSVIS_IsFree(_visParam);
-            System.Windows.Forms.Application.DoEvents();
-            counter++;
-          }
-        }
-        catch (AccessViolationException) {}
-
-        _visParam.VisHandle = 0;
-      }
+      string configFile = Path.Combine(System.Windows.Forms.Application.StartupPath, @"musicplayer\plugins\visualizations\Sonique\vis.ini");     
 
       try
       {
+        // Call Play befor use BASSVIS_ExecutePlugin (moved here)
+        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
+
+        // Create the Visualisation
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
         visExec.SON_Flags = BASSVISFlags.BASSVIS_DEFAULT;
-        visExec.SON_PaintHandle = VisualizationWindow.CompatibleDC;
+        visExec.SON_ParentHandle = VisualizationWindow.Handle;
         visExec.Width = VisualizationWindow.Width;
         visExec.Height = VisualizationWindow.Height;
+        visExec.SON_UseOpenGL = VizPluginInfo.UseOpenGL;
+        visExec.SON_ViewportWidth = VizPluginInfo.ViewPortSizeX;
+        visExec.SON_ViewportHeight = VizPluginInfo.ViewPortSizeY;
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
+
+        if (_visParam.VisHandle != 0)
+        {
+          // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
+          BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
+          // Config Settings
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_RENDERTIMING, VizPluginInfo.RenderTiming);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_USESLOWFADE, 1);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_SLOWFADE, 5);
+          BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
+        
+          Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+        }
+
+        firstRun = false;
       }
-      catch (Exception) {}
-      firstRun = false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "Visualization Manager: Sonique visualization engine initialization failed with the following exception {0}",
+          ex);
+      }
+      _Initialized = _visParam.VisHandle != 0;
       return _visParam.VisHandle != 0;
     }
 

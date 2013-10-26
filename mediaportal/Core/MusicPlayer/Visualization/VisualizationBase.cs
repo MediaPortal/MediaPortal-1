@@ -118,6 +118,11 @@ namespace MediaPortal.Visualization
           BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
           break;
+
+        case VisualizationInfo.PluginType.Bassbox:
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_BASSBOX, GUIGraphicsContext.form.Handle);
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_BASSBOX);
+          break;
       }
     }
 
@@ -143,6 +148,16 @@ namespace MediaPortal.Visualization
     }
 
     public virtual bool IsWinampVis()
+    {
+      return false;
+    }
+
+    public virtual bool IsSoniqueVis()
+    {
+      return false;
+    }
+
+    public virtual bool IsBassboxVis()
     {
       return false;
     }
