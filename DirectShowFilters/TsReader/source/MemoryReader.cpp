@@ -24,21 +24,20 @@ HRESULT CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes)
   if ((*dwReadBytes) <=0) return S_FALSE;
   return S_OK;
 }
+
 HRESULT CMemoryReader::Read(BYTE* pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
 {
   *dwReadBytes =m_buffer.ReadFromBuffer(pbData,lDataLength);
   if ((*dwReadBytes) <=0) return S_FALSE;
   return S_OK;
 }
+
 DWORD CMemoryReader::setFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 {
   return 0;
 }
-bool CMemoryReader::HasMoreData(int bytes)
-{
-  return (m_buffer.Size()>=bytes);
-}
+
 int CMemoryReader::HasData()
 {
-  return (m_buffer.Size());
+  return (int)(m_buffer.Size());
 }
