@@ -460,7 +460,9 @@ namespace MediaPortal.Video.Database
           {
             line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
             OnProgress(line1, _url.Title, string.Empty, 60);
-            FetchActorsInMovie();
+            // Do not save movieinfo to database when fetching actors (false paramater) beacuse we don't have all
+            // movie metadata yet
+            FetchActorsInMovie(false);
           }
 
           #endregion
@@ -606,7 +608,7 @@ namespace MediaPortal.Video.Database
     {
       try
       {
-        FetchActorsInMovie();
+        FetchActorsInMovie(true);
       }
       catch (ThreadAbortException) { }
       finally
@@ -623,7 +625,7 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    private void FetchActorsInMovie()
+    private void FetchActorsInMovie(bool updateMovieInfo)
     {
       ArrayList actors = new ArrayList();
       
@@ -685,7 +687,11 @@ namespace MediaPortal.Video.Database
           {
             _movieDetails.DirectorID = actorId;
             _movieDetails.Director = actorName;
-            VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+
+            if (updateMovieInfo)
+            {
+              VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
+            }
           }
         }
       }

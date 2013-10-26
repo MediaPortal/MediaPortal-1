@@ -107,7 +107,6 @@ namespace TvLibrary.Log
     /// Logs the message to the info file
     /// </summary>
     /// <param name="format">The format.</param>
-    /// <param name="arg">The arg.</param>
     void WriteFile(string format, Exception ex);
 
   }

@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2006-2013 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,20 +25,21 @@
 #include <map>
 using namespace std;
 
-#define SERVICE_TYPE_VIDEO_UNKNOWN	-1
-#define SERVICE_TYPE_VIDEO_MPEG1		0x1
-#define SERVICE_TYPE_VIDEO_MPEG2		0x2
-#define SERVICE_TYPE_DCII_OR_LPCM		0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
-#define SERVICE_TYPE_VIDEO_MPEG4		0x10
-#define SERVICE_TYPE_VIDEO_H264		  0x1b
-#define SERVICE_TYPE_AUDIO_UNKNOWN	-1
-#define SERVICE_TYPE_AUDIO_MPEG1		0x3
-#define SERVICE_TYPE_AUDIO_MPEG2		0x4
-#define SERVICE_TYPE_AUDIO_AC3			0x81 //fake
-#define SERVICE_TYPE_AUDIO_AAC			0x0f
+#define SERVICE_TYPE_VIDEO_UNKNOWN  -1
+#define SERVICE_TYPE_VIDEO_MPEG1    0x1
+#define SERVICE_TYPE_VIDEO_MPEG2    0x2
+#define SERVICE_TYPE_DCII_OR_LPCM   0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
+#define SERVICE_TYPE_VIDEO_MPEG4    0x10
+#define SERVICE_TYPE_VIDEO_H264     0x1b
+#define SERVICE_TYPE_AUDIO_UNKNOWN  -1
+#define SERVICE_TYPE_AUDIO_MPEG1    0x3
+#define SERVICE_TYPE_AUDIO_MPEG2    0x4
+#define SERVICE_TYPE_AUDIO_AC3      0x81 //ATSC AC3 stream
+#define SERVICE_TYPE_AUDIO_AAC      0x0f
 #define SERVICE_TYPE_AUDIO_LATM_AAC 0x11 //LATM AAC audio
-
 #define SERVICE_TYPE_AUDIO_DD_PLUS  0x84 
+#define SERVICE_TYPE_AUDIO_E_AC3    0x87 //ATSC E-AC3 stream
+
 #define SERVICE_TYPE_DVB_SUBTITLES1 0x5
 #define SERVICE_TYPE_DVB_SUBTITLES2 0x6
 

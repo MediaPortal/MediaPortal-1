@@ -32,7 +32,6 @@ namespace MediaPortal.Configuration.Sections
   {
     private MPGroupBox groupBoxSettings;
     private MPRadioButton radioButton1;
-    private IContainer components = null;
     private MPCheckBox mpUseRtspCheckBox;
     private MPLabel mpWarningLabel;
     private MPCheckBox mpEnableRecordingFromTimeshiftCheckBox;

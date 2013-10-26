@@ -10,7 +10,7 @@
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 1 VERSIONINFO
-    FILEVERSION     TSREADER_MAJOR_VERSION,TSREADER_VERSION,0
+    FILEVERSION     TSREADER_MAJOR_VERSION,TSREADER_MID_VERSION,TSREADER_VERSION,0
     PRODUCTVERSION  MP_VERSION
     FILEOS          VOS_UNKNOWN
     FILETYPE        VFT_UNKNOWN
@@ -27,7 +27,7 @@ BEGIN
             VALUE "FileDescription", "TsReader.ax"
             VALUE "FileVersion", TSREADER_VERSION_STR
             VALUE "InternalName", "TsReader.ax"
-            VALUE "LegalCopyright", "Copyright © 2005-2012 Team MediaPortal"
+            VALUE "LegalCopyright", "Copyright © 2005-2013 Team MediaPortal"
             VALUE "OriginalFilename", "TsReader.ax"
             VALUE "ProductName", "MediaPortal"
             VALUE "ProductVersion", MP_VERSION_STR
