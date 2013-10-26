@@ -9,7 +9,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*12L)
+#define MAX_MEMORY_BUFFER_SIZE (1024L*1024L*32L)
+#define OVERFLOW_BUFFER_SIZE (MAX_MEMORY_BUFFER_SIZE - (1024L*1024L*4L))
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -35,8 +36,9 @@ bool CMemoryBuffer::IsRunning()
 void CMemoryBuffer::Clear()
 {
   LogDebug("memorybuffer: Clear() %d",m_Array.size());
+	CAutoLock ClearLock(&m_ClearLock);
 	CAutoLock BufferLock(&m_BufferLock);
-	std::vector<BUFFERITEM *>::iterator it = m_Array.begin();
+	ivecBuffers it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
 	{
     BUFFERITEM *item = *it;
@@ -48,9 +50,9 @@ void CMemoryBuffer::Clear()
 	LogDebug("memorybuffer: Clear() done");
 }
 
-DWORD CMemoryBuffer::Size()
+long CMemoryBuffer::Size()
 {
-  return m_BytesInBuffer;
+  return (m_bRunning ? m_BytesInBuffer : -1);
 }
 void CMemoryBuffer::Run(bool onOff)
 {
@@ -71,25 +73,22 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 	if (pbData==NULL) return 0;
 	if (lDataLength<=0) return 0;
   if (!m_bRunning) return 0;
-  while (m_BytesInBuffer < lDataLength)
-  {	
-    if (!m_bRunning) return 0;
-    m_event.ResetEvent();
-    m_event.Wait();
-    if (!m_bRunning) return 0;
-  }
-		
+    		
 	//Log("get..%d/%d",lDataLength,m_BytesInBuffer);
   long bytesWritten = 0;
-	CAutoLock BufferLock(&m_BufferLock);
+	CAutoLock ClearLock(&m_ClearLock);
 	while (bytesWritten < lDataLength)
 	{
-		if(!m_Array.size() || m_Array.size() <= 0)
-    {
-			LogDebug("memorybuffer: read:empty buffer\n");
-			return 0;
+	  BUFFERITEM* item;
+	  { //Context for CAutoLock
+  	  CAutoLock BufferLock(&m_BufferLock);
+  		if(m_BytesInBuffer <= 0 || !m_Array.size() || m_Array.size() <= 0)
+      {
+	      return (DWORD)bytesWritten;
+      }
+	    ivecBuffers it = m_Array.begin();
+  		item = *it;  		
     }
-		BUFFERITEM *item = m_Array.at(0);
     
 		long copyLength = min(item->nDataLength - item->nOffset, lDataLength-bytesWritten);
 		memcpy(&pbData[bytesWritten], &item->data[item->nOffset], copyLength);
@@ -100,12 +99,13 @@ DWORD CMemoryBuffer::ReadFromBuffer(BYTE *pbData, long lDataLength)
 
 		if (item->nOffset >= item->nDataLength)
 		{
-			m_Array.erase(m_Array.begin());
       delete[] item->data;
 			delete item;
+  	  CAutoLock BufferLock(&m_BufferLock);
+			m_Array.erase(m_Array.begin());
 		}
 	}
-	return bytesWritten;
+	return (DWORD)bytesWritten;
 }
 
 HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
@@ -120,27 +120,27 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
   memcpy(item->data, pbData, lDataLength);
   bool sleep=false;
   {
+    if (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
+    {
+  	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
+  	  //Overflow - discard a reasonable chunk of the current buffer
+      while (m_BytesInBuffer > OVERFLOW_BUFFER_SIZE)
+      {
+        sleep=true;
+  		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
+  	    CAutoLock ClearLock(&m_ClearLock);
+    	  BUFFERITEM *itemc = m_Array.back();		
+        int copyLength=itemc->nDataLength - itemc->nOffset;  
+        m_BytesInBuffer-=copyLength;
+        delete[] itemc->data;
+  		  delete itemc;
+  		  m_Array.pop_back();
+      }
+    }
+  
 	  CAutoLock BufferLock(&m_BufferLock);
     m_Array.push_back(item);
     m_BytesInBuffer+=lDataLength;
-
-	  //Log("add..%d/%d",lDataLength,m_BytesInBuffer);
-    while (m_BytesInBuffer > MAX_MEMORY_BUFFER_SIZE)
-    {
-      sleep=true;
-		  LogDebug("memorybuffer:put full buffer (%d)",m_BytesInBuffer);
-		  BUFFERITEM *item = m_Array.at(0);
-      int copyLength=item->nDataLength - item->nOffset;
-
-      m_BytesInBuffer-=copyLength;
-		  m_Array.erase(m_Array.begin());
-      delete[] item->data;
-		  delete item;
-    }
-    if (m_BytesInBuffer>0)
-    {
-      m_event.SetEvent();
-    }
   }
   if (m_pcallback)
   {
@@ -148,7 +148,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength)
   }
   if (sleep)
   {
-    Sleep(10);
+    Sleep(1);
   }
 	return S_OK;
 }
