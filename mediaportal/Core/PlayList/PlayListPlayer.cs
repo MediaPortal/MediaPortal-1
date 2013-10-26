@@ -222,10 +222,11 @@ namespace MediaPortal.Playlists
           }
           break;
 
-          // SV Allows BassMusicPlayer to continuously play
+          // Allows a Musicplayer to continuously play
+          // Note: BASS Player uses a different technique now, because of Gapless Playback
+          // The handling of the message is left for backward compatibility with 3rd party plugins
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
           {
-            // This message is only sent by BASS in gapless/crossfading mode
             PlayNext();
           }
           break;
@@ -381,6 +382,23 @@ namespace MediaPortal.Playlists
 
       PlayListItem item = playlist[iSong];
       return item;
+    }
+
+    public string GetNextSong()
+    {
+      PlayListItem item = GetNextItem();
+      if (item == null)
+      {
+        return string.Empty;
+      }
+
+      _currentItem++; 
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
+      msg.Label = item.FileName;
+      GUIGraphicsContext.SendMessage(msg);
+
+      return item.FileName;
     }
 
     public string GetNext()

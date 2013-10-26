@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2009 Team MediaPortal
+ *  Copyright (C) 2005-2013 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -42,14 +42,6 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_AUD_BUF_SIZE 1024
-#define MAX_VID_BUF_SIZE 640
-#define MAX_SUB_BUF_SIZE 640
-#define BUFFER_LENGTH 0x1000
-#define READ_SIZE (65536)
-#define MIN_READ_SIZE (READ_SIZE/8)
-#define MIN_READ_SIZE_UNC (READ_SIZE/4)
-#define INITIAL_READ_SIZE (READ_SIZE * 512)
 
 //Macro borrowed from MPC-HC/LAV splitter...
 #define MOVE_TO_H264_START_CODE(b, e) while(b <= e-4 && !((*(DWORD *)b == 0x01000000) || ((*(DWORD *)b & 0x00FFFFFF) == 0x00010000))) b++; if((b <= e-4) && *(DWORD *)b == 0x01000000) b++;
@@ -143,9 +135,9 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_mpegPesParser = new CMpegPesParser();
   
   LogDebug(" ");
-  LogDebug("=================== New filter instance =========================");
-  LogDebug("  Logging format: Date Time [InstanceID] [ThreadID] Message....  ");
-  LogDebug("=================================================================");
+  LogDebug("=================== New filter instance ===========================");
+  LogDebug("  Logging format: [Date Time] [InstanceID] [ThreadID] Message....  ");
+  LogDebug("===================================================================");
   LogDebug("demux: Start file read thread");
   
   StartThread();
@@ -356,6 +348,16 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormatType(&FORMAT_WaveFormatEx);
       pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
       break;
+    case SERVICE_TYPE_AUDIO_E_AC3:  //ATSC E-AC3 (DD plus)
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      break;
   }
 }
 // This methods selects the subtitle stream specified
@@ -550,7 +552,10 @@ void CDeMultiplexer::FlushVideo()
   m_bVideoAtEof=false;
   m_MinVideoDelta = 10.0 ;
   _InterlockedAnd(&m_AVDataLowCount, 0) ;
-  m_filter.m_bRenderingClockTooFast=false ;
+  if (!m_bShuttingDown)
+  {
+    m_filter.m_bRenderingClockTooFast=false;
+  }
   m_bSetVideoDiscontinuity=true;
   m_bVideoSampleLate=false;
   
@@ -588,7 +593,10 @@ void CDeMultiplexer::FlushAudio()
   m_bAudioAtEof = false;
   m_MinAudioDelta = 10.0;
   _InterlockedAnd(&m_AVDataLowCount, 0);
-  m_filter.m_bRenderingClockTooFast=false;
+  if (!m_bShuttingDown)
+  {
+    m_filter.m_bRenderingClockTooFast=false;
+  }
   m_bSetAudioDiscontinuity=true;
   m_bAudioSampleLate=false;
   
@@ -711,7 +719,7 @@ CBuffer* CDeMultiplexer::GetVideo(bool earlyStall)
     return NULL;
   }
 
-  if (CheckPrefetchState(!earlyStall, false))
+  if (CheckPrefetchState(true, false))
   {
     //Read some data
     m_bReadAheadFromFile = true;
@@ -764,7 +772,7 @@ CBuffer* CDeMultiplexer::GetAudio(bool earlyStall, CRefTime rtStartTime)
     return NULL;
   }
 
-  if (CheckPrefetchState(!earlyStall, false))
+  if (CheckPrefetchState(true, false))
   {
     //Read some data
     m_bReadAheadFromFile = true;
@@ -1043,6 +1051,7 @@ int CDeMultiplexer::ReadAheadFromFile()
   return SizeRead;
 }
 
+
 /// This method reads the next READ_SIZE bytes from the file
 /// and processes the raw data
 /// When a TS packet has been discovered, OnTsPacket(byte* tsPacket) gets called
@@ -1055,32 +1064,26 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   CAutoLock lock (&m_sectionRead);
   byte buffer[READ_SIZE];
   int dwReadBytes=0;
-  bool result=false;
   //if we are playing a RTSP stream
   if (m_reader->IsBuffer())
-  {
-    // and, the current buffer holds data
-    int nBytesToRead = m_reader->HasData();
-    if (nBytesToRead > sizeof(buffer))
+  {    
+    if (m_reader->HasData() < 0)
     {
-        nBytesToRead=sizeof(buffer);
+      //Buffer not running
+      return -1;
+    }      
+    //Read raw data from the buffer
+    m_reader->Read(buffer, sizeof(buffer), (DWORD*)&dwReadBytes);
+    if (dwReadBytes < sizeof(buffer))
+    {
+      m_bAudioAtEof = true;
+      m_bVideoAtEof = true;
     }
-    else
+    if (dwReadBytes > 0)
     {
-        m_bAudioAtEof = true ;
-        m_bVideoAtEof = true ;
-    }
-    if (nBytesToRead)
-    {
-      //then read raw data from the buffer
-      m_reader->Read(buffer, nBytesToRead, (DWORD*)&dwReadBytes);
-      if (dwReadBytes > 0)
-      {
-        //yes, then process the raw data
-        result=true;
-        OnRawData2(buffer,(int)dwReadBytes);
-        m_LastDataFromRtsp = GET_TIME_NOW();
-      }
+      //yes, then process the raw data
+      OnRawData2(buffer,(int)dwReadBytes);
+      m_LastDataFromRtsp = GET_TIME_NOW();
     }
     else
     {
@@ -1138,6 +1141,9 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   //Failed to read any data
   return 0;
 }
+
+
+
 /// This method gets called via ReadFile() when a new TS packet has been received
 /// if will :
 ///  - decode any new pat/pmt/sdt
@@ -2637,11 +2643,11 @@ int CDeMultiplexer::GetVideoBuffCntFt(double* frameTime)
 bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
 {  
   //Check for near-overflow conditions first
-  if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() > (MAX_AUD_BUF_SIZE - 50)))
+  if (m_filter.GetAudioPin()->IsConnected() && (m_vecAudioBuffers.size() > AUD_BUF_SIZE_PREFETCH_LIM))
   {
     return false;
   }
-  if (m_filter.GetVideoPin()->IsConnected() && (m_vecVideoBuffers.size() > (MAX_VID_BUF_SIZE - 20)))
+  if (m_filter.GetVideoPin()->IsConnected() && (m_vecVideoBuffers.size() > VID_BUF_SIZE_PREFETCH_LIM))
   {
     return false;
   }
@@ -2666,6 +2672,18 @@ bool CDeMultiplexer::CheckPrefetchState(bool isNormal, bool isForced)
   }
 
   return false;
+}
+
+int CDeMultiplexer::GetRTSPBufferSize()
+{
+  if (m_reader)
+  {
+    if (m_reader->IsBuffer()) //RTSP mode
+    {
+      return (m_reader->HasData());
+    }
+  }
+  return -1;
 }
 
 void CDeMultiplexer::GetBufferCounts(int* ACnt, int* VCnt)
@@ -3100,6 +3118,7 @@ void CDeMultiplexer::ThreadProc()
   DWORD timeNow = GET_TIME_NOW();
   DWORD  lastFlushTime = timeNow;
   DWORD  lastFileReadTime = timeNow;
+  int sizeRead = 0;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
   do
@@ -3130,11 +3149,18 @@ void CDeMultiplexer::ThreadProc()
     if (m_bReadAheadFromFile && (timeNow > (lastFileReadTime + (m_filter.IsUNCfile() ? 10 : 5))) )
     {
       lastFileReadTime = timeNow; 
-      ReadAheadFromFile();
-      m_bReadAheadFromFile = false;
+      int sizeReadTemp = ReadAheadFromFile();      
+      if ((sizeReadTemp < 0) || !m_filter.IsRTSP() || (sizeRead >= READ_SIZE))
+      {
+        sizeRead = 0;
+        m_bReadAheadFromFile = false;
+      }
+      else
+      {
+        sizeRead += sizeReadTemp;
+      }
     }
-     
-     
+              
     Sleep(1);
   }
   while (!ThreadIsStopping(11)) ;

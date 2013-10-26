@@ -134,6 +134,10 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 
 //-------------------- Async logging methods -------------------------------------------------
 
+WORD logFileParsed = -1;
+WORD logFileDate = -1;
+MPEVRCustomPresenter* instanceID = 0;
+
 CCritSec m_qLock;
 CCritSec m_logFileLock;
 std::queue<std::string> m_logQueue;
@@ -151,15 +155,46 @@ void LogPath(TCHAR* dest, TCHAR* name)
 
 
 void LogRotate()
-{
+{   
   CAutoLock lock(&m_logFileLock);
+    
   TCHAR fileName[MAX_PATH];
   LogPath(fileName, _T("log"));
+    
+  try
+  {
+    // Get the last file write date
+    WIN32_FILE_ATTRIBUTE_DATA fileInformation; 
+    if (GetFileAttributesEx(fileName, GetFileExInfoStandard, &fileInformation))
+    {  
+      // Convert the write time to local time.
+      SYSTEMTIME stUTC, fileTime;
+      if (FileTimeToSystemTime(&fileInformation.ftLastWriteTime, &stUTC))
+      {
+        if (SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &fileTime))
+        {
+          logFileDate = fileTime.wDay;
+        
+          SYSTEMTIME systemTime;
+          GetLocalTime(&systemTime);
+          
+          if(fileTime.wDay == systemTime.wDay)
+          {
+            //file date is today - no rotation needed
+            return;
+          }
+        } 
+      }   
+    }
+  }  
+  catch (...) {}
+  
   TCHAR bakFileName[MAX_PATH];
   LogPath(bakFileName, _T("bak"));
   _tremove(bakFileName);
   _trename(fileName, bakFileName);
 }
+
 
 
 string GetLogLine()
@@ -183,6 +218,15 @@ UINT CALLBACK LogThread(void* param)
   {
     if ( m_logQueue.size() > 0 ) 
     {
+      SYSTEMTIME systemTime;
+      GetLocalTime(&systemTime);
+      if(logFileParsed != systemTime.wDay)
+      {
+        LogRotate();
+        logFileParsed=systemTime.wDay;
+        LogPath(fileName, _T("log"));
+      }
+
       CAutoLock lock(&m_logFileLock);
       FILE* fp = _tfopen(fileName, _T("a+"));
       if (fp!=NULL)
@@ -196,6 +240,14 @@ UINT CALLBACK LogThread(void* param)
           line = GetLogLine();
         }
         fclose(fp);
+      }
+      else //discard data
+      {
+        string line = GetLogLine();
+        while (!line.empty())
+        {
+          line = GetLogLine();
+        }
       }
     }
     if (m_bLoggerRunning)
@@ -228,6 +280,9 @@ void StopLogger()
     WaitForSingleObject(m_hLogger, INFINITE);	
     m_EndLoggingEvent.Reset();
     m_hLogger = NULL;
+    logFileParsed = -1;
+    logFileDate = -1;
+    instanceID = 0;
   }
 }
 
@@ -252,14 +307,17 @@ void Log(const char *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[5000];
-  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
-    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-    systemTime.wMilliseconds,
+  sprintf_s(msg, 5000,"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+    systemTime.wYear, systemTime.wMonth, systemTime.wDay,
+    systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds, 
+    instanceID,
     GetCurrentThreadId(),
     buffer);
   CAutoLock l(&m_qLock);
-  m_logQueue.push((string)msg);
+  if (m_logQueue.size() < 2000) 
+  {
+    m_logQueue.push((string)msg);
+  }
 };
 
 
@@ -459,6 +517,7 @@ void UnloadEVR()
 
 bool LoadEVR()
 {
+  Log("============================================================");
   Log("Loading EVR libraries");
   TCHAR systemFolder[MAX_PATH];
   TCHAR DLLFileName[MAX_PATH];
@@ -630,11 +689,10 @@ HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPV
 }
 
 
-BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor)
+BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter, DWORD monitor, int monitorIdx, bool disVsyncCorr, bool disMparCorr)
 {
   HRESULT hr;
   m_RenderPrefix = _T("evr");
-  LogRotate();
   // Make sure that we aren't trying to load the DLLs for second time
   if (!m_bEVRLoaded)
   {
@@ -651,7 +709,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter** evrFilter
 
 #ifndef DEFAULT_PRESENTER
 
-  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7());
+  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7(), monitorIdx, disVsyncCorr, disMparCorr);
   m_pVMR9Filter = (*evrFilter);
 
   CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;

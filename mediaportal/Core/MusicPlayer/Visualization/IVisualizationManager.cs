@@ -39,5 +39,7 @@ namespace MediaPortal.Visualization
     VisualizationInfo.PluginType CurrentVisualizationType { get; }
     void ConfigWinampViz();
     void InitWinampVis();
+    void InitSoniqueVis();
+    void InitBassboxVis();
   }
 }
