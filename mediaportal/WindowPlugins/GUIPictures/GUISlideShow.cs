@@ -339,7 +339,6 @@ namespace MediaPortal.GUI.Pictures
     internal bool _returnedFromVideoPlayback = false;
     internal bool _loadVideoPlayback = false;
     public static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
-    private String pausedMusicFileName;
     private double pausedMusicLastPosition;
     public bool pausedMusic;
     private bool resumeSong = false;

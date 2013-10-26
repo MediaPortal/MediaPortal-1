@@ -78,7 +78,11 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Init DSP specific vars
-      BassWaDsp.BASS_WADSP_Init(this.Handle);
+      try
+      {
+        BassWaDsp.BASS_WADSP_Init(this.Handle);
+      }
+      catch { }
     }
 
     #endregion

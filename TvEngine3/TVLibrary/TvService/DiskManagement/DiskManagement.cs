@@ -53,11 +53,21 @@ namespace TvService
         if (card.RecordingFolder.Length > 0)
         {
           string driveLetter = String.Format("{0}:", card.RecordingFolder[0]);
-          if (Utils.getDriveType(driveLetter) == 3)
+
+          if (card.RecordingFolder.StartsWith(@"\"))
+          {
+            if (!drives.Contains(driveLetter))
+            {
+              drives.Add(card.RecordingFolder);
+              Log.Debug("Quota GetDisks: {0}", card.RecordingFolder);
+            }
+          } 
+          else if (Utils.getDriveType(driveLetter) == 3)
           {
             if (!drives.Contains(driveLetter))
             {
               drives.Add(driveLetter);
+              Log.Debug("Quota GetDisks: {0}", driveLetter);
             }
           }
         }
@@ -104,11 +114,20 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
 
       ulong minimiumFreeDiskSpace;
+      string quotaText;
 
-      string quotaText = layer.GetSetting("freediskspace" + drive[0], "51200").Value;
+      if (drive.StartsWith(@"\"))
+       {
+         quotaText = layer.GetSetting("freediskspace" + drive, "51200").Value;
+       }
+      else
+       {
+         quotaText = layer.GetSetting("freediskspace" + drive[0], "51200").Value;
+       }
       try
       {
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
+        Log.Debug("DiskManagement: minimiumFreeDiskSpace for {0} is {1}", drive, quotaText);
       }
       catch (Exception e)
       {

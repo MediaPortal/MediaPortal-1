@@ -45,6 +45,24 @@
 #define INITIAL_BUFF_DELAY 0      // ms units
 #define AV_READY_DELAY 0     // ms units
 #define PRESENT_DELAY (300*10000) // hns units - timestamp compensation offset
+#define AUDIO_STALL_POINT 0.8     // in seconds
+#define VIDEO_STALL_POINT 2.5     // in seconds
+
+//Vid/Aud/Sub buffer sizes and limits
+#define MAX_AUD_BUF_SIZE 1024
+#define MAX_VID_BUF_SIZE 640
+#define MAX_SUB_BUF_SIZE 640
+#define AUD_BUF_SIZE_LOG_LIM (MAX_AUD_BUF_SIZE-100)
+#define VID_BUF_SIZE_LOG_LIM (MAX_VID_BUF_SIZE-60)
+#define AUD_BUF_SIZE_PREFETCH_LIM (MAX_AUD_BUF_SIZE - 50)
+#define VID_BUF_SIZE_PREFETCH_LIM (MAX_VID_BUF_SIZE - 30)
+
+//File/RTSP ReadFromFile() block sizes
+#define READ_SIZE (65536)
+#define MIN_READ_SIZE (READ_SIZE/8)
+#define MIN_READ_SIZE_UNC (READ_SIZE/4)
+#define INITIAL_READ_SIZE (READ_SIZE * 512)
+
 
 using namespace std;
 

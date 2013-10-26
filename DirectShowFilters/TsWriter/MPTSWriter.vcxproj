@@ -213,6 +213,7 @@
     <ClInclude Include="source\TeletextGrabber.h" />
     <ClInclude Include="source\TsChannel.h" />
     <ClInclude Include="source\TsWriter.h" />
+    <ClInclude Include="source\version.h" />
     <ClInclude Include="source\VideoAnalyzer.h" />
     <ClInclude Include="source\videoaudioobserver.h" />
     <ClInclude Include="source\PcrDecoder.h" />
@@ -250,6 +251,9 @@
       <Project>{4b134b4c-4ef6-4647-9cea-a59ff0013357}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="source\TsWriter.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

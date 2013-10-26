@@ -224,7 +224,7 @@ namespace MediaPortal.Visualization
           if (MusicPlayer.BASS.Config.MusicPlayer == AudioPlayer.WasApi)
           {
             RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, true);
-          }
+      }
           else
           {
           RenderStarted = BassVis.BASSVIS_RenderChannel(_visParam, stream, false);
@@ -262,8 +262,8 @@ namespace MediaPortal.Visualization
         else
         {
           Log.Warn("Visualization Manager: Failed to unload Winamp viz module - {0}", VizPluginInfo.Name);
-          _visParam.VisHandle = 0;
-        }
+        _visParam.VisHandle = 0;
+      }
       }           
 
       int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
@@ -330,7 +330,7 @@ namespace MediaPortal.Visualization
       if (VizPluginInfo == null || VizPluginInfo.FilePath.Length == 0 || !File.Exists(VizPluginInfo.FilePath))
       {
         return false;
-      }      
+      }
 
       try
       {

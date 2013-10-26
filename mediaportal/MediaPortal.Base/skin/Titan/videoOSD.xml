@@ -169,34 +169,34 @@
 
 
     <control>
-	<description>Progress Bar</description>
-	<type>tvprogress</type>
-	<id>105</id>
+      <description>Progress Bar</description>
+      <type>tvprogress</type>
+      <id>105</id>
     	<posX>578</posX>
     	<posY>909</posY>
     	<width>758</width>
     	<height>15</height>
-	<toptexture>-</toptexture>
-	<TextureOffsetY>0</TextureOffsetY>
-	<bottomtexture>-</bottomtexture>
-	<texturetick>-</texturetick>
-	<lefttexture>osd_progress_left.png</lefttexture>
-	<midtexture>-</midtexture>
-	<righttexture>-</righttexture>
-	<logotexture>-</logotexture>
-	<fillbackgroundtexture>-</fillbackgroundtexture>
-	<fillbgxoff>-3</fillbgxoff>
-	<fillbgyoff>0</fillbgyoff>
-	<filltexture1>osd_progress_mid.png</filltexture1>
-	<filltexture2>osd_progress_mid.png</filltexture2>
-	<filltexture3>osd_progress_mid_orange.png</filltexture3>
-	<markertexture>osd_progress_comskip_marker.png</markertexture>
-	<fillheight>15</fillheight>
-	<label>#percentage</label>
-        <label1>#percent2</label1>
-        <label2>#percent3</label2>
-	<labelmarkerstarts>#jumppoints</labelmarkerstarts>
-        <labelmarkerends>#chapters</labelmarkerends>
+      <toptexture>-</toptexture>
+      <TextureOffsetY>0</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <markertexture>osd_progress_comskip_marker.png</markertexture>
+      <fillheight>15</fillheight>
+      <label>#percentage</label>
+      <label1>#percent2</label1>
+      <label2>#percent3</label2>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
     </control>
 
 		<control>
