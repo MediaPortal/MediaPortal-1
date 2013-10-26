@@ -192,6 +192,11 @@ namespace TvPlugin
           return;
         }
 
+        if (!TVHome.Connected)
+        {
+          return;
+        }
+
         // Skin settings may have changed via the MP GUI, reload them.
         LoadSkinSettings();
 

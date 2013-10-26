@@ -27,6 +27,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
@@ -930,7 +931,42 @@ namespace DShowNET.Helper
             }
 
             ReleaseComObject(i.pGraph);
-            hr = graphBuilder.Render(pins[0]);
+            try
+            {
+              if (pinName == "Audio")
+              {
+                try
+                {
+                  #pragma warning disable 168
+                  VolumeHandler vh = VolumeHandler.Instance;
+                  #pragma warning restore 168
+                  // vh.Volume = 19660500 that means Audio endpoint device are not available.
+                  if (vh.Volume == 19660500) // Check if new audio device is connected
+                  {
+                    VolumeHandler.Dispose();
+                    #pragma warning disable 168
+                    vh = VolumeHandler.Instance;
+                    #pragma warning restore 168
+                  }
+                  if (vh.Volume != 19660500)
+                  {
+                    hr = graphBuilder.Render(pins[0]);
+                  }
+                }
+                catch (Exception exception)
+                {
+                  Log.Warn("DirectShowUtil: Could not initialize volume handler (don't connect Audio Pin) : ", exception.Message);
+                }
+              }
+              else
+              {
+                hr = graphBuilder.Render(pins[0]);
+              }
+            }
+            catch (Exception)
+            {
+              // Can't handle pin out
+            }
             if (hr != 0)
               Log.Debug(" - failed");
           }

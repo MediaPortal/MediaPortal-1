@@ -645,7 +645,7 @@ namespace MediaPortal.Video.Database
           int lFileId = -1;
           strFileName = strFileName.Trim();
 
-          string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName LIKE '{2}'",
+        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
                                         lMovieId, lPathId, strFileName);
           SQLiteResultSet results = m_db.Execute(strSQL);
 
@@ -714,11 +714,10 @@ namespace MediaPortal.Video.Database
         }
         
         string strPath, strFileName;
-        string cdlabel = GetDVDLabel(strFilenameAndPath);
-        DatabaseUtility.RemoveInvalidChars(ref cdlabel);
         strFilenameAndPath = strFilenameAndPath.Trim();
         DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
         lPathId = GetPath(strPath);
         
         if (lPathId < 0)
@@ -726,50 +725,17 @@ namespace MediaPortal.Video.Database
           return -1;
         }
 
-        string strSQL = String.Format("SELECT * FROM files WHERE idpath={0}", lPathId);
+        string strSQL = String.Format("SELECT * FROM files WHERE idpath={0} AND strFilename = '{1}'", lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count > 0)
         {
-          for (int iRow = 0; iRow < results.Rows.Count; ++iRow)
-          {
-            string strFname = DatabaseUtility.Get(results, iRow, "strFilename");
-            
-            if (bExact)
-            {
-              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
-              {
-                // was just returning 'true' here, but this caused problems with
-                // the bookmarks as these are stored by fileid. forza.
                 int lFileId;
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idFile"), out lFileId);
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out lFileId);
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idMovie"), out lMovieId);
                 return lFileId;
               }
             }
-            else
-            {
-              if (Util.Utils.ShouldStack(strFname, strFileName))
-              {
-                int lFileId;
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idFile"), out lFileId);
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
-                return lFileId;
-              }
-              
-              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
-              {
-                // was just returning 'true' here, but this caused problems with
-                // the bookmarks as these are stored by fileid. forza.
-                int lFileId;
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idFile"), out lFileId);
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
-                return lFileId;
-              }
-            }
-          }
-        }
-      }
       catch (ThreadAbortException)
       {
         // Will be logged in thread main code
@@ -898,18 +864,24 @@ namespace MediaPortal.Video.Database
           return -1;
         }
         
-        string cdlabel = GetDVDLabel(strPath);
-        DatabaseUtility.RemoveInvalidChars(ref cdlabel);
+        string cdlabel = string.Empty;
+        string strSQL = string.Empty;
         strPath = strPath.Trim();
         
         if (Util.Utils.IsDVD(strPath))
         {
           // It's a DVD! Any drive letter should be OK as long as the label and rest of the path matches
           strPath = strPath.Replace(strPath.Substring(0, 1), "_");
+          cdlabel = GetDVDLabel(strPath);
+          DatabaseUtility.RemoveInvalidChars(ref cdlabel);
+          strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}' AND cdlabel = '{1}'", strPath,
+                                      cdlabel);
+        }
+        else
+        {
+          strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}'", strPath);
         }
         
-        string strSQL = String.Format("SELECT * FROM path WHERE strPath LIKE '{0}' AND cdlabel like '{1}'", strPath,
-                                      cdlabel);
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count > 0)
@@ -993,6 +965,38 @@ namespace MediaPortal.Video.Database
       int lPathId;
       int lMovieId;
       return GetFile(strFilenameAndPath, out lPathId, out lMovieId, true);
+    }
+
+    private int GetFileId(int movieId)
+    {
+      int fileId = -1;
+
+      try
+      {
+        if (null == m_db)
+        {
+          return -1;
+        }
+
+        string strSQL = String.Format("SELECT * FROM files WHERE idMovie = {0} ORDER BY strFilename", movieId);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+
+        if (results.Rows.Count > 0)
+        {
+          Int32.TryParse(DatabaseUtility.Get(results, 0, "idFile"), out fileId);
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+
+      return fileId;
     }
 
     public void GetFilesForMovie(int lMovieId, ref ArrayList files)
@@ -1189,10 +1193,14 @@ namespace MediaPortal.Video.Database
       try
       {
         if (strFilenameAndPath == String.Empty || !Util.Utils.IsVideo(strFilenameAndPath))
+        {
           return;
+        }
 
         if (strFilenameAndPath.IndexOf("remote:") >= 0 || strFilenameAndPath.IndexOf("http:") >= 0)
+        {
           return;
+        }
 
         int fileID = GetFileId(strFilenameAndPath);
 
@@ -1215,6 +1223,57 @@ namespace MediaPortal.Video.Database
           }
           catch (Exception) { }
         }
+
+        mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
+        mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
+        mediaInfo.AspectRatio = DatabaseUtility.Get(results, 0, "aspectRatio");
+
+        int hasSubtitles;
+        int.TryParse(DatabaseUtility.Get(results, 0, "hasSubtitles"), out hasSubtitles);
+
+        if (hasSubtitles != 0)
+        {
+          mediaInfo.HasSubtitles = true;
+        }
+        else
+        {
+          mediaInfo.HasSubtitles = false;
+        }
+
+        mediaInfo.AudioCodec = DatabaseUtility.Get(results, 0, "audioCodec");
+        mediaInfo.AudioChannels = DatabaseUtility.Get(results, 0, "audioChannels");
+        mediaInfo.Duration = GetVideoDuration(fileID);
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase mediainfo exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    private void GetVideoFilesMediaInfo(int movieId, ref VideoFilesMediaInfo mediaInfo)
+    {
+      try
+      {
+        if (movieId < 1)
+        {
+          return;
+        }
+
+        int fileID = GetFileId(movieId);
+
+        if (fileID < 1 )
+        {
+          return;
+        }
+
+        // Get media info from database
+        string strSQL = String.Format("SELECT * FROM filesmediainfo WHERE idFile={0}", fileID);
+        SQLiteResultSet results = m_db.Execute(strSQL);
 
         mediaInfo.VideoCodec = DatabaseUtility.Get(results, 0, "videoCodec");
         mediaInfo.VideoResolution = DatabaseUtility.Get(results, 0, "videoResolution");
@@ -2538,10 +2597,9 @@ namespace MediaPortal.Video.Database
             Tokens f = new Tokens(szGenres, new[] {'/', '|'});
             foreach (string strGenre in f)
             {
-              strGenre.Trim();
-              if (!string.IsNullOrEmpty(strGenre))
+              if (!string.IsNullOrEmpty(strGenre.Trim()))
               {
-                int lGenreId = AddGenre(strGenre);
+                int lGenreId = AddGenre(strGenre.Trim());
                 vecGenres.Add(lGenreId);
               }
             }
@@ -2549,7 +2607,7 @@ namespace MediaPortal.Video.Database
           else
           {
             string strGenre = details.Genre;
-            strGenre.Trim();
+            strGenre = strGenre.Trim();
             int lGenreId = AddGenre(strGenre);
             vecGenres.Add(lGenreId);
           }
@@ -3079,6 +3137,10 @@ namespace MediaPortal.Video.Database
         int duration;
         Int32.TryParse(DatabaseUtility.Get(results, 0, "duration"), out duration);
         return duration;
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in main thread code  
       }
       catch (Exception ex)
       {
@@ -4228,17 +4290,8 @@ namespace MediaPortal.Video.Database
           if (movieinfoTable)
           {
             SetMovieDetails(ref movie, i, results);
-            // FanArt search need this (for database GUI view)
-            // Share view is handled in GUIVideoFiles class)
-            ArrayList files = new ArrayList();
-            GetFilesForMovie(movie.ID, ref files);
-            
-            if (files.Count > 0)
-            {
-              // We need only first file if there is multiple files for one movie, fanart class will handle filename
-              movie.File = files[0].ToString();
+            movie.File = movie.VideoFileName;
             }
-          }
           movies.Add(movie);
         }
       }
@@ -6729,7 +6782,7 @@ namespace MediaPortal.Video.Database
         details.VideoFilePath = details.Path;
 
         VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
-        GetVideoFilesMediaInfo(movieFilename, ref mInfo, false);
+        GetVideoFilesMediaInfo(details.ID, ref mInfo);
         details.MediaInfo = mInfo;
       }
 
