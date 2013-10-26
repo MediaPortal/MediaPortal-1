@@ -73,12 +73,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public delegate void PlaybackProgressHandler(object sender, double duration, double curPosition);
 
-    public delegate void TrackPlaybackCompletedHandler(g_Player.MediaType type, int stoptime, string filename);
-
-    public static event TrackPlaybackCompletedHandler TrackPlaybackCompleted;
-
-    public delegate void CrossFadeHandler(object sender, string filePath);
-
     public delegate void PlaybackStateChangedDelegate(object sender, PlayState oldState, PlayState newState);
 
     public event PlaybackStateChangedDelegate PlaybackStateChanged;
