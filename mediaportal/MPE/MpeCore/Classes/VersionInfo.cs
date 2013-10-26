@@ -26,6 +26,31 @@ namespace MpeCore.Classes
 {
   public class VersionInfo : IComparable
   {
+    protected bool Equals(VersionInfo other)
+    {
+      return string.Equals(_major, other._major) && string.Equals(_minor, other._minor) && string.Equals(_build, other._build) && string.Equals(_revision, other._revision);
+    }
+
+    public override bool Equals(object obj)
+    {
+      if (ReferenceEquals(null, obj)) return false;
+      if (ReferenceEquals(this, obj)) return true;
+      if (obj.GetType() != this.GetType()) return false;
+      return Equals((VersionInfo) obj);
+    }
+
+    public override int GetHashCode()
+    {
+      unchecked
+      {
+        int hashCode = (_major != null ? _major.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_minor != null ? _minor.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_build != null ? _build.GetHashCode() : 0);
+        hashCode = (hashCode*397) ^ (_revision != null ? _revision.GetHashCode() : 0);
+        return hashCode;
+      }
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VersionInfo"/> class.
     /// Version number components are stored in string format

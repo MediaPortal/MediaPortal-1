@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2012 Team MediaPortal
+ *  Copyright (C) 2005-2013 Team MediaPortal
  *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -226,10 +226,9 @@ void LogDebug(const char *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[5000];
-  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%8x] [%4x] %s\n",
-    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-    systemTime.wMilliseconds,
+  sprintf_s(msg, 5000,"[%04.4d-%02.2d-%02.2d %02.2d:%02.2d:%02.2d,%03.3d] [%8x] [%4x] - %s\n",
+    systemTime.wYear, systemTime.wMonth, systemTime.wDay,
+    systemTime.wHour, systemTime.wMinute, systemTime.wSecond, systemTime.wMilliseconds,
     instanceID,
     GetCurrentThreadId(),
     buffer);
@@ -318,7 +317,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
 
-  LogDebug("------------- v0.5.%d -------------", TSREADER_VERSION);
+  LogDebug("------------- v%d.%d.%d.0 -------------", TSREADER_MAJOR_VERSION, TSREADER_MID_VERSION, TSREADER_VERSION);
   
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -485,6 +484,10 @@ CTsReaderFilter::~CTsReaderFilter()
   LogDebug("CTsReaderFilter::dtor");
   //stop duration thread
   StopThread(5000);
+  
+  //stop demux flush/read ahead thread
+  m_demultiplexer.m_bShuttingDown = true;
+  m_demultiplexer.StopThread(5000);
   
   HRESULT hr = m_pAudioPin->Disconnect();
   delete m_pAudioPin;
@@ -1895,10 +1898,11 @@ void CTsReaderFilter::ThreadProc()
           CRefTime firstVideo, lastVideo;
           int cntA = m_demultiplexer.GetAudioBufferPts(firstAudio, lastAudio);
           int cntV = m_demultiplexer.GetVideoBufferPts(firstVideo, lastVideo);
+          long rtspBuffSize = m_demultiplexer.GetRTSPBufferSize();
                   
-          if ((cntA > 300) || (cntV > 300) || m_bEnableBufferLogging)
+          if ((cntA > AUD_BUF_SIZE_LOG_LIM) || (cntV > VID_BUF_SIZE_LOG_LIM) || m_bEnableBufferLogging)
           {
-            LogDebug("Buffers : A/V = %d/%d, A last : %03.3f, V Last : %03.3f", cntA, cntV, (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f);
+            LogDebug("Buffers : A/V = %d/%d, RTSP = %d, A last : %03.3f, V Last : %03.3f", cntA, cntV, rtspBuffSize, (float)lastAudio.Millisecs()/1000.0f, (float)lastVideo.Millisecs()/1000.0f);
           }
         }
                           

@@ -92,6 +92,7 @@ namespace MediaPortal.Mixer
     {
       lock (this)
       {
+        _isDigital = isDigital;
         if (isDigital)
         {
           _componentType = MixerComponentType.SourceWave;
@@ -102,15 +103,18 @@ namespace MediaPortal.Mixer
         }
         // not enough to change this..
 
-        if (OSInfo.OSInfo.VistaOrLater() & (_componentType == MixerComponentType.DestinationSpeakers))
+        if (OSInfo.OSInfo.VistaOrLater())
         {
           _audioDefaultDevice = new AEDev();
           _audioDefaultDevice.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
 
           _isMuted = _audioDefaultDevice.Muted;
-          _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum); 
+          _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
 
-          return;
+          if (!isDigital)
+          {
+            return;
+          }
         }
 
         if (_mixerEventListener == null)
@@ -324,11 +328,19 @@ namespace MediaPortal.Mixer
       bool wasMuted = _isMuted;
       int lastVolume = _volume;
       _isMuted = _audioDefaultDevice.Muted;
+      if (_isDigital)
+      {
+        _isMutedVolume = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
+      }
       _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
 
       if (ControlChanged != null && (wasMuted != _isMuted || lastVolume != _volume))
       {
         ControlChanged(null, null);
+        if (_isDigital && OSInfo.OSInfo.VistaOrLater() && (_isMutedVolume != IsMuted))
+        {
+          SetValue(_mixerControlDetailsMute, _isMuted);
+        }
       }
     }
 
@@ -352,6 +364,10 @@ namespace MediaPortal.Mixer
           {
             //SetValue(_mixerControlDetailsMute, _isMuted = value);
             SetValue(_mixerControlDetailsMute, value);
+            if (_isDigital && OSInfo.OSInfo.VistaOrLater())
+            {
+              _audioDefaultDevice.Muted = value;
+            }
           }
         }
       }
@@ -377,6 +393,10 @@ namespace MediaPortal.Mixer
           {
             //SetValue(_mixerControlDetailsVolume, _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
             SetValue(_mixerControlDetailsVolume, Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
+            if (_isDigital && OSInfo.OSInfo.VistaOrLater())
+            {
+              _audioDefaultDevice.MasterVolume = (float)((float)(value) / (float)(this.VolumeMaximum));
+            }
           }
         }
       }
@@ -399,11 +419,13 @@ namespace MediaPortal.Mixer
     private MixerComponentType _componentType = MixerComponentType.DestinationSpeakers;
     private IntPtr _handle;
     private bool _isMuted;
+    private bool _isMutedVolume;
     private static MixerEventListener _mixerEventListener;
     private int _volume;
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsVolume;
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsMute;
     private AEDev _audioDefaultDevice;
+    private bool _isDigital;
 
     #endregion Fields
   }

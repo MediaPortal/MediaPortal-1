@@ -365,7 +365,10 @@ namespace SetupTv
         // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
         foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
         {
-          parentTreeNode.Nodes.Remove(childNode);
+          if (childNode != null)
+          {
+            parentTreeNode.Nodes.Remove(childNode);
+          }
         }
       }
     }

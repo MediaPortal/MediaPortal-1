@@ -113,7 +113,7 @@ namespace MediaPortal.Configuration.Sections
       {
         textBoxDaemonTools.Text = GetInstalledSoftware("daemon tools", false);
       }
-      if ((comboDriveType.SelectedItem == null || comboDriveType.SelectedItem == string.Empty) && textBoxDaemonTools.Text.ToLowerInvariant().Contains("virtualclonedrive"))
+      if ((comboDriveType.SelectedItem == null || (string) comboDriveType.SelectedItem == string.Empty) && textBoxDaemonTools.Text.ToLowerInvariant().Contains("virtualclonedrive"))
       {
         comboDriveType.SelectedItem = "vcd";
       }
