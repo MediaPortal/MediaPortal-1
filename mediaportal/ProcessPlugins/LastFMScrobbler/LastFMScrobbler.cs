@@ -82,10 +82,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       g_Player.PlayBackEnded += OnPlayBackEnded;
       g_Player.PlayBackChanged += OnPlayBackChanged;
       g_Player.PlayBackStopped += OnPlayBackStopped;
-      // BASS PLayer does it's own handling of the playlist, without invoking g_Player, so we
-      // will miss the g_player events and therefor need to listen also to BASS events.
-      MusicPlayer.BASS.BassAudioEngine.PlaybackStart += OnPlayBackStarted;
-      MusicPlayer.BASS.BassAudioEngine.TrackPlaybackCompleted += OnPlayBackChanged;
     }
 
     public void Stop()
