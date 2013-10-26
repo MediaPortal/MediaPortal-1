@@ -45,7 +45,6 @@ namespace MediaPortal.Music.Database
     private static readonly Regex ArtistURLRegEx = new Regex(ArtistRegExpPattern, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
     private static readonly Regex BracketRegEx = new Regex(@"\s*[\(\[\{].*?[\]\)\}]\s*", RegexOptions.Compiled);
     private static readonly Regex PunctuationRegex = new Regex(@"[^\w\s]|_", RegexOptions.Compiled);
-    private static bool _strippedPrefixes;
 
     #endregion
 

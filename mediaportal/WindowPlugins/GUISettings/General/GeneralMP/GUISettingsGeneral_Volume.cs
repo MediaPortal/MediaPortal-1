@@ -390,7 +390,7 @@ namespace WindowPlugins.GUISettings
 
         customTable = builder.ToString();
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         customTable = string.Empty;
       }

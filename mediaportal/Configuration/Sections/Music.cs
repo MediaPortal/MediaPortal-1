@@ -126,6 +126,8 @@ namespace MediaPortal.Configuration.Sections
     private string _soundDevice = null;
     private string _soundDeviceID = "";
 
+    private bool _initialising = true;
+
     #endregion
 
     #region ctor
@@ -179,8 +181,10 @@ namespace MediaPortal.Configuration.Sections
     {
       base.OnLoad(e);
 
+      _initialising = true;
       trackBarBuffering_Scroll(null, null);
       trackBarCrossfade_Scroll(null, null);
+      soniqueRenderTiming_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
@@ -217,13 +221,15 @@ namespace MediaPortal.Configuration.Sections
 
         #region General Bass Player Settings
 
+        // Remove the Event Handler, so that the settings for Crossfading a preserved
+        GaplessPlaybackChkBox.CheckedChanged -= GaplessPlaybackChkBox_CheckedChanged;
+
         int crossFadeMS = xmlreader.GetValueAsInt("audioplayer", "crossfade", 4000);
 
         if (crossFadeMS < 0)
         {
           crossFadeMS = 4000;
         }
-
         else if (crossFadeMS > trackBarCrossfade.Maximum)
         {
           crossFadeMS = trackBarCrossfade.Maximum;
@@ -237,7 +243,6 @@ namespace MediaPortal.Configuration.Sections
         {
           bufferingMS = trackBarBuffering.Minimum;
         }
-
         else if (bufferingMS > trackBarBuffering.Maximum)
         {
           bufferingMS = trackBarBuffering.Maximum;
@@ -250,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
         GaplessPlaybackChkBox.Checked = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);
         UseSkipStepsCheckBox.Checked = xmlreader.GetValueAsBool("audioplayer", "useSkipSteps", false);
         FadeOnStartStopChkbox.Checked = xmlreader.GetValueAsBool("audioplayer", "fadeOnStartStop", true);
-        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
+        StreamOutputLevelNud.Value = (decimal)xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 100);
 
         cbUpmixMono.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixMono", 0);
         cbUpmixStereo.SelectedIndex = xmlreader.GetValueAsInt("audioplayer", "upMixStereo", 0);
@@ -261,6 +266,9 @@ namespace MediaPortal.Configuration.Sections
         tbResumeAfter.Text = xmlreader.GetValueAsString("audioplayer", "resumeAfter", "0");
         cbResumeSelect.Text = xmlreader.GetValueAsString("audioplayer", "resumeSelect", "");
         tbResumeSearchValue.Text = xmlreader.GetValueAsString("audioplayer", "resumeSearch", "");
+
+        // Re-add the previously removed Event Handler
+        GaplessPlaybackChkBox.CheckedChanged += GaplessPlaybackChkBox_CheckedChanged;
 
         #endregion
 
@@ -295,6 +303,17 @@ namespace MediaPortal.Configuration.Sections
         {
           VizPluginInfo = new VisualizationInfo((VisualizationInfo.PluginType)vizType, vizPath, vizName, vizClsid,
                                                 vizPreset);
+        }
+
+        ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+        soniqueRenderTiming.Value = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+        comboViewPortSizes.SelectedIndex = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+
+        if (vizType == (int) VisualizationInfo.PluginType.Sonique)
+        {
+          VizPluginInfo.UseOpenGL = ckUseOpenGL.Checked;
+          VizPluginInfo.RenderTiming = soniqueRenderTiming.Value;
+          VizPluginInfo.ViewPortSize = comboViewPortSizes.SelectedIndex;
         }
 
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
@@ -472,7 +491,7 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
-        #region Visualization Settings););
+        #region Visualization Settings
         if (IVizMgr != null && VisualizationsCmbBox.SelectedIndex > 0) // Something else than "None" selected
         {
           List<VisualizationInfo> vizPluginsInfo = IVizMgr.VisualizationPluginsInfo;
@@ -489,6 +508,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", vizPluginsInfo[selIndex].FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
+          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
@@ -499,6 +521,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", VizPluginInfo.FilePath);
           xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
+          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else
@@ -508,6 +533,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "path", "");
           xmlwriter.SetValue("musicvisualization", "clsid", "");
           xmlwriter.SetValue("musicvisualization", "preset", "");
+          xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", false);
+          xmlwriter.SetValue("musicvisualization", "renderTiming", "");
+          xmlwriter.SetValue("musicvisualization", "viewPort", "");
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", false);
         }
 
@@ -853,6 +881,12 @@ namespace MediaPortal.Configuration.Sections
               }
             }
           }
+          if (soundDeviceComboBox.Items.Count == 0)
+          {
+            // Add default sound device to avoid crash.
+            soundDeviceComboBox.Items.Add(new SoundDeviceItem("Default Sound Device", ""));
+            soundDeviceComboBox.Items[0] = new SoundDeviceItem("Default Sound Device", "");
+          }
           break;
       }
     }
@@ -994,8 +1028,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void trackBarCrossfade_Scroll(object sender, EventArgs e)
     {
-      float xFadeSecs = 0;
-      xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
+      float xFadeSecs = (float)trackBarCrossfade.Value / 1000f;
       CrossFadeSecondsLbl.Text = string.Format("{0:f2} Seconds", xFadeSecs);
     }
 
@@ -1005,6 +1038,10 @@ namespace MediaPortal.Configuration.Sections
       BufferingSecondsLbl.Text = string.Format("{0:f2} Seconds", bufferingSecs);
     }
 
+    private void soniqueRenderTiming_Scroll(object sender, EventArgs e)
+    {
+      soniqueRenderTimingLbl.Text = string.Format("{0} ms", soniqueRenderTiming.Value);
+    }
 
     private void VisualizationsCmbBox_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -1031,20 +1068,26 @@ namespace MediaPortal.Configuration.Sections
 
       if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Winamp)
       {
-        groupBoxWinampVis.Enabled = true;
+        groupBoxWinampVis.Visible = true;
+        groupBoxSoniqueVis.Visible = false;
+      }
+      else if (VizPluginInfo.VisualizationType == VisualizationInfo.PluginType.Sonique)
+      {
+        groupBoxWinampVis.Visible = false;
+        groupBoxSoniqueVis.Visible = true;
+        groupBoxSoniqueVis.Show();
       }
       else
       {
-        groupBoxWinampVis.Enabled = false;
+        groupBoxWinampVis.Visible = false;
+        groupBoxSoniqueVis.Visible = false;
       }
 
       if (VizPluginInfo.HasPresets)
       {
         VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
-        //SuppressVisualizationRestart = true;
         VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
         VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
-        //SuppressVisualizationRestart = false;
       }
       else
       {
@@ -1088,6 +1131,25 @@ namespace MediaPortal.Configuration.Sections
       CrossFadingLbl.Enabled = !gaplessEnabled;
       trackBarCrossfade.Enabled = !gaplessEnabled;
       CrossFadeSecondsLbl.Enabled = !gaplessEnabled;
+      
+      if (_initialising)
+      {
+        _initialising = false;
+        return;
+      }
+
+      if (!gaplessEnabled)
+      {
+        trackBarCrossfade.Value = 4000;  // Set 4 seconds as default for fading
+        trackBarCrossfade_Scroll(trackBarCrossfade, new EventArgs());
+        FadeOnStartStopChkbox.Checked = true;
+      }
+      else
+      {
+        trackBarCrossfade.Value = 0;
+        trackBarCrossfade_Scroll(trackBarCrossfade, new EventArgs());
+        FadeOnStartStopChkbox.Checked = false;
+      }
     }
 
     private void EnableStatusOverlaysChkBox_CheckedChanged(object sender, EventArgs e)
@@ -1144,9 +1206,10 @@ namespace MediaPortal.Configuration.Sections
       {
         VisualizationInfo pluginInfo = vizPluginsInfo[i];
 
-        if (pluginInfo.IsIdenticalTo(VizPluginInfo, true))
+        if (pluginInfo.IsIdenticalTo(VizPluginInfo))
         {
           selectedIndex = i;
+          pluginInfo.PresetIndex = VizPluginInfo.PresetIndex;
         }
 
         VisualizationsCmbBox.Items.Add(pluginInfo);

@@ -28,7 +28,8 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <ApplicationManifest>Configuration.exe.manifest</ApplicationManifest>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -705,7 +706,6 @@
     <EmbeddedResource Include="Sections\BDZoom.resx">
       <DependentUpon>BDZoom.cs</DependentUpon>
     </EmbeddedResource>
-
     <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -1,0 +1,544 @@
+//css_reference "core.dll";
+//css_reference "Databases.dll";
+//css_reference "utils.dll";
+
+using System;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Web;
+using System.Text.RegularExpressions;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
+using System.Collections;
+
+internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInternalMovieImagesGrabber
+{
+  public ArrayList GetIMDBImages(string imdbID, bool defaultOnly)
+  {
+    string defaultPic = "";
+    ArrayList imdbImages = new ArrayList();
+
+    // First lets take default IMDB cover because maybe it is not in the IMDB Product thumbs group
+    // Get Main Movie page and find default poster link
+    string defaultPosterPageLinkURL = string.Format("http://www.imdb.com/title/{0}", imdbID);
+    string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
+
+    string regexBlockPattern = "id=\"img_primary\">.*?itemprop=\"image\"";
+    string posterBlock = Regex.Match(strBodyPicDefault, regexBlockPattern, RegexOptions.Singleline).Value;
+    Match jpgDefault = Regex.Match(posterBlock, "src=\"(?<image>.*?_V1)", RegexOptions.Singleline);
+
+    if (jpgDefault.Success)
+    {
+      string posterUrl = HttpUtility.HtmlDecode(jpgDefault.Groups["image"].Value);
+      
+      if (!string.IsNullOrEmpty(posterUrl))
+      {
+        imdbImages.Add(posterUrl + "_SX400.jpg");
+        // Remember default PIC, maybe it is in the Product Group so we can escape duplicate
+        defaultPic = posterUrl + "_SX400.jpg";
+      }
+    }
+
+    if (defaultOnly)
+    {
+      return imdbImages;
+    }
+
+    // Then get all we can from IMDB Product thumbs group for movie
+    string posterPageLinkURL = string.Format("http://www.imdb.com/title/{0}/mediaindex?refine=product", imdbID);
+    string strBodyThumbs = GetPage(posterPageLinkURL, "utf-8");
+
+    // Get all thumbs links and put it in the PIC group
+    MatchCollection thumbs = Regex.Matches(strBodyThumbs, "src=\"(?<PIC>http://ia.media-imdb.com/images/M/[^_]+_V1)");
+    
+    foreach (Match thumb in thumbs)
+    {
+      // Get picture
+      string posterUrl = HttpUtility.HtmlDecode(thumb.Groups["PIC"].Value) + "_SX400.jpg";
+
+      // No default Picture again if it's here
+      if (!string.IsNullOrEmpty(posterUrl) && posterUrl != defaultPic)
+      {
+        imdbImages.Add(posterUrl);
+      }
+    }
+
+    return imdbImages;
+  }
+
+  public ArrayList GetIMPAwardsImages(string movieName, string imdbMovieID)
+  {
+    ArrayList impAwardsImages = new ArrayList();
+
+    movieName = movieName.Replace(" ", "+");
+    string resultGoogle = string.Empty;
+    string resultImpAw = string.Empty;
+    string url = string.Format("http://www.google.com/search?as_q={0}+poster&as_sitesearch=www.impawards.com", movieName);
+    IMPAwardsSearch x = new IMPAwardsSearch();
+    WebClient wc = new WebClient();
+
+    try
+    {
+      wc.Proxy.Credentials = CredentialCache.DefaultCredentials;
+      byte[] buffer = wc.DownloadData(url);
+      resultGoogle = Encoding.UTF8.GetString(buffer);
+    }
+    catch (Exception)
+    {
+      return impAwardsImages;
+    }
+    finally
+    {
+      wc.Dispose();
+    }
+
+    Match mGoogle = Regex.Match(resultGoogle, @"www.impawards.com[^""& <].*?(?<year>\d{4}/).*?html");
+
+    while (mGoogle.Success)
+    {
+      // We need all links on Google page not only first because it can be wrong movie
+      // All links is checked against ttnumber so no wrong cover anymore
+      Match mImpAw = mGoogle;
+      // Check if /year/ is in link, if no that is no cover
+      string year = mImpAw.Groups["year"].Value.Replace("/", "");
+      if (year != "")
+      {
+        string url2 = mImpAw.Value;
+        url2 = "http://" + url2;
+        try
+        {
+          byte[] buffer = wc.DownloadData(url2);
+          resultImpAw = Encoding.UTF8.GetString(buffer);
+        }
+        catch (Exception)
+        {
+          return impAwardsImages;
+        }
+        finally
+        {
+          wc.Dispose();
+        }
+        // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
+        Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7}");
+
+        if (ttcheck.Value != imdbMovieID)
+        {
+          break;
+        }
+
+        Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
+        // get main poster displayed on html-page
+        mImpAw = Regex.Match(resultImpAw, "posters/.*?.jpg");
+
+        if (mImpAw.Success)
+        {
+          // Check duplicate entries because Google page links can point to
+          // same cover more than once so we don't need them
+          int check = 0;
+
+          foreach (string text in impAwardsImages)
+          {
+            if (text == urlImpAw + mImpAw.Value)
+            {
+              check = 1;
+              break;
+            }
+          }
+          // No duplicates (check=0)
+          if (check == 0)
+          {
+            impAwardsImages.Add(urlImpAw + mImpAw.Value);
+          }
+          // get other posters displayed on this html-page as thumbs
+          MatchCollection mcImpAw = Regex.Matches(resultImpAw, "thumbs/imp_(?<poster>.*?.jpg)");
+
+          foreach (Match m1 in mcImpAw)
+          {
+            // Check duplicate entries because Google page links can point to
+            // same cover more than once so we don't need them
+            check = 0;
+
+            foreach (string text in impAwardsImages)
+            {
+              if (text == urlImpAw + "posters/" + m1.Groups["poster"])
+              {
+                check = 1;
+                break;
+              }
+            }
+
+            if (check == 0)
+            {
+              impAwardsImages.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
+            }
+          }
+        }
+      }
+
+      mGoogle = mGoogle.NextMatch();
+    }
+
+    return impAwardsImages;
+  }
+
+  #region Fanart
+
+  public ArrayList GetTmdbFanartByApi(int movieId, string imdbTT, string title, bool random, int countFA,
+    string strSearch, out string fileFanArtDefault, out string fanartUrl)
+  {
+    ArrayList fanartList = new ArrayList();
+    bool searchByString = false;
+    fileFanArtDefault = string.Empty;
+    fanartUrl = string.Empty;
+
+    try
+    {
+      string strAbsUrl = string.Empty;
+      string tmdbUrl = string.Empty; // TMDB Fanart api URL
+      // First try by IMDB id (100% accurate) then, if fail, by movie name (first result will be taken as defult fanart, no random)
+      if (imdbTT != string.Empty && imdbTT.StartsWith("tt"))
+      {
+        tmdbUrl = string.Format("http://api.themoviedb.org/3/movie/{0}/images?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a", imdbTT);
+      }
+      else
+      {
+        if (strSearch == string.Empty)
+        {
+          tmdbUrl = string.Format("http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}", title);
+        }
+        else
+        {
+          tmdbUrl = string.Format("http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}", strSearch);
+        }
+        searchByString = true;
+        random = false;
+      }
+      // Download fanart xml 
+      string tmdbXml = string.Empty;
+
+      if (!GetTmdbPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbXml))
+      {
+        Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
+        return fanartList;
+      }
+
+      string matchBackdrop = string.Empty;
+
+      if (!searchByString)
+      {
+        tmdbXml =
+          Regex.Match(tmdbXml, @"""backdrops"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
+        matchBackdrop = @"""file_path"":""/(?<BackDrop>.*?jpg)""";
+      }
+      else
+      {
+         matchBackdrop = @"""backdrop_path"":""/(?<BackDrop>.*?jpg)""";
+      }
+
+      // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
+      string configDir;
+      MediaPortal.Util.FanArt.GetFanArtFolder(out configDir);
+
+      // Check if FanArt directory Exists
+      if (Directory.Exists(configDir))
+      {
+        MatchCollection mcBd = Regex.Matches(tmdbXml, matchBackdrop);
+        // Set fanart collection
+        if (mcBd.Count != 0)
+        {
+          foreach (Match mBd in mcBd)
+          {
+            string strBd = string.Empty;
+            strBd = mBd.Groups["BackDrop"].Value;
+
+            if (!string.IsNullOrEmpty(strBd))
+            {
+              strBd = string.Format("http://cf2.imgobject.com/t/p/w1280/{0}", strBd); // w500 or w1280 or w1920 (image width)
+              fanartList.Add(strBd);
+            }
+          }
+        }
+        else
+        {
+          Log.Info("Fanart Serach: No fanart found for - {0} ({1})", title, tmdbUrl);
+          return fanartList;
+        }
+        // Check if fanart collection is lower than wanted fanarts quantity per movie
+        if (fanartList.Count < countFA)
+        {
+          countFA = fanartList.Count;
+        }
+
+        if (fanartList.Count > 0)
+        {
+          // Delete old FA
+          MediaPortal.Util.FanArt.DeleteFanarts(movieId);
+
+          if (countFA == 1) //Only one fanart found
+          {
+            DownloadFanart(movieId, 0, ref fanartList, ref fanartUrl);
+          }
+          else //Get max 5 fanart per movie
+          {
+            //Randomize order of fanarts in array
+            if (fanartList.Count > countFA && random)
+            {
+              ShuffleFanart(ref fanartList);
+            }
+
+            fileFanArtDefault = MediaPortal.Util.FanArt.SetFanArtFileName(movieId, 0);
+
+            for (int i = 0; i < countFA; i++)
+            {
+              DownloadFanart(movieId, i, ref fanartList, ref fanartUrl);
+            }
+          }
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Error("GetFanart TMDB API error: {0}", ex.Message);
+    }
+
+    return fanartList;
+  }
+
+  // Download and save fanart
+  private void DownloadFanart(int movieId, int index, ref ArrayList fanartList, ref string fanartUrl)
+  {
+    try
+    {
+      string fileFanArt = MediaPortal.Util.FanArt.SetFanArtFileName(movieId, index);
+      System.Net.WebClient webClient = new WebClient();
+      webClient.DownloadFile((string) fanartList[index], fileFanArt);
+      fanartUrl = fanartList[0].ToString();
+      webClient.Dispose();
+    }
+    catch (Exception ex)
+    {
+      Log.Error("Download fanart error: {0}", ex.Message);
+    }
+  }
+
+  // Randomize fanart array list
+  private void ShuffleFanart(ref ArrayList faArray)
+  {
+    Random rnd = new Random();
+    for (int i = faArray.Count - 1; i > 0; i--)
+    {
+      int position = rnd.Next(i + 1);
+      object temp = faArray[i];
+      faArray[i] = faArray[position];
+      faArray[position] = temp;
+    }
+  }
+
+  #endregion
+
+  public ArrayList GetTmdbCoverImages(string movieTitle, string imdbMovieID)
+  {
+    ArrayList imageList = new ArrayList();
+    string strBodyTmdb = string.Empty;
+    string uri = string.Empty;
+
+    if (!string.IsNullOrEmpty(imdbMovieID) && imdbMovieID.StartsWith("tt"))
+    {
+      string defaultPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/movie/{0}/images?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a", imdbMovieID);
+      GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+      string posterBlock =
+        Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
+      // Get all cover links and put it in the "cover" group
+      MatchCollection covers = Regex.Matches(posterBlock, @"""file_path"":""/(?<cover>.*?jpg)""");
+
+      foreach (Match cover in covers)
+      {
+        string coverUrl = string.Empty;
+        coverUrl = string.Format("http://cf2.imgobject.com/t/p/w500/{0}",cover.Groups["cover"].Value);
+        imageList.Add(coverUrl);
+      }
+
+      return imageList;
+    }
+
+    if (!string.IsNullOrEmpty(movieTitle))
+    {
+      string defaultPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/search/movie?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}", movieTitle);
+      GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+
+      // Get all cover links and put it in the "cover" group
+      MatchCollection covers = Regex.Matches(strBodyTmdb, @"""poster_path"":""/(?<cover>.*?jpg)""");
+
+      foreach (Match cover in covers)
+      {
+        string coverUrl = string.Empty;
+        coverUrl = string.Format("http://cf2.imgobject.com/t/p/w500/{0}", cover.Groups["cover"].Value);
+        imageList.Add(coverUrl);
+      }
+    }
+    return imageList;
+  }
+
+  public ArrayList GetTmdbActorImage(string actorName)
+  {
+    string strXml = string.Empty;
+    string uri = string.Empty;
+    ArrayList actorThumbs = new ArrayList();
+
+    string defaultPosterPageLinkUrl = string.Format("http://api.themoviedb.org/3/search/person?api_key=2ed40b5d82aa804a2b1fcedb5ca8d97a&query={0}", actorName);
+    GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strXml);
+
+    MatchCollection actorImages = Regex.Matches(strXml, @"""profile_path"":""/(?<cover>.*?jpg)""");
+
+    if (actorImages.Count == 0)
+    {
+      return actorThumbs;
+    }
+
+    foreach (Match actorImage in actorImages)
+    {
+      string actor = string.Empty;
+      actor = string.Format("http://cf2.imgobject.com/t/p/w500/{0}", actorImage.Groups["cover"].Value);
+      actorThumbs.Add(actor);
+    }
+
+    return actorThumbs;
+  }
+
+  // Get HTML Page
+  private string GetPage(string strURL, string strEncode)
+  {
+    string strBody = "";
+
+    Stream receiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      //Log.Info("IMDB: get page:{0}", strURL);
+      WebRequest req = WebRequest.Create(strURL);
+      req.Headers.Add("Accept-Language", "en-US");
+      req.Timeout = 20000;
+      result = req.GetResponse();
+      receiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = Encoding.GetEncoding(strEncode);
+			
+			using (sr = new StreamReader(receiveStream, encode))
+      {
+        strBody = sr.ReadToEnd();
+      }
+    }
+    catch (Exception)
+    {
+      Log.Info("IMDBCoverSearch: {0} unavailable.", strURL);
+    }
+
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (receiveStream != null)
+      {
+        try
+        {
+          receiveStream.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+    return strBody;
+  }
+
+  // Get TMDB web
+  private bool GetTmdbPage(string strUrl, string strEncode, out string absoluteUri, ref string strBody)
+  {
+    bool sucess = true;
+    absoluteUri = String.Empty;
+    Stream receiveStream = null;
+    StreamReader sr = null;
+    WebResponse result = null;
+    try
+    {
+      // Make the Webrequest
+      HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUrl);
+      req.Method = WebRequestMethods.Http.Get;
+      req.Accept = "application/json";
+      req.Timeout = 20000;
+
+      result = req.GetResponse();
+      receiveStream = result.GetResponseStream();
+
+      // Encoding: depends on selected page
+      Encoding encode = Encoding.GetEncoding(strEncode);
+			
+			using (sr = new StreamReader(receiveStream, encode))
+      {
+        strBody = sr.ReadToEnd();
+      }
+
+      absoluteUri = result.ResponseUri.AbsoluteUri;
+    }
+    catch (Exception)
+    {
+      sucess = false;
+    }
+    finally
+    {
+      if (sr != null)
+      {
+        try
+        {
+          sr.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (receiveStream != null)
+      {
+        try
+        {
+          receiveStream.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+      if (result != null)
+      {
+        try
+        {
+          result.Close();
+        }
+        catch (Exception)
+        {
+        }
+      }
+    }
+    return sucess;
+  }
+}
