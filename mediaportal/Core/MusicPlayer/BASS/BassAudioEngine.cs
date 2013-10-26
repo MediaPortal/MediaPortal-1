@@ -617,21 +617,19 @@ namespace MediaPortal.MusicPlayer.BASS
           if (nextSong != string.Empty)
           {
             PlayInternal(nextSong);
-            if (PlaybackStart != null)
-            {
-              PlaybackStart(g_Player.MediaType.Music, nextSong);
-            }
+            g_Player.currentMedia = g_Player.MediaType.Music;
+            g_Player.currentFilePlaying = nextSong;
+            g_Player.OnChanged(nextSong);
+            g_Player.OnStopped();
+            g_Player.OnStarted();
           }
           else
           {
             Log.Debug("BASS: Reached end of playlist.");
+            g_Player.OnStopped();
             Stop();
           }
 
-          if (TrackPlaybackCompleted != null)
-          {
-            TrackPlaybackCompleted(g_Player.MediaType.Music, (int)CurrentPosition, musicStream.FilePath);
-          }
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
