@@ -44,7 +44,15 @@ namespace MediaPortal
 
     private static FrameGrabber instance = null;
 
-    private FrameGrabber() {}
+    private FrameGrabber()
+    {
+    }
+
+    // MP1-4248 :  Start* Line Code for Ambilight System Capture (Atmolight)
+    public delegate void NewFrameHandler(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface);
+
+    public event NewFrameHandler OnNewFrame;
+    // MP1-4248 : End* Ambilight Capture
 
     public static FrameGrabber GetInstance()
     {
@@ -122,6 +130,19 @@ namespace MediaPortal
     /// <param name="pSurface"></param>
     public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
     {
+      // MP1-4248 :Start* Line Code for Ambilight System Capture (Atmolight)
+      if (OnNewFrame != null)
+      {
+        try
+        {
+          OnNewFrame(width, height, arWidth, arHeight, pSurface);
+        }
+        catch (Exception)
+        {
+        }
+      }
+      // MP1-4248 :End* Ambilight Capture code
+
       // Is GetCurrentImage() requesting a frame grab?
       if (!grabSample || width == 0 || height == 0)
       {
@@ -145,7 +166,7 @@ namespace MediaPortal
         {
           // copy the YUV video surface to our managed ARGB surface
           // Log.Debug("Calling VideoSurfaceToRGBSurface");
-          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr)rgbSurface.UnmanagedComPointer);
+          VideoSurfaceToRGBSurface(new IntPtr(pSurface), (IntPtr) rgbSurface.UnmanagedComPointer);
           lock (grabNotifier)
           {
             grabSample = false;
