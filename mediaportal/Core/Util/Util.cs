@@ -2641,6 +2641,7 @@ namespace MediaPortal.Util
       if (bNoStop) Snd_Options += SND_NOSTOP;
       try
       {
+        sndPlaySoundA(null, Snd_Options); // terminate a currently active sound output
         return sndPlaySoundA(sSoundFile, Snd_Options);
       }
       catch (Exception ex)
