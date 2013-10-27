@@ -261,6 +261,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Plugins.cs" />
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>

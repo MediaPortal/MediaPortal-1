@@ -182,6 +182,16 @@ namespace MediaPortal.InputDevices
           button = RemoteButton.VolumeDown;
         }
 
+        if ((AppCommands)command == AppCommands.MediaChannelUp)
+        {
+            button = RemoteButton.ChannelUp;
+        }
+
+        if ((AppCommands)command == AppCommands.MediaChannelDown)
+        {
+            button = RemoteButton.ChannelDown;
+        }
+
         if (button != RemoteButton.None)
         {
           // Get & execute Mapping
@@ -248,11 +258,9 @@ namespace MediaPortal.InputDevices
           InputDevices.LastHidRequest = AppCommands.BrowserBackward;
           break;
         case RemoteButton.ChannelUp:
-          InputDevices.LastHidRequest = AppCommands.MediaChannelUp;
-          break;
+          return; // Don't handle this command, benefit from OS' repeat handling instead
         case RemoteButton.ChannelDown:
-          InputDevices.LastHidRequest = AppCommands.MediaChannelDown;
-          break;
+          return; // Don't handle this command, benefit from OS' repeat handling instead
         case RemoteButton.Mute:
           InputDevices.LastHidRequest = AppCommands.VolumeMute;
           break;
