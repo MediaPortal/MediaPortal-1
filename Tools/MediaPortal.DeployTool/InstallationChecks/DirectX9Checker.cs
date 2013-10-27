@@ -103,7 +103,22 @@ namespace MediaPortal.DeployTool.InstallationChecks
       }
       try
       {
-        using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX"))
+        RegistryKey key = null;
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\DirectX");
+        if (key == null)
+        {
+          try
+          {
+            key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\Microsoft\\DirectX", false,
+                Utils.eRegWow64Options.KEY_WOW64_32KEY);
+          }
+          catch
+          {
+            // Parent key not open, exception found at opening (probably related to
+            // security permissions requested)
+          }
+        }
+        using (key)
         {
           if (key == null)
           {

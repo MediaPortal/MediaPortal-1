@@ -6,7 +6,7 @@ CREATE TABLE "SoftwareEncoder" (
   "name" varchar(200) NOT NULL,
   "type" int(11) NOT NULL,
   PRIMARY KEY  ("idEncoder")
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table "SoftwareEncoder" */
 
