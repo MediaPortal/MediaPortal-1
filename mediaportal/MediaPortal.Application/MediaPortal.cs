@@ -417,6 +417,9 @@ public class MediaPortalApp : D3D, IRender
   [DllImport(@"User32", EntryPoint = "UnregisterPowerSettingNotification", CallingConvention = CallingConvention.StdCall)]
   private static extern bool UnregisterPowerSettingNotification(IntPtr handle);
 
+  [DllImport("user32.dll", SetLastError = true)]
+  private static extern bool SetProcessDPIAware();
+
   #endregion
 
   #region main()
@@ -425,6 +428,11 @@ public class MediaPortalApp : D3D, IRender
   public static void Main(string[] args)
   {
     Thread.CurrentThread.Name = "MPMain";
+
+    if (Environment.OSVersion.Version.Major >= 6)
+    {
+      SetProcessDPIAware();
+    }
 
     #if !DEBUG
     // TODO: work on the handlers to take over more Watchdog capabilities, current use for Area51 builds as needed only

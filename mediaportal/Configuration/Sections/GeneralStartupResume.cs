@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
         {
           if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
           {
-            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname, screen.Bounds.Width, screen.Bounds.Height, adapter.Information.Description));
+            cbScreen.Items.Add(string.Format("{0} ({1}x{2}) on {3}", monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height, adapter.Information.Description));
           }
         }
       }
