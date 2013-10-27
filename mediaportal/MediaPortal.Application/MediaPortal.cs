@@ -1115,6 +1115,7 @@ public class MediaPortalApp : D3D, IRender
     GUIGraphicsContext.form = this;
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
+    GUIGraphicsContext.Render3DMode = GUIGraphicsContext.eRender3DMode.None;
 
     using (Settings xmlreader = new MPSettings())
     {
@@ -2902,11 +2903,13 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="timePassed"></param>
   protected override void Render(float timePassed)
   {
-    if (!_suspended && AppActive && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST && GUIGraphicsContext.DX9Device != null)
+    if (!_suspended && AppActive && !_isRendering && GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.LOST &&
+        GUIGraphicsContext.DX9Device != null)
     {
       if (GUIGraphicsContext.InVmr9Render)
       {
-        Log.Error("Main: MediaPortal.Render() called while VMR9 render - {0} / {1}", GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS);
+        Log.Error("Main: MediaPortal.Render() called while VMR9 render - {0} / {1}", GUIGraphicsContext.Vmr9Active,
+                  GUIGraphicsContext.Vmr9FPS);
         return;
       }
       if (GUIGraphicsContext.Vmr9Active)
@@ -2920,27 +2923,89 @@ public class MediaPortalApp : D3D, IRender
       {
         _isRendering = true;
         Frames++;
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-        GUIGraphicsContext.DX9Device.BeginScene();
-        CreateStateBlock();
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        GUILayerManager.Render(timePassed);
-        RenderStats();
-        GUIGraphicsContext.DX9Device.EndScene();
-
-        // show the frame on the primary surface.
-        try
+        lock (GUIGraphicsContext.RenderModeSwitch)
         {
-          GUIGraphicsContext.DX9Device.Present();
-        }
-        catch (DeviceLostException ex)
-        {
-          Log.Error("Main: Device lost - {0}", ex.ToString());
-          if (!RefreshRateChanger.RefreshRateChangePending)
+          if (GUIGraphicsContext.BlankScreen || GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.None ||
+              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySideTo2D ||
+              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
           {
-            g_Player.Stop();
+            // clear the surface
+            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+            GUIGraphicsContext.DX9Device.BeginScene();
+            CreateStateBlock();
+            GUIGraphicsContext.SetScalingResolution(0, 0, false);
+            // ask the layer manager to render all layers
+            GUILayerManager.Render(timePassed);
+            RenderStats();
+            GUIFontManager.Present();
+            GUIGraphicsContext.DX9Device.EndScene();
+            //d3ErrInvalidCallCounter = 0;
+            try
+            {
+              // Show the frame on the primary surface.
+              GUIGraphicsContext.DX9Device.Present(); //SLOW
+            }
+            catch (DeviceLostException ex)
+            {
+              Log.Error("Main: Device lost - {0}", ex.ToString());
+              if (!RefreshRateChanger.RefreshRateChangePending)
+              {
+                g_Player.Stop();
+              }
+              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+            }
           }
-          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
+          else if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide ||
+                   GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom)
+          {
+            // 3D output either SBS or TAB
+
+            Surface old = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+            Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+
+            // create texture/surface for preparation for 3D output if they don't exist
+
+            if (GUIGraphicsContext.Auto3DTexture == null)
+              GUIGraphicsContext.Auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
+                                                             backbuffer.Description.Width,
+                                                             backbuffer.Description.Height, 0, Usage.RenderTarget,
+                                                             backbuffer.Description.Format, Pool.Default);
+
+            if (GUIGraphicsContext.Auto3DSurface == null)
+              GUIGraphicsContext.Auto3DSurface = GUIGraphicsContext.Auto3DTexture.GetSurfaceLevel(0);
+
+            if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
+            {
+              // left half
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft, timePassed, backbuffer,
+                                         GUIGraphicsContext.Auto3DSurface,
+                                         new Rectangle(0, 0, backbuffer.Description.Width/2,
+                                                       backbuffer.Description.Height));
+
+              // right half
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight, timePassed, backbuffer,
+                                         GUIGraphicsContext.Auto3DSurface,
+                                         new Rectangle(backbuffer.Description.Width/2, 0,
+                                                       backbuffer.Description.Width/2, backbuffer.Description.Height));
+            }
+            else
+            {
+              // upper half
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABTop, timePassed, backbuffer,
+                                         GUIGraphicsContext.Auto3DSurface,
+                                         new Rectangle(0, 0, backbuffer.Description.Width,
+                                                       backbuffer.Description.Height/2));
+
+              // lower half
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABBottom, timePassed, backbuffer,
+                                         GUIGraphicsContext.Auto3DSurface,
+                                         new Rectangle(0, backbuffer.Description.Height/2,
+                                                       backbuffer.Description.Width, backbuffer.Description.Height/2));
+            }
+
+            GUIGraphicsContext.DX9Device.Present();
+            backbuffer.Dispose();
+          }
         }
       }
       catch (DirectXException dex)
@@ -2949,10 +3014,10 @@ public class MediaPortalApp : D3D, IRender
         {
           case D3DERR_INVALIDCALL:
             _errorCounter++;
-            if (AdapterInfo.AdapterOrdinal> -1 && Manager.Adapters.Count > AdapterInfo.AdapterOrdinal)
+            if (AdapterInfo.AdapterOrdinal > -1 && Manager.Adapters.Count > AdapterInfo.AdapterOrdinal)
             {
               double refreshRate = Manager.Adapters[AdapterInfo.AdapterOrdinal].CurrentDisplayMode.RefreshRate;
-              if (refreshRate > 0 && _errorCounter > 5 * refreshRate) // why 5 * refreshRate???
+              if (refreshRate > 0 && _errorCounter > 5*refreshRate) // why 5 * refreshRate???
               {
                 _errorCounter = 0; //reset counter
                 Log.Info("Main: D3DERR_INVALIDCALL - {0}", dex.ToString());
@@ -2960,7 +3025,7 @@ public class MediaPortalApp : D3D, IRender
               }
             }
             break;
-  
+
           case D3DERR_DEVICEHUNG:
           case D3DERR_DEVICEREMOVED:
             Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
@@ -3010,7 +3075,7 @@ public class MediaPortalApp : D3D, IRender
     if (g_Player.Playing)
     {
       _playingState = true;
-      if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+      if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
       }
@@ -3042,17 +3107,21 @@ public class MediaPortalApp : D3D, IRender
       }
       else
       {
-        GUIPropertyManager.SetProperty("#currentplaytime", Utils.SecondsToHMSString((int)g_Player.CurrentPosition));
-        GUIPropertyManager.SetProperty("#currentremaining", Utils.SecondsToHMSString((int)(g_Player.Duration - g_Player.CurrentPosition)));
-        GUIPropertyManager.SetProperty("#shortcurrentremaining", Utils.SecondsToShortHMSString((int)(g_Player.Duration - g_Player.CurrentPosition)));
-        GUIPropertyManager.SetProperty("#shortcurrentplaytime", Utils.SecondsToShortHMSString((int)g_Player.CurrentPosition));
+        GUIPropertyManager.SetProperty("#currentplaytime", Utils.SecondsToHMSString((int) g_Player.CurrentPosition));
+        GUIPropertyManager.SetProperty("#currentremaining",
+                                       Utils.SecondsToHMSString((int) (g_Player.Duration - g_Player.CurrentPosition)));
+        GUIPropertyManager.SetProperty("#shortcurrentremaining",
+                                       Utils.SecondsToShortHMSString(
+                                         (int) (g_Player.Duration - g_Player.CurrentPosition)));
+        GUIPropertyManager.SetProperty("#shortcurrentplaytime",
+                                       Utils.SecondsToShortHMSString((int) g_Player.CurrentPosition));
       }
 
       if (g_Player.Duration > 0)
       {
-        GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
-        GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
-        double percent = 100 * g_Player.CurrentPosition / g_Player.Duration;
+        GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int) g_Player.Duration));
+        GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int) g_Player.Duration));
+        double percent = 100*g_Player.CurrentPosition/g_Player.Duration;
         GUIPropertyManager.SetProperty("#percentage", percent.ToString(CultureInfo.CurrentCulture));
 
         // Set comskip or chapter markers
@@ -3065,13 +3134,13 @@ public class MediaPortalApp : D3D, IRender
             // Set the marker start to indicate the start of commercials
             foreach (double jump in g_Player.JumpPoints)
             {
-              double jumpPercent = jump / g_Player.Duration * 100.0d;
+              double jumpPercent = jump/g_Player.Duration*100.0d;
               strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
             }
             // Set the marker end to indicate the end of commercials
             foreach (double chapter in g_Player.Chapters)
             {
-              double chapterPercent = chapter / g_Player.Duration * 100.0d;
+              double chapterPercent = chapter/g_Player.Duration*100.0d;
               strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
             }
           }
@@ -3081,7 +3150,7 @@ public class MediaPortalApp : D3D, IRender
             double markerWidth = 0.7d;
             foreach (double chapter in g_Player.Chapters)
             {
-              double chapterPercent = chapter / g_Player.Duration * 100.0d;
+              double chapterPercent = chapter/g_Player.Duration*100.0d;
               strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
               chapterPercent = (chapterPercent >= markerWidth) ? chapterPercent - markerWidth : 0.0d;
               strJumpPoints += String.Format("{0:0.00}", chapterPercent) + " ";
