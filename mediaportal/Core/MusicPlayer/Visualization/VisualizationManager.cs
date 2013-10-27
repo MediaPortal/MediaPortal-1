@@ -372,7 +372,7 @@ namespace MediaPortal.Visualization
             List<string> presets = new List<string>();
             string filePath = winampVisPaths[i];
             string name = Path.GetFileNameWithoutExtension(filePath);
-            _visParam.VisHandle = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, filePath);
+            _visParam.VisHandle = BassVis.BASSVIS_GetModuleHandle(BASSVISKind.BASSVISKIND_WINAMP, filePath);
 
             string pluginname = BassVis.BASSVIS_GetPluginName(_visParam);
             if (pluginname != null)
