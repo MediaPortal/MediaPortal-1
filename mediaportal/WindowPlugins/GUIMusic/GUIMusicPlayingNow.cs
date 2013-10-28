@@ -271,7 +271,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnEnded), new object[] {type, filename});
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnEnded), new object[] {type, filename});
     }
 
     private void DoOnEnded(g_Player.MediaType type, string filename)
@@ -317,7 +317,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted),
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted),
                                      new object[] {g_Player.MediaType.Music, BassMusicPlayer.Player.CurrentFile});
     }
 
@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
     }
 
     private void DoOnStarted(g_Player.MediaType type, string filename)
@@ -833,7 +833,7 @@ namespace MediaPortal.GUI.Music
     {
       if (request.Equals(_lastAlbumRequest))
       {
-        GUIGraphicsContext.form.Invoke(new AlbumInfoCompletedDelegate(DoUpdateAlbumInfo),
+        GUIGraphicsContext.form.BeginInvoke(new AlbumInfoCompletedDelegate(DoUpdateAlbumInfo),
                                        new object[] {request, AlbumTracks});
       }
       else
@@ -970,7 +970,7 @@ namespace MediaPortal.GUI.Music
     {
       if (request.Equals(_lastArtistRequest))
       {
-        GUIGraphicsContext.form.Invoke(new ArtistInfoCompletedDelegate(DoUpdateArtistInfo), new object[] {request, song});
+        GUIGraphicsContext.form.BeginInvoke(new ArtistInfoCompletedDelegate(DoUpdateArtistInfo), new object[] {request, song});
       }
       else
       {
@@ -1007,7 +1007,7 @@ namespace MediaPortal.GUI.Music
     {
       if (request.Equals(_lastTagRequest))
       {
-        GUIGraphicsContext.form.Invoke(new TagInfoCompletedDelegate(DoUpdateSimilarTrackInfo), new object[] {request, TagTracks});
+        GUIGraphicsContext.form.BeginInvoke(new TagInfoCompletedDelegate(DoUpdateSimilarTrackInfo), new object[] {request, TagTracks});
       }
       else
       {
@@ -1352,7 +1352,7 @@ namespace MediaPortal.GUI.Music
 
     private void OnImageTimerTickEvent(object trash_, ElapsedEventArgs args_)
     {
-      GUIGraphicsContext.form.Invoke(new TimerElapsedDelegate(FlipPictures));
+      GUIGraphicsContext.form.BeginInvoke(new TimerElapsedDelegate(FlipPictures));
     }
 
     private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_)
