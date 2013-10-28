@@ -26,8 +26,6 @@
 #include <process.h>
 #include <stdio.h>
 
-//extern "C++" CStaticLogger *staticLogger;
-
 CStaticLogger::CStaticLogger(void)
 {
   this->loggerContexts = new CStaticLoggerContextCollection();
@@ -268,34 +266,54 @@ void CStaticLogger::Flush(void)
 
           SetFilePointerEx(hLogFile, distanceToMove, NULL, FILE_END);
 
-          for (unsigned int j = 0; j < messagesCount; j++)
+          unsigned int bufferSize = context->GetMaxLogSize();
+          unsigned int bufferOccupied = 0;
+
+          ALLOC_MEM_DEFINE_SET(buffer, unsigned char, bufferSize, 0);
+          if (buffer != NULL)
           {
-            const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
-
-            if (((size.LowPart + wcslen(message)) > context->GetMaxLogSize()) && (context->GetLogBackupFile() != NULL))
+            for (unsigned int j = 0; j < messagesCount; j++)
             {
-              size.QuadPart = 0;
-
-              CloseHandle(hLogFile);
-              hLogFile = INVALID_HANDLE_VALUE;
-
-              // log file exceedes maximum log size
-              DeleteFile(context->GetLogBackupFile());
-              MoveFile(context->GetLogFile(), context->GetLogBackupFile());
-
-              hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
-              if (hLogFile == INVALID_HANDLE_VALUE)
+              const wchar_t *message = context->GetMessages()->GetItem(j)->GetValue();
+              unsigned int messageSize = wcslen(message) * sizeof(wchar_t);
+              
+              if (((size.LowPart + bufferOccupied + messageSize) > bufferSize) && (context->GetLogBackupFile() != NULL))
               {
-                messagesCount = j;
-                break;
+                // write data to log file
+                DWORD written = 0;
+                WriteFile(hLogFile, buffer, bufferOccupied, &written, NULL);
+
+                size.QuadPart = 0;
+
+                CloseHandle(hLogFile);
+                hLogFile = INVALID_HANDLE_VALUE;
+                bufferOccupied = 0;
+                memset(buffer, 0, bufferSize);
+
+                // log file exceedes maximum log size
+                DeleteFile(context->GetLogBackupFile());
+                MoveFile(context->GetLogFile(), context->GetLogBackupFile());
+
+                hLogFile = CreateFile(context->GetLogFile(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_FLAG_WRITE_THROUGH, NULL);
+                if (hLogFile == INVALID_HANDLE_VALUE)
+                {
+                  messagesCount = j;
+                  break;
+                }
               }
+
+              memcpy(buffer + bufferOccupied, (unsigned char *)message, messageSize);
+              bufferOccupied += messageSize;
             }
 
-            // write data to log file
-            DWORD written = 0;
-            WriteFile(hLogFile, message, wcslen(message) * sizeof(wchar_t), &written, NULL);
-            size.QuadPart += written;
+            if (bufferOccupied != 0)
+            {
+              // write data to log file
+              DWORD written = 0;
+              WriteFile(hLogFile, buffer, bufferOccupied, &written, NULL);
+            }
           }
+          FREE_MEM(buffer);
 
           CHECK_CONDITION_EXECUTE(hLogFile != INVALID_HANDLE_VALUE, CloseHandle(hLogFile));
           hLogFile = INVALID_HANDLE_VALUE;
