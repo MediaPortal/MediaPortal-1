@@ -93,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Size = new System.Drawing.Size(377, 34);
       this.label2.TabIndex = 13;
       this.label2.Text = "The idle time starts to count whenever there is no user activity and no moving pi" +
-      "cture is shown in fullscreen. Therefore the only exceptions are:";
+    "cture is shown in fullscreen. Therefore the only exceptions are:";
       // 
       // label3
       // 
@@ -124,8 +124,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxScreenSaver
       // 
-      this.groupBoxScreenSaver.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxScreenSaver.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScreenSaver.Controls.Add(this.groupBoxIdleAction);
       this.groupBoxScreenSaver.Controls.Add(this.numericUpDownDelay);
@@ -145,7 +145,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxIdleAction
       // 
-      this.groupBoxIdleAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxIdleAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxIdleAction.Controls.Add(this.pluginsComboBox);
       this.groupBoxIdleAction.Controls.Add(this.radioButtonLoadPlugin);
@@ -168,6 +168,7 @@ namespace MediaPortal.Configuration.Sections
       this.pluginsComboBox.Name = "pluginsComboBox";
       this.pluginsComboBox.Size = new System.Drawing.Size(319, 21);
       this.pluginsComboBox.TabIndex = 3;
+      this.pluginsComboBox.SelectionChangeCommitted += new System.EventHandler(this.pluginsComboBox_SelectionChangeCommitted);
       // 
       // radioButtonLoadPlugin
       // 

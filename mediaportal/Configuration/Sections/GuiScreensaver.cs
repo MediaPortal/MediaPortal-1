@@ -129,5 +129,16 @@ namespace MediaPortal.Configuration.Sections
     {
       pluginsComboBox.Enabled = radioButtonLoadPlugin.Checked;
     }
+
+    private void pluginsComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (loadedPlugins.Count > 0 & pluginsComboBox.SelectedIndex > -1)
+        {
+          xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
+        }
+      }
+    }
   }
 }
