@@ -117,6 +117,21 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+    public override void OnSectionDeActivated()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        xmlreader.SetValueAsBool("general", "IdleTimer", checkBoxEnableScreensaver.Checked);
+        xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);
+        xmlreader.SetValueAsBool("general", "IdleBlanking", radioBtnBlankScreen.Checked);
+        xmlreader.SetValueAsBool("general", "IdlePlugin", radioButtonLoadPlugin.Checked);
+        if (loadedPlugins.Count > 0 & pluginsComboBox.SelectedIndex > -1)
+        {
+          xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
+        }
+      }
+      base.OnSectionDeActivated();
+    }
 
     #endregion   
 
@@ -128,17 +143,6 @@ namespace MediaPortal.Configuration.Sections
     private void radioButtonLoadPlugin_CheckedChanged(object sender, EventArgs e)
     {
       pluginsComboBox.Enabled = radioButtonLoadPlugin.Checked;
-    }
-
-    private void pluginsComboBox_SelectionChangeCommitted(object sender, EventArgs e)
-    {
-      using (Settings xmlreader = new MPSettings())
-      {
-        if (loadedPlugins.Count > 0 & pluginsComboBox.SelectedIndex > -1)
-        {
-          xmlreader.SetValue("general", "IdlePluginWindow", loadedPlugins[pluginsComboBox.SelectedIndex].WindowId);
-        }
-      }
     }
   }
 }
