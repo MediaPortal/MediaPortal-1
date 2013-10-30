@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Music
     private MapSettings _mapSettings = new MapSettings();
     private DirectoryHistory _dirHistory = new DirectoryHistory();
     private GUIListItem _selectedListItem = null;
-    private static VirtualDirectory _virtualDirectory = new VirtualDirectory();
+    private static VirtualDirectory _virtualDirectory;
 
     private int _selectedAlbum = -1;
     private int _selectedItem = -1;
@@ -237,36 +237,23 @@ namespace MediaPortal.GUI.Music
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
-        string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
-        _virtualDirectory.Clear();
-        foreach (Share share in _shareList)
+        //string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
+        _virtualDirectory = VirtualDirectories.Instance.Music;
+        if (currentFolder == string.Empty)
         {
-          if (!string.IsNullOrEmpty(share.Name))
+          if (_virtualDirectory.DefaultShare != null)
           {
-            if (strDefault == share.Name)
+            if (_virtualDirectory.DefaultShare.IsFtpShare)
             {
-              share.Default = true;
-              if (string.IsNullOrEmpty(currentFolder))
-              {
-                if (share.IsFtpShare)
-                {
-                  //remote:hostname?port?login?password?folder
-                  currentFolder = _virtualDirectory.GetShareRemoteURL(share);
-                  _startDirectory = currentFolder;
-                }
-                else
-                {
-                  currentFolder = share.Path;
-                  _startDirectory = share.Path;
-                }
-              }
+              //remote:hostname?port?login?password?folder
+              currentFolder = _virtualDirectory.GetShareRemoteURL(_virtualDirectory.DefaultShare);
+              _startDirectory = currentFolder;
             }
-
-            _virtualDirectory.Add(share);
-          }
-          else
-          {
-            break;
+            else
+            {
+              currentFolder = _virtualDirectory.DefaultShare.Path;
+              _startDirectory = _virtualDirectory.DefaultShare.Path;
+            }
           }
         }
         if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
@@ -326,9 +313,7 @@ namespace MediaPortal.GUI.Music
     {
       base.OnAdded();
       currentFolder = string.Empty;
-      _virtualDirectory.AddDrives();
-      _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
-
+      
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
@@ -337,6 +322,9 @@ namespace MediaPortal.GUI.Music
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
+      LoadSettings();
+      _virtualDirectory.AddDrives();
+      _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
     }
 
     public override bool Init()
@@ -376,12 +364,12 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageLoad()
     {
+      base.OnPageLoad();
+
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         _virtualDirectory.Reset();
       }
-
-      base.OnPageLoad();
 
       if (MusicState.StartWindow != GetID)
       {

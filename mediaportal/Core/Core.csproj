@@ -1540,6 +1540,7 @@
     <Compile Include="Util\WindowsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\WmiExtensions.cs" />
     <Compile Include="Vista Toolbelt\NativeInterop.cs" />
     <Compile Include="Vista Toolbelt\ThumbnailGenerator.cs" />
     <Compile Include="wmfsdk\BufferTypes.cs">

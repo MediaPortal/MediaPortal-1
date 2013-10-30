@@ -654,32 +654,32 @@ namespace MediaPortal.GUI.Video
 
       if ((item.IsFolder && !item.IsBdDvdFolder))
       {
-          // Play all in folder
-          if (_playClicked)
+        // Play all in folder
+        if (_playClicked)
+        {
+          if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-              if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-              {
-                  if (!_virtualDirectory.RequestPin(item.Path))
-                  {
-                      _playClicked = false;
-                      return;
-                  }
-
-                  OnPlayAll(item.Path);
-                  _playClicked = false;
-              }
+            if (!_virtualDirectory.RequestPin(item.Path))
+            {
+              _playClicked = false;
+              return;
+            }
+            
+            OnPlayAll(item.Path);
+            _playClicked = false;
           }
-          else
+        }
+        else
+        {
+          _currentSelectedItem = -1;
+
+          if (facadeLayout != null)
           {
-              _currentSelectedItem = -1;
-
-              if (facadeLayout != null)
-              {
-                  _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
-              }
-
-              LoadDirectory(path, true);
+            _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
           }
+
+          LoadDirectory(path);
+        }
       }
       else
       {
@@ -780,7 +780,6 @@ namespace MediaPortal.GUI.Video
           // In the list must be at least 2 files so we check stackable movie for resume 
           // (which file have a stop time)
           bool asked = false;
-          //ArrayList newItems = new ArrayList();
           string title = item.Label; // Dlg title
 
           if (movie != null && !movie.IsEmpty)
@@ -1287,20 +1286,24 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
-        if (Util.Utils.IsRemovable(item.Path))
+        
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
 
         dlg.AddLocalizedString(1299); // Refresh current directory
-        dlg.AddLocalizedString(1262); // Update grabber scripts
-        dlg.AddLocalizedString(1307); // Update internal grabber scripts
-        dlg.AddLocalizedString(1263); // Set default grabber
-        if (!item.IsFolder)
-        {
-          dlg.AddLocalizedString(1984); // Refresh thumb
-        }
       }
+
+      dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
+     
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(1984); // Refresh thumb
+      }
+     
 
       dlg.DoModal(GetID);
 
