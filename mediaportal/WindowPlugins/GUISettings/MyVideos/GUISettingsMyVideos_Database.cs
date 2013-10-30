@@ -854,21 +854,33 @@ namespace MediaPortal.GUI.Settings
         }
       }
       _conflictFiles = new ArrayList();
+      ArrayList nfoFiles = new ArrayList();
+
+      foreach (string availablePath in availablePaths)
+      {
+        GetNfoFiles(availablePath, ref nfoFiles);
+      }
 
       if (!btnUseNfoScraper.Selected)
       {
-        IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
-                             btnRefreshexistingonly.Selected);
-      }
-      else
-      {
-        ArrayList nfoFiles = new ArrayList();
-
-        foreach (string availablePath in availablePaths)
+        // Scan only new movies (skip scan existing movies or not refreshing existing)
+        if (btnSkipalreadyexisting.Selected && !btnRefreshexistingonly.Selected)
         {
-          GetNfoFiles(availablePath, ref nfoFiles);
-        }
+          // First nfo (can speed up scan time)
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
+          // Then video files (for movies not added by nfo)
+          IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, true, false, false);
 
+        }
+        else // User wants to scan no matter if movies are already in the database (do not use nfo here, user must set that option)
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, btnNearestmatch.Selected, btnSkipalreadyexisting.Selected, false,
+                             btnRefreshexistingonly.Selected);
+        }
+      }
+      else // Use only nfo files
+      {
         IMDBFetcher fetcher = new IMDBFetcher(this);
         fetcher.FetchNfo(nfoFiles, btnSkipalreadyexisting.Selected, btnRefreshexistingonly.Selected);
       }
@@ -892,9 +904,16 @@ namespace MediaPortal.GUI.Settings
         try
         {
           File.Delete(database);
+          // Clear thumbs
+          // Delete covers
+          string files = @"*.jpg"; // Only delete jpg files
+          string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Title\";
+          DeleteVideoThumbs(files, configDir);
+          // Delete actor images
+          configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Videos\Actors\";
+          DeleteVideoThumbs(files, configDir);
+          
           // FanArt delete all files
-          string configDir;
-          FanArt.GetFanArtFolder(out configDir);
           if (btnUsefanart.Selected)
           {
             dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
@@ -910,12 +929,9 @@ namespace MediaPortal.GUI.Settings
             {
               return;
             }
-            string files = @"*.jpg"; // Only delete jpg files
-            string[] fileList = Directory.GetFiles(configDir, files);
-            foreach (string file in fileList)
-            {
-              File.Delete(file);
-            }
+
+            FanArt.GetFanArtFolder(out configDir);
+            DeleteVideoThumbs(files, configDir);
           }
         }
         catch (Exception)
@@ -985,7 +1001,22 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    // Need change fore 1.3.0
+    private void DeleteVideoThumbs(string files, string configDir)
+    {
+      try
+      {
+        string[] fileList = Directory.GetFiles(configDir, files);
+
+        foreach (string file in fileList)
+        {
+          File.Delete(file);
+        }
+      }
+      catch (Exception)
+      {
+      }
+    }
+
     #region IMDB.IProgress
 
     public bool OnDisableCancel(IMDBFetcher fetcher)

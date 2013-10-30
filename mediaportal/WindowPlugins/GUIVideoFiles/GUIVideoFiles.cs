@@ -274,19 +274,24 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (!_useOnlyNfoScraper)
+        ArrayList nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
         {
+          GetNfoFiles(availablePath, ref nfoFiles);
+        }
+
+        if (!_useOnlyNfoScraper) // Normal scraper
+        {
+          // First try nfo files
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
+          // Then video files without nfo
           IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
         }
         else
         {
-          ArrayList nfoFiles = new ArrayList();
-
-          foreach (string availablePath in availablePaths)
-          {
-            GetNfoFiles(availablePath, ref nfoFiles);
-          }
-
+          // Only nfo files
           IMDBFetcher fetcher = new IMDBFetcher(this);
           fetcher.FetchNfo(nfoFiles, true, false);
         }
@@ -1381,11 +1386,11 @@ namespace MediaPortal.GUI.Video
           }
           
           int currentIndex = facadeLayout.SelectedListItemIndex;
+          ArrayList scanNfoFiles = new ArrayList();
+          GetNfoFiles(item.Path, ref scanNfoFiles);
 
           if (_useOnlyNfoScraper)
           {
-            ArrayList scanNfoFiles = new ArrayList();
-            GetNfoFiles(item.Path, ref scanNfoFiles);
             IMDBFetcher scanFetcher = new IMDBFetcher(this);
             scanFetcher.FetchNfo(scanNfoFiles, true, false);
             // Send global message that movie is refreshed/scanned
@@ -1396,9 +1401,13 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
+            // Try nfo files first
+            IMDBFetcher scanFetcher = new IMDBFetcher(this);
+            scanFetcher.FetchNfo(scanNfoFiles, true, false);
+            // Then the rest
             ArrayList availablePaths = new ArrayList();
             availablePaths.Add(item.Path);
-            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, _getActors, false);
             // Send global message that movie is refreshed/scanned
             GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(scanMsg);
