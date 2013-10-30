@@ -678,7 +678,7 @@ namespace MediaPortal.GUI.Video
             _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
           }
 
-          LoadDirectory(path);
+          LoadDirectory(path, true);
         }
       }
       else
