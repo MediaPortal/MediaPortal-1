@@ -197,42 +197,50 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     /// <param name="filename">filename of item that has started</param>
     private static void OnPlayBackStarted(g_Player.MediaType type, string filename)
     {
-      if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
-
-      if (!Win32API.IsConnectedToInternet())
+      try
       {
-        Log.Info("No internet connection detected.  Can not process last.fm announce or Auto DJ");
-        return;
+        if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
+
+        if (!Win32API.IsConnectedToInternet())
+        {
+          Log.Info("No internet connection detected.  Can not process last.fm announce or Auto DJ");
+          return;
+        }
+
+        var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
+        var plI = pl.First(plItem => plItem.FileName == filename);
+        if (plI == null || plI.MusicTag == null)
+        {
+          Log.Info("LastFMScrobbler: Unable to process song: {0}  as it does not exist in the playlist", filename);
+          return;
+        }
+
+        var currentSong = (MusicTag) plI.MusicTag;
+
+        if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
+            (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
+        {
+          Log.Warn("LastFMScrobbler: No track & artist tags found - Unable to process: {0}", filename);
+          return;
+        }
+
+        if (_announceTracks)
+        {
+          new Thread(
+            () =>
+            AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
+                          currentSong.Duration.ToString(CultureInfo.InvariantCulture))) {Name = "Last.FM Announcer"}
+            .Start();
+        }
+
+        if (MusicState.AutoDJEnabled)
+        {
+          new Thread(() => AutoDJ(currentSong)) {Name = "AutoDJ"}.Start();
+        }
       }
-
-      var pl = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListPlayer.SingletonPlayer.CurrentPlaylistType);
-      var plI = pl.First(plItem => plItem.FileName == filename);
-      if (plI == null || plI.MusicTag == null)
+      catch (Exception)
       {
-        Log.Info("LastFMScrobbler: Unable to process song: {0}  as it does not exist in the playlist", filename);
-        return;
-      }
-
-      var currentSong = (MusicTag)plI.MusicTag;
-
-      if (currentSong == null || string.IsNullOrEmpty(currentSong.Title) ||
-          (string.IsNullOrEmpty(currentSong.Artist) && string.IsNullOrEmpty(currentSong.AlbumArtist)))
-      {
-        Log.Warn("LastFMScrobbler: No track & artist tags found - Unable to process: {0}", filename);
-        return;
-      }
-
-      if (_announceTracks)
-      {
-        new Thread(
-          () =>
-          AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
-                        currentSong.Duration.ToString(CultureInfo.InvariantCulture))) { Name = "Last.FM Announcer" }.Start();
-      }
-
-      if (MusicState.AutoDJEnabled)
-      {
-        new Thread(() => AutoDJ(currentSong)) { Name = "AutoDJ" }.Start();        
+        // Catch exception to avoid crash.
       }
 
     }
