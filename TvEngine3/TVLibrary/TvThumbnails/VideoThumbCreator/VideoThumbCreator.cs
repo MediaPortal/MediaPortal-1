@@ -90,12 +90,7 @@ namespace TvThumbnails.VideoThumbCreator
 
       if (preGapSec > Duration)
       {
-        preGapSec = Duration - 240;
-      }
-
-      if (preGapSec < 0)
-      {
-        preGapSec = 4;
+        preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
       }
 
       TimeIntBwThumbs = (Duration - preGapSec) / ((Thumbs.PreviewColumns * Thumbs.PreviewRows) + 1); ;
@@ -128,7 +123,7 @@ namespace TvThumbnails.VideoThumbCreator
       string ExtractorFallbackArgs =
         string.Format("-loglevel quiet -ss 5 ") +
         string.Format("-i \"{0}\" ", aVideoPath) +
-        string.Format("-vf {0} ", ffmpegFallbackArgs) +
+        string.Format("-y -vf {0} ", ffmpegFallbackArgs) +
         string.Format("-ss {0} ", TimeToSeek) +
         string.Format("-vframes 1 -vsync 0 ") +
         string.Format("-an \"{0}_s.jpg\"", strFilenamewithoutExtension);
@@ -157,7 +152,7 @@ namespace TvThumbnails.VideoThumbCreator
             TimeOffset = preGapSec + i * TimeIntBwThumbs;
 
             ffmpegArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", 1, 1);
-            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
             Success = StartProcess(_extractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
             Log.Debug("TvThumbnails.VideoThumbCreator: thumb creation {0}", ExtractorArgs);
             if (!Success)
@@ -421,9 +416,14 @@ namespace TvThumbnails.VideoThumbCreator
       {
         try
         {
-          img = Image.FromFile(strFileName);
-          if (img != null)
-            g.DrawImage(img, x, y, w, h);
+          using (FileStream fs = new FileStream(strFileName, FileMode.Open, FileAccess.Read))
+          {
+            using (img = Image.FromStream(fs, true, false))
+            {
+              if (img != null)
+                g.DrawImage(img, x, y, w, h);
+            }
+          }
         }
         catch (OutOfMemoryException)
         {
@@ -433,7 +433,7 @@ namespace TvThumbnails.VideoThumbCreator
         {
           Log.Info("Utils: An exception occured adding an image to the folder preview thumb: {0}", ex.Message);
         }
-       }
+      }
       finally
       {
         if (img != null)

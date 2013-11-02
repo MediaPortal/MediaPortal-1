@@ -38,44 +38,10 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class PluginsNew : SectionSettings
   {
-    private ArrayList loadedPlugins = new ArrayList();
-    private ArrayList availablePlugins = new ArrayList();
-    private bool isLoaded = false;
-    private bool wasLastLoadAdvanced = false;
-
 		private System.Windows.Forms.ImageList imageListLargePlugins;
 		private System.Windows.Forms.ImageList imageListContextMenu;
 		private System.Windows.Forms.ImageList imageListMPInstaller;
-
-    private class ItemTag
-    {
-      public string DllName;
-      public ISetupForm SetupForm;
-      public string Type = string.Empty;
-      public int WindowId = -1;
-      public bool IsProcess = false;
-      public bool IsWindow = false;
-      public bool IsExternalPlayer = false;
-      public bool IsHome = false;
-      public bool IsEnabled = false;
-      public bool IsPlugins = false;
-      public bool ShowDefaultHome = false;
-      public bool IsIncompatible = false;
-      private Image activeImage = null;
-      private Image inactiveImage = null;
-
-      public Image ActiveImage
-      {
-        get { return activeImage; }
-        set { activeImage = value; }
-      }
-
-      public Image InactiveImage
-      {
-        get { return inactiveImage; }
-        set { inactiveImage = value; }
-      }
-    }
+    private bool pluginsLoadedOnPage = false;
 
     public PluginsNew()
       : this("Plugins") {}
@@ -139,55 +105,122 @@ namespace MediaPortal.Configuration.Sections
       LoadAll();
     }
 
-    private void LoadAll()
+    public void LoadAll()
     {
-      if (!isLoaded || (wasLastLoadAdvanced != SettingsForm.AdvancedMode))
+      if (!Plugins.IsLoaded || (Plugins.WasLastLoadAdvanced != SettingsForm.AdvancedMode))
       {
-        ClearLoadedPlugins();
-        isLoaded = true;
+        Plugins.ClearLoadedPlugins();
+        Plugins.IsLoaded = true;
+        Plugins.EnumeratePlugins();
+        Plugins.LoadPlugins();
+        pluginsLoadedOnPage = false;
+      }
 
-        EnumeratePlugins();
-        LoadPlugins();
-
+      if (!pluginsLoadedOnPage)
+      {
+        listViewPlugins.Items.Clear();
+        foreach (ItemTag tag in Plugins.LoadedPlugins)
+        {
+          LoadPluginImages(tag.expType, tag);
+        }
         LoadSettings();
         PopulateListView();
+        pluginsLoadedOnPage = true;
       }
     }
 
-    private void EnumeratePlugins()
+    private Image OverlayImage(Image targetImage, Image overlay)
     {
-      // Save to determine whether the mode has changed
-      wasLastLoadAdvanced = SettingsForm.AdvancedMode;
-
-      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
-      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"));
-      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "tagreaders"));
-      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "externalplayers"));
-      EnumeratePluginDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
+      PixelFormat fmt = targetImage.PixelFormat;
+      if (fmt != PixelFormat.Format32bppRgb &&
+          fmt != PixelFormat.Format32bppArgb &&
+          fmt != PixelFormat.Format32bppPArgb &&
+          fmt != PixelFormat.Format24bppRgb)
+      {
+        Image result = new Bitmap(targetImage.Width, targetImage.Height, PixelFormat.Format32bppArgb);
+        using (var g = Graphics.FromImage(result))
+        {
+          g.DrawImage(targetImage, 0, 0);
+          g.CompositingMode = CompositingMode.SourceOver;
+          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
+        }
+        return result;
+      }
+      else
+      {
+        using (var g = Graphics.FromImage(targetImage))
+        {
+          g.CompositingMode = CompositingMode.SourceOver;
+          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
+        }
+        return targetImage;
+      }
     }
 
-    private void EnumeratePluginDirectory(string directory)
+    /// <summary>
+    /// Checks whether the a plugin has a <see cref="PluginIconsAttribute"/> defined.  If it has, the images that are indicated
+    /// in the attribute are loaded
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to examine.</param>
+    /// <param name="tag">The <see cref="ItemTag"/> to store the images in.</param>
+    private void LoadPluginImages(Type type, ItemTag tag)
     {
-      if (Directory.Exists(directory))
+      PluginIconsAttribute[] icons =
+        (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
+      if (icons == null || icons.Length == 0)
       {
-        //
-        // Enumerate files
-        //
-        string[] files = Directory.GetFiles(directory, "*.dll");
-
-        //
-        // Add to list
-        //
-        foreach (string file in files)
+        //Log.Debug("PluginsNew: no icons");
+        return;
+      }
+      string resourceName = icons[0].ActivatedResourceName;
+      if (!string.IsNullOrEmpty(resourceName))
+      {
+        Log.Debug("PluginsNew: load active image from resource - {0}", resourceName);
+        tag.ActiveImage = LoadImageFromResource(type, resourceName);
+        if (tag.IsIncompatible)
         {
-          availablePlugins.Add(file);
+          tag.ActiveImage = OverlayImage(tag.ActiveImage, imageListLargePlugins.Images[20]);
+        }
+      }
+      resourceName = icons[0].DeactivatedResourceName;
+      if (!string.IsNullOrEmpty(resourceName))
+      {
+        Log.Debug("PluginsNew: load deactivated image from resource - {0}", resourceName);
+        tag.InactiveImage = LoadImageFromResource(type, resourceName);
+        if (tag.IsIncompatible)
+        {
+          tag.InactiveImage = OverlayImage(tag.InactiveImage, imageListLargePlugins.Images[20]);
         }
       }
     }
 
+    private static Image LoadImageFromResource(Type type, string resourceName)
+    {
+      try
+      {
+        return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
+      }
+      catch (ArgumentException aex)
+      {
+        Log.Error("PluginsNew: Argument Exception loading the image - {0}, {1}", resourceName, aex.Message);
+        //Thrown when the stream does not seem to contain a valid image
+      }
+      catch (FileLoadException lex)
+      {
+        Log.Error("PluginsNew: FileLoad Exception loading the image - {0}, {1}", resourceName, lex.Message);
+        //Throw when the resource could not be loaded
+      }
+      catch (FileNotFoundException fex)
+      {
+        Log.Error("PluginsNew: FileNotFound Exception loading the image - {0}, {1}", resourceName, fex.Message);
+        //Thrown when the resource could not be found
+      }
+      return null;
+    }
+
     private void PopulateListView()
     {
-      foreach (ItemTag tag in loadedPlugins)
+      foreach (ItemTag tag in Plugins.LoadedPlugins)
       {
         // Show only common, stable plugins
         if (!SettingsForm.AdvancedMode)
@@ -260,267 +293,29 @@ namespace MediaPortal.Configuration.Sections
         updateListViewItem(item);
       }
     }
-
-    private void ClearLoadedPlugins()
-    {
-      listViewPlugins.Items.Clear();
-      availablePlugins.Clear();
-      loadedPlugins.Clear();
-    }
-
-    private void LoadPlugins()
-    {
-      foreach (string pluginFile in availablePlugins)
-      {
-        Assembly pluginAssembly = null;
-        try
-        {
-          Log.Debug("PluginsNew: loadPlugins {0}", pluginFile);
-          pluginAssembly = Assembly.LoadFrom(pluginFile);
-        }
-        catch (BadImageFormatException)
-        {
-          Log.Warn("PluginsNew: {0} has a bad image format", pluginFile);
-        }
-
-        if (pluginAssembly != null)
-        {
-          try
-          {
-            Type[] exportedTypes = pluginAssembly.GetExportedTypes();
-            List<object> NonSetupWindows = new List<object>();
-
-            if (!exportedTypes.Any(t => t.IsClass && !t.IsAbstract && 
-                (typeof(ISetupForm).IsAssignableFrom(t) || typeof(GUIWindow).IsAssignableFrom(t))))
-            {
-              continue; // there are no plugins in the assembly, skip it
-            }
-
-            foreach (Type type in exportedTypes)
-            {
-              bool isPlugin = (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null);
-              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof (GUIWindow))));
-
-              // an abstract class cannot be instanciated
-              if (type.IsAbstract)
-              {
-                continue;
-              }
-
-              bool isIncompatible = !CompatibilityManager.IsPluginCompatible(type);
-              if (isIncompatible)
-              {
-                Log.Warn(
-                  "Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
-                  type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-              }
-
-              // Try to locate the interface we're interested in
-              if (isPlugin || isGuiWindow)
-              {
-                // Create instance of the current type
-                object pluginObject;
-                try
-                {
-                  pluginObject = Activator.CreateInstance(type);
-                }
-                catch (TargetInvocationException)
-                {
-                  MessageBox.Show(
-                    string.Format(
-                      "An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.",
-                      type.FullName
-                      ), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                  Log.Warn(
-                    "Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})",
-                    type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-                  continue;
-                }
-
-                if (isPlugin)
-                {
-                  ISetupForm pluginForm = pluginObject as ISetupForm;
-                  IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
-                  IShowPlugin showPlugin = pluginObject as IShowPlugin;
-
-                  if (pluginForm != null)
-                  {
-                    ItemTag tag = new ItemTag();
-                    tag.SetupForm = pluginForm;
-                    tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
-                    tag.WindowId = pluginForm.GetWindowId();
-
-                    if (isGuiWindow)
-                    {
-                      GUIWindow win = (GUIWindow)pluginObject;
-                      if (tag.WindowId == win.GetID)
-                      {
-                        tag.Type = win.GetType().ToString();
-                        tag.IsProcess = false;
-                        tag.IsWindow = true;
-                      }
-                    }
-                    else if (extPlayer != null)
-                    {
-                      tag.IsExternalPlayer = true;
-                    }
-                    else
-                    {
-                      tag.IsProcess = true;
-                    }
-
-                    if (showPlugin != null)
-                    {
-                      tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
-                    }
-
-                    tag.IsIncompatible = isIncompatible;
-
-                    LoadPluginImages(type, tag);
-                    loadedPlugins.Add(tag);
-                  }
-                }
-                else
-                {
-                  NonSetupWindows.Add(pluginObject);
-                }
-              }
-            }
-            // Filter plugins from e.g. dialogs or other windows.
-            foreach (GUIWindow win in NonSetupWindows)
-            {
-              foreach (ItemTag tag in loadedPlugins)
-              {
-                if (tag.WindowId == win.GetID)
-                {
-                  tag.Type = win.GetType().ToString();
-                  tag.IsProcess = false;
-                  tag.IsWindow = true;
-                  Log.Debug(
-                    "PluginsNew: {0}, window plugin, does not implement \"ISetupForm\" and \"GUIWindow\" in the same class",
-                    tag.Type);
-                  break;
-                }
-              }
-            }
-          }
-          catch (Exception ex)
-          {
-            MessageBox.Show(
-              string.Format(
-                "An error occured while loading the plugin file {0}.\n\nIt's broken or incompatible with the current MediaPortal version and won't be loaded.",
-                pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK,
-              MessageBoxIcon.Error);
-            Log.Warn(
-              "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
-              pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
-            Log.Error("PluginManager: Exception: {0}", ex);
-          }
-        }
-      }
-    }
-
-    private Image OverlayImage(Image targetImage, Image overlay)
-    {
-      PixelFormat fmt = targetImage.PixelFormat;
-      if (fmt != PixelFormat.Format32bppRgb &&
-          fmt != PixelFormat.Format32bppArgb &&
-          fmt != PixelFormat.Format32bppPArgb &&
-          fmt != PixelFormat.Format24bppRgb)
-      {
-        Image result = new Bitmap(targetImage.Width, targetImage.Height, PixelFormat.Format32bppArgb);
-        using (var g = Graphics.FromImage(result))
-        {
-          g.DrawImage(targetImage, 0, 0);
-          g.CompositingMode = CompositingMode.SourceOver;
-          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
-        }
-        return result;
-      }
-      else
-      {
-        using (var g = Graphics.FromImage(targetImage))
-        {
-          g.CompositingMode = CompositingMode.SourceOver;
-          g.DrawImage(overlay, 0, 0, targetImage.Width, targetImage.Height);
-        }
-        return targetImage;
-      }
-    }
-
-    /// <summary>
-    /// Checks whether the a plugin has a <see cref="PluginIconsAttribute"/> defined.  If it has, the images that are indicated
-    /// in the attribute are loaded
-    /// </summary>
-    /// <param name="type">The <see cref="Type"/> to examine.</param>
-    /// <param name="tag">The <see cref="ItemTag"/> to store the images in.</param>
-    private void LoadPluginImages(Type type, ItemTag tag)
-    {
-      PluginIconsAttribute[] icons =
-        (PluginIconsAttribute[])type.GetCustomAttributes(typeof (PluginIconsAttribute), false);
-      if (icons == null || icons.Length == 0)
-      {
-        //Log.Debug("PluginsNew: no icons");
-        return;
-      }
-      string resourceName = icons[0].ActivatedResourceName;
-      if (!string.IsNullOrEmpty(resourceName))
-      {
-        Log.Debug("PluginsNew: load active image from resource - {0}", resourceName);
-        tag.ActiveImage = LoadImageFromResource(type, resourceName);
-        if (tag.IsIncompatible)
-        {
-          tag.ActiveImage = OverlayImage(tag.ActiveImage, imageListLargePlugins.Images[20]);
-        }
-      }
-      resourceName = icons[0].DeactivatedResourceName;
-      if (!string.IsNullOrEmpty(resourceName))
-      {
-        Log.Debug("PluginsNew: load deactivated image from resource - {0}", resourceName);
-        tag.InactiveImage = LoadImageFromResource(type, resourceName);
-        if (tag.IsIncompatible)
-        {
-          tag.InactiveImage = OverlayImage(tag.InactiveImage, imageListLargePlugins.Images[20]);
-        }
-      }
-    }
-
-    private static Image LoadImageFromResource(Type type, string resourceName)
-    {
-      try
-      {
-        return Image.FromStream(type.Assembly.GetManifestResourceStream(resourceName));
-      }
-      catch (ArgumentException aex)
-      {
-        Log.Error("PluginsNew: Argument Exception loading the image - {0}, {1}", resourceName, aex.Message);
-        //Thrown when the stream does not seem to contain a valid image
-      }
-      catch (FileLoadException lex)
-      {
-        Log.Error("PluginsNew: FileLoad Exception loading the image - {0}, {1}", resourceName, lex.Message);
-        //Throw when the resource could not be loaded
-      }
-      catch (FileNotFoundException fex)
-      {
-        Log.Error("PluginsNew: FileNotFound Exception loading the image - {0}, {1}", resourceName, fex.Message);
-        //Thrown when the resource could not be found
-      }
-      return null;
-    }
+  
 
     public override void LoadSettings()
     {
       using (Settings xmlreader = new MPSettings())
       {
-        foreach (ItemTag itemTag in loadedPlugins)
+        foreach (ItemTag itemTag in Plugins.LoadedPlugins)
         {
           if (itemTag.SetupForm != null)
           {
             if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
             {
-              itemTag.IsEnabled =
-                xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+              // Enable PowerScheduler if PS++ is enabled
+              if (itemTag.SetupForm.PluginName() == "PowerScheduler" &&
+                xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
+              {
+                itemTag.IsEnabled = true;
+              }
+              else
+              {
+                itemTag.IsEnabled =
+                  xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+              }
             }
             else
             {
@@ -582,6 +377,12 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
         }
+
+        // Remove PS++ entries
+        xmlwriter.RemoveEntry("plugins", "PowerScheduler++");
+        xmlwriter.RemoveEntry("home", "PowerScheduler++");
+        xmlwriter.RemoveEntry("myplugins", "PowerScheduler++");
+        xmlwriter.RemoveEntry("pluginswindows", "PowerScheduler++");
       }
     }
 

@@ -159,7 +159,7 @@
     <control>
     	<description>progressbar bg</description>
     	<type>image</type>
-    	<id>0</id>
+    	<id>104</id>
     	<posX>588</posX>
     	<posY>907</posY>
     	<width>737</width>
@@ -167,20 +167,37 @@
     	<texture>osd_progress_bg.png</texture>
     </control>
 
-		<control>
-			<description>Progress Bar</description>
-			<type>progress</type>
-			<id>105</id>
+
+    <control>
+      <description>Progress Bar</description>
+      <type>tvprogress</type>
+      <id>105</id>
     	<posX>578</posX>
     	<posY>909</posY>
     	<width>758</width>
     	<height>15</height>
-    	<label>#percentage</label>
-    	<lefttexture>osd_progress_left.png</lefttexture>
-    	<midtexture>osd_progress_mid.png</midtexture>
-    	<righttexture>osd_progress_right.png</righttexture>
-			<label>#percentage</label>
-		</control>
+      <toptexture>-</toptexture>
+      <TextureOffsetY>0</TextureOffsetY>
+      <bottomtexture>-</bottomtexture>
+      <texturetick>-</texturetick>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>-</midtexture>
+      <righttexture>-</righttexture>
+      <logotexture>-</logotexture>
+      <fillbackgroundtexture>-</fillbackgroundtexture>
+      <fillbgxoff>-3</fillbgxoff>
+      <fillbgyoff>0</fillbgyoff>
+      <filltexture1>osd_progress_mid.png</filltexture1>
+      <filltexture2>osd_progress_mid.png</filltexture2>
+      <filltexture3>osd_progress_mid_orange.png</filltexture3>
+      <markertexture>osd_progress_comskip_marker.png</markertexture>
+      <fillheight>15</fillheight>
+      <label>#percentage</label>
+      <label1>#percent2</label1>
+      <label2>#percent3</label2>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
+    </control>
 
 		<control>
 			<description>Remaining time</description>

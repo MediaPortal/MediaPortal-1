@@ -1186,7 +1186,6 @@ namespace MediaPortal.Player
 
     protected string MatchFilters(string format)
     {
-      string AACCodec = "AAC";
       string VC1Codec = "VC-1";
 
       //Set codec bool to false

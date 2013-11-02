@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPIPTV_RTSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(DSHOW_BASE);..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.Settings
           if (screen.DeviceName.StartsWith(adapter.Information.DeviceName.Trim()))
           {
             _screenCollection.Add(string.Format("{0} ({1}x{2}) on {3}",
-                                             monitorname, screen.Bounds.Width, screen.Bounds.Height,
+                                             monitorname, adapter.CurrentDisplayMode.Width, adapter.CurrentDisplayMode.Height,
                                              adapter.Information.Description));
           }
         }

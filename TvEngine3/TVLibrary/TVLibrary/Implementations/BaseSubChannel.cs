@@ -390,7 +390,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
+      Log.Log.WriteFile("basesubchannel.StopRecording {0}", this._subChannelId);
       OnStopRecording();
       _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
       _recordingFileName = "";

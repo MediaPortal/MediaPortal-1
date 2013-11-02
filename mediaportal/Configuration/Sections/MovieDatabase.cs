@@ -130,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
 
     // grabber index holds information/urls of available grabbers to download
     private string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
-    private const string GrabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
+    private const string GrabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber_V16.xml";
 
     /// <summary>
     /// Dictionary contains all grabber scripts.
@@ -173,7 +173,8 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList _nfoFiles = new ArrayList();
 
     private ArrayList _conflictFiles = new ArrayList();
-    private ArrayList notFoundMovie = new ArrayList();
+    private ArrayList _notFoundMovie = new ArrayList();
+    private bool _nfoImdbCombined = false; // False->only nfo import, true->nfo+movie scraper
 
     private List<BaseShares.ShareData> _sharesData = null;
 
@@ -346,6 +347,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       
+      // Use nfo files only (option is selected in configuration)
       if (chbUseNfoScraperOnly.Checked)
       {
         _nfoFiles = new ArrayList();
@@ -361,13 +363,39 @@ namespace MediaPortal.Configuration.Sections
           return;
         }
 
-        ImportNfo();
+        ImportNfo(false);
       }
       else
       {
         _conflictFiles = new ArrayList();
-        IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
+        
+        // To scan only new movies, we will use help of nfo files if they exist, then video files for movies
+        // not added by nfo files
+        if (skipCheckBox.Checked && !refreshdbCheckBox.Checked)
+        {
+          _nfoFiles = new ArrayList();
+
+          // First use nfo files
+          foreach (string availablePath in availablePaths)
+          {
+            GetNfoFiles(availablePath, ref _nfoFiles);
+          }
+
+          ImportNfo(true);
+          // Then video files (only not added with nfo)
+          // Close progress dialog from nfo import if exist
+          if (_progressDialog != null)
+          {
+            _progressDialog.CloseProgress();
+          }
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, true,
+                             false);
+        }
+        else // USer wants to scan no matter if movies exist or wants to refresh db, nfo files are not used
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
                              refreshdbCheckBox.Checked);
+        }
       }
       
       LoadMovies(0);
@@ -395,7 +423,6 @@ namespace MediaPortal.Configuration.Sections
             DeleteVideoThumbs(files, configDir);
             
             // FanArt delete all files
-            FanArt.GetFanArtFolder(out configDir);
             if (useFanartCheckBox.CheckState == CheckState.Checked)
             {
               DialogResult dialogResultFanart = MessageBox.Show("Delete all fanarts (All files in " +
@@ -405,15 +432,8 @@ namespace MediaPortal.Configuration.Sections
                                                                 MessageBoxIcon.Question);
               if (dialogResultFanart == DialogResult.Yes)
               {
-                try
-                {
-                  string[] fileList = Directory.GetFiles(configDir, files);
-                  foreach (string file in fileList)
-                  {
-                    File.Delete(file);
-                  }
-                }
-                catch(Exception){}
+                FanArt.GetFanArtFolder(out configDir);
+                DeleteVideoThumbs(files, configDir);
               }
             }
           }
@@ -1704,7 +1724,14 @@ namespace MediaPortal.Configuration.Sections
         ProgressBarAdvance(ref pbSearchCover, "Searching IMPAw... ", true);
 
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
-        impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
+        if (CurrentMovie.Year > 1900)
+        {
+          impSearch.SearchCovers(CurrentMovie.Title + " " + CurrentMovie.Year, CurrentMovie.IMDBNumber);
+        }
+        else
+        {
+          impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
+        }
 
         if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
         {
@@ -2162,6 +2189,13 @@ namespace MediaPortal.Configuration.Sections
       }
 
       int index = lvDatabase.SelectedItems[0].Index;
+      
+      ComboBoxItemDatabase cbd = new ComboBoxItemDatabase();
+      cbd.Database = lvDatabase.SelectedItems[0].SubItems[0].Text;
+      cbd.Name = lvDatabase.SelectedItems[0].SubItems[1].Text;
+      cbd.Language = lvDatabase.SelectedItems[0].SubItems[2].Text;
+      cbd.Limit = lvDatabase.SelectedItems[0].SubItems[3].Text;
+
       lvDatabase.Items.Remove(lvDatabase.SelectedItems[0]);
       lvDatabase.Update();
       if (lvDatabase.Items.Count > 0)
@@ -2175,7 +2209,13 @@ namespace MediaPortal.Configuration.Sections
       }
       SaveSettings();
 
-      UpdateAvailableScripts();
+      List<ComboBoxItemDatabase> dbList = new List<ComboBoxItemDatabase>();
+      dbList.Add(cbd);
+      foreach (ComboBoxItemDatabase comboBoxItemDatabase in mpComboBoxAvailableDatabases.Items)
+      {
+        dbList.Add(comboBoxItemDatabase);
+      }
+      UpdateAvailableScripts(dbList);
     }
 
     private void lvDatabase_KeyUp(Object o, KeyEventArgs e)
@@ -2269,10 +2309,17 @@ namespace MediaPortal.Configuration.Sections
       item.SubItems.Add(database.Name);
       item.SubItems.Add(database.Language);
       item.SubItems.Add(database.Limit);
-
+      
       SaveSettings();
 
-      UpdateAvailableScripts();
+      mpComboBoxAvailableDatabases.Items.Remove(database);
+      List<ComboBoxItemDatabase> dbList = new List<ComboBoxItemDatabase>();
+      foreach (ComboBoxItemDatabase comboBoxItemDatabase in mpComboBoxAvailableDatabases.Items)
+      {
+        dbList.Add(comboBoxItemDatabase);
+      }
+
+      UpdateAvailableScripts(dbList);
     }
 
     private void mpButtonUpdateGrabber_Click(object sender, EventArgs e)
@@ -2376,7 +2423,9 @@ namespace MediaPortal.Configuration.Sections
       string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
       string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
       string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
-
+      string internalMovieImagesGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalMovieImagesGrabber.csscript");
+      string internalMovieImagesGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalMovieImagesGrabber.csscript";
+      
       if (!Win32API.IsConnectedToInternet())
       {
         MessageBox.Show("Update failed. Please check your internet connection!", "", MessageBoxButtons.OK,
@@ -2393,22 +2442,40 @@ namespace MediaPortal.Configuration.Sections
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
+      
       if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
       {
         _progressDialog.CloseProgress();
         return;
       }
 
-      _progressDialog.SetLine1("Downloading the InternalGrabberScript file...");
+      _progressDialog.SetLine1("Downloading the InternalActorsGrabberScript file...");
       _progressDialog.SetLine2("Downloading...");
       _progressDialog.Total = 1;
       _progressDialog.Count = 1;
       _progressDialog.Show();
+      
       if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
       {
         _progressDialog.CloseProgress();
         return;
       }
+
+      IMDB.InternalActorsScriptGrabber.ResetGrabber();
+
+      _progressDialog.SetLine1("Downloading the InternalImagesGrabberScript file...");
+      _progressDialog.SetLine2("Downloading...");
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
+      _progressDialog.Show();
+      
+      if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
+      {
+        _progressDialog.CloseProgress();
+        return;
+      }
+
+      Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
 
       _progressDialog.CloseProgress();
 
@@ -2440,8 +2507,7 @@ namespace MediaPortal.Configuration.Sections
           }
       }
     }
-
-
+    
     /// <summary>
     /// Accept or discard current value of cell editor control
     /// </summary>
@@ -2480,23 +2546,35 @@ namespace MediaPortal.Configuration.Sections
         DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
 
         FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
+        List<ComboBoxItemDatabase> dbList = new List<ComboBoxItemDatabase>();
+
         foreach (FileInfo f in fileList)
         {
           try
           {
-            AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+            CSScript.GlobalSettings.AddSearchDir(AppDomain.CurrentDomain.BaseDirectory);
+            
+            using(AsmHelper script = new AsmHelper(CSScript.Compile(f.FullName), "Temp", true))
+            {
+              script.ProbingDirs = CSScript.GlobalSettings.SearchDirs.Split(';');
+              IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
 
-            _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
+              ComboBoxItemDatabase item = new ComboBoxItemDatabase();
+              item.Database = Path.GetFileNameWithoutExtension(f.FullName);
+              item.Language = grabber.GetLanguage();
+              item.Limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
+              item.Name = grabber.GetName();
+              dbList.Add(item);
+            }
           }
           catch (Exception ex)
           {
-            //textBox3.Text = ex.Message;
             Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
           }
         }
         
-        UpdateAvailableScripts();
+        UpdateAvailableScripts(dbList);
+        IMDB.MovieInfoDatabase.ResetGrabber();
       }
       catch (Exception ex)
       {
@@ -2507,31 +2585,24 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Reloads all grabber in the combobox, which are not used atm.
     /// </summary>
-    private void UpdateAvailableScripts()
+    private void UpdateAvailableScripts(List<ComboBoxItemDatabase> dbList)
     {
-      List<ComboBoxItemDatabase> dbList = new List<ComboBoxItemDatabase>();
-
-      foreach (KeyValuePair<string, IIMDBScriptGrabber> grabber in _grabberList)
+      for (int i = 0; i < dbList.Count; i++)
       {
         bool found = false;
         foreach (ListViewItem item in lvDatabase.Items)
         {
-          if (item.SubItems[chDatabaseDB.Index].Text == grabber.Key)
+          if (item.SubItems[chDatabaseDB.Index].Text == dbList[i].Database)
           {
             found = true;
             break;
           }
         }
 
-        if (!found)
+        if (found)
         {
-          ComboBoxItemDatabase item = new ComboBoxItemDatabase();
-          item.Database = grabber.Key;
-          item.Language = grabber.Value.GetLanguage();
-          item.Limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
-          item.Name = grabber.Value.GetName();
-
-          dbList.Add(item);
+          dbList.RemoveAt(i);
+          i--;
         }
       }
 
@@ -2976,7 +3047,15 @@ namespace MediaPortal.Configuration.Sections
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
         if (tmdbSearch.Count == 0 && chbImpAwCoverSource.Checked)
         {
-          impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+          if (movie.Year > 1900)
+          {
+            impSearch.SearchCovers(movie.Title + " " + movie.Year, movie.IMDBNumber);
+          }
+          else
+          {
+            impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+          }
+
           if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
           {
             // Update database with new cover
@@ -4734,12 +4813,13 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      ImportNfo();
+      ImportNfo(false);
     }
 
-    private void ImportNfo()
+    private void ImportNfo(bool nfoImdbCombined)
     {
-      notFoundMovie = new ArrayList();
+      _notFoundMovie = new ArrayList();
+      _nfoImdbCombined = nfoImdbCombined;
 
       // Set refresh status for background worker
       _isRefreshing = true;
@@ -4863,7 +4943,7 @@ namespace MediaPortal.Configuration.Sections
          if(!VideoDatabase.MakeNfo(movie.ID))
          {
            // Movie filenot found
-           notFoundMovie.Add(movie.Title + "\n");
+           _notFoundMovie.Add(movie.Title + "\n");
            Log.Info("Nfo export error: Video file not exists for movie {0}.", movie.Title);
           }
 
@@ -5001,36 +5081,48 @@ namespace MediaPortal.Configuration.Sections
     private void CancelNfoWorker(object sender, RunWorkerCompletedEventArgs e)
     {
       BackgroundWorker bgw = (BackgroundWorker)sender;
-      _progressDialog.CloseProgress();
-      // Show message
-      if (e.Cancelled)
-      {
-        MessageBox.Show("Canceled !");
-      }
-      else if (e.Error != null)
-      {
-        MessageBox.Show("Error: " + e.Error.Message);
-      }
-      else if (notFoundMovie.Count > 0)
-      {
-        string notFoundMovies = string.Empty;
 
-        foreach (string movie in notFoundMovie)
+      // Show message
+      if (!_nfoImdbCombined)
+      {
+        if (_progressDialog != null)
         {
-          notFoundMovies = notFoundMovies + movie;
+          _progressDialog.CloseProgress();
         }
 
-        MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" +  notFoundMovies);
+        if (e.Cancelled)
+        {
+          MessageBox.Show("Canceled nfo import!");
+        }
+        else if (e.Error != null)
+        {
+          MessageBox.Show("Error: " + e.Error.Message);
+        }
+        else if (_notFoundMovie.Count > 0)
+        {
+          string notFoundMovies = string.Empty;
+
+          foreach (string movie in _notFoundMovie)
+          {
+            notFoundMovies = notFoundMovies + movie;
+          }
+
+          MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" + notFoundMovies);
+        }
+        else
+        {
+          MessageBox.Show("Done!");
+        }
       }
-      else
-      {
-        MessageBox.Show("Done!");
-      }
+
       bgw.Dispose();
-      notFoundMovie.Clear();
+      _notFoundMovie.Clear();
       // Refresh all movies
-      LoadMovies(0);
-      cbTitle.SelectedIndex = 0;
+      if (!_nfoImdbCombined)
+      {
+        LoadMovies(0);
+        cbTitle.SelectedIndex = 0;
+      }
       this.Enabled = true;
     }
 

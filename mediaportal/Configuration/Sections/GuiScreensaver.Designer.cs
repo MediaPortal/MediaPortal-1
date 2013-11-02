@@ -37,6 +37,8 @@ namespace MediaPortal.Configuration.Sections
       this.label7 = new System.Windows.Forms.Label();
       this.groupBoxScreenSaver = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBoxIdleAction = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.pluginsComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.radioButtonLoadPlugin = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioBtnFPSReduce = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioBtnBlankScreen = new MediaPortal.UserInterface.Controls.MPRadioButton();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).BeginInit();
@@ -91,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Size = new System.Drawing.Size(377, 34);
       this.label2.TabIndex = 13;
       this.label2.Text = "The idle time starts to count whenever there is no user activity and no moving pi" +
-          "cture is shown in fullscreen. Therefore the only exceptions are:";
+      "cture is shown in fullscreen. Therefore the only exceptions are:";
       // 
       // label3
       // 
@@ -123,8 +125,8 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxScreenSaver
       // 
       this.groupBoxScreenSaver.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScreenSaver.Controls.Add(this.groupBoxIdleAction);
       this.groupBoxScreenSaver.Controls.Add(this.numericUpDownDelay);
       this.groupBoxScreenSaver.Controls.Add(this.label1);
@@ -136,7 +138,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScreenSaver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScreenSaver.Location = new System.Drawing.Point(6, 0);
       this.groupBoxScreenSaver.Name = "groupBoxScreenSaver";
-      this.groupBoxScreenSaver.Size = new System.Drawing.Size(462, 221);
+      this.groupBoxScreenSaver.Size = new System.Drawing.Size(462, 286);
       this.groupBoxScreenSaver.TabIndex = 17;
       this.groupBoxScreenSaver.TabStop = false;
       this.groupBoxScreenSaver.Text = "Idle timer";
@@ -144,16 +146,42 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxIdleAction
       // 
       this.groupBoxIdleAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxIdleAction.Controls.Add(this.pluginsComboBox);
+      this.groupBoxIdleAction.Controls.Add(this.radioButtonLoadPlugin);
       this.groupBoxIdleAction.Controls.Add(this.radioBtnFPSReduce);
       this.groupBoxIdleAction.Controls.Add(this.radioBtnBlankScreen);
       this.groupBoxIdleAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxIdleAction.Location = new System.Drawing.Point(18, 152);
       this.groupBoxIdleAction.Name = "groupBoxIdleAction";
-      this.groupBoxIdleAction.Size = new System.Drawing.Size(428, 53);
+      this.groupBoxIdleAction.Size = new System.Drawing.Size(428, 82);
       this.groupBoxIdleAction.TabIndex = 17;
       this.groupBoxIdleAction.TabStop = false;
       this.groupBoxIdleAction.Text = "Idle action";
+      // 
+      // pluginsComboBox
+      // 
+      this.pluginsComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.pluginsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.pluginsComboBox.FormattingEnabled = true;
+      this.pluginsComboBox.Location = new System.Drawing.Point(101, 45);
+      this.pluginsComboBox.Name = "pluginsComboBox";
+      this.pluginsComboBox.Size = new System.Drawing.Size(319, 21);
+      this.pluginsComboBox.TabIndex = 3;
+      // 
+      // radioButtonLoadPlugin
+      // 
+      this.radioButtonLoadPlugin.AutoSize = true;
+      this.radioButtonLoadPlugin.Checked = true;
+      this.radioButtonLoadPlugin.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioButtonLoadPlugin.Location = new System.Drawing.Point(15, 46);
+      this.radioButtonLoadPlugin.Name = "radioButtonLoadPlugin";
+      this.radioButtonLoadPlugin.Size = new System.Drawing.Size(80, 17);
+      this.radioButtonLoadPlugin.TabIndex = 2;
+      this.radioButtonLoadPlugin.TabStop = true;
+      this.radioButtonLoadPlugin.Text = "Load Plugin";
+      this.radioButtonLoadPlugin.UseVisualStyleBackColor = true;
+      this.radioButtonLoadPlugin.CheckedChanged += new System.EventHandler(this.radioButtonLoadPlugin_CheckedChanged);
       // 
       // radioBtnFPSReduce
       // 
@@ -185,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBoxScreenSaver);
       this.Name = "GuiScreensaver";
-      this.Size = new System.Drawing.Size(468, 226);
+      this.Size = new System.Drawing.Size(468, 291);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).EndInit();
       this.groupBoxScreenSaver.ResumeLayout(false);
       this.groupBoxScreenSaver.PerformLayout();
@@ -208,5 +236,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIdleAction;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioBtnBlankScreen;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioBtnFPSReduce;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonLoadPlugin;
+    private MediaPortal.UserInterface.Controls.MPComboBox pluginsComboBox;
   }
 }

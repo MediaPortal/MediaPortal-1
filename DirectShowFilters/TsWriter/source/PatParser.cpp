@@ -141,7 +141,7 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
   CChannelInfo* info=it->second;
 
 	// check if we already set the sdt for this channel
-	if (info->SdtReceived) return;
+	if (info->SdtReceived || (info->TransportId != sdtInfo.TransportId)) return;
 
 	info->NetworkId=sdtInfo.NetworkId;
 	info->TransportId=sdtInfo.TransportId;

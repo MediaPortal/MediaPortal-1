@@ -95,7 +95,8 @@ namespace MediaPortal.Configuration
     private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
     private SectionSettings _previousSection = null;
-    private RemoteDirectInput dinputRemote;
+    // Disable DirectX Input (not compatible with NET4 and later)
+    //private RemoteDirectInput dinputRemote;
     private RemoteSerialUIR serialuir;
 
     private static ConfigSplashScreen splashScreen = new ConfigSplashScreen();
@@ -400,9 +401,10 @@ namespace MediaPortal.Configuration
       SectionSettings remote = new Remote();
       AddSection(new ConfigPage(null, remote, false));
 
-      Log.Info("add DirectInput section");
-      RemoteDirectInput dinputConf = new RemoteDirectInput();
-      AddSection(new ConfigPage(remote, dinputConf, true));
+      // Disable DirectX Input (not compatible with NET4 and later)
+      //Log.Info("add DirectInput section");
+      //RemoteDirectInput dinputConf = new RemoteDirectInput();
+      //AddSection(new ConfigPage(remote, dinputConf, true));
       RemoteUSBUIRT usbuirtConf = new RemoteUSBUIRT();
       AddSection(new ConfigPage(remote, usbuirtConf, true));
       serialuir = new RemoteSerialUIR();
@@ -797,12 +799,13 @@ namespace MediaPortal.Configuration
       {
         // Ignore
       }
-      if (null != dinputRemote)
-      {
-        // make sure the listener thread gets killed cleanly!
-        dinputRemote.Dispose();
-        dinputRemote = null;
-      }
+      // Disable DirectX Input (not compatible with NET4 and later)
+      //if (null != dinputRemote)
+      //{
+      //  // make sure the listener thread gets killed cleanly!
+      //  dinputRemote.Dispose();
+      //  dinputRemote = null;
+      //}
     }
 
     private void SettingsForm_Load(object sender, EventArgs e)
