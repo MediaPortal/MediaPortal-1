@@ -1,4 +1,6 @@
-// Copyright (C) 2005-2013 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -14,14 +16,17 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#endregion
 
-// Version numbers (used for resource and log display)
-#define TSREADER_MAJOR_VERSION 3
-#define TSREADER_MID_VERSION 0
-#define TSREADER_VERSION 77
-#define TSREADER_VERSION_STR "3.0.77.0\0"
+namespace MediaPortal.Music.Database
+{
+  public class AllMusicAlbumMatch
+  {
+    public string Artist { get; set; }
+    public string Album { get; set; }
+    public string Year { get; set; }
+    public string AlbumURL { get; set; }
+    public string Label { get; set; }
 
-#define MP_VERSION 1,6,000,0
-#define MP_VERSION_STR "1.6.000.0\0"
-
-
+  }
+}

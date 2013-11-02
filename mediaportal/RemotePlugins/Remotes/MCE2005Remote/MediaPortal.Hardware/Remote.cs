@@ -22,8 +22,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
-using MediaPortal.Profile;
 using Microsoft.Win32.SafeHandles;
 
 #pragma warning disable 618
@@ -60,12 +58,6 @@ namespace MediaPortal.Hardware
         _deviceWatcher.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
         _deviceWatcher.SettingsChanged += new SettingsChanged(OnSettingsChanged);
         _deviceWatcher.RegisterDeviceArrival();
-
-        // Read if we use Master or Wave volume
-        using (Settings reader = new MPSettings())
-        {
-          isDigital = reader.GetValueAsBool("volume", "digital", false);
-        }
 
         Open();
       }
@@ -137,10 +129,7 @@ namespace MediaPortal.Hardware
 
             if (Click != null)
             {
-              if (_doubleClickButton != RemoteButton.Mute && OSInfo.OSInfo.VistaOrLater())
-              {
-                Click(this, new RemoteEventArgs(_doubleClickButton));
-              }
+              Click(this, new RemoteEventArgs(_doubleClickButton));
             }
           }
         }
@@ -177,7 +166,6 @@ namespace MediaPortal.Hardware
     private int _doubleClickTime = -1;
     private int _doubleClickTick = 0;
     private RemoteButton _doubleClickButton;
-    private bool isDigital;
 
     #endregion Members
   }
