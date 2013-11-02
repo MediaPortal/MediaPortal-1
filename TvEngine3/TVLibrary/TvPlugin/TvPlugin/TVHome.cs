@@ -2061,12 +2061,7 @@ namespace TvPlugin
             pDlgOK.Reset();
             pDlgOK.SetHeading(605); //my tv
             pDlgOK.AddLocalizedString(875); //current program
-
-            bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
-            if (!doesManuelScheduleAlreadyExist)
-            {
-              pDlgOK.AddLocalizedString(876); //till manual stop
-            }
+            pDlgOK.AddLocalizedString(876); //till manual stop
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
             switch (pDlgOK.SelectedId)
             {
@@ -2077,9 +2072,14 @@ namespace TvPlugin
 
               case 876:
                 //manual
-                StartRecordingSchedule(channel, true);
-                return true;
-             }
+                bool doesManuelScheduleAlreadyExist = DoesManualScheduleAlreadyExist(channel);
+                if (!doesManuelScheduleAlreadyExist)
+                {
+                  StartRecordingSchedule(channel, true);
+                  return true;
+                }
+                break;
+            }
           }
         }
         else
