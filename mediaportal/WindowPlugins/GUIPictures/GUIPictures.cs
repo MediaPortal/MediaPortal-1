@@ -907,7 +907,7 @@ namespace MediaPortal.GUI.Pictures
       {
         dlg.AddLocalizedString(500); // FileMenu      
       }
-      if (Util.Utils.IsRemovable(item.Path))
+      if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
       {
         dlg.AddLocalizedString(831);
       }
