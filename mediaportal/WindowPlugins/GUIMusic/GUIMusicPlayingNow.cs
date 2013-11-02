@@ -1352,7 +1352,7 @@ namespace MediaPortal.GUI.Music
 
     private void OnImageTimerTickEvent(object trash_, ElapsedEventArgs args_)
     {
-      GUIGraphicsContext.form.BeginInvoke(new TimerElapsedDelegate(FlipPictures));
+      GUIGraphicsContext.form.Invoke(new TimerElapsedDelegate(FlipPictures));
     }
 
     private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_)
