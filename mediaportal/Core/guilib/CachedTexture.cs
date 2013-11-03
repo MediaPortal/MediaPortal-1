@@ -266,7 +266,14 @@ namespace MediaPortal.GUI.Library
         if (_textureNumber >= 0)
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-          DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+          try
+          {
+            DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+          }
+          catch (Exception)
+          {
+            // Catch exception to avoid garbage in log.
+          }
         }
         else
         {
@@ -295,13 +302,21 @@ namespace MediaPortal.GUI.Library
       {
         if (_textureNumber >= 0)
         {
-          // Rotate around the x,y point of the specified rectangle; maintain aspect ratio (1.0f)
-          TransformMatrix localTransform = new TransformMatrix();
-          localTransform.SetZRotation(zrot, x, y, 1.0f);
-          TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
-          localTransform = finalTransform.multiply(localTransform);
+          try
+          {
+            // Rotate around the x,y point of the specified rectangle; maintain aspect ratio (1.0f)
+            TransformMatrix localTransform = new TransformMatrix();
+            localTransform.SetZRotation(zrot, x, y, 1.0f);
+            TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
+            localTransform = finalTransform.multiply(localTransform);
 
-          DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, localTransform.Matrix);
+            DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color,
+                                           localTransform.Matrix);
+          }
+          catch (Exception)
+          {
+            // Catch exception to avoid garbage in log.
+          }
         }
         else
         {
