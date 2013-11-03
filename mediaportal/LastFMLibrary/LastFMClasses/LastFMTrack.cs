@@ -88,38 +88,41 @@ namespace MediaPortal.LastFM
 
     public static List<LastFMSimilarTrack> GetSimilarTracks(XDocument xDoc)
     {
-
       var ci = new CultureInfo("en-GB");
-      var tracks = (from t in xDoc.Descendants("track")
-                    let trackName = (string)t.Element("name")
-                    let playcount = (string)t.Element("playcount")
-                    let mbid = (string)t.Element("mbid")
-                    let duration = (string)t.Element("duration")
-                    let match = (string)t.Element("match")
-                    let trackURL = (string)t.Element("url")
-                    let artistElement = t.Element("artist")
-                    where artistElement != null
-                    let artistName = (string)artistElement.Element("name")
-                    let images = (
-                                   from i in t.Elements("image")
-                                   select new LastFMImage(
-                                     LastFMImage.GetImageSizeEnum((string)i.Attribute("size")),
-                                     (string)i
-                                     )
-                                 ).ToList()
-                    select new LastFMSimilarTrack
-                    {
-                      TrackTitle = trackName,
-                      Playcount = string.IsNullOrEmpty(playcount) ? 0 : int.Parse(playcount, ci),
-                      MusicBrainzId = mbid,
-                      Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration, ci),
-                      Match = string.IsNullOrEmpty(match) ? 0 : float.Parse(match, ci),
-                      TrackURL = trackURL,
-                      ArtistName = artistName,
-                      Images = images
-                    }
-                    ).ToList();
-      return tracks;
+      if (xDoc != null)
+      {
+        var tracks = (from t in xDoc.Descendants("track")
+                      let trackName = (string) t.Element("name")
+                      let playcount = (string) t.Element("playcount")
+                      let mbid = (string) t.Element("mbid")
+                      let duration = (string) t.Element("duration")
+                      let match = (string) t.Element("match")
+                      let trackURL = (string) t.Element("url")
+                      let artistElement = t.Element("artist")
+                      where artistElement != null
+                      let artistName = (string) artistElement.Element("name")
+                      let images = (
+                                     from i in t.Elements("image")
+                                     select new LastFMImage(
+                                       LastFMImage.GetImageSizeEnum((string) i.Attribute("size")),
+                                       (string) i
+                                       )
+                                   ).ToList()
+                      select new LastFMSimilarTrack
+                               {
+                                 TrackTitle = trackName,
+                                 Playcount = string.IsNullOrEmpty(playcount) ? 0 : int.Parse(playcount, ci),
+                                 MusicBrainzId = mbid,
+                                 Duration = string.IsNullOrEmpty(duration) ? 0 : int.Parse(duration, ci),
+                                 Match = string.IsNullOrEmpty(match) ? 0 : float.Parse(match, ci),
+                                 TrackURL = trackURL,
+                                 ArtistName = artistName,
+                                 Images = images
+                               }
+                     ).ToList();
+        return tracks;
+      }
+      return null;
     }
 
   }

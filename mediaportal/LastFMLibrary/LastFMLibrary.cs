@@ -302,7 +302,11 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, false);
       var xDoc = GetXml(buildLastFMString, "GET", false);
 
-      return LastFMSimilarTrack.GetSimilarTracks(xDoc);
+      if (xDoc != null)
+      {
+        return LastFMSimilarTrack.GetSimilarTracks(xDoc);
+      }
+      return null;
     }
 
     /// <summary>
@@ -418,7 +422,11 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
       var xDoc = GetXml(buildLastFMString, "GET", false);
 
-      return LastFMSimilarTrack.GetSimilarTracks(xDoc);
+      if (xDoc != null)
+      {
+        return LastFMSimilarTrack.GetSimilarTracks(xDoc);
+      }
+      return null;
     }
 
     #endregion
@@ -508,6 +516,7 @@ namespace MediaPortal.LastFM
         url = url + "?" + querystring;
       }
 
+      bool webExceptionStatus = false;
       var postArray = Encoding.UTF8.GetBytes(querystring);
       var request = (HttpWebRequest) WebRequest.Create(url);
       request.Method = httpMethod;
@@ -531,6 +540,7 @@ namespace MediaPortal.LastFM
           // errors on last.fm side such as invalid API key, are returned as HTTP errors
           // just process these as a standard return
           response = (HttpWebResponse) ex.Response;
+          webExceptionStatus = true;
         }
         else
         {
@@ -538,20 +548,22 @@ namespace MediaPortal.LastFM
         }
       }
 
-      using (var stream = response.GetResponseStream())
-      using (var reader = new StreamReader(stream, Encoding.UTF8))
+      if (!webExceptionStatus)
       {
-        var resp = reader.ReadToEnd();
-        xDoc = XDocument.Parse(resp);
+        using (var stream = response.GetResponseStream())
+        using (var reader = new StreamReader(stream, Encoding.UTF8))
+        {
+          var resp = reader.ReadToEnd();
+          xDoc = XDocument.Parse(resp);
+        }
+
+        if ((string) xDoc.Root.Attribute("status") != "ok")
+        {
+          throw GetLastFMException(xDoc);
+        }
+        return xDoc;
       }
-
-
-      if ((string) xDoc.Root.Attribute("status") != "ok")
-      {
-        throw GetLastFMException(xDoc);
-      }
-
-      return xDoc;
+      return null;
     }
 
     #endregion
