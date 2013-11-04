@@ -30,6 +30,21 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -117,6 +132,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
@@ -139,6 +155,9 @@
     <Compile Include="config\EPGConfigData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="config\Grabber\JSONField.cs" />
+    <Compile Include="config\Grabber\JSONNode.cs" />
+    <Compile Include="config\Grabber\JSONParserTemplate.cs" />
     <Compile Include="config\Grabber\SublinkInfo.cs" />
     <Compile Include="config\Grabber\DataParserTemplate.cs" />
     <Compile Include="config\Grabber\GrabberConfigFile.cs" />
@@ -159,6 +178,7 @@
     <Compile Include="config\Grabber\WebParserTemplate.cs" />
     <Compile Include="config\Grabber\WebSearchData.cs" />
     <Compile Include="config\Grabber\DataPreference.cs" />
+    <Compile Include="Parser\JSONParser.cs" />
     <Compile Include="Parser\WebParser.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="config\Grabber\XmlField.cs" />
@@ -208,7 +228,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
