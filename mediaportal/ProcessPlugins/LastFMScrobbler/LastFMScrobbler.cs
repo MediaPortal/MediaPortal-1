@@ -226,11 +226,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
 
         if (_announceTracks)
         {
-          new Thread(
-            () =>
-            AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
-                          currentSong.Duration.ToString(CultureInfo.InvariantCulture))) {Name = "Last.FM Announcer"}
-            .Start();
+          new Thread(() => AnnounceTrack(currentSong.Artist ?? currentSong.AlbumArtist, currentSong.Title, currentSong.Album,
+                          currentSong.Duration.ToString(CultureInfo.InvariantCulture))) { Name = "Last.FM Announcer" }.Start();
         }
 
         if (MusicState.AutoDJEnabled)
@@ -242,7 +239,6 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         // Catch exception to avoid crash.
       }
-
     }
 
     /// <summary>
