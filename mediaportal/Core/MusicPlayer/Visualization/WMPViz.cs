@@ -156,7 +156,15 @@ namespace MediaPortal.Visualization
       Marshal.StructureToPtr(TimedLvl, pTimedLevel, false);
 
       int result = 0;
-      result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+
+      try
+      {
+        result = WMPInterop.RenderWMP(pTimedLevel, ref rect);
+      }
+      catch (AccessViolationException)
+      {
+        return result; // We could get an Access Violation when changing Vis
+      }
 
       Marshal.FreeHGlobal(pTimedLevel);
       return result;
