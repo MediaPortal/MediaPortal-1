@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -201,9 +202,17 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       {
         if (type != g_Player.MediaType.Music || !(_announceTracks || MusicState.AutoDJEnabled)) return;
 
-        if (!Win32API.IsConnectedToInternet())
+        try
         {
-          Log.Info("No internet connection detected.  Can not process last.fm announce or Auto DJ");
+          using (var client = new WebClient())
+          using (var stream = client.OpenRead("http://www.google.com"))
+          {
+            Log.Debug("internet connection detected. Can process last.fm announce or Auto DJ");
+          }
+        }
+        catch
+        {
+          Log.Info("No internet connection detected. Can not process last.fm announce or Auto DJ");
           return;
         }
 
@@ -407,14 +416,22 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
         return;
       }
 
-      if (!Win32API.IsConnectedToInternet())
+      try
+      {
+        using (var client = new WebClient())
+        using (var stream = client.OpenRead("http://www.google.com"))
+        {
+          Log.Debug("internet connection detected. to scrobble: {0} - {1}", tag.Title, artist);
+        }
+      }
+      catch
       {
         CacheScrobble(tag, DateTime.UtcNow);
         Log.Info("No internet connection so unable to scrobble: {0} - {1}", tag.Title, artist);
         Log.Info("Scrobble has been cached");
         return;
       }
-      
+
       try
       {
         LastFMLibrary.Scrobble(artist, tag.Title, tag.Album);
