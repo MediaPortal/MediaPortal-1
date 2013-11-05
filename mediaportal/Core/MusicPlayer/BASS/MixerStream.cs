@@ -693,19 +693,23 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      try
-      {
-        GCHandle gch = GCHandle.FromIntPtr(userData);
-        MusicStream musicstream = (MusicStream)gch.Target;
+      new Thread(() =>
+        {
+          try
+          {
+            GCHandle gch = GCHandle.FromIntPtr(userData);
+            MusicStream musicstream = (MusicStream) gch.Target;
 
-        Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
+            Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
 
-        _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
-      }
-      catch (AccessViolationException)
-      {
-        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
-      }
+            _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+          }
+          catch (AccessViolationException)
+          {
+            Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+          }
+        }
+       ) { Name = "BASS" }.Start();
     }
 
 

@@ -96,8 +96,10 @@ namespace MediaPortal.WebEPG
 
         XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
 
-        TextReader r = new StreamReader(_strBaseDir + File);
-        _grabber = (GrabberConfigFile)s.Deserialize(r);
+        using (TextReader r = new StreamReader(_strBaseDir + File))
+        {
+          _grabber = (GrabberConfigFile)s.Deserialize(r);
+        }
       }
       catch (InvalidOperationException ex)
       {
@@ -149,6 +151,10 @@ namespace MediaPortal.WebEPG
       {
         case ListingInfo.Type.Xml:
           _parser = new XmlParser(_grabber.Listing.XmlTemplate);
+          break;
+
+        case ListingInfo.Type.JSON:
+          _parser = new JSONParser(_grabber.Listing.JSONTemplate);
           break;
 
         case ListingInfo.Type.Data:

@@ -1113,7 +1113,7 @@ namespace MediaPortal.GUI.Music
         // Is this an album?
         if (tag != null && !string.IsNullOrEmpty(tag.Album))
         {
-          ShowAlbumInfo(tag.Artist, tag.Album, pItem.Path, tag);
+          ShowAlbumInfo(tag.Artist, tag.Album);
           facadeLayout.RefreshCoverArt();
         }
         else

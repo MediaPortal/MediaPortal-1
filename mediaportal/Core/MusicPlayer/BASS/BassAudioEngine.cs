@@ -73,12 +73,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public delegate void PlaybackProgressHandler(object sender, double duration, double curPosition);
 
-    public delegate void TrackPlaybackCompletedHandler(g_Player.MediaType type, int stoptime, string filename);
-
-    public static event TrackPlaybackCompletedHandler TrackPlaybackCompleted;
-
-    public delegate void CrossFadeHandler(object sender, string filePath);
-
     public delegate void PlaybackStateChangedDelegate(object sender, PlayState oldState, PlayState newState);
 
     public event PlaybackStateChangedDelegate PlaybackStateChanged;
@@ -581,6 +575,26 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Info("BASS: Playback changed to {0}", type);
             break;
           }
+
+        case Action.ActionType.ACTION_PAGE_UP:
+          {
+            if (FullScreen)
+            {
+              Log.Debug("BASS: Switch to Previous Vis");
+              VizManager.GetPrevVis();
+            }
+            break;
+          }
+
+        case Action.ActionType.ACTION_PAGE_DOWN:
+          {
+            if (FullScreen)
+            {
+              Log.Info("BASS: Switch to Next Vis");
+              VizManager.GetNextVis();
+            }
+            break;
+          }
       }
     }
 
@@ -617,21 +631,18 @@ namespace MediaPortal.MusicPlayer.BASS
           if (nextSong != string.Empty)
           {
             PlayInternal(nextSong);
-            if (PlaybackStart != null)
-            {
-              PlaybackStart(g_Player.MediaType.Music, nextSong);
-            }
+            g_Player.currentMedia = g_Player.MediaType.Music;
+            g_Player.currentFilePlaying = nextSong;
+            g_Player.OnChanged(nextSong);
+            g_Player.OnStarted();
           }
           else
           {
             Log.Debug("BASS: Reached end of playlist.");
+            g_Player.OnStopped();
             Stop();
           }
 
-          if (TrackPlaybackCompleted != null)
-          {
-            TrackPlaybackCompleted(g_Player.MediaType.Music, (int)CurrentPosition, musicStream.FilePath);
-          }
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
@@ -1433,53 +1444,59 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private bool HandleCueFile(ref string filePath)
     {
-      _cueTrackStartPos = 0;
-      _cueTrackEndPos = 0;
-      if (CueUtil.isCueFakeTrackFile(filePath))
+      try
       {
-        Log.Debug("BASS: Playing CUE Track: {0}", filePath);
-        _currentCueFakeTrackFileName = filePath;
-        CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
-        if (!cueFakeTrack.CueFileName.Equals(_currentCueFileName))
+        _cueTrackStartPos = 0;
+        _cueTrackEndPos = 0;
+        if (CueUtil.isCueFakeTrackFile(filePath))
         {
-          // New CUE. Update chached cue.
-          _currentCueSheet = new CueSheet(cueFakeTrack.CueFileName);
-          _currentCueFileName = cueFakeTrack.CueFileName;
-        }
-
-        // Get track start position
-        Track track = _currentCueSheet.Tracks[cueFakeTrack.TrackNumber - _currentCueSheet.Tracks[0].TrackNumber];
-        Index index = track.Indices[0];
-        _cueTrackStartPos = CueUtil.cueIndexToFloatTime(index);
-
-        // If single audio file and is not last track, set track end position.
-        if (_currentCueSheet.Tracks[_currentCueSheet.Tracks.Length - 1].TrackNumber > track.TrackNumber)
-        {
-          Track nextTrack =
-            _currentCueSheet.Tracks[cueFakeTrack.TrackNumber - _currentCueSheet.Tracks[0].TrackNumber + 1];
-          if (nextTrack.DataFile.Filename.Equals(track.DataFile.Filename))
+          Log.Debug("BASS: Playing CUE Track: {0}", filePath);
+          _currentCueFakeTrackFileName = filePath;
+          CueFakeTrack cueFakeTrack = CueUtil.parseCueFakeTrackFileName(filePath);
+          if (!cueFakeTrack.CueFileName.Equals(_currentCueFileName))
           {
-            Index nindex = nextTrack.Indices[0];
-            _cueTrackEndPos = CueUtil.cueIndexToFloatTime(nindex);
+            // New CUE. Update chached cue.
+            _currentCueSheet = new CueSheet(cueFakeTrack.CueFileName);
+            _currentCueFileName = cueFakeTrack.CueFileName;
           }
-        }
 
-        // If audio file is not changed, just set new start/end position and reset pause
-        string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
-                               System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-        if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
+          // Get track start position
+          Track track = _currentCueSheet.Tracks[cueFakeTrack.TrackNumber - _currentCueSheet.Tracks[0].TrackNumber];
+          Index index = track.Indices[0];
+          _cueTrackStartPos = CueUtil.cueIndexToFloatTime(index);
+
+          // If single audio file and is not last track, set track end position.
+          if (_currentCueSheet.Tracks[_currentCueSheet.Tracks.Length - 1].TrackNumber > track.TrackNumber)
+          {
+            Track nextTrack =
+              _currentCueSheet.Tracks[cueFakeTrack.TrackNumber - _currentCueSheet.Tracks[0].TrackNumber + 1];
+            if (nextTrack.DataFile.Filename.Equals(track.DataFile.Filename))
+            {
+              Index nindex = nextTrack.Indices[0];
+              _cueTrackEndPos = CueUtil.cueIndexToFloatTime(nindex);
+            }
+          }
+
+          // If audio file is not changed, just set new start/end position and reset pause
+          string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
+                                 System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
+          if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
+          {
+            SetCueTrackEndPosition(GetCurrentStream());
+            return true;
+          }
+          filePath = audioFilePath;
+        }
+        else
         {
-          SetCueTrackEndPosition(GetCurrentStream());
-          return true;
+          _currentCueFileName = null;
+          _currentCueSheet = null;
         }
-        filePath = audioFilePath;
       }
-      else
+      catch (Exception)
       {
-        _currentCueFileName = null;
-        _currentCueSheet = null;
+        // Catch exception to avoid crash.
       }
-
       return false;
     }
 

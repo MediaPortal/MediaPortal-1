@@ -189,6 +189,17 @@ namespace MediaPortal.Player
       set { _currentDescription = value; }
     }
 
+    public static MediaType currentMedia
+    {
+      get { return _currentMedia; }
+      set { _currentMedia = value; }
+    }
+
+    public static string currentFilePlaying
+    {
+      get { return _currentFilePlaying; }
+      set { _currentFilePlaying = value; }
+    }
     #endregion
 
     #region Serialisation
@@ -477,7 +488,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file is stopped
-    private static void OnChanged(string newFile)
+    public static void OnChanged(string newFile)
     {
       if (newFile == null || newFile.Length == 0)
       {
@@ -503,7 +514,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file is stopped
-    private static void OnStopped()
+    public static void OnStopped()
     {
       //check if we're playing
       if (Playing && PlayBackStopped != null)
@@ -530,7 +541,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file ends
-    private static void OnEnded()
+    public static void OnEnded()
     {
       //check if we're playing
       if (PlayBackEnded != null)
@@ -552,7 +563,7 @@ namespace MediaPortal.Player
     }
 
     //called when starting playing a file
-    private static void OnStarted()
+    public static void OnStarted()
     {
       //check if we're playing
       if (_player == null)

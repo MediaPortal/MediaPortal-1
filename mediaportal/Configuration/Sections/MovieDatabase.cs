@@ -381,7 +381,11 @@ namespace MediaPortal.Configuration.Sections
             GetNfoFiles(availablePath, ref _nfoFiles);
           }
 
-          ImportNfo(true);
+          if (_nfoFiles.Count > 0)
+          {
+            ImportNfo(true);
+          }
+
           // Then video files (only not added with nfo)
           // Close progress dialog from nfo import if exist
           if (_progressDialog != null)
