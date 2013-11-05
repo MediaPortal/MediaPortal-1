@@ -684,7 +684,19 @@ namespace SetupTv.Sections
         long quota = mpNumericTextBoxDiskQuota.Value * 1024;
         setting.Value = quota.ToString();
         setting.Persist();
-        Log.Debug("SetupTV: saved quota  for {0} is {1}", drive, setting.Value);
+
+        string enableDiskQuotaValue;
+
+        if (enableDiskQuota.Checked)
+        {
+          enableDiskQuotaValue = "Enabled";
+        }
+        else
+        {
+          enableDiskQuotaValue = "Disabled";
+        }
+
+        Log.Debug("SetupTV: saved quota  for {0} is {1}, Disk Quota is {2}", drive, setting.Value, enableDiskQuotaValue);
       }
       else
       {
