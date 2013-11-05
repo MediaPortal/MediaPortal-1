@@ -2827,7 +2827,7 @@ namespace MediaPortal.GUI.Video
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
-      if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
+      if (!string.IsNullOrEmpty(_currentFolder) && useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
       {
         itemlist = _cachedItems;
         int currentItemIndex = 0;
