@@ -177,7 +177,7 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Debug("PluginsNew: load active image from resource - {0}", resourceName);
         tag.ActiveImage = LoadImageFromResource(type, resourceName);
-        if (tag.IsIncompatible)
+        if (tag.IsIncompatible && tag.ActiveImage != null)
         {
           tag.ActiveImage = OverlayImage(tag.ActiveImage, imageListLargePlugins.Images[20]);
         }
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
       {
         Log.Debug("PluginsNew: load deactivated image from resource - {0}", resourceName);
         tag.InactiveImage = LoadImageFromResource(type, resourceName);
-        if (tag.IsIncompatible)
+        if (tag.IsIncompatible && tag.ActiveImage != null)
         {
           tag.InactiveImage = OverlayImage(tag.InactiveImage, imageListLargePlugins.Images[20]);
         }
