@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2013 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2013 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,13 +38,15 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class PluginsNew : SectionSettings
   {
-		private System.Windows.Forms.ImageList imageListLargePlugins;
-		private System.Windows.Forms.ImageList imageListContextMenu;
-		private System.Windows.Forms.ImageList imageListMPInstaller;
+    private System.Windows.Forms.ImageList imageListLargePlugins;
+    private System.Windows.Forms.ImageList imageListContextMenu;
+    private System.Windows.Forms.ImageList imageListMPInstaller;
     private bool pluginsLoadedOnPage = false;
 
     public PluginsNew()
-      : this("Plugins") {}
+      : this("Plugins")
+    {
+    }
 
     public PluginsNew(string name)
       : base(name)
@@ -52,51 +54,138 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-			this.imageListLargePlugins = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(42, 42) };
-			this.imageListContextMenu = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(16, 16) };
-			this.imageListMPInstaller = new System.Windows.Forms.ImageList() { ColorDepth = ColorDepth.Depth32Bit, TransparentColor = Color.Transparent, ImageSize = new Size(42, 42) };
+      this.imageListLargePlugins = new System.Windows.Forms.ImageList()
+                                     {
+                                       ColorDepth = ColorDepth.Depth32Bit,
+                                       TransparentColor = Color.Transparent,
+                                       ImageSize = new Size(42, 42)
+                                     };
+      this.imageListContextMenu = new System.Windows.Forms.ImageList()
+                                    {
+                                      ColorDepth = ColorDepth.Depth32Bit,
+                                      TransparentColor = Color.Transparent,
+                                      ImageSize = new Size(16, 16)
+                                    };
+      this.imageListMPInstaller = new System.Windows.Forms.ImageList()
+                                    {
+                                      ColorDepth = ColorDepth.Depth32Bit,
+                                      TransparentColor = Color.Transparent,
+                                      ImageSize = new Size(42, 42)
+                                    };
 
-			System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-			// 
-			// imageListLargePlugins
-			// 
-			this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageListLargePlugins.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.00_plugin_other.png")));
-			this.imageListLargePlugins.Images.Add("1", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.01_plugin_other_off.png")));
-			this.imageListLargePlugins.Images.Add("2", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.02_plugin_window.png")));
-			this.imageListLargePlugins.Images.Add("3", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.03_plugin_window_off.png")));
-			this.imageListLargePlugins.Images.Add("4", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.04_plugin_process.png")));
-			this.imageListLargePlugins.Images.Add("5", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.05_plugin_process_off.png")));
-			this.imageListLargePlugins.Images.Add("6", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.06_plugin_externalplayers.png")));
-			this.imageListLargePlugins.Images.Add("7", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.07_plugin_externalplayers_off.png")));
-			this.imageListLargePlugins.Images.Add("8", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.08_plugin_window_home.png")));
-			this.imageListLargePlugins.Images.Add("9", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.09_plugin_window_plugins.png")));
-			this.imageListLargePlugins.Images.Add("10", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.10_plugin_other_incomp.png")));
-			this.imageListLargePlugins.Images.Add("11", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.11_plugin_other_off_incomp.png")));
-			this.imageListLargePlugins.Images.Add("12", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.12_plugin_window_incomp.png")));
-			this.imageListLargePlugins.Images.Add("13", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.13_plugin_window_off_incomp.png")));
-			this.imageListLargePlugins.Images.Add("14", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.14_plugin_process_incomp.png")));
-			this.imageListLargePlugins.Images.Add("15", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.15_plugin_process_off_incomp.png")));
-			this.imageListLargePlugins.Images.Add("16", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.16_plugin_externalplayers_incomp.png")));
-			this.imageListLargePlugins.Images.Add("17", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.17_plugin_externalplayers_off_incomp.png")));
-			this.imageListLargePlugins.Images.Add("18", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.18_plugin_window_home_incomp.png")));
-			this.imageListLargePlugins.Images.Add("19", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.19_plugin_window_plugins_incomp.png")));
-			this.imageListLargePlugins.Images.Add("20", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.20_alert-ovl.png")));
+      System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+      // 
+      // imageListLargePlugins
+      // 
+      this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListLargePlugins.Images.Add("0",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.00_plugin_other.png")));
+      this.imageListLargePlugins.Images.Add("1",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.01_plugin_other_off.png")));
+      this.imageListLargePlugins.Images.Add("2",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.02_plugin_window.png")));
+      this.imageListLargePlugins.Images.Add("3",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.03_plugin_window_off.png")));
+      this.imageListLargePlugins.Images.Add("4",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.04_plugin_process.png")));
+      this.imageListLargePlugins.Images.Add("5",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.05_plugin_process_off.png")));
+      this.imageListLargePlugins.Images.Add("6",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.06_plugin_externalplayers.png")));
+      this.imageListLargePlugins.Images.Add("7",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.07_plugin_externalplayers_off.png")));
+      this.imageListLargePlugins.Images.Add("8",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.08_plugin_window_home.png")));
+      this.imageListLargePlugins.Images.Add("9",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.09_plugin_window_plugins.png")));
+      this.imageListLargePlugins.Images.Add("10",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.10_plugin_other_incomp.png")));
+      this.imageListLargePlugins.Images.Add("11",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.11_plugin_other_off_incomp.png")));
+      this.imageListLargePlugins.Images.Add("12",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.12_plugin_window_incomp.png")));
+      this.imageListLargePlugins.Images.Add("13",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.13_plugin_window_off_incomp.png")));
+      this.imageListLargePlugins.Images.Add("14",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.14_plugin_process_incomp.png")));
+      this.imageListLargePlugins.Images.Add("15",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.15_plugin_process_off_incomp.png")));
+      this.imageListLargePlugins.Images.Add("16",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.16_plugin_externalplayers_incomp.png")));
+      this.imageListLargePlugins.Images.Add("17",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.17_plugin_externalplayers_off_incomp.png")));
+      this.imageListLargePlugins.Images.Add("18",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.18_plugin_window_home_incomp.png")));
+      this.imageListLargePlugins.Images.Add("19",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.19_plugin_window_plugins_incomp.png")));
+      this.imageListLargePlugins.Images.Add("20",
+                                            Image.FromStream(
+                                              asm.GetManifestResourceStream(
+                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.20_alert-ovl.png")));
 
-			// 
-			// imageListContextMenu
-			// 
-			this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageListContextMenu.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.00_Enabled.png.bmp")));
-			this.imageListContextMenu.Images.Add("1", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.01_Enabled_off.png.bmp")));
+      // 
+      // imageListContextMenu
+      // 
+      this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListContextMenu.Images.Add("0",
+                                           Image.FromStream(
+                                             asm.GetManifestResourceStream(
+                                               "MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.00_Enabled.png.bmp")));
+      this.imageListContextMenu.Images.Add("1",
+                                           Image.FromStream(
+                                             asm.GetManifestResourceStream(
+                                               "MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.01_Enabled_off.png.bmp")));
 
-			// 
-			// imageListMPInstaller
-			// 
-			this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageListMPInstaller.Images.Add("0", Image.FromStream(asm.GetManifestResourceStream("MediaPortal.Configuration.Sections.Images.Plugins.imageListMPInstaller.00_application.ico.bmp")));
+      // 
+      // imageListMPInstaller
+      // 
+      this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListMPInstaller.Images.Add("0",
+                                           Image.FromStream(
+                                             asm.GetManifestResourceStream(
+                                               "MediaPortal.Configuration.Sections.Images.Plugins.imageListMPInstaller.00_application.ico.bmp")));
 
-			this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
+      this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
     }
 
     public override void OnSectionActivated()
@@ -166,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
     private void LoadPluginImages(Type type, ItemTag tag)
     {
       PluginIconsAttribute[] icons =
-        (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
+        (PluginIconsAttribute[]) type.GetCustomAttributes(typeof (PluginIconsAttribute), false);
       if (icons == null || icons.Length == 0)
       {
         //Log.Debug("PluginsNew: no icons");
@@ -229,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
           {
             continue;
           }
-          if (tag.IsProcess && !tag.IsEnabled && tag.SetupForm.PluginName() != "Audioscrobbler")
+          if (tag.IsProcess && !tag.IsEnabled)
           {
             continue;
           }
@@ -293,7 +382,7 @@ namespace MediaPortal.Configuration.Sections
         updateListViewItem(item);
       }
     }
-  
+
 
     public override void LoadSettings()
     {
@@ -307,7 +396,7 @@ namespace MediaPortal.Configuration.Sections
             {
               // Enable PowerScheduler if PS++ is enabled
               if (itemTag.SetupForm.PluginName() == "PowerScheduler" &&
-                xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
+                  xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
               {
                 itemTag.IsEnabled = true;
               }
@@ -351,7 +440,7 @@ namespace MediaPortal.Configuration.Sections
       {
         foreach (ListViewItem item in listViewPlugins.Items)
         {
-          ItemTag itemTag = (ItemTag)item.Tag;
+          ItemTag itemTag = (ItemTag) item.Tag;
 
           bool isEnabled = itemTag.IsEnabled;
           bool isHome = itemTag.IsHome;
@@ -391,7 +480,7 @@ namespace MediaPortal.Configuration.Sections
       if (listViewPlugins.FocusedItem == null) return;
       if (listViewPlugins.FocusedItem.Tag == null) return;
 
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {
         return;
@@ -408,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void updateListViewItem(ListViewItem item)
     {
-      ItemTag tag = (ItemTag)item.Tag;
+      ItemTag tag = (ItemTag) item.Tag;
 
       int incompatibleImageOfs = tag.IsIncompatible ? 10 : 0;
 
@@ -486,14 +575,14 @@ namespace MediaPortal.Configuration.Sections
         }
         item.ImageKey = disabledKey;
       }
-     
+
       listViewPlugins.Refresh();
       //this.Refresh();
     }
 
     private void itemMyPlugins_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {
         return;
@@ -513,7 +602,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemMyHome_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {
         return;
@@ -533,7 +622,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemEnabled_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {
         return;
@@ -549,7 +638,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void itemConfigure_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {
         return;
@@ -638,7 +727,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (listViewPlugins.FocusedItem != null)
       {
-        ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+        ItemTag itemTag = (ItemTag) listViewPlugins.FocusedItem.Tag;
 
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
@@ -700,7 +789,9 @@ namespace MediaPortal.Configuration.Sections
       {
         Process.Start(Config.GetFile(Config.Dir.Base, "MpeInstaller.exe"));
       }
-      catch {}
+      catch
+      {
+      }
     }
   }
 }

@@ -86,6 +86,12 @@ namespace MediaPortal.Tests.Core.Playlists
       return true;
     }
 
+    public bool PlayMusic (string strFile)
+    {
+      hasPlayBeenCalled = true;
+      return true;
+    }
+
     public void Stop()
     {
       throw new Exception("The method or operation is not implemented.");

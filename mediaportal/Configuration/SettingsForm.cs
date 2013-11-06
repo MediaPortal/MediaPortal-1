@@ -1022,28 +1022,8 @@ namespace MediaPortal.Configuration
           return false;
         }
 
-        bool audioScrobblerOn = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
-        if (audioScrobblerOn)
-        {
-          // Does Audioscrobbler have a user but no password (due to DB upgrades, restores, etc)
-          string asuser = xmlreader.GetValueAsString("audioscrobbler", "user", "");
-          if (!string.IsNullOrEmpty(asuser))
-          {
-            Music.Database.MusicDatabase mdb = Music.Database.MusicDatabase.Instance;
-            string AsPass = mdb.AddScrobbleUserPassword(Convert.ToString(mdb.AddScrobbleUser(asuser)), "");
-            if (string.IsNullOrEmpty(AsPass))
-            {
-              MessageBox.Show("No password specified for current Audioscrobbler user", "MediaPortal Settings",
-                              MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-              return false;
-            }
-          }
-        }
-
-        // Check hostname for tv server if tv or radio is used
-        bool tvPluginEnabled = xmlreader.GetValueAsBool("plugins", "TV", false);
-        bool radioPluginEnabled = xmlreader.GetValueAsBool("plugins", "Radio", false);
-        if (UseTvServer && (tvPluginEnabled || radioPluginEnabled))
+        // Check hostname for tv server (empty hostname is invalid)
+        if (UseTvServer)
         {
           string hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
           if (string.IsNullOrEmpty(hostName))
@@ -1071,7 +1051,6 @@ namespace MediaPortal.Configuration
 
           }
         }
-
       }
       return true;
     }

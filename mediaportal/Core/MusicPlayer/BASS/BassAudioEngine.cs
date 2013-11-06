@@ -333,6 +333,11 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
+        if (Util.Utils.IsLastFMStream(stream.FilePath))
+        {
+          return false;
+        }
+
         return stream.Filetype.FileMainType == FileMainType.WebStream;
       }
     }
