@@ -1473,9 +1473,10 @@ namespace MediaPortal.MusicPlayer.BASS
           _currentCueSheet = null;
         }
       }
-      catch (Exception)
+      catch (System.IO.FileNotFoundException)
       {
-        // Catch exception to avoid crash.
+        // The CUE File may have been moved
+        Log.Error("BASS: Cue File cannot be found at the expected location. aborting playback.");
       }
       return false;
     }
