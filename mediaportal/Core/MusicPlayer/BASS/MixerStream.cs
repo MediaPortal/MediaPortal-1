@@ -240,7 +240,7 @@ namespace MediaPortal.MusicPlayer.BASS
           bool wasApiExclusiveSupported = true;
 
           // Check if we have an uneven number of channels
-          var chkChannels = outputChannels%2;
+          var chkChannels = outputChannels % 2;
           if (chkChannels == 1)
           {
             Log.Warn("BASS: Found uneven number of channels {0}. increase output channels.", outputChannels);
@@ -286,7 +286,7 @@ namespace MediaPortal.MusicPlayer.BASS
           }
 
           Log.Debug("BASS: Try to init WASAPI with a Frequency of {0} and {1} channels", stream.ChannelInfo.freq, outputChannels);
-  
+
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, outputChannels,
                                       initFlags | BASSWASAPIInit.BASS_WASAPI_BUFFER, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
@@ -693,23 +693,19 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      new Thread(() =>
-        {
-          try
-          {
-            GCHandle gch = GCHandle.FromIntPtr(userData);
-            MusicStream musicstream = (MusicStream) gch.Target;
+      try
+      {
+        GCHandle gch = GCHandle.FromIntPtr(userData);
+        MusicStream musicstream = (MusicStream)gch.Target;
 
-            Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
+        Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
 
-            _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
-          }
-          catch (AccessViolationException)
-          {
-            Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
-          }
-        }
-       ) { Name = "BASS" }.Start();
+        _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+      }
+      catch (AccessViolationException)
+      {
+        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+      }
     }
 
 

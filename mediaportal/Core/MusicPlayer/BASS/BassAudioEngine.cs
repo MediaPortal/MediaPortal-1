@@ -1541,6 +1541,7 @@ namespace MediaPortal.MusicPlayer.BASS
         _isCDDAFile = false;
       }
 
+      bool newMixerCreated = false;
       if (_mixer == null)
       {
         _mixer = new MixerStream(this);
@@ -1569,24 +1570,47 @@ namespace MediaPortal.MusicPlayer.BASS
                 stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
             {
               Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
-              _mixer.Dispose();
-              _mixer = null;
-              _mixer = new MixerStream(this);
-              if (!_mixer.CreateMixer(stream))
-              {
-                Log.Error("BASS: Could not create Mixer. Aborting playback.");
-                return false;
-              }
+              newMixerCreated = true;
+              new Thread(() =>
+                {
+                  _mixer.Dispose();
+                  _mixer = null;
+                  _mixer = new MixerStream(this);
+                  if (!_mixer.CreateMixer(stream))
+                  {
+                    Log.Error("BASS: Could not create Mixer. Aborting playback.");
+                    return;
+                  }
 
-              if (HasViz)
-              {
-                _streamcopy.ChannelHandle = _mixer.BassStream;
-              }
+                  if (HasViz)
+                  {
+                    _streamcopy.ChannelHandle = _mixer.BassStream;
+                  }
+                  PlayInternalAddStream(stream);
+                }
+              ) { Name = "BASS" }.Start();
             }
           }
         }
       }
 
+      if (!PlayInternalAddStream(stream) && !newMixerCreated)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    /// <summary>
+    /// This method is needed as an extension to Playinternal().
+    /// In case of a new mixer needed, this is when the next song has a different sample rate or number of channels, it is called out
+    /// of a thread.
+    /// This would however break gapless playback and therefor in cases where the sample rate / channels don't change it 
+    /// is called from the same thread.
+    /// </summary>
+    /// <param name="stream">THe MusicStream object</param>
+    private bool PlayInternalAddStream(MusicStream stream)
+    {
       // Enable events, for various Playback Actions to be handled
       stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
