@@ -1684,9 +1684,12 @@ namespace MediaPortal.MusicPlayer.BASS
         else
         {
           // Cue support
-          if (HandleCueFile(ref filePath))
+          if ((currentStream != null && currentStream.IsPlaying))
           {
-            return true;
+            if (HandleCueFile(ref filePath))
+            {
+              return true;
+            }
           }
         }
 
