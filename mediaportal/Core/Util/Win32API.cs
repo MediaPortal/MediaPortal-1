@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -402,12 +403,18 @@ namespace MediaPortal.Util
     //Checks if the computer is connected to the internet...
     public static bool IsConnectedToInternet()
     {
-#if DEBUG
-      return true;
-#else
-      int Desc;
-      return InternetGetConnectedState(out Desc, 0);
-#endif
+      try
+      {
+        using (var client = new WebClient())
+        using (var stream = client.OpenRead("http://www.google.com"))
+        {
+          return true;
+        }
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     public static bool IsConnectedToInternet(ref int code)
