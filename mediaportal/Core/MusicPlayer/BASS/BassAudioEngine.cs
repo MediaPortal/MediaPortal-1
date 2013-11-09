@@ -138,6 +138,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private System.Windows.Forms.Timer _stoppedStreamsTimer = new System.Windows.Forms.Timer();
 
+    private EventWaitHandle _mutexWaitForSyncProc;
+
     #endregion
 
     #region Properties
@@ -601,6 +603,9 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       MusicStream musicStream = (MusicStream)sender;
 
+      // Set a Mutex to avoid the Thread, which creates a new mixer to be executed, while the Syncproc is still active
+      _mutexWaitForSyncProc = new AutoResetEvent(false);
+
       switch (action)
       {
         case MusicStream.StreamAction.Ended:
@@ -644,6 +649,9 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           break;
       }
+
+      // Release the Mutex, since all the Syncproc work is done
+      _mutexWaitForSyncProc.Set();
     }
 
     #endregion
@@ -1573,8 +1581,28 @@ namespace MediaPortal.MusicPlayer.BASS
               newMixerCreated = true;
               new Thread(() =>
                 {
+                  // Wait for the mutex to be released, to signal that the syncproc is done.
+                  // This should normally happen in milli seconds, so let's time out latest after 2 seconds
+                  _mutexWaitForSyncProc.WaitOne(2000);
+
+                  // Free Mixer
                   _mixer.Dispose();
                   _mixer = null;
+                  if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+                  {
+                    try
+                    {
+                      Log.Debug("BASS: Freeing WASAPI Device");
+                      if (!BassWasapi.BASS_WASAPI_Free())
+                      {
+                        Log.Error("BASS: Error freeing WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+                      }
+                    }
+                    catch (Exception ex)
+                    {
+                      Log.Error("BASS: Exception stopping WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+                    }
+                  }
                   _mixer = new MixerStream(this);
                   if (!_mixer.CreateMixer(stream))
                   {

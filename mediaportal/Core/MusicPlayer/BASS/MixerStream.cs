@@ -730,10 +730,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        if (!Bass.BASS_ChannelStop(_mixer))
-        {
-          Log.Error("BASS: Error stopping mixer: {0}", Bass.BASS_ErrorGetCode());
-        }
         if (!Bass.BASS_StreamFree(_mixer))
         {
           Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
