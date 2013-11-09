@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Library
     public static Device DX9Device = null; // pointer to current DX9 device
     public static Texture Auto3DTexture = null;
     public static Surface Auto3DSurface = null;
+   
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
     public static Form form = null; // Current GDI form
@@ -182,6 +183,7 @@ namespace MediaPortal.GUI.Library
     static GUIGraphicsContext()
     {
       Render3DMode = eRender3DMode.None;
+      Switch3DSides = false;
     }
 
     /// <summary>
@@ -285,6 +287,8 @@ namespace MediaPortal.GUI.Library
     public enum eRender3DModeHalf { None, SBSLeft, SBSRight, TABTop, TABBottom };
 
     public static eRender3DModeHalf Render3DModeHalf { get; set; }
+
+    public static bool Switch3DSides { get; set; }
 
     public static bool Render3DSubtitle { get; set; }
 
