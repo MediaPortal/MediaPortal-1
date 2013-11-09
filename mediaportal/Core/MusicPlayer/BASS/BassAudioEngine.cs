@@ -136,8 +136,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private TAG_INFO _tagInfo;
 
-    private System.Windows.Forms.Timer _stoppedStreamsTimer = new System.Windows.Forms.Timer();
-
     private EventWaitHandle _mutexWaitForSyncProc;
 
     #endregion
@@ -627,7 +625,6 @@ namespace MediaPortal.MusicPlayer.BASS
             g_Player.OnStopped();
             Stop();
           }
-
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
@@ -635,6 +632,12 @@ namespace MediaPortal.MusicPlayer.BASS
           if (InternetStreamSongChanged != null)
           {
             InternetStreamSongChanged(this);
+          }
+          break;
+
+        case MusicStream.StreamAction.Freed:
+          {
+            musicStream.Dispose();
           }
           break;
 
@@ -710,9 +713,6 @@ namespace MediaPortal.MusicPlayer.BASS
           _streamcopy = new StreamCopy();
           _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
         }
-
-        _stoppedStreamsTimer.Interval = 30000;        
-        _stoppedStreamsTimer.Tick += CleanupStoppedStreams;
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1228,22 +1228,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
-    /// <summary>
-    /// Cleanup of Stopped streams. Invoked by a Timer
-    /// </summary>
-    private void CleanupStoppedStreams(Object obj, EventArgs evtArgs)
-    {
-      for (var i = _streams.Count - 1; i >= 0; i--)
-      {
-        MusicStream stream = _streams[i];
-        if (!stream.IsPlaying)
-        {
-          Log.Debug("BASS: cleaning up stopped stream: {0}", stream.FilePath);
-          stream.Dispose();
-        }
-      }
-    }
-
     #endregion
 
     #region Visualisation Related
@@ -1734,11 +1718,6 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
-        if (!_stoppedStreamsTimer.Enabled)
-        {
-          _stoppedStreamsTimer.Start();
-        }
-
         if (Config.MusicPlayer == AudioPlayer.Asio && !BassAsio.BASS_ASIO_IsStarted())
         {
           BassAsio.BASS_ASIO_Stop();
@@ -2035,7 +2014,6 @@ namespace MediaPortal.MusicPlayer.BASS
                        Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
                      }
 
-                     _stoppedStreamsTimer.Stop();
                      NotifyPlaying = false;
                    }
         ) { Name = "BASS Stop" }.Start();

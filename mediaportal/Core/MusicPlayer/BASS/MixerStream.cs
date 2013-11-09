@@ -348,7 +348,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
       bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                         BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
-                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
+                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX |
+                                        BASSFlag.BASS_STREAM_AUTOFREE);
 
       Bass.BASS_ChannelLock(_mixer, false);
 
