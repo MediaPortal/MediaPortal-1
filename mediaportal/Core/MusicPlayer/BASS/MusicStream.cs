@@ -112,6 +112,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
     private bool _disposed = false;
+    private bool _temporaryStream = false;
 
     #endregion
 
@@ -230,8 +231,22 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Constructor
 
-    public MusicStream(string filePath)
+    /// <summary>
+    /// Creates a MusicStream object
+    /// </summary>
+    /// <param name="filePath">The Path of the song</param>
+    public MusicStream(string filePath) : this(filePath, false)
     {
+    }
+
+    /// <summary>
+    /// Creates a Musicstream object
+    /// </summary>
+    /// <param name="filePath">The Path of the song</param>
+    /// <param name="temporaryStream">Indicates that the stream is just temporary</param>
+    public MusicStream(string filePath, bool temporaryStream)
+    {
+      _temporaryStream = temporaryStream;
       _fileType.FileMainType = FileMainType.Unknown;
       _channelInfo = new BASS_CHANNELINFO();
       _filePath = filePath;
@@ -253,8 +268,11 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void CreateStream()
     {
-      Log.Info("BASS: ---------------------------------------------");
-      Log.Info("BASS: Creating BASS audio stream");
+      if (!_temporaryStream)
+      {
+        Log.Info("BASS: ---------------------------------------------");
+        Log.Info("BASS: Creating BASS audio stream");
+      }
 
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
 
@@ -268,8 +286,12 @@ namespace MediaPortal.MusicPlayer.BASS
         case FileMainType.AudioFile:
         case FileMainType.MidiFile:
           _stream = Bass.BASS_StreamCreateFile(_filePath, 0, 0, streamFlags);
-          // Read the Tag
-          _musicTag = TagReader.TagReader.ReadTag(_filePath);
+
+          if (!_temporaryStream)
+          {
+            // Read the Tag
+            _musicTag = TagReader.TagReader.ReadTag(_filePath);
+          }
           break;
 
         case FileMainType.CDTrack:
@@ -290,7 +312,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // Turn on parsing of ASX files
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PLAYLIST, 2);
           _stream = Bass.BASS_StreamCreateURL(_filePath, 0, streamFlags, null, IntPtr.Zero);
-          if (_stream != 0)
+          if (_stream != 0 && !_temporaryStream)
           {
             // Get the Tags and set the Meta Tag SyncProc
             _tagInfo = new TAG_INFO(_filePath);
@@ -300,8 +322,8 @@ namespace MediaPortal.MusicPlayer.BASS
               GetMetaTags();
             }
             Bass.BASS_ChannelSetSync(_stream, BASSSync.BASS_SYNC_META, 0, _metaTagSyncProcDelegate, IntPtr.Zero);
+            Log.Debug("BASS: Webstream found - fetching stream {0}", Convert.ToString(_stream));
           }
-          Log.Debug("BASS: Webstream found - fetching stream {0}", Convert.ToString(_stream));
           break;
       }
 
@@ -323,6 +345,13 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Error("BASS: Unable to get information for stream {0}.  Reason: {1}.", _filePath,
                       Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+        return;
+      }
+
+      // This stream has just been created to check upfront, the sample rate
+      // We don't need further processing of this stream
+      if (_temporaryStream)
+      {
         return;
       }
 

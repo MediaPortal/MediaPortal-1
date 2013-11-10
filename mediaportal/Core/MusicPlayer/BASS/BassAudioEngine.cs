@@ -136,8 +136,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private TAG_INFO _tagInfo;
 
-    private EventWaitHandle _mutexWaitForSyncProc;
-
     #endregion
 
     #region Properties
@@ -601,9 +599,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       MusicStream musicStream = (MusicStream)sender;
 
-      // Set a Mutex to avoid the Thread, which creates a new mixer to be executed, while the Syncproc is still active
-      _mutexWaitForSyncProc = new AutoResetEvent(false);
-
       switch (action)
       {
         case MusicStream.StreamAction.Ended:
@@ -652,9 +647,6 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           break;
       }
-
-      // Release the Mutex, since all the Syncproc work is done
-      _mutexWaitForSyncProc.Set();
     }
 
     #endregion
@@ -1533,7 +1525,6 @@ namespace MediaPortal.MusicPlayer.BASS
         _isCDDAFile = false;
       }
 
-      bool newMixerCreated = false;
       if (_mixer == null)
       {
         _mixer = new MixerStream(this);
@@ -1552,77 +1543,44 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        if (!_mixer.UpMixing)
+        if (NewMixerNeeded(stream))
         {
-          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (!_mixer.WasApiShared &&
-              (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
+          Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
+          // Free Mixer
+          _mixer.Dispose();
+          _mixer = null;
+
+          // Free Wasapi, if needed
+          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
           {
-            if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
-                stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+            try
             {
-              Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
-              newMixerCreated = true;
-              new Thread(() =>
-                {
-                  // Wait for the mutex to be released, to signal that the syncproc is done.
-                  // This should normally happen in milli seconds, so let's time out latest after 2 seconds
-                  _mutexWaitForSyncProc.WaitOne(2000);
-
-                  // Free Mixer
-                  _mixer.Dispose();
-                  _mixer = null;
-                  if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
-                  {
-                    try
-                    {
-                      Log.Debug("BASS: Freeing WASAPI Device");
-                      if (!BassWasapi.BASS_WASAPI_Free())
-                      {
-                        Log.Error("BASS: Error freeing WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
-                      }
-                    }
-                    catch (Exception ex)
-                    {
-                      Log.Error("BASS: Exception stopping WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-                    }
-                  }
-                  _mixer = new MixerStream(this);
-                  if (!_mixer.CreateMixer(stream))
-                  {
-                    Log.Error("BASS: Could not create Mixer. Aborting playback.");
-                    return;
-                  }
-
-                  if (HasViz)
-                  {
-                    _streamcopy.ChannelHandle = _mixer.BassStream;
-                  }
-                  PlayInternalAddStream(stream);
-                }
-              ) { Name = "BASS" }.Start();
+              Log.Debug("BASS: Freeing WASAPI Device");
+              if (!BassWasapi.BASS_WASAPI_Free())
+              {
+                Log.Error("BASS: Error freeing WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
+              }
             }
+            catch (Exception ex)
+            {
+              Log.Error("BASS: Exception stopping WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+            }
+          }
+
+          _mixer = new MixerStream(this);
+          if (!_mixer.CreateMixer(stream))
+          {
+            Log.Error("BASS: Could not create Mixer. Aborting playback.");
+            return false;
+          }
+
+          if (HasViz)
+          {
+            _streamcopy.ChannelHandle = _mixer.BassStream;
           }
         }
       }
 
-      if (!PlayInternalAddStream(stream) && !newMixerCreated)
-      {
-        return false;
-      }
-      return true;
-    }
-
-    /// <summary>
-    /// This method is needed as an extension to Playinternal().
-    /// In case of a new mixer needed, this is when the next song has a different sample rate or number of channels, it is called out
-    /// of a thread.
-    /// This would however break gapless playback and therefor in cases where the sample rate / channels don't change it 
-    /// is called from the same thread.
-    /// </summary>
-    /// <param name="stream">THe MusicStream object</param>
-    private bool PlayInternalAddStream(MusicStream stream)
-    {
       // Enable events, for various Playback Actions to be handled
       stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
@@ -1633,7 +1591,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return false;
       }
-
+      
       return true;
     }
 
@@ -2411,6 +2369,30 @@ namespace MediaPortal.MusicPlayer.BASS
     #endregion
 
     #region  Public Methods
+
+    /// <summary>
+    /// Checks, if a new Mixer would be needed, because of changes in Sample Rate or number of channels
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    public bool NewMixerNeeded(MusicStream stream)
+    {
+      if (!_mixer.UpMixing)
+      {
+        BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
+        if (!_mixer.WasApiShared &&
+            (chinfo.freq != stream.ChannelInfo.freq || (chinfo.chans != stream.ChannelInfo.chans && stream.ChannelInfo.chans != 1)))
+        {
+          if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
+              stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+          {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
 
     /// <summary>
     /// Returns the Tags of an AV Stream

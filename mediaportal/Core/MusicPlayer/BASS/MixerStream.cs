@@ -351,6 +351,11 @@ namespace MediaPortal.MusicPlayer.BASS
                                         BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX |
                                         BASSFlag.BASS_STREAM_AUTOFREE);
 
+      if (!result)
+      {
+        Log.Error("BASS: Error attaching stream to mixer. {0}", Bass.BASS_ErrorGetCode());
+      }
+
       Bass.BASS_ChannelLock(_mixer, false);
 
       if (result && _mixingMatrix != null)
@@ -705,7 +710,36 @@ namespace MediaPortal.MusicPlayer.BASS
 
         Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
 
-        _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+        // We need to find out, if the nextsongs sample rate and / or number of channels are different to the one just ended
+        // If this is the case we need a new mixer and the OnMusicStreamMessage needs to be invoked in a thread to avoid crashes.
+        // In order to have gapless playback, it needs to be invoked in sync.
+        MusicStream nextStream = null;
+        Playlists.PlayListItem nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextItem();
+        if (nextSong != null)
+        {
+          nextStream = new MusicStream(nextSong.FileName, true);
+        }
+
+        bool newMixerNeeded = false;
+        if (nextStream != null && nextStream.BassStream != 0)
+        {
+          if (_bassPlayer.NewMixerNeeded(nextStream))
+          {
+            newMixerNeeded = true;
+          }
+          nextStream.Dispose();
+        }
+
+        if (newMixerNeeded)
+        {
+          // invoke a thread because we need a new mixer
+          Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
+          new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
+        }
+        else
+        {
+          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+        }
       }
       catch (AccessViolationException)
       {
