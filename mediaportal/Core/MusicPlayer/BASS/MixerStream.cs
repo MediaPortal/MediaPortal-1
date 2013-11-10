@@ -732,6 +732,10 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (newMixerNeeded)
         {
+          // Unplug the Source channel from the mixer
+          Log.Debug("BASS: Unplugging source channel from Mixer.");
+          BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);
+
           // invoke a thread because we need a new mixer
           Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
           new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
