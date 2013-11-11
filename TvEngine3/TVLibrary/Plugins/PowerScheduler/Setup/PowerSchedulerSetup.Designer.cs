@@ -28,9 +28,9 @@ namespace PowerScheduler.Setup
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerSchedulerSetup));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.textBoxCommand = new System.Windows.Forms.TextBox();
@@ -146,6 +146,13 @@ namespace PowerScheduler.Setup
       this.flowLayoutPanelPreWakeupTime = new System.Windows.Forms.FlowLayoutPanel();
       this.label3 = new System.Windows.Forms.Label();
       this.numericUpDownPreWakeupTime = new System.Windows.Forms.NumericUpDown();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.buttonDelete = new System.Windows.Forms.Button();
+      this.buttonAdd = new System.Windows.Forms.Button();
+      this.listBoxHosts = new System.Windows.Forms.ListBox();
+      this.textBoxEditHost = new System.Windows.Forms.TextBox();
+      this.checkBoxPingMonitorEnable = new System.Windows.Forms.CheckBox();
+      this.checkBoxPingMonitorAwayMode = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridShares)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNetworkIdleLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIdleTimeout)).BeginInit();
@@ -184,6 +191,7 @@ namespace PowerScheduler.Setup
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreNoStandbyTime)).BeginInit();
       this.flowLayoutPanelPreWakeupTime.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).BeginInit();
+      this.tabPage1.SuspendLayout();
       this.SuspendLayout();
       // 
       // textBoxCommand
@@ -193,8 +201,8 @@ namespace PowerScheduler.Setup
       this.textBoxCommand.Size = new System.Drawing.Size(329, 20);
       this.textBoxCommand.TabIndex = 2;
       this.toolTip.SetToolTip(this.textBoxCommand, "The command is executed on each system power state change. The\r\nargument (\"standb" +
-              "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
-              "ime the command is executed.");
+        "y\", \"wakeup\", \"awaymode\" or \"runmode\") will\r\nbe added by PowerScheduler at the t" +
+        "ime the command is executed.");
       this.textBoxCommand.TextChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
       // checkBoxRebootWakeup
@@ -206,7 +214,7 @@ namespace PowerScheduler.Setup
       this.checkBoxRebootWakeup.TabIndex = 4;
       this.checkBoxRebootWakeup.Text = "Wakeup the computer for reboot";
       this.toolTip.SetToolTip(this.checkBoxRebootWakeup, "If unchecked, the reboot will be caught up when the system is running again.\r\nThe" +
-              " computer will reboot only when not busy with other tasks.");
+        " computer will reboot only when not busy with other tasks.");
       this.checkBoxRebootWakeup.UseVisualStyleBackColor = true;
       this.checkBoxRebootWakeup.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -215,47 +223,47 @@ namespace PowerScheduler.Setup
       this.dataGridShares.AllowUserToOrderColumns = true;
       this.dataGridShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
       this.dataGridShares.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
       this.dataGridShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sharename,
             this.Hostname,
             this.Username});
-      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle5;
       this.dataGridShares.EnableHeadersVisualStyles = false;
       this.dataGridShares.Location = new System.Drawing.Point(34, 66);
       this.dataGridShares.MaximumSize = new System.Drawing.Size(348, 231);
       this.dataGridShares.MinimumSize = new System.Drawing.Size(348, 48);
       this.dataGridShares.Name = "dataGridShares";
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
       this.dataGridShares.RowHeadersWidth = 30;
       this.dataGridShares.RowTemplate.Height = 24;
       this.dataGridShares.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.dataGridShares.Size = new System.Drawing.Size(348, 99);
       this.dataGridShares.TabIndex = 2;
       this.toolTip.SetToolTip(this.dataGridShares, "Enter share / client / user combinations that prevent standby\r\n(leave blank to ma" +
-              "tch any value)");
+        "tch any value)");
       this.dataGridShares.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.buttonApply_Enable);
       // 
       // Sharename
@@ -288,7 +296,7 @@ namespace PowerScheduler.Setup
       this.labelShares.TabIndex = 1;
       this.labelShares.Text = "Shares to prevent standby";
       this.toolTip.SetToolTip(this.labelShares, "Enter share / client / user combinations that prevent standby\r\n(blank fields matc" +
-              "h any value; empty list matches any active share)");
+        "h any value; empty list matches any active share)");
       // 
       // buttonSelectShare
       // 
@@ -311,7 +319,7 @@ namespace PowerScheduler.Setup
       this.checkBoxMPClientRunning.TabIndex = 2;
       this.checkBoxMPClientRunning.Text = "Do not put the computer to sleep while the MediaPortal client is not running";
       this.toolTip.SetToolTip(this.checkBoxMPClientRunning, "Prevents automatic standby while doing administrative work\r\n(only recommended for" +
-              " a single-seat HTPC).");
+        " a single-seat HTPC).");
       this.checkBoxMPClientRunning.UseVisualStyleBackColor = true;
       this.checkBoxMPClientRunning.CheckedChanged += new System.EventHandler(this.checkBoxMPClientRunning_CheckedChanged);
       // 
@@ -324,7 +332,7 @@ namespace PowerScheduler.Setup
       this.checkBoxProcessesAwayMode.TabIndex = 3;
       this.checkBoxProcessesAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxProcessesAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the selected processes are running.\r\n");
+        " while the selected processes are running.\r\n");
       this.checkBoxProcessesAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxProcessesAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -347,7 +355,7 @@ namespace PowerScheduler.Setup
       this.textBoxProcesses.Size = new System.Drawing.Size(315, 20);
       this.textBoxProcesses.TabIndex = 0;
       this.toolTip.SetToolTip(this.textBoxProcesses, "Enter a comma-separated list of processes which prevent\r\nthe system from going to" +
-              " standby while they are active.");
+        " standby while they are active.");
       this.textBoxProcesses.TextChanged += new System.EventHandler(this.textBoxProcesses_TextChanged);
       // 
       // checkBoxEPGAwayMode
@@ -359,7 +367,7 @@ namespace PowerScheduler.Setup
       this.checkBoxEPGAwayMode.TabIndex = 6;
       this.checkBoxEPGAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxEPGAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " until EPG grabbing is completed.");
+        " until EPG grabbing is completed.");
       this.checkBoxEPGAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxEPGAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -382,7 +390,7 @@ namespace PowerScheduler.Setup
       this.checkBoxEPGPreventStandby.TabIndex = 5;
       this.checkBoxEPGPreventStandby.Text = "Do not put the computer to sleep while grabbing EPG";
       this.toolTip.SetToolTip(this.checkBoxEPGPreventStandby, "The computer will not go to standby automatically until EPG grabbing is completed" +
-              ".");
+        ".");
       this.checkBoxEPGPreventStandby.UseVisualStyleBackColor = true;
       this.checkBoxEPGPreventStandby.CheckedChanged += new System.EventHandler(this.checkBoxEPGPreventStandby_CheckedChanged);
       // 
@@ -395,7 +403,7 @@ namespace PowerScheduler.Setup
       this.checkBoxNetworkAwayMode.TabIndex = 3;
       this.checkBoxNetworkAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxNetworkAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the network is active.\r\n");
+        " while the network is active.\r\n");
       this.checkBoxNetworkAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxNetworkAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -408,7 +416,7 @@ namespace PowerScheduler.Setup
       this.checkBoxSharesAwayMode.TabIndex = 4;
       this.checkBoxSharesAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
       this.toolTip.SetToolTip(this.checkBoxSharesAwayMode, "Not even a \"Power Off\" or \"Remote Control Off\"causes the\r\nsystem to go to standby" +
-              " while the selected shares are active.\r\n");
+        " while the selected shares are active.\r\n");
       this.checkBoxSharesAwayMode.UseVisualStyleBackColor = true;
       this.checkBoxSharesAwayMode.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -464,8 +472,8 @@ namespace PowerScheduler.Setup
       this.checkBoxAutoPowerSettings.TabIndex = 13;
       this.checkBoxAutoPowerSettings.Text = "Apply recommended windows power settings for selected profile automatically";
       this.toolTip.SetToolTip(this.checkBoxAutoPowerSettings, "If checked, PowerScheduler will set the Windows Power Settings\r\nto some reasonabl" +
-              "e values depending on the selected profile.\r\nUncheck this option to configure th" +
-              "e Windows Power Settings manually.");
+        "e values depending on the selected profile.\r\nUncheck this option to configure th" +
+        "e Windows Power Settings manually.");
       this.checkBoxAutoPowerSettings.UseVisualStyleBackColor = true;
       this.checkBoxAutoPowerSettings.CheckedChanged += new System.EventHandler(this.checkBoxAutoPowerSettings_CheckedChanged);
       // 
@@ -491,7 +499,7 @@ namespace PowerScheduler.Setup
       this.checkBoxReinitializeController.TabIndex = 0;
       this.checkBoxReinitializeController.Text = "Reinitialize TV controller on wakeup (also reinitializes tuner)";
       this.toolTip.SetToolTip(this.checkBoxReinitializeController, "Reinitializes the internal TV controller and tuner setup (does not restart the TV" +
-              "-Server).");
+        "-Server).");
       this.checkBoxReinitializeController.UseVisualStyleBackColor = true;
       this.checkBoxReinitializeController.CheckedChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
@@ -555,7 +563,7 @@ namespace PowerScheduler.Setup
       this.checkBoxSharesEnabled.TabIndex = 0;
       this.checkBoxSharesEnabled.Text = "Do not put the computer to sleep while shares are active";
       this.toolTip.SetToolTip(this.checkBoxSharesEnabled, "The computer will not go to standby automatically while the selected shares are a" +
-              "ctive.");
+        "ctive.");
       this.checkBoxSharesEnabled.UseVisualStyleBackColor = true;
       this.checkBoxSharesEnabled.CheckedChanged += new System.EventHandler(this.checkBoxSharesEnabled_CheckedChanged);
       // 
@@ -600,7 +608,7 @@ namespace PowerScheduler.Setup
       this.numericUpDownIdleTimeout.Size = new System.Drawing.Size(41, 20);
       this.numericUpDownIdleTimeout.TabIndex = 11;
       this.toolTip.SetToolTip(this.numericUpDownIdleTimeout, "Adjust the time after which the system goes to standby when idle\r\n(\"0\" means \"nev" +
-              "er\").");
+        "er\").");
       this.numericUpDownIdleTimeout.ValueChanged += new System.EventHandler(this.numericUpDownIdleTimeout_ValueChanged);
       this.numericUpDownIdleTimeout.EnabledChanged += new System.EventHandler(this.numericUpDownIdleTimeout_EnabledChanged);
       // 
@@ -632,8 +640,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxProcesses
       // 
-      this.groupBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProcesses.Controls.Add(this.checkBoxMPClientRunning);
       this.groupBoxProcesses.Controls.Add(this.checkBoxProcessesAwayMode);
       this.groupBoxProcesses.Controls.Add(this.buttonSelectProcess);
@@ -647,8 +655,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxEPG
       // 
-      this.groupBoxEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxEPG.Controls.Add(this.flowLayoutPanelEPG);
       this.groupBoxEPG.Controls.Add(this.checkBoxEPGAwayMode);
       this.groupBoxEPG.Controls.Add(this.buttonEPGCommand);
@@ -666,8 +674,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelEPG
       // 
-      this.flowLayoutPanelEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelEPG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelEPG.AutoSize = true;
       this.flowLayoutPanelEPG.Controls.Add(this.labelEPG1);
       this.flowLayoutPanelEPG.Controls.Add(this.textBoxEPG);
@@ -839,9 +847,9 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxStatus
       // 
-      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStatus.BackColor = System.Drawing.SystemColors.Control;
       this.groupBoxStatus.Controls.Add(this.labelStandbyStatus);
       this.groupBoxStatus.Controls.Add(this.textBoxStandbyHandler);
@@ -868,9 +876,9 @@ namespace PowerScheduler.Setup
       // 
       // textBoxStandbyHandler
       // 
-      this.textBoxStandbyHandler.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxStandbyHandler.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxStandbyHandler.BackColor = System.Drawing.SystemColors.Control;
       this.textBoxStandbyHandler.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.textBoxStandbyHandler.Location = new System.Drawing.Point(132, 61);
@@ -928,8 +936,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxAdvanced
       // 
-      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAdvanced.Controls.Add(this.checkBoxAutoPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonPowerSettings);
       this.groupBoxAdvanced.Controls.Add(this.buttonCommand);
@@ -967,8 +975,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelShutdownMode
       // 
-      this.flowLayoutPanelShutdownMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelShutdownMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelShutdownMode.AutoSize = true;
       this.flowLayoutPanelShutdownMode.Controls.Add(this.labelShutdownMode);
       this.flowLayoutPanelShutdownMode.Controls.Add(this.comboBoxShutdownMode);
@@ -1000,8 +1008,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxReboot
       // 
-      this.groupBoxReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxReboot.Controls.Add(this.flowLayoutPanelReboot);
       this.groupBoxReboot.Controls.Add(this.buttonRebootCommand);
       this.groupBoxReboot.Controls.Add(this.textBoxRebootCommand);
@@ -1017,8 +1025,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelReboot
       // 
-      this.flowLayoutPanelReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelReboot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelReboot.AutoSize = true;
       this.flowLayoutPanelReboot.Controls.Add(this.labelReboot1);
       this.flowLayoutPanelReboot.Controls.Add(this.textBoxReboot);
@@ -1172,8 +1180,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxNetwork
       // 
-      this.groupBoxNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxNetwork.Controls.Add(this.flowLayoutPanelNetworkIdleLimit);
       this.groupBoxNetwork.Controls.Add(this.checkBoxNetworkAwayMode);
       this.groupBoxNetwork.Controls.Add(this.checkBoxNetworkEnabled);
@@ -1186,8 +1194,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelNetworkIdleLimit
       // 
-      this.flowLayoutPanelNetworkIdleLimit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelNetworkIdleLimit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelNetworkIdleLimit.AutoSize = true;
       this.flowLayoutPanelNetworkIdleLimit.Controls.Add(this.labelNetwork);
       this.flowLayoutPanelNetworkIdleLimit.Controls.Add(this.numericUpDownNetworkIdleLimit);
@@ -1219,8 +1227,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxShares
       // 
-      this.groupBoxShares.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxShares.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxShares.Controls.Add(this.buttonSelectShare);
       this.groupBoxShares.Controls.Add(this.checkBoxSharesAwayMode);
       this.groupBoxShares.Controls.Add(this.labelShares);
@@ -1268,8 +1276,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxGeneral
       // 
-      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxGeneral.Controls.Add(this.flowLayoutPanelGeneral);
       this.groupBoxGeneral.Controls.Add(this.labelExpertMode);
       this.groupBoxGeneral.Controls.Add(this.buttonExpertMode);
@@ -1282,8 +1290,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelGeneral
       // 
-      this.flowLayoutPanelGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelGeneral.AutoSize = true;
       this.flowLayoutPanelGeneral.Controls.Add(this.textBoxProfile);
       this.flowLayoutPanelGeneral.Controls.Add(this.comboBoxProfile);
@@ -1310,8 +1318,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelIdleTimeout
       // 
-      this.flowLayoutPanelIdleTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelIdleTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelIdleTimeout.AutoSize = true;
       this.flowLayoutPanelIdleTimeout.Controls.Add(this.labelIdleTimeout1);
       this.flowLayoutPanelIdleTimeout.Controls.Add(this.numericUpDownIdleTimeout);
@@ -1358,8 +1366,8 @@ namespace PowerScheduler.Setup
       // 
       // tabControl
       // 
-      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl.Controls.Add(this.tabPageGeneral);
       this.tabControl.Controls.Add(this.tabPageClient);
       this.tabControl.Controls.Add(this.tabPageEPG);
@@ -1367,6 +1375,7 @@ namespace PowerScheduler.Setup
       this.tabControl.Controls.Add(this.tabPageProcesses);
       this.tabControl.Controls.Add(this.tabPageShares);
       this.tabControl.Controls.Add(this.tabPageNetwork);
+      this.tabControl.Controls.Add(this.tabPage1);
       this.tabControl.Controls.Add(this.tabPageAdvanced);
       this.tabControl.Controls.Add(this.tabPageLegacy);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -1391,8 +1400,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxClient
       // 
-      this.groupBoxClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxClient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxClient.Controls.Add(this.checkBoxUmuteMasterVolume);
       this.groupBoxClient.Controls.Add(this.checkBoxHomeOnly);
       this.groupBoxClient.Location = new System.Drawing.Point(6, 6);
@@ -1415,8 +1424,8 @@ namespace PowerScheduler.Setup
       // 
       // groupBoxLegacy
       // 
-      this.groupBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLegacy.Controls.Add(this.label4);
       this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelStandbyHours);
       this.groupBoxLegacy.Controls.Add(this.flowLayoutPanelPreNoStandbyTime);
@@ -1439,8 +1448,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelStandbyHours
       // 
-      this.flowLayoutPanelStandbyHours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelStandbyHours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelStandbyHours.AutoSize = true;
       this.flowLayoutPanelStandbyHours.Controls.Add(this.label5);
       this.flowLayoutPanelStandbyHours.Controls.Add(this.numericUpDownStandbyHoursFrom);
@@ -1520,8 +1529,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelPreNoStandbyTime
       // 
-      this.flowLayoutPanelPreNoStandbyTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreNoStandbyTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelPreNoStandbyTime.AutoSize = true;
       this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.label1);
       this.flowLayoutPanelPreNoStandbyTime.Controls.Add(this.numericUpDownPreNoStandbyTime);
@@ -1562,8 +1571,8 @@ namespace PowerScheduler.Setup
       // 
       // flowLayoutPanelPreWakeupTime
       // 
-      this.flowLayoutPanelPreWakeupTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.flowLayoutPanelPreWakeupTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.flowLayoutPanelPreWakeupTime.AutoSize = true;
       this.flowLayoutPanelPreWakeupTime.Controls.Add(this.label3);
       this.flowLayoutPanelPreWakeupTime.Controls.Add(this.numericUpDownPreWakeupTime);
@@ -1601,6 +1610,79 @@ namespace PowerScheduler.Setup
             0,
             0});
       this.numericUpDownPreWakeupTime.ValueChanged += new System.EventHandler(this.buttonApply_Enable);
+      // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.buttonDelete);
+      this.tabPage1.Controls.Add(this.buttonAdd);
+      this.tabPage1.Controls.Add(this.listBoxHosts);
+      this.tabPage1.Controls.Add(this.textBoxEditHost);
+      this.tabPage1.Controls.Add(this.checkBoxPingMonitorEnable);
+      this.tabPage1.Controls.Add(this.checkBoxPingMonitorAwayMode);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(476, 264);
+      this.tabPage1.TabIndex = 9;
+      this.tabPage1.Text = "Ping Monitor";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // buttonDelete
+      // 
+      this.buttonDelete.Location = new System.Drawing.Point(178, 124);
+      this.buttonDelete.Name = "buttonDelete";
+      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+      this.buttonDelete.TabIndex = 5;
+      this.buttonDelete.Text = "Delete";
+      this.buttonDelete.UseVisualStyleBackColor = true;
+      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+      // 
+      // buttonAdd
+      // 
+      this.buttonAdd.Location = new System.Drawing.Point(178, 84);
+      this.buttonAdd.Name = "buttonAdd";
+      this.buttonAdd.Size = new System.Drawing.Size(75, 23);
+      this.buttonAdd.TabIndex = 4;
+      this.buttonAdd.Text = "Add";
+      this.buttonAdd.UseVisualStyleBackColor = true;
+      this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+      // 
+      // listBoxHosts
+      // 
+      this.listBoxHosts.FormattingEnabled = true;
+      this.listBoxHosts.Location = new System.Drawing.Point(37, 124);
+      this.listBoxHosts.Name = "listBoxHosts";
+      this.listBoxHosts.Size = new System.Drawing.Size(120, 108);
+      this.listBoxHosts.TabIndex = 3;
+      // 
+      // textBoxEditHost
+      // 
+      this.textBoxEditHost.Location = new System.Drawing.Point(37, 88);
+      this.textBoxEditHost.Name = "textBoxEditHost";
+      this.textBoxEditHost.Size = new System.Drawing.Size(120, 20);
+      this.textBoxEditHost.TabIndex = 2;
+      // 
+      // checkBoxPingMonitorEnable
+      // 
+      this.checkBoxPingMonitorEnable.AutoSize = true;
+      this.checkBoxPingMonitorEnable.Location = new System.Drawing.Point(20, 29);
+      this.checkBoxPingMonitorEnable.Name = "checkBoxPingMonitorEnable";
+      this.checkBoxPingMonitorEnable.Size = new System.Drawing.Size(306, 17);
+      this.checkBoxPingMonitorEnable.TabIndex = 1;
+      this.checkBoxPingMonitorEnable.Text = "Do not put the computer to sleep while any hosts are active";
+      this.checkBoxPingMonitorEnable.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorEnable.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
+      // 
+      // checkBoxPingMonitorAwayMode
+      // 
+      this.checkBoxPingMonitorAwayMode.AutoSize = true;
+      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(37, 53);
+      this.checkBoxPingMonitorAwayMode.Name = "checkBoxPingMonitorAwayMode";
+      this.checkBoxPingMonitorAwayMode.Size = new System.Drawing.Size(344, 17);
+      this.checkBoxPingMonitorAwayMode.TabIndex = 0;
+      this.checkBoxPingMonitorAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
+      this.checkBoxPingMonitorAwayMode.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorAwayMode.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorAwayMode_CheckedChanged);
       // 
       // PowerSchedulerSetup
       // 
@@ -1669,6 +1751,8 @@ namespace PowerScheduler.Setup
       this.flowLayoutPanelPreWakeupTime.ResumeLayout(false);
       this.flowLayoutPanelPreWakeupTime.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).EndInit();
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -1787,6 +1871,13 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursTo;
     private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorAwayMode;
+    private System.Windows.Forms.Button buttonDelete;
+    private System.Windows.Forms.Button buttonAdd;
+    private System.Windows.Forms.ListBox listBoxHosts;
+    private System.Windows.Forms.TextBox textBoxEditHost;
+    private System.Windows.Forms.CheckBox checkBoxPingMonitorEnable;
 
   }
 }

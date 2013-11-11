@@ -509,6 +509,36 @@ namespace PowerScheduler.Setup
 
 
         buttonApply.Enabled = buttonApplyEnabled;
+
+#if SERVER
+        bool _pingMonitorEnabled = Convert.ToBoolean(GetSetting("PingMonitorEnabled", "false"));
+        checkBoxPingMonitorAwayMode.Checked = Convert.ToBoolean(GetSetting("PingMonitorAwayMode", "false"));
+        if (_pingMonitorEnabled)
+        {
+          checkBoxPingMonitorEnable.Checked = true;
+          checkBoxPingMonitorAwayMode.Enabled = true;
+          buttonAdd.Enabled = true;
+          buttonDelete.Enabled = true;
+        }
+        else
+        {
+          checkBoxPingMonitorEnable.Checked = false;  
+          checkBoxPingMonitorAwayMode.Enabled = false;
+          buttonAdd.Enabled = false;
+          buttonDelete.Enabled = false;
+        }
+ 
+        listBoxHosts.Items.Clear();
+        string str = GetSetting("PingMonitorHosts", "");
+        if (str != "")
+        {
+          foreach (string str2 in str.Split(";".ToCharArray()))
+          {
+            this.listBoxHosts.Items.Add(str2);
+          }
+        }
+#endif
+
       }
 #if SERVER
       
@@ -704,6 +734,20 @@ namespace PowerScheduler.Setup
 
         SetSetting("NetworkMonitorAwayMode", checkBoxNetworkAwayMode.Checked.ToString());
 
+        // Ping Monitor
+
+        SetSetting("PingMonitorEnabled", checkBoxPingMonitorEnable.Checked.ToString());
+        SetSetting("PingMonitorAwayMode", checkBoxPingMonitorAwayMode.Checked.ToString());
+
+        string str = "";
+        for (int i = 0; i < this.listBoxHosts.Items.Count; i++)
+        {
+          str = str + this.listBoxHosts.Items[i].ToString() + ";";
+        }
+        str = str.TrimEnd(";".ToCharArray());
+
+        SetSetting("PingMonitorHosts", str);
+
         // Advanced
 #if SERVER
         SetSetting("ReinitializeController", checkBoxReinitializeController.Checked.ToString());
@@ -894,7 +938,7 @@ namespace PowerScheduler.Setup
     #region Forms Control Events
 
     #region MasterSetup
-
+    
     private void buttonApply_Click(object sender, EventArgs e)
     {
       buttonApply.Enabled = false;
@@ -1337,7 +1381,59 @@ namespace PowerScheduler.Setup
 
     #endregion
 
+    # region Ping Monitor tab
+
+    private void checkBoxPingMonitorEnable_CheckedChanged(object sender, EventArgs e)
+    {
+      buttonApply.Enabled = true;
+      if (checkBoxPingMonitorEnable.Checked)
+      {
+        checkBoxPingMonitorAwayMode.Enabled = true;
+        buttonAdd.Enabled = true;
+        buttonDelete.Enabled = true;
+      }
+      else
+      {
+        checkBoxPingMonitorAwayMode.Enabled = false;
+        buttonAdd.Enabled = false;
+        buttonDelete.Enabled = false;
+      }
+    }
+    
+    private void buttonAdd_Click(object sender, EventArgs e)
+    {
+      if (textBoxEditHost.Text == "")
+      {
+        MessageBox.Show("No Hostname entered");
+      }
+      else
+      {
+        for (int i = 0; i < listBoxHosts.Items.Count; i++)
+        {
+          if (listBoxHosts.Items[i].ToString().ToLower() == textBoxEditHost.Text.ToLower())
+          {
+            MessageBox.Show("Host already in List");
+            return;
+          }
+        }
+        listBoxHosts.Items.Add(textBoxEditHost.Text);
+        textBoxEditHost.Text = "";
+        buttonApply.Enabled = true;
+      }
+    }
+
+    private void buttonDelete_Click(object sender, EventArgs e)
+    {
+      listBoxHosts.Items.Remove(listBoxHosts.SelectedItem);
+      buttonApply.Enabled = true;
+    }
+
+    private void checkBoxPingMonitorAwayMode_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
     #endregion
 
+    #endregion
   }
 }
