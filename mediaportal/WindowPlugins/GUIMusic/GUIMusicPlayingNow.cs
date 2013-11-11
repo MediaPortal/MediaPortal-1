@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnEnded), new object[] {type, filename});
+      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnEnded), new object[] {type, filename});
     }
 
     private void DoOnEnded(g_Player.MediaType type, string filename)
@@ -227,7 +227,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted),
+      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted),
                                      new object[] {g_Player.MediaType.Music, BassMusicPlayer.Player.CurrentFile});
     }
 
@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
+      GUIGraphicsContext.form.Invoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
       UpdateSimilarTracks(filename);
     }
 

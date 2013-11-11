@@ -240,7 +240,7 @@ namespace MediaPortal.MusicPlayer.BASS
           bool wasApiExclusiveSupported = true;
 
           // Check if we have an uneven number of channels
-          var chkChannels = outputChannels%2;
+          var chkChannels = outputChannels % 2;
           if (chkChannels == 1)
           {
             Log.Warn("BASS: Found uneven number of channels {0}. increase output channels.", outputChannels);
@@ -286,7 +286,7 @@ namespace MediaPortal.MusicPlayer.BASS
           }
 
           Log.Debug("BASS: Try to init WASAPI with a Frequency of {0} and {1} channels", stream.ChannelInfo.freq, outputChannels);
-  
+
           if (BassWasapi.BASS_WASAPI_Init(_bassPlayer.DeviceNumber, stream.ChannelInfo.freq, outputChannels,
                                       initFlags | BASSWASAPIInit.BASS_WASAPI_BUFFER, Convert.ToSingle(Config.BufferingMs / 1000.0), 0f, _wasapiProc, IntPtr.Zero))
           {
@@ -348,7 +348,13 @@ namespace MediaPortal.MusicPlayer.BASS
 
       bool result = BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
                                         BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER |
-                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX);
+                                        BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_MIXER_DOWNMIX |
+                                        BASSFlag.BASS_STREAM_AUTOFREE);
+
+      if (!result)
+      {
+        Log.Error("BASS: Error attaching stream to mixer. {0}", Bass.BASS_ErrorGetCode());
+      }
 
       Bass.BASS_ChannelLock(_mixer, false);
 
@@ -431,8 +437,12 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return Bass.BASS_ChannelGetData(_mixer, buffer, length);
       }
+      catch (AccessViolationException)
+      {
+      }
       catch (Exception)
-      { }
+      {
+      }
       return 0;
     }
 
@@ -693,23 +703,52 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="userData"></param>
     private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
     {
-      new Thread(() =>
+      try
+      {
+        GCHandle gch = GCHandle.FromIntPtr(userData);
+        MusicStream musicstream = (MusicStream)gch.Target;
+
+        Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
+
+        // We need to find out, if the nextsongs sample rate and / or number of channels are different to the one just ended
+        // If this is the case we need a new mixer and the OnMusicStreamMessage needs to be invoked in a thread to avoid crashes.
+        // In order to have gapless playback, it needs to be invoked in sync.
+        MusicStream nextStream = null;
+        Playlists.PlayListItem nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextItem();
+        if (nextSong != null)
         {
-          try
-          {
-            GCHandle gch = GCHandle.FromIntPtr(userData);
-            MusicStream musicstream = (MusicStream) gch.Target;
-
-            Log.Debug("BASS: End of Song {0}", musicstream.FilePath);
-
-            _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
-          }
-          catch (AccessViolationException)
-          {
-            Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
-          }
+          nextStream = new MusicStream(nextSong.FileName, true);
         }
-       ) { Name = "BASS" }.Start();
+
+        bool newMixerNeeded = false;
+        if (nextStream != null && nextStream.BassStream != 0)
+        {
+          if (_bassPlayer.NewMixerNeeded(nextStream))
+          {
+            newMixerNeeded = true;
+          }
+          nextStream.Dispose();
+        }
+
+        if (newMixerNeeded)
+        {
+          // Unplug the Source channel from the mixer
+          Log.Debug("BASS: Unplugging source channel from Mixer.");
+          BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);
+
+          // invoke a thread because we need a new mixer
+          Log.Debug("BASS: Next song needs a new mixer. Invoke a thread.");
+          new Thread(() => _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading)) { Name = "BASS" }.Start();
+        }
+        else
+        {
+          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.Crossfading);
+        }
+      }
+      catch (AccessViolationException)
+      {
+        Log.Error("BASS: Caught AccessViolationException in Playback End Proc");
+      }
     }
 
 
@@ -730,10 +769,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        if (!Bass.BASS_ChannelStop(_mixer))
-        {
-          Log.Error("BASS: Error stopping mixer: {0}", Bass.BASS_ErrorGetCode());
-        }
         if (!Bass.BASS_StreamFree(_mixer))
         {
           Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());

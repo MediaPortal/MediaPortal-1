@@ -136,8 +136,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private TAG_INFO _tagInfo;
 
-    private System.Windows.Forms.Timer _stoppedStreamsTimer = new System.Windows.Forms.Timer();
-
     #endregion
 
     #region Properties
@@ -647,7 +645,6 @@ namespace MediaPortal.MusicPlayer.BASS
             g_Player.OnStopped();
             Stop();
           }
-
           break;
 
         case MusicStream.StreamAction.InternetStreamChanged:
@@ -655,6 +652,12 @@ namespace MediaPortal.MusicPlayer.BASS
           if (InternetStreamSongChanged != null)
           {
             InternetStreamSongChanged(this);
+          }
+          break;
+
+        case MusicStream.StreamAction.Freed:
+          {
+            musicStream.Dispose();
           }
           break;
 
@@ -727,9 +730,6 @@ namespace MediaPortal.MusicPlayer.BASS
           _streamcopy = new StreamCopy();
           _streamcopy.StreamCopyFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE;
         }
-
-        _stoppedStreamsTimer.Interval = 30000;        
-        _stoppedStreamsTimer.Tick += CleanupStoppedStreams;
 
         Log.Info("BASS: Initializing BASS environment done.");
 
@@ -1245,22 +1245,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
-    /// <summary>
-    /// Cleanup of Stopped streams. Invoked by a Timer
-    /// </summary>
-    private void CleanupStoppedStreams(Object obj, EventArgs evtArgs)
-    {
-      for (var i = _streams.Count - 1; i >= 0; i--)
-      {
-        MusicStream stream = _streams[i];
-        if (!stream.IsPlaying)
-        {
-          Log.Debug("BASS: cleaning up stopped stream: {0}", stream.FilePath);
-          stream.Dispose();
-        }
-      }
-    }
-
     #endregion
 
     #region Visualisation Related
@@ -1498,9 +1482,10 @@ namespace MediaPortal.MusicPlayer.BASS
           _currentCueSheet = null;
         }
       }
-      catch (Exception)
+      catch (System.IO.FileNotFoundException)
       {
-        // Catch exception to avoid crash.
+        // The CUE File may have been moved
+        Log.Error("BASS: Cue File cannot be found at the expected location. aborting playback.");
       }
       return false;
     }
@@ -1583,30 +1568,40 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        if (!_mixer.UpMixing)
+        if (NewMixerNeeded(stream))
         {
-          BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
-          if (!_mixer.WasApiShared &&
-              (chinfo.freq != stream.ChannelInfo.freq || chinfo.chans != stream.ChannelInfo.chans))
-          {
-            if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
-                stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
-            {
-              Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
-              _mixer.Dispose();
-              _mixer = null;
-              _mixer = new MixerStream(this);
-              if (!_mixer.CreateMixer(stream))
-              {
-                Log.Error("BASS: Could not create Mixer. Aborting playback.");
-                return false;
-              }
+          Log.Debug("BASS: New stream has different number of channels or sample rate. Need a new mixer.");
+          // Free Mixer
+          _mixer.Dispose();
+          _mixer = null;
 
-              if (HasViz)
+          // Free Wasapi, if needed
+          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+          {
+            try
+            {
+              Log.Debug("BASS: Freeing WASAPI Device");
+              if (!BassWasapi.BASS_WASAPI_Free())
               {
-                _streamcopy.ChannelHandle = _mixer.BassStream;
+                Log.Error("BASS: Error freeing WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
               }
             }
+            catch (Exception ex)
+            {
+              Log.Error("BASS: Exception stopping WASAPI. {0} {1}", ex.Message, ex.StackTrace);
+            }
+          }
+
+          _mixer = new MixerStream(this);
+          if (!_mixer.CreateMixer(stream))
+          {
+            Log.Error("BASS: Could not create Mixer. Aborting playback.");
+            return false;
+          }
+
+          if (HasViz)
+          {
+            _streamcopy.ChannelHandle = _mixer.BassStream;
           }
         }
       }
@@ -1704,11 +1699,6 @@ namespace MediaPortal.MusicPlayer.BASS
         if (!PlayInternal(filePath))
         {
           return false;
-        }
-
-        if (!_stoppedStreamsTimer.Enabled)
-        {
-          _stoppedStreamsTimer.Start();
         }
 
         if (Config.MusicPlayer == AudioPlayer.Asio && !BassAsio.BASS_ASIO_IsStarted())
@@ -2007,7 +1997,6 @@ namespace MediaPortal.MusicPlayer.BASS
                        Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
                      }
 
-                     _stoppedStreamsTimer.Stop();
                      NotifyPlaying = false;
                    }
         ) { Name = "BASS Stop" }.Start();
@@ -2405,6 +2394,30 @@ namespace MediaPortal.MusicPlayer.BASS
     #endregion
 
     #region  Public Methods
+
+    /// <summary>
+    /// Checks, if a new Mixer would be needed, because of changes in Sample Rate or number of channels
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    public bool NewMixerNeeded(MusicStream stream)
+    {
+      if (!_mixer.UpMixing)
+      {
+        BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_mixer.BassStream);
+        if (!_mixer.WasApiShared &&
+            (chinfo.freq != stream.ChannelInfo.freq || (chinfo.chans != stream.ChannelInfo.chans && stream.ChannelInfo.chans != 1)))
+        {
+          if (stream.ChannelInfo.freq != _mixer.WasApiMixedFreq ||
+              stream.ChannelInfo.chans != _mixer.WasApiMixedChans)
+          {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
 
     /// <summary>
     /// Returns the Tags of an AV Stream
