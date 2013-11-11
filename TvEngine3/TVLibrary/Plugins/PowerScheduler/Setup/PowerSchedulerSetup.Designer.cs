@@ -28,9 +28,9 @@ namespace PowerScheduler.Setup
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerSchedulerSetup));
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       this.textBoxCommand = new System.Windows.Forms.TextBox();
@@ -131,6 +131,13 @@ namespace PowerScheduler.Setup
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPageClient = new System.Windows.Forms.TabPage();
       this.groupBoxClient = new System.Windows.Forms.GroupBox();
+      this.tabPagePingMonitor = new System.Windows.Forms.TabPage();
+      this.buttonDelete = new System.Windows.Forms.Button();
+      this.buttonAdd = new System.Windows.Forms.Button();
+      this.listBoxHosts = new System.Windows.Forms.ListBox();
+      this.textBoxEditHost = new System.Windows.Forms.TextBox();
+      this.checkBoxPingMonitorEnable = new System.Windows.Forms.CheckBox();
+      this.checkBoxPingMonitorAwayMode = new System.Windows.Forms.CheckBox();
       this.tabPageLegacy = new System.Windows.Forms.TabPage();
       this.groupBoxLegacy = new System.Windows.Forms.GroupBox();
       this.label4 = new System.Windows.Forms.Label();
@@ -146,13 +153,6 @@ namespace PowerScheduler.Setup
       this.flowLayoutPanelPreWakeupTime = new System.Windows.Forms.FlowLayoutPanel();
       this.label3 = new System.Windows.Forms.Label();
       this.numericUpDownPreWakeupTime = new System.Windows.Forms.NumericUpDown();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.buttonDelete = new System.Windows.Forms.Button();
-      this.buttonAdd = new System.Windows.Forms.Button();
-      this.listBoxHosts = new System.Windows.Forms.ListBox();
-      this.textBoxEditHost = new System.Windows.Forms.TextBox();
-      this.checkBoxPingMonitorEnable = new System.Windows.Forms.CheckBox();
-      this.checkBoxPingMonitorAwayMode = new System.Windows.Forms.CheckBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridShares)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNetworkIdleLimit)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIdleTimeout)).BeginInit();
@@ -182,6 +182,7 @@ namespace PowerScheduler.Setup
       this.tabControl.SuspendLayout();
       this.tabPageClient.SuspendLayout();
       this.groupBoxClient.SuspendLayout();
+      this.tabPagePingMonitor.SuspendLayout();
       this.tabPageLegacy.SuspendLayout();
       this.groupBoxLegacy.SuspendLayout();
       this.flowLayoutPanelStandbyHours.SuspendLayout();
@@ -191,7 +192,6 @@ namespace PowerScheduler.Setup
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreNoStandbyTime)).BeginInit();
       this.flowLayoutPanelPreWakeupTime.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).BeginInit();
-      this.tabPage1.SuspendLayout();
       this.SuspendLayout();
       // 
       // textBoxCommand
@@ -223,40 +223,40 @@ namespace PowerScheduler.Setup
       this.dataGridShares.AllowUserToOrderColumns = true;
       this.dataGridShares.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
       this.dataGridShares.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dataGridShares.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dataGridShares.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Sharename,
             this.Hostname,
             this.Username});
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridShares.DefaultCellStyle = dataGridViewCellStyle2;
       this.dataGridShares.EnableHeadersVisualStyles = false;
       this.dataGridShares.Location = new System.Drawing.Point(34, 66);
       this.dataGridShares.MaximumSize = new System.Drawing.Size(348, 231);
       this.dataGridShares.MinimumSize = new System.Drawing.Size(348, 48);
       this.dataGridShares.Name = "dataGridShares";
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGridShares.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
       this.dataGridShares.RowHeadersWidth = 30;
       this.dataGridShares.RowTemplate.Height = 24;
       this.dataGridShares.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -1375,7 +1375,7 @@ namespace PowerScheduler.Setup
       this.tabControl.Controls.Add(this.tabPageProcesses);
       this.tabControl.Controls.Add(this.tabPageShares);
       this.tabControl.Controls.Add(this.tabPageNetwork);
-      this.tabControl.Controls.Add(this.tabPage1);
+      this.tabControl.Controls.Add(this.tabPagePingMonitor);
       this.tabControl.Controls.Add(this.tabPageAdvanced);
       this.tabControl.Controls.Add(this.tabPageLegacy);
       this.tabControl.Location = new System.Drawing.Point(0, 0);
@@ -1410,6 +1410,79 @@ namespace PowerScheduler.Setup
       this.groupBoxClient.TabIndex = 1;
       this.groupBoxClient.TabStop = false;
       this.groupBoxClient.Text = "Client settings";
+      // 
+      // tabPagePingMonitor
+      // 
+      this.tabPagePingMonitor.Controls.Add(this.buttonDelete);
+      this.tabPagePingMonitor.Controls.Add(this.buttonAdd);
+      this.tabPagePingMonitor.Controls.Add(this.listBoxHosts);
+      this.tabPagePingMonitor.Controls.Add(this.textBoxEditHost);
+      this.tabPagePingMonitor.Controls.Add(this.checkBoxPingMonitorEnable);
+      this.tabPagePingMonitor.Controls.Add(this.checkBoxPingMonitorAwayMode);
+      this.tabPagePingMonitor.Location = new System.Drawing.Point(4, 22);
+      this.tabPagePingMonitor.Name = "tabPagePingMonitor";
+      this.tabPagePingMonitor.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPagePingMonitor.Size = new System.Drawing.Size(476, 264);
+      this.tabPagePingMonitor.TabIndex = 9;
+      this.tabPagePingMonitor.Text = "Ping Monitor";
+      this.tabPagePingMonitor.UseVisualStyleBackColor = true;
+      // 
+      // buttonDelete
+      // 
+      this.buttonDelete.Location = new System.Drawing.Point(178, 124);
+      this.buttonDelete.Name = "buttonDelete";
+      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+      this.buttonDelete.TabIndex = 5;
+      this.buttonDelete.Text = "Delete";
+      this.buttonDelete.UseVisualStyleBackColor = true;
+      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+      // 
+      // buttonAdd
+      // 
+      this.buttonAdd.Location = new System.Drawing.Point(178, 84);
+      this.buttonAdd.Name = "buttonAdd";
+      this.buttonAdd.Size = new System.Drawing.Size(75, 23);
+      this.buttonAdd.TabIndex = 4;
+      this.buttonAdd.Text = "Add";
+      this.buttonAdd.UseVisualStyleBackColor = true;
+      this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+      // 
+      // listBoxHosts
+      // 
+      this.listBoxHosts.FormattingEnabled = true;
+      this.listBoxHosts.Location = new System.Drawing.Point(37, 124);
+      this.listBoxHosts.Name = "listBoxHosts";
+      this.listBoxHosts.Size = new System.Drawing.Size(120, 108);
+      this.listBoxHosts.TabIndex = 3;
+      // 
+      // textBoxEditHost
+      // 
+      this.textBoxEditHost.Location = new System.Drawing.Point(37, 88);
+      this.textBoxEditHost.Name = "textBoxEditHost";
+      this.textBoxEditHost.Size = new System.Drawing.Size(120, 20);
+      this.textBoxEditHost.TabIndex = 2;
+      // 
+      // checkBoxPingMonitorEnable
+      // 
+      this.checkBoxPingMonitorEnable.AutoSize = true;
+      this.checkBoxPingMonitorEnable.Location = new System.Drawing.Point(20, 29);
+      this.checkBoxPingMonitorEnable.Name = "checkBoxPingMonitorEnable";
+      this.checkBoxPingMonitorEnable.Size = new System.Drawing.Size(306, 17);
+      this.checkBoxPingMonitorEnable.TabIndex = 1;
+      this.checkBoxPingMonitorEnable.Text = "Do not put the computer to sleep while any hosts are active";
+      this.checkBoxPingMonitorEnable.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorEnable.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
+      // 
+      // checkBoxPingMonitorAwayMode
+      // 
+      this.checkBoxPingMonitorAwayMode.AutoSize = true;
+      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(37, 53);
+      this.checkBoxPingMonitorAwayMode.Name = "checkBoxPingMonitorAwayMode";
+      this.checkBoxPingMonitorAwayMode.Size = new System.Drawing.Size(344, 17);
+      this.checkBoxPingMonitorAwayMode.TabIndex = 0;
+      this.checkBoxPingMonitorAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
+      this.checkBoxPingMonitorAwayMode.UseVisualStyleBackColor = true;
+      this.checkBoxPingMonitorAwayMode.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorAwayMode_CheckedChanged);
       // 
       // tabPageLegacy
       // 
@@ -1611,79 +1684,6 @@ namespace PowerScheduler.Setup
             0});
       this.numericUpDownPreWakeupTime.ValueChanged += new System.EventHandler(this.buttonApply_Enable);
       // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this.buttonDelete);
-      this.tabPage1.Controls.Add(this.buttonAdd);
-      this.tabPage1.Controls.Add(this.listBoxHosts);
-      this.tabPage1.Controls.Add(this.textBoxEditHost);
-      this.tabPage1.Controls.Add(this.checkBoxPingMonitorEnable);
-      this.tabPage1.Controls.Add(this.checkBoxPingMonitorAwayMode);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(476, 264);
-      this.tabPage1.TabIndex = 9;
-      this.tabPage1.Text = "Ping Monitor";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // buttonDelete
-      // 
-      this.buttonDelete.Location = new System.Drawing.Point(178, 124);
-      this.buttonDelete.Name = "buttonDelete";
-      this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-      this.buttonDelete.TabIndex = 5;
-      this.buttonDelete.Text = "Delete";
-      this.buttonDelete.UseVisualStyleBackColor = true;
-      this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-      // 
-      // buttonAdd
-      // 
-      this.buttonAdd.Location = new System.Drawing.Point(178, 84);
-      this.buttonAdd.Name = "buttonAdd";
-      this.buttonAdd.Size = new System.Drawing.Size(75, 23);
-      this.buttonAdd.TabIndex = 4;
-      this.buttonAdd.Text = "Add";
-      this.buttonAdd.UseVisualStyleBackColor = true;
-      this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
-      // 
-      // listBoxHosts
-      // 
-      this.listBoxHosts.FormattingEnabled = true;
-      this.listBoxHosts.Location = new System.Drawing.Point(37, 124);
-      this.listBoxHosts.Name = "listBoxHosts";
-      this.listBoxHosts.Size = new System.Drawing.Size(120, 108);
-      this.listBoxHosts.TabIndex = 3;
-      // 
-      // textBoxEditHost
-      // 
-      this.textBoxEditHost.Location = new System.Drawing.Point(37, 88);
-      this.textBoxEditHost.Name = "textBoxEditHost";
-      this.textBoxEditHost.Size = new System.Drawing.Size(120, 20);
-      this.textBoxEditHost.TabIndex = 2;
-      // 
-      // checkBoxPingMonitorEnable
-      // 
-      this.checkBoxPingMonitorEnable.AutoSize = true;
-      this.checkBoxPingMonitorEnable.Location = new System.Drawing.Point(20, 29);
-      this.checkBoxPingMonitorEnable.Name = "checkBoxPingMonitorEnable";
-      this.checkBoxPingMonitorEnable.Size = new System.Drawing.Size(306, 17);
-      this.checkBoxPingMonitorEnable.TabIndex = 1;
-      this.checkBoxPingMonitorEnable.Text = "Do not put the computer to sleep while any hosts are active";
-      this.checkBoxPingMonitorEnable.UseVisualStyleBackColor = true;
-      this.checkBoxPingMonitorEnable.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorEnable_CheckedChanged);
-      // 
-      // checkBoxPingMonitorAwayMode
-      // 
-      this.checkBoxPingMonitorAwayMode.AutoSize = true;
-      this.checkBoxPingMonitorAwayMode.Location = new System.Drawing.Point(37, 53);
-      this.checkBoxPingMonitorAwayMode.Name = "checkBoxPingMonitorAwayMode";
-      this.checkBoxPingMonitorAwayMode.Size = new System.Drawing.Size(344, 17);
-      this.checkBoxPingMonitorAwayMode.TabIndex = 0;
-      this.checkBoxPingMonitorAwayMode.Text = "Enter away mode when the user wants to put the computer to sleep";
-      this.checkBoxPingMonitorAwayMode.UseVisualStyleBackColor = true;
-      this.checkBoxPingMonitorAwayMode.CheckedChanged += new System.EventHandler(this.checkBoxPingMonitorAwayMode_CheckedChanged);
-      // 
       // PowerSchedulerSetup
       // 
       this.Controls.Add(this.groupBoxStatus);
@@ -1738,6 +1738,8 @@ namespace PowerScheduler.Setup
       this.tabPageClient.ResumeLayout(false);
       this.groupBoxClient.ResumeLayout(false);
       this.groupBoxClient.PerformLayout();
+      this.tabPagePingMonitor.ResumeLayout(false);
+      this.tabPagePingMonitor.PerformLayout();
       this.tabPageLegacy.ResumeLayout(false);
       this.groupBoxLegacy.ResumeLayout(false);
       this.groupBoxLegacy.PerformLayout();
@@ -1751,8 +1753,6 @@ namespace PowerScheduler.Setup
       this.flowLayoutPanelPreWakeupTime.ResumeLayout(false);
       this.flowLayoutPanelPreWakeupTime.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreWakeupTime)).EndInit();
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -1871,7 +1871,7 @@ namespace PowerScheduler.Setup
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.NumericUpDown numericUpDownStandbyHoursTo;
     private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPagePingMonitor;
     private System.Windows.Forms.CheckBox checkBoxPingMonitorAwayMode;
     private System.Windows.Forms.Button buttonDelete;
     private System.Windows.Forms.Button buttonAdd;

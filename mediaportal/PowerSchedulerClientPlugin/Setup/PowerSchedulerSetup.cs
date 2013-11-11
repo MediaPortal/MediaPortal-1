@@ -511,6 +511,8 @@ namespace PowerScheduler.Setup
         buttonApply.Enabled = buttonApplyEnabled;
 
 #if SERVER
+        // Ping Monitor
+
         bool _pingMonitorEnabled = Convert.ToBoolean(GetSetting("PingMonitorEnabled", "false"));
         checkBoxPingMonitorAwayMode.Checked = Convert.ToBoolean(GetSetting("PingMonitorAwayMode", "false"));
         if (_pingMonitorEnabled)
@@ -537,6 +539,10 @@ namespace PowerScheduler.Setup
             this.listBoxHosts.Items.Add(str2);
           }
         }
+#endif
+
+#if CLIENT
+      tabControl.Controls.Remove(tabPagePingMonitor);
 #endif
 
       }
