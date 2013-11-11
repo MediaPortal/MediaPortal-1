@@ -72,6 +72,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "plugins", "ISDN Caller-ID");
       RemoveEntry(settings, "plugins", "YAC Caller-ID");
       RemoveEntry(settings, "plugins", "MAME Devices");
+      RemoveEntry(settings, "plugins", "Audioscrobbler");
       RemoveEntry(settings, "plugins", "Last.fm Radio");
       RemoveEntry(settings, "home", "Burner");
       RemoveEntry(settings, "home", "VideoEditor");
@@ -93,6 +94,22 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "audioplayer", "asiodevice");
       RemoveEntry(settings, "audioplayer", "mixing");
       RemoveEntry(settings, "screenselector", "usescreenselector");
+      RemoveEntry(settings, "audioscrobbler", "user");
+      RemoveEntry(settings, "audioscrobbler", "usesimilarrandom");
+      RemoveEntry(settings, "audioscrobbler", "EnableNowPlaying");
+      RemoveEntry(settings, "audioscrobbler", "showtrayicon");
+      RemoveEntry(settings, "audioscrobbler", "showballontips");
+      RemoveEntry(settings, "audioscrobbler", "submitradiotracks");
+      RemoveEntry(settings, "audioscrobbler", "directskip");
+      RemoveEntry(settings, "audioscrobbler", "listentrycount");
+      RemoveEntry(settings, "audioscrobbler", "streamplayertype");
+      RemoveEntry(settings, "audioscrobbler", "oneclickstart");
+      RemoveEntry(settings, "audioscrobbler", "usesmskeyboard");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmcovers");
+      RemoveEntry(settings, "musicmisc", "fetchlastfmtopalbums");
+      RemoveEntry(settings, "musicmisc", "lookupSimilarTracks");
+      RemoveEntry(settings, "musicmisc", "switchArtistOnLastFMSubmit");
+      RemoveEntry(settings, "musicfiles", "autoshuffle");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");

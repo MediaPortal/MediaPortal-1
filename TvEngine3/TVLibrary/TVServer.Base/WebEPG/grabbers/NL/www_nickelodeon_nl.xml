@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+	<Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+	<Channels>
+		<Channel id="Nickelodeon" siteId="28" />
+	</Channels>
+	<Listing type="JSON">
+		<Site url="http://api.mtvnn.com/v2/airings.json?channel_id=28&amp;broadcast_date_is=[YYYY]-[MM]-[DD]&amp;language_code=nl&amp;country_code=NL" post="" external="false" encoding="" />
+		<JSON channel="channel/id=28" xpath="airing">
+			<Fields>
+				<Field name="#START" jsonname="air_time" />
+				<Field name="#TITLE" jsonname="title" />
+				<Field name="#DESCRIPTION" jsonname="episode/original_title" />
+			</Fields>
+		</JSON>
+	</Listing>
+</Grabber>

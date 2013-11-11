@@ -30,10 +30,7 @@ namespace MediaPortal.GUI.Settings
   /// </summary>
   public class GUISettingsMusicNowPlaying : GUIInternalWindow
   {
-    [SkinControl(2)] protected GUICheckButton btnFetchlastfmcovers = null;
-    [SkinControl(3)] protected GUICheckButton btnFetchlastfmtopalbums = null;
-    [SkinControl(4)] protected GUICheckButton btnFetchlastfmtracktags = null;
-    [SkinControl(5)] protected GUICheckButton btnSwitchArtistOnLastFMSubmit = null;
+    [SkinControl(4)] protected GUICheckButton btnDisableSimilarTrackLookup = null;
     [SkinControl(6)] protected GUIButtonControl btnVUNone= null;
     
 
@@ -56,12 +53,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        btnFetchlastfmcovers.Selected = !xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
-        btnFetchlastfmtopalbums.Selected = !xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
-        btnFetchlastfmtracktags.Selected = !xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
-        btnSwitchArtistOnLastFMSubmit.Selected= xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit",
-                                                                              false);
-
+        btnDisableSimilarTrackLookup.Selected = !xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true);
         _vuMeter= xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
         _vuMeter = UppercaseFirst(_vuMeter);
       }
@@ -71,11 +63,7 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmcovers", !btnFetchlastfmcovers.Selected);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !btnFetchlastfmtopalbums.Selected);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !btnFetchlastfmtracktags.Selected);
-        xmlwriter.SetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", btnSwitchArtistOnLastFMSubmit.Selected);
-
+        xmlwriter.SetValueAsBool("musicmisc", "lookupSimilarTracks", !btnDisableSimilarTrackLookup.Selected);
         xmlwriter.SetValue("musicmisc", "vumeter", _vuMeter.ToLowerInvariant());
       }
     }
@@ -152,8 +140,7 @@ namespace MediaPortal.GUI.Settings
           SettingsChanged(true);
         }
       }
-      if (control == btnFetchlastfmcovers || control == btnFetchlastfmtopalbums || 
-          control == btnFetchlastfmtracktags || control == btnSwitchArtistOnLastFMSubmit)
+      if (control == btnDisableSimilarTrackLookup)
       {
         SettingsChanged(true);
       }

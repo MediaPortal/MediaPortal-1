@@ -34,11 +34,14 @@ namespace MediaPortal.DeployTool.InstallationChecks
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
-    private static readonly string prg = "MySQL" + _arch;
-    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
+    private static readonly string prg = "MySQL56" + _arch;
+    private static readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     private readonly string _dataDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
-                                       "\\MySQL\\MySQL Server 5.1";
+                                       "\\MySQL\\MySQL Server 5.6";
+
+    private static bool MySQL51 = false;
+    private static string strMySQL = "";
 
     private void PrepareMyIni(string iniFile)
     {
@@ -48,18 +51,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
       WritePrivateProfileString("mysqld", "basedir",
                                 "\"" + InstallationProperties.Instance["DBMSDir"].Replace('\\', '/') + "/\"", iniFile);
       WritePrivateProfileString("mysqld", "datadir", "\"" + _dataDir.Replace('\\', '/') + "/Data\"", iniFile);
-      WritePrivateProfileString("mysqld", "default-character-set", "utf8", iniFile);
-      WritePrivateProfileString("mysqld", "default-storage-engine", "myisam", iniFile);
+      WritePrivateProfileString("mysqld", "default-storage-engine", "INNODB", iniFile);
       WritePrivateProfileString("mysqld", "sql-mode",
                                 "\"STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION\"", iniFile);
       WritePrivateProfileString("mysqld", "max_connections", "100", iniFile);
       WritePrivateProfileString("mysqld", "query_cache_size", "32M", iniFile);
-      WritePrivateProfileString("mysqld", "table_cache", "64", iniFile);
       WritePrivateProfileString("mysqld", "tmp_table_size", "18M", iniFile);
       WritePrivateProfileString("mysqld", "thread_cache_size", "4", iniFile);
       WritePrivateProfileString("mysqld", "thread_concurrency", "4", iniFile);
       WritePrivateProfileString("mysqld", "myisam_max_sort_file_size", "100M", iniFile);
-      WritePrivateProfileString("mysqld", "myisam_max_extra_sort_file_size", "100M", iniFile);
       WritePrivateProfileString("mysqld", "myisam_sort_buffer_size", "64M", iniFile);
       WritePrivateProfileString("mysqld", "key_buffer_size", "16M", iniFile);
       WritePrivateProfileString("mysqld", "read_buffer_size", "2M", iniFile);
@@ -75,7 +75,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MySQL 5.1";
+      return "MySQL 5.6";
     }
 
     public bool Download()
@@ -84,8 +84,143 @@ namespace MediaPortal.DeployTool.InstallationChecks
       return (result == DialogResult.OK);
     }
 
+    private bool IsMySQL51Installed()
+    {
+      RegistryKey key = null;
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
+                               Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+      if (key == null)
+      {
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      }
+      if (key != null)
+      {
+        strMySQL = key.GetValue("Location").ToString();
+        if (Utils.CheckTargetDir(strMySQL) && strMySQL.Contains("MySQL Server 5.1"))
+        {
+          key.Close();
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public bool BackupDB()
+    {
+      if (string.IsNullOrEmpty(strMySQL))
+      {
+        string strMySqlDump = null;
+        strMySqlDump = "\"" + strMySQL + "bin\\mysqldump.exe" + "\"";
+        string cmdLine = "-uroot -p" + InstallationProperties.Instance["DBMSPassword"] +
+                         " --all-databases --flush-logs";
+        cmdLine += " -r " + "\"" + Path.GetTempPath() + "all_databases.sql" + "\"";
+        Process setup = Process.Start(strMySqlDump, cmdLine);
+        try
+        {
+          if (setup != null)
+          {
+            setup.WaitForExit();
+          }
+        }
+        catch
+        {
+          return false;
+        }
+
+        const string ServiceName = "MySQL";
+        ServiceController ctrl = new ServiceController(ServiceName);
+        try
+        {
+          ctrl.Stop();
+        }
+        catch (Exception)
+        {
+          MessageBox.Show("MySQL - stop service exception");
+          //return false;
+        }
+
+        string cmdExe = Environment.SystemDirectory + "\\sc.exe";
+        string cmdParam = "delete " + ServiceName; // +"\"";
+#if DEBUG
+        string ff = "c:\\mysql-srv.bat";
+        StreamWriter a = new StreamWriter(ff);
+        a.WriteLine("@echo off");
+        a.WriteLine(cmdExe + " " + cmdParam);
+        a.Close();
+        Process svcInstaller = Process.Start(ff);
+#else
+        Process svcInstaller = Process.Start(cmdExe, cmdParam);
+#endif
+        if (svcInstaller != null)
+        {
+          svcInstaller.WaitForExit();
+        }
+      }
+      return true;
+    }
+
+    public bool RestoreDB()
+    {
+      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql.exe";
+      string cmdLine = "--host=localhost --user=root --port=3306 --default-character-set=utf8 -p";
+      cmdLine += InstallationProperties.Instance["DBMSPassword"];
+      cmdLine += " --comments ";
+      cmdLine += "-e " + "\"" + "source " + Path.GetTempPath() + "all_databases.sql" + "\"";
+      Process setup = Process.Start(strMySql, cmdLine);
+      try
+      {
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
+
+    public bool ForceUpdateDB()
+    {
+      string strMySql = InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysql_upgrade.exe";
+      string cmdLine = "--host=localhost --user=root -p";
+      cmdLine += InstallationProperties.Instance["DBMSPassword"];
+      cmdLine += " --force";
+      Process setup = Process.Start(strMySql, cmdLine);
+      try
+      {
+        if (setup != null)
+        {
+          setup.WaitForExit();
+        }
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
+
     public bool Install()
     {
+      MySQL51 = IsMySQL51Installed();
+
+      if (MySQL51)
+      {
+        // Backup MySQL 5.1 Database and uninstall current MySQL 5.1
+        BackupDB();
+        Utils.UninstallMSI("{561AB451-B967-475C-80E0-3B6679C38B52}");
+      }
+
       string cmdLine = "/i \"" + _fileName + "\"";
       cmdLine += " INSTALLDIR=\"" + InstallationProperties.Instance["DBMSDir"] + "\"";
       cmdLine += " DATADIR=\"" + _dataDir + "\"";
@@ -108,9 +243,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       while (!sr.EndOfStream)
       {
         string line = sr.ReadLine();
-        if (line.Contains("Installation operation completed successfully"))
+        if (line.Contains("Configuration completed successfully") || line.Contains("Installation completed successfully") || line.Contains("completed successfully"))
         {
           installOk = true;
+          //File.Delete(Path.GetTempPath() + "\\mysqlinst.log");
           break;
         }
       }
@@ -161,14 +297,30 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       try
       {
+        // Try restore DB here first
+        if (MySQL51)
+        {
+          RestoreDB();
+          ForceUpdateDB();
+        }
+
         Process mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
         if (mysqladmin != null)
         {
           mysqladmin.WaitForExit();
           if (mysqladmin.ExitCode != 0)
           {
-            MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
-            return false;
+            cmdLine = "-u root --password=" + InstallationProperties.Instance["DBMSPassword"] + " password " + InstallationProperties.Instance["DBMSPassword"];
+            mysqladmin = Process.Start(InstallationProperties.Instance["DBMSDir"] + "\\bin\\mysqladmin.exe", cmdLine);
+            if (mysqladmin != null)
+            {
+              mysqladmin.WaitForExit();
+              if (mysqladmin.ExitCode != 0)
+              {
+                MessageBox.Show("MySQL - set password error: " + mysqladmin.ExitCode);
+                return false;
+              }
+            }
           }
         }
       }
@@ -202,17 +354,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
         MessageBox.Show("MySQL - set privileges exception");
         return false;
       }
+      if (MySQL51)
+      {
+        RestoreDB();
+        ForceUpdateDB();
+      }
       return true;
     }
 
     public bool UnInstall()
     {
-      Utils.UninstallMSI("{2FEB25F8-C3CB-49A2-AE79-DE17FFAFB5D9}");
+      Utils.UninstallMSI("{56DA0CB5-ABD2-4318-BEAB-62FDBC9B12CC}");
       return true;
     }
 
     public CheckResult CheckStatus()
     {
+      RegistryKey key = null;
       CheckResult result;
       result.needsDownload = true;
       FileInfo mySqlFile = new FileInfo(_fileName);
@@ -225,9 +383,65 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.6", false,
+            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
       if (key == null)
+      {
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.6");
+      }
+      if (key == null)
+      {
         result.state = CheckState.NOT_INSTALLED;
+      }
+      else
+      {
+        key.Close();
+        result.state = CheckState.INSTALLED;
+      }
+      return result;
+    }
+
+    public static CheckResult CheckStatusMySQL51()
+    {
+      RegistryKey key = null;
+      CheckResult result;
+      result.needsDownload = true;
+      FileInfo mySqlFile = new FileInfo(_fileName);
+
+      if (mySqlFile.Exists && mySqlFile.Length != 0)
+        result.needsDownload = false;
+
+      if (InstallationProperties.Instance["InstallType"] == "download_only")
+      {
+        result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
+        return result;
+      }
+      try
+      {
+        key = Utils.OpenSubKey(Registry.LocalMachine, "SOFTWARE\\MySQL AB\\MySQL Server 5.1", false,
+            Utils.eRegWow64Options.KEY_WOW64_32KEY);
+      }
+      catch
+      {
+        // Parent key not open, exception found at opening (probably related to
+        // security permissions requested)
+      }
+      if (key == null)
+      {
+        key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\MySQL AB\\MySQL Server 5.1");
+      }
+      if (key == null)
+      {
+        result.state = CheckState.NOT_INSTALLED;
+      }
       else
       {
         key.Close();

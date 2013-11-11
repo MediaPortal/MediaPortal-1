@@ -164,7 +164,6 @@ namespace MediaPortal.Visualization
 
     public override void Dispose()
     {
-      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       base.Dispose();
       Close();
     }
@@ -239,6 +238,7 @@ namespace MediaPortal.Visualization
 
     public override bool Close()
     {
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       if (base.Close())
       {
         return true;
@@ -266,7 +266,7 @@ namespace MediaPortal.Visualization
       }
       }           
 
-      int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
+      int tmpVis = BassVis.BASSVIS_GetModuleHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {
         int numModules = BassVis.BASSVIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);

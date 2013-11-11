@@ -474,12 +474,9 @@ namespace MediaPortal.Util
     {
       try
       {
-        if (aPath.StartsWith(@"http://"))
+        if (aPath.StartsWith(@"http://play.last.fm"))
         {
-          if (aPath.Contains(@"/last.mp3?") || aPath.Contains(@"last.fm/"))
-          {
-            return true;
-          }
+          return true;
         }
       }
       catch (Exception ex)
@@ -2644,6 +2641,7 @@ namespace MediaPortal.Util
       if (bNoStop) Snd_Options += SND_NOSTOP;
       try
       {
+        sndPlaySoundA(null, Snd_Options); // terminate a currently active sound output
         return sndPlaySoundA(sSoundFile, Snd_Options);
       }
       catch (Exception ex)
@@ -4981,7 +4979,7 @@ namespace MediaPortal.Util
       while ((i-=step)>=0 && depth-->0)
       {
         tree += basename.Substring(i, step) + @"\";
-      }
+  }
       return tree;
     }
 

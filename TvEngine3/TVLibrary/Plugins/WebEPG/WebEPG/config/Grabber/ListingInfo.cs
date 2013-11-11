@@ -34,7 +34,8 @@ namespace MediaPortal.WebEPG.Config.Grabber
     {
       Html,
       Data,
-      Xml
+      Xml,
+      JSON
     }
 
     #endregion
@@ -47,6 +48,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlElement("Html")] public WebParserTemplate HtmlTemplate;
     [XmlElement("Xml")] public XmlParserTemplate XmlTemplate;
     [XmlElement("Data")] public DataParserTemplate DataTemplate;
+    [XmlElement("JSON")] public JSONParserTemplate JSONTemplate;
 
     #endregion
   }

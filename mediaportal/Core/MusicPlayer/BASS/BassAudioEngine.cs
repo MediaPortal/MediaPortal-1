@@ -331,6 +331,11 @@ namespace MediaPortal.MusicPlayer.BASS
           return false;
         }
 
+        if (Util.Utils.IsLastFMStream(stream.FilePath))
+        {
+          return false;
+        }
+
         return stream.Filetype.FileMainType == FileMainType.WebStream;
       }
     }
@@ -571,6 +576,26 @@ namespace MediaPortal.MusicPlayer.BASS
                 break;
             }
             Log.Info("BASS: Playback changed to {0}", type);
+            break;
+          }
+
+        case Action.ActionType.ACTION_PAGE_UP:
+          {
+            if (FullScreen)
+            {
+              Log.Debug("BASS: Switch to Previous Vis");
+              VizManager.GetPrevVis();
+            }
+            break;
+          }
+
+        case Action.ActionType.ACTION_PAGE_DOWN:
+          {
+            if (FullScreen)
+            {
+              Log.Info("BASS: Switch to Next Vis");
+              VizManager.GetNextVis();
+            }
             break;
           }
       }

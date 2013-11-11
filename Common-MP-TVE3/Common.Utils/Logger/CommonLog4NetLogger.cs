@@ -71,9 +71,9 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("      <encoding type=\"System.Text.UTF8Encoding\" />");
       tw.WriteLine("      <appendToFile value=\"true\" />");
       tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
-      tw.WriteLine("      <rollingStyle value=\"Once\" />");
-      tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
-      tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
+      tw.WriteLine("      <rollingStyle value=\"Size\" />");
+      tw.WriteLine("      <maxSizeRollBackups value=\"5\" />");
+      tw.WriteLine("      <maximumFileSize value=\"5MB\" />");
       tw.WriteLine("      <staticLogFileName value=\"true\" />");
       tw.WriteLine("      <PreserveLogFileNameExtension value=\"true\" />");
       tw.WriteLine("      <layout type=\"log4net.Layout.PatternLayout\">");
@@ -86,9 +86,9 @@ namespace MediaPortal.Common.Utils.Logger
       tw.WriteLine("      <encoding type=\"System.Text.UTF8Encoding\" />");
       tw.WriteLine("      <appendToFile value=\"true\" />");
       tw.WriteLine("      <lockingModel type=\"log4net.Appender.FileAppender+MinimalLock\" />");
-      tw.WriteLine("      <rollingStyle value=\"Once\" />");
-      tw.WriteLine("      <maxSizeRollBackups value=\"4\" />");
-      tw.WriteLine("      <maximumFileSize value=\"1MB\" />");
+      tw.WriteLine("      <rollingStyle value=\"Size\" />");
+      tw.WriteLine("      <maxSizeRollBackups value=\"5\" />");
+      tw.WriteLine("      <maximumFileSize value=\"5MB\" />");
       tw.WriteLine("      <staticLogFileName value=\"true\" />");
       tw.WriteLine("      <PreserveLogFileNameExtension value=\"true\" />");
       tw.WriteLine("      <layout type=\"log4net.Layout.PatternLayout\">");
