@@ -131,12 +131,10 @@ namespace MediaPortal.GUI.Music
 
     #region SkinControls
 
-    [SkinControl(8)]
-    protected GUIButtonControl btnSearch = null;
-    [SkinControl(12)]
-    protected GUIButtonControl btnPlayCd = null;
-    [SkinControl(10)]
-    protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(8)] protected GUIButtonControl btnSearch = null;
+    [SkinControl(12)] protected GUIButtonControl btnPlayCd = null;
+    [SkinControl(10)] protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(18)] protected GUICheckButton btnAutoDJ;
 
     #endregion
 
@@ -151,6 +149,7 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
+      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged); 
       playlistPlayer.PlaylistChanged += playlistPlayer_PlaylistChanged;
       g_Player.PlayBackChanged += OnPlaybackChangedOrStopped;
       g_Player.PlayBackStopped += OnPlaybackChangedOrStopped;
@@ -211,6 +210,7 @@ namespace MediaPortal.GUI.Music
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.AutoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", false);
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
@@ -518,6 +518,10 @@ namespace MediaPortal.GUI.Music
       {
         OnShowSavedPlaylists(m_strPlayListPath);
       }
+      if (control == btnAutoDJ)
+      {
+        MusicState.AutoDJEnabled = !MusicState.AutoDJEnabled;
+      }
     }
 
     protected override void UpdateButtonStates()
@@ -679,6 +683,11 @@ namespace MediaPortal.GUI.Music
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       }
 
+      if (btnAutoDJ != null)
+      {
+        btnAutoDJ.Selected = MusicState.AutoDJEnabled;
+      }
+
       base.OnPageLoad();
     }
 
@@ -691,6 +700,7 @@ namespace MediaPortal.GUI.Music
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);
+        xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", MusicState.AutoDJEnabled);
       }
       base.OnPageDestroy(newWindowId);
     }
@@ -860,7 +870,7 @@ namespace MediaPortal.GUI.Music
       SelectCurrentItem();
     }
 
-    protected static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
+    public static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
     {
       if (item.MusicTag == null)
       {
@@ -1462,7 +1472,8 @@ namespace MediaPortal.GUI.Music
         var artist = song.Artist;
         if (_strippedPrefixes)
         {
-          artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
         }
         ShowAlbumInfo(artist, song.Album);
       }
@@ -1471,7 +1482,8 @@ namespace MediaPortal.GUI.Music
         var artist = song.Artist;
         if (_strippedPrefixes)
         {
-          artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
         }
 
         ShowArtistInfo(artist, song.Album);
@@ -1481,7 +1493,8 @@ namespace MediaPortal.GUI.Music
         var artist = song.AlbumArtist;
         if (_strippedPrefixes)
         {
-          artist = AudioscrobblerBase.UndoArtistPrefix(song.AlbumArtist);
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.AlbumArtist);
         }
 
         ShowArtistInfo(artist, song.Album);

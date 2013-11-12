@@ -238,8 +238,6 @@
     <Compile Include="Music\InternetLookups\ArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerBase.cs" />
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerUtils.cs" />
     <Compile Include="Music\MusicDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -254,8 +252,6 @@
     <Compile Include="Music\MusicSong.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Music\Audioscrobbler\AudioscrobblerQueue.cs" />
-    <Compile Include="Music\Audioscrobbler\ScrobblerUtilsRequest.cs" />
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>
