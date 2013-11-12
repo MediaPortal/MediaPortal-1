@@ -978,9 +978,9 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case 831:
-          string message;
-          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          if (!Util.Utils.EjectCDROM(item.Path))
           {
+            string message = "Request failed";
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
             pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));

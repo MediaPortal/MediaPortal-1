@@ -192,6 +192,8 @@ public class MediaPortalApp : D3D, IRender
   private const string ConfigMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
   #pragma warning restore 169
 
+  private ShellNotifications Notifications = new ShellNotifications();
+
   #endregion
 
   #region enumns
@@ -1390,6 +1392,42 @@ public class MediaPortalApp : D3D, IRender
     {
       switch (msg.Msg)
       {
+        case (int)ShellNotifications.WmShnotify:
+          NotifyInfos info = new NotifyInfos((ShellNotifications.SHCNE)(int)msg.LParam);
+          
+          if (Notifications.NotificationReceipt(msg.WParam, msg.LParam, ref info))
+          {
+            if (info.Notification == ShellNotifications.SHCNE.SHCNE_MEDIAINSERTED)
+            {
+              string path = info.Item1;
+
+              if (Utils.IsRemovable(path))
+              {
+                string driveName = Utils.GetDriveName(info.Item1);
+                GUIMessage gmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+                gmsg.Label = info.Item1;
+                gmsg.Label2 = String.Format("({0}) {1}", path, driveName);
+                GUIGraphicsContext.SendMessage(gmsg);
+              }
+              break;
+            }
+
+            if (info.Notification == ShellNotifications.SHCNE.SHCNE_MEDIAREMOVED)
+            {
+              string path = info.Item1;
+
+              if (Utils.IsRemovable(path))
+              {
+                string driveName = Utils.GetDriveName(info.Item1);
+                GUIMessage gmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+                gmsg.Label = info.Item1;
+                gmsg.Label2 = String.Format("({0}) {1}", path, driveName);
+                GUIGraphicsContext.SendMessage(gmsg);
+              }
+            }
+          }
+          break;
+
         // power management
         case WM_POWERBROADCAST:
           OnPowerBroadcast(ref msg);
@@ -2394,6 +2432,9 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
+    // Register shell notifications to wndproc
+    Notifications.RegisterChangeNotify(this.Handle, ShellNotifications.CSIDL.CSIDL_DESKTOP, true);
+
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
@@ -2697,6 +2738,7 @@ public class MediaPortalApp : D3D, IRender
     }
     UnregisterForDeviceNotification();
     UnregisterForPowerSettingNotitication();
+    Notifications.UnregisterChangeNotify();
   }
 
 
