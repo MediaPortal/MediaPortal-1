@@ -77,32 +77,36 @@ namespace MediaPortal.Video.Database
         XmlDocument doc = new XmlDocument();
         doc.Load(filename);
         XmlNodeList simpleTags = doc.SelectNodes("/tags/tag/SimpleTag");
-        foreach (XmlNode simpleTag in simpleTags)
+        
+        if (simpleTags != null)
         {
-          string tagName = simpleTag.ChildNodes[0].InnerText;
-          switch (tagName)
+          foreach (XmlNode simpleTag in simpleTags)
           {
-            case "TITLE":
-              info.Title = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "COMMENT":
-              info.Description = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "GENRE":
-              info.Genre = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "CHANNEL_NAME":
-              info.ChannelName = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "EPISODE_NAME":
-              info.EpisodeName = simpleTag.ChildNodes[1].InnerText;
-              break;
-            case "START_TIME":
-              info.StartTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
-              break;
-            case "END_TIME":
-              info.EndTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
-              break;
+            string tagName = simpleTag.ChildNodes[0].InnerText;
+            switch (tagName)
+            {
+              case "TITLE":
+                info.Title = simpleTag.ChildNodes[1].InnerText;
+                break;
+              case "COMMENT":
+                info.Description = simpleTag.ChildNodes[1].InnerText;
+                break;
+              case "GENRE":
+                info.Genre = simpleTag.ChildNodes[1].InnerText;
+                break;
+              case "CHANNEL_NAME":
+                info.ChannelName = simpleTag.ChildNodes[1].InnerText;
+                break;
+              case "EPISODE_NAME":
+                info.EpisodeName = simpleTag.ChildNodes[1].InnerText;
+                break;
+              case "START_TIME":
+                info.StartTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+                break;
+              case "END_TIME":
+                info.EndTime = new DateTime(long.Parse(simpleTag.ChildNodes[1].InnerText));
+                break;
+            }
           }
         }
       }
@@ -526,10 +530,8 @@ namespace MediaPortal.Video.Database
       _mStrTagLine = string.Empty;
       _mStrPlotOutline = string.Empty;
       _mStrPlot = string.Empty;
-      // Added userreview
       _mStrUserReview = string.Empty;
       _mStrPictureURL = string.Empty;
-      // Fanart
       _mStrFanartURL = string.Empty;
       _mStrTitle = string.Empty;
       _mStrSortTitle = string.Empty;
@@ -928,6 +930,10 @@ namespace MediaPortal.Video.Database
               {
                 GetUserFanart(item, ref info);
               }
+              catch (ThreadAbortException)
+              {
+                // Will be logged in thread main code
+              }
               catch (Exception ex)
               {
                 Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
@@ -952,11 +958,17 @@ namespace MediaPortal.Video.Database
 
             if (info.IsEmpty)
             {
+              info.DVDLabel = item.DVDLabel;
               FetchMovieNfo(path, fileName, ref info);
             }
           }
 
-          VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
+          if (info.ID < 1)
+          {
+            VideoDatabase.GetVideoFilesMediaInfo(fileName, ref mInfo, false);
+            info.MediaInfo = mInfo;
+          }
+          
           info.VideoFileName = fileName;
 
           if (string.IsNullOrEmpty(info.VideoFilePath) || info.VideoFilePath == Strings.Unknown)
@@ -967,7 +979,6 @@ namespace MediaPortal.Video.Database
           }
 
           info.Path = path;
-          info.MediaInfo = mInfo;
 
           if (info.ID > 0)
           {
@@ -998,6 +1009,10 @@ namespace MediaPortal.Video.Database
               GetUserFanart(item, ref info);
             }
           }
+          catch (ThreadAbortException)
+          {
+            // Will be logged in thread main code
+          }
           catch (Exception ex)
           {
             Log.Error("IMDBMovie Set user fanart file property error: {0}", ex.Message);
@@ -1005,11 +1020,19 @@ namespace MediaPortal.Video.Database
 
           item.AlbumInfoTag = info;
         }
+        catch (ThreadAbortException)
+        {
+          // Will be logged in thread main code
+        }
         catch (Exception ex)
         {
           Log.Error("IMDBMovie SetMovieData (GetMovieInfo) error: {0}", ex.Message);
           item.AlbumInfoTag = info;
         }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
       }
       catch (Exception ex)
       {
@@ -1685,7 +1708,8 @@ namespace MediaPortal.Video.Database
     }
 
     /// <summary>
-    /// Use only in share view
+    /// Sets movie skin properties from albuminfotag from item, also sets new IMDBMovie
+    /// in case albuminfotag is NULL in GUIListItem and resets movie skin properties
     /// </summary>
     /// <param name="item"></param>
     public static void SetMovieProperties(GUIListItem item)
@@ -1696,6 +1720,8 @@ namespace MediaPortal.Video.Database
 
         if (info == null)
         {
+          Log.Debug("IMDBMovie: SetMovieproperties - Movie info is NULL.");
+          ResetMovieProperties();
           return;
         }
       
@@ -1828,8 +1854,6 @@ namespace MediaPortal.Video.Database
         GUIPropertyManager.SetProperty("#HasSubtitles", hasSubtitles);
         GUIPropertyManager.SetProperty("#AspectRatio", info.MediaInfo.AspectRatio);
         GUIPropertyManager.SetProperty("#myvideosuserfanart", info.UserFanart);
-
-        
       }
       catch (Exception ex)
       {
@@ -1877,9 +1901,8 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
       GUIPropertyManager.SetProperty("#myvideosuserfanart", string.Empty);
     }
-
+    
     #endregion
-
     
   }
 }

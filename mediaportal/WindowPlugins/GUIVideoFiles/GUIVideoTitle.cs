@@ -1110,6 +1110,36 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH:
+          try
+          {
+            currentSelectedItem = facadeLayout.SelectedListItemIndex;
+
+            if (currentSelectedItem > 0)
+            {
+              currentSelectedItem--;
+            }
+
+            LoadDirectory(currentFolder);
+
+            if (currentSelectedItem >= 0)
+            {
+              GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUIVideoFiles error: On message: {0} - {1}", message.GetType(), ex.Message);
+          }
+          break;
+      }
+      return base.OnMessage(message);
+    }
     
     #endregion
 

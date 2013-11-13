@@ -115,6 +115,9 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      IMDBMovie movie1 = item1.AlbumInfoTag as IMDBMovie;
+      IMDBMovie movie2 = item2.AlbumInfoTag as IMDBMovie;
+
       switch (CurrentSortMethod)
       {
         case SortMethod.Year:
@@ -123,7 +126,7 @@ namespace MediaPortal.GUI.Video
             {
               if (item1.IsFolder && item2.IsFolder)
               {
-                return String.Compare(item1.Label, item2.Label, true);
+                return Util.StringLogicalComparer.Compare(item1.Label, item2.Label);
               }
               if (item1.Year > item2.Year)
               {
@@ -138,7 +141,7 @@ namespace MediaPortal.GUI.Video
             {
               if (item1.IsFolder && item2.IsFolder)
               {
-                return String.Compare(item2.Label, item1.Label, true);
+                return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
               }
               if (item1.Year > item2.Year)
               {
@@ -149,7 +152,7 @@ namespace MediaPortal.GUI.Video
                 return 1;
               }
             }
-            return 0;
+            return Util.StringLogicalComparer.Compare(item2.Label, item1.Label);
           }
         case SortMethod.Rating:
           {
@@ -180,9 +183,6 @@ namespace MediaPortal.GUI.Video
 
         case SortMethod.Name:
         case SortMethod.NameAll:
-
-          IMDBMovie movie1 = item1.AlbumInfoTag as IMDBMovie;
-          IMDBMovie movie2 = item2.AlbumInfoTag as IMDBMovie;
 
           if (SortAscending)
           {
@@ -240,9 +240,9 @@ namespace MediaPortal.GUI.Video
           }
 
           item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
-                          item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+                         item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
-                          item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+                         item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
 
           if (item1.Label2 == string.Empty || item2.Label2 == string.Empty)
           {
@@ -257,7 +257,7 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(Convert.ToDateTime(item2.Label2), Convert.ToDateTime(item1.Label2));
           }
-          
+
         case SortMethod.Label:
           if (SortAscending)
           {
@@ -272,19 +272,19 @@ namespace MediaPortal.GUI.Video
           {
             if (SortAscending)
             {
-              return (int)(item1.Duration - item2.Duration);
+              return (int) (item1.Duration - item2.Duration);
             }
             else
             {
-              return (int)(item2.Duration - item1.Duration);
+              return (int) (item2.Duration - item1.Duration);
             }
           }
           else
           {
             if (SortAscending)
             {
-               long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
-               return compare == 0 ? 0 : compare < 0 ? -1 : 1;
+              long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
+              return compare == 0 ? 0 : compare < 0 ? -1 : 1;
             }
             else
             {
@@ -324,9 +324,9 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
-        
+
         case SortMethod.Modified:
-        
+
           if (item1.FileInfo == null)
           {
             if (!this.TryGetFileInfo(ref item1))
@@ -344,10 +344,10 @@ namespace MediaPortal.GUI.Video
           }
 
           item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
-                           item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+                         item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
-                           item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          
+                         item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
           if (SortAscending)
           {
             return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
@@ -356,11 +356,11 @@ namespace MediaPortal.GUI.Video
           {
             return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
           }
-        
+
         case SortMethod.Watched:
           {
             int ret = 0;
-            
+
             if (item1.IsPlayed && !item2.IsPlayed)
             {
               ret = -1;
@@ -373,9 +373,6 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              movie1 = item1.AlbumInfoTag as IMDBMovie;
-              movie2 = item2.AlbumInfoTag as IMDBMovie;
-
               if (SortAscending)
               {
                 if (!UseSortTitle)

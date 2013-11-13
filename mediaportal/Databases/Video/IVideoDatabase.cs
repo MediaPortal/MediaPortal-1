@@ -38,6 +38,7 @@ namespace MediaPortal.Video.Database
     void RemoveFilesForMovie(int lMovieId);
     int GetFileId(string strFilenameAndPath);
     void GetFilesForMovie(int lMovieId, ref ArrayList movies);
+    void DeleteMoviesInFolder(string strPath);
     
     // Genre
     int AddGenre(string strGenre1);
@@ -97,7 +98,6 @@ namespace MediaPortal.Video.Database
     int GetMovieInfo(string strFilenameAndPath, ref IMDBMovie details);
     void GetMovieInfoById(int lMovieId, ref IMDBMovie details);
     void SetWatched(IMDBMovie details);
-    void SetDateWatched(IMDBMovie details);
     
     // Stop time & duration
     void DeleteMovieStopTime(int iFileId);
@@ -176,6 +176,7 @@ namespace MediaPortal.Video.Database
     void GetVideoFiles(string path, ref ArrayList availableFiles);
     void FlushTransactionsToDisk();
     void RevertFlushTransactionsToDisk();
+    void UpdateMediaInfo(string strFilenameAndPath);
 
   }
 }

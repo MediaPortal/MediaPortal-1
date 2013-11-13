@@ -110,6 +110,11 @@ namespace MediaPortal.Video.Database
       _database.GetFilesForMovie(lMovieId, ref files);
     }
 
+    public static void DeleteMoviesInFolder(string strPath)
+    {
+      _database.DeleteMoviesInFolder(strPath);
+    }
+
     #endregion
 
     #region MediaInfo
@@ -354,20 +359,24 @@ namespace MediaPortal.Video.Database
       _database.GetMovieInfoById(lMovieId, ref details);
     }
 
+    public static void UpdateMediaInfo(string strFilenameAndPath)
+    {
+      _database.UpdateMediaInfo(strFilenameAndPath);
+    }
+
     #endregion
 
     #region Watched status, stoptime
 
+    /// <summary>
+    /// Updates movie info watched status from details.Watched and set movie info dateWatched from current system dateTime
+    /// </summary>
+    /// <param name="details"></param>
     public static void SetWatched(IMDBMovie details)
     {
       _database.SetWatched(details);
     }
-
-    public static void SetDateWatched(IMDBMovie details)
-    {
-      _database.SetDateWatched(details);
-    }
-
+    
     public static void DeleteMovieStopTime(int iFileId)
     {
       _database.DeleteMovieStopTime(iFileId);
