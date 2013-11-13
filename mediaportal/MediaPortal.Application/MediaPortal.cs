@@ -1409,7 +1409,6 @@ public class MediaPortalApp : D3D, IRender
                 gmsg.Label2 = String.Format("({0}) {1}", path, driveName);
                 GUIGraphicsContext.SendMessage(gmsg);
               }
-              break;
             }
 
             if (info.Notification == ShellNotifications.SHCNE.SHCNE_MEDIAREMOVED)
@@ -1426,7 +1425,7 @@ public class MediaPortalApp : D3D, IRender
               }
             }
           }
-          break;
+          return;
 
         // power management
         case WM_POWERBROADCAST:

@@ -476,7 +476,8 @@ namespace MediaPortal.Util
       _notifyid = SHChangeNotifyRegister(
         hWnd,
         SHCNF.SHCNF_TYPE | SHCNF.SHCNF_IDLIST,
-        SHCNE.SHCNE_ALLEVENTS | SHCNE.SHCNE_INTERRUPT,
+        //SHCNE.SHCNE_ALLEVENTS | SHCNE.SHCNE_INTERRUPT,
+        SHCNE.SHCNE_MEDIAINSERTED | SHCNE.SHCNE_MEDIAREMOVED,
         WmShnotify,
         1,
         ref changeentry);
