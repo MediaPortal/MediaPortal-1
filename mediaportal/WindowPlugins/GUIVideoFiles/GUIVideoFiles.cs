@@ -1484,9 +1484,29 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 831:
-          if (!Util.Utils.EjectCDROM(item.Path))
+          string message = string.Empty;
+          
+          if (Util.Utils.IsRemovableUsbDisk(item.Path))
           {
-            string message = "Request failed";
+            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+              pDlgOK.SetLine(2, string.Empty);
+              pDlgOK.SetLine(3, message);
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            else
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+          }
+          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
+          {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
             pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));

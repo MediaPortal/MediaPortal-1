@@ -1400,14 +1400,25 @@ namespace MediaPortal.Util
       return false;
     }
 
-    public static bool IsUsbHdd(string strFile)
+    public static bool IsUsbHdd(string path)
     {
-      if (strFile == null) return false;
-      if (strFile.Length < 2) return false;
+      if (path == null) return false;
+      if (path.Length < 2) return false;
       List<string> usbHdds = new List<string>();
       usbHdds = GetAvailableUsbHardDisks();
-      string strDrive = strFile.Substring(0, 2);
+      string strDrive = path.Substring(0, 2);
       if (usbHdds.Contains(strDrive)) return true;
+      return false;
+    }
+
+    public static bool IsRemovableUsbDisk(string path)
+    {
+      if (path == null) return false;
+      if (path.Length < 2) return false;
+      List<string> usbDisks = new List<string>();
+      usbDisks = GetRemovableUsbDisks();
+      string strDrive = path.Substring(0, 2);
+      if (usbDisks.Contains(strDrive)) return true;
       return false;
     }
 
@@ -4996,6 +5007,50 @@ namespace MediaPortal.Util
         foreach (ManagementObject drive in
           new ManagementObjectSearcher(
             "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%hard disk%'").
+            Get())
+        {
+          // associate physical disks with partitions
+          ManagementObject partition = new ManagementObjectSearcher(String.Format(
+            "associators of {{Win32_DiskDrive.DeviceID='{0}'}} where AssocClass = Win32_DiskDriveToDiskPartition",
+            drive["DeviceID"])).First();
+
+          if (partition != null)
+          {
+            // associate partitions with logical disks (drive letter volumes)
+            ManagementObject logical = new ManagementObjectSearcher(String.Format(
+              "associators of {{Win32_DiskPartition.DeviceID='{0}'}} where AssocClass = Win32_LogicalDiskToPartition",
+              partition["DeviceID"])).First();
+
+            if (logical != null)
+            {
+              disks.Add(logical["Name"].ToString());
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+      }
+
+      return disks;
+    }
+
+    /// <summary>
+    /// Returns connected USB removable disk drives letters
+    /// Works only from Vista and above
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetRemovableUsbDisks()
+    {
+      List<string> disks = new List<string>();
+
+      try
+      {
+        // browse all USB WMI physical disks
+        foreach (ManagementObject drive in
+          new ManagementObjectSearcher(
+            "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%removable%' AND Model LIKE '%disk%'").
             Get())
         {
           // associate physical disks with partitions
