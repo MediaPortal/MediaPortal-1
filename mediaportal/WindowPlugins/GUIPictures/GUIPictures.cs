@@ -980,7 +980,7 @@ namespace MediaPortal.GUI.Pictures
         case 831:
           string message = string.Empty;
 
-          if (Util.Utils.IsRemovableUsbDisk(item.Path))
+          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
           {
             if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
             {
