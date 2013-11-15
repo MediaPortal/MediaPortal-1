@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.BassAsio;
@@ -429,7 +430,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private int WasApiCallback(IntPtr buffer, int length, IntPtr user)
     {
-      if (_mixer == 0)
+      if (_mixer == null || _mixer == 0)
       {
         return 0;
       }
