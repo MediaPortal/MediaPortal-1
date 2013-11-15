@@ -487,6 +487,16 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public bool LoadSkin()
     {
+
+      // add thread check to log calls not running in main thread/GUI
+      #if DEBUG
+      int iCurrentThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+      if (iCurrentThread != 1)
+      {
+        Log.Error("LoadSkin: Running on thread <{0}> instead of main thread - StackTrace: '{1}'", iCurrentThread, Environment.StackTrace);
+      }
+      #endif
+
       _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured
       if (_windowXmlFileName == "")

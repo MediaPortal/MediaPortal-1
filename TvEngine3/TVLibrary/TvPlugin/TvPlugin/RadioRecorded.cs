@@ -1303,18 +1303,36 @@ namespace TvPlugin
         {
           GUIPropertyManager.SetProperty("#selectedthumb", String.Empty);
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         rec = pItem.TVTag as Recording;
         if (rec == null)
         {
           SetProperties(null);
+          if (pItem.IsFolder && pItem.Label == "..")
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
           return;
         }
         SetProperties(rec);
         if (!pItem.IsFolder)
         {
-          GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          if (string.IsNullOrEmpty(pItem.ThumbnailImage))
+          {
+            MediaPortal.Util.Utils.SetDefaultIcons(pItem);
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.IconImageBig);
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#selectedthumb", pItem.ThumbnailImage);
+          }
         }
       }
       catch (Exception ex)
