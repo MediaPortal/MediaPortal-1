@@ -221,17 +221,14 @@ namespace MediaPortal.MusicPlayer.BASS
 
           Log.Info("BASS: Initialising WASAPI device");
 
-          if (BassWasapi.BASS_WASAPI_IsStarted())
+          try
           {
-            try
-            {
-              BassWasapi.BASS_WASAPI_Free();
-              Log.Debug("BASS: Freed WASAPI device");
-            }
-            catch (Exception ex)
-            {
-              Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-            }
+            BassWasapi.BASS_WASAPI_Free();
+            Log.Debug("BASS: Freed WASAPI device");
+          }
+          catch (Exception ex)
+          {
+            Log.Error("BASS: Exception freeing WASAPI. {0} {1}", ex.Message, ex.StackTrace);
           }
 
           BASSWASAPIInit initFlags = BASSWASAPIInit.BASS_WASAPI_AUTOFORMAT;
@@ -733,6 +730,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (newMixerNeeded)
         {
+          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+          {
+            BassWasapi.BASS_WASAPI_Stop(true);
+          }
+
           // Unplug the Source channel from the mixer
           Log.Debug("BASS: Unplugging source channel from Mixer.");
           BassMix.BASS_Mixer_ChannelRemove(musicstream.BassStream);

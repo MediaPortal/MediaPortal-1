@@ -1574,24 +1574,6 @@ namespace MediaPortal.MusicPlayer.BASS
           // Free Mixer
           _mixer.Dispose();
           _mixer = null;
-
-          // Free Wasapi, if needed
-          if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
-          {
-            try
-            {
-              Log.Debug("BASS: Freeing WASAPI Device");
-              if (!BassWasapi.BASS_WASAPI_Free())
-              {
-                Log.Error("BASS: Error freeing WASAPI Device: {0}", Bass.BASS_ErrorGetCode());
-              }
-            }
-            catch (Exception ex)
-            {
-              Log.Error("BASS: Exception stopping WASAPI. {0} {1}", ex.Message, ex.StackTrace);
-            }
-          }
-
           _mixer = new MixerStream(this);
           if (!_mixer.CreateMixer(stream))
           {
@@ -1695,6 +1677,15 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         _state = PlayState.Init;
+
+        // If WASAPI is started, we might run into troubles, because of a new stream needed,
+        // So let's stop it here
+        if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
+        {
+          Log.Debug("BASS: Stop and Freeing WASAPI Device before start of new playback");
+          BassWasapi.BASS_WASAPI_Stop(true);
+          BassWasapi.BASS_WASAPI_Free();
+        }
 
         if (!PlayInternal(filePath))
         {
