@@ -1682,9 +1682,8 @@ namespace MediaPortal.MusicPlayer.BASS
         // So let's stop it here
         if (Config.MusicPlayer == AudioPlayer.WasApi && BassWasapi.BASS_WASAPI_IsStarted())
         {
-          Log.Debug("BASS: Stop and Freeing WASAPI Device before start of new playback");
+          Log.Debug("BASS: Stop WASAPI Device before start of new playback");
           BassWasapi.BASS_WASAPI_Stop(true);
-          BassWasapi.BASS_WASAPI_Free();
         }
 
         if (!PlayInternal(filePath))
