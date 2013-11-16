@@ -901,12 +901,20 @@ namespace MediaPortal.GUI.Pictures
         //dlg.AddLocalizedString(200047); //Recursive Generate Thumbnails
         dlg.AddLocalizedString(200048); //Regenerate Thumbnails
       }
+      
       dlg.AddLocalizedString(457); //Switch View
       int iPincodeCorrect;
+      
       if (!_virtualDirectory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && isFileMenuEnabled)
       {
         dlg.AddLocalizedString(500); // FileMenu      
       }
+
+      if (Util.Utils.getDriveType(item.Path) == 5)
+      {
+        dlg.AddLocalizedString(654); //Eject
+      }
+
       if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
       {
         dlg.AddLocalizedString(831);
@@ -1015,6 +1023,17 @@ namespace MediaPortal.GUI.Pictures
             pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
+          break;
+        case 654: // Eject
+          if (Util.Utils.getDriveType(item.Path) != 5)
+          {
+            Util.Utils.EjectCDROM();
+          }
+          else
+          {
+            Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
+          }
+          LoadDirectory(string.Empty);
           break;
       }
     }
