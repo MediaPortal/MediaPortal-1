@@ -1189,7 +1189,6 @@ namespace MediaPortal.GUI.Video
               }
 
               dlg.AddLocalizedString(368); //IMDB
-              dlg.AddLocalizedString(654); //Eject
             }
             // Folder
             else if (item.IsFolder)
@@ -1234,11 +1233,6 @@ namespace MediaPortal.GUI.Video
                     }
                   }
                 }
-              }
-
-              if (Util.Utils.getDriveType(item.Path) == 5)
-              {
-                dlg.AddLocalizedString(654); //Eject            
               }
 
               if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
@@ -1286,11 +1280,35 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
+
+        #region Eject/Load
+
+        // CD/DVD/BD
+        if (Util.Utils.getDriveType(item.Path) == 5)
+        {
+          if (item.Path != null)
+          {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+            // There is no easy way in NET to detect open tray so we will check
+            // if media is inside (load will be visible also in case that tray is closed but
+            // media is not loaded)
+            if (!driveInfo.IsReady)
+            {
+              dlg.AddLocalizedString(607); //Load  
+            }
+
+            dlg.AddLocalizedString(654); //Eject  
+          }
+        }
         
+        // Removable/USB HDD
         if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
+
+        #endregion
 
         dlg.AddLocalizedString(1299); // Refresh current directory
       }
@@ -1330,6 +1348,10 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_PLAYLIST);
           break;
 
+        case 607: // Load (only CDROM)
+          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          break;
+
         case 654: // Eject
           if (Util.Utils.getDriveType(item.Path) != 5)
           {
@@ -1339,6 +1361,7 @@ namespace MediaPortal.GUI.Video
           {
             Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
           }
+
           LoadDirectory(string.Empty);
           break;
 

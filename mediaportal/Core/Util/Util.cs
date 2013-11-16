@@ -1754,7 +1754,12 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
+      EjectCDROM(string.Empty);
+    }
+    
+    public static void CloseCDROM(string driveLetter)
+    {
+      mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
     }
 
     public static Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
