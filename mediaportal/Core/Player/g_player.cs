@@ -77,6 +77,7 @@ namespace MediaPortal.Player
     private static bool _isInitialized = false;
     private static string _currentFilePlaying = "";
     private static MediaType _currentMedia;
+    public static MediaType _currentMediaForBassEngine;
     private static IPlayerFactory _factory;
     public static bool Starting = false;
     private static ArrayList _seekStepList = new ArrayList();
@@ -1393,6 +1394,10 @@ namespace MediaPortal.Player
               doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
             }
           }
+
+          // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+          _currentMediaForBassEngine = type;
+
           if (doStop)
           {
             if (_player != null)
@@ -1474,6 +1479,9 @@ namespace MediaPortal.Player
             ForcePlay = false;
           }
         }
+
+        // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+        _currentMediaForBassEngine = type;
 
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)
