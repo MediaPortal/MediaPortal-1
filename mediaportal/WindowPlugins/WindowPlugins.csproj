@@ -226,6 +226,10 @@
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\LastFMLibrary\LastFMLibrary.csproj">
+      <Project>{FE0B7969-38A1-4150-BB3B-C2E87F40AEED}</Project>
+      <Name>LastFMLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>
@@ -247,6 +251,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIPictures\PictureSort.cs" />
+    <Compile Include="GUILastFMRadio\GUILastFMRadio.cs" />
     <Compile Include="GUISettings\BluRay\GUISettingsBluRay.cs" />
     <Compile Include="GUISettings\MyVideos\GUISettingsMyVideos_OtherSettings.cs" />
     <Compile Include="GUISettings\Weather\GUISettingsWeather.cs" />
@@ -634,7 +639,12 @@
   <ItemGroup>
     <EmbeddedResource Include="GUIDisc\DVDDisabled.gif" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="GUILastFMRadio\BallonRadio.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUILastFMRadio\BallonRadioDisabled.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

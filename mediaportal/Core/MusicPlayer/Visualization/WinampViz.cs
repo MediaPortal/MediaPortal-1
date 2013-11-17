@@ -164,7 +164,6 @@ namespace MediaPortal.Visualization
 
     public override void Dispose()
     {
-      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       base.Dispose();
       Close();
     }
@@ -239,6 +238,7 @@ namespace MediaPortal.Visualization
 
     public override bool Close()
     {
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       if (base.Close())
       {
         return true;
