@@ -1615,6 +1615,7 @@ namespace MediaPortal.Player
       }
       finally
       {
+        _currentMediaForBassEngine = _currentMedia;
         Starting = false;
       }
       UnableToPlay(strFile, type);
