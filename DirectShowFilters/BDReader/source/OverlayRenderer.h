@@ -29,6 +29,8 @@
 #include <D3d9.h>
 #include "OSDTexture.h"
 
+#define OVERLAY_WIDTH 1920
+#define OVERLAY_HEIGHT 1080
 #define PALETTE_SIZE 256
 #define NUM_OF_PLANES 2
 
@@ -43,6 +45,16 @@ struct BD_OVERLAY_EX : BD_OVERLAY
 
 typedef vector<BD_OVERLAY_EX*>::iterator ivecOverlayQueue;
 
+void __cdecl ARBGLock(BD_ARGB_BUFFER* buffer);
+void __cdecl ARBGUnlock(BD_ARGB_BUFFER* buffer);
+
+class COverlayRenderer;
+
+struct BD_ARGB_BUFFER_EX : BD_ARGB_BUFFER
+{
+  COverlayRenderer* render;
+};
+
 class COverlayRenderer
 {
 public:
@@ -55,6 +67,10 @@ public:
   void SetD3DDevice(IDirect3DDevice9* device);
 
   void SetScr(INT64 pts, INT64 offset);
+
+  bool CreateARGBBuffers(bd_argb_buffer_s** pBuffer);
+  void LockARGBSurface(BD_ARGB_BUFFER_EX* buffer);
+  void UnlockARGBSurface(BD_ARGB_BUFFER_EX* buffer);
 
 private:
 
@@ -75,7 +91,7 @@ private:
 
   void DecodePalette(const BD_OVERLAY* ov);
 
-  void CopyToFrontBuffer(const uint8_t plane);
+  void CopyToFrontBuffer(const uint8_t plane, bool ARGB = false);
   void ResetDirtyRect(const uint8_t plane);
   void ResetDirtyRect(const uint8_t plane, uint16_t w, uint16_t h);
   void AdjustDirtyRect(const uint8_t plane, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
@@ -101,6 +117,9 @@ private:
 
   OSDTexture* m_pPlanes[NUM_OF_PLANES];
   OSDTexture* m_pPlanesBackbuffer[NUM_OF_PLANES];
+
+  BD_ARGB_BUFFER_EX m_ARGBBuffer;
+  IDirect3DTexture9* m_pARGBTextures[NUM_OF_PLANES];
 
   RECT m_dirtyRect[NUM_OF_PLANES];
 

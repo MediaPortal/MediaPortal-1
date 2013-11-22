@@ -341,7 +341,12 @@ bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
   if (_bd_register_overlay_proc(m_pBd, this, StaticOverlayProc) != 0)
     LogDebug("CLibBlurayWrapper - failed to register the overlay proc");
 
-  if (_bd_register_argb_overlay_proc(m_pBd, this, StaticARGBOverlayProc, NULL) != 0)
+  BD_ARGB_BUFFER* pBuffer = NULL;
+
+  if (m_pOverlayRenderer && !m_pOverlayRenderer->CreateARGBBuffers((BD_ARGB_BUFFER**)&pBuffer))
+    LogDebug("CLibBlurayWrapper - failed to create application side ARGB buffers");
+
+  if (_bd_register_argb_overlay_proc(m_pBd, this, StaticARGBOverlayProc, pBuffer) != 0)
     LogDebug("CLibBlurayWrapper - failed to register ARGB overlay proc");
 
   return true;
