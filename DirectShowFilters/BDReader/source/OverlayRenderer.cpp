@@ -20,6 +20,7 @@
  */
 
 #include "OverlayRenderer.h"
+#include <overlay.h>
 #include <streams.h>
 #include <D3d9.h>
 #include "LibBlurayWrapper.h"
@@ -44,6 +45,11 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   
   m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
   m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
+
+  m_pARGBTextures[BD_OVERLAY_PG] = NULL;
+  m_pARGBTextures[BD_OVERLAY_IG] = NULL;
+
+  ZeroMemory((void*)&m_ARGBBuffer, sizeof(BD_ARGB_BUFFER_EX));
 
   m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
   m_hNewOverlayAvailable = CreateEvent(0, TRUE, FALSE, 0);
@@ -294,6 +300,110 @@ void COverlayRenderer::SetScr(INT64 pts, INT64 offset)
   m_rtOffset = CONVERT_90KHz_DS(offset);
 }
 
+bool COverlayRenderer:: CreateARGBBuffers(bd_argb_buffer_s** pBuffer)
+{
+  // only BD_OVERLAY_IG layer is used at the moment, 
+  // so no texture is created for BD_OVERLAY_PG layer
+  
+  *pBuffer = NULL;
+
+  HRESULT hr = m_pD3DDevice->CreateTexture(OVERLAY_WIDTH, OVERLAY_HEIGHT, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
+                                          D3DPOOL_DEFAULT, &m_pARGBTextures[BD_OVERLAY_IG], NULL);
+
+  if (FAILED(hr))
+  {
+    LogDebug("COverlayRenderer::CreateARGBBuffers - failed to create PG texture (0x%08x)", hr);
+    return false;
+  }
+
+  hr = m_pD3DDevice->CreateTexture(OVERLAY_WIDTH, OVERLAY_HEIGHT, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
+                                          D3DPOOL_DEFAULT, &m_pARGBTextures[BD_OVERLAY_IG], NULL);
+
+  if (FAILED(hr))
+  {
+    LogDebug("COverlayRenderer::CreateARGBBuffers - failed to create IG texture (0x%08x)", hr);
+    return false;
+  }
+ 
+  BD_ARGB_BUFFER* buf = (BD_ARGB_BUFFER*)&m_ARGBBuffer;
+
+  buf->buf[BD_OVERLAY_PG] = NULL;
+  buf->buf[BD_OVERLAY_IG] = NULL;
+  buf->width = OVERLAY_WIDTH;
+  buf->height = OVERLAY_HEIGHT;
+  buf->lock = ARBGLock;
+  buf->unlock = ARBGUnlock;
+  m_ARGBBuffer.render = this;
+
+  *pBuffer = (BD_ARGB_BUFFER*)&m_ARGBBuffer;
+
+  return true;
+}
+
+void ARBGLock(BD_ARGB_BUFFER* buffer)
+{
+  if (!buffer)
+    return;
+
+  BD_ARGB_BUFFER_EX* bufferEx = static_cast<BD_ARGB_BUFFER_EX*>(buffer);
+  COverlayRenderer* renderer = static_cast<COverlayRenderer*>(bufferEx->render);
+
+  renderer->LockARGBSurface(bufferEx);
+}
+
+void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
+{
+  RECT area = {};
+  area.left = buffer->dirty[BD_OVERLAY_IG].x0;
+  area.top = buffer->dirty[BD_OVERLAY_IG].y0;
+  area.right = buffer->dirty[BD_OVERLAY_IG].x1;
+  area.bottom = buffer->dirty[BD_OVERLAY_IG].y1;
+
+  D3DLOCKED_RECT lockedRect = {};
+
+  HRESULT hr = m_pARGBTextures[BD_OVERLAY_IG]->LockRect(0, &lockedRect, &area, 0);
+  if (FAILED(hr))
+  {
+    LogDebug("COverlayRenderer::ARBGLock - failed to lock rect (0x%08x)", hr);
+    return;
+  }
+
+  int width =  area.right - area.left;
+  int height = area.bottom - area.top;
+
+  m_ARGBBuffer.buf[BD_OVERLAY_IG] = (uint32_t*)lockedRect.pBits;
+  m_ARGBBuffer.width = lockedRect.Pitch / 4;
+  m_ARGBBuffer.height = height + 1;
+
+  AdjustDirtyRect(BD_OVERLAY_IG, area.left, area.top, width, height);
+}
+
+void ARBGUnlock(BD_ARGB_BUFFER* buffer)
+{
+  if (!buffer)
+    return;
+
+  BD_ARGB_BUFFER_EX* bufferEx = static_cast<BD_ARGB_BUFFER_EX*>(buffer);
+  COverlayRenderer* renderer = static_cast<COverlayRenderer*>(bufferEx->render);
+
+  renderer->UnlockARGBSurface(bufferEx);
+}
+
+void COverlayRenderer::UnlockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
+{
+  HRESULT hr = m_pARGBTextures[BD_OVERLAY_IG]->UnlockRect(0);
+  if (FAILED(hr))
+  {
+    LogDebug("COverlayRenderer::ARBGLock - failed to unlock rect (0x%08x)", hr);
+    return;
+  }
+
+  CopyToFrontBuffer(BD_OVERLAY_IG, true);
+
+  OSDTexture* plane = m_pPlanes[BD_OVERLAY_IG];
+  m_pLib->HandleOSDUpdate(*plane);
+}
+
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 {
   if (!ov)
@@ -409,7 +519,7 @@ void COverlayRenderer::ARGBOverlayProc(const BD_ARGB_OVERLAY* ov)
 
   LogARGBCommand(ov);
 
-  switch (ov->cmd) 
+  switch (ov->cmd)
   {
     case BD_ARGB_OVERLAY_INIT:
       OpenOverlay(ov);
@@ -424,15 +534,7 @@ void COverlayRenderer::ARGBOverlayProc(const BD_ARGB_OVERLAY* ov)
   switch (ov->cmd)
   {
     case BD_ARGB_OVERLAY_DRAW:
-      DrawARGBBitmap(pOsdTexture, ov);
-      break;      
     case BD_ARGB_OVERLAY_FLUSH:
-      {
-        CopyToFrontBuffer(ov->plane);
-      
-        OSDTexture* plane = m_pPlanes[ov->plane];
-        m_pLib->HandleOSDUpdate(*plane);
-      }
       break;
     default:
       ASSERT(false);
@@ -769,7 +871,7 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
   }
 }
 
-void COverlayRenderer::CopyToFrontBuffer(uint8_t plane)
+void COverlayRenderer::CopyToFrontBuffer(uint8_t plane, bool ARGB)
 {
   if (!m_pD3DDevice || !m_pPlanes[plane])
     return;
@@ -779,7 +881,10 @@ void COverlayRenderer::CopyToFrontBuffer(uint8_t plane)
 
   HRESULT hr = S_FALSE;
 
-  hr = m_pPlanesBackbuffer[plane]->texture->GetSurfaceLevel(0, &sourceSurface);
+  if (ARGB)
+    hr = m_pARGBTextures[BD_OVERLAY_IG]->GetSurfaceLevel(0, &sourceSurface);
+  else
+    hr = m_pPlanesBackbuffer[plane]->texture->GetSurfaceLevel(0, &sourceSurface);
 
   if (FAILED(hr))
   {
@@ -796,7 +901,7 @@ void COverlayRenderer::CopyToFrontBuffer(uint8_t plane)
     return;
   }
 
-  m_pD3DDevice->StretchRect(sourceSurface, &m_dirtyRect[plane], dstSurface, &m_dirtyRect[plane], D3DTEXF_NONE);
+  hr = m_pD3DDevice->StretchRect(sourceSurface, &m_dirtyRect[plane], dstSurface, &m_dirtyRect[plane], D3DTEXF_NONE);
 
   if (FAILED(hr))
     LogDebug("ovr: CopyToFrontBuffer - StretchRect: 0x%08x");
