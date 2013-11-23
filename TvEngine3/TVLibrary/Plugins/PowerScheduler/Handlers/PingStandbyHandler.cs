@@ -60,7 +60,7 @@ namespace TvEngine.PowerScheduler.Handlers
             _counter = 0;
             string hosts = _tvbLayer.GetSetting("PowerSchedulerPingMonitorHosts", "").Value;
 
-            if (!(hosts != ""))
+            if (string.IsNullOrEmpty(hosts))
             {
               Log.Debug("PS: PingMonitor: No Hosts in List");
             }
