@@ -633,10 +633,10 @@ namespace MediaPortal.MusicPlayer.BASS
           string nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextSong();
           if (nextSong != string.Empty)
           {
+            g_Player.OnChanged(nextSong);
             PlayInternal(nextSong);
             g_Player.currentMedia = g_Player.MediaType.Music;
             g_Player.currentFilePlaying = nextSong;
-            g_Player.OnChanged(nextSong);
             g_Player.OnStarted();
           }
           else
