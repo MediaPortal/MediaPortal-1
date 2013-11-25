@@ -5,6 +5,8 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
+using System.ComponentModel;
+using System.Threading;
 using TvDatabase;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Interfaces;
@@ -17,7 +19,8 @@ namespace TvEngine.PowerScheduler.Handlers
     private bool _useAwayMode = false;
     private bool _enabled = false;
     private TvBusinessLayer _tvbLayer = new TvBusinessLayer();
-    private int _counter = 0;
+    private bool _pingRun = false;
+    private bool _isActiveHost = false;
 
     #region Constructor
     
@@ -55,9 +58,24 @@ namespace TvEngine.PowerScheduler.Handlers
       {
         get
         {
-          if (_enabled && _counter == 4)
+          if (_enabled && _pingRun)
           {
-            _counter = 0;
+            _pingRun = false;
+
+            if (_isActiveHost)
+            {
+              _isActiveHost = false;
+              return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+            }
+            else
+            {
+              Log.Debug("PS: PingMonitor: No Host seems to be active");
+              return StandbyMode.StandbyAllowed;
+            }
+          }
+
+          if (_enabled && !_pingRun)
+          {
             string hosts = _tvbLayer.GetSetting("PowerSchedulerPingMonitorHosts", "").Value;
 
             if (string.IsNullOrEmpty(hosts))
@@ -66,32 +84,35 @@ namespace TvEngine.PowerScheduler.Handlers
             }
             else
             {
-              foreach (string str2 in hosts.Split(";".ToCharArray()))
+              _pingRun = true;
+              foreach (string hostName in hosts.Split(";".ToCharArray()))
               {
-                if (isComputerAvaible(str2))
+                try
                 {
-                  Log.Debug("PS: PingMonitor: Found at least one active Host {0}", str2);
-                  return _useAwayMode ? StandbyMode.AwayModeRequested : StandbyMode.StandbyPrevented;
+                  Ping ping = new Ping();
+                  ping.PingCompleted += new PingCompletedEventHandler(PingCompletedCallback);
+                  ping.SendAsync(hostName, 100);
                 }
+                catch (Exception) {}
               }
-              Log.Debug("PS: PingMonitor: No Host seems to be active");
             }
           }
-          _counter++;
           return StandbyMode.StandbyAllowed;
         }
       }
 
-      public static bool isComputerAvaible(string hostName)
+      private void PingCompletedCallback(object sender, PingCompletedEventArgs e)
       {
-        try
+        if (e.Cancelled)
         {
-          Ping ping = new Ping();
-          return (ping.Send(hostName, 100).Status == IPStatus.Success);
+          Log.Debug("PS: PingCompletedCallback, Ping canceled.");
+          return;
         }
-        catch (Exception)
+
+        if (e.Reply.Status == IPStatus.Success)
         {
-          return false;
+          _isActiveHost = true;
+          Log.Debug("PS: PingMonitor found an active host {0}", e.Reply.Address);
         }
       }
 
