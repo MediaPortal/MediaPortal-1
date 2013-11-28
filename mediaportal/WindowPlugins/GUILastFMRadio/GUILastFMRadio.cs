@@ -225,11 +225,14 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       if (controlId == (int)SkinControls.PLAYLIST_CONTROL)
       {
-        if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
+        if (PlaylistControl.SelectedListItem.Path != null && g_Player.currentFileName != null)
         {
-          //Not sure why this is called for current track but somehow OnClicked is getting fired
-          //for current track with no user interaction.   Ignore these events
-          return;
+          if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
+          {
+            //Not sure why this is called for current track but somehow OnClicked is getting fired
+            //for current track with no user interaction.   Ignore these events
+            return;
+          }
         }
         _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
         _playlistPlayer.Play(PlaylistControl.SelectedListItemIndex);
