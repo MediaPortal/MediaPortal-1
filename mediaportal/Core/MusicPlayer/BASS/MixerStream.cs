@@ -29,7 +29,7 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _wasapiMixedChans = 0;
     private int _wasapiMixedFreq = 0;
 
-    private bool _disposed = false;
+    private bool _disposedMixerStream = false;
 
     private SYNCPROC _playbackEndProcDelegate = null;
     private int _syncProc = 0;
@@ -713,9 +713,14 @@ namespace MediaPortal.MusicPlayer.BASS
         // In order to have gapless playback, it needs to be invoked in sync.
         MusicStream nextStream = null;
         Playlists.PlayListItem nextSong = Playlists.PlayListPlayer.SingletonPlayer.GetNextItem();
-        if (nextSong != null)
+        MusicStream._fileType = Utils.GetFileType(musicstream.FilePath);
+        if (nextSong != null && MusicStream._fileType.FileMainType != FileMainType.WebStream)
         {
           nextStream = new MusicStream(nextSong.FileName, true);
+        }
+        else if (MusicStream._fileType.FileMainType == FileMainType.WebStream)
+        {
+          _bassPlayer.OnMusicStreamMessage(musicstream, MusicStream.StreamAction.InternetStreamChanged);
         }
 
         bool newMixerNeeded = false;
@@ -761,26 +766,29 @@ namespace MediaPortal.MusicPlayer.BASS
 
     public void Dispose()
     {
-      if (_disposed)
+      if (_disposedMixerStream)
       {
         return;
       }
 
-      _disposed = true;
-
-      Log.Debug("BASS: Disposing Mixer Stream");
-
-      try
+      lock (this)
       {
-        if (!Bass.BASS_StreamFree(_mixer))
+        _disposedMixerStream = true;
+
+        Log.Debug("BASS: Disposing Mixer Stream");
+
+        try
         {
-          Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+          if (!Bass.BASS_StreamFree(_mixer))
+          {
+            Log.Error("BASS: Error freeing mixer: {0}", Bass.BASS_ErrorGetCode());
+          }
+          _mixer = 0;
         }
-        _mixer = 0;
-      }
-      catch (Exception ex)
-      {
-        Log.Error("BASS: Exception disposing mixer - {0}. {1}", ex.Message, ex.StackTrace);
+        catch (Exception ex)
+        {
+          Log.Error("BASS: Exception disposing mixer - {0}. {1}", ex.Message, ex.StackTrace);
+        }
       }
     }
 
