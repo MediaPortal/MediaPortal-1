@@ -67,7 +67,7 @@ namespace MediaPortal.Player
 
     #region variables
 
-    private static MediaInfoWrapper _mediaInfo = null;
+    public static MediaInfoWrapper _mediaInfo = null;
     private static int _currentStep = 0;
     private static int _currentStepIndex = -1;
     private static DateTime _seekTimer = DateTime.MinValue;
@@ -76,6 +76,7 @@ namespace MediaPortal.Player
     private static SubTitles _subs = null;
     private static bool _isInitialized = false;
     private static string _currentFilePlaying = "";
+    private static string _currentMediaInfoFilePlaying = "";
     private static MediaType _currentMedia;
     public static MediaType _currentMediaForBassEngine;
     private static IPlayerFactory _factory;
@@ -201,6 +202,13 @@ namespace MediaPortal.Player
       get { return _currentFilePlaying; }
       set { _currentFilePlaying = value; }
     }
+
+    public static string currentMediaInfoFilePlaying
+    {
+      get { return _currentMediaInfoFilePlaying; }
+      set { _currentMediaInfoFilePlaying = value; }
+    }
+
     #endregion
 
     #region Serialisation
@@ -1356,7 +1364,11 @@ namespace MediaPortal.Player
 
         if (!playingRemoteUrl) // MediaInfo can only be used on files (local or SMB)
         {
-          _mediaInfo = new MediaInfoWrapper(strFile);
+          if (currentMediaInfoFilePlaying != strFile)
+          {
+            _mediaInfo = new MediaInfoWrapper(strFile);
+            currentMediaInfoFilePlaying = strFile;
+          }
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
@@ -1615,6 +1627,7 @@ namespace MediaPortal.Player
       }
       finally
       {
+        currentMediaInfoFilePlaying = "";
         Starting = false;
       }
       UnableToPlay(strFile, type);
@@ -3378,7 +3391,9 @@ namespace MediaPortal.Player
       {
         bool playingRemoteUrl = Util.Utils.IsRemoteUrl(FileName);
         if (_mediaInfo == null && !playingRemoteUrl)
+        {
           _mediaInfo = new MediaInfoWrapper(FileName);
+        }
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Util.Utils.GetFilename(FileName));

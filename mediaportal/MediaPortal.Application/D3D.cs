@@ -2168,7 +2168,10 @@ namespace MediaPortal
         ShowMouseCursor(false);
       }
       _lostFocus = false;
-      _firstTimeActivated = true;
+      if (WindowState == FormWindowState.Minimized)
+      {
+        _firstTimeActivated = true;
+      }
       base.OnGotFocus(e);
     }
 
