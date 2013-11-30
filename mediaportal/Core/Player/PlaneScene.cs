@@ -993,8 +993,10 @@ namespace MediaPortal.Player
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  _destinationRect.Width = originalDestination.Width*2;
-                  _destinationRect.X = -_destinationRect.Width/2;
+                  int dxViewModeSwitcherOffset = (int)((double)_destinationRect.Width / _sourceRect.Width * _sourceRect.X);
+                  _destinationRect.Width = originalDestination.Width*2 + dxViewModeSwitcherOffset*2;
+                  _destinationRect.X = -originalDestination.Width - dxViewModeSwitcherOffset*2;
+                  _sourceRect.Width = _sourceRect.Width + _sourceRect.X;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
@@ -1004,8 +1006,10 @@ namespace MediaPortal.Player
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  _destinationRect.Height = originalDestination.Height*2;
-                  _destinationRect.Y = -(originalDestination.Height - _destinationRect.Y);
+                  int dyViewModeSwitcherOffset = (int)((double)_destinationRect.Height / _sourceRect.Height * _sourceRect.Y);
+                  _destinationRect.Height = originalDestination.Height*2 + dyViewModeSwitcherOffset*2;;
+                  _destinationRect.Y = -(originalDestination.Height - _destinationRect.Y) -dyViewModeSwitcherOffset*2;
+                  _sourceRect.Height = _sourceRect.Height + _sourceRect.Y;
                   break;
               }
             }
@@ -1021,7 +1025,7 @@ namespace MediaPortal.Player
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
                   _sourceRect.Width = originalSource.Width/2;
-                  _sourceRect.X = originalSource.Width/2;
+                  _sourceRect.X = originalSource.Width/2 + _sourceRect.X*2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
@@ -1032,7 +1036,7 @@ namespace MediaPortal.Player
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
                   _sourceRect.Height = originalSource.Height/2;
-                  _sourceRect.Y = originalSource.Height/2;
+                  _sourceRect.Y = originalSource.Height/2 + _sourceRect.Y*2;
                   break;
               }
             }
