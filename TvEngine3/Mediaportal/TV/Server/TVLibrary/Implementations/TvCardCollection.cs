@@ -43,7 +43,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Microsoft.Win32;
-using TvLibrary.Implementations.DVB;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
