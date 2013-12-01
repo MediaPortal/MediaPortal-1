@@ -5593,7 +5593,8 @@ namespace Mediaportal.TV.Server.TVLibrary
       var fileStreams = new Dictionary<string, byte[]>();
       try
       {
-        var dirInfo = new DirectoryInfo("plugins");
+        string pluginsFolder = PathManager.BuildAssemblyRelativePath("plugins");
+        var dirInfo = new DirectoryInfo(pluginsFolder);
 
         FileInfo[] files = dirInfo.GetFiles("*.dll");
 
