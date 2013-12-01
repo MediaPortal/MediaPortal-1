@@ -974,6 +974,10 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   SetOutPath "${SETUP_TV_FOLDER}\Integration"
   File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
 
+  ; Integration plugin
+  SetOutPath "${SETUP_TV_FOLDER}\Integration"
+  File "${git_TVServer}\Server\TvLibrary.Integration.MP1\bin\${BUILD_TYPE}\Mediaportal.TV.Server.TVLibrary.Integration.MP1.dll"
+
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION       for TVClient
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
