@@ -47,6 +47,28 @@ namespace OSPrerequisites
     private const string MSG_BETA_SERVICE_PACK =
       "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
+    /// <summary>
+    /// <see cref="OperationSystemException"/> is thrown if the application is started on an unsupported operating system.
+    /// If this exception is caught, the <see cref="ExitCode"/> contains the expected code for terminating the application
+    /// using <see cref="Environment.Exit"/>.
+    /// </summary>
+    public class OperationSystemException : ApplicationException
+    {
+      private readonly string _message;
+      private readonly int _exitCode;
+
+      public int ExitCode { get { return _exitCode; } }
+      public OperationSystemException(string message, int exitCode)
+      {
+        _message = message;
+        _exitCode = exitCode;
+      }
+      public override string ToString()
+      {
+        return _message;
+      }
+    }
+
     ///<summary>
     /// Log and warn user if OS is not supported or is blacklisted
     ///</summary>
@@ -65,7 +87,7 @@ namespace OSPrerequisites
             MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
           }
-          Environment.Exit(-100);
+          throw new OperationSystemException(MSG_NOT_INSTALLABLE, -100);
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
@@ -76,7 +98,8 @@ namespace OSPrerequisites
           {
             res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,
                                   MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel) Environment.Exit(-200);
+            if (res == DialogResult.Cancel)
+              throw new OperationSystemException(MSG_NOT_SUPPORTED, -200);
           }
           break;
         default:
@@ -86,7 +109,8 @@ namespace OSPrerequisites
       {
         res = MessageBox.Show(MSG_BETA_SERVICE_PACK, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,
                               MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Environment.Exit(-300);
+        if (res == DialogResult.Cancel)
+          throw new OperationSystemException(MSG_BETA_SERVICE_PACK, -300);
       }
     }
   }
