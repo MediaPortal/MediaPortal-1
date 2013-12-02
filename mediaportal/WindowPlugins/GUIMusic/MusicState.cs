@@ -34,5 +34,7 @@ namespace MediaPortal.GUI.Music
       m_iStartWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
     }
 
+    public static bool AutoDJEnabled { get; set; }
+
   }
 }

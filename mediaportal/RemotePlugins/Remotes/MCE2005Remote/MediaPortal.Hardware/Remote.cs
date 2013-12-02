@@ -137,7 +137,14 @@ namespace MediaPortal.Hardware
 
             if (Click != null)
             {
-              if (_doubleClickButton != RemoteButton.Mute && OSInfo.OSInfo.VistaOrLater())
+              if (OSInfo.OSInfo.Win8OrLater())
+              {
+                if (_doubleClickButton != RemoteButton.Mute)
+                {
+                  Click(this, new RemoteEventArgs(_doubleClickButton));
+                }
+              }
+              else
               {
                 Click(this, new RemoteEventArgs(_doubleClickButton));
               }

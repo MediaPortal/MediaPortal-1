@@ -77,6 +77,7 @@ namespace MediaPortal.Player
     private static bool _isInitialized = false;
     private static string _currentFilePlaying = "";
     private static MediaType _currentMedia;
+    public static MediaType _currentMediaForBassEngine;
     private static IPlayerFactory _factory;
     public static bool Starting = false;
     private static ArrayList _seekStepList = new ArrayList();
@@ -189,6 +190,17 @@ namespace MediaPortal.Player
       set { _currentDescription = value; }
     }
 
+    public static MediaType currentMedia
+    {
+      get { return _currentMedia; }
+      set { _currentMedia = value; }
+    }
+
+    public static string currentFilePlaying
+    {
+      get { return _currentFilePlaying; }
+      set { _currentFilePlaying = value; }
+    }
     #endregion
 
     #region Serialisation
@@ -477,7 +489,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file is stopped
-    private static void OnChanged(string newFile)
+    public static void OnChanged(string newFile)
     {
       if (newFile == null || newFile.Length == 0)
       {
@@ -503,7 +515,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file is stopped
-    private static void OnStopped()
+    public static void OnStopped()
     {
       //check if we're playing
       if (Playing && PlayBackStopped != null)
@@ -530,7 +542,7 @@ namespace MediaPortal.Player
     }
 
     //called when current playing file ends
-    private static void OnEnded()
+    public static void OnEnded()
     {
       //check if we're playing
       if (PlayBackEnded != null)
@@ -552,7 +564,7 @@ namespace MediaPortal.Player
     }
 
     //called when starting playing a file
-    private static void OnStarted()
+    public static void OnStarted()
     {
       //check if we're playing
       if (_player == null)
@@ -1382,6 +1394,10 @@ namespace MediaPortal.Player
               doStop = !BassMusicPlayer.Player.CrossFadingEnabled;
             }
           }
+
+          // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+          _currentMediaForBassEngine = type;
+
           if (doStop)
           {
             if (_player != null)
@@ -1463,6 +1479,9 @@ namespace MediaPortal.Player
             ForcePlay = false;
           }
         }
+
+        // Set currentMedia needed for correct detection when BASS Engine is doing a Stop
+        _currentMediaForBassEngine = type;
 
         Log.Info("g_Player.Play({0} {1})", strFile, type);
         if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)

@@ -39,61 +39,61 @@ namespace SQLite.NET
     [DllImport("shlwapi.dll")]
     private static extern bool PathIsNetworkPath(string Path);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_open16([MarshalAs(UnmanagedType.LPWStr)] string dbname, out IntPtr handle);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern void sqlite3_close(IntPtr sqlite_handle);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_errmsg16(IntPtr sqlite_handle);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_changes(IntPtr handle);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_last_insert_rowid(IntPtr sqlite_handle);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern SqliteError sqlite3_prepare16(IntPtr sqlite_handle,
                                                          [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen,
                                                          out IntPtr pVm, out IntPtr pzTail);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern SqliteError sqlite3_step(IntPtr pVm);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern SqliteError sqlite3_finalize(IntPtr pVm, out IntPtr pzErrMsg);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern SqliteError sqlite3_exec16(IntPtr handle, string sql, IntPtr callback, IntPtr user_data,
                                                       out IntPtr errstr_ptr);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_column_name16(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_column_text16(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_column_blob(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_column_bytes(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_column_count(IntPtr pVm);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int sqlite3_column_type(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern Int64 sqlite3_column_int64(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern double sqlite3_column_double(IntPtr pVm, int col);
 
-    [DllImport("sqlite.dll")]
+    [DllImport("sqlite.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr sqlite3_libversion();
 
     #endregion
