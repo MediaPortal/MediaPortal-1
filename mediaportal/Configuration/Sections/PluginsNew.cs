@@ -38,9 +38,9 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class PluginsNew : SectionSettings
   {
-    private System.Windows.Forms.ImageList imageListLargePlugins;
-    private System.Windows.Forms.ImageList imageListContextMenu;
-    private System.Windows.Forms.ImageList imageListMPInstaller;
+		private System.Windows.Forms.ImageList imageListLargePlugins;
+		private System.Windows.Forms.ImageList imageListContextMenu;
+		private System.Windows.Forms.ImageList imageListMPInstaller;
     private bool pluginsLoadedOnPage = false;
 
     public PluginsNew()
@@ -73,11 +73,11 @@ namespace MediaPortal.Configuration.Sections
                                       ImageSize = new Size(42, 42)
                                     };
 
-      System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-      // 
-      // imageListLargePlugins
-      // 
-      this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
+			System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+			// 
+			// imageListLargePlugins
+			// 
+			this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
       this.imageListLargePlugins.Images.Add("0",
                                             Image.FromStream(
                                               asm.GetManifestResourceStream(
@@ -163,10 +163,10 @@ namespace MediaPortal.Configuration.Sections
                                               asm.GetManifestResourceStream(
                                                 "MediaPortal.Configuration.Sections.Images.Plugins.imageListLargePlugins.20_alert-ovl.png")));
 
-      // 
-      // imageListContextMenu
-      // 
-      this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// imageListContextMenu
+			// 
+			this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
       this.imageListContextMenu.Images.Add("0",
                                            Image.FromStream(
                                              asm.GetManifestResourceStream(
@@ -176,16 +176,16 @@ namespace MediaPortal.Configuration.Sections
                                              asm.GetManifestResourceStream(
                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListContextMenu.01_Enabled_off.png.bmp")));
 
-      // 
-      // imageListMPInstaller
-      // 
-      this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// imageListMPInstaller
+			// 
+			this.imageListMPInstaller.TransparentColor = System.Drawing.Color.Transparent;
       this.imageListMPInstaller.Images.Add("0",
                                            Image.FromStream(
                                              asm.GetManifestResourceStream(
                                                "MediaPortal.Configuration.Sections.Images.Plugins.imageListMPInstaller.00_application.ico.bmp")));
 
-      this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
+			this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
     }
 
     public override void OnSectionActivated()
@@ -318,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
           {
             continue;
           }
-          if (tag.IsProcess && !tag.IsEnabled)
+          if (tag.IsProcess && !tag.IsEnabled && tag.SetupForm.PluginName() != "PowerScheduler")
           {
             continue;
           }
@@ -396,7 +396,7 @@ namespace MediaPortal.Configuration.Sections
             {
               // Enable PowerScheduler if PS++ is enabled
               if (itemTag.SetupForm.PluginName() == "PowerScheduler" &&
-                  xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
+                xmlreader.GetValueAsBool("plugins", "PowerScheduler++", false))
               {
                 itemTag.IsEnabled = true;
               }
@@ -791,7 +791,7 @@ namespace MediaPortal.Configuration.Sections
       }
       catch
       {
-      }
     }
+  }
   }
 }
