@@ -62,28 +62,13 @@ namespace TvService
     {
       if (Environment.OSVersion.Version.Major >= 6)
       {
-        try
+        // Enable pre-shutdown notification by accessing the ServiceBase class's internals through .NET reflection (code by Siva Chandran P)
+        FieldInfo acceptedCommandsFieldInfo = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (acceptedCommandsFieldInfo != null)
         {
-          // Call base Creator
-          MethodInfo init = typeof(ServiceBase).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.NonPublic);
-          init.Invoke(this, new object[] { false });
-
-          // Register the "TvServiceCallbackEx" handler
-          Type targetDelegate = typeof(ServiceBase).Assembly.GetType("System.ServiceProcess.NativeMethods+ServiceControlCallbackEx");
-          FieldInfo commandCallbackEx = typeof(ServiceBase).GetField("commandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
-          commandCallbackEx.SetValue(this, Delegate.CreateDelegate(targetDelegate, this, "TvServiceCallbackEx"));
-
-          // Accept SERVICE_CONTROL_PRESHUTDOWN
-          var acceptedCommands = typeof(ServiceBase).GetField("acceptedCommands", BindingFlags.Instance | BindingFlags.NonPublic);
-          int accCom = (int)acceptedCommands.GetValue(this);
-          acceptedCommands.SetValue(this, accCom | SERVICE_ACCEPT_PRESHUTDOWN);
-
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Exception on Starting TV Service: {0}", ex);
-          throw;
-        }
+          int value = (int)acceptedCommandsFieldInfo.GetValue(this);
+          acceptedCommandsFieldInfo.SetValue(this, value | SERVICE_ACCEPT_PRESHUTDOWN);
+        } 
       }
 
       AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
@@ -338,28 +323,19 @@ namespace TvService
     }
 
     /// <summary>
-    /// Handle service events
+    /// When implemented in a derived class, executes when the Service Control Manager (SCM) passes a custom command to the service. Specifies actions to take when a command with the specified parameter value occurs.
     /// </summary>
-    /// <param name="control"></param>
-    /// <param name="eventType"></param>
-    /// <param name="eventData"></param>
-    /// <param name="eventContext"></param>
-    /// <returns></returns>
-    internal virtual int TvServiceCallbackEx(int control, int eventType, IntPtr eventData, IntPtr eventContext)
+    /// <param name="command"></param>
+    protected override void OnCustomCommand(int command)
     {
-      var baseCallback = typeof(ServiceBase).GetMethod("ServiceCommandCallbackEx", BindingFlags.Instance | BindingFlags.NonPublic);
-      switch (control)
+      // Check for pre-shutdown notification (code by Siva Chandran P)
+      if (command == SERVICE_CONTROL_PRESHUTDOWN)
       {
-        case SERVICE_CONTROL_PRESHUTDOWN:
-          Log.Debug("TV Service got PRESHUTDOWN event");
-          // Pretend shutdown was called
-          return (int)baseCallback.Invoke(this, new object[] { 0x00000005, eventType, eventData, eventContext });
-        default:
-          // Call base
-          return (int)baseCallback.Invoke(this, new object[] { control, eventType, eventData, eventContext });
+        OnStop();
       }
+      else
+        base.OnCustomCommand(command);
     }
-
   }
 
   public class TvServiceThread : IPowerEventHandler
@@ -908,7 +884,7 @@ namespace TvService
       {
         if (!Started)
         {
-          Log.Info("TV Service: Starting");
+          Log.Info("TV service: Starting");
 
           Thread.CurrentThread.Name = "TVService";
 
@@ -940,7 +916,7 @@ namespace TvService
             _InitializedEvent.Set();
           }
           _started = true;
-          Log.Info("TV Service: Started");
+          Log.Info("TV service: Started");
 
           // Wait for termination
           while (true)
@@ -951,14 +927,14 @@ namespace TvService
       }
       catch (ThreadAbortException)
       {
-        Log.Info("TV Service is being stopped");
+        Log.Info("TvService is being stopped");
       }
       catch (Exception ex)
       {
         if (_started)
-          Log.Error("TV Service terminated unexpectedly: {0}", ex.ToString());
+          Log.Error("TvService terminated unexpectedly: {0}", ex.ToString());
         else
-          Log.Error("TV Service failed to start: {0}", ex.ToString());
+          Log.Error("TvService failed to start: {0}", ex.ToString());
       }
       finally
       {
