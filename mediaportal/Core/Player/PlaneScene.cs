@@ -988,28 +988,26 @@ namespace MediaPortal.Player
               {
                 case GUIGraphicsContext.eRender3DModeHalf.SBSLeft:
 
-                  _destinationRect.Width = originalDestination.Width*2;
+                  _sourceRect.X = originalSource.X / 2;
+                  _sourceRect.Width = originalSource.Width/2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.SBSRight:
 
-                  int dxViewModeSwitcherOffset = (int)((double)_destinationRect.Width / _sourceRect.Width * _sourceRect.X);
-                  _destinationRect.Width = originalDestination.Width*2 + dxViewModeSwitcherOffset*2;
-                  _destinationRect.X = -originalDestination.Width - dxViewModeSwitcherOffset*2;
-                  _sourceRect.Width = _sourceRect.Width + _sourceRect.X;
+                  _sourceRect.X = originalDestination.Width/2 + originalSource.X / 2;
+                  _sourceRect.Width = originalSource.Width / 2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABTop:
 
-                  _destinationRect.Height = originalDestination.Height*2;
+                  _sourceRect.Y = originalSource.Y / 2;
+                  _sourceRect.Height = originalSource.Height / 2;
                   break;
 
                 case GUIGraphicsContext.eRender3DModeHalf.TABBottom:
 
-                  int dyViewModeSwitcherOffset = (int)((double)_destinationRect.Height / _sourceRect.Height * _sourceRect.Y);
-                  _destinationRect.Height = originalDestination.Height*2 + dyViewModeSwitcherOffset*2;;
-                  _destinationRect.Y = -(originalDestination.Height - _destinationRect.Y) -dyViewModeSwitcherOffset*2;
-                  _sourceRect.Height = _sourceRect.Height + _sourceRect.Y;
+                  _sourceRect.Y = originalSource.Height / 2 - originalSource.Y / 2;
+                  _sourceRect.Height = originalSource.Height / 2;
                   break;
               }
             }
