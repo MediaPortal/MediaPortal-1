@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 {
   /// <summary>
   /// A struct that is capable of holding the relevant details for a product that this plugin supports.

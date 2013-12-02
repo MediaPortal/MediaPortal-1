@@ -138,27 +138,27 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// Exception class for the tv library
   /// </summary>
   [Serializable]
-  public class TvExceptionDeviceLoadFailed : TvException
+  public class TvExceptionTunerLoadFailed : TvException
   {
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvExceptionDeviceLoadFailed"/> class.
+    /// Initializes a new instance of the <see cref="TvExceptionTunerLoadFailed"/> class.
     /// </summary>
-    public TvExceptionDeviceLoadFailed() { }
+    public TvExceptionTunerLoadFailed() { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvExceptionDeviceLoadFailed"/> class.
+    /// Initializes a new instance of the <see cref="TvExceptionTunerLoadFailed"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
-    public TvExceptionDeviceLoadFailed(string message)
+    public TvExceptionTunerLoadFailed(string message)
       : base(message) { }
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="TvExceptionDeviceLoadFailed"/> class.
+    /// Initializes a new instance of the <see cref="TvExceptionTunerLoadFailed"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
-    public TvExceptionDeviceLoadFailed(string message, Exception innerException)
+    public TvExceptionTunerLoadFailed(string message, Exception innerException)
       : base(message, innerException) { }
   }
 

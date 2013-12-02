@@ -29,10 +29,6 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 
-#if !USING_NET11
-
-#endif
-
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
@@ -40,242 +36,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public static class FilterGraphTools
   {
-
-
-    #region structs
-
-    private static readonly byte[] Mpeg2ProgramVideo =
-      {
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top
-        0xd0, 0x02, 0x00, 0x00, //  .hdr.rcSource.right
-        0x40, 0x02, 0x00, 0x00, //  .hdr.rcSource.bottom
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom
-        0xc0, 0xe1, 0xe4, 0x00, //  .hdr.dwBitRate
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate
-        0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwInterlaceFlags
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwCopyProtectFlags
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioX
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioY
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved1
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved2
-        0x28, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize
-        0xd0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth
-        0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight
-        0x00, 0x00, //  .hdr.bmiHeader.biPlanes
-        0x00, 0x00, //  .hdr.bmiHeader.biBitCount
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biCompression
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage
-        0xd0, 0x07, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter
-        0x42, 0xd8, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant
-        0x00, 0x00, 0x00, 0x00, //  .dwStartTimeCode
-        0x4c, 0x00, 0x00, 0x00, //  .cbSequenceHeader
-        0x00, 0x00, 0x00, 0x00, //  .dwProfile
-        0x00, 0x00, 0x00, 0x00, //  .dwLevel
-        0x00, 0x00, 0x00, 0x00, //  .Flags
-        //  .dwSequenceHeader [1]
-        0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33,
-        0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12,
-        0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14,
-        0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15,
-        0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16,
-        0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
-        0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19,
-        0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b,
-        0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e,
-        0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-#pragma warning disable 169
-    private static byte[] H264VideoFormat = {
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left              = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top               = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.right             = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.bottom            = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left              = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top               = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right             = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom            = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitRate                  = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate             = 0x00000000
-                                              //	0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
-                                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                              //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize           = 0x00000028
-                                              0xD0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth          = 0x000002d0
-                                              0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight         = 0x00000240
-                                              0x00, 0x00, //  .hdr.bmiHeader.biPlanes         = 0x0001
-                                              0x00, 0x00, //  .hdr.bmiHeader.biBitCount       = 0x0018
-                                              0x48, 0x32, 0x36, 0x34, //  .hdr.bmiHeader.biCompression    = "H264"
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage      = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter  = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter  = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed        = 0x00000000
-                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant   = 0x00000000
-                                            };
-#pragma warning restore 169
-
-    private static readonly byte[] MPEG2AudioFormat =
-      {
-        0x50, 0x00, //wFormatTag
-        0x02, 0x00, //nChannels
-        0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
-        0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
-        0x01, 0x00, //nBlockAlign
-        0x00, 0x00, //wBitsPerSample
-        0x16, 0x00, //cbSize
-        0x02, 0x00, //wValidBitsPerSample
-        0x00, 0xe8, //wSamplesPerBlock
-        0x03, 0x00, //wReserved
-        0x01, 0x00, 0x01, 0x00, //dwChannelMask
-        0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-
-    private static readonly byte[] MPEG1AudioFormat =
-      {
-        0x50, 0x00, //wFormatTag
-        0x02, 0x00, //nChannels
-        0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-        0x00, 0x7D, 0x00, 0x00, //nAvgBytesPerSec
-        0x00, 0x03, //nBlockAlign
-        0x00, 0x00, //wBitsPerSample
-        0x16, 0x00, //cbSize
-        0x02, 0x00, //wValidBitsPerSample
-        0x00, 0xE8, //wSamplesPerBlock
-        0x03, 0x00, //wReserved
-        0x01, 0x00, 0x01, 0x00, //dwChannelMask
-        0x01, 0x00, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-    private static readonly byte[] LPCMAudioFormat =
-      {
-        0x00, 0x00, // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
-        0x02, 0x00, // channels
-        0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
-        0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
-        0x00, 0x03, // nBlockAlign      = 0x0300 = 768
-        0x10, 0x00, // wBitsPerSample   = 16
-        0x16, 0x00, // extra size       = 0x0016 = 22 bytes
-      };
-
-#pragma warning disable 169
-    private static byte[] AC3AudioFormat = {
-                                             0x00, 0x20, //wFormatTag
-                                             0x06, 0x00, //nChannels
-                                             0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-                                             0xC0, 0x5D, 0x00, 0x00, //nAvgBytesPerSec
-                                             0x00, 0x03, //nBlockAlign
-                                             0x00, 0x00, //wBitsPerSample
-                                             0x00, 0x00 //cbSize
-                                           };
-#pragma warning restore 169
-
-    private static readonly byte[] AACAudioFormat = {
-                                                      0xFF, 0x00, //wFormatTag
-                                                      0x02, 0x00, //nChannels
-                                                      0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-                                                      0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
-                                                      0xAE, 0x02, //nBlockAlign
-                                                      0x00, 0x00, //wBitsPerSample
-                                                      0x02, 0x00, //cbSize
-                                                      0x11, 0x90
-                                                    };
-
-#pragma warning disable 169
-    private static byte[] AACAudioFormat2 = {
-                                              0xFF, 0x00, //wFormatTag
-                                              0x02, 0x00, //nChannels
-                                              0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-                                              0x9F, 0x24, 0x00, 0x00, //nAvgBytesPerSec
-                                              0x90, 0x01, //nBlockAlign
-                                              0x00, 0x00, //wBitsPerSample
-                                              0x02, 0x00, //cbSize
-                                              0x11, 0x90
-                                            };
-#pragma warning restore 169
-
-    #endregion
-
     /// <summary>
-    /// Add a filter to a DirectShow Graph using its CLSID.
+    /// Add a filter to a DirectShow graph using its CLSID.
     /// </summary>
-    /// <param name="graph">The graph.</param>
-    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
-    /// <param name="filterName">The name or label to use for the filter.</param>
-    /// <returns>an instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
     /// <remarks>
+    /// The filter class must be registered with Windows using regsvr32.
     /// You can use <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> to check if the CLSID is valid before calling this method.
     /// </remarks>
-    /// <example>This sample shows how to programmatically add a NVIDIA Video decoder filter to a graph
-    /// <code>
-    /// Guid nvidiaVideoDecClsid = new Guid("71E4616A-DB5E-452B-8CA5-71D9CC7805E9");
-    /// 
-    /// if (FilterGraphTools.IsThisComObjectInstalled(nvidiaVideoDecClsid))
-    /// {
-    ///   filter = FilterGraphTools.AddFilterByClsid(graphBuilder, nvidiaVideoDecClsid, "NVIDIA Video Decoder");
-    /// }
-    /// else
-    /// {
-    ///   // use another filter...
-    /// }
-    /// </code>
-    /// </example>
-    /// <seealso cref="IsThisComObjectInstalled"/>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter AddFilterByClsid(IFilterGraph2 graph, Guid clsid, string filterName)
+    /// <param name="graph">The graph.</param>
+    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
+    /// <param name="name">The name or label to use for the filter.</param>
+    /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
+    public static IBaseFilter AddFilterFromRegisteredClsid(IFilterGraph2 graph, Guid clsid, string name)
     {
-      if (graph == null)
-      {
-        throw new ArgumentNullException("graph");
-      }
-
       IBaseFilter filter = null;
       try
       {
         Type type = Type.GetTypeFromCLSID(clsid);
-        filter = (IBaseFilter)Activator.CreateInstance(type);
+        filter = Activator.CreateInstance(type) as IBaseFilter;
 
-        int hr = graph.AddFilter(filter, filterName);
+        int hr = graph.AddFilter(filter, name);
         HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
       }
       catch
       {
-        Release.ComObject("filter graph tools add-filter-by-CLSID filter", ref filter);
+        Release.ComObject("filter graph tools add-filter-from-registered-CLSID filter", ref filter);
         throw;
       }
 
@@ -283,444 +68,58 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// Add a filter to a DirectShow Graph using its name
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="deviceCategory">the filter category (see DirectShowLib.FilterCategory)</param>
-    /// <param name="friendlyName">the filter name (case-sensitive)</param>
-    /// <returns>an instance of the filter if the method successfully created it, null if not</returns>
-    /// <example>This sample shows how to programmatically add a NVIDIA Video decoder filter to a graph
-    /// <code>
-    /// filter = FilterGraphTools.AddFilterByName(graphBuilder, FilterCategory.LegacyAmFilterCategory, "NVIDIA Video Decoder");
-    /// </code>
-    /// </example>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
-    public static IBaseFilter AddFilterByName(IGraphBuilder graphBuilder, Guid deviceCategory, string friendlyName)
-    {
-      IBaseFilter filter = null;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      DsDevice[] devices = DsDevice.GetDevicesOfCat(deviceCategory);
-
-      for (int i = 0; i < devices.Length; i++)
-      {
-        if (!devices[i].Name.Equals(friendlyName))
-          continue;
-
-        int hr = ((IFilterGraph2)graphBuilder).AddSourceFilterForMoniker(devices[i].Mon, null, friendlyName, out filter);
-        DsError.ThrowExceptionForHR(hr);
-
-        break;
-      }
-
-      return filter;
-    }
-
-    /// <summary>
-    /// Add a filter to a DirectShow Graph using its Moniker's device path
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="devicePath">a moniker path</param>
-    /// <param name="name">the name to use for the filter in the graph</param>
-    /// <returns>an instance of the filter if the method successfully creates it, null if not</returns>
-    /// <example>This sample shows how to programmatically add a NVIDIA Video decoder filter to a graph
-    /// <code>
-    /// string devicePath = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{71E4616A-DB5E-452B-8CA5-71D9CC7805E9}";
-    /// filter = FilterGraphTools.AddFilterByDevicePath(graphBuilder, devicePath, "NVIDIA Video Decoder");
-    /// </code>
-    /// </example>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur when the filter is add to the graph</exception>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter AddFilterByDevicePath(IGraphBuilder graphBuilder, string devicePath, string name)
-    {
-      IBaseFilter filter = null;
-#if USING_NET11
-			UCOMIBindCtx bindCtx = null;
-			UCOMIMoniker moniker = null;
-#else
-      IBindCtx bindCtx = null;
-      IMoniker moniker = null;
-#endif
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      try
-      {
-        int hr = NativeMethods.CreateBindCtx(0, out bindCtx);
-        Marshal.ThrowExceptionForHR(hr);
-        int eaten;
-
-        hr = NativeMethods.MkParseDisplayName(bindCtx, devicePath, out eaten, out moniker);
-        Marshal.ThrowExceptionForHR(hr);
-
-        hr = ((IFilterGraph2)graphBuilder).AddSourceFilterForMoniker(moniker, bindCtx, name, out filter);
-        DsError.ThrowExceptionForHR(hr);
-      }
-      catch (Exception ex)
-      {
-        Log.Debug("Error occured while adding filter by device path: ", ex);
-        // An error occur. Just returning null...
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools add-filter-by-device-path bind context", ref bindCtx);
-        Release.ComObject("filter graph tools add-filter-by-device-path moniker", ref moniker);
-      }
-
-      return filter;
-    }
-
-    /// <summary>
-    /// Find a filter in a DirectShow Graph using its name
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="filterName">the filter name to find (case-sensitive)</param>
-    /// <returns>an instance of the filter if found, null if not</returns>
-    /// <seealso cref="FindFilterByClsid"/>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter FindFilterByName(IGraphBuilder graphBuilder, string filterName)
-    {
-      IBaseFilter filter = null;
-      IEnumFilters enumFilters;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      int hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
-
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
-        {
-          if (GetFilterName(filters[0]).Equals(filterName))
-          {
-            filter = filters[0];
-            break;
-          }
-        }
-        Release.ComObject("filter graph tools find-filter-by-name filter enumerator", ref enumFilters);
-      }
-
-      return filter;
-    }
-
-    /// <summary>
-    /// Find a filter in a DirectShow Graph using its CLSID
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="filterClsid">the CLSID to find</param>
-    /// <returns>an instance of the filter if found, null if not</returns>
-    /// <seealso cref="FindFilterByName"/>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder is null</exception>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static IBaseFilter FindFilterByClsid(IGraphBuilder graphBuilder, Guid filterClsid)
-    {
-      IBaseFilter filter = null;
-      IEnumFilters enumFilters;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      int hr = graphBuilder.EnumFilters(out enumFilters);
-      if (hr == (int)HResult.Severity.Success)
-      {
-        IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
-
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
-        {
-          Guid clsid;
-
-          hr = filters[0].GetClassID(out clsid);
-
-          if ((hr == (int)HResult.Severity.Success) && (clsid == filterClsid))
-          {
-            filter = filters[0];
-            break;
-          }
-
-          Release.ComObject("filter graph tools find-filter-by-CLSID filter", ref filters[0]);
-        }
-        Release.ComObject("filter graph tools find-filter-by-CLSID filter enumerator", ref enumFilters);
-      }
-
-      return filter;
-    }
-
-    /// <summary>
-    /// Render a filter's pin in a DirectShow Graph
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="source">the filter containing the pin to render</param>
-    /// <param name="pinName">the pin name</param>
-    /// <returns>true if rendering is a success, false if not</returns>
-    /// <example>
-    /// <code>
-    /// hr = graphBuilder.AddSourceFilter(@"foo.avi", "Source Filter", out filter);
-    /// DsError.ThrowExceptionForHR(hr);
-    /// 
-    /// if (!FilterGraphTools.RenderPin(graphBuilder, filter, "Output"))
-    /// {
-    ///   // Something went wrong...
-    /// }
-    /// </code>
-    /// </example>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder or source is null</exception>
-    /// <remarks>This method assumes that the filter is part of the given graph</remarks>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool RenderPin(IGraphBuilder graphBuilder, IBaseFilter source, string pinName)
-    {
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      if (source == null)
-        throw new ArgumentNullException("source");
-
-      IPin pin = DsFindPin.ByName(source, pinName);
-
-      if (pin != null)
-      {
-        int hr = graphBuilder.Render(pin);
-        Release.ComObject("filter graph tools render-pin pin", ref pin);
-
-        return (hr >= 0);
-      }
-
-      return false;
-    }
-
-    /// <summary>
-    /// Find a pin on the filter specified
-    /// which can supplies the mediatype and mediasubtype specified
-    /// if found the pin is returned
-    /// </summary>
-    /// <param name="filter">The filter to find the pin on.</param>
-    /// <param name="mediaType">Type of the media.</param>
-    /// <param name="mediaSubtype">The media subtype.</param>
-    /// <param name="direction">The direction of the pin</param>
-    /// <param name="index">Index of the pin</param>
-    public static IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype, PinDirection direction,
-                                    out int index)
-    {
-      IEnumPins enumPins;
-      filter.EnumPins(out enumPins);
-      // loop through all pins
-      index = -1;
-      while (true)
-      {
-        IPin[] pins = new IPin[2];
-        int fetched;
-        enumPins.Next(1, pins, out fetched);
-        if (fetched != 1)
-          break;
-        //first check if the pindirection matches
-        PinDirection pinDirection;
-        pins[0].QueryDirection(out pinDirection);
-        if (pinDirection != direction)
-          continue;
-        index++;
-        //next check if the pin supports the media type requested
-        IEnumMediaTypes enumMedia;
-        AMMediaType[] media = new AMMediaType[2];
-        pins[0].EnumMediaTypes(out enumMedia);
-        while (true)
-        {
-          int fetchedMedia;
-          enumMedia.Next(1, media, out fetchedMedia);
-          if (fetchedMedia != 1)
-            break;
-
-          if (media[0].majorType == mediaType)
-          {
-            if (media[0].subType == mediaSubtype || mediaSubtype == MediaSubType.Null)
-            {
-              Release.AmMediaType(ref media[0]);
-              return pins[0];
-            }
-          }
-          Release.AmMediaType(ref media[0]);
-        }
-        Release.ComObject("filter graph tools find-media-pin pin", ref pins[0]);
-      }
-      return null;
-    }
-
-    /// <summary>
-    /// Scans a filter's pins looking for a pin with the specified name
-    /// </summary>
-    /// <param name="vSource">The filter to scan</param>
-    /// <param name="vPinName">The pin name to find</param>
-    /// <param name="vDir">The direction of the pin</param>
-    /// <param name="pinIndex">The index of the pin</param>
-    /// <returns>The matching pin, or null if not found</returns>
-    public static IPin GetPinByName(IBaseFilter vSource, string vPinName, PinDirection vDir, out int pinIndex)
-    {
-      IEnumPins ppEnum;
-      PinInfo ppinfo;
-      IPin pRet = null;
-      IPin[] pPins = new IPin[1];
-      pinIndex = -1;
-      if (vSource == null)
-      {
-        return null;
-      }
-
-      // Get the pin enumerator
-      int hr = vSource.EnumPins(out ppEnum);
-      DsError.ThrowExceptionForHR(hr);
-
-      try
-      {
-        int lFetched;
-        // Walk the pins looking for a match
-        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
-        {
-          try
-          {
-            PinDirection ppindir;
-            // Read the info
-            hr = pPins[0].QueryPinInfo(out ppinfo);
-            DsError.ThrowExceptionForHR(hr);
-
-            try
-            {
-              hr = pPins[0].QueryDirection(out ppindir);
-              DsError.ThrowExceptionForHR(hr);
-
-              // Is it the right direction?
-              if (ppindir == vDir)
-              {
-                pinIndex++;
-                // Is it the right name?
-                if (ppinfo.name == vPinName)
-                {
-                  pRet = pPins[0];
-                  break;
-                }
-              }
-              Release.ComObject("filter graph tools get-pin-by-name pin", ref pPins[0]);
-            }
-            finally
-            {
-              Release.PinInfo(ref ppinfo);
-            }
-          }
-          catch (Exception)
-          {
-            Release.ComObject("filter graph tools get-pin-by-name pin", ref pPins[0]);
-            throw;
-          }
-        }
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools get-pin-by-name pin enumerator", ref ppEnum);
-      }
-
-      return pRet;
-    }
-
-    /// <summary>
-    /// Scan's a filter's pins looking for a pin with the specified category and direction
-    /// </summary>
-    /// <param name="vSource">The filter to scan</param>
-    /// <param name="PinCategory">The guid from PinCategory to scan for</param>
-    /// <param name="iIndex">Zero based index (ie 2 will return the third pin of the specified category)</param>
-    /// <param name="vDir">The direction of the pin</param>
-    /// <param name="pinIndex">The index of the pin</param>
-    /// <returns>The matching pin, or null if not found</returns>
-    public static IPin GetPinByCategoryAndDirection(IBaseFilter vSource, Guid PinCategory, int iIndex, PinDirection vDir,
-                                                    out int pinIndex)
-    {
-      IEnumPins ppEnum;
-      IPin pRet = null;
-      IPin[] pPins = new IPin[1];
-      pinIndex = -1;
-      if (vSource == null)
-      {
-        return null;
-      }
-
-      // Get the pin enumerator
-      int hr = vSource.EnumPins(out ppEnum);
-      DsError.ThrowExceptionForHR(hr);
-
-      try
-      {
-        int lFetched;
-        // Walk the pins looking for a match
-        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
-        {
-          PinDirection ppindir;
-          // Read the direction
-          hr = pPins[0].QueryDirection(out ppindir);
-          DsError.ThrowExceptionForHR(hr);
-
-          if (ppindir == vDir)
-          {
-            pinIndex++;
-            // Is it the right category?
-            if (DsUtils.GetPinCategory(pPins[0]) == PinCategory)
-            {
-              // Is is the right index?
-              if (iIndex == 0)
-              {
-                pRet = pPins[0];
-                break;
-              }
-              iIndex--;
-            }
-          }
-          Release.ComObject("filter graph tools get-pin-by-category-and-direction pin", ref pPins[0]);
-        }
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools get-pin-by-category-and-direction pin enumerator", ref ppEnum);
-      }
-
-      return pRet;
-    }
-
-    /// <summary>
-    /// Remove all filters from a DirectShow graph.
+    /// Add a filter implemented in a known file to a DirectShow graph.
     /// </summary>
     /// <param name="graph">The graph.</param>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void RemoveAllFilters(IFilterGraph2 graph)
+    /// <param name="fileName">The name of the file containing the filter implementation.</param>
+    /// <param name="clsid">The class ID (CLSID) for the filter class. The class must expose the IBaseFilter interface.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
+    /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
+    public static IBaseFilter AddFilterFromFile(IFilterGraph2 graph, string fileName, Guid clsid, string filterName)
     {
-      if (graph == null)
-      {
-        throw new ArgumentNullException("graph");
-      }
-
-      IEnumFilters enumFilters = null;
+      IBaseFilter filter = null;
       try
       {
-        int hr = graph.EnumFilters(out enumFilters);
-        HResult.ThrowException(hr, "Failed to EnumFilters() on IFilterGraph2.");
+        filter = ComHelper.LoadComObjectFromFile(fileName, clsid, typeof(IBaseFilter).GUID) as IBaseFilter;
 
-        IBaseFilter[] filters = new IBaseFilter[1];
-        int fetched;
-        while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
-        {
-          string filterName = GetFilterName(filters[0]);
-          Log.Debug("Remove filter from graph: {0}", filterName);
-          graph.RemoveFilter(filters[0]);
-        }
+        int hr = graph.AddFilter(filter, filterName);
+        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
       }
-      finally
+      catch
       {
-        Release.ComObject("filter graph tools remove-all-filters filter enumerator", ref enumFilters);
+        Release.ComObject("filter graph tools add-filter-from-file filter", ref filter);
+        throw;
       }
+
+      return filter;
+    }
+
+    /// <summary>
+    /// Add a filter to a DirectShow graph using its corresponding <see cref="DsDevice"/> (<see cref="IMoniker"/> wrapper).
+    /// </summary>
+    /// <param name="graph">The graph.</param>
+    /// <param name="device">The device.</param>
+    /// <param name="name">The name or label to use for the filter.</param>
+    /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
+    public static IBaseFilter AddFilterFromDevice(IFilterGraph2 graph, DsDevice device)
+    {
+      if (device == null || device.Mon == null)
+      {
+        throw new TvException("Failed to add filter by device, device or moniker is null.");
+      }
+
+      IBaseFilter filter = null;
+      try
+      {
+        int hr = graph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out filter);
+        HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
+      }
+      catch
+      {
+        Release.ComObject("filter graph tools add-filter-from-device filter", ref filter);
+        throw;
+      }
+      return filter;
     }
 
     /// <summary>
@@ -732,7 +131,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur during the file creation</exception>
     /// <seealso cref="LoadGraphFile"/>
     /// <remarks>This method overwrites any existing file</remarks>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void SaveGraphFile(IGraphBuilder graphBuilder, string fileName)
     {
       IStorage storage = null;
@@ -788,7 +186,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <exception cref="System.ArgumentException">Thrown if the given file is not a valid graph file</exception>
     /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if errors occur during loading</exception>
     /// <seealso cref="SaveGraphFile"/>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void LoadGraphFile(IGraphBuilder graphBuilder, string fileName)
     {
       IStorage storage = null;
@@ -874,7 +271,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// }
     /// </code>
     /// </example>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void ShowFilterPropertyPage(IBaseFilter filter, IntPtr parent)
     {
       FilterInfo filterInfo;
@@ -928,7 +324,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </code>
     /// </example>
     /// <returns>true if the object is available, false if not</returns>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsThisComObjectInstalled(Guid clsid)
     {
       bool retval = false;
@@ -945,363 +340,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// Check if the Video Mixing Renderer 9 Filter is available
-    /// <seealso cref="IsThisComObjectInstalled"/>
-    /// </summary>
-    /// <remarks>
-    /// This method uses <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> internally
-    /// </remarks>
-    /// <returns>true if VMR9 is present, false if not</returns>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool IsVMR9Present()
-    {
-      return IsThisComObjectInstalled(typeof(VideoMixingRenderer9).GUID);
-    }
-
-    /// <summary>
-    /// Check if the Video Mixing Renderer 7 Filter is available
-    /// <seealso cref="IsThisComObjectInstalled"/>
-    /// </summary>
-    /// <remarks>
-    /// This method uses <see cref="IsThisComObjectInstalled">IsThisComObjectInstalled</see> internally
-    /// </remarks>
-    /// <returns>true if VMR7 is present, false if not</returns>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static bool IsVMR7Present()
-    {
-      return IsThisComObjectInstalled(typeof(VideoMixingRenderer).GUID);
-    }
-
-    /// <summary>
-    /// Connect pins from two filters
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="upFilter">the upstream filter</param>
-    /// <param name="sourcePinName">the upstream filter pin name</param>
-    /// <param name="downFilter">the downstream filter</param>
-    /// <param name="destPinName">the downstream filter pin name</param>
-    /// <param name="useIntelligentConnect">indicate if the method should use DirectShow's Intelligent Connect</param>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder, upFilter or downFilter are null</exception>
-    /// <exception cref="System.ArgumentException">Thrown if pin names are not found in filters</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if pins can't connect</exception>
-    /// <remarks>
-    /// If useIntelligentConnect is true, this method can add missing filters between the two pins.<br/>
-    /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
-    /// </remarks>
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName,
-                                      IBaseFilter downFilter, string destPinName, bool useIntelligentConnect)
-    {
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      if (upFilter == null)
-        throw new ArgumentNullException("upFilter");
-
-      if (downFilter == null)
-        throw new ArgumentNullException("downFilter");
-
-      IPin sourcePin = DsFindPin.ByName(upFilter, sourcePinName);
-      if (sourcePin == null)
-        throw new ArgumentException("The source filter has no pin called : " + sourcePinName, sourcePinName);
-
-      IPin destPin = DsFindPin.ByName(downFilter, destPinName);
-      if (destPin == null)
-        throw new ArgumentException("The downstream filter has no pin called : " + destPinName, destPinName);
-
-      try
-      {
-        ConnectFilters(graphBuilder, sourcePin, destPin, useIntelligentConnect);
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools connect-filters source pin", ref sourcePin);
-        Release.ComObject("filter graph tools connect-filters destination pin", ref destPin);
-      }
-    }
-
-    /// <summary>
-    /// Connect pins from two filters
-    /// </summary>
-    /// <param name="graphBuilder">the IGraphBuilder interface of the graph</param>
-    /// <param name="sourcePin">the source (upstream / output) pin</param>
-    /// <param name="destPin">the destination (downstream / input) pin</param>
-    /// <param name="useIntelligentConnect">indicates if the method should use DirectShow's Intelligent Connect</param>
-    /// <exception cref="System.ArgumentNullException">Thrown if graphBuilder, sourcePin or destPin are null</exception>
-    /// <exception cref="System.Runtime.InteropServices.COMException">Thrown if pins can't connect</exception>
-    /// <remarks>
-    /// If useIntelligentConnect is true, this method can add missing filters between the two pins.<br/>
-    /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
-    /// </remarks>
-    [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin,
-                                      bool useIntelligentConnect)
-    {
-      int hr;
-
-      if (graphBuilder == null)
-        throw new ArgumentNullException("graphBuilder");
-
-      if (sourcePin == null)
-        throw new ArgumentNullException("sourcePin");
-
-      if (destPin == null)
-        throw new ArgumentNullException("destPin");
-
-      if (useIntelligentConnect)
-      {
-        hr = graphBuilder.Connect(sourcePin, destPin);
-        DsError.ThrowExceptionForHR(hr);
-      }
-      else
-      {
-        hr = graphBuilder.ConnectDirect(sourcePin, destPin, null);
-        DsError.ThrowExceptionForHR(hr);
-      }
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">graph builder interface</param>
-    /// <param name="pinSource">souce pin</param>
-    /// <param name="filterDest">destination filter</param>
-    /// <param name="destPinIndex">input pin index</param>
-    public static bool ConnectPin(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter filterDest, int destPinIndex)
-    {
-      IPin pin;
-      pinSource.ConnectedTo(out pin);
-      if (pin != null)
-      {
-        Release.ComObject("filter graph tools connect-pin source pin connected pin", ref pin);
-        return false;
-      }
-      IPin pinDest = DsFindPin.ByDirection(filterDest, PinDirection.Input, destPinIndex);
-      if (pinDest == null)
-      {
-        return false;
-      }
-
-      try
-      {
-        int hr = graphBuilder.Connect(pinSource, pinDest);
-        return hr == (int)HResult.Severity.Success;
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools connect-pin destination pin", ref pinDest);
-      }
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder.</param>
-    /// <param name="pinSource">The ping source.</param>
-    /// <param name="destinationFilter">The destination filter.</param>
-    /// <returns></returns>
-    public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
-    {
-      //this.LogDebug("analog: ConnectFilter()");
-      Log.Debug("analog:  PinSource:{0}", LogPinInfo(pinSource));
-      for (int i = 0; i <= 10; ++i)
-      {
-        IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, i);
-        if (pinIn == null)
-          return false;
-        try
-        {
-          IPin connectedToPin;
-          if (pinIn.ConnectedTo(out connectedToPin) != 0)
-            connectedToPin = null;
-
-          if (connectedToPin == null)
-          {
-            Log.Debug("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
-            int hr = graphBuilder.Connect(pinSource, pinIn);
-            if (hr == (int)HResult.Severity.Success)
-            {
-              Log.Debug("analog:  pins connected");
-              return true;
-            }
-          }
-          else
-          {
-            Release.ComObject("filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
-          }
-        }
-        finally
-        {
-          Release.ComObject("filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
-        }
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder.</param>
-    /// <param name="pinSource">The ping source.</param>
-    /// <param name="destinationFilter">The destination filter.</param>
-    /// <param name="destinationPinIndex">The index of the destination pin</param>
-    /// <returns></returns>
-    public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter,
-                                     out int destinationPinIndex)
-    {
-      //this.LogDebug("analog: ConnectFilter()");
-      Log.Debug("analog:  PinSource:{0}", LogPinInfo(pinSource));
-      destinationPinIndex = -1;
-      for (int i = 0; i <= 10; ++i)
-      {
-        IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, i);
-        if (pinIn == null)
-          return false;
-
-        try
-        {
-          destinationPinIndex++;
-          IPin connectedToPin;
-          if (pinIn.ConnectedTo(out connectedToPin) != 0)
-            connectedToPin = null;
-
-          if (connectedToPin == null)
-          {
-            Log.Debug("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
-            int hr = graphBuilder.Connect(pinSource, pinIn);
-            if (hr == (int)HResult.Severity.Success)
-            {
-              Log.Debug("analog:  pins connected");
-              return true;
-            }
-          }
-          else
-          {
-            Release.ComObject("filter graph tools connect-filter destination pin candidate connected pin", ref connectedToPin);
-          }
-        }
-        finally
-        {
-          Release.ComObject("filter graph tools connect-filter destination pin candidate " + i, ref pinIn);
-        }
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder.</param>
-    /// <param name="sourceFilter">The source filter.</param>
-    /// <param name="pinDestination">The pin destination.</param>
-    /// <returns></returns>
-    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
-    {
-      //this.LogDebug("analog: ConnectFilter()");
-      Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinDestination));
-      for (int i = 0; i <= 10; ++i)
-      {
-        IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        if (pinOut == null)
-          return false;
-
-        try
-        {
-          Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
-          int hr = graphBuilder.Connect(pinOut, pinDestination);
-          if (hr == (int)HResult.Severity.Success)
-          {
-            Log.Debug("analog:  pins connected");
-            return true;
-          }
-        }
-        finally
-        {
-          Release.ComObject("filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
-        }
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder.</param>
-    /// <param name="sourceFilter">The source filter.</param>
-    /// <param name="pinDestination">The pin destination.</param>
-    /// <param name="sourcePinIndex">The determined output index of the source filter</param>
-    /// <returns></returns>
-    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination,
-                                     out int sourcePinIndex)
-    {
-      //this.LogDebug("analog: ConnectFilter()");
-      Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinDestination));
-      sourcePinIndex = -1;
-      for (int i = 0; i <= 10; ++i)
-      {
-        IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        if (pinOut == null)
-          return false;
-
-        try
-        {
-          Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
-          int hr = graphBuilder.Connect(pinOut, pinDestination);
-          if (hr == (int)HResult.Severity.Success)
-          {
-            Log.Debug("analog:  pins connected");
-            sourcePinIndex = i;
-            return true;
-          }
-        }
-        finally
-        {
-          Release.ComObject("filter graph tools connect-filter source filter output pin candidate " + i, ref pinOut);
-        }
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// helper function to connect 2 filters
-    /// </summary>
-    /// <param name="graphBuilder">The graph builder.</param>
-    /// <param name="sourceFilter">The source filter.</param>
-    /// <param name="destinationFilter">The destination filter.</param>
-    /// <returns></returns>
-    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
-    {
-      //this.LogDebug("analog: ConnectFilter()");
-      IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
-      try
-      {
-        Log.Debug("analog:  PinDest:{0}", LogPinInfo(pinIn));
-        for (int i = 0; i <= 10; ++i)
-        {
-          IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-          try
-          {
-            Log.Debug("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
-            int hr = graphBuilder.Connect(pinOut, pinIn);
-            if (hr == (int)HResult.Severity.Success)
-            {
-              Log.Debug("analog:  pins connected");
-              return true;
-            }
-          }
-          finally
-          {
-            Release.ComObject("filter graph tools connect-filter source filter output pin", ref pinOut);
-          }
-        }
-      }
-      finally
-      {
-        Release.ComObject("filter graph tools connect-filter destination filter input pin", ref pinIn);
-      }
-      return false;
-    }
-
-    /// <summary>
     /// increment the ComObject referencecount of the object.
     /// </summary>
     /// <param name="o">The object.</param>
@@ -1314,261 +352,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     }
 
     /// <summary>
-    /// get the referencecount of the object.
-    /// </summary>
-    /// <param name="o">The object.</param>
-    /// <returns>referencecount</returns>
-    public static int getRefCount(object o)
-    {
-      if (o == null)
-        return -1;
-      int refcount = Marshal.Release(Marshal.GetIUnknownForObject(o));
-      return refcount;
-    }
-
-    /// <summary>
-    /// get the ComObject referencecount of the filter.
+    /// Get the name of a filter.
     /// </summary>
     /// <param name="filter">The filter.</param>
-    /// <returns>referencecount</returns>
-    public static int getRefCountCOM(object filter)
-    {
-      if (filter == null)
-        return -1;
-      object o = incRefCountCOM(filter);
-      int refcount = Release.ComObject("filter graph tools get-ref-count-COM instance", ref o);
-      return refcount;
-    }
-
-    /// <summary>
-    /// Logs the pin info.
-    /// </summary>
-    /// <param name="pin">The pin.</param>
-    /// <returns></returns>
-    public static string LogPinInfo(IPin pin)
-    {
-      if (pin == null)
-        return " pin==null ";
-      PinInfo pinInfo;
-      IPin connectedToPin;
-      if (pin.ConnectedTo(out connectedToPin) != 0)
-        connectedToPin = null;
-
-      bool connected = connectedToPin != null;
-      if (connected)
-      {
-        Release.ComObject("filter graph tools log-pin-info connected pin", ref connectedToPin);
-      }
-
-      int hr = pin.QueryPinInfo(out pinInfo);
-      Release.PinInfo(ref pinInfo);
-      return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected,
-                           getRefCount(pin), getRefCountCOM(pin));
-    }
-
-    /// <summary>
-    /// Logs the filter info.
-    /// </summary>
-    /// <param name="filter">The filter.</param>
-    /// <returns></returns>
-    public static string LogFilterInfo(IBaseFilter filter)
-    {
-      if (filter == null)
-        return " filter==null ";
-      return String.Format("name:{0} [{1}/{2}]", GetFilterName(filter), getRefCount(filter), getRefCountCOM(filter));
-    }
-
-    /// <summary>
-    /// Gets the filter name.
-    /// </summary>
-    /// <param name="filter">The filter.</param>
-    /// <returns>FilterName</returns>
+    /// <returns>the name of the filter</returns>
     public static string GetFilterName(IBaseFilter filter)
     {
       FilterInfo filterInfo;
       int hr = filter.QueryFilterInfo(out filterInfo);
-      string filterName = null;
-      if (hr == (int)HResult.Severity.Success)
-      {
-        filterName = filterInfo.achName;
-        Release.FilterInfo(ref filterInfo);
-      }
-      return filterName;
+      HResult.ThrowException(hr, "Failed to query filter information.");
+      Release.FilterInfo(ref filterInfo);
+      return filterInfo.achName;
     }
 
     /// <summary>
-    /// Gets the pin name.
+    /// Get the name of a pin.
     /// </summary>
     /// <param name="pin">The pin.</param>
-    /// <returns>PinName</returns>
+    /// <returns>the name of the pin</returns>
     public static string GetPinName(IPin pin)
     {
-      if (pin == null)
-        return "";
       PinInfo pinInfo;
       int hr = pin.QueryPinInfo(out pinInfo);
-      string name = pinInfo.name;
-      Release.PinInfo(ref pinInfo);
-      return name;
-    }
-
-    /// <summary>
-    /// Gets the audio MPG2 media.
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioMpg2Media()
-    {
-      AMMediaType mediaAudio = new AMMediaType();
-      mediaAudio.majorType = MediaType.Audio;
-      mediaAudio.subType = MediaSubType.Mpeg2Audio;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatPtr = IntPtr.Zero;
-      mediaAudio.sampleSize = 1;
-      mediaAudio.temporalCompression = false;
-      mediaAudio.fixedSizeSamples = true;
-      mediaAudio.unkPtr = IntPtr.Zero;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatSize = MPEG2AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      Marshal.Copy(MPEG2AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
-      return mediaAudio;
-    }
-
-    /// <summary>
-    /// Gets the audio MPG1 media.
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioMpg1Media()
-    {
-      AMMediaType mediaAudio = new AMMediaType();
-      mediaAudio.majorType = MediaType.Audio;
-      mediaAudio.subType = MediaSubType.MPEG1Payload;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatPtr = IntPtr.Zero;
-      mediaAudio.sampleSize = 1;
-      mediaAudio.temporalCompression = false;
-      mediaAudio.fixedSizeSamples = true;
-      mediaAudio.unkPtr = IntPtr.Zero;
-      mediaAudio.formatType = FormatType.WaveEx;
-      mediaAudio.formatSize = MPEG1AudioFormat.GetLength(0);
-      mediaAudio.formatPtr = Marshal.AllocCoTaskMem(mediaAudio.formatSize);
-      Marshal.Copy(MPEG1AudioFormat, 0, mediaAudio.formatPtr, mediaAudio.formatSize);
-      return mediaAudio;
-    }
-
-    /// <summary>
-    /// Gets the video MPG2 media.
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetVideoMpg2Media()
-    {
-      AMMediaType mediaVideo = new AMMediaType();
-      mediaVideo.majorType = MediaType.Video;
-      mediaVideo.subType = MediaSubType.Mpeg2Video;
-      mediaVideo.formatType = FormatType.Mpeg2Video;
-      mediaVideo.unkPtr = IntPtr.Zero;
-      mediaVideo.sampleSize = 1;
-      mediaVideo.temporalCompression = false;
-      mediaVideo.fixedSizeSamples = true;
-      mediaVideo.formatSize = Mpeg2ProgramVideo.GetLength(0);
-      mediaVideo.formatPtr = Marshal.AllocCoTaskMem(mediaVideo.formatSize);
-      Marshal.Copy(Mpeg2ProgramVideo, 0, mediaVideo.formatPtr, mediaVideo.formatSize);
-      return mediaVideo;
-    }
-
-    /// <summary>
-    /// Gets the audio ac3 media type
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioAc3()
-    {
-      AMMediaType mediaAc3 = new AMMediaType();
-      mediaAc3.majorType = MediaType.Audio;
-      mediaAc3.subType = MediaSubType.DolbyAC3;
-      mediaAc3.formatType = FormatType.WaveEx;
-      mediaAc3.unkPtr = IntPtr.Zero;
-      mediaAc3.sampleSize = 1;
-      mediaAc3.temporalCompression = false;
-      mediaAc3.fixedSizeSamples = true;
-      mediaAc3.formatSize = MPEG1AudioFormat.GetLength(0);
-      mediaAc3.formatPtr = Marshal.AllocCoTaskMem(mediaAc3.formatSize);
-      Marshal.Copy(MPEG1AudioFormat, 0, mediaAc3.formatPtr, mediaAc3.formatSize);
-      return mediaAc3;
-    }
-
-    /// <summary>
-    /// Gets the audio AAC media type
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioAAC()
-    {
-      AMMediaType mediaAac = new AMMediaType();
-      mediaAac.majorType = MediaType.Audio;
-      mediaAac.subType = MpMediaSubType.AAC;
-      mediaAac.formatType = FormatType.WaveEx;
-      mediaAac.unkPtr = IntPtr.Zero;
-      mediaAac.sampleSize = 1;
-      mediaAac.temporalCompression = false;
-      mediaAac.fixedSizeSamples = true;
-      mediaAac.formatSize = AACAudioFormat.GetLength(0);
-      mediaAac.formatPtr = Marshal.AllocCoTaskMem(mediaAac.formatSize);
-      Marshal.Copy(AACAudioFormat, 0, mediaAac.formatPtr, mediaAac.formatSize);
-      return mediaAac;
-    }
-
-    /// <summary>
-    /// Gets the audio LATM AAC media type
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioLATMAAC()
-    {
-      AMMediaType mediaLATMAAC = new AMMediaType();
-      mediaLATMAAC.majorType = MediaType.Audio;
-      mediaLATMAAC.subType = MpMediaSubType.LATMAAC;
-      mediaLATMAAC.formatType = FormatType.WaveEx;
-      mediaLATMAAC.unkPtr = IntPtr.Zero;
-      mediaLATMAAC.sampleSize = 1;
-      mediaLATMAAC.temporalCompression = false;
-      mediaLATMAAC.fixedSizeSamples = true;
-      mediaLATMAAC.formatSize = AACAudioFormat.GetLength(0);
-      mediaLATMAAC.formatPtr = Marshal.AllocCoTaskMem(mediaLATMAAC.formatSize);
-      Marshal.Copy(AACAudioFormat, 0, mediaLATMAAC.formatPtr, mediaLATMAAC.formatSize);
-      return mediaLATMAAC;
-    }
-
-    /// <summary>
-    /// Gets the audio LPCM media type
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetAudioLPCMMedia()
-    {
-      AMMediaType mediaLPCM = new AMMediaType();
-      mediaLPCM.majorType = MediaType.Audio;
-      mediaLPCM.subType = MpMediaSubType.DVD_LPCM_AUDIO;
-      mediaLPCM.formatType = FormatType.WaveEx;
-      mediaLPCM.unkPtr = IntPtr.Zero;
-      mediaLPCM.sampleSize = 1;
-      mediaLPCM.temporalCompression = false;
-      mediaLPCM.fixedSizeSamples = true;
-      mediaLPCM.formatSize = LPCMAudioFormat.GetLength(0);
-      mediaLPCM.formatPtr = Marshal.AllocCoTaskMem(mediaLPCM.formatSize);
-      Marshal.Copy(LPCMAudioFormat, 0, mediaLPCM.formatPtr, mediaLPCM.formatSize);
-      return mediaLPCM;
-    }
-
-    /// <summary>
-    /// Gets the transport stream media type
-    /// </summary>
-    /// <returns></returns>
-    public static AMMediaType GetTransportStreamMedia()
-    {
-      AMMediaType mediaTS = new AMMediaType();
-      mediaTS.majorType = MediaType.Stream;
-      mediaTS.subType = MediaSubType.Mpeg2Transport;
-      mediaTS.formatType = FormatType.Null;
-      mediaTS.formatSize = 0;
-      mediaTS.formatPtr = IntPtr.Zero;
-      return mediaTS;
+      HResult.ThrowException(hr, "Failed to query pin information.");
+      Release.ComObject("filter graph tools pin name filter", ref pinInfo.filter);
+      return pinInfo.name;
     }
 
     /// <summary>
@@ -1611,6 +419,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       catch
       {
         graph.RemoveFilter(newFilter);
+        throw;
       }
       finally
       {
@@ -1639,11 +448,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       try
       {
         hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
-        HResult.ThrowException(hr, "Failed to render the stream into the new filter.");
+        HResult.ThrowException(hr, "Failed to render into the new filter.");
       }
       catch
       {
         graph.RemoveFilter(newFilter);
+        throw;
       }
     }
 
@@ -1662,14 +472,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         throw new TvException("Failed to add and connect filter, upstream filter or moniker are null.");
       }
 
-      IBaseFilter newFilter = null;
-      int hr = graph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out newFilter);
-      HResult.ThrowException(hr, "Failed to add the filter for the device to the graph.");
+      IBaseFilter newFilter = AddFilterFromDevice(graph, device);
 
       try
       {
-        hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
-        HResult.ThrowException(hr, "Failed to render the stream into the new filter.");
+        int hr = graphBuilder.RenderStream(null, null, upstreamFilter, null, newFilter);
+        HResult.ThrowException(hr, "Failed to render into the new filter.");
       }
       catch
       {

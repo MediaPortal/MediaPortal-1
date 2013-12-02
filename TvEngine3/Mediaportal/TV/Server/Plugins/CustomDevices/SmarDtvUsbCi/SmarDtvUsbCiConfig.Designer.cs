@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 {
   partial class SmarDtvUsbCiConfig
   {

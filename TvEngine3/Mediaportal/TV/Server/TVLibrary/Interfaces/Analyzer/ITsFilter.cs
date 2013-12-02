@@ -34,7 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// The main TsWriter interface
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
    Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsFilter
@@ -273,7 +273,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="chunkSize">Chunk size</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
+    int TimeShiftSetParams(int handle, int minFiles, int maxFiles, uint chunkSize);
 
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
@@ -282,7 +282,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [PreserveSig]
-    int TimeShiftGetCurrentFilePosition(int handle, [Out] out Int64 position, [Out] out long bufferId);
+    int TimeShiftGetCurrentFilePosition(int handle, [Out] out long position, [Out] out long bufferId);
 
     /// <summary>
     /// Sets the video/audio observer callback

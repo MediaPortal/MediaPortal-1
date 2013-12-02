@@ -28,8 +28,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
-  /// This is a class which is used to remember which software encoders are
-  /// currently in use and how many instances of each have been instantiated.
+  /// This class is used to keep track of the number of instances of each video and audio encoder
+  /// <see cref="DsDevice"/> which are in use.
   /// </summary>
   public class EncodersInUse
   {
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <returns><c>true</c> if the encoder can be used, otherwise <c>false</c></returns>
     public bool Add(DsDevice device, SoftwareEncoder dbEncoder)
     {
-      if (device == null)
+      if (device == null || device.Name == null || device.DevicePath == null || device.Mon == null)
       {
         return false;
       }
@@ -139,7 +139,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <param name="device">The encoder device.</param>
     public void Remove(DsDevice device)
     {
-      if (device == null)
+      if (device == null || device.Name == null || device.DevicePath == null || device.Mon == null)
       {
         return;
       }

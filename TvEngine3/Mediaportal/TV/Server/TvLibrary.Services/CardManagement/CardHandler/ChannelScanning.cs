@@ -86,7 +86,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         ITVScanning scanner = _cardHandler.Card.ScanningInterface;
         if (scanner == null)
           return null;
-        scanner.Reset();
         List<IChannel> channelsFound = scanner.Scan(channel, settings);
         if (channelsFound == null)
           return null;
@@ -116,7 +115,6 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         ITVScanning scanner = _cardHandler.Card.ScanningInterface;
         if (scanner == null)
           return null;
-        scanner.Reset();
         List<IChannel> channelsFound = scanner.ScanNIT(channel, settings);
         if (channelsFound == null)
           return null;

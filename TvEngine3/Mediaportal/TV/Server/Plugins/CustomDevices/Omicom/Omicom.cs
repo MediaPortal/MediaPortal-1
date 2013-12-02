@@ -23,12 +23,13 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Omicom
 {
   /// <summary>
   /// A class for handling DiSEqC for Omicom devices.
@@ -51,10 +52,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DiseqcMessage
     {
-      public Int32 MessageLength;
+      public int MessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
-      public Int32 RepeatCount;       // Set to zero to send the message once, one => twice, two => three times... etc.
+      public int RepeatCount;         // Set to zero to send the message once, one => twice, two => three times... etc.
     }
 
     #endregion
@@ -82,17 +83,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Omicom: initialising device");
 
-      if (tunerFilter == null)
+      if (context == null)
       {
-        this.LogDebug("Omicom: tuner filter is null");
+        this.LogDebug("Omicom: context is null");
         return false;
       }
       if (_isOmicom)
@@ -101,16 +102,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         return true;
       }
 
-      _propertySet = tunerFilter as IKsPropertySet;
+      _propertySet = context as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Omicom: tuner filter is not a property set");
+        this.LogDebug("Omicom: context is not a property set");
         return false;
       }
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcWrite, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Omicom: device does not support the Omicom property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -131,10 +132,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Omicom: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isOmicom)
       {
@@ -181,10 +182,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         return false;
       }
 
-      Marshal.WriteInt32(_diseqcBuffer, 0, (Int32)tone22kState);
+      Marshal.WriteInt32(_diseqcBuffer, 0, (int)tone22kState);
 
-      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(Int32), _diseqcBuffer, sizeof(Int32));
-      if (hr == 0)
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Tone22k, _diseqcBuffer, sizeof(int), _diseqcBuffer, sizeof(int));
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Omicom: result = success");
         return true;
@@ -232,7 +233,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         _diseqcBuffer, DISEQC_MESSAGE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Omicom: result = success");
         return true;
@@ -269,7 +270,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
         _diseqcBuffer, DISEQC_MESSAGE_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DISEQC_MESSAGE_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != DISEQC_MESSAGE_SIZE)
       {
         this.LogDebug("Omicom: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -293,7 +294,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Omicom
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

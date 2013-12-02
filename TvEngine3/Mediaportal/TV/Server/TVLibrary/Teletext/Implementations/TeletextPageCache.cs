@@ -96,7 +96,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     public int NumberOfSubpages(int pageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException(String.Format("page is invalid:0x{0:X}", pageNumber));
+        throw new ArgumentOutOfRangeException(string.Format("page is invalid:0x{0:x}", pageNumber));
 
       if (_pageCache[pageNumber] == null)
         return -1;
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     /// <param name="subPageNumber">Subpage number</param>
     public void DeletePage(int pageNumber, int subPageNumber)
     {
-      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("DeletePage {0:X}/{1:X}", pageNumber, subPageNumber));
+      //if (pageNumber == 0x600) Trace.WriteLine(string.Format("DeletePage {0:X}/{1:X}", pageNumber, subPageNumber));
       if (subPageNumber > 0)
       {
         subPageNumber--;
@@ -206,7 +206,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     /// <param name="vbiLines">VBI lines</param>
     public void PageReceived(int pageNumber, int subPageNumber, byte[] pageData, string vbiLines)
     {
-      //if (pageNumber == 0x600) Trace.WriteLine(String.Format("PageReceived {0:X}/{1:X}", pageNumber, subPageNumber));
+      //if (pageNumber == 0x600) Trace.WriteLine(string.Format("PageReceived {0:X}/{1:X}", pageNumber, subPageNumber));
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
         throw new ArgumentOutOfRangeException("pageNumber");
 
@@ -283,11 +283,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       _checkTimer = DateTime.Now;
     }
 
-    #region IDisposable Members
-		
-		protected virtual void Dispose(bool disposing)
+    #region IDisposable members
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> when Dispose() is called explicitly.</param>
+		protected virtual void Dispose(bool isDisposing)
 		{
-		  if (disposing)
+		  if (isDisposing)
 		  {
 		    // get rid of managed resources
         Clear();

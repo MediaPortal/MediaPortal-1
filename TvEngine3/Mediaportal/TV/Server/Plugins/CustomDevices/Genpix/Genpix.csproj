@@ -8,8 +8,8 @@
     <ProjectGuid>{C8C90219-0665-43C6-B1DB-997B40012DC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Genpix</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Genpix</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.Genpix</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.Genpix</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

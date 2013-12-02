@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       }
       catch (Exception ex)
       {
-        this.LogInfo("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
+        this.LogInfo(ex, "TimeshiftingEpgGrabber: Error while retrieving the epg data: ");
       }
       if (grabbedEpg == null)
       {
@@ -166,9 +166,13 @@ namespace Mediaportal.TV.Server.TVLibrary
 
     #region IDisposable Members    
 
-    protected virtual void Dispose(bool disposing)
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> when Dispose() is called explicitly.</param>
+    protected virtual void Dispose(bool isDisposing)
     {
-      if (disposing)
+      if (isDisposing)
       {
         // get rid of managed resources
         if (!_disposed)

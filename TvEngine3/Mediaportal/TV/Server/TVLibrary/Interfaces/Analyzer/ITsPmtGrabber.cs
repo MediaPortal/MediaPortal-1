@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter PMT grabber callback interface.
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("37a1c1e3-4760-49fe-ab59-6688ada54923"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPmtCallBack
@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter PMT grabber interface.
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("6e714740-803d-4175-bef6-67246bdf1855"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsPmtGrabber

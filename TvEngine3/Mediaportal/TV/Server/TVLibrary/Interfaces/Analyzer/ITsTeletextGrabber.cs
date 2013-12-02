@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the Teletext callback 
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
    Guid("540EA3F3-C2E0-4a96-9FC2-071875962911"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITeletextCallBack
@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the Teletext grabber com object
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
    Guid("9A9E7592-A178-4a63-A210-910FD7FFEC8C"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTeletextGrabber

@@ -18,8 +18,6 @@
 
 #endregion
 
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Analog;
-
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
@@ -103,20 +101,5 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// </summary>
     /// <returns>true/false</returns>
     bool SupportsBitRate();
-
-    /// <summary>
-    /// Called when playback starts
-    /// </summary>
-    void StartPlayback();
-
-    /// <summary>
-    /// Called when record starts
-    /// </summary>
-    void StartRecord();
-
-    /// <summary>
-    /// Sets the new configuration object
-    /// </summary>
-    void SetConfiguration(Configuration configuration);
   }
 }

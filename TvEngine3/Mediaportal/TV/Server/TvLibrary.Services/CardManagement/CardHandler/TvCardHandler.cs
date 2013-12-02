@@ -209,9 +209,9 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     }
 
     /// <summary>
-    /// Does the device support conditional access?
+    /// Does the tuner support conditional access?
     /// </summary>
-    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
     public bool IsConditionalAccessSupported
     {
       get

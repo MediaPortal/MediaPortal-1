@@ -27,17 +27,18 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.Plugins.Base.Interfaces;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Digital Devices devices (and clones from Mystique).
   /// </summary>
-  public class DigitalDevices : BaseCustomDevice, IAddOnDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice, ITvServerPlugin
+  public class DigitalDevices : BaseCustomDevice, IDirectShowAddOnDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice, ITvServerPlugin
   {
     #region enums
 
@@ -65,36 +66,36 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MenuData   // DD_CAM_MENU_DATA
     {
-      public Int32 Id;
-      public Int32 Type;
-      public Int32 EntryCount;
-      public Int32 Length;
+      public int Id;
+      public int Type;
+      public int EntryCount;
+      public int Length;
       // The following strings are passed back as an inline array of
       // variable length NULL terminated strings. This makes it
       // impossible to unmarshal the struct automatically.
-      public String Title;
-      public String SubTitle;
-      public String Footer;
-      public List<String> Entries;
+      public string Title;
+      public string SubTitle;
+      public string Footer;
+      public List<string> Entries;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct MenuChoice   // DD_CAM_MENU_REPLY
     {
-      public Int32 Id;
-      public Int32 Choice;
+      public int Id;
+      public int Choice;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private struct MenuAnswer   // DD_CAM_TEXT_DATA
     {
       #pragma warning disable 0649
-      public Int32 Id;
-      public Int32 Length;
+      public int Id;
+      public int Length;
       // The following string is passed back as an inline variable
       // length NULL terminated string. This makes it impossible to
       // unmarshal the struct automatically.
-      public String Answer;
+      public string Answer;
       #pragma warning restore 0649
     }
 
@@ -105,7 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       // length NULL terminated string. This makes it impossible to
       // unmarshal the struct automatically.
       #pragma warning disable 0649
-      public String Title;
+      public string Title;
       #pragma warning restore 0649
     }
 
@@ -113,9 +114,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     {
       public IBaseFilter Filter;
       public DsDevice Device;
-      public String FilterName;
-      public String CamMenuTitle;
-      public Int32 CamMenuId;
+      public string FilterName;
+      public string CamMenuTitle;
+      public int CamMenuId;
 
       public CiContext(IBaseFilter filter, DsDevice device)
       {
@@ -128,9 +129,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         int hr = filter.QueryFilterInfo(out filterInfo);
         FilterName = filterInfo.achName;
         Release.FilterInfo(ref filterInfo);
-        if (hr != 0 || FilterName == null)
+        if (hr != (int)HResult.Severity.Success || FilterName == null)
         {
-          FilterName = String.Empty;
+          FilterName = string.Empty;
         }
         CamMenuTitle = FilterName;
       }
@@ -170,8 +171,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     private bool _ciSlotsConfigured = false;
 
     private bool _isDigitalDevices = false;
-    private String _name = "Digital Devices";
-    private String _tunerDevicePath = String.Empty;
+    private string _name = "Digital Devices";
+    private string _tunerDevicePath = string.Empty;
     private bool _isCiSlotPresent = false;
 
     // For CI/CAM interaction.
@@ -223,7 +224,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       KSPropertySupport support;
       int hr = ps.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Digital Devices: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         Release.ComObject("Digital Devices DiSEqC property set", ref ps);
@@ -319,7 +320,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
                   for (int j = 0; j < menu.EntryCount; j++)
                   {
-                    String entry = menu.Entries[j];
+                    string entry = menu.Entries[j];
                     this.LogDebug("  entry {0,-2}  = {1}", j + 1, entry);
                     if (_ciMenuCallbacks != null && !_camMessagesDisabled)
                     {
@@ -373,7 +374,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.GetMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
       int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, MENU_DATA_SIZE, ref returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         // Attempting to check for an MMI message when the menu has not previously been
         // opened seems to fail (HRESULT 0x8007001f). Don't flood the logs...
@@ -400,11 +401,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       menu.Type = Marshal.ReadInt32(_mmiBuffer, 4);
       menu.EntryCount = Marshal.ReadInt32(_mmiBuffer, 8);
       menu.Length = Marshal.ReadInt32(_mmiBuffer, 12);
-      menu.Entries = new List<String>();
+      menu.Entries = new List<string>();
       IntPtr stringPtr = IntPtr.Add(_mmiBuffer, 16);
       for (int i = 0; i < menu.EntryCount + 3; i++)
       {
-        String entry = Marshal.PtrToStringAnsi(stringPtr);
+        string entry = Marshal.PtrToStringAnsi(stringPtr);
         switch (i)
         {
           case 0:
@@ -437,7 +438,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     {
       get
       {
-        if (!String.IsNullOrEmpty(_name))
+        if (!string.IsNullOrEmpty(_name))
         {
           return _name;
         }
@@ -449,48 +450,55 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Digital Devices: initialising device");
 
-      // Digital Devices components have a common section in their device path.
-      if (String.IsNullOrEmpty(tunerDevicePath))
-      {
-        this.LogDebug("Digital Devices: tuner device path is not set");
-        return false;
-      }
       if (_isDigitalDevices)
       {
         this.LogDebug("Digital Devices: device is already initialised");
         return true;
       }
 
-      if (!tunerDevicePath.ToLowerInvariant().Contains(DigitalDevicesCiSlots.COMMON_DEVICE_PATH_SECTION))
+      IBaseFilter tunerFilter = context as IBaseFilter;
+      if (tunerFilter == null)
       {
-        this.LogDebug("Digital Devices: device path does not contain the Digital Devices common section");
+        this.LogDebug("Digital Devices: tuner filter is null");
+        return false;
+      }
+
+      // Digital Devices components have a common section in their device path.
+      if (string.IsNullOrEmpty(tunerExternalIdentifier))
+      {
+        this.LogDebug("Digital Devices: tuner external identifier is not set");
+        return false;
+      }
+      if (!tunerExternalIdentifier.ToLowerInvariant().Contains(DigitalDevicesCiSlots.COMMON_DEVICE_PATH_SECTION))
+      {
+        this.LogDebug("Digital Devices: external identifier does not contain the Digital Devices common section");
         return false;
       }
 
       this.LogDebug("Digital Devices: supported device detected");
       _isDigitalDevices = true;
-      _tunerDevicePath = tunerDevicePath;
+      _tunerDevicePath = tunerExternalIdentifier;
 
       // Read the tuner filter name.
       FilterInfo tunerFilterInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerFilterInfo);
       string tunerFilterName = tunerFilterInfo.achName;
       Release.FilterInfo(ref tunerFilterInfo);
-      if (hr != 0 || String.IsNullOrEmpty(tunerFilterName))
+      if (hr != (int)HResult.Severity.Success || string.IsNullOrEmpty(tunerFilterName))
       {
         this.LogDebug("Digital Devices: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
-        foreach (String prefix in VALID_DEVICE_NAME_PREFIXES)
+        foreach (string prefix in VALID_DEVICE_NAME_PREFIXES)
         {
           if (tunerFilterName.StartsWith(prefix))
           {
@@ -535,16 +543,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
     #endregion
 
-    #region IAddOnDevice member
+    #region IDirectShowAddOnDevice member
 
     /// <summary>
-    /// Insert and connect the device's additional filter(s) into the BDA graph.
-    /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
+    /// Insert and connect additional filter(s) into the graph.
     /// </summary>
-    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
-    ///   connect the [first] device filter to.</param>
-    /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ref IBaseFilter lastFilter)
+    /// <param name="graph">The tuner filter graph.</param>
+    /// <param name="lastFilter">The source filter (usually either a capture/receiver or
+    ///   multiplexer filter) to connect the [first] additional filter to.</param>
+    /// <returns><c>true</c> if one or more additional filters were successfully added to the graph, otherwise <c>false</c></returns>
+    public bool AddToGraph(IFilterGraph2 graph, ref IBaseFilter lastFilter)
     {
       this.LogDebug("Digital Devices: add to graph");
 
@@ -553,9 +561,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         this.LogDebug("Digital Devices: device not initialised or interface not supported");
         return false;
       }
+      if (graph == null)
+      {
+        this.LogDebug("Digital Devices: graph is null");
+        return false;
+      }
       if (lastFilter == null)
       {
-        this.LogDebug("Digital Devices: upstream filter is null");
+        this.LogDebug("Digital Devices: last filter is null");
         return false;
       }
       if (_ciContexts != null && _ciContexts.Count > 0)
@@ -564,30 +577,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;
       }
 
-      // We need a reference to the filter graph.
-      FilterInfo filterInfo;
-      int hr = lastFilter.QueryFilterInfo(out filterInfo);
-      if (hr != 0)
-      {
-        this.LogDebug("Digital Devices: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        return false;
-      }
-      _graph = filterInfo.pGraph as IFilterGraph2;
-      if (_graph == null)
-      {
-        this.LogDebug("Digital Devices: failed to get graph reference");
-        Release.FilterInfo(ref filterInfo);
-        return false;
-      }
-
       // We need a demux filter to test whether we can add any further CI filters
       // to the graph.
+      _graph = graph;
       IPin demuxInputPin = null;
       IBaseFilter tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
       try
       {
-        hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
-        if (hr != 0)
+        int hr = _graph.AddFilter(tmpDemux, "Temp MPEG2 Demultiplexer");
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("Digital Devices: failed to add test demux to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
@@ -611,14 +609,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         // This will be our list of CI contexts.
         _ciContexts = new List<CiContext>();
         _isCiSlotPresent = false;
-
-        DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
         while (true)
         {
           // Stage 1: if connection to a demux is possible then no [further] CI slots are configured
           // for this tuner. This test removes a 30 to 45 second delay when the graphbuilder tries
           // to render [capture]->[CI]->[demux].
-          if (_graph.Connect(lastFilterOutputPin, demuxInputPin) == 0)
+          if (_graph.ConnectDirect(lastFilterOutputPin, demuxInputPin, null) == 0)
           {
             this.LogDebug("Digital Devices: no [more] CI filters available or configured for this tuner");
             lastFilterOutputPin.Disconnect();
@@ -629,12 +625,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           // over all capture devices because the CI filters have to be connected in a specific order
           // which is not guaranteed to be the same as the capture device array order.
           bool addedFilter = false;
+          DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
           foreach (DsDevice captureDevice in captureDevices)
           {
             // We're looking for a Digital Devices common interface device that is not
             // already in use in any graph.
             if (!DigitalDevicesCiSlots.IsDigitalDevicesCiDevice(captureDevice))
             {
+              captureDevice.Dispose();
               continue;
             }
 
@@ -642,9 +640,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             this.LogDebug("Digital Devices: adding filter for device \"{0}\"", captureDevice.Name);
             IBaseFilter tmpCiFilter = null;
             hr = _graph.AddSourceFilterForMoniker(captureDevice.Mon, null, captureDevice.Name, out tmpCiFilter);
-            if (hr != 0 || tmpCiFilter == null)
+            if (hr != (int)HResult.Severity.Success || tmpCiFilter == null)
             {
               this.LogDebug("Digital Devices: failed to add the filter to the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              captureDevice.Dispose();
               continue;
             }
 
@@ -660,8 +659,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
                 this.LogDebug("Digital Devices: the filter doesn't have required pin(s)");
                 continue;
               }
-              hr = _graph.Connect(lastFilterOutputPin, tmpFilterInputPin);
-              if (hr != 0)
+              hr = _graph.ConnectDirect(lastFilterOutputPin, tmpFilterInputPin, null);
+              if (hr != (int)HResult.Severity.Success)
               {
                 this.LogDebug("Digital Devices: failed to connect the filter into the graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
                 continue;
@@ -670,11 +669,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             finally
             {
               Release.ComObject("Digital Devices CI filter input pin", ref tmpFilterInputPin);
-              if (hr != 0)
+              if (hr != (int)HResult.Severity.Success)
               {
                 Release.ComObject("Digital Devices CI filter output pin", ref tmpFilterOutputPin);
                 _graph.RemoveFilter(tmpCiFilter);
                 Release.ComObject("Digital Devices CI filter", ref tmpCiFilter);
+                captureDevice.Dispose();
               }
             }
 
@@ -810,12 +810,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       _mmiBuffer = Marshal.AllocCoTaskMem(MENU_DATA_SIZE);
 
       // Fill in the menu title for each CI context if possible.
-      String menuTitle;
+      string menuTitle;
       for (byte i = 0; i < _ciContexts.Count; i++)
       {
         this.LogDebug("Digital Devices: slot {0} read CAM menu title", i);
         int hr = DigitalDevicesCiSlots.GetMenuTitle(_ciContexts[i].Filter, out menuTitle);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("  title = {0}", menuTitle);
           this.LogDebug("Digital Devices: result = success");
@@ -926,7 +926,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         this.LogDebug("Digital Devices: reset slot {0} \"{1}\"", i + 1, _ciContexts[i].FilterName);
         KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.Reset, (int)KsMethodFlag.Send);
         int hr = (_ciContexts[i].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Digital Devices: result = success");
           // Reset the menu depth tracker.
@@ -1011,9 +1011,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;
       }
 
-      String provider = String.Empty;
+      string provider = string.Empty;
       DVBBaseChannel dvbChannel = channel as DVBBaseChannel;
-      UInt32 serviceId = pmt.ProgramNumber;
+      uint serviceId = pmt.ProgramNumber;
       if (dvbChannel != null)
       {
         provider = dvbChannel.Provider;
@@ -1054,7 +1054,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
             lock (_ciSlotSettings)
             {
               DigitalDevicesCiSlot globalSlot = _ciSlotSettings[_ciContexts[i].Device.DevicePath];
-              if ((provider.Equals(String.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider))
+              if ((provider.Equals(string.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider))
               {
                 this.LogDebug("    provider supported, decrypt limit status = {0}/{1}", globalSlot.CurrentTunerSet.Count, globalSlot.DecryptLimit);
                 if (globalSlot.DecryptLimit == 0 || globalSlot.CurrentTunerSet.Count < globalSlot.DecryptLimit)
@@ -1081,7 +1081,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         return true;   // Don't bother retrying.
       }
 
-      int paramSize = sizeof(Int32);
+      int paramSize = sizeof(int);
       IntPtr buffer = Marshal.AllocCoTaskMem(paramSize);
       Marshal.WriteInt32(buffer, (int)serviceId);
       DVB_MMI.DumpBinary(buffer, 0, paramSize);
@@ -1090,7 +1090,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         buffer, paramSize
       );
       Marshal.FreeCoTaskMem(buffer);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: result = success");
         return true;
@@ -1160,7 +1160,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       try
       {
-        _ciMenuCallbacks.OnCiMenu("CAM Selection", "Please select a CAM.", String.Empty, _ciContexts.Count);
+        _ciMenuCallbacks.OnCiMenu("CAM Selection", "Please select a CAM.", string.Empty, _ciContexts.Count);
         for (int i = 0; i < _ciContexts.Count; i++)
         {
           _ciMenuCallbacks.OnCiMenuChoice(i, _ciContexts[i].CamMenuTitle);
@@ -1201,7 +1201,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.EnterMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
       int hr = (_ciContexts[slot].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: result = success");
         // Future menu interactions will be passed to this CI slot/CAM.
@@ -1238,7 +1238,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CloseMenu, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
       int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, IntPtr.Zero, 0, ref returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: result = success");
         return true;
@@ -1307,7 +1307,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.MenuReply, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
       int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, MENU_CHOICE_SIZE, ref returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: result = success");
         return true;
@@ -1323,11 +1323,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, String answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("Digital Devices: slot {0} send menu answer, answer = {1}, cancel = {2}", _menuContext + 1, answer, cancel);
 
@@ -1359,7 +1359,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       KsMethod method = new KsMethod(CAM_CONTROL_METHOD_SET, (int)CamControlMethod.CamAnswer, (int)KsMethodFlag.Send);
       int returnedByteCount = 0;
       int hr = (_ciContexts[_menuContext].Filter as IKsControl).KsMethod(ref method, KS_METHOD_SIZE, _mmiBuffer, bufferSize, ref returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: result = success");
         return true;
@@ -1425,7 +1425,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       // but I don't know about the "Enable".
       bool success = true;
       int hr = _deviceControl.StartChanges();
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
@@ -1433,8 +1433,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // I'm not certain whether this property has to be set for each command sent, but we do it for safety.
       Marshal.WriteInt32(_diseqcBuffer, 0, 0);
-      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, sizeof(Int32));
-      if (hr != 0)
+      hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, sizeof(int));
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
@@ -1448,7 +1448,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
       //DVB_MMI.DumpBinary(_diseqcBuffer, 0, BDA_DISEQC_MESSAGE_SIZE);
       hr = _propertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
@@ -1456,13 +1456,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
 
       // Finalise (send) the command.
       hr = _deviceControl.CheckChanges();
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
       hr = _deviceControl.CommitChanges();
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Devices: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
@@ -1495,7 +1495,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       }
       int returnedByteCount;
       int hr = _propertySet.Get(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Response, _diseqcBuffer, INSTANCE_SIZE, _diseqcBuffer, BDA_DISEQC_MESSAGE_SIZE, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == BDA_DISEQC_MESSAGE_SIZE)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == BDA_DISEQC_MESSAGE_SIZE)
       {
         // Copy the response into the return array.
         BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_diseqcBuffer, typeof(BdaDiseqcMessage));
@@ -1519,7 +1519,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {
@@ -1530,6 +1530,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
         {
           if (context.Device != null)
           {
+            context.Device.Dispose();
             context.Device = null;
           }
           if (context.Filter != null)

@@ -25,10 +25,10 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
 {
   /// <summary>
   /// A class for handling DiSEqC and DVB-S2 tuning for Geniatech devices.
@@ -129,11 +129,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Geniatech: initialising device");
 
@@ -143,7 +143,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
         return true;
       }
 
-      bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
+      bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
       if (!result)
       {
         this.LogDebug("Geniatech: base Conexant interface not supported");
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Geniatech: device does not support the NBC parameter property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -173,10 +173,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Geniatech: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isGeniatech || _propertySet == null)
       {
@@ -235,7 +235,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, NBC_PARAMS_SIZE
       );
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -248,13 +248,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    public bool SetPowerState(PowerState state)
     {
-      this.LogDebug("Geniatech: set power state, on = {0}", powerOn);
+      this.LogDebug("Geniatech: set power state, state = {0}", state);
 
       if (!_isGeniatech || _propertySet == null)
       {
@@ -264,12 +264,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      if (powerOn)
+      if (state == PowerState.On)
       {
         Marshal.WriteInt32(_paramBuffer, 0, 1);
       }
@@ -279,9 +279,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
       }
       hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
         _instanceBuffer, INSTANCE_SIZE,
-        _paramBuffer, sizeof(Int32)
+        _paramBuffer, sizeof(int)
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Geniatech: result = success");
         return true;
@@ -296,7 +296,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Geniatech
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

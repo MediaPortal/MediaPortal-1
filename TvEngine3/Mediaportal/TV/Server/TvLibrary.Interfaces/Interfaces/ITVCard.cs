@@ -20,8 +20,8 @@
 
 using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
@@ -108,7 +108,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
 
     /// <summary>
-    /// Get the device's DiSEqC control interface. This interface is only applicable for satellite tuners.
+    /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.
     /// It is used for controlling switch, positioner and LNB settings.
     /// </summary>
     /// <value><c>null</c> if the tuner is not a satellite tuner or the tuner does not support sending/receiving
@@ -116,9 +116,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     IDiseqcController DiseqcController { get; }
 
     /// <summary>
-    /// Does the device support conditional access?
+    /// Does the tuner support conditional access?
     /// </summary>
-    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
     bool IsConditionalAccessSupported { get; }
 
     /// <summary>
@@ -180,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     List<EpgChannel> Epg { get; }
 
     /// <summary>
-    /// Get the device's channel scanning interface.
+    /// Get the tuner's channel scanning interface.
     /// </summary>
     ITVScanning ScanningInterface { get; }
 
@@ -212,8 +212,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 
     #endregion
 
-    #region quality control
-
     /// <summary>
     /// Get/Set the quality
     /// </summary>
@@ -225,11 +223,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     bool SupportsQualityControl { get; }
 
     /// <summary>
-    /// Reloads the card configuration
+    /// Reload the tuner's configuration.
     /// </summary>
-    void ReloadCardConfiguration();
-
-    #endregion
+    void ReloadConfiguration();
 
     #region properties
 

@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
       else
       {
-        SetVideoProcAmp(new Dictionary<VideoProcAmpProperty, VideoQuality>());
+        SetVideoProcAmp(new Dictionary<VideoProcAmpProperty, int>());
         videoStandardComboBox.Enabled = false;
         resolutionComboBox.Enabled = false;
         frameRateComboBox.Enabled = false;
@@ -263,29 +263,29 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       }
     }
 
-    private void SetVideoProcAmp(IDictionary<VideoProcAmpProperty, VideoQuality> map)
+    private void SetVideoProcAmp(IDictionary<VideoProcAmpProperty, int> map)
     {
-      VideoQuality quality;
+      int quality;
       if (map.ContainsKey(VideoProcAmpProperty.Brightness))
       {
         quality = map[VideoProcAmpProperty.Brightness];
-        brightnessScrollbar.Maximum = quality.MaxValue;
-        brightnessScrollbar.Minimum = quality.MinValue;
-        brightnessScrollbar.SmallChange = quality.SteppingDelta;
-        brightnessScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        brightnessScrollbar.Maximum = 100;
+        brightnessScrollbar.Minimum = 0;
+        brightnessScrollbar.SmallChange = 1;
+        brightnessScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          brightnessScrollbar.Value = quality.MaxValue;
+          brightnessScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          brightnessScrollbar.Value = quality.MinValue;
+          brightnessScrollbar.Value = 0;
         }
         else
         {
-          brightnessScrollbar.Value = quality.Value;
+          brightnessScrollbar.Value = quality;
         }
-        brightnessValue.Text = quality.Value.ToString();
+        brightnessValue.Text = quality.ToString();
         brightnessScrollbar.Enabled = true;
         brightnessValue.Enabled = true;
         label5.Enabled = true;
@@ -300,23 +300,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.Contrast))
       {
         quality = map[VideoProcAmpProperty.Contrast];
-        contrastScrollbar.Maximum = quality.MaxValue;
-        contrastScrollbar.Minimum = quality.MinValue;
-        contrastScrollbar.SmallChange = quality.SteppingDelta;
-        contrastScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        contrastScrollbar.Maximum = 100;
+        contrastScrollbar.Minimum = 0;
+        contrastScrollbar.SmallChange = 1;
+        contrastScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          contrastScrollbar.Value = quality.MaxValue;
+          contrastScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          contrastScrollbar.Value = quality.MinValue;
+          contrastScrollbar.Value = 0;
         }
         else
         {
-          contrastScrollbar.Value = quality.Value;
+          contrastScrollbar.Value = quality;
         }
-        contrastValue.Text = quality.Value.ToString();
+        contrastValue.Text = quality.ToString();
         contrastScrollbar.Enabled = true;
         contrastValue.Enabled = true;
         label6.Enabled = true;
@@ -331,23 +331,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.Hue))
       {
         quality = map[VideoProcAmpProperty.Hue];
-        hueScrollbar.Maximum = quality.MaxValue;
-        hueScrollbar.Minimum = quality.MinValue;
-        hueScrollbar.SmallChange = quality.SteppingDelta;
-        hueScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        hueScrollbar.Maximum = 100;
+        hueScrollbar.Minimum = 0;
+        hueScrollbar.SmallChange = 1;
+        hueScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          hueScrollbar.Value = quality.MaxValue;
+          hueScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          hueScrollbar.Value = quality.MinValue;
+          hueScrollbar.Value = 0;
         }
         else
         {
-          hueScrollbar.Value = quality.Value;
+          hueScrollbar.Value = quality;
         }
-        hueValue.Text = quality.Value.ToString();
+        hueValue.Text = quality.ToString();
         hueScrollbar.Enabled = true;
         hueValue.Enabled = true;
         label7.Enabled = true;
@@ -362,23 +362,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.Saturation))
       {
         quality = map[VideoProcAmpProperty.Saturation];
-        saturationScrollbar.Maximum = quality.MaxValue;
-        saturationScrollbar.Minimum = quality.MinValue;
-        saturationScrollbar.SmallChange = quality.SteppingDelta;
-        saturationScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        saturationScrollbar.Maximum = 100;
+        saturationScrollbar.Minimum = 0;
+        saturationScrollbar.SmallChange = 1;
+        saturationScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          saturationScrollbar.Value = quality.MaxValue;
+          saturationScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          saturationScrollbar.Value = quality.MinValue;
+          saturationScrollbar.Value = 0;
         }
         else
         {
-          saturationScrollbar.Value = quality.Value;
+          saturationScrollbar.Value = quality;
         }
-        saturationValue.Text = quality.Value.ToString();
+        saturationValue.Text = quality.ToString();
         saturationScrollbar.Enabled = true;
         saturationValue.Enabled = true;
         label8.Enabled = true;
@@ -393,23 +393,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.Sharpness))
       {
         quality = map[VideoProcAmpProperty.Sharpness];
-        sharpnessScrollbar.Maximum = quality.MaxValue;
-        sharpnessScrollbar.Minimum = quality.MinValue;
-        sharpnessScrollbar.SmallChange = quality.SteppingDelta;
-        sharpnessScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        sharpnessScrollbar.Maximum = 100;
+        sharpnessScrollbar.Minimum = 0;
+        sharpnessScrollbar.SmallChange = 1;
+        sharpnessScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          sharpnessScrollbar.Value = quality.MaxValue;
+          sharpnessScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          sharpnessScrollbar.Value = quality.MinValue;
+          sharpnessScrollbar.Value = 0;
         }
         else
         {
-          sharpnessScrollbar.Value = quality.Value;
+          sharpnessScrollbar.Value = quality;
         }
-        sharpnessValue.Text = quality.Value.ToString();
+        sharpnessValue.Text = quality.ToString();
         sharpnessScrollbar.Enabled = true;
         sharpnessValue.Enabled = true;
         label9.Enabled = true;
@@ -424,23 +424,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.Gamma))
       {
         quality = map[VideoProcAmpProperty.Gamma];
-        gammaScrollbar.Maximum = quality.MaxValue;
-        gammaScrollbar.Minimum = quality.MinValue;
-        gammaScrollbar.SmallChange = quality.SteppingDelta;
-        gammaScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        gammaScrollbar.Maximum = 100;
+        gammaScrollbar.Minimum = 0;
+        gammaScrollbar.SmallChange = 1;
+        gammaScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          gammaScrollbar.Value = quality.MaxValue;
+          gammaScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          gammaScrollbar.Value = quality.MinValue;
+          gammaScrollbar.Value = 0;
         }
         else
         {
-          gammaScrollbar.Value = quality.Value;
+          gammaScrollbar.Value = quality;
         }
-        gammaValue.Text = quality.Value.ToString();
+        gammaValue.Text = quality.ToString();
         gammaScrollbar.Enabled = true;
         gammaValue.Enabled = true;
         label10.Enabled = true;
@@ -455,23 +455,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.ColorEnable))
       {
         quality = map[VideoProcAmpProperty.ColorEnable];
-        colorEnableScrollbar.Maximum = quality.MaxValue;
-        colorEnableScrollbar.Minimum = quality.MinValue;
-        colorEnableScrollbar.SmallChange = quality.SteppingDelta;
-        colorEnableScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        colorEnableScrollbar.Maximum = 100;
+        colorEnableScrollbar.Minimum = 0;
+        colorEnableScrollbar.SmallChange = 1;
+        colorEnableScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          colorEnableScrollbar.Value = quality.MaxValue;
+          colorEnableScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          colorEnableScrollbar.Value = quality.MinValue;
+          colorEnableScrollbar.Value = 0;
         }
         else
         {
-          colorEnableScrollbar.Value = quality.Value;
+          colorEnableScrollbar.Value = quality;
         }
-        colorEnableValue.Text = quality.Value.ToString();
+        colorEnableValue.Text = quality.ToString();
         colorEnableScrollbar.Enabled = true;
         colorEnableValue.Enabled = true;
         label11.Enabled = true;
@@ -486,23 +486,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.WhiteBalance))
       {
         quality = map[VideoProcAmpProperty.WhiteBalance];
-        whiteBalanceScrollbar.Maximum = quality.MaxValue;
-        whiteBalanceScrollbar.Minimum = quality.MinValue;
-        whiteBalanceScrollbar.SmallChange = quality.SteppingDelta;
-        whiteBalanceScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        whiteBalanceScrollbar.Maximum = 100;
+        whiteBalanceScrollbar.Minimum = 0;
+        whiteBalanceScrollbar.SmallChange = 1;
+        whiteBalanceScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          whiteBalanceScrollbar.Value = quality.MaxValue;
+          whiteBalanceScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          whiteBalanceScrollbar.Value = quality.MinValue;
+          whiteBalanceScrollbar.Value = 0;
         }
         else
         {
-          whiteBalanceScrollbar.Value = quality.Value;
+          whiteBalanceScrollbar.Value = quality;
         }
-        whiteBalanceValue.Text = quality.Value.ToString();
+        whiteBalanceValue.Text = quality.ToString();
         whiteBalanceScrollbar.Enabled = true;
         whiteBalanceValue.Enabled = true;
         label12.Enabled = true;
@@ -517,23 +517,23 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       if (map.ContainsKey(VideoProcAmpProperty.BacklightCompensation))
       {
         quality = map[VideoProcAmpProperty.BacklightCompensation];
-        backlightCompensationScrollbar.Maximum = quality.MaxValue;
-        backlightCompensationScrollbar.Minimum = quality.MinValue;
-        backlightCompensationScrollbar.SmallChange = quality.SteppingDelta;
-        backlightCompensationScrollbar.LargeChange = quality.SteppingDelta;
-        if (quality.Value > quality.MaxValue)
+        backlightCompensationScrollbar.Maximum = 100;
+        backlightCompensationScrollbar.Minimum = 0;
+        backlightCompensationScrollbar.SmallChange = 1;
+        backlightCompensationScrollbar.LargeChange = 1;
+        if (quality > 100)
         {
-          backlightCompensationScrollbar.Value = quality.MaxValue;
+          backlightCompensationScrollbar.Value = 100;
         }
-        else if (quality.Value < quality.MinValue)
+        else if (quality < 0)
         {
-          backlightCompensationScrollbar.Value = quality.MinValue;
+          backlightCompensationScrollbar.Value = 0;
         }
         else
         {
-          backlightCompensationScrollbar.Value = quality.Value;
+          backlightCompensationScrollbar.Value = quality;
         }
-        backlightCompensationValue.Text = quality.Value.ToString();
+        backlightCompensationValue.Text = quality.ToString();
         backlightCompensationScrollbar.Enabled = true;
         backlightCompensationValue.Enabled = true;
         label13.Enabled = true;
@@ -572,7 +572,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         case VIDEOENCODER_BITRATE_MODE.VariableBitRatePeak:
           vbrPeakRecord.Select();
           break;
-      }
+    }
     }
 
     private void SetBitRate()
@@ -857,8 +857,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
-        temp.VideoSource = CaptureVideoSource.Tuner;
-        temp.AudioSource = CaptureAudioSource.Tuner;
+        temp.VideoSource = CaptureSourceVideo.Tuner;
+        temp.AudioSource = CaptureSourceAudio.Tuner;
         temp.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
         
         temp.MediaType = MediaTypeEnum.TV;
@@ -911,8 +911,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           channel.ChannelNumber = channelNr;
           channel.MediaType = MediaTypeEnum.TV;
           
-          channel.VideoSource = CaptureVideoSource.Tuner;
-          channel.AudioSource = CaptureAudioSource.Automatic;
+          channel.VideoSource = CaptureSourceVideo.Tuner;
+          channel.AudioSource = CaptureSourceAudio.Automatic;
           string line = String.Format("channel:{0} source:{1} ", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -1011,7 +1011,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-      catch (TvExceptionDeviceLoadFailed)
+      catch (TvExceptionTunerLoadFailed)
       {
         this.LogError("analog: DoTvScan error (missing software encoder)");
         MessageBox.Show(
@@ -1078,8 +1078,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         AnalogChannel radioChannel = new AnalogChannel();
         radioChannel.Frequency = 96000000;
         radioChannel.MediaType = MediaTypeEnum.Radio;
-        radioChannel.VideoSource = CaptureVideoSource.Tuner;
-        radioChannel.AudioSource = CaptureAudioSource.Automatic;
+        radioChannel.VideoSource = CaptureSourceVideo.Tuner;
+        radioChannel.AudioSource = CaptureSourceAudio.Automatic;
         if (!ServiceAgents.Instance.ControllerServiceAgent.CanTune(_cardNumber, radioChannel))
         {
           MessageBox.Show(this, "The Tv Card does not support radio");
@@ -1164,8 +1164,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
           AnalogChannel channel = new AnalogChannel();
           channel.MediaType = MediaTypeEnum.Radio;
           channel.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
-          channel.VideoSource = CaptureVideoSource.Tuner;
-          channel.AudioSource = CaptureAudioSource.Automatic;
+          channel.VideoSource = CaptureSourceVideo.Tuner;
+          channel.AudioSource = CaptureSourceAudio.Automatic;
           channel.Country = countries.Countries[mpComboBoxCountry.SelectedIndex];
           channel.Frequency = freq;
           
@@ -1277,8 +1277,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = TunerInputType.Antenna;
-        temp.VideoSource = CaptureVideoSource.Tuner;
-        temp.AudioSource = CaptureAudioSource.Tuner;
+        temp.VideoSource = CaptureSourceVideo.Tuner;
+        temp.AudioSource = CaptureSourceAudio.Tuner;
         
         temp.MediaType = MediaTypeEnum.TV;
         ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);
@@ -1291,12 +1291,12 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ReCheckSettings();
       }
 
-      
-      Dictionary<CaptureVideoSource, int> videoPinMap = _configuration.Graph.Crossbar.VideoPinMap;
+      // TODO this information is no longer available - need another way to add one channel per input
+      Dictionary<CaptureSourceVideo, int> videoPinMap = new Dictionary<CaptureSourceVideo, int>();
       AnalogChannel tuningDetail;
       Card card = ServiceAgents.Instance.CardServiceAgent.GetCardByDevicePath(ServiceAgents.Instance.ControllerServiceAgent.CardDevice(_cardNumber));
       Channel dbChannel;
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Composite1))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite1))
       {
         string channelName = "CVBS#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1313,13 +1313,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Composite1;
+        tuningDetail.VideoSource = CaptureSourceVideo.Composite1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         MappingHelper.AddChannelToGroup(ref dbChannel, TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);        
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Composite2))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite2))
       {
         string channelName = "CVBS#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1336,7 +1336,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Composite2;
+        tuningDetail.VideoSource = CaptureSourceVideo.Composite2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
@@ -1344,7 +1344,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
 
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Composite3))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Composite3))
       {
         string channelName = "CVBS#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1362,7 +1362,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Composite3;
+        tuningDetail.VideoSource = CaptureSourceVideo.Composite3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
@@ -1370,7 +1370,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
         
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Svideo1))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo1))
       {
         string channelName = "S-Video#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1387,14 +1387,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Svideo1;
+        tuningDetail.VideoSource = CaptureSourceVideo.Svideo1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Svideo2))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo2))
       {
         string channelName = "S-Video#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1411,14 +1411,14 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Svideo2;
+        tuningDetail.VideoSource = CaptureSourceVideo.Svideo2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
 
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Svideo3))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Svideo3))
       {
         string channelName = "S-Video#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1435,13 +1435,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Svideo3;
+        tuningDetail.VideoSource = CaptureSourceVideo.Svideo3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Rgb1))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb1))
       {
         string channelName = "RGB#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1458,13 +1458,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Rgb1;
+        tuningDetail.VideoSource = CaptureSourceVideo.Rgb1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Rgb2))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb2))
       {
         string channelName = "RGB#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1481,13 +1481,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Rgb2;
+        tuningDetail.VideoSource = CaptureSourceVideo.Rgb2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Rgb3))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Rgb3))
       {
         string channelName = "RGB#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1504,13 +1504,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Rgb3;
+        tuningDetail.VideoSource = CaptureSourceVideo.Rgb3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Yryby1))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby1))
       {
         string channelName = "YRYBY#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1527,13 +1527,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Yryby1;
+        tuningDetail.VideoSource = CaptureSourceVideo.Yryby1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Yryby2))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby2))
       {
         string channelName = "YRYBY#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1550,7 +1550,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Yryby2;
+        tuningDetail.VideoSource = CaptureSourceVideo.Yryby2;
 
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);
 
@@ -1559,7 +1559,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);        
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Yryby3))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Yryby3))
       {
         string channelName = "YRYBY#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1576,13 +1576,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Yryby3;
+        tuningDetail.VideoSource = CaptureSourceVideo.Yryby3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Hdmi1))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi1))
       {
         string channelName = "HDMI#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1599,13 +1599,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Hdmi1;
+        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi1;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Hdmi2))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi2))
       {
         string channelName = "HDMI#2 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1622,13 +1622,13 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Hdmi2;
+        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi2;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
         MappingHelper.AddChannelToGroup(ref dbChannel, @group);
       }
-      if (videoPinMap.ContainsKey(CaptureVideoSource.Hdmi3))
+      if (videoPinMap.ContainsKey(CaptureSourceVideo.Hdmi3))
       {
         string channelName = "HDMI#3 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = ServiceAgents.Instance.ChannelServiceAgent.GetTuningDetailsByName(channelName, 0);
@@ -1645,7 +1645,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         tuningDetail = new AnalogChannel();
         tuningDetail.MediaType = MediaTypeEnum.TV;
         tuningDetail.Name = dbChannel.DisplayName;
-        tuningDetail.VideoSource = CaptureVideoSource.Hdmi3;
+        tuningDetail.VideoSource = CaptureSourceVideo.Hdmi3;
         ServiceAgents.Instance.ChannelServiceAgent.AddTuningDetail(dbChannel.IdChannel, tuningDetail);        
         MappingHelper.AddChannelToCard(dbChannel, card, false);
         ChannelGroup group = ServiceAgents.Instance.ChannelGroupServiceAgent.GetOrCreateGroup(TvConstants.TvGroupNames.AllChannels, MediaTypeEnum.TV);
@@ -1700,8 +1700,8 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
         user = new User();
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
-        temp.VideoSource = CaptureVideoSource.Tuner;
-        temp.AudioSource = CaptureAudioSource.Tuner;
+        temp.VideoSource = CaptureSourceVideo.Tuner;
+        temp.AudioSource = CaptureSourceAudio.Tuner;
         
         temp.MediaType = MediaTypeEnum.TV;
         ServiceAgents.Instance.ControllerServiceAgent.Tune(user.Name, user.CardId, out user, temp, -1);

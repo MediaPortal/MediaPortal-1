@@ -18,19 +18,20 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
-  /// An interface for devices that are capable of supplying power to other connected elements such as
-  /// aerials, LNBs, amplifiers and switches.
+  /// An interface for tuners that are responsible for supplying power to other connected elements
+  /// (such as aerials, LNBs, amplifiers and switches) or that can be manually powered down/up to
+  /// reduce power consumption.
   /// </summary>
   public interface IPowerDevice : ICustomDevice
   {
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    bool SetPowerState(bool powerOn);
+    bool SetPowerState(PowerState state);
   }
 }

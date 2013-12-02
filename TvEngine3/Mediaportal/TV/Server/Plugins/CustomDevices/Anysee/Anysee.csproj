@@ -8,8 +8,8 @@
     <ProjectGuid>{4EA595FF-5FCD-4CE3-9338-2F91983E1962}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Anysee</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Anysee</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.Anysee</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.Anysee</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -52,6 +52,10 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\MicrosoftBda\MicrosoftBda.csproj">
+      <Project>{4345B8A4-5656-4C50-8457-EDCF761E72E6}</Project>
+      <Name>MicrosoftBda</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

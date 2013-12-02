@@ -8,8 +8,8 @@
     <ProjectGuid>{007A75BA-726A-426A-A874-F376F483AD87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Omicom</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Omicom</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.Omicom</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.Omicom</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

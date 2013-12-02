@@ -19,17 +19,17 @@
 #endregion
 
 using System;
-using DirectShowLib;
+using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
 {
   /// <summary>
   /// This class provides clear QAM tuning support for ATSC/QAM devices that use ViXS chipsets/demodulators, such
   /// as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
   /// </summary>
-  public class ViXS : Microsoft.Microsoft
+  public class ViXS : MicrosoftBda.MicrosoftBda
   {
     #region constants
 
@@ -85,11 +85,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("ViXS: initialising device");
 
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
         this.LogDebug("ViXS: tuner type {0} is not supported", tunerType);
         return false;
       }
-      bool result = base.Initialise(tunerFilter, tunerType, tunerDevicePath);
+      bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
       if (!result)
       {
         this.LogDebug("ViXS: base Microsoft interface not supported");
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.ViXS
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

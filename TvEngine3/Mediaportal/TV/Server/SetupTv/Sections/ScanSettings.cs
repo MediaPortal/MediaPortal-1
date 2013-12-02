@@ -222,6 +222,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
     private void BuildLists()
     {
+      // TODO this needs fixing - it assumes that TV Server configuration is running on the same PC as the service
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
       DsDevice[] devices3 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
@@ -233,20 +234,17 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         found = false;
         DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
-        if (devices1.Any(t => t.Name == encoder.Name))
+        if (devices1.Any(t => t != null && t.Name == encoder.Name))
         {
           found = true;
           displayEncoder.Installed = "Yes";
         }
         if (!found)
         {
-          for (int i = 0; i < devices3.Length; i++)
+          if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
-            if (devices3[i].Name == encoder.Name)
-            {
-              displayEncoder.Installed = "Yes";
-              break;
-            }
+            displayEncoder.Installed = "Yes";
+            break;
           }
         }
         _bindingVideoEncoders.Add(displayEncoder);
@@ -259,29 +257,45 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       {
         found = false;
         DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
-        for (int i = 0; i < devices2.Length; i++)
+        if (devices2.Any(t => t != null && t.Name == encoder.Name))
         {
-          if (devices2[i].Name == encoder.Name)
-          {
-            found = true;
-            displayEncoder.Installed = "Yes";
-            break;
-          }
+          found = true;
+          displayEncoder.Installed = "Yes";
+          break;
         }
         if (!found)
         {
-          for (int i = 0; i < devices3.Length; i++)
+          if (devices3.Any(t => t != null && t.Name == encoder.Name))
           {
-            if (devices3[i].Name == encoder.Name)
-            {
-              displayEncoder.Installed = "Yes";
-              break;
-            }
+            displayEncoder.Installed = "Yes";
+            break;
           }
         }
         _bindingAudioEncoders.Add(displayEncoder);
       }
       mpListViewAudio.DataSource = _bindingAudioEncoders;
+
+      foreach (DsDevice d in devices1)
+      {
+        if (d != null)
+        {
+          d.Dispose();
+        }
+      }
+      foreach (DsDevice d in devices2)
+      {
+        if (d != null)
+        {
+          d.Dispose();
+        }
+      }
+      foreach (DsDevice d in devices3)
+      {
+        if (d != null)
+        {
+          d.Dispose();
+        }
+      }
     }
 
     private void MoveEncodersUp(DataGridView grid, BindingList<DisplaySoftwareEncoder> list)

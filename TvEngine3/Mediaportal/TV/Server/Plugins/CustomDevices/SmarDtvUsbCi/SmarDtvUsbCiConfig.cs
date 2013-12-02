@@ -31,7 +31,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 {
   public partial class SmarDtvUsbCiConfig : SectionSettings
   {
@@ -81,62 +81,72 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi
       IList<Card> dbTuners = _cardServiceAgent.ListAllCards();
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
 
-      for (int i = 0; i < _products.Count; i++)
+      try
       {
-        this.LogDebug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
-
-        // Populate the tuner selection fields and set current values.
-        int setting = _settingServiceAgent.GetValue(_products[i].DbSettingName, -1);
-        _tunerSelections[i].Items.Clear();
-        _tunerSelections[i].SelectedIndex = -1;
-
-        foreach (Card tuner in dbTuners)
+        for (int i = 0; i < _products.Count; i++)
         {
-          CardType tunerType = _controllerServiceAgent.Type(tuner.IdCard);
-          if (tunerType == CardType.Analog || tunerType == CardType.RadioWebStream || tunerType == CardType.Unknown)
-          {
-            continue;
-          }
-          _tunerSelections[i].Items.Add(tuner);
-          if (tuner.IdCard.Equals(setting))
-          {
-            this.LogDebug("  currently linked to tuner {0} ({1})", tuner.IdCard, tuner.Name);
-            _tunerSelections[i].SelectedItem = tuner;
-          }
-        }
+          this.LogDebug("SmarDTV USB CI config: product {0}...", _products[i].ProductName);
 
-        // Check whether the CI is installed in the system. We disable the selection field if it is
-        // not installed.
-        bool found = false;
-        _tunerSelections[i].Enabled = false;
-        foreach (DsDevice device in captureDevices)
-        {
-          if (device.Name != null)
+          // Populate the tuner selection fields and set current values.
+          int setting = _settingServiceAgent.GetValue(_products[i].DbSettingName, -1);
+          _tunerSelections[i].Items.Clear();
+          _tunerSelections[i].SelectedIndex = -1;
+
+          foreach (Card tuner in dbTuners)
           {
-            if (device.Name.Equals(_products[i].WdmDeviceName))
+            CardType tunerType = _controllerServiceAgent.Type(tuner.IdCard);
+            if (tunerType == CardType.Analog || tunerType == CardType.RadioWebStream || tunerType == CardType.Unknown)
             {
-              this.LogDebug("  WDM driver installed");
-              _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed with the WDM driver.";
-              _installStateLabels[i].ForeColor = Color.Orange;
-              found = true;
-              break;
+              continue;
             }
-            else if (device.Name.Equals(_products[i].BdaDeviceName))
+            _tunerSelections[i].Items.Add(tuner);
+            if (tuner.IdCard.Equals(setting))
             {
-              this.LogDebug("  BDA driver installed");
-              _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed correctly.";
-              _installStateLabels[i].ForeColor = Color.ForestGreen;
-              _tunerSelections[i].Enabled = true;
-              found = true;
-              break;
+              this.LogDebug("  currently linked to tuner {0} ({1})", tuner.IdCard, tuner.Name);
+              _tunerSelections[i].SelectedItem = tuner;
             }
           }
+
+          // Check whether the CI is installed in the system. We disable the selection field if it is
+          // not installed.
+          bool found = false;
+          _tunerSelections[i].Enabled = false;
+          foreach (DsDevice device in captureDevices)
+          {
+            if (device.Name != null)
+            {
+              if (device.Name.Equals(_products[i].WdmDeviceName))
+              {
+                this.LogDebug("  WDM driver installed");
+                _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed with the WDM driver.";
+                _installStateLabels[i].ForeColor = Color.Orange;
+                found = true;
+                break;
+              }
+              else if (device.Name.Equals(_products[i].BdaDeviceName))
+              {
+                this.LogDebug("  BDA driver installed");
+                _installStateLabels[i].Text = "The " + _products[i].ProductName + " is installed correctly.";
+                _installStateLabels[i].ForeColor = Color.ForestGreen;
+                _tunerSelections[i].Enabled = true;
+                found = true;
+                break;
+              }
+            }
+          }
+          if (!found)
+          {
+            this.LogDebug("  driver not installed");
+            _installStateLabels[i].Text = "The " + _products[i].ProductName + " is not detected.";
+            _installStateLabels[i].ForeColor = Color.Red;
+          }
         }
-        if (!found)
+      }
+      finally
+      {
+        foreach (DsDevice d in captureDevices)
         {
-          this.LogDebug("  driver not installed");
-          _installStateLabels[i].Text = "The " + _products[i].ProductName + " is not detected.";
-          _installStateLabels[i].ForeColor = Color.Red;
+          d.Dispose();
         }
       }
 

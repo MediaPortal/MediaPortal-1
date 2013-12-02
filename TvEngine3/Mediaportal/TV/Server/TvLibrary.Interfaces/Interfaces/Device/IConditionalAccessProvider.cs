@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
   /// An interface for devices that implement conditional access features (most commonly service decryption).
@@ -30,9 +30,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// that any necessary hardware (such as a CI slot) is connected.
     /// </summary>
     /// <remarks>
-    /// The interface may not be able to respond to commands immediately. Some providers only attempt to
-    /// initialise hardware when the interface is opened, and initialising the hardware may take in the
-    /// order of ten seconds.
+    /// This function should be called as the first interaction with the interface. The interface may not
+    /// be able to respond to commands immediately. Some providers only attempt to initialise hardware
+    /// when the interface is opened, and initialising the hardware may take in the order of ten seconds.
     /// </remarks>
     /// <returns><c>true</c> if the interface is successfully opened, otherwise <c>false</c></returns>
     bool OpenInterface();
@@ -41,8 +41,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// Close the conditional access interface.
     /// </summary>
     /// <remarks>
-    /// It is expected that it would be unnecessary to call this function directly. Disposing the
-    /// ICustomDevice instance should automatically close the interface.
+    /// In general this function should only be called if the interface is open, however the provider will
+    /// not return an error if the interface is not open. It is expected that it would be unnecessary to
+    /// call this function directly. Disposing the <see cref="ICustomDevice"/> instance should automatically
+    /// close the interface.
     /// </remarks>
     /// <returns><c>true</c> if the interface is successfully closed, otherwise <c>false</c></returns>
     bool CloseInterface();

@@ -21,7 +21,7 @@
 using System;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc
 {
   #region enums
 

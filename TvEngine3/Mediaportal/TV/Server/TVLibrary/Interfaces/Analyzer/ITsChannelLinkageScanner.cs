@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the channel linkage scanner com object
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
    Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelLinkageScanner
@@ -63,8 +63,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetChannel([In] uint channelIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id,
-                   [In, Out] ref UInt16 service_id);
+    int GetChannel([In] uint channelIndex, [In, Out] ref ushort network_id, [In, Out] ref ushort transport_id,
+                   [In, Out] ref ushort service_id);
 
     /// <summary>
     /// Gets the number of linked channels for a channel
@@ -86,8 +86,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="name">The channel name</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref UInt16 network_id,
-                         [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id, out IntPtr name);
+    int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref ushort network_id,
+                         [In, Out] ref ushort transport_id, [In, Out] ref ushort service_id, out IntPtr name);
 
 
     /// <summary>

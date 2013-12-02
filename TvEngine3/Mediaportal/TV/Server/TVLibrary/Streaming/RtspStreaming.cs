@@ -92,7 +92,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
@@ -324,7 +324,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
       Dictionary<string, RtspStream>.Enumerator enumer = _streams.GetEnumerator();
       while (enumer.MoveNext())
       {
-        if (String.Compare(fileName, enumer.Current.Value.FileName, true) == 0)
+        if (string.Compare(fileName, enumer.Current.Value.FileName, true) == 0)
         {
           Remove(enumer.Current.Key);
           return;
@@ -387,8 +387,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
           {
             if (queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
             {
-              String[] arrDefaultIPGateway = (String[])(queryObj["DefaultIPGateway"]);
-              String[] arrIPAddress = (String[])(queryObj["IPAddress"]);
+              string[] arrDefaultIPGateway = (string[])(queryObj["DefaultIPGateway"]);
+              string[] arrIPAddress = (string[])(queryObj["IPAddress"]);
               if (arrDefaultIPGateway.Length > 0 && arrIPAddress.Length > 0)
               {
                 foreach (string address in arrIPAddress)

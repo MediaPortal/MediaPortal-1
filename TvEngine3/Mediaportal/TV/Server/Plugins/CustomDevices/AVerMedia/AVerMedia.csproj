@@ -8,8 +8,8 @@
     <ProjectGuid>{3CA0D0E7-B40D-489C-9BE2-AC27CB5D9F2A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -53,9 +53,9 @@
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft\Microsoft.csproj">
+    <ProjectReference Include="..\MicrosoftBda\MicrosoftBda.csproj">
       <Project>{4345B8A4-5656-4C50-8457-EDCF761E72E6}</Project>
-      <Name>Microsoft</Name>
+      <Name>MicrosoftBda</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

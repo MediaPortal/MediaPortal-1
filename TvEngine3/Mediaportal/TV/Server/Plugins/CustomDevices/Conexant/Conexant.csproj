@@ -8,8 +8,8 @@
     <ProjectGuid>{C2D16A07-744D-41DA-8030-778407BE83DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Conexant</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Conexant</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.Conexant</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.Conexant</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

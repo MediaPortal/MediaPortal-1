@@ -8,8 +8,8 @@
     <ProjectGuid>{441E49F8-4CA1-4D81-9AE8-ED6A41542C88}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.Knc</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.Knc</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.Knc</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.Knc</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

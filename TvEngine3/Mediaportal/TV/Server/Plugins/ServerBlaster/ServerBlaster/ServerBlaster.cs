@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.Plugins.ServerBlaster
     private bool _send;
     private bool _sending;
     private bool _running;
-    private CaptureVideoSource _videoInputType;
+    private CaptureSourceVideo _videoInputType;
 
     #endregion Members
   }

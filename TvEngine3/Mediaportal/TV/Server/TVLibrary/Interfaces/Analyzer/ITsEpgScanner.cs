@@ -27,7 +27,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// Interface to the epg grabber com object
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
    Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsEpgScanner
@@ -73,8 +73,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGChannel([In] uint channel, [In, Out] ref UInt16 networkId, [In, Out] ref UInt16 transportid,
-                      [In, Out] ref UInt16 service_id);
+    int GetEPGChannel([In] uint channel, [In, Out] ref ushort networkId, [In, Out] ref ushort transportid,
+                      [In, Out] ref ushort service_id);
 
     /// <summary>
     /// Gets the EPG event details.
@@ -152,7 +152,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetMHWTitle(uint program, ref uint id, ref uint transportId, ref uint networkId, ref uint channelId,
-                    ref UInt32 programId, ref uint themeId, ref uint PPV, ref byte Summaries, ref uint duration,
+                    ref uint programId, ref uint themeId, ref uint PPV, ref byte Summaries, ref uint duration,
                     ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
 
     /// <summary>
@@ -175,7 +175,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="summary">The summary.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWSummary(UInt32 programId, out IntPtr summary);
+    int GetMHWSummary(uint programId, out IntPtr summary);
 
     /// <summary>
     /// Gets the MHW theme.

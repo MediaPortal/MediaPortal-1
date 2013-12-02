@@ -8,8 +8,8 @@
     <ProjectGuid>{AEEF96AB-0019-42A6-BED7-60C4DF42D94F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.MdPlugin</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -37,7 +37,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MdPlug.cs" />
+    <Compile Include="MdPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -716,6 +716,9 @@ namespace DirectShowLib
     LangC = 0x0040,
   }
 
+  /*
+   * Redefined in MediaPortalCustomisations.cs.
+   * 
   /// <summary>
   /// From VideoProcAmpProperty
   /// </summary>
@@ -731,7 +734,7 @@ namespace DirectShowLib
     WhiteBalance,
     BacklightCompensation,
     Gain
-  }
+  }*/
 
   /// <summary>
   /// From VideoProcAmpFlags

@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.ChannelLinkage;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DVB.Graphs;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;

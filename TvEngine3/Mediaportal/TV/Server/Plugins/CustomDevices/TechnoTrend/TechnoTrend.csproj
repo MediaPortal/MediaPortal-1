@@ -8,8 +8,8 @@
     <ProjectGuid>{8D592086-9059-418E-9C7F-1A850A09B663}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

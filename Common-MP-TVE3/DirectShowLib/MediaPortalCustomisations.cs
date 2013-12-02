@@ -91,6 +91,28 @@ namespace DirectShowLib
     SECAMMask = 0x000FF000
   }
 
+  /// <summary>
+  /// From VideoProcAmpProperty
+  /// </summary>
+  public enum VideoProcAmpProperty
+  {
+    Brightness,
+    Contrast,
+    Hue,
+    Saturation,
+    Sharpness,
+    Gamma,
+    ColorEnable,
+    WhiteBalance,
+    BacklightCompensation,
+    Gain,
+    // Properties in KsMedia.h, missing in AXExtend.cs added here.
+    DigitalMultiplier,
+    DigitalMultiplierLimit,
+    WhiteBalanceComponent,
+    PowerLineFrequency
+  }
+
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("70423839-6ACC-4b23-B079-21DBF08156A5"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -114,7 +136,7 @@ namespace DirectShowLib
     [PreserveSig]
     int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [Out] out object[] Values,
+      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr. ***
       [Out] out int ValuesCount
       );
 
@@ -153,35 +175,35 @@ namespace DirectShowLib
     [PreserveSig]
     new int GetParameterRange(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object ValueMin,
-        [Out] out object ValueMax,
-        [Out] out object SteppingDelta
-        );
+      [Out] out object ValueMin,
+      [Out] out object ValueMax,
+      [Out] out object SteppingDelta
+      );
 
     [PreserveSig]
     new int GetParameterValues(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object[] Values,
-        [Out] out int ValuesCount
-        );
+      [Out] out IntPtr Values,  // *** Changed from object[] to IntPtr. ***
+      [Out] out int ValuesCount
+      );
 
     [PreserveSig]
     new int GetDefaultValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int GetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-        [Out] out object Value
-        );
+      [Out] out object Value
+      );
 
     [PreserveSig]
     new int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
       [In] ref object Value     // *** Changed to ref. ***
-        );
+      );
 
     #endregion
   }
@@ -255,6 +277,68 @@ namespace DirectShowLib.BDA
 
     [PreserveSig]
     int get_FrequencyMultiplier([Out] out int pulMultiplier);
+  }
+
+  [ComImport, SuppressUnmanagedCodeSecurity,
+   Guid("CD51F1E0-7BE9-4123-8482-A2A796C0A6B0"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IBDA_ConditionalAccess
+  {
+    [PreserveSig]
+    int get_SmartCardStatus(
+      [Out] out SmartCardStatusType pCardStatus,
+      [Out] out SmartCardAssociationType pCardAssociation,
+      [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrCardError,
+      [Out, MarshalAs(UnmanagedType.VariantBool)] out bool pfOOBLocked
+      );
+
+    [PreserveSig]
+    int get_SmartCardInfo(
+      [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrCardName,
+      [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrCardManufacturer,
+      [Out, MarshalAs(UnmanagedType.VariantBool)] out bool pfDaylightSavings,
+      [Out] out byte pbyRatingRegion,
+      [Out] out int plTimeZoneOffsetMinutes,
+      [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrLanguage,
+      [Out] out EALocationCodeType pEALocationCode
+      );
+
+    [PreserveSig]
+    int get_SmartCardApplications(
+      [Out] out int pulcApplications,   // *** Changed from in/out ref to out. ***
+      [In] int ulcApplicationsMax,
+      [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStruct, SizeParamIndex = 1)] SmartCardApplication[] rgApplications  // *** Changed from in/out to out with marshaling parameters. ***
+      );
+
+    [PreserveSig]
+    int get_Entitlement(
+      [In] short usVirtualChannel,
+      [Out] out EntitlementType pEntitlement
+      );
+
+    [PreserveSig]
+    int TuneByChannel([In] short usVirtualChannel);
+
+    [PreserveSig]
+    int SetProgram([In] short usProgramNumber);
+
+    [PreserveSig]
+    int AddProgram([In] short usProgramNumber);
+
+    [PreserveSig]
+    int RemoveProgram([In] short usProgramNumber);
+
+    [PreserveSig]
+    int GetModuleUI(
+      [In] byte byDialogNumber,
+      [Out, MarshalAs(UnmanagedType.BStr)] out string pbstrURL
+      );
+
+    [PreserveSig]
+    int InformUIClosed(
+      [In] byte byDialogNumber,
+      [In] UICloseReasonType CloseReason
+      );
   }
 }
 
@@ -702,7 +786,13 @@ namespace DirectShowLib
   public static class MediaPortalGuid
   {
     /// <summary> AM_KSCATEGORY_MULTIVBICODEC </summary>
-    public static readonly Guid AMKSMULTIVBICodec = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd, 0x28, 0xcd, 0x5f);
+    public static readonly Guid AM_KS_CATEGORY_MULTI_VBI_CODEC = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd, 0x28, 0xcd, 0x5f);
+
+    /// <summary> DIGITAL_CABLE_NETWORK_TYPE </summary>
+    public static readonly Guid DIGITAL_CABLE_NETWORK_TYPE = new Guid(0x143827ab, 0xf77b, 0x498d, 0x81, 0xca, 0x5a, 0x00, 0x7a, 0xec, 0x28, 0xbf);
+
+    /// <summary> KSMEDIUMSETID_Standard </summary>
+    public static readonly Guid KS_MEDIUM_SET_ID_STANDARD = new Guid(0x4747b320, 0x62ce, 0x11cf, 0xa5, 0xd6, 0x28, 0xdb, 0x04, 0xc1, 0x00, 0x00);
 
     /// <summary> MEDIATYPE_Subtitle 'subs' </summary>
     public static readonly Guid Subtitle = new Guid(0xE487EB08, 0x6B26, 0x4be9, 0x9D, 0xD3, 0x99, 0x34, 0x34, 0xD3, 0x13, 0xFD);
@@ -917,27 +1007,53 @@ namespace DirectShowLib
   public class DevicePathUtils
   {
     /// <summary>
-    /// Extract the device identifier section from a device path.
+    /// Extract the hardware identifier section from a device path.
     /// </summary>
     /// <remarks>
-    /// For example...
-    /// device path = @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
-    /// device identifier = 4&1215b326&0&0018
+    /// General device path elements:
+    /// @device:[type: cm|pnp|sw]:\\?\[connection: hdaudio|pci|root|stream|usb]#[product info: vendor, device, product, subsystem]#[hardware component identifier]#[category GUID]\[instance GUID/CLSID]
+    /// 
+    /// Examples:
+    /// @device:cm:{33D9A762-90C8-11D0-BD43-00A0C911CE86}\7162 BDA Audio Capture
+    /// @device:pnp:\\?\usb#vid_1b80&pid_d393#5&10ef021e&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{9d4afc32-0f42-45d9-b590-af9295699871}
+    /// @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
+    /// @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
+    /// @device:pnp:\\?\root#system#0000#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{03884cb6-e89a-4deb-b69e-8dc621686e6a}&global
+    /// @device:sw:{71985F48-1CA1-11D3-9CC8-00C04F7971E0}\Silicondust HDHomeRun Tuner 1000101F-0
+    /// @device:pnp:\\?\hdaudio#func_01&ven_10ec&dev_0882&subsys_1043e601&rev_1001#4&225f9914&0&0001#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\rearlineinwave3
     /// </remarks>
     /// <param name="devicePath">The device path to analyse.</param>
-    /// <returns>the device identifier if successful, otherwise <c>null</c></returns>
-    public static string ExtractDeviceIdentifier(string devicePath)
+    /// <returns>the hardware identifier if successful, otherwise <c>null</c></returns>
+    public static string ExtractHardwareIdentifier(string devicePath)
     {
       if (devicePath == null)
       {
         return null;
       }
+
+      // Device paths that we can interpret contain 4 sections separated by #.
       string[] sections = devicePath.Split('#');
       if (sections.Length != 4)
       {
         return null;
       }
-      return sections[2];
+
+      // The third section is the hardware component identifier. Note the first
+      // and second sections are usually identical for all components (digital
+      // and analog) of PnP USB and PCI hardware, but they are ***not***
+      // usually identical for hardware with stream class drivers.
+      // Hardware component identifiers that we can interpret contain 4
+      // sections separated by &. Again, all 4 parts are usually identical for
+      // PnP USB and PCI hardware components. For hardware with stream class
+      // drivers, the first three parts are identical and the last part is a
+      // unique component identifier.
+      string hardwareComponentIdentifier = sections[2];
+      sections = hardwareComponentIdentifier.Split('&');
+      if (sections.Length != 4)
+      {
+        return null;
+      }
+      return sections[0] + '&' + sections[1] + '&' + sections[2];
     }
   }
 }

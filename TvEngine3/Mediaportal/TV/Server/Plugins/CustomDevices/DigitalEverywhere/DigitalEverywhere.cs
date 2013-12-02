@@ -27,17 +27,18 @@ using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 {
   /// <summary>
   /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere devices.
   /// </summary>
-  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IPidFilterController, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
+  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IMpeg2PidFilter, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -257,8 +258,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbsMultiplexParams
     {
-      public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+      public uint Frequency;              // unit = kHz, range = 9750000 - 12750000
+      public uint SymbolRate;             // unit = ks/s, range = 1000 - 40000
 
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
@@ -271,23 +272,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     {
       [MarshalAs(UnmanagedType.Bool)]
       public bool CurrentTransponder;
-      public UInt32 Lnb;                  // index (0..3) of the LNB parameters set with SetLnbParams
+      public uint Lnb;                    // index (0..3) of the LNB parameters set with SetLnbParams
 
-      public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+      public uint Frequency;              // unit = kHz, range = 9750000 - 12750000
+      public uint SymbolRate;             // unit = ks/s, range = 1000 - 40000
 
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
-      private UInt16 Padding;
+      private ushort Padding;
 
-      public UInt16 OriginalNetworkId;
-      public UInt16 TransportStreamId;
-      public UInt16 ServiceId;
-      public UInt16 VideoPid;
-      public UInt16 AudioPid;
-      public UInt16 PcrPid;
-      public UInt16 TeletextPid;
-      public UInt16 PmtPid;
+      public ushort OriginalNetworkId;
+      public ushort TransportStreamId;
+      public ushort ServiceId;
+      public ushort VideoPid;
+      public ushort AudioPid;
+      public ushort PcrPid;
+      public ushort TeletextPid;
+      public ushort PmtPid;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -302,24 +303,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
       private byte[] Padding1;
 
-      public UInt32 Frequency;            // unit = kHz, range = 9750000 - 12750000
-      public UInt32 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+      public uint Frequency;              // unit = kHz, range = 9750000 - 12750000
+      public uint SymbolRate;             // unit = ks/s, range = 1000 - 40000
 
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
-      private UInt16 Padding2;
+      private ushort Padding2;
 
       public byte NumberOfValidPids;
       private byte Padding3;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
-      public UInt16[] FilterPids;
-      private UInt16 Padding4;
+      public ushort[] FilterPids;
+      private ushort Padding4;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct DvbtMultiplexParams
     {
-      public UInt32 Frequency;            // unit = kHz, range = 47000 - 860000
+      public uint Frequency;              // unit = kHz, range = 47000 - 860000
       public DeOfdmBandwidth Bandwidth;
       public DeOfdmConstellation Constellation;
       public DeOfdmCodeRate CodeRateHp;
@@ -343,8 +344,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public byte NumberOfValidPids;
       private byte Padding1;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
-      public UInt16[] FilterPids;
-      private UInt16 Padding2;
+      public ushort[] FilterPids;
+      private ushort Padding2;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -363,8 +364,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct FrontEndStatusInfo
     {
-      public UInt32 Frequency;            // unit = kHz, intermediate frequency for DVB-S/2
-      public UInt32 BitErrorRate;
+      public uint Frequency;              // unit = kHz, intermediate frequency for DVB-S/2
+      public uint BitErrorRate;
 
       public byte SignalStrength;         // range = 0 - 100%
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -372,7 +373,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsLocked;
 
-      public UInt16 CarrierToNoiseRatio;
+      public ushort CarrierToNoiseRatio;
       public byte AutomaticGainControl;
       private byte Value;                 // ???
 
@@ -421,20 +422,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbParams
     {
-      public UInt32 AntennaNumber;
+      public uint AntennaNumber;
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsEast;
 
-      public UInt16 OrbitalPosition;
-      public UInt16 LowBandLof;           // unit = MHz
-      public UInt16 SwitchFrequency;      // unit = MHz
-      public UInt16 HighBandLof;          // unit = MHz
+      public ushort OrbitalPosition;
+      public ushort LowBandLof;             // unit = MHz
+      public ushort SwitchFrequency;        // unit = MHz
+      public ushort HighBandLof;            // unit = MHz
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct LnbParamInfo
     {
-      public Int32 NumberOfAntennas;       // range = 0 - 3
+      public int NumberOfAntennas;         // range = 0 - 3
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LNB_PARAM_COUNT)]
       public LnbParams[] LnbParams;
     }
@@ -442,9 +443,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct QpskTuneParams
     {
-      public UInt32 Frequency;            // unit = kHz, range = 950000 - 2150000
+      public uint Frequency;                // unit = kHz, range = 950000 - 2150000
 
-      public UInt16 SymbolRate;           // unit = ks/s, range = 1000 - 40000
+      public ushort SymbolRate;             // unit = ks/s, range = 1000 - 40000
       public DeFecRate InnerFecRate;
       public DePolarisation Polarisation;
 
@@ -458,7 +459,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       public byte MessageType;
       public byte MessageLength;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_CI_ERROR_DEBUG_MESSAGE_LENGTH)]
-      public String Message;
+      public string Message;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -466,15 +467,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     {
       public byte Slot;
       public DeCiMessageTag Tag;
-      private UInt16 Padding1;
+      private ushort Padding1;
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool More;
 
-      public UInt16 DataLength;
+      public ushort DataLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_LENGTH)]
       public byte[] Data;
-      private UInt16 Padding2;
+      private ushort Padding2;
 
       public CaData(DeCiMessageTag tag)
       {
@@ -575,7 +576,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           responsebuffer, bufferSize,
           out returnedByteCount
         );
-        if (hr == 0 && returnedByteCount == 2)
+        if (hr == (int)HResult.Severity.Success && returnedByteCount == 2)
         {
           ciState = (DeCiState)Marshal.ReadInt16(responsebuffer, 0);
         }
@@ -610,7 +611,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _mmiBuffer, CA_DATA_SIZE,
         _mmiBuffer, CA_DATA_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -638,7 +639,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, DRIVER_VERSION_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DRIVER_VERSION_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -664,7 +665,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, FIRMWARE_VERSION_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != FIRMWARE_VERSION_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != FIRMWARE_VERSION_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -693,7 +694,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, TEMPERATURE_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != TEMPERATURE_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != TEMPERATURE_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -723,7 +724,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, FRONT_END_STATUS_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != FRONT_END_STATUS_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != FRONT_END_STATUS_INFO_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -757,7 +758,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, CA_DATA_SIZE,
         _generalBuffer, CA_DATA_SIZE
       );
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -774,7 +775,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, CA_DATA_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != CA_DATA_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
       {
         this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -836,7 +837,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
 
           int hr = GetCiStatus(out ciState);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             continue;
@@ -888,7 +889,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
               _mmiBuffer, CA_DATA_SIZE,
               _mmiBuffer, CA_DATA_SIZE
             );
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               this.LogDebug("Digital Everywhere: request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               continue;
@@ -905,7 +906,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
               _mmiBuffer, CA_DATA_SIZE,
               out returnedByteCount
             );
-            if (hr != 0)
+            if (hr != (int)HResult.Severity.Success)
             {
               this.LogDebug("Digital Everywhere: failed to retrieve data, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               continue;
@@ -937,7 +938,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -949,17 +950,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Digital Everywhere: initialising device");
 
-      if (tunerFilter == null)
+      if (context == null)
       {
-        this.LogDebug("Digital Everywhere: tuner filter is null");
+        this.LogDebug("Digital Everywhere: context is null");
         return false;
       }
       if (_isDigitalEverywhere)
@@ -968,17 +969,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         return true;
       }
 
-      _propertySet = tunerFilter as IKsPropertySet;
+      _propertySet = context as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Digital Everywhere: tuner filter is not a property set");
+        this.LogDebug("Digital Everywhere: context is not a property set");
         return false;
       }
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.TestInterface,
         IntPtr.Zero, 0, IntPtr.Zero, 0
       );
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: device does not support the Digital Everywhere property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1005,10 +1006,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Digital Everywhere: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isDigitalEverywhere)
       {
@@ -1088,13 +1089,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    public bool SetPowerState(PowerState state)
     {
-      this.LogDebug("Digital Everywhere: set power state, on = {0}", powerOn);
+      this.LogDebug("Digital Everywhere: set power state, state = {0}", state);
 
       if (!_isDigitalEverywhere || _propertySet == null)
       {
@@ -1107,13 +1108,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       // supply might be turned on or off.
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      if (powerOn)
+      if (state == PowerState.On)
       {
         Marshal.WriteByte(_generalBuffer, 0, (byte)DeLnbPower.On);
       }
@@ -1125,7 +1126,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, sizeof(Byte),
         _generalBuffer, sizeof(Byte)
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1137,18 +1138,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
     #endregion
 
-    #region IPidFilterController member
+    #region IMpeg2PidFilter member
 
     /// <summary>
     /// Configure the PID filter.
     /// </summary>
+    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
     /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
+    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
     {
-      this.LogDebug("Digital Everywhere: set PID filter PIDs, modulation = {0}, force enable = {1}", modulation, forceEnable);
+      this.LogDebug("Digital Everywhere: set PID filter state, force enable = {0}", forceEnable);
 
       if (!_isDigitalEverywhere || _propertySet == null)
       {
@@ -1173,7 +1174,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       bool fullTransponder = true;
       ushort[] filterPids = new ushort[MAX_PID_FILTER_PIDS];
       byte validPidCount = 0;
-      if (pids == null || pids.Count == 0 || (modulation != ModulationType.Mod8Psk && !forceEnable))
+      DVBSChannel satelliteTuningDetail = tuningDetail as DVBSChannel;
+      if (pids == null || pids.Count == 0 ||
+        (
+          (
+            satelliteTuningDetail == null ||
+            satelliteTuningDetail.ModulationType != ModulationType.Mod8Psk
+          ) &&
+          !forceEnable
+        )
+      )
       {
         this.LogDebug("Digital Everywhere: disabling PID filter");
       }
@@ -1198,7 +1208,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           this.LogDebug("Digital Everywhere: enabling PID filter");
 
           fullTransponder = false;
-          HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
+          IEnumerator<ushort> en = pids.GetEnumerator();
           while (en.MoveNext() && validPidCount < MAX_PID_FILTER_PIDS)
           {
             filterPids[validPidCount++] = en.Current;
@@ -1235,7 +1245,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, bufferSize,
         _generalBuffer, bufferSize
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1292,9 +1302,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         lnbParams.LnbParams[0].AntennaNumber = 0;
         lnbParams.LnbParams[0].IsEast = true;
         lnbParams.LnbParams[0].OrbitalPosition = 160;
-        lnbParams.LnbParams[0].LowBandLof = (UInt16)(dvbsChannel.LnbType.LowBandFrequency / 1000);
-        lnbParams.LnbParams[0].SwitchFrequency = (UInt16)(dvbsChannel.LnbType.SwitchFrequency / 1000);
-        lnbParams.LnbParams[0].HighBandLof = (UInt16)(dvbsChannel.LnbType.HighBandFrequency / 1000);
+        lnbParams.LnbParams[0].LowBandLof = (ushort)(dvbsChannel.LnbType.LowBandFrequency / 1000);
+        lnbParams.LnbParams[0].SwitchFrequency = (ushort)(dvbsChannel.LnbType.SwitchFrequency / 1000);
+        lnbParams.LnbParams[0].HighBandLof = (ushort)(dvbsChannel.LnbType.HighBandFrequency / 1000);
 
         Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
         //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_PARAM_INFO_SIZE);
@@ -1303,14 +1313,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           _generalBuffer, LNB_PARAM_INFO_SIZE,
           _generalBuffer, LNB_PARAM_INFO_SIZE
         );
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
 
         DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
-        tuneRequest.Frequency = (UInt32)dvbsChannel.Frequency;
-        tuneRequest.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
+        tuneRequest.Frequency = (uint)dvbsChannel.Frequency;
+        tuneRequest.SymbolRate = (uint)dvbsChannel.SymbolRate;
         tuneRequest.Lnb = 0;    // To match the AntennaNumber value above.
 
         // OnBeforeTune() mixed pilot and roll-off settings into the top four bits of the least significant
@@ -1362,7 +1372,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         if (dvbtChannel is DVBTChannel && _tunerType == CardType.DvbT)
         {
           DvbtMultiplexParams tuneRequest = new DvbtMultiplexParams();
-          tuneRequest.Frequency = (UInt32)dvbtChannel.Frequency;
+          tuneRequest.Frequency = (uint)dvbtChannel.Frequency;
           tuneRequest.Bandwidth = DeOfdmBandwidth.Bandwidth8;
           if (dvbtChannel.Bandwidth == 7000)
           {
@@ -1393,7 +1403,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         }
       }
 
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1509,7 +1519,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, CA_DATA_SIZE,
         _generalBuffer, CA_DATA_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
       }
@@ -1537,7 +1547,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
 
       DeCiState ciState;
       int hr = GetCiStatus(out ciState);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1608,7 +1618,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
           _pmtBuffer, CA_DATA_SIZE
         );
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1660,7 +1670,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       this.LogDebug("Digital Everywhere: close menu");
       CaData data = new CaData(DeCiMessageTag.Mmi);
       byte[] apdu = DvbMmiHandler.CreateMmiClose(0);
-      data.DataLength = (UInt16)apdu.Length;
+      data.DataLength = (ushort)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
     }
@@ -1675,7 +1685,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
       this.LogDebug("Digital Everywhere: select menu entry, choice = {0}", choice);
       CaData data = new CaData(DeCiMessageTag.Mmi);
       byte[] apdu = DvbMmiHandler.CreateMmiMenuAnswer(choice);
-      data.DataLength = (UInt16)apdu.Length;
+      data.DataLength = (ushort)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
     }
@@ -1686,11 +1696,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, String answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("Digital Everywhere: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -1701,7 +1711,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         responseType = MmiResponseType.Cancel;
       }
       byte[] apdu = DvbMmiHandler.CreateMmiEnquiryAnswer(responseType, answer);
-      data.DataLength = (UInt16)apdu.Length;
+      data.DataLength = (ushort)apdu.Length;
       Buffer.BlockCopy(apdu, 0, data.Data, 0, apdu.Length);
       return SendMmi(data);
     }
@@ -1753,7 +1763,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, LNB_COMMAND_SIZE,
         _generalBuffer, LNB_COMMAND_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1805,7 +1815,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
         _generalBuffer, LNB_COMMAND_SIZE,
         _generalBuffer, LNB_COMMAND_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
@@ -1833,7 +1843,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

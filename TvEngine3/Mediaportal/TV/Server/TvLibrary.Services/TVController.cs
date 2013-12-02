@@ -4740,7 +4740,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       {
         if (ValidateTvControllerParams(cardId) && SupportsQualityControl(cardId))
         {
-          _cards[cardId].Card.ReloadCardConfiguration(); 
+          _cards[cardId].Card.ReloadConfiguration(); 
         }        
       }
       catch (Exception e)

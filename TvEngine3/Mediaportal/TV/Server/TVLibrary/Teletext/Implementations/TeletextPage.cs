@@ -47,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TeletextPage"/> class.
@@ -319,7 +319,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
                   {
                     if (OddParity.IsCorrect(newData))
                     {
-                      // Trace.WriteLine(String.Format("2) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                      // Trace.WriteLine(string.Format("2) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
                       return true;
                     }
                   }
@@ -327,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
                   {
                     //bytes 0-1 = row/column, hamming 8/4 coded
 
-                    //Trace.WriteLine(String.Format("3) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                    //Trace.WriteLine(string.Format("3) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
                     return true;
                   }
                 }
@@ -335,7 +335,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
                 {
                   //rows 25,26,27
 
-                  //Trace.WriteLine(String.Format("4) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
+                  //Trace.WriteLine(string.Format("4) {0:X}/{1} r:{2} c:{3} {4} {5:X}!={6:X}", _pageNumber, subPageNumber, row, col, _clearSubPage[subPageNumber], ptr[off + col], pageData[off + col]));
                   return true;
                 }
               }
@@ -485,11 +485,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     #endregion
 
-    #region IDisposable Members   
-		
-		protected virtual void Dispose(bool disposing)
+    #region IDisposable members
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    /// <param name="isDisposing"><c>True</c> when Dispose() is called explicitly.</param>
+		protected virtual void Dispose(bool isDisposing)
 		{
-		  if (disposing)
+		  if (isDisposing)
 		  {
 		    // get rid of managed resources
 		  }
@@ -500,11 +504,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
         FreePage(i);
       }
 		}
-		
-		
-		/// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>  
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary> 
 		public void Dispose()
 		{
 		  Dispose(true);

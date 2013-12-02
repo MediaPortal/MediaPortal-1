@@ -28,11 +28,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   public interface ITVScanning
   {
     /// <summary>
-    /// resets the scanner
-    /// </summary>
-    void Reset();
-
-    /// <summary>
     /// Tunes to the channel specified and will start scanning for any channel
     /// </summary>
     /// <param name="channel">channel to tune to</param>

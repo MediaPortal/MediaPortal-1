@@ -89,7 +89,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     #endregion
 
-    #region ctor/dtor
+    #region constructor/dtor
 
     ///<summary>
     /// Constructor
@@ -116,7 +116,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     private void _pageCache_OnPageUpdated(int pageNumber, int subPageNumber)
     {
-      //  Trace.WriteLine(String.Format("{0:X}/{1:X} updated", pageNumber, subPageNumber));
+      //  Trace.WriteLine(string.Format("{0:X}/{1:X} updated", pageNumber, subPageNumber));
       if (OnPageUpdated != null)
       {
         OnPageUpdated(pageNumber, subPageNumber);
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     private void _pageCache_OnPageDeleted(int pageNumber, int subPageNumber)
     {
-      // Trace.WriteLine(String.Format("{0:X}/{1:X} deleted", pageNumber, subPageNumber));
+      // Trace.WriteLine(string.Format("{0:X}/{1:X} deleted", pageNumber, subPageNumber));
       if (OnPageDeleted != null)
       {
         OnPageDeleted(pageNumber, subPageNumber);
@@ -134,7 +134,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     private void _pageCache_OnPageAdded(int pageNumber, int subPageNumber)
     {
-      //Trace.WriteLine(String.Format("{0:X}/{1:X} added", pageNumber, subPageNumber));
+      //Trace.WriteLine(string.Format("{0:X}/{1:X} added", pageNumber, subPageNumber));
       if (OnPageAdded != null)
       {
         OnPageAdded(pageNumber, subPageNumber);
@@ -441,7 +441,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       }
       catch (Exception ex)
       {
-        this.LogDebug("Error while saving teletext data: ", ex);
+        this.LogDebug(ex, "Error while saving teletext data: ");
       }
     }
 

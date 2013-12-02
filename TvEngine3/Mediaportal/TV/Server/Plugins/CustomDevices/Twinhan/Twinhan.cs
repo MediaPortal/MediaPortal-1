@@ -26,18 +26,19 @@ using System.Threading;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Twinhan
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Twinhan devices, including clones from TerraTec,
   /// TechniSat and Digital Rise.
   /// </summary>
-  public class Twinhan : BaseCustomDevice, /*IAddOnDevice, ICustomTuner,*/ IPowerDevice, IPidFilterController, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
+  public class Twinhan : BaseCustomDevice, /*ICustomTuner,*/ IPowerDevice, IMpeg2PidFilter, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -177,7 +178,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private struct DeviceInfo   // DEVICE_INFO
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-      public String Name;                                     // Example: VP1020, VP3020C, VP7045...
+      public string Name;                                     // Example: VP1020, VP3020C, VP7045...
 
       public TwinhanDeviceType Type;                          // Values are bitwise AND'ed together to produce the final device type.
       public TwinhanDeviceSpeed Speed;
@@ -185,7 +186,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       public byte[] MacAddress;
       public TwinhanCiSupport CiSupport;
 
-      public Int32 TsPacketLength;                            // 188 or 204
+      public int TsPacketLength;                              // 188 or 204
 
       // mm1352000: The following two bytes don't appear to always be set correctly.
       // Maybe these fields are only present for certain devices or driver versions.
@@ -204,11 +205,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       public byte FirmwareMajorVersion;                       // BCD encoding eg. 0x10 -> 1.0
       public byte FirmwareMinorVersion;                       // BCD encoding eg. 0x05 -> 0.5  ==> 1.0b05
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 22)]
-      public String Date;                                     // Example: "2004-12-20 18:30:00" or  "DEC 20 2004 10:22:10"  with compiler __DATE__ and __TIME__  definition s
+      public string Date;                                     // Example: "2004-12-20 18:30:00" or  "DEC 20 2004 10:22:10"  with compiler __DATE__ and __TIME__  definition s
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-      public String Company;                                  // Example: "TWINHAN" 
+      public string Company;                                  // Example: "TWINHAN" 
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-      public String HardwareInfo;                             // Example: "PCI DVB CX-878 with MCU series", "PCI ATSC CX-878 with MCU series", "7020/7021 USB-Sat", "7045/7046 USB-Ter" etc.
+      public string HardwareInfo;                             // Example: "PCI DVB CX-878 with MCU series", "PCI ATSC CX-878 with MCU series", "7020/7021 USB-Sat", "7045/7046 USB-Ter" etc.
       public byte CiMmiFlags;                                 // Bit 0 = event mode support (0 => not supported, 1 => supported)
       private byte Reserved;
       public TwinhanSimulatorType SimType;
@@ -222,10 +223,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     {
       public TwinhanPidFilterMode FilterMode;
       public byte MaxPids;                                    // Max number of PIDs supported by the PID filter (HW/FW limit, always <= MAX_PID_FILTER_PIDS).
-      private UInt16 Padding;
-      public UInt32 ValidPidMask;                             // A bit mask specifying the current valid PIDs. If the bit is 0 then the PID is ignored. Example: if ValidPidMask = 0x00000005 then there are 2 valid PIDs at indexes 0 and 2.
+      private ushort Padding;
+      public uint ValidPidMask;                               // A bit mask specifying the current valid PIDs. If the bit is 0 then the PID is ignored. Example: if ValidPidMask = 0x00000005 then there are 2 valid PIDs at indexes 0 and 2.
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PID_FILTER_PIDS)]
-      public UInt16[] FilterPids;                             // Filter PID list.
+      public ushort[] FilterPids;                             // Filter PID list.
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -234,20 +235,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       [MarshalAs(UnmanagedType.I1)]
       public bool PowerOn;
       public TwinhanToneBurst ToneBurst;
-      private UInt16 Padding;
+      private ushort Padding;
 
-      public UInt32 LowBandLof;                               // unit = kHz
-      public UInt32 HighBandLof;                              // unit = kHz
-      public UInt32 SwitchFrequency;                          // unit = kHz
+      public uint LowBandLof;                               // unit = kHz
+      public uint HighBandLof;                              // unit = kHz
+      public uint SwitchFrequency;                          // unit = kHz
       public Twinhan22k Tone22k;
       public TwinhanDiseqcPort DiseqcPort;
-      private UInt16 Padding2;
+      private ushort Padding2;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct DiseqcMessage
     {
-      public Int32 MessageLength;
+      public int MessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
     }
@@ -258,11 +259,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     {
       public TwinhanCiState CiState;
       public TwinhanMmiState MmiState;
-      public UInt32 PmtState;
-      public UInt32 EventMessage;                             // Current event status.
+      public uint PmtState;
+      public uint EventMessage;                             // Current event status.
       public TwinhanRawCommandState RawCmdState;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-      private UInt32[] Reserved;
+      private uint[] Reserved;
     }
 
     // Old CI/MMI state info structure - CI API v1.
@@ -278,18 +279,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     // A private class to help us handle the two MMI data formats cleanly and easily.
     private class MmiData
     {
-      public String Title = String.Empty;
-      public String SubTitle = String.Empty;
-      public String Footer = String.Empty;
-      public List<String> Entries = new List<string>();
-      public Int32 EntryCount = 0;
+      public string Title = string.Empty;
+      public string SubTitle = string.Empty;
+      public string Footer = string.Empty;
+      public List<string> Entries = new List<string>();
+      public int EntryCount = 0;
       public bool IsEnquiry = false;
       public bool IsBlindAnswer = false;
-      public Int32 AnswerLength = 0;
-      public String Prompt = String.Empty;
-      public Int32 ChoiceIndex = 0;
-      public String Answer = String.Empty;
-      public Int32 Type = 0;
+      public int AnswerLength = 0;
+      public string Prompt = string.Empty;
+      public int ChoiceIndex = 0;
+      public string Answer = string.Empty;
+      public int Type = 0;
 
       public void WriteToBuffer(IntPtr buffer, bool isTerraTecFormat)
       {
@@ -369,7 +370,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
-      public String Text;
+      public string Text;
       #pragma warning restore 0649
     }
 
@@ -377,30 +378,30 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private struct DefaultMmiData
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Title;
+      public string Title;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String SubTitle;
+      public string SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Footer;
+      public string Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = DEFAULT_MAX_CAM_MENU_ENTRIES)]
       public DefaultMmiMenuEntry[] Entries;
-      private UInt16 Padding1;
-      public Int32 EntryCount;
+      private ushort Padding1;
+      public int EntryCount;
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsEnquiry;
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
-      public Int32 AnswerLength;    // enquiry: expected answer length, enquiry answer: actual answer length
+      public int AnswerLength;      // enquiry: expected answer length, enquiry answer: actual answer length
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Prompt;
+      public string Prompt;
 
-      public Int32 ChoiceIndex;
+      public int ChoiceIndex;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Answer;
+      public string Answer;
 
-      public Int32 Type;            // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
+      public int Type;              // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -408,7 +409,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public String Text;
+      public string Text;
       #pragma warning restore 0649
     }
 
@@ -416,29 +417,29 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private struct TerraTecMmiData
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Title;
+      public string Title;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String SubTitle;
+      public string SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Footer;
+      public string Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = TERRATEC_MAX_CAM_MENU_ENTRIES)]
       public TerraTecMmiMenuEntry[] Entries;
-      public Int32 EntryCount;
+      public int EntryCount;
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsEnquiry;
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsBlindAnswer;
-      public Int32 AnswerLength;    // enquiry: expected answer length, enquiry answer: actual answer length
+      public int AnswerLength;      // enquiry: expected answer length, enquiry answer: actual answer length
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Prompt;
+      public string Prompt;
 
-      public Int32 ChoiceIndex;
+      public int ChoiceIndex;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Answer;
+      public string Answer;
 
-      public Int32 Type;            // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
+      public int Type;              // 1, 2 (menu/list, select entry) or 3 (enquiry, enquiry answer)
     }
 
     #endregion
@@ -446,25 +447,25 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private struct ApplicationInfo    // THAppInfo
     {
-      public UInt32 ApplicationType;
-      public UInt32 Manufacturer;
-      public UInt32 ManufacturerCode;
+      public uint ApplicationType;
+      public uint Manufacturer;
+      public uint ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-      public String RootMenuTitle;
+      public string RootMenuTitle;
     }
 
     [StructLayout(LayoutKind.Explicit)]
     private struct TuningParams   // TURNER_VALUE
     {
       [FieldOffset(0)]
-      public UInt32 Frequency;                                // unit = kHz
+      public uint Frequency;                                // unit = kHz
 
       // Note: these two fields are unioned - they are never both required in
       // a single tune request so the bytes are reused.
       [FieldOffset(4)]
-      public UInt32 SymbolRate;                               // unit = ks/s
+      public uint SymbolRate;                               // unit = ks/s
       [FieldOffset(4)]
-      public UInt32 Bandwidth;                                // unit = MHz
+      public uint Bandwidth;                                // unit = MHz
 
       [FieldOffset(8)]
       public ModulationType Modulation;
@@ -473,7 +474,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       [FieldOffset(13)]
       private byte Padding1;
       [FieldOffset(14)]
-      private UInt16 Padding2;
+      private ushort Padding2;
     }
 
     #endregion
@@ -483,13 +484,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     // Initialise a buffer with a new command, ready to pass to the tuner filter.
     private class TwinhanCommand
     {
-      private UInt32 _controlCode;
+      private uint _controlCode;
       private IntPtr _inBuffer;
-      private Int32 _inBufferSize;
+      private int _inBufferSize;
       private IntPtr _outBuffer;
-      private Int32 _outBufferSize;
+      private int _outBufferSize;
 
-      public TwinhanCommand(UInt32 controlCode, IntPtr inBuffer, Int32 inBufferSize, IntPtr outBuffer, Int32 outBufferSize)
+      public TwinhanCommand(uint controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize)
       {
         _controlCode = controlCode;
         _inBuffer = inBuffer;
@@ -523,7 +524,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
           // Fill the command buffer.
           byte[] guidAsBytes = COMMAND_GUID.ToByteArray();
           Marshal.Copy(guidAsBytes, 0, commandBuffer, guidAsBytes.Length);
-          Marshal.WriteInt32(commandBuffer, 16, (Int32)_controlCode);
+          Marshal.WriteInt32(commandBuffer, 16, (int)_controlCode);
           Marshal.WriteInt32(commandBuffer, 20, _inBuffer.ToInt32());
           Marshal.WriteInt32(commandBuffer, 24, _inBufferSize);
           Marshal.WriteInt32(commandBuffer, 28, _outBuffer.ToInt32());
@@ -531,7 +532,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
           Marshal.WriteInt32(commandBuffer, 36, returnedByteCountBuffer.ToInt32());
 
           hr = ps.Set(BDA_EXTENSION_PROPERTY_SET, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
           }
@@ -1115,6 +1116,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     private bool _isCamPresent = false;
     #pragma warning restore 0414
     private bool _isCamReady = false;
+    private TwinhanDeviceSpeed _connection = TwinhanDeviceSpeed.Pcie;
     private bool _isPidFilterSupported = false;
     private bool _isPidFilterBypassSupported = true;
 
@@ -1128,7 +1130,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
     private IKsPropertySet _propertySet = null;
     private CardType _tunerType = CardType.Unknown;
-    private String _tunerFilterName = String.Empty;
+    private string _tunerFilterName = string.Empty;
 
     private TwinhanCiSupport _ciApiVersion = TwinhanCiSupport.Unsupported;
     private int _maxPidFilterPids = MAX_PID_FILTER_PIDS;
@@ -1173,7 +1175,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_STATE, IntPtr.Zero, 0, responseBuffer, bufferSize);
         int returnedByteCount;
         int hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           ciState = (TwinhanCiState)Marshal.ReadInt32(responseBuffer, 0);
           mmiState = (TwinhanMmiState)Marshal.ReadInt32(responseBuffer, 4);
@@ -1203,7 +1205,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DEVICE_INFO, IntPtr.Zero, 0, _generalBuffer, DEVICE_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1220,7 +1222,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       this.LogDebug("  TS packet length            = {0}", deviceInfo.TsPacketLength);
       // Handle the PID filter paramter bytes carefully - not all drivers actually return
       // meaningful values for them.
-      if (deviceInfo.IsPidFilterBypassSupported == 0x01)
+      if (deviceInfo.IsPidFilterPresent == 0x01)
       {
         _isPidFilterSupported = true;
         if (deviceInfo.IsPidFilterBypassSupported == 0)
@@ -1231,6 +1233,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       this.LogDebug("  PID filter supported        = {0}", _isPidFilterSupported);
       this.LogDebug("  PID filter bypass supported = {0}", _isPidFilterBypassSupported);
 
+      _connection = deviceInfo.Speed;
       _ciApiVersion = deviceInfo.CiSupport;
     }
 
@@ -1247,7 +1250,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_PID_FILTER_INFO, IntPtr.Zero, 0, _generalBuffer, PID_FILTER_PARAMS_SIZE);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1274,7 +1277,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DRIVER_INFO, IntPtr.Zero, 0, _generalBuffer, DRIVER_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1283,11 +1286,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       //this.LogDebug("Twinhan: number of DriverInfo bytes returned is {0}", returnedByteCount);
       //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
       DriverInfo driverInfo = (DriverInfo)Marshal.PtrToStructure(_generalBuffer, typeof(DriverInfo));
-      char[] majorVersion = String.Format("{0:x2}", driverInfo.DriverMajorVersion).ToCharArray();
-      char[] minorVersion = String.Format("{0:x2}", driverInfo.DriverMinorVersion).ToCharArray();
+      char[] majorVersion = string.Format("{0:x2}", driverInfo.DriverMajorVersion).ToCharArray();
+      char[] minorVersion = string.Format("{0:x2}", driverInfo.DriverMinorVersion).ToCharArray();
       this.LogDebug("  driver version              = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
-      majorVersion = String.Format("{0:x2}", driverInfo.FirmwareMajorVersion).ToCharArray();
-      minorVersion = String.Format("{0:x2}", driverInfo.FirmwareMinorVersion).ToCharArray();
+      majorVersion = string.Format("{0:x2}", driverInfo.FirmwareMajorVersion).ToCharArray();
+      minorVersion = string.Format("{0:x2}", driverInfo.FirmwareMinorVersion).ToCharArray();
       this.LogDebug("  firmware version            = {0}.{1}.{2}.{3}", majorVersion[0], majorVersion[1], minorVersion[0], minorVersion[1]);
       this.LogDebug("  date                        = {0}", driverInfo.Date);
       this.LogDebug("  company                     = {0}", driverInfo.Company);
@@ -1345,7 +1348,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         while (!_stopMmiHandlerThread)
         {
           int hr = GetCiStatus(out ciState, out mmiState);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
@@ -1539,7 +1542,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
         hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Twinhan: result = success");
           return true;
@@ -1569,7 +1572,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _mmiBuffer, _mmiDataSize);
         int returnedByteCount;
         hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr == 0 && returnedByteCount == _mmiDataSize)
+        if (hr == (int)HResult.Severity.Success && returnedByteCount == _mmiDataSize)
         {
           this.LogDebug("Twinhan: result = success");
           //DVB_MMI.DumpBinary(_mmiBuffer, 0, returnedByteCount);
@@ -1590,7 +1593,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -1606,14 +1609,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Twinhan: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("Twinhan: tuner filter is null");
@@ -1637,7 +1641,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: device does not support the Twinhan property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1652,7 +1656,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       _tunerFilterName = tunerFilterInfo.achName;
       Release.FilterInfo(ref tunerFilterInfo);
 
-      if (hr != 0 || _tunerFilterName == null)
+      if (hr != (int)HResult.Severity.Success || _tunerFilterName == null)
       {
         this.LogDebug("Twinhan: failed to get the tuner filter name, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         _tunerFilterName = string.Empty;
@@ -1683,14 +1687,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnLoaded(ITVCard tuner, out DeviceAction action)
+    public override void OnLoaded(ITVCard tuner, out TunerAction action)
     {
       // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
       // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
       // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
       // subsequent tune requests.
       // We start the graph immediately to prevent the graph from being left idle.
-      action = DeviceAction.Start;
+      action = TunerAction.Start;
     }
 
     /// <summary>
@@ -1700,10 +1704,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Twinhan: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isTwinhan)
       {
@@ -1752,102 +1756,32 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     /// </summary>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
-    public override void OnStop(ITVCard tuner, ref DeviceAction action)
+    public override void OnStop(ITVCard tuner, ref TunerAction action)
     {
       // The TerraTec H7 and TechniSat CableStar Combo HD CI require *very* careful graph management. If the graph
       // is left idle for any length of time (a few minutes) they will fail to (re)start streaming. In addition,
       // they require the graph to be restarted if tuning fails, otherwise they don't seem to behave properly in
       // subsequent tune requests.
-      if (action == DeviceAction.Stop || action == DeviceAction.Pause)
+      if (action == TunerAction.Stop || action == TunerAction.Pause)
       {
-        action = DeviceAction.Restart;
+        action = TunerAction.Restart;
       }
     }
 
     #endregion
-
-    #endregion
-
-    #region IAddOnDevice member
-
-    /// <summary>
-    /// Insert and connect the device's additional filter(s) into the BDA graph.
-    /// [network provider]->[tuner]->[capture]->[...device filter(s)]->[infinite tee]->[MPEG 2 demultiplexer]->[transport information filter]->[transport stream writer]
-    /// </summary>
-    /// <remarks>
-    /// This implementation exists only to provide a work around driver issues with the TerraTec H7 and TechniSat
-    /// CableStar Combo HD CI. The short summary is that older drivers wrongly indicate that the tuner filter is
-    /// also the capture filter, and this causes graph building to fail because TV Server does not attempt to add
-    /// a capture filter. According to user reports, the older drivers are more stable with respect to CI
-    /// performance when multiple devices are connected. See the following thread for more details:
-    /// http://forum.team-mediaportal.com/threads/tv-server-channel-scan-no-channels-detected.95913/
-    /// </remarks>
-    /// <param name="graphBuilder">The graph builder to use to insert the device filter(s).</param>
-    /// <param name="lastFilter">The source filter (usually either a tuner or capture/receiver filter) to
-    ///   connect the [first] device filter to.</param>
-    /// <returns><c>true</c> if the device was successfully added to the graph, otherwise <c>false</c></returns>
-    public bool AddToGraph(ICaptureGraphBuilder2 graphBuilder, ref IBaseFilter lastFilter)
-    {
-      this.LogDebug("Twinhan: add to graph");
-
-      String lowerFilterName = _tunerFilterName.ToLowerInvariant();
-      if (
-        !lowerFilterName.Equals("technisat udst7000bda dvb-c ctuner") &&
-        !lowerFilterName.Equals("technisat udst7000bda dvb-t vtuner") &&
-        !lowerFilterName.Equals("terratec h7 digital tuner (dvb-c)") &&
-        !lowerFilterName.Equals("terratec h7 digital tuner (dvb-t)")
-      )
-      {
-        // No problem with non-H7 devices.
-        return true;
-      }
-
-      this.LogDebug("Twinhan: TerraTec H7 compatible device detected");
-      bool captureFilterRequired = false;
-      IKsTopologyInfo topologyInfo = lastFilter as IKsTopologyInfo;
-      if (topologyInfo != null)
-      {
-        int categoryCount;
-        topologyInfo.get_NumCategories(out categoryCount);
-        for (int i = 0; i < categoryCount; i++)
-        {
-          Guid guid;
-          topologyInfo.get_Category(i, out guid);
-          if (guid == FilterCategory.BDASourceFiltersCategory)
-          {
-            captureFilterRequired = true;
-            break;
-          }
-        }
-      }
-      else
-      {
-        this.LogDebug("Twinhan: filter does not have topology information, assuming filter not required");
-        return true;
-      }
-
-      if (!captureFilterRequired)
-      {
-        this.LogDebug("Twinhan: filter is not a tuner filter so a capture filter is not required");
-        return true;
-      }
-      // TODO - add the capture/receiver filter... or maybe we can ask people who want to use the old drivers that
-      // exhibit this bug to mod their registry.
-      return true;
-    }
 
     #endregion
 
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    public bool SetPowerState(PowerState state)
     {
-      this.LogDebug("Twinhan: set power state, on = {0}", powerOn);
+      this.LogDebug("Twinhan: set power state, state = {0}", state);
 
       // It is not known for certain whether any Twinhan DVB-T tuners are able to
       // supply power to the aerial, however the FAQs on TerraTec's website suggest
@@ -1866,7 +1800,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         return true;    // Don't retry...
       }
 
-      if (powerOn)
+      if (state == PowerState.On)
       {
         Marshal.WriteByte(_generalBuffer, 0, 0x01);
       }
@@ -1877,7 +1811,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_TUNER_POWER, _generalBuffer, 1, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         return true;
@@ -1938,8 +1872,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       if (channel is DVBCChannel)
       {
         DVBCChannel ch = channel as DVBCChannel;
-        tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.SymbolRate = (UInt32)ch.SymbolRate;
+        tuningParams.Frequency = (uint)ch.Frequency;
+        tuningParams.SymbolRate = (uint)ch.SymbolRate;
         tuningParams.Modulation = ch.ModulationType;
       }
       else if (channel is DVBSChannel)
@@ -1948,9 +1882,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         LnbParams lnbParams = new LnbParams();
         lnbParams.PowerOn = true;
         lnbParams.ToneBurst = TwinhanToneBurst.Off;
-        lnbParams.LowBandLof = (UInt32)dvbsChannel.LnbType.LowBandFrequency;
-        lnbParams.HighBandLof = (UInt32)dvbsChannel.LnbType.HighBandFrequency;
-        lnbParams.SwitchFrequency = (UInt32)dvbsChannel.LnbType.SwitchFrequency;
+        lnbParams.LowBandLof = (uint)dvbsChannel.LnbType.LowBandFrequency;
+        lnbParams.HighBandLof = (uint)dvbsChannel.LnbType.HighBandFrequency;
+        lnbParams.SwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency;
         lnbParams.Tone22k = Twinhan22k.Off;
         if (dvbsChannel.Frequency > dvbsChannel.LnbType.SwitchFrequency)
         {
@@ -1961,7 +1895,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
         TwinhanCommand lcommand = new TwinhanCommand(THBDA_IOCTL_SET_LNB_DATA, _generalBuffer, LNB_PARAMS_SIZE, IntPtr.Zero, 0);
         hr = lcommand.Execute(_propertySet, out returnedByteCount);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Twinhan: result = success");
         }
@@ -1970,15 +1904,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
           this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
 
-        tuningParams.Frequency = (UInt32)dvbsChannel.Frequency;
-        tuningParams.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
+        tuningParams.Frequency = (uint)dvbsChannel.Frequency;
+        tuningParams.SymbolRate = (uint)dvbsChannel.SymbolRate;
         tuningParams.Modulation = (ModulationType)1;
       }
       else if (channel is DVBTChannel)
       {
         DVBTChannel ch = channel as DVBTChannel;
-        tuningParams.Frequency = (UInt32)ch.Frequency;
-        tuningParams.Bandwidth = (UInt32)ch.Bandwidth;
+        tuningParams.Frequency = (uint)ch.Frequency;
+        tuningParams.Bandwidth = (uint)ch.Bandwidth;
         tuningParams.Modulation = 0;  // ???
       }
       else
@@ -1993,7 +1927,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_LOCK_TUNER, _generalBuffer, TUNING_PARAMS_SIZE, IntPtr.Zero, 0);
       hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
       }
@@ -2008,7 +1942,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       }
       command = new TwinhanCommand(THBDA_IOCTL_GET_LNB_DATA, IntPtr.Zero, 0, _generalBuffer, LNB_PARAMS_SIZE);
       hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
       }
@@ -2020,9 +1954,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
 
       Marshal.WriteInt32(_generalBuffer, 0);
-      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, sizeof(Int32));
+      command = new TwinhanCommand(THBDA_IOCTL_GET_SIGNAL_Q_S, IntPtr.Zero, 0, _generalBuffer, sizeof(int));
       hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         DVB_MMI.DumpBinary(_generalBuffer, 0, 4);
@@ -2037,18 +1971,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
 
     #endregion
 
-    #region IPidFilterController member
+    #region IMpeg2PidFilter member
 
     /// <summary>
     /// Configure the PID filter.
     /// </summary>
+    /// <param name="tuningDetail">The current multiplex/transponder tuning parameters.</param>
     /// <param name="pids">The PIDs to allow through the filter.</param>
-    /// <param name="modulation">The current multiplex/transponder modulation scheme.</param>
     /// <param name="forceEnable">Set this parameter to <c>true</c> to force the filter to be enabled.</param>
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
-    public bool SetFilterPids(HashSet<UInt16> pids, ModulationType modulation, bool forceEnable)
+    public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
     {
-      this.LogDebug("Twinhan: set PID filter PIDs, modulation = {0}, force enable = {1}", modulation, forceEnable);
+      this.LogDebug("Twinhan: set PID filter state, force enable = {0}", forceEnable);
 
       if (!_isTwinhan || _propertySet == null)
       {
@@ -2067,10 +2001,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       // that can be viewed/recorded simultaneously. One or both of the Starbox and Magicbox are USB 1
       // devices which means that they are not capable of even carrying full DVB-S transponders.
       PidFilterParams pidFilterParams = new PidFilterParams();
-      pidFilterParams.FilterPids = new UInt16[MAX_PID_FILTER_PIDS];
+      pidFilterParams.FilterPids = new ushort[MAX_PID_FILTER_PIDS];
       pidFilterParams.FilterMode = TwinhanPidFilterMode.Disabled;
       pidFilterParams.ValidPidMask = 0;
-      if (pids == null || pids.Count == 0 || (_isPidFilterBypassSupported && !forceEnable))
+      if (pids == null || pids.Count == 0 ||
+        (
+          _connection != TwinhanDeviceSpeed.UsbLow &&
+          _connection != TwinhanDeviceSpeed.UsbFull &&
+          _isPidFilterBypassSupported &&
+          !forceEnable
+        )
+      )
       {
         this.LogDebug("Twinhan: disabling PID filter");
       }
@@ -2093,7 +2034,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         if (pidFilterParams.FilterMode != TwinhanPidFilterMode.Disabled)
         {
           this.LogDebug("Twinhan: enabling PID filter");
-          HashSet<UInt16>.Enumerator en = pids.GetEnumerator();
+          IEnumerator<ushort> en = pids.GetEnumerator();
           byte pidCount = 0;
           while (en.MoveNext() && pidCount < _maxPidFilterPids)
           {
@@ -2108,7 +2049,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_SET_PID_FILTER_INFO, _generalBuffer, PID_FILTER_PARAMS_SIZE, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         return true;
@@ -2166,7 +2107,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCiState ciState;
       TwinhanMmiState mmiState;
       int hr = GetCiStatus(out ciState, out mmiState);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -2254,7 +2195,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_RESET_DEVICE, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: reset property failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         resetDevice = true;
@@ -2283,7 +2224,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCiState ciState;
       TwinhanMmiState mmiState;
       int hr = GetCiStatus(out ciState, out mmiState);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -2338,7 +2279,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_CI_SEND_PMT, pmtBuffer, caPmt.Length, IntPtr.Zero, 0);
         int returnedByteCount;
         int hr = tcommand.Execute(_propertySet, out returnedByteCount);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Twinhan: result = success");
           return true;
@@ -2404,7 +2345,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_CI_GET_APP_INFO, IntPtr.Zero, 0, _mmiBuffer, APPLICATION_INFO_SIZE);
         int returnedByteCount;
         hr = command.Execute(_propertySet, out returnedByteCount);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
@@ -2419,7 +2360,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         command = new TwinhanCommand(THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
         hr = command.Execute(_propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         return true;
@@ -2455,7 +2396,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
         int returnedByteCount;
         hr = command.Execute(_propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         return true;
@@ -2489,7 +2430,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("Twinhan: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -2561,7 +2502,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand tcommand = new TwinhanCommand(THBDA_IOCTL_SET_DiSEqC, _generalBuffer, DISEQC_MESSAGE_SIZE, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = tcommand.Execute(_propertySet, out returnedByteCount);
-      /*if (hr != 0)
+      /*if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }*/
@@ -2600,7 +2541,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
       TwinhanCommand command = new TwinhanCommand(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _generalBuffer, DISEQC_MESSAGE_SIZE);
       int returnedByteCount;
       int hr = command.Execute(_propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Twinhan: result = success");
         DiseqcMessage message = (DiseqcMessage)Marshal.PtrToStructure(_generalBuffer, typeof(DiseqcMessage));
@@ -2620,7 +2561,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Twinhan
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

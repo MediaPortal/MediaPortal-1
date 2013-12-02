@@ -18,7 +18,9 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
+
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
   /// An interface for devices that implement the DiSEqC device communication and control standard.

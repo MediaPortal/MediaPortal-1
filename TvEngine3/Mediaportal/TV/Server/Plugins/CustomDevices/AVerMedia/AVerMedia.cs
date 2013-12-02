@@ -23,18 +23,18 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DirectShowLib;
+using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using MicrosoftCustomDevicePlugin = Mediaportal.TV.Server.Plugins.CustomDevices.Microsoft.Microsoft;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 {
   /// <summary>
   /// A class for handling conditional access with the AVerMedia SatGate (A706C).
   /// </summary>
-  public class AVerMedia : MicrosoftCustomDevicePlugin, IConditionalAccessProvider, ICiMenuActions
+  public class AVerMedia : MicrosoftBda.MicrosoftBda, IConditionalAccessProvider, ICiMenuActions
   {
     #region enums
 
@@ -65,7 +65,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// <param name="stateData">Information related to the state change.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate Int32 OnAVerMediaCiStateChange(IntPtr context, IntPtr stateData);
+    private delegate int OnAVerMediaCiStateChange(IntPtr context, IntPtr stateData);
 
     /// <summary>
     /// Called by the CI COM object when an MMI message is available.
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// <param name="messageData">The MMI message data.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully handled</returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.StdCall)]
-    private delegate Int32 OnAVerMediaMmiMessage(IntPtr context, IntPtr messageData);
+    private delegate int OnAVerMediaMmiMessage(IntPtr context, IntPtr messageData);
 
     #endregion
 
@@ -219,8 +219,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     private struct AVerMediaPmt
     {
       private byte Zero1;
-      private Int16 Zero2;
-      public Int16 Length;
+      private short Zero2;
+      public short Length;
       public IntPtr PmtPtr;   // Note: if you send normal PMT, do not include the CRC.
     }
 
@@ -229,7 +229,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Text;
+      public string Text;
       #pragma warning restore 0649
     }
 
@@ -237,8 +237,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     private struct MmiData
     {
       public AVerMediaMmiMessageType MessageType;
-      public UInt16 Unknown;
-      public UInt16 IsBlindAnswer;
+      public ushort Unknown;
+      public ushort IsBlindAnswer;
       public byte StringCount;
       public byte Count;      // either the number of entries in a menu/list, or the number of characters for an enquiry
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
@@ -309,7 +309,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// <param name="context">Internal context information maintained by the COM object.</param>
     /// <param name="stateData">Information related to the state change.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
-    private Int32 OnCiStateChange(IntPtr context, IntPtr stateData)
+    private int OnCiStateChange(IntPtr context, IntPtr stateData)
     {
       if (stateData == IntPtr.Zero)
       {
@@ -346,14 +346,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// <param name="context">Internal context information maintained by the COM object.</param>
     /// <param name="messageData">The MMI message data.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully handled</returns>
-    private Int32 OnMmiMessage(IntPtr context, IntPtr messageData)
+    private int OnMmiMessage(IntPtr context, IntPtr messageData)
     {
       if (messageData == IntPtr.Zero)
       {
         this.LogDebug("AVerMedia: MMI message callback, no message data provided");
         return 0;
       }
-      if ((Int16)AVerMediaMmiMessageType.Unknown == Marshal.ReadInt16(messageData, 0))
+      if ((short)AVerMediaMmiMessageType.Unknown == Marshal.ReadInt16(messageData, 0))
       {
         return 0;
       }
@@ -445,7 +445,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -457,17 +457,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("AVerMedia: initialising device");
 
-      if (String.IsNullOrEmpty(tunerDevicePath))
+      if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
-        this.LogDebug("AVerMedia: tuner device path is not set");
+        this.LogDebug("AVerMedia: tuner external identifier is not set");
         return false;
       }
       if (_isAVerMedia)
@@ -476,15 +476,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
         return true;
       }
 
-      foreach (String validDevicePath in VALID_DEVICE_PATHS)
+      foreach (string validDevicePath in VALID_DEVICE_PATHS)
       {
-        if (tunerDevicePath.ToLowerInvariant().Contains(validDevicePath))
+        if (tunerExternalIdentifier.ToLowerInvariant().Contains(validDevicePath))
         {
-          base.Initialise(tunerFilter, tunerType, tunerDevicePath);
+          base.Initialise(tunerExternalIdentifier, tunerType, context);
 
           this.LogDebug("AVerMedia: supported device detected");
           _isAVerMedia = true;
-          _tunerDevicePath = tunerDevicePath;
+          _tunerDevicePath = tunerExternalIdentifier;
           return true;
         }
       }
@@ -581,7 +581,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       int hr = _ciInterface.SetStateChangeCallBack(_ciStateChangeInterfacePtr);
       hr |= _mmiInterface.SetMessageCallback(_mmiMessageInterfacePtr);
       hr |= _ciInterface.OpenInterface(devicePathSection, null, null);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
@@ -729,7 +729,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       {
         //int hr = _ciInterface.SendPmt(structPtr, 0);
         int hr = _pmtInterface.SendPmt1(structPtr, (short)listAction);
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("AVerMedia: result = success");
           return true;
@@ -783,7 +783,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       }
 
       int hr = _mmiInterface.OpenMenu(0);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
@@ -813,7 +813,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       }
 
       int hr = _mmiInterface.CloseMenu(0);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
@@ -844,7 +844,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       }
 
       int hr = _mmiInterface.SelectMenuEntry(0, choice);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
@@ -864,7 +864,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("AVerMedia: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -890,7 +890,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
       }
 
       int hr = _mmiInterface.SendMenuAnswer(0, answer, (byte)answer.Length);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
@@ -905,7 +905,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.AVerMedia
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

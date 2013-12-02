@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         return TvResult.SWEncoderMissing;
       }
-      catch (TvExceptionDeviceLoadFailed ex2)
+      catch (TvExceptionTunerLoadFailed ex2)
       {
         this.LogError(ex2);
         if (result != null)
@@ -352,7 +352,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         }
         return TvResult.SWEncoderMissing;
       }
-      catch (TvExceptionDeviceLoadFailed ex2)
+      catch (TvExceptionTunerLoadFailed ex2)
       {
         user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         this.LogError(ex2);

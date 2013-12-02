@@ -22,10 +22,11 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
 {
   public class Compro : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
@@ -107,16 +108,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         _generalBuffer, MAC_ADDRESS_LENGTH,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != MAC_ADDRESS_LENGTH)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
         this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
-        String address = String.Empty;
+        string address = string.Empty;
         for (int i = 0; i < returnedByteCount; i++)
         {
-          address += String.Format("{0:x2}-", Marshal.ReadByte(_generalBuffer, i));
+          address += string.Format("{0:x2}-", Marshal.ReadByte(_generalBuffer, i));
         }
         this.LogDebug("  MAC address = {0}", address.Substring(0, (returnedByteCount * 3) - 1));
       }
@@ -128,17 +129,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Compro: initialising device");
 
-      if (tunerFilter == null)
+      if (context == null)
       {
-        this.LogDebug("Compro: tuner filter is null");
+        this.LogDebug("Compro: context is null");
         return false;
       }
       if (_isCompro)
@@ -147,16 +148,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         return true;
       }
 
-      _propertySet = tunerFilter as IKsPropertySet;
+      _propertySet = context as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Compro: tuner filter is not a property set");
+        this.LogDebug("Compro: context is not a property set");
         return false;
       }
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
-      if (hr != 0 || (support & KSPropertySupport.Get) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Get) == 0)
       {
         this.LogDebug("Compro: device does not support the Compro property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -175,13 +176,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    public bool SetPowerState(PowerState state)
     {
-      this.LogDebug("Compro: set power state, on = {0}", powerOn);
+      this.LogDebug("Compro: set power state, state = {0}", state);
 
       if (!_isCompro || _propertySet == null)
       {
@@ -191,13 +192,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      if (powerOn)
+      if (state == PowerState.On)
       {
         Marshal.WriteByte(_commandBuffer, 0, (byte)ComproLnbPower.On);
       }
@@ -210,7 +211,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         IntPtr.Zero, 0,
         _commandBuffer, sizeof(Byte)
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Compro: result = success");
         return true;
@@ -248,7 +249,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
       {
         hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
                                     out support);
-        if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+        if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
         {
           this.LogDebug("Compro: DiSEqC basic property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
@@ -264,10 +265,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
             Marshal.WriteInt32(_commandBuffer, 0, 1);
           }
           hr = _propertySet.Set(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
-            _generalBuffer, sizeof(Int32),
-            _commandBuffer, sizeof(Int32)
+            _generalBuffer, sizeof(int),
+            _commandBuffer, sizeof(int)
           );
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             success = false;
@@ -277,7 +278,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
 
       hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
                                   out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Compro: tone/power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -295,7 +296,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
           IntPtr.Zero, 0,
           _commandBuffer, sizeof(Byte)
         );
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
@@ -346,7 +347,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
         _generalBuffer, GENERAL_BUFFER_SIZE,
         _commandBuffer, MAX_DISEQC_MESSAGE_LENGTH
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Compro: result = success");
         return true;
@@ -374,7 +375,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Compro
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

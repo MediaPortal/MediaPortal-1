@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter encryption analyser callback interface.
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("7b42a7b1-0f93-44f4-9f0f-57b3a424d882"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IEncryptionStateChangeCallBack
@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter encryption analyser interface.
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("59f8d617-92fd-48d5-8f6d-a97bfd95c448"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsEncryptionAnalyser

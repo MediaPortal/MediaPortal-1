@@ -25,12 +25,13 @@ using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Knc
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for KNC One devices, including compatible models
@@ -76,36 +77,36 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
     /// <param name="callbacks">Callback structure pointer.</param>
     /// <returns><c>true</c> if the interface is successfully enabled, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_Enable(Int32 deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
+    private static extern bool KNCBDA_CI_Enable(int deviceIndex, IGraphBuilder graphBuilder, IBaseFilter filter, IntPtr callbacks);
 
     /// <summary>
     /// Disable the conditional access interface.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the interface is successfully disabled, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_Disable(Int32 deviceIndex);
+    private static extern bool KNCBDA_CI_Disable(int deviceIndex);
 
     /// <summary>
     /// Check if this device currently has conditional access capabilities.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if a CI slot is connected with a CAM inserted, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_IsAvailable(Int32 deviceIndex);
+    private static extern bool KNCBDA_CI_IsAvailable(int deviceIndex);
 
     /// <summary>
     /// Check if the CAM is ready for interaction.
     /// </summary>
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <returns><c>true</c> if the CAM is ready, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_IsReady(Int32 deviceIndex);
+    private static extern bool KNCBDA_CI_IsReady(int deviceIndex);
 
     /// <summary>
     /// Enable the use of the KNCBDA_CI_* functions by initialising internal variables and interfaces.
@@ -113,9 +114,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="param"><c>True</c> to enable the CI slot; <c>false</c>to disable the CI slot.</param>
     /// <returns>???</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_HW_Enable(Int32 deviceIndex, [MarshalAs(UnmanagedType.Bool)] bool param);
+    private static extern bool KNCBDA_CI_HW_Enable(int deviceIndex, [MarshalAs(UnmanagedType.Bool)] bool param);
 
     /// <summary>
     /// Get the name/brand/type of the CAM inserted in the CI slot. This string is likely
@@ -125,10 +126,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="name">A buffer to hold the CAM name.</param>
     /// <param name="bufferSize">The size of the CAM name buffer in bytes.</param>
     /// <returns>the name/brand/type of the CAM</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_GetName(Int32 deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
-                                                UInt32 bufferSize);
+    private static extern bool KNCBDA_CI_GetName(int deviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder name,
+                                                uint bufferSize);
 
     /// <summary>
     /// Send CA PMT to the CAM.
@@ -137,9 +138,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="caPmt">A pointer to a buffer containing the CA PMT.</param>
     /// <param name="caPmtLength">The length of the CA PMT buffer in bytes.</param>
     /// <returns><c>true</c> if the CA PMT is successfully passed to the CAM, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_SendPMTCommand(Int32 deviceIndex, IntPtr caPmt, UInt32 caPmtLength);
+    private static extern bool KNCBDA_CI_SendPMTCommand(int deviceIndex, IntPtr caPmt, uint caPmtLength);
 
     /// <summary>
     /// Enter the CAM menu.
@@ -147,9 +148,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_EnterMenu(Int32 deviceIndex, byte slotIndex);
+    private static extern bool KNCBDA_CI_EnterMenu(int deviceIndex, byte slotIndex);
 
     /// <summary>
     /// Select an entry in the CAM menu.
@@ -158,9 +159,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <param name="choice">The index (0..n) of the menu choice selected by the user.</param>
     /// <returns>???</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_SelectMenu(Int32 deviceIndex, byte slotIndex, byte choice);
+    private static extern bool KNCBDA_CI_SelectMenu(int deviceIndex, byte slotIndex, byte choice);
 
     /// <summary>
     /// Close the CAM menu.
@@ -168,9 +169,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="slotIndex">The index (0..n) of the CI slot that the CAM is inserted in.</param>
     /// <returns>???</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_CloseMenu(Int32 deviceIndex, byte slotIndex);
+    private static extern bool KNCBDA_CI_CloseMenu(int deviceIndex, byte slotIndex);
 
     /// <summary>
     /// Send a response from the user to the CAM.
@@ -180,10 +181,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="menuAnswer">The user's response.</param>
     /// <returns>???</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_CI_SendMenuAnswer(Int32 deviceIndex, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool cancel,
-                                                       [In, MarshalAs(UnmanagedType.LPStr)] String menuAnswer);
+    private static extern bool KNCBDA_CI_SendMenuAnswer(int deviceIndex, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool cancel,
+                                                       [In, MarshalAs(UnmanagedType.LPStr)] string menuAnswer);
 
     /// <summary>
     /// Enable the use of the KNCBDA_HW_* functions by initialising internal variables and interfaces.
@@ -191,9 +192,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="deviceIndex">Device index 0..n.</param>
     /// <param name="filter">The filter which supports the proprietary property sets. This is the tuner filter for PCI devices and the capture filter for PCI-e devices.</param>
     /// <returns><c>true</c> if the hardware interfaces are successfully initialised, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_HW_Enable(Int32 deviceIndex, IBaseFilter filter);
+    private static extern bool KNCBDA_HW_Enable(int deviceIndex, IBaseFilter filter);
 
     /// <summary>
     /// Send a DiSEqC command.
@@ -203,9 +204,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="commandLength">The length of the command.</param>
     /// <param name="repeatCount">The number of times to resend the command.</param>
     /// <returns><c>true</c> if the tuner successfully sent the command, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool KNCBDA_HW_DiSEqCWrite(Int32 deviceIndex, IntPtr command, UInt32 commandLength, UInt32 repeatCount);
+    private static extern bool KNCBDA_HW_DiSEqCWrite(int deviceIndex, IntPtr command, uint commandLength, uint repeatCount);
 
     /// <summary>
     /// PCI-e products (Philips/NXP/Trident SAA7160 based) have a main device filter - one
@@ -214,17 +215,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// SAA716x based main devices.
     /// </summary>
     /// <returns>the number of SAA716x main device filters in the system</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern Int32 PCIE_EnumerateMainDevices();
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
+    private static extern int PCIE_EnumerateMainDevices();
 
     /// <summary>
     /// Returns the filter name for a specific main device.
     /// </summary>
     /// <param name="mainDeviceIndex">Main device index 0..n.</param>
     /// <returns>the name for the main device corresponding with the index parameter</returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
     [return: MarshalAs(UnmanagedType.LPStr)]
-    private static extern String PCIE_GetDeviceItem(Int32 mainDeviceIndex);
+    private static extern string PCIE_GetDeviceItem(int mainDeviceIndex);
 
     /// <summary>
     /// Open a main device. You need to do this if you want to swap the CI/CAM inputs on the corresponding
@@ -232,14 +233,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// </summary>
     /// <param name="mainDeviceIndex">Main device index 0..n.</param>
     /// <returns><c>true</c> if the device is successfully opened, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool PCIE_OpenMainDevice(Int32 mainDeviceIndex);
+    private static extern bool PCIE_OpenMainDevice(int mainDeviceIndex);
 
     /// <summary>
     /// Close the currently open main device. You can only have one main device open at a time.
     /// </summary>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     private static extern void PCIE_CloseMainDevice();
 
     /// <summary>
@@ -250,9 +251,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="data">A pointer to a buffer containing the property value.</param>
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is set successfully, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool PCIE_SetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, UInt32 dataLength);
+    private static extern bool PCIE_SetProperty(Guid propertySet, uint propertyIndex, IntPtr data, uint dataLength);
 
     /// <summary>
     /// Get the value of a tuner property.
@@ -262,9 +263,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="data">A pointer to a buffer to hold the property value.</param>
     /// <param name="dataLength">The length of the property value in bytes.</param>
     /// <returns><c>true</c> if the value of the property is retrieved successfully, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool PCIE_GetProperty(Guid propertySet, UInt32 propertyIndex, IntPtr data, out UInt32 dataLength);
+    private static extern bool PCIE_GetProperty(Guid propertySet, uint propertyIndex, IntPtr data, out uint dataLength);
 
     /// <summary>
     /// Swap the CI slot/CAM associated with the tuners on a card. Tuners can only access a single
@@ -272,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// </summary>
     /// <param name="swap"><c>True</c> to swap CI slot/CAM inputs.</param>
     /// <returns><c>true</c> if the CI slot/CAM inputs on the device are successfully swapped, otherwise <c>false</c></returns>
-    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("Resources\\KNCBDACTRL.dll", CallingConvention = CallingConvention.StdCall)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool PCIE_SwapCAMInput([MarshalAs(UnmanagedType.Bool)] bool swap);
 
@@ -326,7 +327,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiState(
-      byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] String menuTitle, IntPtr context);
+      byte slotIndex, KncCiState state, [MarshalAs(UnmanagedType.LPStr)] string menuTitle, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver when the CAM menu is successfully opened.
@@ -346,10 +347,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="numEntries">The number of entries in the menu.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] String title,
-                                            [MarshalAs(UnmanagedType.LPStr)] String subTitle,
-                                            [MarshalAs(UnmanagedType.LPStr)] String footer,
-                                            UInt32 numEntries, IntPtr context);
+    private delegate void OnKncCiMenu(byte slotIndex, [MarshalAs(UnmanagedType.LPStr)] string title,
+                                            [MarshalAs(UnmanagedType.LPStr)] string subTitle,
+                                            [MarshalAs(UnmanagedType.LPStr)] string footer,
+                                            uint numEntries, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver for each menu entry when the user is browsing the CAM menu.
@@ -360,7 +361,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiMenuEntry(
-      byte slotIndex, UInt32 entryIndex, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+      byte slotIndex, uint entryIndex, [MarshalAs(UnmanagedType.LPStr)] string text, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver when the CAM requests input from the user.
@@ -372,7 +373,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnKncCiRequest(
-      byte slotIndex, bool blind, UInt32 answerLength, [MarshalAs(UnmanagedType.LPStr)] String text, IntPtr context);
+      byte slotIndex, bool blind, uint answerLength, [MarshalAs(UnmanagedType.LPStr)] string text, IntPtr context);
 
     /// <summary>
     /// Called by the tuner driver when the CAM wants to close the menu.
@@ -381,7 +382,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnKncCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context);
+    private delegate void OnKncCiCloseDisplay(byte slotIndex, uint delay, IntPtr context);
 
     #endregion
 
@@ -486,7 +487,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     private bool _isPcie = false;
     private int _deviceIndex = -1;
     private byte _slotIndex = 0;
-    private String _name = "KNC";
+    private string _name = "KNC";
     private KncCiState _ciState = KncCiState.Releasing;
     private bool _isCamPresent = false;
     private bool _isCamReady = false;
@@ -513,14 +514,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// </remarks>
     /// <param name="devicePath">The device path of the device.</param>
     /// <returns>the device index for this device, otherwise -1 if the device is not KNC-compatible</returns>
-    private static int GetDeviceIndex(String devicePath)
+    private static int GetDeviceIndex(string devicePath)
     {
       // Build a list of the device paths of all KNC-compatible tuners installed in this system.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
-      List<String> devicePaths = new List<String>();
+      List<string> devicePaths = new List<string>();
       foreach (DsDevice device in devices)
       {
-        foreach (String validTunerName in VALID_DEVICE_NAMES)
+        foreach (string validTunerName in VALID_DEVICE_NAMES)
         {
           if (device.Name != null && device.Name.Equals(validTunerName))
           {
@@ -528,6 +529,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
             break;
           }
         }
+        device.Dispose();
       }
 
       if (devicePaths.Count == 0)
@@ -540,7 +542,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
 
       // Find the index of the device.
       int idx = 0;
-      foreach (String path in devicePaths)
+      foreach (string path in devicePaths)
       {
         if (devicePath.Equals(path))
         {
@@ -592,7 +594,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       // it with this devices' device path instance component. In addition, the mainDeviceName is non-unique,
       // so in the case where there are multiple KNC PCIe devices connected to a single system we are not
       // able to distinguish between them. Hmmm...
-      String mainDeviceName = PCIE_GetDeviceItem(0);
+      string mainDeviceName = PCIE_GetDeviceItem(0);
 
       if (!PCIE_OpenMainDevice(0))
       {
@@ -615,7 +617,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="state">The new state of the slot.</param>
     /// <param name="menuTitle">The CAM root menu title.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiState(byte slotIndex, KncCiState state, String menuTitle, IntPtr context)
+    private void OnCiState(byte slotIndex, KncCiState state, string menuTitle, IntPtr context)
     {
       this.LogDebug("KNC: device {0} CI state change callback, slot = {1}", _deviceIndex, slotIndex);
       lock (this)
@@ -661,7 +663,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="footer">The menu footer.</param>
     /// <param name="numEntries">The number of entries in the menu.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiMenu(byte slotIndex, String title, String subTitle, String footer, UInt32 numEntries, IntPtr context)
+    private void OnCiMenu(byte slotIndex, string title, string subTitle, string footer, uint numEntries, IntPtr context)
     {
       this.LogDebug("KNC: device {0} menu callback, slot = {1}", _deviceIndex, slotIndex);
       this.LogDebug("  title     = {0}", title);
@@ -692,7 +694,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="entryIndex">The index of the entry within the menu.</param>
     /// <param name="text">The text associated with the entry.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiMenuEntry(byte slotIndex, UInt32 entryIndex, String text, IntPtr context)
+    private void OnCiMenuEntry(byte slotIndex, uint entryIndex, string text, IntPtr context)
     {
       this.LogDebug("KNC: device {0} menu entry callback, slot = {1}", _deviceIndex, slotIndex);
       this.LogDebug("  entry {0,-2} = {1}", entryIndex, text);
@@ -721,7 +723,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiRequest(byte slotIndex, bool blind, UInt32 answerLength, String text, IntPtr context)
+    private void OnCiRequest(byte slotIndex, bool blind, uint answerLength, string text, IntPtr context)
     {
       this.LogDebug("KNC: device {0} request callback, slot = {1}", _deviceIndex, slotIndex);
       this.LogDebug("  text   = {0}", text);
@@ -750,7 +752,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="delay">The delay (in milliseconds) after which the menu should be closed.</param>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
-    private void OnCiCloseDisplay(byte slotIndex, UInt32 delay, IntPtr context)
+    private void OnCiCloseDisplay(byte slotIndex, uint delay, IntPtr context)
     {
       this.LogDebug("KNC: device {0} close menu callback, slot = {1}, delay = {2}", _deviceIndex, slotIndex, delay);
       if (_ciMenuCallbacks != null)
@@ -793,7 +795,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -805,22 +807,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("KNC: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("KNC: tuner filter is null");
         return false;
       }
-      if (String.IsNullOrEmpty(tunerDevicePath))
+      if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
-        this.LogDebug("KNC: tuner device path is not set");
+        this.LogDebug("KNC: tuner external identifier is not set");
         return false;
       }
       if (_isKnc)
@@ -832,12 +835,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       // Stage 1: check if this device is supported by the KNC API.
       FilterInfo tunerInfo;
       int hr = tunerFilter.QueryFilterInfo(out tunerInfo);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("KNC: failed to get the tuner filter name, hr = 0x{0:x} - {1}", HResult.GetDXErrorString(hr));
         return false;
       }
-      foreach (String validTunerName in VALID_DEVICE_NAMES)
+      foreach (string validTunerName in VALID_DEVICE_NAMES)
       {
         if (tunerInfo.achName.Equals(validTunerName))
         {
@@ -845,7 +848,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           _name = validTunerName.Substring(0, validTunerName.IndexOf(' '));
 
           // Stage 2: attempt to get the KNC device index corresponding with this tuner.
-          String devicePath = tunerDevicePath.ToLowerInvariant();
+          string devicePath = tunerExternalIdentifier.ToLowerInvariant();
           _deviceIndex = GetDeviceIndex(devicePath);
           if (_deviceIndex < 0)
           {
@@ -874,7 +877,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           IPin captureInputPin;
           hr = tunerOutputPin.ConnectedTo(out captureInputPin);
           Release.ComObject("KNC tuner filter output pin", ref tunerOutputPin);
-          if (hr != 0 || captureInputPin == null)
+          if (hr != (int)HResult.Severity.Success || captureInputPin == null)
           {
             this.LogDebug("KNC: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             break;
@@ -883,7 +886,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
           PinInfo captureInfo;
           hr = captureInputPin.QueryPinInfo(out captureInfo);
           Release.ComObject("KNC capture filter input pin", ref captureInputPin);
-          if (hr != 0 || captureInfo.filter == null)
+          if (hr != (int)HResult.Severity.Success || captureInfo.filter == null)
           {
             this.LogDebug("KNC: failed to get the capture filter, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           }
@@ -925,10 +928,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("KNC: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isKnc)
       {
@@ -1166,7 +1169,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
       {
         Marshal.Copy(caPmt, 0, pmtBuffer, caPmt.Length);
         //DVB_MMI.DumpBinary(pmtBuffer, 0, caPmtLength);
-        bool result = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (UInt32)caPmt.Length);
+        bool result = KNCBDA_CI_SendPMTCommand(_deviceIndex, pmtBuffer, (uint)caPmt.Length);
         this.LogDebug("KNC: result = {0}", result);
         return result;
       }
@@ -1263,11 +1266,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, String answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("KNC: device {0} slot {1} send menu answer, answer = {2}, cancel = {3}", _deviceIndex, _slotIndex, answer, cancel);
       if (!_isKnc)
@@ -1357,7 +1360,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Knc
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

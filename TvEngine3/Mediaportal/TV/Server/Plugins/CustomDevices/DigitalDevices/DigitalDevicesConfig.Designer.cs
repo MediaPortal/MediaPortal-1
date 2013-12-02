@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   partial class DigitalDevicesConfig
   {

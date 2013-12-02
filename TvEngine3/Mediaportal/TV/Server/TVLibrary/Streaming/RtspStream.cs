@@ -38,7 +38,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
 
     #endregion
 
-    #region ctors
+    #region constructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspStream"/> class.

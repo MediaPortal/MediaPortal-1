@@ -23,12 +23,13 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Genpix
 {
   /// <summary>
   /// A class for handling DiSEqC for Genpix tuners using the standard BDA driver.
@@ -104,26 +105,26 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct BdaExtensionParams
     {
-      public UInt32 Frequency;              // unit = MHz
-      public UInt32 LnbLowBandLof;          // unit = MHz
-      public UInt32 LnbHighBandLof;         // unit = MHz
-      public UInt32 LnbSwitchFrequency;     // unit = MHz
-      public UInt32 SymbolRate;             // unit = ks/s
+      public uint Frequency;                // unit = MHz
+      public uint LnbLowBandLof;            // unit = MHz
+      public uint LnbHighBandLof;           // unit = MHz
+      public uint LnbSwitchFrequency;       // unit = MHz
+      public uint SymbolRate;               // unit = ks/s
       public Polarisation Polarisation;
       public ModulationType Modulation;
       public BinaryConvolutionCodeRate InnerFecRate;
       public GenpixSwitchPort SwitchPort;
 
-      public UInt32 DiseqcRepeats;          // Set to zero to send once, one to send twice, two to send three times etc.
+      public uint DiseqcRepeats;            // Set to zero to send once, one to send twice, two to send three times etc.
 
-      public UInt32 DiseqcMessageLength;
+      public uint DiseqcMessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] DiseqcMessage;
       [MarshalAs(UnmanagedType.Bool)]
       public bool DiseqcForceHighVoltage;
 
-      public UInt32 SignalStrength;         // range = 0 - 100%
-      public UInt32 SignalQuality;          // range = 0 - 100%
+      public uint SignalStrength;           // range = 0 - 100%
+      public uint SignalQuality;            // range = 0 - 100%
       [MarshalAs(UnmanagedType.Bool)]
       public bool SignalIsLocked;
     }
@@ -158,17 +159,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Genpix: initialising device");
 
-      if (tunerFilter == null)
+      if (context == null)
       {
-        this.LogDebug("Genpix: tuner filter is null");
+        this.LogDebug("Genpix: context is null");
         return false;
       }
       if (_isGenpix)
@@ -177,16 +178,16 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
         return true;
       }
 
-      _propertySet = tunerFilter as IKsPropertySet;
+      _propertySet = context as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Genpix: tuner filter is not a property set");
+        this.LogDebug("Genpix: context is not a property set");
         return false;
       }
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Genpix: device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -208,10 +209,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Genpix: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isGenpix)
       {
@@ -354,11 +355,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
 
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       BdaExtensionParams command = new BdaExtensionParams();
-      command.Frequency = (UInt32)dvbsChannel.Frequency / 1000;
-      command.LnbLowBandLof = (UInt32)dvbsChannel.LnbType.LowBandFrequency / 1000;
-      command.LnbHighBandLof = (UInt32)dvbsChannel.LnbType.HighBandFrequency / 1000;
-      command.LnbSwitchFrequency = (UInt32)dvbsChannel.LnbType.SwitchFrequency / 1000;
-      command.SymbolRate = (UInt32)dvbsChannel.SymbolRate;
+      command.Frequency = (uint)dvbsChannel.Frequency / 1000;
+      command.LnbLowBandLof = (uint)dvbsChannel.LnbType.LowBandFrequency / 1000;
+      command.LnbHighBandLof = (uint)dvbsChannel.LnbType.HighBandFrequency / 1000;
+      command.LnbSwitchFrequency = (uint)dvbsChannel.LnbType.SwitchFrequency / 1000;
+      command.SymbolRate = (uint)dvbsChannel.SymbolRate;
       command.Polarisation = dvbsChannel.Polarisation;
       command.Modulation = dvbsChannel.ModulationType;
       command.InnerFecRate = dvbsChannel.InnerFecRate;
@@ -372,7 +373,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
         _instanceBuffer, INSTANCE_SIZE,
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Genpix: result = success");
         return true;
@@ -433,7 +434,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
         _instanceBuffer, INSTANCE_SIZE,
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Genpix: result = success");
         return true;
@@ -480,7 +481,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
         _instanceBuffer, INSTANCE_SIZE,
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Genpix: result = success");
         return true;
@@ -508,7 +509,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Genpix
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

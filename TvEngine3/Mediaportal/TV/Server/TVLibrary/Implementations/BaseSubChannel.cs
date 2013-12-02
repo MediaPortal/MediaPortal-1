@@ -133,9 +133,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected bool _cancelTune;
 
+    protected ITVCard _tuner;
+
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
@@ -145,8 +147,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _cancelTune = false;
       _subChannelId = subChannelId;
       _teletextDecoder = new DVBTeletext();
-      _timeshiftFileName = String.Empty;
-      _recordingFileName = String.Empty;
+      _timeshiftFileName = string.Empty;
+      _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       _dateTimeShiftStarted = DateTime.MinValue;
     }
@@ -307,7 +309,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("BaseSubChannel: subchannel {0} stop timeshifting", _subChannelId);
       OnStopTimeShifting();
-      _timeshiftFileName = String.Empty;
+      _timeshiftFileName = string.Empty;
       _dateTimeShiftStarted = DateTime.MinValue;
       return true;
     }
@@ -344,7 +346,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("BaseSubChannel: subchannel {0} stop recording", _subChannelId);
       OnStopRecording();
-      _recordingFileName = String.Empty;
+      _recordingFileName = string.Empty;
       _dateRecordingStarted = DateTime.MinValue;
       return true;
     }
@@ -354,7 +356,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public void TimeShiftGetCurrentFilePosition(ref Int64 position, ref long bufferId)
+    public void TimeShiftGetCurrentFilePosition(ref long position, ref long bufferId)
     {
       OnGetTimeShiftFilePosition(ref position, ref bufferId);
     }
@@ -369,7 +371,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     /// <summary>
-    /// Check if the current tuning process has been cancelled and throw and exception if it has.
+    /// Check if the current tuning process has been cancelled and throw an exception if it has.
     /// </summary>
     protected void ThrowExceptionIfTuneCancelled()
     {
@@ -381,7 +383,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     #endregion
 
-    #region IAnalogTeletextCallBack and ITeletextCallBack Members
+    #region ITeletextCallBack members
 
     /// <summary>
     /// callback from the TsWriter filter when it received a new teletext packets
@@ -391,12 +393,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public int OnTeletextReceived(IntPtr data, short packetCount)
     {
+      if (_teletextDecoder == null)
+      {
+        return 0;
+      }
       try
       {
         IntPtr packetPtr = data;
         for (int i = 0; i < packetCount; ++i)
         {
-          ProcessPacket(packetPtr);
+          _teletextDecoder.SaveData(packetPtr);
           packetPtr = IntPtr.Add(packetPtr, 188);
         }
       }
@@ -405,19 +411,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         this.LogError(ex, "");
       }
       return 0;
-    }
-
-    /// <summary>
-    /// processes a single transport packet
-    /// Called from BufferCB
-    /// </summary>
-    /// <param name="ptr">pointer to the transport packet</param>
-    public void ProcessPacket(IntPtr ptr)
-    {
-      if (_teletextDecoder != null)
-      {
-        _teletextDecoder.SaveData(ptr);
-      }
     }
 
     #endregion
@@ -461,10 +454,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         StopTimeShifting();
       }
-      _timeshiftFileName = String.Empty;
-      _recordingFileName = String.Empty;
-      _dateTimeShiftStarted = DateTime.MinValue;
-      _dateRecordingStarted = DateTime.MinValue;
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
@@ -480,7 +469,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Should be called before tuning to a new channel
     /// resets the state
     /// </summary>
-    public abstract void OnBeforeTune();
+    public virtual void OnBeforeTune()
+    {
+      if (_teletextDecoder != null)
+      {
+        _teletextDecoder.ClearBuffer();
+      }
+    }
 
     /// <summary>
     /// Should be called when the graph is tuned to the new channel
@@ -493,18 +488,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// sets up the pmt grabber to grab the pmt of the channel
     /// </summary>
     public abstract void OnGraphRunning();
-
-    /// <summary>
-    /// Should be called when graph is about to stop.
-    /// stops any timeshifting/recording on this channel
-    /// </summary>
-    public abstract void OnGraphStop();
-
-    /// <summary>
-    /// should be called when graph has been stopped
-    /// Resets the graph state
-    /// </summary>
-    public abstract void OnGraphStopped();
 
     #endregion
 
@@ -540,7 +523,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected abstract void OnGetTimeShiftFilePosition(ref Int64 position, ref long bufferId);
+    protected abstract void OnGetTimeShiftFilePosition(ref long position, ref long bufferId);
 
     /// <summary>
     /// A derrived class should activate or deactivate the teletext grabbing on the tv card.

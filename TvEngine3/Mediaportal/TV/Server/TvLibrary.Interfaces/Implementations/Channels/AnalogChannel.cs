@@ -51,10 +51,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     private TunerInputType _tunerSource = TunerInputType.Cable;
 
     [DataMember]
-    private CaptureVideoSource _videoInputType = CaptureVideoSource.Tuner;
+    private CaptureSourceVideo _videoInputType = CaptureSourceVideo.Tuner;
 
     [DataMember]
-    private CaptureAudioSource _audioInputType = CaptureAudioSource.Tuner;
+    private CaptureSourceAudio _audioInputType = CaptureSourceAudio.Tuner;
 
     [DataMember]
     private bool _isVcrSignal;
@@ -80,8 +80,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
       CountryCollection collection = new CountryCollection();
       _country = collection.GetTunerCountryFromID(31);  // The Netherlands.
       _tunerSource = TunerInputType.Cable;
-      _videoInputType = CaptureVideoSource.Tuner;
-      _audioInputType = CaptureAudioSource.Tuner;
+      _videoInputType = CaptureSourceVideo.Tuner;
+      _audioInputType = CaptureSourceAudio.Tuner;
       _isVcrSignal = false;
       _mediaType = MediaTypeEnum.TV;
       _freeToAir = true;
@@ -161,7 +161,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set the channel video input or source.
     /// </summary>
-    public CaptureVideoSource VideoSource
+    public CaptureSourceVideo VideoSource
     {
       get { return _videoInputType; }
       set { _videoInputType = value; }
@@ -170,7 +170,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels
     /// <summary>
     /// Get/set the channel audio input or source.
     /// </summary>
-    public CaptureAudioSource AudioSource
+    public CaptureSourceAudio AudioSource
     {
       get { return _audioInputType; }
       set { _audioInputType = value; }

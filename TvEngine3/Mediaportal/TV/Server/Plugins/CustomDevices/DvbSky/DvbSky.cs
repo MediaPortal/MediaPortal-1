@@ -21,10 +21,10 @@
 using System;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DvbSky
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for DVBSky devices. Actually with the exception of
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -106,19 +106,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("DVBSky: initialising device");
 
-      if (tunerFilter == null)
-      {
-        this.LogDebug("DVBSky: tuner filter is null");
-        return false;
-      }
       if (_isDvbSky)
       {
         this.LogDebug("DVBSky: device is already initialised");
@@ -127,7 +122,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
 
       this.LogDebug("DVBSky: checking base Conexant interface support");
       _conexantInterface = new Conexant.Conexant(DVBSKY_BDA_EXTENSION_GENERAL_PROPERTY_SET);
-      if (!_conexantInterface.Initialise(tunerFilter, tunerType, tunerDevicePath))
+      if (!_conexantInterface.Initialise(tunerExternalIdentifier, tunerType, context))
       {
         this.LogDebug("DVBSky: base Conexant interface not supported");
         _conexantInterface.Dispose();
@@ -138,7 +133,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
       _isDvbSky = true;
 
       this.LogDebug("DVBSky: checking base NetUP conditional access support");
-      if (base.Initialise(tunerFilter, tunerType, tunerDevicePath))
+      if (base.Initialise(tunerExternalIdentifier, tunerType, context))
       {
         this.LogDebug("DVBSky: conditional access interface supported");
       }
@@ -215,7 +210,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DvbSky
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

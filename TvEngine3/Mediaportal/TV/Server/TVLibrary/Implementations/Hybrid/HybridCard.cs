@@ -46,7 +46,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HybridCard"/> class.
@@ -141,9 +141,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Does the device support conditional access?
+    /// Does the tuner support conditional access?
     /// </summary>
-    /// <value><c>true</c> if the device supports conditional access, otherwise <c>false</c></value>
+    /// <value><c>true</c> if the tuner supports conditional access, otherwise <c>false</c></value>
     public bool IsConditionalAccessSupported
     {
       get { return _internalCard.IsConditionalAccessSupported; }
@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Get the device's channel scanning interface.
+    /// Get the tuner's channel scanning interface.
     /// </summary>
     public ITVScanning ScanningInterface
     {
@@ -487,11 +487,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     }
 
     /// <summary>
-    /// Reloads the card configuration
+    /// Reload the tuner's configuration.
     /// </summary>
-    public void ReloadCardConfiguration()
+    public void ReloadConfiguration()
     {
-      _internalCard.ReloadCardConfiguration();
+      _internalCard.ReloadConfiguration();
     }
 
     #endregion

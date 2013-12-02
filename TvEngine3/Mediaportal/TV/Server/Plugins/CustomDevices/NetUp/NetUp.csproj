@@ -8,8 +8,8 @@
     <ProjectGuid>{567A537B-255B-4BC1-AAB8-FA30BD6DE5B3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.NetUp</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.NetUp</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.NetUp</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.NetUp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

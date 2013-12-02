@@ -22,10 +22,11 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
 {
   /// <summary>
   /// A base class for handling DiSEqC for various Conexant-based devices including Hauppauge, Geniatech
@@ -77,9 +78,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       public byte[] DiseqcTransmitMessage;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_RX_MESSAGE_LENGTH)]
       public byte[] DiseqcReceiveMessage;
-      public UInt32 DiseqcTransmitMessageLength;
-      public UInt32 DiseqcReceiveMessageLength;
-      public UInt32 AmplitudeAttenuation;       // range = 3 (max amplitude) - 63 (min amplitude)
+      public uint DiseqcTransmitMessageLength;
+      public uint DiseqcReceiveMessageLength;
+      public uint AmplitudeAttenuation;         // range = 3 (max amplitude) - 63 (min amplitude)
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsToneBurstModulated;
       public CxDiseqcVersion DiseqcVersion;
@@ -180,14 +181,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Conexant: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("Conexant: tuner filter is null");
@@ -209,7 +211,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Conexant: device does not support the Conexant property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -276,7 +278,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
         _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
 
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Conexant: result = success");
         return true;
@@ -316,7 +318,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
       DiseqcMessageParams message = new DiseqcMessageParams();
       message.DiseqcTransmitMessage = new byte[MAX_DISEQC_TX_MESSAGE_LENGTH];
       Buffer.BlockCopy(command, 0, message.DiseqcTransmitMessage, 0, command.Length);
-      message.DiseqcTransmitMessageLength = (UInt32)length;
+      message.DiseqcTransmitMessageLength = (uint)length;
       message.DiseqcReceiveMessageLength = 0;
       message.AmplitudeAttenuation = 3;
       // We have no choice about sending a tone burst command. If this is a switch command for port A then
@@ -341,7 +343,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Conexant: result = success");
         return true;
@@ -369,7 +371,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Conexant
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

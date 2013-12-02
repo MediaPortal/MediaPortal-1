@@ -9,6 +9,7 @@ using Mediaportal.TV.Server.TVDatabase.EntityModel;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Countries;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
@@ -357,8 +358,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
           analogChannel.MediaType = (MediaTypeEnum)detail.MediaType;
           analogChannel.Name = detail.Name;
           analogChannel.TunerSource = (TunerInputType)detail.TuningSource;
-          analogChannel.VideoSource = (CaptureVideoSource)detail.VideoSource;
-          analogChannel.AudioSource = (CaptureAudioSource)detail.AudioSource;
+          analogChannel.VideoSource = (CaptureSourceVideo)detail.VideoSource;
+          analogChannel.AudioSource = (CaptureSourceAudio)detail.AudioSource;
           return analogChannel;
         case 1: //ATSCChannel
           ATSCChannel atscChannel = new ATSCChannel();

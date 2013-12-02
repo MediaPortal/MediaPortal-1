@@ -25,7 +25,7 @@ using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   /// <summary>
   /// A struct that is capable of holding the relevant details for a Digital Devices CI slot.
@@ -168,7 +168,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
           buffer, bufferSize,
           out returnedByteCount
         );
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           title = Marshal.PtrToStringAnsi(buffer, returnedByteCount).TrimEnd(new char[] { (char)0 });
         }

@@ -5,7 +5,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
@@ -55,7 +55,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         return;
       }
 
-      if (String.IsNullOrWhiteSpace(_customDevicesFolder))
+      if (string.IsNullOrWhiteSpace(_customDevicesFolder))
       {
         this.LogDebug("customDevicesFolder path is null or empty.");
         return;
@@ -82,8 +82,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         _plugins.Sort(
         delegate(ICustomDevice cd1, ICustomDevice cd2)
         {
-          bool cd1IsAddOn = cd1 is IAddOnDevice;
-          bool cd2IsAddOn = cd2 is IAddOnDevice;
+          bool cd1IsAddOn = cd1 is IDirectShowAddOnDevice;
+          bool cd2IsAddOn = cd2 is IDirectShowAddOnDevice;
           if (cd1IsAddOn && !cd2IsAddOn)
           {
             return -1;
@@ -105,13 +105,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       foreach (ICustomDevice d in _plugins)
       {
         Type[] interfaces = d.GetType().GetInterfaces();
-        String[] interfaceNames = new String[interfaces.Length];
+        string[] interfaceNames = new string[interfaces.Length];
         for (int i = 0; i < interfaces.Length; i++)
         {
           interfaceNames[i] = interfaces[i].Name;
         }
         Array.Sort(interfaceNames);
-        this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, String.Join(", ", interfaceNames));
+        this.LogDebug("  {0} [{1} - {2}]: {3}", d.Name, d.Priority, d.GetType().Name, string.Join(", ", interfaceNames));
       }   
       }
       catch (Exception ex)

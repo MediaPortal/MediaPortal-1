@@ -43,13 +43,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     private readonly List<byte[]> _workingPage = new List<byte[]>();
     private readonly TeletextPageCache _pageCache;
     //bool[,] _rowsReceived = new bool[MAX_MAGAZINE + 2, 32];
-    private string _line = String.Empty;
+    private string _line = string.Empty;
     private bool _isSerial = true;
     private int _prevMagazine;
 
     #endregion
 
-    #region ctor
+    #region constructor
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TeletextDecoder"/> class.
@@ -125,18 +125,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
           if (packetNumber == 0)
           {
-            _line += String.Format("{0:X}'", Hamming.GetPageNumber(off, ref rowData));
-            _vbiLine[magazine] += String.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
+            _line += string.Format("{0:X}'", Hamming.GetPageNumber(off, ref rowData));
+            _vbiLine[magazine] += string.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
           }
           else if (packetNumber < 10)
           {
-            _line += String.Format("{0}0{1} ", magazine, packetNumber);
-            _vbiLine[magazine] += String.Format(" [{0}] {1}0{2} ", (line), magazine, packetNumber);
+            _line += string.Format("{0}0{1} ", magazine, packetNumber);
+            _vbiLine[magazine] += string.Format(" [{0}] {1}0{2} ", (line), magazine, packetNumber);
           }
           else
           {
-            _line += String.Format("{0}{1} ", magazine, packetNumber);
-            _vbiLine[magazine] += String.Format(" [{0}] {1}{2} ", (line), magazine, packetNumber);
+            _line += string.Format("{0}{1} ", magazine, packetNumber);
+            _vbiLine[magazine] += string.Format(" [{0}] {1}{2} ", (line), magazine, packetNumber);
           }
 
 
@@ -184,7 +184,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
           if (packetNumber == 0)
           {
             UpdatePage(magazine);
-            _vbiLine[magazine] = String.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
+            _vbiLine[magazine] = string.Format(" [{0}] {1:X}'", (line), Hamming.GetPageNumber(off, ref rowData));
             _magazineCurrentPageNr[magazine] = -1;
             _magazineCurrentSubPage[magazine] = -1;
 

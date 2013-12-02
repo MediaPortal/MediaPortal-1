@@ -19,7 +19,6 @@
 #endregion
 
 using System.Collections.Generic;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Analog.Graphs.Analog;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
@@ -50,11 +49,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     public HybridCard Add(int idCard, ITVCard card)
     {
       _idCards.Add(idCard);
-      TvCardAnalog analogCard = card as TvCardAnalog;
-      if (analogCard != null)
-      {
-        analogCard.CardId = idCard;
-      }
       _cards.Add(card);
       return new HybridCard(this, card);
     }
@@ -90,7 +84,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     #region ITVCard Members
 
     /// <summary>
-    /// Stop the device. The actual result of this function depends on device configuration.
+    /// Stop the tuner. The actual result of this function depends on tuner configuration.
     /// </summary>
     public void Stop()
     {

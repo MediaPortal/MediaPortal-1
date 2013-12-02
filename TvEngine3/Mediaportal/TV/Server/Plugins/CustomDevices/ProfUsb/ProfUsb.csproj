@@ -8,8 +8,8 @@
     <ProjectGuid>{98CA1C60-C01E-4697-ABAB-CCB1536CA3A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.ProfUsb</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.ProfUsb</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

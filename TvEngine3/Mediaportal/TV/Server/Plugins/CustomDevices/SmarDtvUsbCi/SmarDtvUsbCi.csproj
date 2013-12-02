@@ -8,8 +8,8 @@
     <ProjectGuid>{CFB19A12-1A20-4B09-99D5-2BF157E5FA94}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.SmarDtvUsbCi</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,7 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>    
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />

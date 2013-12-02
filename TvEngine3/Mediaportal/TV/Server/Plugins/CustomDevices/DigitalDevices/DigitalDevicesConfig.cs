@@ -27,9 +27,10 @@ using Mediaportal.TV.Server.SetupControls;
 using Mediaportal.TV.Server.SetupControls.UserInterfaceControls;
 using Mediaportal.TV.Server.TVControl.Interfaces.Services;
 using Mediaportal.TV.Server.TVControl.ServiceAgents;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   public partial class DigitalDevicesConfig : SectionSettings
   {
@@ -60,51 +61,58 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.DigitalDevices
       Guid baseFilterGuid = typeof(IBaseFilter).GUID;
       foreach (DsDevice device in captureDevices)
       {
-        if (!DigitalDevicesCiSlots.IsDigitalDevicesCiDevice(device))
-        {
-          continue;
-        }
-        this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
-        DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
-        if (dbSlots.ContainsKey(device.DevicePath))
-        {
-          this.LogDebug("  found existing configuration");
-          slot = dbSlots[device.DevicePath];
-        }
-        else
-        {
-          this.LogDebug("  new configuration");
-        }
-        slot.DeviceName = device.Name;
-        this.LogDebug("  decrypt limit  = {0}", slot.DecryptLimit);
-        String[] providerList = new String[slot.Providers.Count];
-        slot.Providers.CopyTo(providerList);
-        this.LogDebug("  provider list  = {0}", String.Join(", ", providerList));
-
-        // If possible, read the root menu title for the CAM in the slot.
-        object obj = null;
         try
         {
-          device.Mon.BindToObject(null, null, ref baseFilterGuid, out obj);
-        }
-        catch (Exception)
-        {
-        }
-        IBaseFilter ciFilter = obj as IBaseFilter;
-        if (ciFilter != null)
-        {
-          String menuTitle;
-          int hr = DigitalDevicesCiSlots.GetMenuTitle(ciFilter, out menuTitle);
-          if (hr == 0)
+          if (!DigitalDevicesCiSlots.IsDigitalDevicesCiDevice(device))
           {
-            slot.CamRootMenuTitle = menuTitle;
+            continue;
           }
-          ciFilter = null;
-        }
-        Release.ComObject("Digital Devices config device object", ref obj);
-        this.LogDebug("  CAM name/title = {0}", slot.CamRootMenuTitle);
+          this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
+          DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
+          if (dbSlots.ContainsKey(device.DevicePath))
+          {
+            this.LogDebug("  found existing configuration");
+            slot = dbSlots[device.DevicePath];
+          }
+          else
+          {
+            this.LogDebug("  new configuration");
+          }
+          slot.DeviceName = device.Name;
+          this.LogDebug("  decrypt limit  = {0}", slot.DecryptLimit);
+          String[] providerList = new String[slot.Providers.Count];
+          slot.Providers.CopyTo(providerList);
+          this.LogDebug("  provider list  = {0}", String.Join(", ", providerList));
 
-        _ciSlots.Add(slot);
+          // If possible, read the root menu title for the CAM in the slot.
+          object obj = null;
+          try
+          {
+            device.Mon.BindToObject(null, null, ref baseFilterGuid, out obj);
+          }
+          catch (Exception)
+          {
+          }
+          IBaseFilter ciFilter = obj as IBaseFilter;
+          if (ciFilter != null)
+          {
+            String menuTitle;
+            int hr = DigitalDevicesCiSlots.GetMenuTitle(ciFilter, out menuTitle);
+            if (hr == (int)HResult.Severity.Success)
+            {
+              slot.CamRootMenuTitle = menuTitle;
+            }
+            ciFilter = null;
+          }
+          Release.ComObject("Digital Devices config device object", ref obj);
+          this.LogDebug("  CAM name/title = {0}", slot.CamRootMenuTitle);
+
+          _ciSlots.Add(slot);
+        }
+        finally
+        {
+          device.Dispose();
+        }
       }
       _ciSlots.Sort(
         delegate(DigitalDevicesCiSlot slot1, DigitalDevicesCiSlot slot2)

@@ -8,8 +8,8 @@
     <ProjectGuid>{055B591F-DD8D-4E13-BF56-41A8515CE738}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.DigitalEverywhere</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -22,10 +22,11 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
 {
   /// <summary>
   /// A class for handling DiSEqC Genpix devices using the open source BDA driver available from
@@ -86,11 +87,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
-        return "Genpix (Open Source)";
+        return "Genpix open source";
       }
     }
 
@@ -98,22 +99,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Genpix (Open Source): initialising device");
+      this.LogDebug("Genpix open source: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
-        this.LogDebug("Genpix (Open Source): tuner filter is null");
+        this.LogDebug("Genpix open source: tuner filter is null");
         return false;
       }
       if (_isGenpixOpenSource)
       {
-        this.LogDebug("Genpix (Open Source): device is already initialised");
+        this.LogDebug("Genpix open source: device is already initialised");
         return true;
       }
 
@@ -121,19 +123,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
       _propertySet = pin as IKsPropertySet;
       if (_propertySet == null)
       {
-        this.LogDebug("Genpix (Open Source): pin is not a property set");
+        this.LogDebug("Genpix open source: pin is not a property set");
         return false;
       }
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
-        this.LogDebug("Genpix (Open Source): device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Genpix open source: device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Genpix (Open Source): supported device detected");
+      this.LogDebug("Genpix open source: supported device detected");
       _isGenpixOpenSource = true;
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_SIZE);
       _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
@@ -156,17 +158,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     /// <returns><c>true</c> if the tone state is set successfully, otherwise <c>false</c></returns>
     public bool SetToneState(ToneBurst toneBurstState, Tone22k tone22kState)
     {
-      this.LogDebug("Genpix (Open Source): set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
+      this.LogDebug("Genpix open source: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
       if (!_isGenpixOpenSource || _propertySet == null)
       {
-        this.LogDebug("Genpix (Open Source): device not initialised or interface not supported");
+        this.LogDebug("Genpix open source: device not initialised or interface not supported");
         return false;
       }
 
       if (toneBurstState == ToneBurst.None)
       {
-        this.LogDebug("Genpix (Open Source): result = success");
+        this.LogDebug("Genpix open source: result = success");
         return true;
       }
 
@@ -189,13 +191,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("Genpix (Open Source): result = success");
+        this.LogDebug("Genpix open source: result = success");
         return true;
       }
 
-      this.LogDebug("Genpix (Open Source): result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -206,21 +208,21 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     /// <returns><c>true</c> if the command is sent successfully, otherwise <c>false</c></returns>
     public bool SendCommand(byte[] command)
     {
-      this.LogDebug("Genpix (Open Source): send DiSEqC command");
+      this.LogDebug("Genpix open source: send DiSEqC command");
 
       if (!_isGenpixOpenSource || _propertySet == null)
       {
-        this.LogDebug("Genpix (Open Source): device not initialised or interface not supported");
+        this.LogDebug("Genpix open source: device not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Genpix (Open Source): command not supplied");
+        this.LogDebug("Genpix open source: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("Genpix (Open Source): command too long, length = {0}", command.Length);
+        this.LogDebug("Genpix open source: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -234,13 +236,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("Genpix (Open Source): result = success");
+        this.LogDebug("Genpix open source: result = success");
         return true;
       }
 
-      this.LogDebug("Genpix (Open Source): result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogDebug("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -262,7 +264,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.GenpixOpenSource
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

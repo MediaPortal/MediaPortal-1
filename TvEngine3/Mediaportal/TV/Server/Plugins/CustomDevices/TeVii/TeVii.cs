@@ -20,15 +20,15 @@
 
 using System;
 using System.Runtime.InteropServices;
-using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 {
   /// <summary>
   /// A class for handling DiSEqC and tuning for TeVii devices.
@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// </summary>
     /// <returns>the API Version number</returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern Int32 GetAPIVersion();
+    private static extern int GetAPIVersion();
 
     /// <summary>
     /// Enumerate the TeVii-compatible devices in the system.
@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// </remarks>
     /// <returns>the number of TeVii-compatible devices connected to the system</returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern Int32 FindDevices();
+    private static extern int FindDevices();
 
     /// <summary>
     /// Get the friendly name for a specific TeVii device.
@@ -115,10 +115,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
     /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
     /// </remarks>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device name, otherwise <c>IntPtr.Zero</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetDeviceName(Int32 idx);
+    private static extern IntPtr GetDeviceName(int index);
 
     /// <summary>
     /// Get the device path for a specific TeVii device.
@@ -127,10 +127,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// The returned pointer is a pointer to an ANSI NULL terminated string (UnmanagedType.LPStr). We don't use
     /// automatic marshaling because we are not meant to modify or free the memory associated with the pointer.
     /// </remarks>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <returns>a pointer to a NULL terminated buffer containing the device path, otherwise <c>IntPtr.Zero</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern IntPtr GetDevicePath(Int32 idx);
+    private static extern IntPtr GetDevicePath(int index);
 
     #endregion
 
@@ -141,29 +141,29 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// Open access to a specific TeVii device.
     /// </summary>
     /// <remarks>
-    /// The idx parameter specifies which device will be opened. It is possible to have access to multiple
+    /// The index parameter specifies which device will be opened. It is possible to have access to multiple
     /// devices simultaneously.
     /// </remarks>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <param name="captureCallback">An optional pointer to a function that will be executed when raw stream packets are received.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the capture callback.</param>
     /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool OpenDevice(Int32 idx, IntPtr captureCallback, IntPtr context);
+    private static extern bool OpenDevice(int index, IntPtr captureCallback, IntPtr context);
 
     /// <summary>
     /// Close access to a specific TeVii device.
     /// </summary>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <returns><c>true</c> if the device access is successfully closed, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool CloseDevice(Int32 idx);
+    private static extern bool CloseDevice(int index);
 
     /// <summary>
     /// Tune a TeVii DVB-S/S2 tuner to a specific satellite transponder.
     /// </summary>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <param name="frequency">The transponder frequency in kHz (eg. 12450000).</param>
     /// <param name="symbolRate">The transponder symbol rate in sps (eg. 27500000).</param>
     /// <param name="lnbLof">The LNB local oscillator frequency offset in kHz (eg. 9570000).</param>
@@ -174,24 +174,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the tuner successfully locks on the transponder, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool TuneTransponder(Int32 idx, Int32 frequency, Int32 symbolRate, Int32 lnbLof, TeViiPolarisation polarisation,
+    private static extern bool TuneTransponder(int index, int frequency, int symbolRate, int lnbLof, TeViiPolarisation polarisation,
                                                [MarshalAs(UnmanagedType.Bool)] bool toneOn, TeViiModulation modulation, TeViiFecRate fecRate);
 
     /// <summary>
     /// Get the current signal status for a specific TeVii tuner device.
     /// </summary>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <param name="isLocked"><c>True</c> if the tuner/demodulator are locked onto a transponder.</param>
     /// <param name="strength">A signal strength rating ranging between 0 (low strength) and 100 (high strength).</param>
     /// <param name="quality">A signal quality rating ranging between 0 (low quality) and 100 (high quality).</param>
     /// <returns><c>true</c> if the signal status is successfully retrieved, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool GetSignalStatus(Int32 idx, [Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked, out Int32 strength, out Int32 quality);
+    private static extern bool GetSignalStatus(int index, [Out, MarshalAs(UnmanagedType.Bool)] out bool isLocked, out int strength, out int quality);
 
     /// <summary>
     /// Send an arbitrary DiSEqC message.
     /// </summary>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <param name="message">The DiSEqC message bytes.</param>
     /// <param name="length">The message length in bytes.</param>
     /// <param name="repeatCount">The number of times to resend the message. Zero means send the message once.</param>
@@ -199,18 +199,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SendDiSEqC(Int32 idx, byte[] message, Int32 length, Int32 repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
+    private static extern bool SendDiSEqC(int index, byte[] message, int length, int repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
 
     /// <summary>
     /// Set the remote control receiver callback function.
     /// </summary>
-    /// <param name="idx">The zero-based device index (0 &lt;= idx &lt; FindDevices()).</param>
+    /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
     /// <param name="remoteKeyCallback">An optional pointer to a function that will be called when remote keypress events are detected.</param>
     /// <param name="context">An optional pointer that will be passed as a paramter to the remote key callback.</param>
     /// <returns><c>true</c> if the callback function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetRemoteControl(Int32 idx, IntPtr remoteKeyCallback, IntPtr context);
+    private static extern bool SetRemoteControl(int index, IntPtr remoteKeyCallback, IntPtr context);
 
     #endregion
 
@@ -362,17 +362,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("TeVii: initialising device");
 
-      if (String.IsNullOrEmpty(tunerDevicePath))
+      if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
-        this.LogDebug("TeVii: tuner device path is not set");
+        this.LogDebug("TeVii: tuner external identifier is not set");
         return false;
       }
       if (_isTeVii)
@@ -381,26 +381,26 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
         return true;
       }
 
-      Int32 deviceCount = FindDevices();
-      this.LogDebug("TeVii: number of devices = {0}, tuner device path = {1}", deviceCount, tunerDevicePath);
+      int deviceCount = FindDevices();
+      this.LogDebug("TeVii: number of devices = {0}, tuner external identifier = {1}", deviceCount, tunerExternalIdentifier);
       if (deviceCount == 0)
       {
         this.LogDebug("TeVii: TeVii devices not present");
         return false;
       }
 
-      String deviceName = String.Empty;
-      String devicePath = String.Empty;
-      for (int deviceIdx = 0; deviceIdx < deviceCount; deviceIdx++)
+      string deviceName = string.Empty;
+      string devicePath = string.Empty;
+      for (int deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
       {
-        deviceName = Marshal.PtrToStringAnsi(GetDeviceName(deviceIdx));
-        devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIdx));
+        deviceName = Marshal.PtrToStringAnsi(GetDeviceName(deviceIndex));
+        devicePath = Marshal.PtrToStringAnsi(GetDevicePath(deviceIndex));
 
         //this.LogDebug("TeVii: compare to {0} {1}", deviceName, devicePath);
-        if (devicePath.Equals(tunerDevicePath))
+        if (devicePath.Equals(tunerExternalIdentifier))
         {
-          this.LogDebug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIdx, deviceName, GetAPIVersion());
-          _deviceIndex = deviceIdx;
+          this.LogDebug("TeVii: device recognised, index = {0}, name = {1}, API version = {2}", deviceIndex, deviceName, GetAPIVersion());
+          _deviceIndex = deviceIndex;
           break;
         }
       }
@@ -574,7 +574,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TeVii
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

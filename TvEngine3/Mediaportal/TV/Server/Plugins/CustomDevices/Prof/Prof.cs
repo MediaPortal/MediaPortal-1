@@ -23,12 +23,13 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
 {
   /// <summary>
   /// A class for handling DiSEqC for Prof devices, including clones from Satrade and Omicom. The interface
@@ -158,7 +159,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_RX_MESSAGE_LENGTH)]
       public byte[] DiseqcReceiveMessage;
       public byte DiseqcReceiveMessageLength;
-      private UInt16 Padding;
+      private ushort Padding;
 
       public ProfToneModulation ToneModulation;
       public ProfDiseqcReceiveMode ReceiveMode;
@@ -225,14 +226,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Prof: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("Prof: tuner filter is null");
@@ -255,7 +257,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage, out support);
       // The original Conexant interface uses the set method; this interface uses the get method.
-      if (hr != 0 || (support & KSPropertySupport.Get) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Get) == 0)
       {
         this.LogDebug("Prof: device does not support the Prof property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -276,10 +278,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("Prof: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isProf || _propertySet == null)
       {
@@ -349,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
       {
         this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -362,7 +364,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
         _generalBuffer, NBC_TUNING_PARAMS_SIZE,
         _generalBuffer, NBC_TUNING_PARAMS_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Prof: result = success");
       }
@@ -379,13 +381,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public virtual bool SetPowerState(bool powerOn)
+    public virtual bool SetPowerState(PowerState state)
     {
-      this.LogDebug("Prof: set power state, on = {0}", powerOn);
+      this.LogDebug("Prof: set power state, state = {0}", state);
 
       if (!_isProf || _propertySet == null)
       {
@@ -396,7 +398,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
       BdaExtensionParams command = new BdaExtensionParams();
       command.Command = BdaExtensionCommand.LnbPower;
       command.LnbPower = ProfLnbPower.Off;
-      if (powerOn)
+      if (state == PowerState.On)
       {
         command.LnbPower = ProfLnbPower.On;
       }
@@ -410,7 +412,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
          _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
          out returnedByteCount
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Prof: result = success");
         return true;
@@ -469,7 +471,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
         out returnedByteCount
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Prof: result = success");
         return true;
@@ -522,7 +524,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
         _generalBuffer, BDA_EXTENSION_PARAMS_SIZE,
         out returnedByteCount
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Prof: result = success");
         return true;
@@ -550,7 +552,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Prof
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

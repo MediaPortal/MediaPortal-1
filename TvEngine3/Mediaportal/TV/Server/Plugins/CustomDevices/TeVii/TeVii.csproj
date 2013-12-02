@@ -8,8 +8,8 @@
     <ProjectGuid>{D4CA26A3-DCC3-43F3-A720-67E9798D7EC0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.TeVii</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.TeVii</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.TeVii</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.TeVii</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

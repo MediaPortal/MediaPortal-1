@@ -8,8 +8,8 @@
     <ProjectGuid>{D27D51F7-F01E-45FD-864A-8A0E334179CF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mediaportal.TV.Server.Plugins.CustomDevices.ViXS</RootNamespace>
-    <AssemblyName>Mediaportal.TV.Server.Plugins.CustomDevices.ViXS</AssemblyName>
+    <RootNamespace>Mediaportal.TV.Server.Plugins.TunerExtension.ViXS</RootNamespace>
+    <AssemblyName>Mediaportal.TV.Server.Plugins.TunerExtension.ViXS</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -44,17 +44,13 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft\Microsoft.csproj">
+    <ProjectReference Include="..\MicrosoftBda\MicrosoftBda.csproj">
       <Project>{4345B8A4-5656-4C50-8457-EDCF761E72E6}</Project>
-      <Name>Microsoft</Name>
+      <Name>MicrosoftBda</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

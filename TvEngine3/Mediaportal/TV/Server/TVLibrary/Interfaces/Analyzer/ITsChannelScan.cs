@@ -26,7 +26,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   ///<summary>
   /// TsWriter channel scanner callback interface.
   ///</summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("ce141670-1840-4188-8a40-618ba3a5a1c3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IChannelScanCallBack
@@ -66,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   /// <summary>
   /// TsWriter channel scanner interface.
   /// </summary>
-  [ComVisible(true), ComImport,
+  [ComVisible(false), ComImport,
     Guid("1663dc42-d169-41da-bce2-eeec482cb9fb"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelScan
@@ -260,7 +260,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="name">The name of the region.</param>
     /// <returns>an HRESULT indicating whether the target region name was successfully retrieved</returns>
     [PreserveSig]
-    int GetTargetRegionName(Int64 targetRegionId, out IntPtr name);
+    int GetTargetRegionName(long targetRegionId, out IntPtr name);
 
     /// <summary>
     /// Retrieve the name of a specific bouquet.

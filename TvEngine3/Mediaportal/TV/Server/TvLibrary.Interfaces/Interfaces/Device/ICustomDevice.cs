@@ -20,8 +20,9 @@
 
 using System;
 using DirectShowLib;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
   /// A base interface for devices that support extended functions.
@@ -33,9 +34,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </summary>
     /// <remarks>
     /// Custom device loading/detection is done in order of descending priority, and custom devices that
-    /// implement the IAddOnDevice interface are loaded before other devices. This approach allows certain
-    /// driver interface conflicts to be avoided. Priority ranges from 100 (highest priority) to 1 (lowest
-    /// priority).
+    /// implement the <see cref="IDirectShowAddOnDevice"/> interface are loaded before other devices. This
+    /// approach allows certain driver interface conflicts to be avoided. Priority ranges from 100
+    /// (highest priority) to 1 (lowest priority).
     /// </remarks>
     byte Priority { get; }
 
@@ -43,17 +44,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    String Name { get; }
+    string Name { get; }
 
     /// <summary>
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath);
+    bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context);
 
     #region device state change callbacks
 
@@ -65,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </remarks>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    void OnLoaded(ITVCard tuner, out DeviceAction action);
+    void OnLoaded(ITVCard tuner, out TunerAction action);
 
     /// <summary>
     /// This callback is invoked before a tune request is assembled.
@@ -79,7 +80,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action);
+    void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action);
 
     /// <summary>
     /// This callback is invoked after a tune request is submitted but before the device is started.
@@ -112,7 +113,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </remarks>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
-    void OnStop(ITVCard tuner, ref DeviceAction action);
+    void OnStop(ITVCard tuner, ref TunerAction action);
 
     #endregion
   }
@@ -149,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public virtual String Name
+    public virtual string Name
     {
       get
       {
@@ -161,11 +162,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public virtual bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public virtual bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       // This base class is not intended to be instantiated.
       return false;
@@ -178,9 +179,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </summary>
     /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnLoaded(ITVCard tuner, out DeviceAction action)
+    public virtual void OnLoaded(ITVCard tuner, out TunerAction action)
     {
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
     }
 
     /// <summary>
@@ -190,9 +191,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public virtual void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
     }
 
     /// <summary>
@@ -219,7 +220,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     /// </summary>
     /// <param name="tuner">The device instance that this device instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
-    public virtual void OnStop(ITVCard tuner, ref DeviceAction action)
+    public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {
     }
 
@@ -228,7 +229,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public virtual void Dispose()
     {

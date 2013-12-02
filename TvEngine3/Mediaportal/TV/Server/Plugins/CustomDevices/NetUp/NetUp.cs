@@ -27,11 +27,12 @@ using System.Threading;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for NetUP devices.
@@ -77,10 +78,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       public MmiApplicationType ApplicationType;
       private byte Padding;
-      public UInt16 Manufacturer;
-      public UInt16 ManufacturerCode;
+      public ushort Manufacturer;
+      public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String RootMenuTitle;
+      public string RootMenuTitle;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -90,18 +91,18 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
       // These fields don't ever seem to be filled, but that is okay since
       // we can query for application info directly.
-      public UInt16 Manufacturer;
-      public UInt16 ManufacturerCode;
+      public ushort Manufacturer;
+      public ushort ManufacturerCode;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String RootMenuTitle;
+      public string RootMenuTitle;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CaInfo   // NETUP_CAM_INFO
     {
-      public UInt32 NumberOfCaSystemIds;
+      public uint NumberOfCaSystemIds;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CA_SYSTEM_IDS)]
-      public UInt16[] CaSystemIds;
+      public ushort[] CaSystemIds;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -109,7 +110,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String Text;
+      public string Text;
       #pragma warning restore 0649
     }
 
@@ -119,14 +120,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsMenu;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String Title;
+      public string Title;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String SubTitle;
+      public string SubTitle;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String Footer;
+      public string Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CAM_MENU_ENTRIES)]
       public MmiMenuEntry[] Entries;
-      public UInt32 EntryCount;
+      public uint EntryCount;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -136,9 +137,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       public bool IsBlindAnswer;
       public byte ExpectedAnswerLength;
       private byte Padding1;
-      private Int16 Padding2;
+      private short Padding2;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String Prompt;
+      public string Prompt;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -146,7 +147,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       public byte AnswerLength;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public String Answer;
+      public string Answer;
     }
 
     #endregion
@@ -159,17 +160,17 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       #region variables
 
       private static int _operatingSystemPointerSize = 0;
-      private UInt32 _controlCode;
+      private uint _controlCode;
       private IntPtr _inBuffer;
-      private Int32 _inBufferSize;
+      private int _inBufferSize;
       private IntPtr _outBuffer;
-      private Int32 _outBufferSize;
+      private int _outBufferSize;
 
       #endregion
 
-      public NetUpCommand(NetUpIoControl controlCode, IntPtr inBuffer, Int32 inBufferSize, IntPtr outBuffer, Int32 outBufferSize)
+      public NetUpCommand(NetUpIoControl controlCode, IntPtr inBuffer, int inBufferSize, IntPtr outBuffer, int outBufferSize)
       {
-        _controlCode = (UInt32)controlCode;
+        _controlCode = (uint)controlCode;
         _inBuffer = inBuffer;
         _inBufferSize = inBufferSize;
         _outBuffer = outBuffer;
@@ -218,7 +219,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
         IntPtr instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
         IntPtr commandBuffer = Marshal.AllocCoTaskMem(COMMAND_SIZE);
-        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(Int32));
+        IntPtr returnedByteCountBuffer = Marshal.AllocCoTaskMem(sizeof(int));
         try
         {
           // Clear buffers. This is probably not actually needed, but better
@@ -255,7 +256,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           }
 
           hr = ps.Set(psGuid, 0, instanceBuffer, INSTANCE_SIZE, commandBuffer, COMMAND_SIZE);
-          if (hr == 0)
+          if (hr == (int)HResult.Severity.Success)
           {
             returnedByteCount = Marshal.ReadInt32(returnedByteCountBuffer);
           }
@@ -344,7 +345,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
 
-      if (hr == 0 && returnedByteCount == APPLICATION_INFO_SIZE)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == APPLICATION_INFO_SIZE)
       {
         ApplicationInfo info = (ApplicationInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(ApplicationInfo));
         this.LogDebug("  type         = {0}", info.ApplicationType);
@@ -375,7 +376,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CA_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == CA_INFO_SIZE)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == CA_INFO_SIZE)
       {
         CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
         this.LogDebug("  # CAS IDs = {0}", info.NumberOfCaSystemIds);
@@ -411,7 +412,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CI_STATE_INFO_SIZE);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0 && returnedByteCount == CI_STATE_INFO_SIZE)
+      if (hr == (int)HResult.Severity.Success && returnedByteCount == CI_STATE_INFO_SIZE)
       {
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
       }
@@ -467,7 +468,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
           CiStateInfo info;
           int hr = GetCiStatus(out info);
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             continue;
@@ -531,7 +532,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MMI_MENU_SIZE);
         int returnedByteCount;
         int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-        if (hr != 0 || returnedByteCount != MMI_MENU_SIZE)
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_MENU_SIZE)
         {
           this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
@@ -600,7 +601,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MMI_ENQUIRY_SIZE);
         int returnedByteCount;
         int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-        if (hr != 0 || returnedByteCount != MMI_ENQUIRY_SIZE)
+        if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
           this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
@@ -640,7 +641,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -652,14 +653,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("NetUP: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("NetUP: tuner filter is null");
@@ -676,7 +678,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       if (_propertySet == null)
       {
         this.LogDebug("NetUP: pin is not a property set");
-        Release.ComObject("NetUP tuner filter input pin", ref _propertySet);
+        Release.ComObject("NetUP tuner filter output pin", ref _propertySet);
         return false;
       }
 
@@ -687,12 +689,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       // connect an infinite tee so that we can check if the pin supports the property set.
       IPin connected;
       int hr = pin.ConnectedTo(out connected);
-      if (hr == 0 && connected != null)
+      if (hr == (int)HResult.Severity.Success && connected != null)
       {
         // We don't need to connect the infinite tee in this case.
+        Release.ComObject("NetUP tuner filter connected pin", ref connected);
         KSPropertySupport support;
         hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
-        if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+        if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
         {
           this.LogDebug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
@@ -708,7 +711,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         // Get a reference to the filter graph.
         FilterInfo filterInfo;
         hr = tunerFilter.QueryFilterInfo(out filterInfo);
-        if (hr != 0)
+        if (hr != (int)HResult.Severity.Success)
         {
           this.LogDebug("NetUP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
@@ -726,7 +729,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         try
         {
           hr = graph.AddFilter(infTee, "Temp Infinite Tee");
-          if (hr != 0)
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("NetUP: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
@@ -739,8 +742,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
             this.LogDebug("NetUP: failed to find the inf tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
-          hr = graph.Connect(pin, infTeeInputPin);
-          if (hr != 0)
+          hr = graph.ConnectDirect(pin, infTeeInputPin, null);
+          if (hr != (int)HResult.Severity.Success)
           {
             this.LogDebug("NetUP: failed to connect pins, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
@@ -749,7 +752,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
           // Check if the NetUP property set is supported.
           KSPropertySupport support;
           hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
-          if (hr != 0 || (support & KSPropertySupport.Set) == 0)
+          if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
           {
             this.LogDebug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
@@ -883,7 +886,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiReset, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
       }
@@ -912,7 +915,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
 
       CiStateInfo info;
       int hr = GetCiStatus(out info);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -978,7 +981,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       int returnedByteCount;
       int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       Marshal.FreeCoTaskMem(buffer);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1037,7 +1040,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         int returnedByteCount;
         hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1073,7 +1076,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         int returnedByteCount;
         hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1111,7 +1114,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         int returnedByteCount;
         hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1131,7 +1134,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("NetUP: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -1172,7 +1175,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
         int returnedByteCount;
         hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1234,7 +1237,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
       NetUpCommand ncommand = new NetUpCommand(NetUpIoControl.Diseqc, _generalBuffer, command.Length, IntPtr.Zero, 0);
       int returnedByteCount;
       int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
@@ -1262,7 +1265,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.NetUp
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

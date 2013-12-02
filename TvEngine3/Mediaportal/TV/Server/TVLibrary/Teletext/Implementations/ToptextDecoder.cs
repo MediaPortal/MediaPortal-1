@@ -137,9 +137,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       _pageGreen = ConvertToHex(green);
       _pageYellow = ConvertToHex(yellow);
       _pageBlue = ConvertToHex(blue);
-      if (nextGroup == String.Empty)
+      if (nextGroup == string.Empty)
         nextGroup = green.ToString();
-      if (nextBlock == String.Empty)
+      if (nextBlock == string.Empty)
         nextBlock = yellow.ToString();
 
       Hamming.SetPacketNumber(0, ref _row24, pageNumber, 24);
@@ -424,7 +424,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
             {
               if (pageUnits >= 0x0 && pageUnits <= 9)
               {
-                string description = String.Empty;
+                string description = string.Empty;
                 for (int i = 1; i < 12; ++i)
                 {
                   row = 1 + (lineCounter / 2);

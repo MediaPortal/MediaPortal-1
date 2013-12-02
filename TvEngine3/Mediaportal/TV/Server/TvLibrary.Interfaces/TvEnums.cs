@@ -24,7 +24,7 @@ using System.ComponentModel;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces
 {
   /// <summary>
-  /// Supported device types.
+  /// Supported tuner types.
   /// </summary>
   public enum CardType
   {
@@ -63,34 +63,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   }
 
   /// <summary>
-  /// Idle modes. An idle mode determines the action that will be taken when a device is no longer
+  /// Idle modes. An idle mode determines the action that will be taken when a tuner is no longer
   /// being actively used.
   /// </summary>
   public enum IdleMode
   {
     /// <summary>
-    /// For a device that presents a DirectShow/BDA filter interface, pause the graph.
-    /// - not supported by some devices
-    /// - average power use (device dependent)
+    /// For a tuner that presents a DirectShow/BDA filter interface, pause the graph.
+    /// - not supported by some tuners
+    /// - average power use (tuner dependent)
     /// - fast first (re)tune
     /// </summary>
     Pause,
     /// <summary>
-    /// For a device that presents a DirectShow/BDA filter interface, stop the graph.
+    /// For a tuner that presents a DirectShow/BDA filter interface, stop the graph.
     /// - highly compatible
-    /// - low power use (device dependent)
+    /// - low power use (tuner dependent)
     /// - average/default first (re)tune speed
     /// </summary>
     Stop,
     /// <summary>
-    /// For a device that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
+    /// For a tuner that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
     /// - ultimate compatibility
     /// - minimal power use
     /// - slowest first (re)tune.
     /// </summary>
     Unload,
     /// <summary>
-    /// For a device that presents a DirectShow/BDA filter interface, keep the graph running.
+    /// For a tuner that presents a DirectShow/BDA filter interface, keep the graph running.
     /// - reasonable compatibility
     /// - highest power use
     /// - fastest possible first (re)tune.
@@ -100,7 +100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   }
 
   /// <summary>
-  /// Device actions. Plugins can specify actions at certain stages of the device lifecycle that optimise
+  /// Tuner actions. Plugins can specify actions at certain stages of the tuner lifecycle that optimise
   /// compatibility, performance, power use etc.
   /// </summary>
   /// <remarks>
@@ -108,65 +108,65 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// highest value will be performed (eg. stop would be performed in preference to pause). The order is
   /// intended to have more compatible actions listed higher than unusual or less compatible actions.
   /// </remarks>
-  public enum DeviceAction
+  public enum TunerAction
   {
     /// <summary>
     /// Default behaviour will continue. No alternate action will be taken.
     /// </summary>
     Default,
     /// <summary>
-    /// Start the device.
-    /// For a device that presents a DirectShow/BDA filter interface, run the graph.
+    /// Start the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, run the graph.
     /// </summary>
     Start,
     /// <summary>
-    /// Pause the device.
-    /// For a device that presents a DirectShow/BDA filter interface, pause the graph.
+    /// Pause the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, pause the graph.
     /// </summary>
     Pause,
     /// <summary>
-    /// Stop the device.
-    /// For a device that presents a DirectShow/BDA filter interface, stop the graph.
+    /// Stop the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, stop the graph.
     /// </summary>
     Stop,
     /// <summary>
-    /// Retart the device.
-    /// For a device that presents a DirectShow/BDA filter interface, stop then run the graph.
+    /// Retart the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, stop then run the graph.
     /// </summary>
     Restart,
     /// <summary>
-    /// Reset the device.
-    /// For a device that presents a DirectShow/BDA filter interface, rebuild the graph.
+    /// Reset the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, rebuild the graph.
     /// </summary>
     Reset,
     /// <summary>
-    /// Unload the device.
-    /// For a device that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
+    /// Unload the tuner.
+    /// For a tuner that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
     /// </summary>
     Unload
   }
 
   /// <summary>
-  /// Device state. For a device that presents a DirectShow/BDA filter interface, this measure of
+  /// Tuner state. For a tuner that presents a DirectShow/BDA filter interface, this measure of
   /// state roughly mirrors the state of the graph.
   /// </summary>
-  public enum DeviceState
+  public enum TunerState
   {
     /// <summary>
-    /// The device is not yet loaded. It must be loaded/initialised before any interaction may occur.
+    /// The tuner is not yet loaded. It must be loaded/initialised before any interaction may occur.
     /// </summary>
     [Description("Not Loaded")]
     NotLoaded,
     /// <summary>
-    /// The device is loaded but not paused or started.
+    /// The tuner is loaded but not paused or started.
     /// </summary>
     Stopped,
     /// <summary>
-    /// The device is paused.
+    /// The tuner is paused.
     /// </summary>
     Paused,
     /// <summary>
-    /// The device is started. Note a device may be started and idle if the device is configured to
+    /// The tuner is started. Note a tuner may be started and idle if the tuner is configured to
     /// use the always on idle mode.
     /// </summary>
     Started
@@ -176,7 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// PID filter modes.
   /// </summary>
   /// <remarks>
-  /// Plugins can implement PID filters to support devices connected via low bandwith or bandwidth sensitive
+  /// Plugins can implement PID filters to support tuners connected via low bandwith or bandwidth sensitive
   /// connections.
   /// </remarks>
   public enum PidFilterMode
@@ -561,7 +561,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// <summary>
   /// Capture video sources.
   /// </summary>
-  public enum CaptureVideoSource
+  public enum CaptureSourceVideo
   {
     /// <summary>
     /// No video.
@@ -651,7 +651,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
   /// <summary>
   /// Audio input type.
   /// </summary>
-  public enum CaptureAudioSource
+  public enum CaptureSourceAudio
   {
     /// <summary>
     /// No audio.
@@ -709,6 +709,36 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// S/PDIF input #3.
     /// </summary>
     [Description("S/PDIF #3")]
-    Spdif3
+    Spdif3,
+    /// <summary>
+    /// AES input #1.
+    /// </summary>
+    [Description("AES #1")]
+    Aes1,
+    /// <summary>
+    /// AES input #2.
+    /// </summary>
+    [Description("AES #2")]
+    Aes2,
+    /// <summary>
+    /// AES input #3.
+    /// </summary>
+    [Description("AES #3")]
+    Aes3
+  }
+
+  /// <summary>
+  /// Tuner power states.
+  /// </summary>
+  public enum PowerState
+  {
+    /// <summary>
+    /// Power off.
+    /// </summary>
+    Off,
+    /// <summary>
+    /// Power on.
+    /// </summary>
+    On
   }
 }

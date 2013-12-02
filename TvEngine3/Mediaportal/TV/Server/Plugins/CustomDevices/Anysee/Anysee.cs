@@ -27,11 +27,12 @@ using System.Threading;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.Anysee
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for Anysee tuners. Smart card slots are not
@@ -395,7 +396,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       [MarshalAs(UnmanagedType.Bool)]
       public bool Enable;
-      public Int32 Key;         // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
+      public int Key;           // bit 8 = repeat flag (0 = repeat), bits 7-0 = key code
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -407,7 +408,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
       public byte[] FirmwareVersion;    // [0x04, 0x00] -> 0.4
       public AnyseePlatform Platform;
-      private Int32 Padding;
+      private int Padding;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -419,11 +420,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public AnyseeBroadcastSystem CurrentBroadcastSystem;
       public AnyseeNimMode CurrentNimMode;
 
-      public Int32 CurrentFrequency;    // unit = kHz
-      public Int32 Unknown1;
+      public int CurrentFrequency;      // unit = kHz
+      public int Unknown1;
 
       public AnyseeNim NimType;
-      private Int32 Padding;
+      private int Padding;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -433,8 +434,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public byte[] KsProperty;
 
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-      public byte[] Version;            // [0x58, 0x20, 0x06, 0x01] -> 1.6.20.58
-      private Int32 Padding;
+      public byte[] Version;        // [0x58, 0x20, 0x06, 0x01] -> 1.6.20.58
+      private int Padding;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -443,11 +444,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
       public byte[] KsProperty;
 
-      public Int32 SymbolRate;      // unit = s/s (Baud)
-      public Int32 SweepRate;       // unit = Hz/s
+      public int SymbolRate;        // unit = s/s (Baud)
+      public int SweepRate;         // unit = Hz/s
 
-      public Int32 Frequency;       // unit = kHz
-      public Int32 CarrierOffset;   // unit = kHz
+      public int Frequency;         // unit = kHz
+      public int CarrierOffset;     // unit = kHz
 
       public byte Bandwidth;        // unit = Mhz
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -467,13 +468,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
       public byte[] KsProperty;
 
-      public Int32 UnknownFlags;
-      public Int32 SwitchFrequency; // unit = MHz
+      public int UnknownFlags;
+      public int SwitchFrequency;   // unit = MHz
 
-      public Int32 HighLof;         // unit = MHz
-      public Int32 LowLof;          // unit = MHz
+      public int HighLof;           // unit = MHz
+      public int LowLof;            // unit = MHz
 
-      public Int32 EffectiveLof;    // unit = MHz
+      public int EffectiveLof;      // unit = MHz
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
       private byte[] Reserved;
     }
@@ -484,14 +485,14 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
       public byte[] KsProperty;
 
-      public Int32 MinFrequency;    // unit = kHz
-      public Int32 MaxFrequency;    // unit = kHz
+      public int MinFrequency;      // unit = kHz
+      public int MaxFrequency;      // unit = kHz
 
-      public Int32 MinSymbolRate;   // unit = s/s (Baud)
-      public Int32 MaxSymbolRate;   // unit = s/s (Baud)
+      public int MinSymbolRate;     // unit = s/s (Baud)
+      public int MaxSymbolRate;     // unit = s/s (Baud)
 
-      public Int32 MinSearchStep;   // unit = Hz
-      public Int32 MaxSearchStep;   // unit = Hz
+      public int MinSearchStep;     // unit = Hz
+      public int MaxSearchStep;     // unit = Hz
 
       public AnyseeNimCapability NimCapabilities;
       public AnyseeBroadcastSystem PrimaryBroadcastSystem;
@@ -511,7 +512,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       public AnyseeBoardProperty BoardProperties;
 
       public AnyseeBoardMode BoardMode;
-      private Int32 Padding;
+      private int Padding;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -520,7 +521,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = KS_PROPERTY_SIZE)]
       public byte[] KsProperty;
 
-      public Int32 MessageLength;
+      public int MessageLength;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DISEQC_MESSAGE_LENGTH)]
       public byte[] Message;
 
@@ -534,15 +535,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     {
       #pragma warning disable 0649
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_API_STRING_LENGTH)]
-      public String Text;
+      public string Text;
       #pragma warning restore 0649
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfo    // tagCIStatus
     {
-      public Int32 Size;
-      public Int32 DeviceIndex;
+      public int Size;
+      public int DeviceIndex;
 
       public ApiString Message;
     }
@@ -550,24 +551,24 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenu  // MMIStrsBlock
     {
-      public Int32 StringCount;
-      public Int32 MenuIndex;
+      public int StringCount;
+      public int MenuIndex;
       public IntPtr Entries;                // This is a pointer to an array of pointers.
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMessage   // tagCIMsgs
     {
-      public Int32 DeviceIndex;
-      public Int32 SlotIndex;
+      public int DeviceIndex;
+      public int SlotIndex;
 
-      public Int32 HeaderCount;
-      public Int32 EntryCount;
+      public int HeaderCount;
+      public int EntryCount;
 
       public AnyseeMmiMessageType Type;
-      public Int32 ExpectedAnswerLength;
+      public int ExpectedAnswerLength;
 
-      public Int32 KeyCount;
+      public int KeyCount;
       public ApiString RootMenuTitle;
 
       public IntPtr Menu;
@@ -587,13 +588,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     {
       public byte PmtByte6;                     // Byte 6 from the PMT section (PMT version, current next indicator). 
       private byte Padding1;
-      public UInt16 PcrPid;
-      public UInt16 ServiceId;
+      public ushort PcrPid;
+      public ushort ServiceId;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESCRIPTOR_DATA_LENGTH)]
       public byte[] ProgramCaDescriptorData;    // The first two bytes should specify the length of the descriptor data.
-      private UInt16 Padding2;
+      private ushort Padding2;
 
-      public UInt32 EsCount;
+      public uint EsCount;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_ELEMENTARY_STREAMS)]
       public EsPmtData[] EsPmt;
     }
@@ -601,7 +602,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct EsPmtData
     {
-      public UInt16 Pid;
+      public ushort Pid;
       public AnyseeEsType EsType;
       public byte StreamType;
 
@@ -626,11 +627,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICE_COUNT)]
         public ApiString[] DevicePaths;       // A list of the capture device paths for all Anysee devices connected to the system.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICE_COUNT)]
-        public Int32[] DevicePathLengths;     // The length of the corresponding device path in DevicePaths.
+        public int[] DevicePathLengths;       // The length of the corresponding device path in DevicePaths.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICE_COUNT)]
-        public Int32[] DevicePathIndices;     // The index of the corresponding capture device in the set of KSCATEGORY_BDA_RECEIVER_COMPONENT devices returned by the system enumerator.
+        public int[] DevicePathIndices;       // The index of the corresponding capture device in the set of KSCATEGORY_BDA_RECEIVER_COMPONENT devices returned by the system enumerator.
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICE_COUNT)]
-        public Int32[] DeviceIndices;         // The Anysee device index for the corresponding device.
+        public int[] DeviceIndices;           // The Anysee device index for the corresponding device.
       }
 
       #endregion
@@ -645,7 +646,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// <param name="ciApiInstance">A reference to the instance created. The memory must be allocated by TV Server before calling this function.</param>
       /// <returns><c>one</c> if an instance is successfully created, otherwise <c>zero</c></returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate Int32 CreateDtvCIAPI(IntPtr ciApiInstance);
+      private delegate int CreateDtvCIAPI(IntPtr ciApiInstance);
 
       /// <summary>
       /// Destroy a previously created common interface API instance.
@@ -653,7 +654,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// <param name="ciApiInstance">A reference to the instance to destroy. The memory must be released by TV Server after calling this function.</param>
       /// <returns><c>one</c> if the instance is successfully destroyed, otherwise <c>zero</c></returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate Int32 DestroyDtvCIAPI(IntPtr ciApiInstance);
+      private delegate int DestroyDtvCIAPI(IntPtr ciApiInstance);
 
       /// <summary>
       /// Get the number of Anysee devices connected to the system with corresponding
@@ -662,7 +663,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// <param name="deviceInfo">A buffer containing device path and index information for all Anysee devices connected to the system.</param>
       /// <returns>the number of Anysee devices connected to the system</returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate Int32 GetanyseeNumberofDevicesEx(IntPtr deviceInfo);
+      private delegate int GetanyseeNumberofDevicesEx(IntPtr deviceInfo);
 
       #endregion
 
@@ -676,7 +677,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// <param name="deviceIndex">The Anysee index for the device to open.</param>
       /// <returns>an HRESULT indicating whether the API was successfully opened</returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate Int32 OpenCILib(IntPtr ciApiInstance, IntPtr windowHandle, Int32 deviceIndex);
+      private delegate int OpenCILib(IntPtr ciApiInstance, IntPtr windowHandle, int deviceIndex);
 
       /// <summary>
       /// Execute a command on an open common interface instance.
@@ -687,7 +688,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// <param name="outputParams">A reference to a buffer that will be filled with the command's output parameters.</param>
       /// <returns>an HRESULT indicating whether the command was successfully executed</returns>
       [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-      private delegate Int32 CI_Control(IntPtr ciApiInstance, AnyseeCiCommand command, IntPtr inputParams, IntPtr outputParams);
+      private delegate int CI_Control(IntPtr ciApiInstance, AnyseeCiCommand command, IntPtr inputParams, IntPtr outputParams);
 
       #endregion
 
@@ -716,7 +717,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       private int _apiIndex = 0;
       private bool _dllLoaded = false;
-      private String _devicePath = String.Empty;
+      private string _devicePath = string.Empty;
 
       private IntPtr _ciApiInstance = IntPtr.Zero;
       private IntPtr _windowHandle = IntPtr.Zero;
@@ -856,7 +857,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       /// </summary>
       /// <param name="tunerDevicePath">The tuner device path.</param>
       /// <returns><c>true</c> if the API is successfully opened, otherwise <c>false</c></returns>
-      public bool OpenApi(String tunerDevicePath)
+      public bool OpenApi(string tunerDevicePath)
       {
         this.LogDebug("Anysee: opening API, API index = {0}", _apiIndex);
 
@@ -894,7 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         this.LogDebug("Anysee: starting API access thread");
         _stopApiAccessThread = false;
         _apiAccessThread = new Thread(new ThreadStart(AccessThread));
-        _apiAccessThread.Name = String.Format("Anysee API {0} Access", _apiCount);
+        _apiAccessThread.Name = string.Format("Anysee API {0} Access", _apiCount);
         _apiAccessThread.IsBackground = true;
         _apiAccessThread.SetApartmentState(ApartmentState.STA);
         _apiAccessThread.Start();
@@ -947,7 +948,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         CiDeviceInfo deviceInfo = (CiDeviceInfo)Marshal.PtrToStructure(infoBuffer, typeof(CiDeviceInfo));
         Marshal.FreeCoTaskMem(infoBuffer);
 
-        String captureDevicePath;
+        string captureDevicePath;
         int index = -1;
         for (int i = 0; i < numDevices; i++)
         {
@@ -1072,7 +1073,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         {
           hr = _ciControl(_ciApiInstance, command, inputParams, outputParams);
         }
-        if (hr == 0)
+        if (hr == (int)HResult.Severity.Success)
         {
           this.LogDebug("Anysee: result = success");
           return true;
@@ -1093,7 +1094,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// <param name="message">A short description of the CI state.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Int32 OnAnyseeCiState(Int32 slotIndex, AnyseeCiState state, [MarshalAs(UnmanagedType.LPStr)] String message);
+    private delegate int OnAnyseeCiState(int slotIndex, AnyseeCiState state, [MarshalAs(UnmanagedType.LPStr)] string message);
 
     /// <summary>
     /// Called by the tuner driver when MMI information is ready to be processed.
@@ -1102,7 +1103,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// <param name="message">The message from the CAM.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate Int32 OnAnyseeMmiMessage(Int32 slotIndex, IntPtr message);
+    private delegate int OnAnyseeMmiMessage(int slotIndex, IntPtr message);
 
     #endregion
 
@@ -1158,7 +1159,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     private IntPtr _callbackBuffer = IntPtr.Zero;
     private IntPtr _pmtBuffer = IntPtr.Zero;
 
-    private String _tunerDevicePath = String.Empty;
+    private string _tunerDevicePath = string.Empty;
     private ApiCallbacks _apiCallbacks;
     private ICiMenuCallbacks _ciMenuCallbacks = null;
 
@@ -1184,7 +1185,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, NIM_CONFIG_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != NIM_CONFIG_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != NIM_CONFIG_SIZE)
       {
         this.LogDebug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -1221,7 +1222,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, DRIVER_VERSION_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != DRIVER_VERSION_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_SIZE)
       {
         this.LogDebug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1249,7 +1250,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, PLATFORM_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != PLATFORM_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != PLATFORM_INFO_SIZE)
       {
         this.LogDebug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1288,7 +1289,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, BOARD_INFO_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != BOARD_INFO_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != BOARD_INFO_SIZE)
       {
         this.LogDebug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1320,7 +1321,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, CAPABILITIES_SIZE,
         out returnedByteCount
       );
-      if (hr != 0 || returnedByteCount != CAPABILITIES_SIZE)
+      if (hr != (int)HResult.Severity.Success || returnedByteCount != CAPABILITIES_SIZE)
       {
         this.LogDebug("Anysee: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
@@ -1361,7 +1362,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       lock (this)
       {
-        Marshal.WriteInt32(_generalBuffer, (Int32)key);
+        Marshal.WriteInt32(_generalBuffer, (int)key);
         if (_ciApi.ExecuteCommand(AnyseeCiCommand.SetKey, _generalBuffer, IntPtr.Zero))
         {
           this.LogDebug("Anysee: result = success");
@@ -1382,7 +1383,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// <param name="state">The new CI state.</param>
     /// <param name="message">A short description of the CI state.</param>
     /// <returns>an HRESULT to indicate whether the state change was successfully handled</returns>
-    private Int32 OnCiState(Int32 slotIndex, AnyseeCiState state, String message)
+    private int OnCiState(int slotIndex, AnyseeCiState state, string message)
     {
       // If a CAM is inserted the API seems to only invoke this callback when the CAM state
       // changes. However, if a CAM is *not* inserted then this callback is invoked every
@@ -1418,7 +1419,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         }
       }
 
-      if (String.IsNullOrEmpty(message))
+      if (string.IsNullOrEmpty(message))
       {
         message = "(no message)";
       }
@@ -1433,7 +1434,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="message">The message from the CAM.</param>
     /// <returns>an HRESULT to indicate whether the message was successfully processed</returns>
-    private Int32 OnMmiMessage(Int32 slotIndex, IntPtr message)
+    private int OnMmiMessage(int slotIndex, IntPtr message)
     {
       this.LogDebug("Anysee: MMI message callback, slot = {0}", slotIndex);
 
@@ -1461,7 +1462,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           this.LogDebug("Anysee: menu callbacks are not set");
         }
 
-        String prompt = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
+        string prompt = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
         this.LogDebug("  prompt    = {0}", prompt);
         this.LogDebug("  length    = {0}", msg.ExpectedAnswerLength);
         this.LogDebug("  key count = {0}", msg.KeyCount);
@@ -1492,9 +1493,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         this.LogDebug("Anysee: menu callbacks are not set");
       }
 
-      String title = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
-      String subTitle = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size));
-      String footer = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size * 2));
+      string title = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, 0));
+      string subTitle = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size));
+      string footer = Marshal.PtrToStringAnsi(Marshal.ReadIntPtr(menu.Entries, IntPtr.Size * 2));
       this.LogDebug("  title     = {0}", title);
       this.LogDebug("  sub-title = {0}", subTitle);
       this.LogDebug("  footer    = {0}", footer);
@@ -1512,7 +1513,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         }
       }
 
-      String entry;
+      string entry;
       int offset = IntPtr.Size * msg.HeaderCount;
       for (int i = 0; i < msg.EntryCount; i++)
       {
@@ -1543,22 +1544,23 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("Anysee: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("Anysee: tuner filter is null");
         return false;
       }
-      if (String.IsNullOrEmpty(tunerDevicePath))
+      if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
-        this.LogDebug("Anysee: tuner device path is not set");
+        this.LogDebug("Anysee: tuner external identifier is not set");
         return false;
       }
       if (_isAnysee)
@@ -1578,7 +1580,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       }
       int hr = tunerOutputPin.ConnectedTo(out captureInputPin);
       Release.ComObject("Anysee tuner filter output pin", ref tunerOutputPin);
-      if (hr != 0 || captureInputPin == null)
+      if (hr != (int)HResult.Severity.Success || captureInputPin == null)
       {
         this.LogDebug("Anysee: failed to get the capture filter input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1587,7 +1589,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       PinInfo captureInfo;
       hr = captureInputPin.QueryPinInfo(out captureInfo);
       Release.ComObject("Anysee capture filter input pin", ref captureInputPin);
-      if (hr != 0)
+      if (hr != (int)HResult.Severity.Success)
       {
         this.LogDebug("Anysee: failed to get the capture filter input pin info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1604,7 +1606,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       KSPropertySupport support;
       hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Ir, out support);
-      if (hr != 0 || support == 0)
+      if (hr != (int)HResult.Severity.Success || support == 0)
       {
         this.LogDebug("Anysee: device does not support the Anysee property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         Release.PinInfo(ref captureInfo);
@@ -1614,7 +1616,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
 
       this.LogDebug("Anysee: supported device detected");
       _isAnysee = true;
-      _tunerDevicePath = tunerDevicePath;
+      _tunerDevicePath = tunerExternalIdentifier;
       _generalBuffer = Marshal.AllocCoTaskMem(NIM_CONFIG_SIZE);
 
       ReadNimConfig();
@@ -1826,7 +1828,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       // Elementary streams.
       this.LogDebug("Anysee: elementary streams");
       pmtData.EsPmt = new EsPmtData[MAX_PMT_ELEMENTARY_STREAMS];
-      UInt16 esCount = 0;
+      ushort esCount = 0;
       foreach (PmtElementaryStream es in pmt.ElementaryStreams)
       {
         // We want to add each video, audio, subtitle and teletext stream with their corresponding
@@ -1979,11 +1981,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, String answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("Anysee: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -1991,7 +1993,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
       {
         // We can't send anything other than numbers through the Anysee interface.
         int digit;
-        if (!Int32.TryParse(answer[i].ToString(), out digit))
+        if (!int.TryParse(answer[i].ToString(), out digit))
         {
           this.LogDebug("Anysee: answer may only contain numeric digits");
           return false;
@@ -2047,7 +2049,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
         _generalBuffer, DISEQC_MESSAGE_SIZE,
         _generalBuffer, DISEQC_MESSAGE_SIZE
       );
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Anysee: result = success");
         return true;
@@ -2099,7 +2101,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
           _generalBuffer, DISEQC_MESSAGE_SIZE
         );
       }
-      if (hr == 0)
+      if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Anysee: result = success");
         return true;
@@ -2127,7 +2129,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.Anysee
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

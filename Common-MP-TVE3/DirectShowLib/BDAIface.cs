@@ -411,6 +411,9 @@ namespace DirectShowLib.BDA
     int get_PatTableTickCount([Out] out int pPatTickCount);
   }
 
+  /*
+   * Interface redefined in MediaPortalCustomisations.
+   * 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("CD51F1E0-7BE9-4123-8482-A2A796C0A6B0"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -471,7 +474,7 @@ namespace DirectShowLib.BDA
       [In] byte byDialogNumber,
       [In] UICloseReasonType CloseReason
       );
-  }
+  }*/
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("20e80cb5-c543-4c1b-8eb3-49e719eee7d4"),

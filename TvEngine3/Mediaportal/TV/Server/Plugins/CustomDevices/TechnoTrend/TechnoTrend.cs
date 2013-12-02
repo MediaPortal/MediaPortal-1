@@ -26,12 +26,13 @@ using System.Text;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
-namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
+namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 {
   /// <summary>
   /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series devices.
@@ -272,9 +273,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     {
       public TtCiState Status;
       [MarshalAs(UnmanagedType.LPStr)]
-      public String CamMenuTitle;
-      public IntPtr CaSystemIds;        // array of UInt16
-      public UInt16 NumberOfCaSystemIds;
+      public string CamMenuTitle;
+      public IntPtr CaSystemIds;        // array of ushort
+      public ushort NumberOfCaSystemIds;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -282,19 +283,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     {
       public TtConnectionType ConnectionType;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String DialIn;
+      public string DialIn;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String ClientIpAddress;
+      public string ClientIpAddress;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String ServerIpAddress;
+      public string ServerIpAddress;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String TcpPort;
+      public string TcpPort;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String ConnectionAuthenticationId;
+      public string ConnectionAuthenticationId;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String LoginUserName;
+      public string LoginUserName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String LoginPassword;
+      public string LoginPassword;
       public byte RetryCount;
       public byte Timeout;      // unit = 10 ms
     }
@@ -303,19 +304,19 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private struct FilterNames // TS_FilterNames
     {
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String TunerFilterName;
+      public string TunerFilterName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String TunerFilter2Name;
+      public string TunerFilter2Name;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String CaptureFilterName;
+      public string CaptureFilterName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String AnalogTunerFilterName;
+      public string AnalogTunerFilterName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String AnalogCaptureFilterName;
+      public string AnalogCaptureFilterName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String StbCaptureFilterName;
+      public string StbCaptureFilterName;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_WINDOWS_PATH_LENGTH)]
-      public String ProductName;
+      public string ProductName;
       public TtFrontEndType FrontEndType;
     }
 
@@ -384,7 +385,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private struct TtDvbcTuneRequest
     {
       public TtDeviceType DeviceType;
-      public UInt32 Frequency;                // unit = kHz
+      public uint Frequency;                  // unit = kHz
 
       public ModulationType Modulation;       // expected to be QAM 16, 32, 64, 128, or 256
       private FECMethod InnerFecMethod;
@@ -393,7 +394,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       private FECMethod OuterFecMethod;
 
       private BinaryConvolutionCodeRate OuterFecRate;
-      public UInt32 SymbolRate;               // unit = ks/s
+      public uint SymbolRate;                 // unit = ks/s
 
       public SpectralInversion SpectralInversion;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
@@ -404,15 +405,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private struct TtDvbsTuneRequest
     {
       public TtDeviceType DeviceType;
-      public UInt32 Frequency;                // unit = kHz
+      public uint Frequency;                  // unit = kHz
 
-      public UInt32 FrequencyMultiplier;
+      public uint FrequencyMultiplier;
       public Polarisation Polarisation;
 
-      private UInt32 Bandwidth;
+      private uint Bandwidth;
       public TtDiseqcPort Diseqc;
 
-      private UInt32 Transponder;
+      private uint Transponder;
       public ModulationType Modulation;       // expected to be QPSK for DVB-S, 8 VSB for DVB-S2
 
       private FECMethod InnerFecMethod;
@@ -421,20 +422,20 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       private FECMethod OuterFecMethod;
       private BinaryConvolutionCodeRate OuterFecRate;
 
-      public UInt32 SymbolRate;               // unit = ks/s
+      public uint SymbolRate;                 // unit = ks/s
       public SpectralInversion SpectralInversion;
 
-      public UInt32 LnbHighBandLof;           // unit = kHz
-      public UInt32 LnbLowBandLof;            // unit = kHz
+      public uint LnbHighBandLof;             // unit = kHz
+      public uint LnbLowBandLof;              // unit = kHz
 
-      public UInt32 LnbSwitchFrequency;       // unit = kHz
+      public uint LnbSwitchFrequency;         // unit = kHz
       [MarshalAs(UnmanagedType.Bool)]
       public bool UseToneBurst;               // This field turns tone burst on/off; use the Diseqc field to specify the tone state.
 
-      private UInt32 Command;
-      private UInt32 CommandCount;
+      private uint Command;
+      private uint CommandCount;
 
-      private UInt32 LnbSource;
+      private uint LnbSource;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
       private byte[] RawDiseqc;
     }
@@ -443,10 +444,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private struct TtDvbtTuneRequest
     {
       public TtDeviceType DeviceType;
-      public UInt32 Frequency;                // unit = kHz
+      public uint Frequency;                  // unit = kHz
 
-      public UInt32 FrequencyMultiplier;
-      public UInt32 Bandwidth;                // unit = kHz
+      public uint FrequencyMultiplier;
+      public uint Bandwidth;                  // unit = kHz
 
       public ModulationType Modulation;       // expected to be QAM 16, QAM 64, QAM 256, or QPSK
       private FECMethod InnerFecMethod;
@@ -487,7 +488,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a handle that the DLL can use to identify this device for future function calls</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern IntPtr bdaapiOpenHWIdx(TtDeviceCategory category, UInt32 index);
+    private static extern IntPtr bdaapiOpenHWIdx(TtDeviceCategory category, uint index);
 
     /// <summary>
     /// Close access to a specific device and relinquish control over it.
@@ -597,7 +598,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetMAC(IntPtr device, ref UInt32 highPart, ref UInt32 lowPart);
+    private static extern TtApiResult bdaapiGetMAC(IntPtr device, ref uint highPart, ref uint lowPart);
 
     /// <summary>
     /// Get the PCI/USB device IDs. The sub identifiers are only valid for PCI/PCIe devices.
@@ -610,7 +611,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr device, ref UInt16 vendorId, ref UInt16 subVendorId, ref UInt16 deviceId, ref UInt16 subDeviceId);
+    private static extern TtApiResult bdaapiGetDeviceIDs(IntPtr device, ref ushort vendorId, ref ushort subVendorId, ref ushort deviceId, ref ushort subDeviceId);
 
     /// <summary>
     /// Determine whether the device really supports USB 2 "high speed" mode.
@@ -640,7 +641,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetHwIdx(IntPtr device, ref Int32 index);
+    private static extern TtApiResult bdaapiGetHwIdx(IntPtr device, ref int index);
 
     /// <summary>
     /// Get the Windows device path.
@@ -651,7 +652,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder devicePath, ref Int32 devicePathLength);
+    private static extern TtApiResult bdaapiGetDevicePath(IntPtr device, [MarshalAs(UnmanagedType.LPStr)] StringBuilder devicePath, ref int devicePathLength);
 
     /// <summary>
     /// Get the product seller identifier.
@@ -728,7 +729,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr device, IntPtr pmt, UInt16 pmtLength);
+    private static extern TtApiResult bdaapiCIReadPSIFastWithPMT(IntPtr device, IntPtr pmt, ushort pmtLength);
 
     /// <summary>
     /// Send a message to the CAM to request that a service be descrambled.
@@ -738,7 +739,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr device, UInt16 serviceId);
+    private static extern TtApiResult bdaapiCIReadPSIFastDrvDemux(IntPtr device, ushort serviceId);
 
     /// <summary>
     /// Send a message to the CAM to request that one or more services be descrambled.
@@ -749,7 +750,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <returns>a TechnoTrend API result to indicate success or failure reason</returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr sidList, Int32 serviceCount);
+    private static extern TtApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr sidList, int serviceCount);
 
     /// <summary>
     /// Enter the CAM menu.
@@ -782,7 +783,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TtApiResult bdaapiCIAnswer(IntPtr device, byte slotIndex,
-                                                    [MarshalAs(UnmanagedType.LPStr)] String menuAnswer, byte answerLength);
+                                                    [MarshalAs(UnmanagedType.LPStr)] string menuAnswer, byte answerLength);
 
     /// <summary>
     /// Select an entry in the CAM menu.
@@ -848,7 +849,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="textLength">The length of the context text in bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength);
+    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, short textLength);
 
     /// <summary>
     /// Called by the tuner driver when a menu or list from the CAM is available.
@@ -859,7 +860,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength);
+    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, short numEntries, IntPtr entries, short totalMenuLength);
 
     /// <summary>
     /// Called by the tuner driver when the CAM wants to close the menu.
@@ -878,7 +879,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, Int16 keyMask);
+    private delegate void OnTtInputRequest(IntPtr context, byte slotIndex, [MarshalAs(UnmanagedType.Bool)] bool blind, byte answerLength, short keyMask);
 
     /// <summary>
     /// Called by the tuner driver when a message is received from the CAM. This delegate receives the raw
@@ -889,7 +890,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="buffer">A buffer containing the CAM message/response.</param>
     /// <param name="bufferSize">The size of the buffer.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, Int16 bufferSize);
+    private delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, short bufferSize);
 
     #region low speed communication interface callback definitions
 
@@ -954,7 +955,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize);
+    private delegate void OnTtLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, short bufferSize);
 
     #endregion
 
@@ -968,7 +969,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     private static readonly int FILTER_NAMES_SIZE = Marshal.SizeOf(typeof(FilterNames));        // 1824
     private static readonly int TUNE_REQUEST_SIZE = Marshal.SizeOf(typeof(TtDvbsTuneRequest));  // 100 (the size is the same for all tune request structs)
 
-    private const int SERVICE_BUFFER_SIZE = MAX_SERVICE_COUNT * sizeof(UInt16);
+    private const int SERVICE_BUFFER_SIZE = MAX_SERVICE_COUNT * sizeof(ushort);
     private static readonly int GENERAL_BUFFER_SIZE = Math.Max(MAX_DISEQC_COMMAND_LENGTH, TUNE_REQUEST_SIZE);
 
     private static readonly string[] VALID_BUDGET2_DEVICE_NAMES = new string[]
@@ -1020,7 +1021,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 
     private CardType _tunerType = CardType.Unknown;
     private TtDeviceCategory _deviceCategory = TtDeviceCategory.Unknown;
-    private String _name = "TechnoTrend";
+    private string _name = "TechnoTrend";
 
     private IntPtr _deviceHandle = IntPtr.Zero;
     private IntPtr _serviceBuffer = IntPtr.Zero;
@@ -1031,9 +1032,9 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 
     // When the CAM asks for input (via callback), the input request context (description) is provided
     // by a separate callback. We use this variable to cache it.
-    private String _camInputRequestContext = String.Empty;
+    private string _camInputRequestContext = string.Empty;
 
-    private HashSet<UInt16> _descrambledServices = null;
+    private HashSet<ushort> _descrambledServices = null;
 
     #endregion
 
@@ -1049,40 +1050,40 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       int hr = tunerFilter.QueryFilterInfo(out filterInfo);
       string filterName = filterInfo.achName;
       Release.FilterInfo(ref filterInfo);
-      if (hr != 0 || String.IsNullOrEmpty(filterName))
+      if (hr != (int)HResult.Severity.Success || string.IsNullOrEmpty(filterName))
       {
         return TtDeviceCategory.Unknown;
       }
 
-      foreach (String name in VALID_BUDGET2_DEVICE_NAMES)
+      foreach (string name in VALID_BUDGET2_DEVICE_NAMES)
       {
         if (filterName.Equals(name))
         {
           return TtDeviceCategory.Budget2;
         }
       }
-      foreach (String name in VALID_BUDGET3_DEVICE_NAMES)
+      foreach (string name in VALID_BUDGET3_DEVICE_NAMES)
       {
         if (filterName.Equals(name))
         {
           return TtDeviceCategory.Budget3;
         }
       }
-      foreach (String name in VALID_USB2_DEVICE_NAMES)
+      foreach (string name in VALID_USB2_DEVICE_NAMES)
       {
         if (filterName.Equals(name))
         {
           return TtDeviceCategory.Usb2;
         }
       }
-      foreach (String name in VALID_PINNACLE_DEVICE_NAMES)
+      foreach (string name in VALID_PINNACLE_DEVICE_NAMES)
       {
         if (filterName.Equals(name))
         {
           return TtDeviceCategory.Usb2Pinnacle;
         }
       }
-      foreach (String name in VALID_DSS_DEVICE_NAMES)
+      foreach (string name in VALID_DSS_DEVICE_NAMES)
       {
         if (filterName.Equals(name))
         {
@@ -1109,12 +1110,12 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
 
       try
       {
-        // Request the raw medium data.
+        // Request the raw medium data. We receive a pointer to a KSMULTIPLE_ITEM.
         IntPtr raw;
         int hr = pin.KsQueryMediums(out raw);
         try
         {
-          if (hr != 0 || raw == IntPtr.Zero)
+          if (hr != (int)HResult.Severity.Success || raw == IntPtr.Zero)
           {
             return deviceId;
           }
@@ -1208,8 +1209,8 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       }
 
       // MAC address.
-      UInt32 lowPart = 0;
-      UInt32 highPart = 0;
+      uint lowPart = 0;
+      uint highPart = 0;
       result = bdaapiGetMAC(_deviceHandle, ref highPart, ref lowPart);
       if (result == TtApiResult.Success)
       {
@@ -1305,7 +1306,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         CiSlotInfo info = (CiSlotInfo)Marshal.PtrToStructure(slotInfo, typeof(CiSlotInfo));
         this.LogDebug("TechnoTrend: slot info");
         this.LogDebug("  status     = {0} ", info.Status);
-        if (info.CamMenuTitle.Equals(String.Empty))
+        if (info.CamMenuTitle.Equals(string.Empty))
         {
           this.LogDebug("  menu title = (not available)");
         }
@@ -1361,7 +1362,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     /// <param name="text">The request context text from the CAM.</param>
     /// <param name="textLength">The length of the context text in bytes.</param>
-    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, Int16 textLength)
+    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, short textLength)
     {
       try
       {
@@ -1382,7 +1383,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="numEntries">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, Int16 numEntries, IntPtr entries, Int16 totalMenuLength)
+    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, short numEntries, IntPtr entries, short totalMenuLength)
     {
       try
       {
@@ -1476,7 +1477,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="blind"><c>True</c> if the input should be hidden (eg. password).</param>
     /// <param name="answerLength">The expected answer length.</param>
     /// <param name="keyMask"></param>
-    private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, Int16 keyMask)
+    private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, short keyMask)
     {
       this.LogDebug("TechnoTrend: input request callback, slot = {0}", slotIndex);
       this.LogDebug("  length   = {0}", answerLength);
@@ -1573,7 +1574,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="phaseId"></param>
     /// <param name="buffer"></param>
     /// <param name="bufferSize"></param>
-    private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, Int16 bufferSize)
+    private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, short bufferSize)
     {
       this.LogDebug("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
       DVB_MMI.DumpBinary(buffer, 0, bufferSize);
@@ -1589,7 +1590,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
     /// name/number.
     /// </summary>
-    public override String Name
+    public override string Name
     {
       get
       {
@@ -1601,14 +1602,15 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
     /// the ICustomDevice instance should be disposed immediately.
     /// </summary>
-    /// <param name="tunerFilter">The tuner filter in the BDA graph.</param>
+    /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
-    /// <param name="tunerDevicePath">The device path of the DsDevice associated with the tuner filter.</param>
+    /// <param name="context">Context required to initialise the interface.</param>
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
-    public override bool Initialise(IBaseFilter tunerFilter, CardType tunerType, String tunerDevicePath)
+    public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
       this.LogDebug("TechnoTrend: initialising device");
 
+      IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
       {
         this.LogDebug("TechnoTrend: tuner filter is null");
@@ -1667,10 +1669,10 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
-    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out DeviceAction action)
+    public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
       this.LogDebug("TechnoTrend: on before tune callback");
-      action = DeviceAction.Default;
+      action = TunerAction.Default;
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
@@ -1703,13 +1705,13 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     #region IPowerDevice member
 
     /// <summary>
-    /// Turn the device power supply on or off.
+    /// Set the tuner power state.
     /// </summary>
-    /// <param name="powerOn"><c>True</c> to turn the power supply on; <c>false</c> to turn the power supply off.</param>
+    /// <param name="state">The power state to apply.</param>
     /// <returns><c>true</c> if the power state is set successfully, otherwise <c>false</c></returns>
-    public bool SetPowerState(bool powerOn)
+    public bool SetPowerState(PowerState state)
     {
-      this.LogDebug("TechnoTrend: set power state, on = {0}", powerOn);
+      this.LogDebug("TechnoTrend: set power state, state = {0}", state);
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
@@ -1722,7 +1724,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         return false;
       }
 
-      TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, powerOn);
+      TtApiResult result = bdaapiSetDVBTAntPwr(_deviceHandle, state == PowerState.On);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
@@ -1891,7 +1893,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         this.LogDebug("TechnoTrend: result = {0}", result);
         _isCiSlotPresent = true;
         _serviceBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
-        _descrambledServices = new HashSet<UInt16>();
+        _descrambledServices = new HashSet<ushort>();
       }
       else
       {
@@ -1920,7 +1922,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         _serviceBuffer = IntPtr.Zero;
       }
       _descrambledServices = null;
-      _camInputRequestContext = String.Empty;
+      _camInputRequestContext = string.Empty;
       _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCamReady = false;
@@ -2023,7 +2025,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
         listAction == CaPmtListManagementAction.First)
       {
         // "Only" and "first" actions mean start a new list.
-        _descrambledServices = new HashSet<UInt16>();
+        _descrambledServices = new HashSet<ushort>();
         _descrambledServices.Add(pmt.ProgramNumber);
       }
 
@@ -2042,11 +2044,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
       // Send the updated list to the CAM.
       this.LogDebug("TechnoTrend: service list");
       int i = 0;
-      HashSet<UInt16>.Enumerator en = _descrambledServices.GetEnumerator();
+      HashSet<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
       while (en.MoveNext())
       {
         this.LogDebug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
-        Marshal.WriteInt16(_serviceBuffer, 2 * i, (Int16)en.Current);
+        Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en.Current);
         i++;
       }
 
@@ -2139,11 +2141,11 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     /// <param name="cancel"><c>True</c> to cancel the request.</param>
     /// <param name="answer">The user's response.</param>
     /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, String answer)
+    public bool SendMenuAnswer(bool cancel, string answer)
     {
       if (answer == null)
       {
-        answer = String.Empty;
+        answer = string.Empty;
       }
       this.LogDebug("TechnoTrend: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
 
@@ -2262,7 +2264,7 @@ namespace Mediaportal.TV.Server.Plugins.CustomDevices.TechnoTrend
     #region IDisposable member
 
     /// <summary>
-    /// Close interfaces, free memory and release COM object references.
+    /// Release and dispose all resources.
     /// </summary>
     public override void Dispose()
     {

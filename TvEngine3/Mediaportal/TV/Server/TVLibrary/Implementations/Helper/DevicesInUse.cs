@@ -25,8 +25,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
   /// <summary>
-  /// This is a class which is used to remember which devices are currently in
-  /// use.
+  /// This class is used to keep track of the <see cref="DsDevice"/> instances which are in use.
   /// </summary>
   public class DevicesInUse
   {
@@ -67,7 +66,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <returns><c>true</c> if the device can be used, otherwise <c>false</c></returns>
     public bool Add(DsDevice device)
     {
-      if (device == null)
+      if (device == null || device.Name == null || device.DevicePath == null || device.Mon == null)
       {
         return false;
       }
@@ -96,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <param name="device">The device.</param>
     public void Remove(DsDevice device)
     {
-      if (device == null)
+      if (device == null || device.Name == null || device.DevicePath == null || device.Mon == null)
       {
         return;
       }
