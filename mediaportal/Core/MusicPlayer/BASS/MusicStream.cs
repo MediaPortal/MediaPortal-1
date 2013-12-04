@@ -654,6 +654,10 @@ namespace MediaPortal.MusicPlayer.BASS
                            Thread.Sleep(20);
                          }
                        }
+                       else
+                       {
+                         Bass.BASS_ChannelStop(_stream);
+                       }
                      }
                      else
                      {
