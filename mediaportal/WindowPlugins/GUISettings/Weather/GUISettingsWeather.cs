@@ -19,16 +19,9 @@
 
 using System;
 using System.Collections;
-using System.Globalization;
-using System.Diagnostics;
-using System.Reflection;
-using DirectShowLib;
-using DShowNET;
-using DShowNET.Helper;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using MediaPortal.Util;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -94,7 +87,7 @@ namespace MediaPortal.GUI.Settings
       if (MediaPortal.GUI.Settings.GUISettings.SettingsChanged && !MediaPortal.Util.Utils.IsGUISettingsWindow(newWindowId))
       {
         MediaPortal.GUI.Settings.GUISettings.OnRestartMP(GetID);
-      }
+    }
 
       base.OnPageDestroy(newWindowId);
     }

@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -355,9 +356,9 @@ namespace MediaPortal.GUI.Music
           {
             btnClear.Disabled = false;
             btnSave.Disabled = false;
-          }
-          else
-          {
+            }
+            else
+            {
             btnClear.Disabled = true;
             btnSave.Disabled = true;
           }
@@ -721,7 +722,7 @@ namespace MediaPortal.GUI.Music
     private void SavePlayList()
     {
       string strNewFileName = playlistPlayer.CurrentPlaylistName;
-      if (GetKeyboard(ref strNewFileName))
+      if (VirtualKeyboard.GetKeyboard(ref strNewFileName, GetID))
       {
         string strPath = Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = string.Empty;

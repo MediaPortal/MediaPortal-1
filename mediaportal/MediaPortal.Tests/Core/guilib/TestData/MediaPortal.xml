@@ -1857,7 +1857,6 @@
     <entry name="External Control Plugin II">no</entry>
   </section>
   <section name="pluginsdlls">
-    <entry name="WindowPlugins.dll">no</entry>
     <entry name="ExternalPlayers.dll">no</entry>
     <entry name="ProcessPlugins.dll">no</entry>
     <entry name="ECP2Plugin.dll">yes</entry>

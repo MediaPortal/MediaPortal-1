@@ -34,7 +34,7 @@ using Timer = System.Timers.Timer;
 
 namespace MediaPortal.GUI.NumberPlace
 {
-  [PluginIcons("WindowPlugins.GUINumberPlace.NumberPlace.gif", "WindowPlugins.GUINumberPlace.NumberPlaceDisabled.gif")]
+  [PluginIcons("GUINumberPlace.NumberPlace.gif", "GUINumberPlace.NumberPlaceDisabled.gif")]
   public class GUINumberPlace : GUIInternalWindow, ISetupForm, IShowPlugin
   {
     private enum SkinControlIDs
