@@ -1399,9 +1399,12 @@ namespace MediaPortal.MusicPlayer.BASS
       if (VizWindow.InvokeRequired)
       {
         ShowVisualizationWindowDelegate d = new ShowVisualizationWindowDelegate(ShowVisualizationWindow);
-        VizWindow.Invoke(d, new object[] { visible });
+        try
+        {
+          VizWindow.Invoke(d, new object[] { visible });
+        }
+        catch { }
       }
-
       else
       {
         VizWindow.Visible = visible;
