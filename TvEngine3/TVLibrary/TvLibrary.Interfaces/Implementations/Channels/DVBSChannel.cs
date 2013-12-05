@@ -522,4 +522,21 @@ namespace TvLibrary.Channels
              dvbsChannel.DisEqc != DisEqc;
     }
   }
+  
+    public enum ToneBurst
+  {
+      None,
+      ToneBurst,
+      DataBurst
+  }
+
+  public enum Tone22k
+  {
+      Off,
+      On,
+      Auto
+  }
+
+
+
 }
