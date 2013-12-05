@@ -190,10 +190,10 @@ namespace TvLibrary.Implementations.Dri
 
     public void OnLvctChannelDetail(MgtTableType tableType, string shortName, int majorChannelNumber, int minorChannelNumber,
       ModulationMode modulationMode, uint carrierFrequency, int channelTsid, int programNumber, EtmLocation etmLocation,
-      bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, AtscServiceType serviceType, int sourceId)
+      bool accessControlled, bool hidden, int pathSelect, bool outOfBand, bool hideGuide, TvLibrary.Implementations.Dri.Parser.AtscServiceType serviceType, int sourceId)
     {
       if (programNumber == 0 || outOfBand || modulationMode == ModulationMode.Analog || modulationMode == ModulationMode.PrivateDescriptor ||
-        (serviceType != AtscServiceType.Audio && serviceType != AtscServiceType.DigitalTelevision) || sourceId == 0)
+        (serviceType != TvLibrary.Implementations.Dri.Parser.AtscServiceType.Audio && serviceType != TvLibrary.Implementations.Dri.Parser.AtscServiceType.DigitalTelevision) || sourceId == 0)
       {
         // Not tunable/supported.
         return;
@@ -234,8 +234,8 @@ namespace TvLibrary.Implementations.Dri
           break;
       }
       channel.FreeToAir = !accessControlled;
-      channel.IsTv = (serviceType == AtscServiceType.DigitalTelevision);
-      channel.IsRadio = (serviceType == AtscServiceType.Audio);
+      channel.IsTv = (serviceType == TvLibrary.Implementations.Dri.Parser.AtscServiceType.DigitalTelevision);
+      channel.IsRadio = (serviceType == TvLibrary.Implementations.Dri.Parser.AtscServiceType.Audio);
       if (minorChannelNumber == 0)
       {
         channel.LogicalChannelNumber = majorChannelNumber;

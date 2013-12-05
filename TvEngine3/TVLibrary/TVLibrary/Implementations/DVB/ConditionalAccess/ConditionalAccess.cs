@@ -27,7 +27,8 @@ using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Hardware;
-using System.Threading;
+using TvLibrary.Implementations.Dri;
+using TvLibrary.Implementations.Dri.Service;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -50,7 +51,6 @@ namespace TvLibrary.Implementations.DVB
     private readonly DigitalEverywhere _digitalEveryWhere;
     private readonly TechnoTrendAPI _technoTrend;
     private readonly Twinhan _twinhan;
-    private readonly Turbosight _turbosight;
     private readonly KNCAPI _knc;
     private readonly Hauppauge _hauppauge;
     private readonly ProfRed _profred;
@@ -64,6 +64,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
+    private readonly TunerDri _tunerDri;
+    private readonly Turbosight _turbosight;
 
     private readonly IHardwareProvider _HWProvider;
 
@@ -117,6 +119,12 @@ namespace TvLibrary.Implementations.DVB
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
+        TunerDri driTuner = card as TunerDri;
+        if (driTuner != null)
+        {
+          _tunerDri = driTuner;
+          _ciMenu = driTuner;
+        }
         if (tunerFilter == null && analyzerFilter == null)
           return;
         //DVB checks. Conditional Access & DiSEqC etc.
@@ -126,6 +134,18 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
+
+            Log.Log.WriteFile("Check for TBS");
+
+            uint deviceIndex = (uint)Turbosight.GetDeviceIndex(card);
+            _turbosight = new Turbosight(tunerFilter, deviceIndex);
+            if (_turbosight.IsTurbosight)
+            {
+                this._diSEqCMotor = new DiSEqCMotor(_turbosight);
+                _ciMenu = _turbosight;
+                return;
+            }
+
           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
@@ -198,16 +218,6 @@ namespace TvLibrary.Implementations.DVB
           }
           Release.DisposeToNull(ref _hauppauge);
           Release.DisposeToNull(ref _winTvCiModule);
-
-          TvLibrary.Log.Log.WriteFile("Check for Turbosight");
-          this._turbosight = new Turbosight(tunerFilter);
-          if (this._turbosight.IsTurbosight)
-          {
-              this._diSEqCMotor = new DiSEqCMotor(this._turbosight);
-              this._ciMenu = this._turbosight;
-              return;
-          }
-          Release.DisposeToNull<Turbosight>(ref this._turbosight);
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -423,6 +433,16 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!_useCam)
           return true;
+
+        if (_tunerDri != null)
+        {
+          return _tunerDri.CardStatus == DriCasCardStatus.Inserted;
+        }
+
+        if (_turbosight != null)
+        {
+            return _turbosight.IsCamReady();
+        }
         if (_knc != null)
         {
           //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
@@ -458,10 +478,6 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
-        if (this._turbosight != null)
-        {
-            return this._turbosight.IsCamReady();
-        }
       }
       catch (Exception ex)
       {
@@ -479,6 +495,11 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!_useCam)
           return;
+        if (_turbosight != null)
+        {
+            bool flag;
+            _turbosight.ResetCi(out flag);
+        }
         if (_digitalEveryWhere != null)
         {
           _digitalEveryWhere.ResetCAM();
@@ -490,11 +511,6 @@ namespace TvLibrary.Implementations.DVB
         if (_knc != null)
         {
           _knc.ResetCI();
-        }
-        if (this._turbosight != null)
-        {
-            bool flag;
-            this._turbosight.ResetCi(out flag);
         }
       }
       catch (Exception ex)
@@ -675,6 +691,10 @@ namespace TvLibrary.Implementations.DVB
         context.AudioPid = audioPid;
         context.ServiceId = channel.ServiceId;
 
+        if (_turbosight != null)
+        {
+            return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
+        }
         if (_winTvCiModule != null)
         {
           int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
@@ -716,10 +736,6 @@ namespace TvLibrary.Implementations.DVB
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _twinhan.SendPMT(caPmt, caPmtLen);
         }
-        if (this._turbosight != null)
-        {
-            return this._turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
-        }
       }
       catch (Exception ex)
       {
@@ -738,6 +754,11 @@ namespace TvLibrary.Implementations.DVB
       bool succeeded = true;
       try
       {
+        if (_turbosight != null)
+        {
+            _turbosight.SendDiseqcCommand(parameters, channel);
+            System.Threading.Thread.Sleep(100);
+        }
         if (_knc != null)
         {
           _knc.SendDiseqCommand(parameters, channel);
@@ -772,11 +793,6 @@ namespace TvLibrary.Implementations.DVB
         {
           _conexant.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
-        }
-        if (this._turbosight != null)
-        {
-            this._turbosight.SendDiseqcCommand(parameters, channel);
-            Thread.Sleep(100);
         }
         if (_profred != null)
         {
@@ -943,10 +959,6 @@ namespace TvLibrary.Implementations.DVB
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
-        }
-        if (_turbosight != null)
-        {
-            return (DVBSChannel)this._turbosight.SetTuningParameters(channel);
         }
         if (_profred != null)
         {
