@@ -49,15 +49,15 @@ namespace MediaPortal.Visualization
       public Int64 TimeStamp;
     }
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool InitWMPEngine([MarshalAs(UnmanagedType.LPWStr)] string strVizCLSID, int presetIndex,
                                               VisualizationBase.OutputContextType outputContextType, IntPtr callBack,
                                               IntPtr hOutput, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern int RenderWMP(IntPtr pData, ref VisualizationBase.RECT rect);
 
-    [DllImport("mpviz.dll", CharSet = CharSet.Auto)]
+    [DllImport("mpviz.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
     internal static extern bool SetOutputWMP(VisualizationBase.OutputContextType outputContextType, IntPtr hOutput);
   }
 

@@ -168,7 +168,14 @@ namespace MediaPortal.Player
           strFile = GetLargestFileInDirectory(path, "*.m2ts");
         }
 
-        _mI.Open(strFile);
+        if (strFile != null)
+        {
+          _mI.Open(strFile);
+        }
+        else
+        {
+          return;
+        }
 
         NumberFormatInfo providerNumber = new NumberFormatInfo();
         providerNumber.NumberDecimalSeparator = ".";

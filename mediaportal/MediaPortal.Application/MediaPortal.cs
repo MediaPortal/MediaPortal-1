@@ -3022,31 +3022,29 @@ public class MediaPortalApp : D3D, IRender
 
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
             {
-              // left half
-              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft, timePassed, backbuffer,
-                                         GUIGraphicsContext.Auto3DSurface,
-                                         new Rectangle(0, 0, backbuffer.Description.Width/2,
-                                                       backbuffer.Description.Height));
+              // left half (or right if switched)
 
-              // right half
-              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight, timePassed, backbuffer,
-                                         GUIGraphicsContext.Auto3DSurface,
-                                         new Rectangle(backbuffer.Description.Width/2, 0,
-                                                       backbuffer.Description.Width/2, backbuffer.Description.Height));
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSRight : GUIGraphicsContext.eRender3DModeHalf.SBSLeft,
+                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              new Rectangle(0, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
+
+              // right half (or right if switched)
+
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.SBSLeft : GUIGraphicsContext.eRender3DModeHalf.SBSRight,
+                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              new Rectangle(backbuffer.Description.Width / 2, 0, backbuffer.Description.Width / 2, backbuffer.Description.Height));
             }
             else
             {
-              // upper half
-              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABTop, timePassed, backbuffer,
-                                         GUIGraphicsContext.Auto3DSurface,
-                                         new Rectangle(0, 0, backbuffer.Description.Width,
-                                                       backbuffer.Description.Height/2));
+              // upper half (or lower if switched)
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABBottom : GUIGraphicsContext.eRender3DModeHalf.TABTop, 
+                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
 
-              // lower half
-              PlaneScene.RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABBottom, timePassed, backbuffer,
-                                         GUIGraphicsContext.Auto3DSurface,
-                                         new Rectangle(0, backbuffer.Description.Height/2,
-                                                       backbuffer.Description.Width, backbuffer.Description.Height/2));
+              // lower half (or upper if switched)
+              PlaneScene.RenderFor3DMode(GUIGraphicsContext.Switch3DSides ? GUIGraphicsContext.eRender3DModeHalf.TABTop : GUIGraphicsContext.eRender3DModeHalf.TABBottom, 
+                              timePassed, backbuffer, GUIGraphicsContext.Auto3DSurface,
+                              new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width, backbuffer.Description.Height/2));
             }
 
             GUIGraphicsContext.DX9Device.Present();
