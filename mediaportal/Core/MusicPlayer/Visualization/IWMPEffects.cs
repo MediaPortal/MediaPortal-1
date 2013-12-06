@@ -73,6 +73,27 @@ namespace MediaPortal.Visualization
     int RenderFullScreen(IntPtr timedLevels);
   }
 
+  [
+    ComImport,
+    Guid("695386EC-AA3C-4618-A5E1-DD9A8B987632"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)
+  ]
+  public interface IWMPEffects2: IWMPEffects
+  {
+    // visualization access to the core Windows Media Player APIs.
+    int SetCore(IntPtr pPlayer);
+    //  instantiate a visualization window
+    int Create(IntPtr hwndParent);
+    // destroy a visualization window instantiated in the Create method.
+    int Destroy();
+    // inform the visualization that a new media item has been loaded.
+    int NotifyNewMedia(IntPtr pMedia);
+    // pass window messages to a visualization.
+    int OnWindowMessage(int Msg, int WParam, int LParam, ref int plResultParam);
+    // render a windowed visualization.
+    int RenderWindowed(ref WMPInterop.TimedLevel pData, bool fRequiredRender);
+  }
+
   public enum EffectsCapability
   {
     EFFECT_CANGOFULLSCREEN = 0x00000001,
