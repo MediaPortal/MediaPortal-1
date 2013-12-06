@@ -29,7 +29,6 @@ using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
-using MediaPortal.Player;
 using Microsoft.Win32;
 using BassVis_Api;
 
@@ -42,10 +41,12 @@ namespace MediaPortal.Visualization
     private BassAudioEngine Bass = null;
     private List<VisualizationInfo> _VisualizationPluginsInfo = new List<VisualizationInfo>();
     private VisualizationInfo.PluginType CurrentVizType = VisualizationInfo.PluginType.None;
+    private VisualizationInfo.PluginType OldVizType = VisualizationInfo.PluginType.None;
     private IVisualization Viz = null;
     private string VizPath = string.Empty;
     private VisualizationWindow VizRenderWindow = null;
     private string CurrentViz = null;
+    private string OldViz = null;
     private int _TargetFPS = 20;
     private BASSVIS_PARAM _visParam = null;
 
@@ -94,6 +95,11 @@ namespace MediaPortal.Visualization
     public VisualizationInfo.PluginType CurrentVisualizationType
     {
       get { return CurrentVizType; }
+    }
+
+    public VisualizationInfo.PluginType OldVisualizationType
+    {
+      get { return OldVizType; }
     }
 
     #endregion
@@ -363,37 +369,11 @@ namespace MediaPortal.Visualization
 
         if (bassboxVisPaths != null && bassboxVisPaths[0] != "")
         {
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_BASSBOX, GUIGraphicsContext.form.Handle);
-          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_BASSBOX);
+          // use only Filename BassBox can have Presetnames double           
           for (int i = 0; i < bassboxVisPaths.Length; i++)
           {
             string filePath = bassboxVisPaths[i];
             string name = Path.GetFileNameWithoutExtension(filePath);
-            BASSVIS_EXEC visExec = new BASSVIS_EXEC(filePath);
-            visExec.BB_Flags = BASSVISFlags.BASSVIS_NOINIT; // don't execute the plugin yet
-
-            if (_visParam.VisHandle != 0)
-            {
-              BassVis.BASSVIS_Free(_visParam);
-              bool bFree = BassVis.BASSVIS_IsFree(_visParam);
-              if (bFree)
-              {
-                _visParam.VisHandle = 0;
-              }
-              else
-              {
-                Log.Warn("VisualisationManager: Failed to unload BassBox viz module - {0}", name);
-                _visParam.VisHandle = 0;
-              }
-            }
-
-            BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
-
-            string pluginname = BassVis.BASSVIS_GetModulePresetName(_visParam, 0, filePath);
-            if (pluginname != null)
-            {
-              name = pluginname;
-            }
 
             VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Bassbox, filePath, name,
                                                               string.Empty, null);
@@ -498,9 +478,72 @@ namespace MediaPortal.Visualization
 
     private bool InternalCreateVisualization(VisualizationInfo vizPluginInfo, bool isPreview)
     {
-      CloseCurrentVisualization();
+      // Close VisualType is not a BassVis Kind
+      if (vizPluginInfo.VisualizationType != VisualizationInfo.PluginType.Sonique &&
+          vizPluginInfo.VisualizationType != VisualizationInfo.PluginType.Winamp &&
+          vizPluginInfo.VisualizationType != VisualizationInfo.PluginType.Bassbox)
+      {
+        CloseCurrentVisualization();
+      }
+      else
+      {
+        if (OldVizType != vizPluginInfo.VisualizationType)
+        {
+          CloseCurrentVisualization();
+          OldVizType = vizPluginInfo.VisualizationType;
+        }
+        else
+        {
+          switch (OldVizType)
+          {
+            case VisualizationInfo.PluginType.None:
+            case VisualizationInfo.PluginType.Unknown:
+              return false;
+
+            case VisualizationInfo.PluginType.Sonique:
+              {
+                Log.Info("Visualization Manager: Free Sonique visualization...");
+                BassVis.BASSVIS_Free(Viz.VizParam);
+                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                if (bFree)
+                {
+                  Viz.VizParam.VisHandle = 0;
+                  Log.Info("Visualization Manager: Sonique visualization " + OldViz + " free succes");
+                }
+                break;
+              }
+            case VisualizationInfo.PluginType.Winamp:
+              {
+                Log.Info("Visualization Manager: Free Winamp visualization...");
+                BassVis.BASSVIS_Free(Viz.VizParam);
+                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                if (bFree)
+                {
+                  Viz.VizParam.VisHandle = 0;
+                  Log.Info("Visualization Manager: Winamp visualization " + OldViz + " free succes");
+                }
+                break;
+              }
+
+            case VisualizationInfo.PluginType.Bassbox:
+              {
+                Log.Info("Visualization Manager: Free Bassbox visualization...");
+                BassVis.BASSVIS_Free(Viz.VizParam);
+                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                if (bFree)
+                {
+                  Viz.VizParam.VisHandle = 0;
+                  Log.Info("Visualization Manager: Bassbox visualization " + OldViz + " free succes");
+                }
+                break;
+              }
+          }
+        }
+      }
+
       CurrentVizType = vizPluginInfo.VisualizationType;
-      CurrentViz = vizPluginInfo.Name;
+      OldViz = vizPluginInfo.Name;
+      CurrentViz = OldViz;
 
       switch (CurrentVizType)
       {
@@ -539,7 +582,7 @@ namespace MediaPortal.Visualization
         case VisualizationInfo.PluginType.Winamp:
           {
             Log.Info("Visualization Manager: Creating new Winamp visualization...");
-            Viz = new WinampViz(vizPluginInfo, VizRenderWindow);
+            Viz = new WinampViz(vizPluginInfo, VizRenderWindow);          
             break;
           }
 
@@ -705,15 +748,22 @@ namespace MediaPortal.Visualization
     public void GetNextVis()
     {
       int i = GetCurrentVizIndex();
-      
+
       if (i > -1 && i < _VisualizationPluginsInfo.Count - 1)
       {
         if (CreateVisualization(_VisualizationPluginsInfo[i + 1]))
         {
           VizRenderWindow.Run = true;
-          VisualizationInfo currentVis = _VisualizationPluginsInfo[i+1];
+          VisualizationInfo currentVis = _VisualizationPluginsInfo[i + 1];
           SaveCurrentViz(currentVis);
         }
+      }
+      else
+      {
+        // if last plugin entry reached then use the first plugin in the list
+        CurrentViz =  _VisualizationPluginsInfo[0].Name;
+        OldVizType = VisualizationInfo.PluginType.None;
+        GetNextVis();
       }
     }
 
@@ -726,9 +776,16 @@ namespace MediaPortal.Visualization
         if (CreateVisualization(_VisualizationPluginsInfo[i - 1]))
         {
           VizRenderWindow.Run = true;
-          VisualizationInfo currentVis = _VisualizationPluginsInfo[i-1];
+          VisualizationInfo currentVis = _VisualizationPluginsInfo[i - 1];
           SaveCurrentViz(currentVis);
         }
+      }
+      else
+      {
+        // if first plugin entry reached then use last entry in the list 
+        CurrentViz = _VisualizationPluginsInfo[_VisualizationPluginsInfo.Count - 1].Name;
+        OldVizType = VisualizationInfo.PluginType.None;
+        GetPrevVis();
       }
     }
 

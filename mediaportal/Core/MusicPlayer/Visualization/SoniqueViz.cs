@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using BassVis_Api;
 
 
@@ -35,17 +36,15 @@ namespace MediaPortal.Visualization
   {
     #region Variables
 
-    [DllImport("User32.dll")]
-    public static extern IntPtr GetDC(IntPtr hWnd);
-
     private BASSVIS_INFO _mediaInfo = null;
+    private BASSVIS_EXEC visExec = null;
 
     private bool RenderStarted = false;
     private bool firstRun = true;
 
     private MusicTag trackTag = null;
+    private string _OldCurrentFile = "   ";
     private string _songTitle = "   "; // Title of the song played
-    private BASSVIS_EXEC visExec;
 
     #endregion
 
@@ -101,32 +100,36 @@ namespace MediaPortal.Visualization
                                       BassAudioEngine.PlayState newState)
     {
       Log.Debug("SoniqueViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
-      if (newState == BassAudioEngine.PlayState.Playing)
+      if (_visParam.VisHandle != 0)
       {
-        RenderStarted = false;
-        trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
-        if (trackTag != null)
+        if (newState == BassAudioEngine.PlayState.Playing)
         {
-          _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+          RenderStarted = false;
+          trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+          if (trackTag != null)
+          {
+            _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+          }
+          else
+          {
+            _songTitle = "   ";
+          }
+
+          _mediaInfo.SongTitle = _songTitle;
+          _mediaInfo.SongFile = Bass.CurrentFile;
+          _OldCurrentFile = Bass.CurrentFile;
+
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
         }
-        else
+        else if (newState == BassAudioEngine.PlayState.Paused)
         {
-          _songTitle = "   ";
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
         }
-
-        _mediaInfo.SongTitle = _songTitle;
-        _mediaInfo.SongFile = Bass.CurrentFile;
-
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
-      }
-      else if (newState == BassAudioEngine.PlayState.Paused)
-      {
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Pause);
-      }
-      else if (newState == BassAudioEngine.PlayState.Ended)
-      {
-        BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
-        RenderStarted = false;
+        else if (newState == BassAudioEngine.PlayState.Ended)
+        {
+          BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Stop);
+          RenderStarted = false;
+        }
       }
     }
 
@@ -155,16 +158,39 @@ namespace MediaPortal.Visualization
           return 0;
         }
 
+        // Any is wrong with PlaybackStateChanged, if the songfile automatically changed
+        // so i have create a new variable which fix this problem
         if (Bass != null)
         {
-          _mediaInfo.Position = (int) (1000*Bass.CurrentPosition);
-          _mediaInfo.Duration = (int) Bass.Duration;
+          if (Bass.CurrentFile != _OldCurrentFile)
+          {
+            trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
+            if (trackTag != null)
+            {
+              _songTitle = String.Format("{0} - {1}", trackTag.Artist, trackTag.Title);
+              _OldCurrentFile = Bass.CurrentFile;
+            }
+            else
+            {
+              _songTitle = "   ";
+            }
+          }
+
+          // Set Song information, so that the plugin can display it
+          if (trackTag != null)
+          {
+            _mediaInfo.SongTitle = _songTitle;
+            _mediaInfo.SongFile = Bass.CurrentFile;
+            _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            _mediaInfo.Duration = (int)Bass.Duration;
+          }
+          else
+          {
+            _mediaInfo.Position = 0;
+            _mediaInfo.Duration = 0;
+          }
         }
-        else
-        {
-          _mediaInfo.Position = 0;
-          _mediaInfo.Duration = 0;
-        }
+        
         if (IsPreviewVisualization)
         {
           _mediaInfo.SongTitle = "Mediaportal Preview";
@@ -182,6 +208,7 @@ namespace MediaPortal.Visualization
         {
           stream = (int) Bass.GetCurrentVizStream();
         }
+
         // ckeck is playing
         int nReturn = BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.IsPlaying);
         if (nReturn == Convert.ToInt32(BASSVIS_PLAYSTATE.Play) && (_visParam.VisHandle != 0))
@@ -282,6 +309,14 @@ namespace MediaPortal.Visualization
         // Call Play befor use BASSVIS_ExecutePlugin (moved here)
         BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
 
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        {
+          VizPluginInfo.UseOpenGL = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+          VizPluginInfo.UseCover = xmlreader.GetValueAsBool("musicvisualization", "useCover", true);
+          VizPluginInfo.RenderTiming = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+          VizPluginInfo.ViewPortSize = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
+        }
+
         // Create the Visualisation
         visExec = new BASSVIS_EXEC(vizPath);
         visExec.SON_ConfigFile = configFile;
@@ -294,12 +329,14 @@ namespace MediaPortal.Visualization
         visExec.SON_ViewportHeight = VizPluginInfo.ViewPortSizeY;
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
+        visExec.SON_ShowFPS = true;
+        visExec.SON_ShowPrgBar = true;
+        visExec.SON_UseCover = VizPluginInfo.UseCover; 
+
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
 
         if (_visParam.VisHandle != 0)
         {
-          // Set the visualization window that was taken over from BASSVIS_ExecutePlugin
-          BassVis.BASSVIS_Resize(_visParam, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height);
           // Config Settings
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_RENDERTIMING, VizPluginInfo.RenderTiming);
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_SONIQUEVIS_CONFIG_USESLOWFADE, 1);
@@ -307,8 +344,10 @@ namespace MediaPortal.Visualization
           BassVis.BASSVIS_SetOption(_visParam, BASSVIS_CONFIGFLAGS.BASSVIS_CONFIG_FFTAMP, 5);
         
           Win32API.ShowWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Hide);
+          
+          // SetForegroundWindow
+          GUIGraphicsContext.form.Activate();
         }
-
         firstRun = false;
       }
       catch (Exception ex)

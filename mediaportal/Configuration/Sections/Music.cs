@@ -182,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       trackBarBuffering_Scroll(null, null);
       trackBarCrossfade_Scroll(null, null);
       soniqueRenderTiming_Scroll(null, null);
+      winampFFTsensitivity_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
@@ -303,16 +304,24 @@ namespace MediaPortal.Configuration.Sections
         }
 
         ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+        ckUseCover.Checked = xmlreader.GetValueAsBool("musicvisualization", "useCover", true);
         soniqueRenderTiming.Value = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+        winampFFTsensitivity.Value = xmlreader.GetValueAsInt("musicvisualization", "fftSensitivity", 36);
         comboViewPortSizes.SelectedIndex = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
 
         if (vizType == (int) VisualizationInfo.PluginType.Sonique)
         {
           VizPluginInfo.UseOpenGL = ckUseOpenGL.Checked;
+          VizPluginInfo.UseCover = ckUseCover.Checked;
           VizPluginInfo.RenderTiming = soniqueRenderTiming.Value;
           VizPluginInfo.ViewPortSize = comboViewPortSizes.SelectedIndex;
         }
 
+        if (vizType == (int)VisualizationInfo.PluginType.Winamp)
+        {
+          VizPluginInfo.FFTSensitivity = winampFFTsensitivity.Value;
+        }
+        
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
 
         if (fps < (int)VisualizationFpsNud.Minimum)
@@ -481,7 +490,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
           xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
@@ -494,7 +505,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
           xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
@@ -506,7 +519,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", "");
           xmlwriter.SetValue("musicvisualization", "preset", "");
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", false);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", false);
           xmlwriter.SetValue("musicvisualization", "renderTiming", "");
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", "");
           xmlwriter.SetValue("musicvisualization", "viewPort", "");
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", false);
         }
@@ -1190,6 +1205,11 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
+    private void winampFFTsensitivity_Scroll(object sender, EventArgs e)
+    {
+      winampFFTsensitivityLbl.Text = string.Format("{0} ", winampFFTsensitivity.Value * 32);
+    }
   }
 
   /// <summary>
