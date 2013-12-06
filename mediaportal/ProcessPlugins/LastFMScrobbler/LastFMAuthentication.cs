@@ -31,6 +31,7 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
     public LastFMAuthentication()
     {
       InitializeComponent();
+      txtUserName.Text = MusicDatabase.Instance.GetLastFMUser();
     }
 
     private void btnSubmit_Click(object sender, EventArgs e)

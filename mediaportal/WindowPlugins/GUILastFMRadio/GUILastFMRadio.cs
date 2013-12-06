@@ -225,11 +225,14 @@ namespace MediaPortal.GUI.LastFMRadio
       }
       if (controlId == (int)SkinControls.PLAYLIST_CONTROL)
       {
-        if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
+        if (PlaylistControl.SelectedListItem.Path != null && g_Player.currentFileName != null)
         {
-          //Not sure why this is called for current track but somehow OnClicked is getting fired
-          //for current track with no user interaction.   Ignore these events
-          return;
+          if (PlaylistControl.SelectedListItem.Path == g_Player.currentFileName)
+          {
+            //Not sure why this is called for current track but somehow OnClicked is getting fired
+            //for current track with no user interaction.   Ignore these events
+            return;
+          }
         }
         _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_LAST_FM;
         _playlistPlayer.Play(PlaylistControl.SelectedListItemIndex);
@@ -286,8 +289,34 @@ namespace MediaPortal.GUI.LastFMRadio
       }
 
       Log.Debug("Tuned to last.fm station: {0}", strStation);
-      
-      AddMoreTracks();
+
+      try
+      {
+        AddMoreTracks();
+      }
+      catch (LastFMException ex)
+      {
+        Log.Error("Unable to add last.fm tracks to playlist");
+        var errMessage = "Unable to add last.fm tracks to playlist\n";
+        if (ex.LastFMError == LastFMException.LastFMErrorCode.UnknownError)
+        {
+          Log.Error(ex);
+          errMessage += "Please check logs";
+        }
+        else
+        {
+          errMessage += ex.Message;
+        }
+
+        var dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(107890));
+          dlgNotify.SetText(errMessage);
+          dlgNotify.DoModal(GetID);
+        }
+        return;
+      }
       _playlistPlayer.Play(0);
     }
 
@@ -325,36 +354,43 @@ namespace MediaPortal.GUI.LastFMRadio
         }
         return;
       }
-     
-      foreach (var lastFMTrack in tracks)
+
+      if (tracks != null)
       {
-        var tag = new MusicTag
+        foreach (var lastFMTrack in tracks)
         {
-          AlbumArtist = lastFMTrack.ArtistName,
-          Artist = lastFMTrack.ArtistName,
-          Title = lastFMTrack.TrackTitle,
-          FileName = lastFMTrack.TrackStreamingURL,
-          Duration = lastFMTrack.Duration,
-          ImageURL = lastFMTrack.ImageURL
-        };
-        var pli = new PlayListItem
-        {
-          Type = PlayListItem.PlayListItemType.Audio,
-          FileName = lastFMTrack.TrackStreamingURL,
-          Description = lastFMTrack.ArtistName + " - " + lastFMTrack.TrackTitle,
-          Duration = lastFMTrack.Duration,
-          MusicTag = tag,
-          Source = PlayListItem.PlayListItemSource.Recommendation,
-          SourceDescription = "Last.fm Radio"
-        };
+          var tag = new MusicTag
+                      {
+                        AlbumArtist = lastFMTrack.ArtistName,
+                        Artist = lastFMTrack.ArtistName,
+                        Title = lastFMTrack.TrackTitle,
+                        FileName = lastFMTrack.TrackStreamingURL,
+                        Duration = lastFMTrack.Duration,
+                        ImageURL = lastFMTrack.ImageURL
+                      };
+          var pli = new PlayListItem
+                      {
+                        Type = PlayListItem.PlayListItemType.Audio,
+                        FileName = lastFMTrack.TrackStreamingURL,
+                        Description = lastFMTrack.ArtistName + " - " + lastFMTrack.TrackTitle,
+                        Duration = lastFMTrack.Duration,
+                        MusicTag = tag,
+                        Source = PlayListItem.PlayListItemSource.Recommendation,
+                        SourceDescription = "Last.fm Radio"
+                      };
 
-        Log.Info("Last.fm Added - Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle, lastFMTrack.TrackStreamingURL);
+          Log.Info("Last.fm Added - Artist: {0} :Title: {1} :URL: {2}", lastFMTrack.ArtistName, lastFMTrack.TrackTitle,
+                   lastFMTrack.TrackStreamingURL);
 
-        var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
-        pl.Add(pli);
-
+          var pl = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_LAST_FM);
+          pl.Add(pli);
+        }
+        LoadPlaylist();
       }
-      LoadPlaylist();
+      else
+      {
+        Log.Debug("Unable to add last.fm tracks to playlist");
+      }
     }
 
     #endregion
