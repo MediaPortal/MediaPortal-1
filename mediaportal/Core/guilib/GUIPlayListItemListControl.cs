@@ -380,7 +380,7 @@ namespace MediaPortal.GUI.Library
 
           if (!_upDownControl.Focus)
           {
-            if (_rightControlId != GetID)
+            if (NavigateRight != GetID)
             {
               base.OnAction(action);
             }
