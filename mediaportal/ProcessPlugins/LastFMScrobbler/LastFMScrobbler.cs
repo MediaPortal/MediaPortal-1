@@ -410,8 +410,8 @@ namespace MediaPortal.ProcessPlugins.LastFMScrobbler
       { // last.fm say not to scrobble songs that last less than 30 seconds
         return;
       }
-      if (stoptime < 240 && stoptime < (tag.Duration / 2))
-      { // last.fm say only to scrobble is more than 4 minutes has been listned to or 
+      if (stoptime < 120 && stoptime < (tag.Duration / 2))
+      { // last.fm say only to scrobble is more than 2 minutes has been listned to or 
         // at least hald the duration of the song
         return;
       }

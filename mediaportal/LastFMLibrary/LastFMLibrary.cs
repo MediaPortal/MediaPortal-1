@@ -77,10 +77,12 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
       var xDoc = GetXml(buildLastFMString, "POST", true);
 
-      var sk = xDoc.Descendants("key").FirstOrDefault();
-
-      if (sk != null) _sessionKey = sk.Value;
-      _currentUser = username;
+      if (xDoc != null)
+      {
+        var sk = xDoc.Descendants("key").FirstOrDefault();
+        if (sk != null) _sessionKey = sk.Value;
+        _currentUser = username;
+      }
 
       return _sessionKey;
 
@@ -246,18 +248,22 @@ namespace MediaPortal.LastFM
       var buildLastFMString = LastFMHelper.LastFMHelper.BuildLastFMString(parms, methodName, true);
       var xDoc = GetXml(buildLastFMString, "GET", false);
 
-      XNamespace ns = "http://xspf.org/ns/0/";
-      var tracks = (from a in xDoc.Descendants(ns + "track")
-               select new LastFMStreamingTrack
-                        {
-                          ArtistName = (string) a.Element(ns + "creator"),
-                          TrackTitle = (string) a.Element(ns + "title"),
-                          TrackStreamingURL = (string) a.Element(ns + "location"),
-                          Duration = Int32.Parse((string) a.Element(ns + "duration")) / 1000,
-                          Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
-                          ImageURL = (string) a.Element(ns + "image")
-                        }).ToList();
-      return tracks;
+      if (xDoc != null)
+      {
+        XNamespace ns = "http://xspf.org/ns/0/";
+        var tracks = (from a in xDoc.Descendants(ns + "track")
+                      select new LastFMStreamingTrack
+                               {
+                                 ArtistName = (string) a.Element(ns + "creator"),
+                                 TrackTitle = (string) a.Element(ns + "title"),
+                                 TrackStreamingURL = (string) a.Element(ns + "location"),
+                                 Duration = Int32.Parse((string) a.Element(ns + "duration"))/1000,
+                                 Identifier = Int32.Parse((string) a.Element(ns + "identifier")),
+                                 ImageURL = (string) a.Element(ns + "image")
+                               }).ToList();
+        return tracks;
+      }
+      return null;
     }
 
     #endregion
@@ -540,7 +546,7 @@ namespace MediaPortal.LastFM
           // errors on last.fm side such as invalid API key, are returned as HTTP errors
           // just process these as a standard return
           response = (HttpWebResponse) ex.Response;
-          webExceptionStatus = true;
+          //webExceptionStatus = true;
         }
         else
         {
