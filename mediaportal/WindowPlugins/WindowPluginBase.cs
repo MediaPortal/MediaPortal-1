@@ -212,8 +212,8 @@ namespace WindowPlugins
           SetLayout((Layout)btnLayouts.SelectedItemValue);
           SelectCurrentItem();
 
-          // Refocus on the layout button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
@@ -221,16 +221,9 @@ namespace WindowPlugins
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
-          
-          // View can switch screen (ie. in my vids from shares to dbviews) so we need to check that 
-          // because selectitem will be done on old screen and that can cause a trouble
-          if (GUIWindowManager.ActiveWindow == GetID)
-          {
-            SelectCurrentItem();  
-          }
-          
-          // Refocus on the view button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
