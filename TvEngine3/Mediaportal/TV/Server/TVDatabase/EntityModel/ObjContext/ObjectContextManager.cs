@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
 using System.Data.Objects;
+using System.Linq;
 using System.Reflection;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -12,6 +13,15 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 {
   public static class ObjectContextManager
   {
+    public enum SupportedDatabaseType
+    {
+      None,
+      MySQL,
+      MSSQL,
+      MSSQLCE,
+      SQLite
+    }
+
     #region Static fields
 
     public delegate DbConnection CreateConnectionDelegate();
@@ -19,8 +29,8 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
 
     private static readonly object _syncObj = new object();
     private static MetadataWorkspace _metadataWorkspace = null;
-    private static string _conType = null;
     private static bool _initialized = false;
+    private static SupportedDatabaseType _databaseType;
 
     #endregion
 
@@ -46,10 +56,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       try
       {
         var model = GetModel();
-        if (!model.DatabaseExists())
+        _databaseType = DetectDatabase(model);
+        if (CheckCreateDatabase(model))
         {
           Log.Info("DataBase does not exist. Creating database...");
-          model.CreateDatabase();
           CreateIndexes(model);
           DropConstraints(model);
           SetupStaticValues(model);
@@ -61,6 +71,53 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
         Log.Error(ex, "ObjectContextManager : error opening database. Is the SQL engine running ?");
         throw;
       }
+    }
+
+    /// <summary>
+    /// Checks if the database exists and creates it if required.
+    /// </summary>
+    /// <param name="model">Model</param>
+    /// <returns><c>true</c> if database was created</returns>
+    private static bool CheckCreateDatabase(Model model)
+    {
+      // This is a special workaround for System.Data.SQLite provider, it does not support creation of database.
+      if (_databaseType == SupportedDatabaseType.SQLite)
+      {
+        // We supply a database with all structures, but without data. So we check if the database is already filled using a table 
+        // that contains static values.
+        int cnt = model.ExecuteStoreQuery<int>("SELECT COUNT(*) FROM LnbTypes").First();
+        // If we get a count the table exists but is empty. So we have the same situation as after model.CreateDatabase();
+        // If table does not exist, we will get an exception. Handling it would not help here, because we cannot create the tables using EF.
+        return cnt == 0;
+      }
+
+      if (!model.DatabaseExists())
+      {
+        model.CreateDatabase();
+        return true;
+      }
+
+      return false;
+    }
+
+    private static SupportedDatabaseType DetectDatabase(Model model)
+    {
+      return DetectDatabase(((EntityConnection)model.Connection).StoreConnection);
+    }
+
+    private static SupportedDatabaseType DetectDatabase(DbConnection connection)
+    {
+      string conType = connection.GetType().ToString();
+      if (conType.Contains("MySqlClient"))
+        return SupportedDatabaseType.MySQL;
+      if (conType.Contains("SQLite"))
+        return SupportedDatabaseType.SQLite;
+      if (conType.Contains("SqlServerCe"))
+        return SupportedDatabaseType.MSSQLCE;
+      if (conType.Contains("SqlClient"))
+        return SupportedDatabaseType.MSSQL;
+
+      return SupportedDatabaseType.None;
     }
 
     private static void CreateIndexes(Model model)
@@ -129,24 +186,19 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <returns>EntityConnection</returns>
     public static EntityConnection BuildEFConnection(DbConnection dbConnection)
     {
-      string conType = dbConnection.GetType().ToString();
+      var database = DetectDatabase(dbConnection);
       lock (_syncObj)
       {
-        if (conType != _conType || _metadataWorkspace == null)
+        if (database != _databaseType || _metadataWorkspace == null)
         {
           List<string> metadata = new List<string>
-            {
-              "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.csdl",
-              "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.msl"
-            };
-          if (conType.Contains("MySqlClient"))
-            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MySQL.ssdl");
-          else if (conType.Contains("SqlServerCe"))
-            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQLCE.ssdl");
-          else if (conType.Contains("SqlClient"))
-            metadata.Add("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.MSSQL.ssdl");
-
-          _conType = conType;
+          {
+            "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.csdl",
+            "res://Mediaportal.TV.Server.TVDatabase.EntityModel/Model.msl",
+            // Select matching ssdl based on the detected database type.
+            string.Format("res://Mediaportal.TV.Server.TVDatabase.EntityModel/Mediaportal.TV.Server.TVDatabase.EntityModel.Model.{0}.ssdl", database)
+          };
+          _databaseType = database;
           _metadataWorkspace = new MetadataWorkspace(metadata, new[] { Assembly.GetExecutingAssembly() });
         }
         return new EntityConnection(_metadataWorkspace, dbConnection);
@@ -205,7 +257,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       ctx.SaveChanges();
     }
 
-    private static object _createDbContextLock = new object();
+    private static readonly object _createDbContextLock = new object();
 
     public static Model CreateDbContext()
     {
@@ -254,7 +306,6 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
       model.TvMovieMappings.MergeOption = MergeOption.NoTracking;
       model.Versions.MergeOption = MergeOption.NoTracking;
       return model;
-
     }
 
     /// <summary>
@@ -265,10 +316,10 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.ObjContext
     /// <param name="constraintName">Constraint name</param>
     private static void TryDropConstraint(Model model, string tableName, string constraintName)
     {
-      bool isMySql = ((EntityConnection) model.Connection).StoreConnection.GetType().ToString().Contains("MySqlConnection");
+      var database = DetectDatabase(model);
       try
       {
-        string sql = isMySql ?
+        string sql = database == SupportedDatabaseType.MySQL ?
           "ALTER TABLE {0} DROP FOREIGN KEY {1}" : // MySQL syntax
           "ALTER TABLE {0} DROP CONSTRAINT {1}";   // Microsoft-SQLServer(+CE) syntax
         model.ExecuteStoreCommand(string.Format(sql, tableName, constraintName));
