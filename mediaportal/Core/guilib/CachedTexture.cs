@@ -20,13 +20,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using DShowNET.Helper;
-using Microsoft.DirectX.Direct3D;
-using System.Runtime.CompilerServices;
 using MediaPortal.ExtensionMethods;
+using Microsoft.DirectX.Direct3D;
 
 //using MediaPortal.EventSubscriptionManager;
 
@@ -54,15 +51,12 @@ namespace MediaPortal.GUI.Library
     {
       #region variables
 
-      // Track whether Dispose has been called.
-      private bool disposed = false;
+      private bool _disposed = false; // track whether Dispose has been called.
       private Texture _image; //texture of current frame
       private int _duration; //duration of current frame
       private int _textureNumber = -1;
       public readonly bool UseNewTextureEngine = true;
       private string _imageName = string.Empty;
-      private static bool logTextures = false;
-      //private EventSubscriptionManager.EventSubscriptionManager _eventMgr = new EventSubscriptionManager.EventSubscriptionManager(); 
 
       #endregion
 
@@ -83,22 +77,16 @@ namespace MediaPortal.GUI.Library
           {
             _image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
+
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-            _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-            if (logTextures)
-            {
-              Log.Info("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
-            }
+            _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*) ptr.ToPointer());
           }
         }
       }
 
       ~Frame()
       {
-        // call Dispose with false.  Since we're in the
-        // destructor call, the managed resources will be
-        // disposed of anyways.
-        Dispose(false);
+        DisposeInternal();
       }
 
       public string ImageName
@@ -113,41 +101,6 @@ namespace MediaPortal.GUI.Library
       public Texture Image
       {
         get { return _image; }
-        set
-        {
-          if (_image != null)
-          {
-            try
-            {
-              if (logTextures)
-              {
-                Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
-              }
-              Dispose();
-            }
-            catch (Exception)
-            {
-              //already disposed?
-            }
-          }
-          _image = value;
-
-          if (_image != null)
-          {
-            //_eventMgr.Subscribe(_image, "Disposing", new EventHandler(D3DTexture_Disposing));
-            _image.Disposing -= new EventHandler(D3DTexture_Disposing);
-            _image.Disposing += new EventHandler(D3DTexture_Disposing);
-            unsafe
-            {
-              IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-              _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
-              if (logTextures)
-              {
-                Log.Info("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
-              }
-            }
-          }
-        }
       }
 
       private void D3DTexture_Disposing(object sender, EventArgs e)
@@ -176,7 +129,7 @@ namespace MediaPortal.GUI.Library
       /// </summary>
       public void Dispose()
       {
-        Dispose(true);
+        DisposeInternal();
         // This object will be cleaned up by the Dispose method.
         // Therefore, calling GC.SupressFinalize to take this object off
         // the finalization queue and prevent finalization code for this object
@@ -184,16 +137,12 @@ namespace MediaPortal.GUI.Library
         GC.SuppressFinalize(this);
       }
 
-      private void Dispose(bool disposeManagedResources)
+      private void DisposeInternal()
       {
-        // process only if mananged and unmanaged resources have
-        // not been disposed of.      
-        if (!this.disposed)
+        if (!_disposed)
         {
-          lock (this)
-          {
-            DisposeUnmanagedResources();
-          }
+          DisposeUnmanagedResources();
+
           if (Disposed != null)
           {
             Disposed(this, new EventArgs());
@@ -205,19 +154,14 @@ namespace MediaPortal.GUI.Library
               }
             }
           }
-          disposed = true;
+          _disposed = true;
         }
       }
 
       private void DisposeUnmanagedResources()
       {
-        //Log.Debug("Frame.DisposeUnmanagedResources mainthread: {0}", !(GUIGraphicsContext.form.InvokeRequired));
         if (_image != null)
         {
-          if (logTextures)
-          {
-            Log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
-          }
           try
           {
             if (_textureNumber >= 0)
@@ -261,26 +205,10 @@ namespace MediaPortal.GUI.Library
       /// <param name="color"></param>
       public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, uint color)
       {
-        //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
-        //Trace.WriteLine(logline);
         if (_textureNumber >= 0)
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-          try
-          {
-            DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
-          }
-          catch (Exception)
-          {
-            // Catch exception to avoid garbage in log.
-          }
-        }
-        else
-        {
-          if (logTextures)
-          {
-            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
-          }
+          DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
         }
       }
 
@@ -302,8 +230,6 @@ namespace MediaPortal.GUI.Library
       {
         if (_textureNumber >= 0)
         {
-          try
-          {
             // Rotate around the x,y point of the specified rectangle; maintain aspect ratio (1.0f)
             TransformMatrix localTransform = new TransformMatrix();
             localTransform.SetZRotation(zrot, x, y, 1.0f);
@@ -312,18 +238,7 @@ namespace MediaPortal.GUI.Library
 
             DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color,
                                            localTransform.Matrix);
-          }
-          catch (Exception)
-          {
-            // Catch exception to avoid garbage in log.
-          }
-        }
-        else
-        {
-          if (logTextures)
-          {
-            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
-          }
+
         }
       }
 
@@ -362,13 +277,6 @@ namespace MediaPortal.GUI.Library
                                  blendableTextureNo, uoffd, voffd, umaxd, vmaxd,
                                  blendMode);
         }
-        else
-        {
-          if (logTextures)
-          {
-            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
-          }
-        }
       }
 
       /// <summary>
@@ -395,15 +303,7 @@ namespace MediaPortal.GUI.Library
         {
           float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
           DXNative.FontEngineDrawMaskedTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
-                                                      color, matrix,
-                                                      maskTextureNo, uoffm, voffm, umaxm, vmaxm);
-        }
-        else
-        {
-          if (logTextures)
-          {
-            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
-          }
+                                               color, matrix, maskTextureNo, uoffm, voffm, umaxm, vmaxm);
         }
       }
     }
@@ -412,8 +312,7 @@ namespace MediaPortal.GUI.Library
 
     #region variables
 
-    // Track whether Dispose has been called.
-    private bool disposed = false;
+    private bool _disposed = false; // track whether Dispose has been called.
     private string _fileName = ""; // filename of the texture
     private List<Frame> _listFrames = new List<Frame>(); // array to hold all frames
     private int _textureWidth = 0; // width of the texture
@@ -432,10 +331,7 @@ namespace MediaPortal.GUI.Library
 
     ~CachedTexture()
     {
-      // call Dispose with false.  Since we're in the
-      // destructor call, the managed resources will be
-      // disposed of anyways.
-      Dispose(false);
+      DisposeInternal();
     }
 
     #endregion
@@ -572,16 +468,11 @@ namespace MediaPortal.GUI.Library
 
     #region IDisposable Members
 
-    private void Dispose(bool disposeManagedResources)
-    {
-      // process only if mananged and unmanaged resources have
-      // not been disposed of.      
-      lock (this)
+    private void DisposeInternal()
+    {   
+      if (!_disposed)
       {
-        if (!this.disposed)
-        {
-          DisposeUnmanagedResources();
-        }
+        DisposeUnmanagedResources();
       }
 
       DisposeFrames();
@@ -598,7 +489,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      this.disposed = true;
+      _disposed = true;
     }
 
     private void DisposeFrames()
@@ -636,7 +527,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void Dispose()
     {
-      Dispose(true);
+      DisposeInternal();
       // This object will be cleaned up by the Dispose method.
       // Therefore, calling GC.SupressFinalize to take this object off
       // the finalization queue and prevent finalization code for this object
