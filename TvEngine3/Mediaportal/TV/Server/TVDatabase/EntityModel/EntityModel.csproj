@@ -130,6 +130,7 @@
     <EmbeddedResource Include="Model.MSSQLCE.ssdl">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Model.SQLite.ssdl" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -152,6 +153,7 @@
     <Content Include="how 2 auto generate poco classes.txt" />
     <Content Include="Model.edmx.sql" />
     <Content Include="Model_MySQL.edmx.sql" />
+    <Content Include="Model_SQLite.edmx.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
