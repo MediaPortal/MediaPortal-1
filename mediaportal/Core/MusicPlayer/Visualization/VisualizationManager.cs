@@ -502,38 +502,47 @@ namespace MediaPortal.Visualization
 
             case VisualizationInfo.PluginType.Sonique:
               {
-                Log.Info("Visualization Manager: Free Sonique visualization...");
-                BassVis.BASSVIS_Free(Viz.VizParam);
-                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
-                if (bFree)
+                if (Viz.VizParam != null)
                 {
-                  Viz.VizParam.VisHandle = 0;
-                  Log.Info("Visualization Manager: Sonique visualization " + OldViz + " free succes");
+                  Log.Info("Visualization Manager: Free Sonique visualization...");
+                  BassVis.BASSVIS_Free(Viz.VizParam);
+                  bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                  if (bFree)
+                  {
+                    Viz.VizParam.VisHandle = 0;
+                    Log.Info("Visualization Manager: Sonique visualization " + OldViz + " free succes");
+                  }
                 }
                 break;
               }
             case VisualizationInfo.PluginType.Winamp:
               {
-                Log.Info("Visualization Manager: Free Winamp visualization...");
-                BassVis.BASSVIS_Free(Viz.VizParam);
-                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
-                if (bFree)
+                if (Viz.VizParam != null)
                 {
-                  Viz.VizParam.VisHandle = 0;
-                  Log.Info("Visualization Manager: Winamp visualization " + OldViz + " free succes");
+                  Log.Info("Visualization Manager: Free Winamp visualization...");
+                  BassVis.BASSVIS_Free(Viz.VizParam);
+                  bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                  if (bFree)
+                  {
+                    Viz.VizParam.VisHandle = 0;
+                    Log.Info("Visualization Manager: Winamp visualization " + OldViz + " free succes");
+                  }
                 }
                 break;
               }
 
             case VisualizationInfo.PluginType.Bassbox:
               {
-                Log.Info("Visualization Manager: Free Bassbox visualization...");
-                BassVis.BASSVIS_Free(Viz.VizParam);
-                bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
-                if (bFree)
+                if (Viz.VizParam != null)
                 {
-                  Viz.VizParam.VisHandle = 0;
-                  Log.Info("Visualization Manager: Bassbox visualization " + OldViz + " free succes");
+                  Log.Info("Visualization Manager: Free Bassbox visualization...");
+                  BassVis.BASSVIS_Free(Viz.VizParam);
+                  bool bFree = BassVis.BASSVIS_IsFree(Viz.VizParam);
+                  if (bFree)
+                  {
+                    Viz.VizParam.VisHandle = 0;
+                    Log.Info("Visualization Manager: Bassbox visualization " + OldViz + " free succes");
+                  }
                 }
                 break;
               }
