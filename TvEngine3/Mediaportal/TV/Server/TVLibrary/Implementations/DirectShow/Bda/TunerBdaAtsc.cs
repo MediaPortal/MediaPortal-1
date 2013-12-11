@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerBdaAtsc(DsDevice device)
-      : base(device)
+      : base(device, device.DevicePath + "A")
     {
       _tunerType = CardType.Atsc;
     }
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
         int hr = tuningSpace.put_UniqueName(TuningSpaceName);
         hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
-        hr |= tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
+        hr |= tuningSpace.put__NetworkType(NetworkType.ATSC_TERRESTRIAL);
         hr |= tuningSpace.put_CountryCode(0);
         hr |= tuningSpace.put_InputType(TunerInputType.Antenna);
         hr |= tuningSpace.put_MaxMinorChannel(999);     // the number of minor channels per major channel

@@ -216,8 +216,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// multiplexer.
     /// </remarks>
     /// <param name="graph">The tuner's DirectShow graph.</param>
+    /// <param name="productInstanceIdentifier">A common identifier shared by the tuner's components.</param>
     /// <param name="capture">The capture component.</param>
-    public void PerformLoading(IFilterGraph2 graph, string hardwareIdentifier, Capture capture)
+    public void PerformLoading(IFilterGraph2 graph, string productInstanceIdentifier, Capture capture)
     {
       IPin capturePin = null;
       IPin videoPin = null;
@@ -240,7 +241,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         // STAGE 2
         // Add all hardware filters.
         // ------------------------------------------------
-        AddAndConnectHardwareFilters(graph, capture, hardwareIdentifier);
+        AddAndConnectHardwareFilters(graph, capture, productInstanceIdentifier);
 
         // ------------------------------------------------
         // STAGE 3
@@ -343,12 +344,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
     }
 
-    private void AddAndConnectHardwareFilters(IFilterGraph2 graph, Capture capture, string requiredDevicePathSection)
+    private void AddAndConnectHardwareFilters(IFilterGraph2 graph, Capture capture, string productInstanceIdentifier)
     {
       this.LogInfo("WDM analog encoder: add hardware encoder(s)");
       if (capture.VideoFilter != null)
       {
-        int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, requiredDevicePathSection, out _filterEncoderVideo, out _deviceEncoderVideo);
+        int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, productInstanceIdentifier, out _filterEncoderVideo, out _deviceEncoderVideo);
         if (connectionCount > 1)
         {
           // We assume the video capture and encoder filters also handle audio
@@ -370,13 +371,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             Release.ComObject("encoder video encoder test audio pin", ref pin);
             _filterEncoderAudio = _filterEncoderVideo;
             _deviceEncoderAudio = _deviceEncoderVideo;
-            AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, requiredDevicePathSection, out _filterEncoderVideo, out _deviceEncoderVideo);
+            AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.VideoFilter, productInstanceIdentifier, out _filterEncoderVideo, out _deviceEncoderVideo);
           }
         }
       }
       if (capture.AudioFilter != null && _filterEncoderAudio == null)
       {
-        AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.AudioFilter, requiredDevicePathSection, out _filterEncoderAudio, out _deviceEncoderAudio);
+        AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingEncoderDevices, capture.AudioFilter, productInstanceIdentifier, out _filterEncoderAudio, out _deviceEncoderAudio);
       }
 
       // Connect a hardware multiplexer filter.
@@ -384,7 +385,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       IBaseFilter videoFilter = _filterEncoderVideo ?? capture.VideoFilter;
       if (videoFilter != null)
       {
-        AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingMultiplexerDevices, videoFilter, requiredDevicePathSection, out _filterMultiplexer, out _deviceMultiplexer);
+        AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingMultiplexerDevices, videoFilter, productInstanceIdentifier, out _filterMultiplexer, out _deviceMultiplexer);
       }
       // If the video capture or encoder filters also handle audio then audio
       // will be already connected to the multiplexer. However, we may have a
@@ -394,7 +395,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         IBaseFilter audioFilter = _filterEncoderAudio ?? capture.AudioFilter;
         if (_filterMultiplexer == null)
         {
-          AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingMultiplexerDevices, audioFilter, requiredDevicePathSection, out _filterMultiplexer, out _deviceMultiplexer);
+          AddAndConnectFilterFromCategory(graph, FilterCategory.WDMStreamingMultiplexerDevices, audioFilter, productInstanceIdentifier, out _filterMultiplexer, out _deviceMultiplexer);
         }
         else
         {
@@ -425,9 +426,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           DsDevice[] devices = new DsDevice[devices1.Length + devices2.Length];
           devices1.CopyTo(devices, 0);
           devices2.CopyTo(devices, devices1.Length);
-          foreach (DsDevice d in devices)
+          try
           {
-            try
+            foreach (DsDevice d in devices)
             {
               if (d.Name == null || (!d.Name.Equals("VBI Codec") && !d.Name.Equals("WST Codec")))
               {
@@ -445,30 +446,33 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
                 _filterVbiSplitter = null;
                 continue;
               }
+
+              IPin inputPin = null;
+              try
+              {
+                inputPin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
+                hr = graph.ConnectDirect(vbiPin, inputPin, null);
+                HResult.ThrowException(hr, "Failed to connect VBI splitter.");
+                this.LogDebug("WDM analog encoder: connected!");
+                break;
+              }
+              catch (Exception ex)
+              {
+                this.LogDebug(ex, "WDM analog encoder: failed to connect VBI splitter");
+                graph.RemoveFilter(_filterVbiSplitter);
+                Release.ComObject("encoder VBI splitter filter", ref _filterVbiSplitter);
+              }
+              finally
+              {
+                Release.ComObject("encoder VBI splitter filter input pin", ref inputPin);
+              }
             }
-            finally
+          }
+          finally
+          {
+            foreach (DsDevice d in devices)
             {
               d.Dispose();
-            }
-
-            IPin inputPin = null;
-            try
-            {
-              inputPin = DsFindPin.ByDirection(_filterVbiSplitter, PinDirection.Input, 0);
-              hr = graph.ConnectDirect(vbiPin, inputPin, null);
-              HResult.ThrowException(hr, "Failed to connect VBI splitter.");
-              this.LogDebug("WDM analog encoder: connected!");
-              break;
-            }
-            catch (Exception ex)
-            {
-              this.LogDebug(ex, "WDM analog encoder: failed to connect VBI splitter");
-              graph.RemoveFilter(_filterVbiSplitter);
-              Release.ComObject("encoder VBI splitter filter", ref _filterVbiSplitter);
-            }
-            finally
-            {
-              Release.ComObject("encoder VBI splitter filter input pin", ref inputPin);
             }
           }
         }
@@ -600,7 +604,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
       try
       {
-        int hr = 0;
         for (int i = 0; i < devices.Length; i++)
         {
           DsDevice d = devices[i];
@@ -616,7 +619,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
           try
           {
-            this.LogDebug("WDM analog encoder: attempt to add {0} {1}", d.Name, d.DevicePath);
+            this.LogDebug("WDM analog encoder: attempt to add {0} {1}", d.Name, devicePath);
             _filterMultiplexer = FilterGraphTools.AddFilterFromDevice(graph, d);
           }
           catch (Exception ex)
@@ -934,29 +937,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     {
       if (graph != null)
       {
-        if (_filterEncoderAudio != null && _filterEncoderAudio != _filterEncoderVideo)
+        if (_filterEncoderAudio != _filterEncoderVideo)
         {
           graph.RemoveFilter(_filterEncoderAudio);
         }
-        if (_filterEncoderVideo != null)
-        {
-          graph.RemoveFilter(_filterEncoderVideo);
-        }
-        if (_filterMultiplexer != null)
-        {
-          graph.RemoveFilter(_filterMultiplexer);
-        }
-        if (_filterTsMultiplexer != null)
-        {
-          graph.RemoveFilter(_filterTsMultiplexer);
-        }
-        if (_filterVbiSplitter != null)
-        {
-          graph.RemoveFilter(_filterVbiSplitter);
-        }
+        graph.RemoveFilter(_filterEncoderVideo);
+        graph.RemoveFilter(_filterMultiplexer);
+        graph.RemoveFilter(_filterTsMultiplexer);
+        graph.RemoveFilter(_filterVbiSplitter);
       }
 
-      if (_filterEncoderAudio != null && _filterEncoderAudio != _filterEncoderVideo)
+      if (_filterEncoderAudio != _filterEncoderVideo)
       {
         Release.ComObject("encoder audio encoder filter", ref _filterEncoderAudio);
       }

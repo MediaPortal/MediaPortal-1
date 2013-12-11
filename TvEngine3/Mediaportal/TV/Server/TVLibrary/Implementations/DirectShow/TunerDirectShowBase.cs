@@ -212,14 +212,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       if (_graph != null)
       {
         // First remove the filters that we inserted.
-        if (_filterTsWriter != null)
-        {
-          _graph.RemoveFilter(_filterTsWriter);
-        }
-        if (_filterMain != null)
-        {
-          _graph.RemoveFilter(_filterMain);
-        }
+        _graph.RemoveFilter(_filterTsWriter);
+        _graph.RemoveFilter(_filterMain);
 
         // Now check if there are any filters remaining in the graph.
         // Presence of such filters indicate there are badly behaved
@@ -274,6 +268,23 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       get
       {
         return new ScannerMpeg2TsBase(this, _filterTsWriter as ITsChannelScan);
+      }
+    }
+
+    #endregion
+
+    #region IDisposable member
+
+    /// <summary>
+    /// Release and dispose all resources.
+    /// </summary>
+    public void Dispose()
+    {
+      base.Dispose();
+      if (_deviceMain != null)
+      {
+        _deviceMain.Dispose();
+        _deviceMain = null;
       }
     }
 

@@ -230,9 +230,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     /// </summary>
     /// <param name="graph">The tuner's DirectShow graph.</param>
     /// <param name="captureGraphBuilder">The capture graph builder instance associated with the graph.</param>
-    /// <param name="hardwareIdentifier">A common identifier shared by the tuner's components.</param>
+    /// <param name="productInstanceIdentifier">A common identifier shared by the tuner's components.</param>
     /// <param name="crossbar">The crossbar component.</param>
-    public void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string hardwareIdentifier, Crossbar crossbar)
+    public void PerformLoading(IFilterGraph2 graph, ICaptureGraphBuilder2 captureGraphBuilder, string productInstanceIdentifier, Crossbar crossbar)
     {
       if (_deviceMain != null)
       {
@@ -259,10 +259,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         _crossbarOutputPinIndexAudio = crossbar.PinIndexOutputAudio;
         if (_crossbarOutputPinIndexVideo >= 0)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, hardwareIdentifier, out _filterVideo, out _deviceVideo);
+          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceIdentifier, out _filterVideo, out _deviceVideo);
           if (connectionCount == 0)
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbar.Filter, hardwareIdentifier, out _filterVideo, out _deviceVideo);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.VideoInputDevice, crossbar.Filter, productInstanceIdentifier, out _filterVideo, out _deviceVideo);
           }
           if (connectionCount == 0)
           {
@@ -278,10 +278,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         if (_crossbarOutputPinIndexAudio >= 0 && _filterAudio == null)
         {
-          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, hardwareIdentifier, out _filterAudio, out _deviceAudio);
+          int connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AMKSCapture, crossbar.Filter, productInstanceIdentifier, out _filterAudio, out _deviceAudio);
           if (connectionCount == 0)
           {
-            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbar.Filter, hardwareIdentifier, out _filterAudio, out _deviceAudio);
+            connectionCount = AddAndConnectFilterFromCategory(graph, FilterCategory.AudioInputDevice, crossbar.Filter, productInstanceIdentifier, out _filterAudio, out _deviceAudio);
           }
           if (connectionCount == 0)
           {
@@ -905,16 +905,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
 
       if (graph != null)
       {
-        if (_filterAudio != null && _filterAudio != _filterVideo)
+        if (_filterAudio != _filterVideo)
         {
           graph.RemoveFilter(_filterAudio);
         }
-        if (_filterVideo != null)
-        {
-          graph.RemoveFilter(_filterVideo);
-        }
+        graph.RemoveFilter(_filterVideo);
       }
-      if (_filterAudio != null && _filterAudio != _filterVideo)
+      if (_filterAudio != _filterVideo)
       {
         Release.ComObject("capture audio filter", ref _filterAudio);
       }

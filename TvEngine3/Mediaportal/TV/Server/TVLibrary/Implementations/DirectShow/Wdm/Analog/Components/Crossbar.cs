@@ -529,7 +529,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       _pinMapVideoDefaultAudio.Clear();
       _pinMapAudio.Clear();
 
-      if (graph != null && _filter != null)
+      if (graph != null)
       {
         graph.RemoveFilter(_filter);
       }

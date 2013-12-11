@@ -49,16 +49,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     ///   filter.</param>
     /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter
     ///   should already be present in the graph.</param>
-    /// <param name="hardwareIdentifier">A <see cref="DsDevice"/> device path (<see
-    ///   cref="IMoniker"/> display name) section. Related hardware filters share common sections.
-    ///   This parameter is used to prioritise filter candidates. <c>Null</c> is permitted.</param>
+    /// <param name="productInstanceIdentifier">A <see cref="DsDevice"/> device path (<see
+    ///   cref="IMoniker"/> display name) section. Related filters share common sections. This
+    ///   parameter is used to prioritise filter candidates. <c>Null</c> is permitted.</param>
     /// <param name="filter">The filter that was added to the graph. If a filter was not
     ///   successfully added this parameter will be <c>null</c>.</param>
     /// <param name="device">The <see cref="DsDevice"/> instance corresponding with the filter that
     ///   was added to the graph. If a filter was not successfully added this parameter will be
     ///   <c>null</c>.</param>
     /// <returns>the number of pin connections between the upstream and new filter</returns>
-    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string hardwareIdentifier, out IBaseFilter filter, out DsDevice device)
+    protected int AddAndConnectFilterFromCategory(IFilterGraph2 graph, Guid category, IBaseFilter upstreamFilter, string productInstanceIdentifier, out IBaseFilter filter, out DsDevice device)
     {
       filter = null;
       device = null;
@@ -69,20 +69,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       // device path contains all or part of the hardware identifier.
       DsDevice[] devices = DsDevice.GetDevicesOfCat(category);
       this.LogDebug("WDM analog component: add and connect filter from category {0}, device count = {1}", category, devices.Length);
-      if (!string.IsNullOrEmpty(hardwareIdentifier))
+      if (!string.IsNullOrEmpty(productInstanceIdentifier))
       {
         Array.Sort(devices, delegate(DsDevice d1, DsDevice d2)
         {
-          bool d1Result = false;
-          bool d2Result = false;
-          if (d1 != null && d1.DevicePath != null)
-          {
-            d1Result = d1.DevicePath.Contains(hardwareIdentifier);
-          }
-          if (d2 != null && d2.DevicePath != null)
-          {
-            d2Result = d2.DevicePath.Contains(hardwareIdentifier);
-          }
+          bool d1Result = productInstanceIdentifier.Equals(d1.ProductInstanceIdentifier);
+          bool d2Result = productInstanceIdentifier.Equals(d2.ProductInstanceIdentifier);
           if (d1Result && !d2Result)
           {
             return -1;
@@ -96,9 +88,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       }
 
       // For each device...
-      foreach (DsDevice d in devices)
+      try
       {
-        try
+        foreach (DsDevice d in devices)
         {
           if (!DevicesInUse.Instance.Add(d))
           {
@@ -139,7 +131,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
             }
           }
         }
-        finally
+      }
+      finally
+      {
+        foreach (DsDevice d in devices)
         {
           if (d != device)
           {

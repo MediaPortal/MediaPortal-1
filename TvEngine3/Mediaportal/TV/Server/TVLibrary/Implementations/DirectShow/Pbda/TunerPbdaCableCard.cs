@@ -195,7 +195,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
     protected override void PerformUnloading()
     {
       this.LogDebug("PBDA CableCARD: perform unloading");
-      if (_graph != null && _filterPbdaPt != null)
+      if (_graph != null)
       {
         _graph.RemoveFilter(_filterPbdaPt);
       }

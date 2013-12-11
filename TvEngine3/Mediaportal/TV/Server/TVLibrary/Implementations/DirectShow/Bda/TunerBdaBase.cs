@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -109,9 +110,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Initialise a new instance of the <see cref="TunerBdaBase"/> class.
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
-    public TunerBdaBase(DsDevice device)
-      : base(device)
+    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
+    protected TunerBdaBase(DsDevice device, string externalIdentifier)
+      : base(device.Name, externalIdentifier)
     {
+      _deviceMain = device;
     }
 
     #endregion
@@ -455,9 +458,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         return;
       }
 
-      bool matchHardwareIdentifier = true;
-      string tunerDeviceIdentifier = DevicePathUtils.ExtractHardwareIdentifier(DevicePath);
-      tunerDeviceIdentifier = tunerDeviceIdentifier ?? string.Empty;
+      bool matchProductInstanceIdentifier = true;
+      string tunerProductInstanceIdentifier = _deviceMain.ProductInstanceIdentifier;
+      tunerProductInstanceIdentifier = tunerProductInstanceIdentifier ?? string.Empty;
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
       try
       {
@@ -472,7 +475,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             }
             string devicePath = device.DevicePath;
             if (devicePath.Contains("root#system#") ||
-              (matchHardwareIdentifier && !tunerDeviceIdentifier.Equals(DevicePathUtils.ExtractHardwareIdentifier(devicePath)))
+              (matchProductInstanceIdentifier && !tunerProductInstanceIdentifier.Equals(device.ProductInstanceIdentifier))
             )
             {
               continue;
@@ -491,12 +494,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
               DevicesInUse.Instance.Remove(device);
             }
           }
-          if (!matchHardwareIdentifier)
+          if (!matchProductInstanceIdentifier)
           {
             this.LogWarn("BDA base: failed to add and connect capture filter, assuming plugin required to complete graph");
             break;
           }
-          matchHardwareIdentifier = false;
+          matchProductInstanceIdentifier = false;
           this.LogDebug("BDA base: allow non-matching capture components");
         }
       }
@@ -519,11 +522,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       this.LogDebug("BDA base: add BDA MPEG 2 TIF filter");
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
-      for (int i = 0; i < devices.Length; i++)
+      try
       {
-        DsDevice device = devices[i];
-        try
+        for (int i = 0; i < devices.Length; i++)
         {
+          DsDevice device = devices[i];
           if (device.Name == null || !device.Name.Equals("BDA MPEG2 Transport Information Filter"))
           {
             continue;
@@ -531,9 +534,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           _filterTransportInformation = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMpeg2Demultiplexer, _captureGraphBuilder);
           return;
         }
-        finally
+      }
+      finally
+      {
+        foreach (DsDevice d in devices)
         {
-          device.Dispose();
+          d.Dispose();
         }
       }
       this.LogWarn("BDA base: transport information filter not found");
@@ -576,6 +582,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       {
         throw new TvException("Failed to locate signal statistic interfaces.");
       }
+      this.LogDebug("BDA base: found {0} interfaces", statistics.Count);
       return statistics;
     }
 
@@ -587,26 +594,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: perform unloading");
       if (_graph != null)
       {
-        if (_filterNetworkProvider != null)
-        {
-          _graph.RemoveFilter(_filterNetworkProvider);
-        }
-        if (_filterCapture != null)
-        {
-          _graph.RemoveFilter(_filterCapture);
-        }
-        if (_filterInfiniteTee != null)
-        {
-          _graph.RemoveFilter(_filterInfiniteTee);
-        }
-        if (_filterMpeg2Demultiplexer != null)
-        {
-          _graph.RemoveFilter(_filterMpeg2Demultiplexer);
-        }
-        if (_filterTransportInformation != null)
-        {
-          _graph.RemoveFilter(_filterTransportInformation);
-        }
+        _graph.RemoveFilter(_filterNetworkProvider);
+        _graph.RemoveFilter(_filterCapture);
+        _graph.RemoveFilter(_filterInfiniteTee);
+        _graph.RemoveFilter(_filterMpeg2Demultiplexer);
+        _graph.RemoveFilter(_filterTransportInformation);
       }
       Release.ComObject("base BDA tuner network provider", ref _filterNetworkProvider);
       Release.ComObject("base BDA tuner capture filter", ref _filterCapture);
@@ -626,7 +618,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         for (int i = 0; i < _signalStatisticsInterfaces.Count; i++)
         {
           IBDA_SignalStatistics s = _signalStatisticsInterfaces[i];
-          Release.ComObject("base BDA tuner signal statistics interface", ref s);
+          Release.ComObject(string.Format("base BDA tuner signal statistics interface {0}", i), ref s);
         }
         _signalStatisticsInterfaces.Clear();
       }
@@ -701,13 +693,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         }
         catch (Exception ex)
         {
-          this.LogWarn(ex, "BDA base: exception updating signal status");
+          this.LogWarn(ex, "BDA base: exception updating signal status with interface {0}", i);
         }
         finally
         {
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogWarn("BDA base: potential error updating signal status, hr = 0x{0:x}", hr);
+            this.LogWarn("BDA base: potential error updating signal status with interface {0}, hr = 0x{1:x}", i, hr);
           }
         }
       }

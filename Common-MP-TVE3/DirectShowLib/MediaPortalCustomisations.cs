@@ -26,12 +26,15 @@ using System.Security;
 using System.Text;
 using DirectShowLib.BDA;
 using DirectShowLib.Dvd;
+using System.Runtime.InteropServices.ComTypes;
+using System.Collections;
+using System.Text.RegularExpressions;
 
 /// <summary>
-/// This file holds the MediaPortal and TV Server interface customisations
-/// of the DirectShow.NET library. We keep customisations separate
-/// from the original library code wherever possible to reduce maintenance
-/// and merging issues when it comes to upgrading the DirectShow.NET library.
+/// This file holds the MediaPortal and TV Server interface customisations of
+/// the DirectShow.NET library. We keep customisations separate from the
+/// original library code wherever possible to reduce maintenance and merging
+/// issues when it comes to upgrading the DirectShow.NET library.
 /// </summary>
 
   #region AXExtend.cs
@@ -511,6 +514,378 @@ namespace DirectShowLib
   //
   //  Note the replacement of IntPtr.Zero with lFetched.
 
+namespace DirectShowLib
+{
+  public class DsDevice : IDisposable
+  {
+#if USING_NET11
+        private UCOMIMoniker m_Mon;
+#else
+    private IMoniker m_Mon;
+#endif
+    private string m_Name;
+
+#if USING_NET11
+        public DsDevice(UCOMIMoniker Mon)
+#else
+    public DsDevice(IMoniker Mon)
+#endif
+    {
+      m_Mon = Mon;
+      m_Name = null;
+    }
+
+#if USING_NET11
+        public UCOMIMoniker Mon
+#else
+    public IMoniker Mon
+#endif
+    {
+      get { return m_Mon; }
+    }
+
+    public string Name
+    {
+      get
+      {
+        if (m_Name == null)
+        {
+          m_Name = GetPropBagValue("FriendlyName") as string;
+        }
+        return m_Name;
+      }
+    }
+
+    /// <summary>
+    /// Returns a unique identifier for a device
+    /// </summary>
+    public string DevicePath
+    {
+      get
+      {
+        string s = null;
+
+        try
+        {
+          m_Mon.GetDisplayName(null, null, out s);
+        }
+        catch
+        {
+        }
+
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// Returns the ClassID for a device
+    /// </summary>
+    public Guid ClassID
+    {
+      get
+      {
+        Guid g;
+
+        m_Mon.GetClassID(out g);
+
+        return g;
+      }
+    }
+
+    // *** START added. ***
+
+    /// <summary>
+    /// Get the product instance identifier.
+    /// </summary>
+    /// <remarks>
+    /// In most cases the product instance identifier is extracted from the device path (IMoniker
+    /// display name).
+    /// General device path elements:
+    /// @device:[type: cm|pnp|sw]:\\?\[connection: hdaudio|pci|root|stream|usb]#[product info: vendor, device, product, subsystem]#[product instance identifier]#[category GUID]\[component instance GUID/CLSID]
+    /// 
+    /// Examples:
+    /// @device:cm:{33D9A762-90C8-11D0-BD43-00A0C911CE86}\7162 BDA Audio Capture
+    /// @device:pnp:\\?\usb#vid_1b80&pid_d393#5&10ef021e&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{9d4afc32-0f42-45d9-b590-af9295699871}
+    /// @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
+    /// @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
+    /// @device:pnp:\\?\root#system#0000#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{03884cb6-e89a-4deb-b69e-8dc621686e6a}&global
+    /// @device:sw:{71985F48-1CA1-11D3-9CC8-00C04F7971E0}\Silicondust HDHomeRun Tuner 1000101F-0
+    /// @device:pnp:\\?\hdaudio#func_01&ven_10ec&dev_0882&subsys_1043e601&rev_1001#4&225f9914&0&0001#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\rearlineinwave3
+    /// </remarks>
+    /// <param name="devicePath">The device path to analyse.</param>
+    /// <returns>the product instance identifier if successful, otherwise <c>null</c></returns>
+    public string ProductInstanceIdentifier
+    {
+      get
+      {
+        //---------------------------
+        // Hardware-specific methods.
+        //---------------------------
+        string name = Name;
+        if (name != null)
+        {
+          if (name.Contains("Ceton"))
+          {
+            // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+            Match m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+\d+", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              return m.Groups[1].Captures[0].Value;
+            }
+          }
+          else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
+          {
+            // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+            Match m = Regex.Match(name, @"\s+([^\s]+)-\d$", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              return m.Groups[1].Captures[0].Value;
+            }
+          }
+        }
+
+        //----------------
+        // Generic method.
+        //----------------
+        string devicePath = DevicePath;
+        if (devicePath == null)
+        {
+          return null;
+        }
+
+        // Device paths that we can interpret contain 4 sections separated by #.
+        string[] sections = devicePath.Split('#');
+        if (sections.Length != 4)
+        {
+          return null;
+        }
+
+        // The third section is the product instance identifier. Note the first
+        // and second sections are usually identical for all components (digital
+        // and analog) of PnP USB and PCI hardware, but they are ***not***
+        // usually identical for hardware with stream class drivers.
+        // Hardware component identifiers that we can interpret contain 4
+        // sections separated by &. Again, all 4 parts are usually identical for
+        // PnP USB and PCI hardware components. For hardware with stream class
+        // drivers, the first three parts are identical and the last part is a
+        // unique component identifier.
+        string productInstanceIdentifier = sections[2];
+        sections = productInstanceIdentifier.Split('&');
+        if (sections.Length == 1)
+        {
+          return productInstanceIdentifier;
+        }
+        if (sections.Length != 4)
+        {
+          return null;
+        }
+        return sections[0] + '&' + sections[1] + '&' + sections[2];
+      }
+    }
+
+    /// <summary>
+    /// Get the tuner instance identifier.
+    /// </summary>
+    public int TunerInstanceIdentifier
+    {
+      get
+      {
+        //---------------------------
+        // Hardware-specific methods.
+        //---------------------------
+        Match m;
+        string name = Name;
+        if (name != null)
+        {
+          // Ceton CableCARD tuners.
+          if (name.Contains("Ceton"))
+          {
+            // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+            m = Regex.Match(name, @"\s+\([^\s]+\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              return Int32.Parse(m.Groups[1].Captures[0].Value);
+            }
+          }
+          // Silicondust HDHomeRun tuners (Hauppauge CableCARD tuners are clones)
+          else if (name.Contains("HDHomeRun") || name.StartsWith("Hauppauge OpenCable Receiver"))
+          {
+            // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+            m = Regex.Match(name, @"\s+[^\s]+-(\d)$", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+              return Int32.Parse(m.Groups[1].Captures[0].Value);
+            }
+          }
+        }
+
+        string devicePath = DevicePath;
+        if (devicePath == null)
+        {
+          return -1;
+        }
+
+        // Digital Devices tuners.
+        // The device path contains two digits that identify the tuner type and
+        // instance. The second digit is the zero-indexed tuner identifier.
+        m = Regex.Match(devicePath, @"8b884e\d(\d)-fbca-11de-b16f-000000004d56", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          return Int32.Parse(m.Groups[1].Captures[0].Value);
+        }
+
+        //----------------
+        // Generic method.
+        //----------------
+        // Drivers may store a TunerInstanceID in the registry as a means to
+        // indicate hardware grouping to the OS. It is related to W7 container
+        // IDs:
+        // http://msdn.microsoft.com/en-us/library/windows/hardware/ff540024%28v=vs.85%29.aspx
+        object id = GetPropBagValue("TunerInstanceID");
+        if (id != null)
+        {
+          return (Int32)id;
+        }
+        return -1;
+      }
+    }
+
+    // *** END added. ***
+
+    /// <summary>
+    /// Returns an array of DsDevices of type devcat.
+    /// </summary>
+    /// <param name="cat">Any one of FilterCategory</param>
+    public static DsDevice[] GetDevicesOfCat(Guid FilterCategory)
+    {
+      int hr;
+
+      // Use arrayList to build the retun list since it is easily resizable
+      DsDevice[] devret;
+      ArrayList devs = new ArrayList();
+#if USING_NET11
+            UCOMIEnumMoniker enumMon;
+#else
+      IEnumMoniker enumMon;
+#endif
+
+      ICreateDevEnum enumDev = (ICreateDevEnum)new CreateDevEnum();
+      hr = enumDev.CreateClassEnumerator(FilterCategory, out enumMon, 0);
+      DsError.ThrowExceptionForHR(hr);
+
+      // CreateClassEnumerator returns null for enumMon if there are no entries
+      if (hr != 1)
+      {
+        try
+        {
+          try
+          {
+#if USING_NET11
+                        UCOMIMoniker[] mon = new UCOMIMoniker[1];
+#else
+            IMoniker[] mon = new IMoniker[1];
+#endif
+
+#if USING_NET11
+                        int j;
+                        while ((enumMon.Next(1, mon, out j) == 0))
+#else
+            while ((enumMon.Next(1, mon, IntPtr.Zero) == 0))
+#endif
+            {
+              try
+              {
+                // The devs array now owns this object.  Don't
+                // release it if we are going to be successfully
+                // returning the devret array
+                devs.Add(new DsDevice(mon[0]));
+              }
+              catch
+              {
+                Marshal.ReleaseComObject(mon[0]);
+                throw;
+              }
+            }
+          }
+          finally
+          {
+            Marshal.ReleaseComObject(enumMon);
+          }
+
+          // Copy the ArrayList to the DsDevice[]
+          devret = new DsDevice[devs.Count];
+          devs.CopyTo(devret);
+        }
+        catch
+        {
+          foreach (DsDevice d in devs)
+          {
+            d.Dispose();
+          }
+          throw;
+        }
+      }
+      else
+      {
+        devret = new DsDevice[0];
+      }
+
+      return devret;
+    }
+
+    /// <summary>
+    /// Get a specific PropertyBag value from a moniker
+    /// </summary>
+    /// <param name="sPropName">The name of the value to retrieve</param>
+    /// <returns>object or null on error</returns>
+    public object GetPropBagValue(string sPropName)   // *** Changed return type from string to object. ***
+    {
+      IPropertyBag bag = null;
+      object ret = null;        // *** Changed type from string to object. ***
+      object bagObj = null;
+      object val = null;
+
+      try
+      {
+        Guid bagId = typeof(IPropertyBag).GUID;
+        m_Mon.BindToStorage(null, null, ref bagId, out bagObj);
+
+        bag = (IPropertyBag)bagObj;
+
+        int hr = bag.Read(sPropName, out val, null);
+        DsError.ThrowExceptionForHR(hr);
+
+        ret = val;    // *** Removed "as string" cast. ***
+      }
+      catch
+      {
+        ret = null;
+      }
+      finally
+      {
+        bag = null;
+        if (bagObj != null)
+        {
+          Marshal.ReleaseComObject(bagObj);
+          bagObj = null;
+        }
+      }
+
+      return ret;
+    }
+
+    public void Dispose()
+    {
+      if (Mon != null)
+      {
+        Marshal.ReleaseComObject(Mon);
+        m_Mon = null;
+      }
+      m_Name = null;
+    }
+  }
+}
+
   #endregion
 
   #region DVDIf.cs
@@ -788,14 +1163,57 @@ namespace DirectShowLib
     /// <summary> AM_KSCATEGORY_MULTIVBICODEC </summary>
     public static readonly Guid AM_KS_CATEGORY_MULTI_VBI_CODEC = new Guid(0x9c24a977, 0x0951, 0x451a, 0x80, 0x06, 0x0e, 0x49, 0xbd, 0x28, 0xcd, 0x5f);
 
-    /// <summary> DIGITAL_CABLE_NETWORK_TYPE </summary>
-    public static readonly Guid DIGITAL_CABLE_NETWORK_TYPE = new Guid(0x143827ab, 0xf77b, 0x498d, 0x81, 0xca, 0x5a, 0x00, 0x7a, 0xec, 0x28, 0xbf);
+    /// <summary> KSNODE_BDA_8PSK_DEMODULATOR </summary>
+    public static readonly Guid KS_NODE_BDA_8PSK_DEMODULATOR = new Guid(0xe957a0e7, 0xdd98, 0x4a3c, 0x81, 0x0b, 0x35, 0x25, 0x15, 0x7a, 0xb6, 0x2e);
+    /// <summary> KSNODE_BDA_ISDB_S_DEMODULATOR </summary>
+    public static readonly Guid KS_NODE_BDA_ISDB_S_DEMODULATOR = new Guid(0xedde230a, 0x9086, 0x432d, 0xb8, 0xa5, 0x66, 0x70, 0x26, 0x38, 0x07, 0xe9);
+    /// <summary> KSNODE_BDA_ISDB_T_DEMODULATOR </summary>
+    public static readonly Guid KS_NODE_BDA_ISDB_T_DEMODULATOR = new Guid(0xfcea3ae3, 0x2cb2, 0x464d, 0x8f, 0x5d, 0x30, 0x5c, 0x0b, 0xb7, 0x78, 0xa2);
 
     /// <summary> KSMEDIUMSETID_Standard </summary>
     public static readonly Guid KS_MEDIUM_SET_ID_STANDARD = new Guid(0x4747b320, 0x62ce, 0x11cf, 0xa5, 0xd6, 0x28, 0xdb, 0x04, 0xc1, 0x00, 0x00);
 
     /// <summary> MEDIATYPE_Subtitle 'subs' </summary>
     public static readonly Guid Subtitle = new Guid(0xE487EB08, 0x6B26, 0x4be9, 0x9D, 0xD3, 0x99, 0x34, 0x34, 0xD3, 0x13, 0xFD);
+  }
+
+  /// <summary>
+  /// The full collection of network types from bdamedia.h.
+  /// </summary>
+  public static class NetworkType
+  {
+    /// <summary> DIGITAL_CABLE_NETWORK_TYPE </summary>
+    public static readonly Guid DIGITAL_CABLE = new Guid(0x143827ab, 0xf77b, 0x498d, 0x81, 0xca, 0x5a, 0x00, 0x7a, 0xec, 0x28, 0xbf);
+    /// <summary> ANALOG_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ANALOG_TV = new Guid(0xb820d87e, 0xe0e3, 0x478f, 0x8a, 0x38, 0x4e, 0x13, 0xf7, 0xb3, 0xdf, 0x42);
+    /// <summary> ANALOG_AUXIN_NETWORK_TYPE </summary>
+    public static readonly Guid ANALOG_AUX_IN = new Guid(0x742EF867, 0x9E1, 0x40A3, 0x82, 0xD3, 0x96, 0x69, 0xBA, 0x35, 0x32, 0x5F);
+    /// <summary> ANALOG_FM_NETWORK_TYPE </summary>
+    public static readonly Guid ANALOG_FM = new Guid(0x7728087b, 0x2bb9, 0x4e30, 0x80, 0x78, 0x44, 0x94, 0x76, 0xe5, 0x9d, 0xbb);
+    /// <summary> ISDB_TERRESTRIAL_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ISDB_TERRESTRIAL = new Guid(0x95037f6f, 0x3ac7, 0x4452, 0xb6, 0xc4, 0x45, 0xa9, 0xce, 0x92, 0x92, 0xa2);
+    /// <summary> ISDB_T_NETWORK_TYPE </summary>
+    public static readonly Guid ISDB_T = new Guid(0xfc3855a6, 0xc901, 0x4f2e, 0xab, 0xa8, 0x90, 0x81, 0x5a, 0xfc, 0x6c, 0x83);
+    /// <summary> ISDB_SATELLITE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ISDB_SATELLITE = new Guid(0xb0a4e6a0, 0x6a1a, 0x4b83, 0xbb, 0x5b, 0x90, 0x3e, 0x1d, 0x90, 0xe6, 0xb6);
+    /// <summary> ISDB_S_NETWORK_TYPE </summary>
+    public static readonly Guid ISDB_S = new Guid(0xa1e78202, 0x1459, 0x41b1, 0x9c, 0xa9, 0x2a, 0x92, 0x58, 0x7a, 0x42, 0xcc);
+    /// <summary> ISDB_CABLE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ISDB_CABLE = new Guid(0xc974ddb5, 0x41fe, 0x4b25, 0x97, 0x41, 0x92, 0xf0, 0x49, 0xf1, 0xd5, 0xd1);
+    /// <summary> DIRECT_TV_SATELLITE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid DIRECTV_SATELLITE = new Guid(0x93b66fb5, 0x93d4, 0x4323, 0x92, 0x1c, 0xc1, 0xf5, 0x2d, 0xf6, 0x1d, 0x3f);
+    /// <summary> ECHOSTAR_SATELLITE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ECHOSTAR_SATELLITE = new Guid(0xc4f6b31b, 0xc6bf, 0x4759, 0x88, 0x6f, 0xa7, 0x38, 0x6d, 0xca, 0x27, 0xa0);
+    /// <summary> ATSC_TERRESTRIAL_TV_NETWORK_TYPE </summary>
+    public static readonly Guid ATSC_TERRESTRIAL = new Guid(0x0dad2fdd, 0x5fd7, 0x11d3, 0x8f, 0x50, 0x00, 0xc0, 0x4f, 0x79, 0x71, 0xe2);
+    /// <summary> DVB_TERRESTRIAL_TV_NETWORK_TYPE </summary>
+    public static readonly Guid DVB_TERRESTRIAL = new Guid(0x216c62df, 0x6d7f, 0x4e9a, 0x85, 0x71, 0x05, 0xf1, 0x4e, 0xdb, 0x76, 0x6a);
+    /// <summary> BSKYB_TERRESTRIAL_TV_NETWORK_TYPE </summary>
+    public static readonly Guid BSKYB_TERRESTRIAL = new Guid(0x9e9e46c6, 0x3aba, 0x4f08, 0xad, 0x0e, 0xcc, 0x5a, 0xc8, 0x14, 0x8c, 0x2b);
+    /// <summary> DVB_SATELLITE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid DVB_SATELLITE = new Guid(0xfa4b375a, 0x45b4, 0x4d45, 0x84, 0x40, 0x26, 0x39, 0x57, 0xb1, 0x16, 0x23);
+    /// <summary> DVB_CABLE_TV_NETWORK_TYPE </summary>
+    public static readonly Guid DVB_CABLE = new Guid(0xdc0c0fe7, 0x0485, 0x4266, 0xb9, 0x3f, 0x68, 0xfb, 0xf8, 0x0e, 0xd8, 0x34);
   }
 
   /// <summary>
@@ -1002,59 +1420,11 @@ namespace DirectShowLib
   }
 
   /// <summary>
-  /// A collection of utility methods for dealing with device paths.
+  /// A collection of utility methods for dealing with <see cref="IMoniker"/> device paths.
   /// </summary>
   public class DevicePathUtils
   {
-    /// <summary>
-    /// Extract the hardware identifier section from a device path.
-    /// </summary>
-    /// <remarks>
-    /// General device path elements:
-    /// @device:[type: cm|pnp|sw]:\\?\[connection: hdaudio|pci|root|stream|usb]#[product info: vendor, device, product, subsystem]#[hardware component identifier]#[category GUID]\[instance GUID/CLSID]
-    /// 
-    /// Examples:
-    /// @device:cm:{33D9A762-90C8-11D0-BD43-00A0C911CE86}\7162 BDA Audio Capture
-    /// @device:pnp:\\?\usb#vid_1b80&pid_d393#5&10ef021e&0&2#{71985f48-1ca1-11d3-9cc8-00c04f7971e0}\{9d4afc32-0f42-45d9-b590-af9295699871}
-    /// @device:pnp:\\?\stream#hcw88bar.cfg92#5&35edf2e&7&0#{a799a801-a46d-11d0-a18c-00a02401dcd4}\global
-    /// @device:pnp:\\?\pci#ven_1131&dev_7162&subsys_010111bd&rev_01#4&1215b326&0&0018#{a799a800-a46d-11d0-a18c-00a02401dcd4}\{62b08a3e-335e-4b30-90f9-2ba400000000}
-    /// @device:pnp:\\?\root#system#0000#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{03884cb6-e89a-4deb-b69e-8dc621686e6a}&global
-    /// @device:sw:{71985F48-1CA1-11D3-9CC8-00C04F7971E0}\Silicondust HDHomeRun Tuner 1000101F-0
-    /// @device:pnp:\\?\hdaudio#func_01&ven_10ec&dev_0882&subsys_1043e601&rev_1001#4&225f9914&0&0001#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\rearlineinwave3
-    /// </remarks>
-    /// <param name="devicePath">The device path to analyse.</param>
-    /// <returns>the hardware identifier if successful, otherwise <c>null</c></returns>
-    public static string ExtractHardwareIdentifier(string devicePath)
-    {
-      if (devicePath == null)
-      {
-        return null;
-      }
 
-      // Device paths that we can interpret contain 4 sections separated by #.
-      string[] sections = devicePath.Split('#');
-      if (sections.Length != 4)
-      {
-        return null;
-      }
-
-      // The third section is the hardware component identifier. Note the first
-      // and second sections are usually identical for all components (digital
-      // and analog) of PnP USB and PCI hardware, but they are ***not***
-      // usually identical for hardware with stream class drivers.
-      // Hardware component identifiers that we can interpret contain 4
-      // sections separated by &. Again, all 4 parts are usually identical for
-      // PnP USB and PCI hardware components. For hardware with stream class
-      // drivers, the first three parts are identical and the last part is a
-      // unique component identifier.
-      string hardwareComponentIdentifier = sections[2];
-      sections = hardwareComponentIdentifier.Split('&');
-      if (sections.Length != 4)
-      {
-        return null;
-      }
-      return sections[0] + '&' + sections[1] + '&' + sections[2];
-    }
   }
 }
 

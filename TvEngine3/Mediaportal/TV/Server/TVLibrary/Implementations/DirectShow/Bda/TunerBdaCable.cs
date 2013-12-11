@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     public TunerBdaCable(DsDevice device)
-      : base(device)
+      : base(device, device.DevicePath + "C")
     {
       _tunerType = CardType.DvbC;
     }
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
         tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
         int hr = tuningSpace.put_UniqueName(TuningSpaceName);
         hr |= tuningSpace.put_FriendlyName(TuningSpaceName);
-        hr |= tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
+        hr |= tuningSpace.put__NetworkType(NetworkType.DVB_CABLE);
         hr |= tuningSpace.put_SystemType(DVBSystemType.Cable);
 
         locator = (IDVBCLocator)new DVBCLocator();

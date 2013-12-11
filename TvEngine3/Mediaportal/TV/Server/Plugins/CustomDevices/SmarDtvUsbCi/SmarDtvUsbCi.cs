@@ -438,11 +438,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         {
           // We're not too worried about cleanup here as Dispose() will be called shortly. We just want to make
           // sure that we don't leave the CI filter in the graph if it can't be used.
-          if (_ciFilter != null)
-          {
-            _graph.RemoveFilter(_ciFilter);
-            Release.ComObject("SmarDTV CI filter", ref _ciFilter);
-          }
+          _graph.RemoveFilter(_ciFilter);
+          Release.ComObject("SmarDTV CI filter", ref _ciFilter);
         }
       }
 
@@ -893,23 +890,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     public override void Dispose()
     {
       CloseInterface();
-      if (_ciFilter != null)
+      if (_graph != null)
       {
-        if (_graph != null)
-        {
-          _graph.RemoveFilter(_ciFilter);
-        }
-        Release.ComObject("SmarDTV CI filter", ref _ciFilter);
+        _graph.RemoveFilter(_ciFilter);
+        Release.ComObject("SmarDTV CI graph", ref _graph);
       }
+      Release.ComObject("SmarDTV CI filter", ref _ciFilter);
+
       if (_ciDevice != null)
       {
         lock (_devicesInUse)
         {
           _devicesInUse.Remove(_ciDevice.DevicePath);
         }
+        _ciDevice.Dispose();
         _ciDevice = null;
       }
-      Release.ComObject("SmarDTV CI graph", ref _graph);
+
       _isSmarDtvUsbCi = false;
     }
 

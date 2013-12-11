@@ -67,12 +67,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
           {
             continue;
           }
-          this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, device.DevicePath);
-          DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(device.DevicePath);
-          if (dbSlots.ContainsKey(device.DevicePath))
+          string devicePath = device.DevicePath;
+          this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, devicePath);
+          DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath);
+          if (dbSlots.ContainsKey(devicePath))
           {
             this.LogDebug("  found existing configuration");
-            slot = dbSlots[device.DevicePath];
+            slot = dbSlots[devicePath];
           }
           else
           {

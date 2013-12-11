@@ -316,6 +316,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           _multiChannelDecryptMode = (MultiChannelDecryptMode)d.MultiChannelDecryptMode;
 
           // Preload the device if configured to do so.
+          // TODO preloading shouldn't be done here - it should happen in TunerDetector (in case required components can't be loaded until the super constructor is executed)
           if (d.Enabled && d.PreloadCard)
           {
             this.LogInfo("TvCardBase: preloading device {0}", _name);
@@ -874,7 +875,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Wait for the tuner to acquire signal lock.
     /// </summary>
-    public void LockInOnSignal()
+    private void LockInOnSignal()
     {
       this.LogDebug("TvCardBase: lock in on signal");
       _isSignalLocked = false;
@@ -1557,5 +1558,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     }
 
     #endregion
+
+    // TODO implement IDisposable here
   }
 }

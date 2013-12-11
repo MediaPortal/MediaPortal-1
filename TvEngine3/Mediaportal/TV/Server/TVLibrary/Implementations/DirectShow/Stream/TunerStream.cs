@@ -26,36 +26,30 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.Device;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 {
-  /// <summary>
-  /// The MediaPortal IPTV/DVB-IP/URL stream source class.
-  /// </summary>
-  [ComImport, Guid("d3dd4c59-d3a7-4b82-9727-7b9203eb67c0")]
-  public class MediaPortalStreamSource
-  {
-  }
-
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which supports the MediaPortal
   /// stream source filter.
   /// </summary>
   public class TunerStream : TunerDirectShowBase
   {
+    /// <summary>
+    /// The MediaPortal IPTV/DVB-IP/URL stream source class.
+    /// </summary>
+    [ComImport, Guid("d3dd4c59-d3a7-4b82-9727-7b9203eb67c0")]
+    private class MediaPortalStreamSource
+    {
+    }
+
     #region variables
 
     /// <summary>
     /// The source filter.
     /// </summary>
     private IBaseFilter _filterStreamSource = null;
-
-    /// <summary>
-    /// The instance number of this device/tuner.
-    /// </summary>
-    private int _sequenceNumber = -1;
 
     /// <summary>
     /// A media type describing the source stream format. 
@@ -74,20 +68,34 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
 
     #endregion
 
+    #region constructor
+
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerStream"/> class.
     /// </summary>
-    /// <param name="device">The <see cref="DsDevice"/> instance to encapsulate.</param>
     /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
-    public TunerStream(DsDevice device, int sequenceNumber)
-      : base(device)
+    public TunerStream(int sequenceNumber)
+      : base("MediaPortal Stream Source " + (sequenceNumber + 1), "MediaPortal Stream Source " + (sequenceNumber + 1))
+    {
+      Init();
+    }
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerStream"/> class.
+    /// </summary>
+    /// <param name="name">A short name or description for the tuner.</param>
+    /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
+    protected TunerStream(string name, int sequenceNumber)
+      : base(name + " " + (sequenceNumber + 1), name + " " + (sequenceNumber + 1))
+    {
+      Init();
+    }
+
+    private void Init()
     {
       _tunerType = CardType.DvbIP;
       _defaultUrl = "udp://@0.0.0.0:1234";
       _sourceFilterClsid = typeof(MediaPortalStreamSource).GUID;
-
-      _sequenceNumber = sequenceNumber;
-      _name += " " + (_sequenceNumber + 1);
 
       _sourceMediaType = new AMMediaType();
       _sourceMediaType.majorType = MediaType.Stream;
@@ -100,6 +108,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       _sourceMediaType.formatSize = 0;
       _sourceMediaType.formatPtr = IntPtr.Zero;
     }
+
+    #endregion
 
     #region graph building
 
@@ -114,11 +124,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       // Start with the source filter.
       if (_sourceFilterClsid == typeof(MediaPortalStreamSource).GUID)
       {
-        _filterStreamSource = FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, "MediaPortal Stream Source");
+        _filterStreamSource = FilterGraphTools.AddFilterFromFile(_graph, "MPIPTVSource.ax", _sourceFilterClsid, _name);
       }
       else
       {
-        _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, "Stream Source");
+        _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, _name);
       }
 
       // Check for and load plugins, adding any additional device filters to the graph.
@@ -136,7 +146,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     protected override void PerformUnloading()
     {
       this.LogDebug("DirectShow stream: perform unloading");
-      if (_graph != null && _filterStreamSource != null)
+      if (_graph != null)
       {
         _graph.RemoveFilter(_filterStreamSource);
       }
@@ -198,17 +208,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       _isSignalLocked = true;
       _signalLevel = 100;
       _signalQuality = 100;
-    }
-
-    /// <summary>
-    /// return the DevicePath
-    /// </summary>
-    public override string DevicePath
-    {
-      get
-      {
-        return base.DevicePath + " (" + _sequenceNumber + ")";
-      }
     }
   }
 }

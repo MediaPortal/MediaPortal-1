@@ -1049,11 +1049,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         for (int i = 0; i < _ciContexts.Count; i++)
         {
           this.LogDebug("  {0}...", _ciContexts[i].CamMenuTitle);
-          if (_ciSlotSettings.ContainsKey(_ciContexts[i].Device.DevicePath))
+          string ciSlotDevicePath = _ciContexts[i].Device.DevicePath;
+          if (_ciSlotSettings.ContainsKey(ciSlotDevicePath))
           {
             lock (_ciSlotSettings)
             {
-              DigitalDevicesCiSlot globalSlot = _ciSlotSettings[_ciContexts[i].Device.DevicePath];
+              DigitalDevicesCiSlot globalSlot = _ciSlotSettings[ciSlotDevicePath];
               if ((provider.Equals(string.Empty) && globalSlot.Providers.Count == 0) || globalSlot.Providers.Contains(provider))
               {
                 this.LogDebug("    provider supported, decrypt limit status = {0}/{1}", globalSlot.CurrentTunerSet.Count, globalSlot.DecryptLimit);

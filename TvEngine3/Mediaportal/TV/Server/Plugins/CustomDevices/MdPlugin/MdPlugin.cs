@@ -1433,24 +1433,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MdPlugin
 
       if (_graph != null)
       {
-        if (_infTee != null)
-        {
-          _graph.RemoveFilter(_infTee);
-          Release.ComObject("MD plugin infinite tee", ref _infTee);
-        }
+        _graph.RemoveFilter(_infTee);
 
-        foreach (DecodeSlot slot in _slots)
+        if (_slots != null)
         {
-          if (slot.Filter != null)
+          foreach (DecodeSlot slot in _slots)
           {
             _graph.RemoveFilter(slot.Filter);
-            Release.ComObject("MD plugin MDAPI filter", ref slot.Filter);
           }
         }
 
         Release.ComObject("MD plugin graph", ref _graph);
-        _slots = null;
       }
+
+      Release.ComObject("MD plugin infinite tee", ref _infTee);
+      if (_slots != null)
+      {
+        foreach (DecodeSlot slot in _slots)
+        {
+          Release.ComObject("MD plugin MDAPI filter", ref slot.Filter);
+        }
+      }
+      _slots = null;
 
       _isMdPlugin = false;
     }

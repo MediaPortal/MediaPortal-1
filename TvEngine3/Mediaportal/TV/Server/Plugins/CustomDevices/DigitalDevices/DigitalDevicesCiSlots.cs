@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
@@ -188,11 +189,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     /// <returns><c>true</c> if the device is a Digital Device common interface device, otherwise <c>false</c></returns>
     public static bool IsDigitalDevicesCiDevice(DsDevice device)
     {
-      if (device != null && device.Name != null &&
-        device.DevicePath.ToLowerInvariant().Contains(COMMON_DEVICE_PATH_SECTION) &&
-        device.Name.ToLowerInvariant().Contains("common interface"))
+      if (device != null && device.Name != null)
       {
-        return true;
+        string devicePath = device.DevicePath;
+        if (devicePath != null)
+        {
+          devicePath = devicePath.ToLowerInvariant();
+          if (devicePath.Contains(COMMON_DEVICE_PATH_SECTION) && device.Name.ToLowerInvariant().Contains("common interface"))
+          {
+            return true;
+          }
+        }
       }
       return false;
     }

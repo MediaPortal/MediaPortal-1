@@ -1471,14 +1471,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       if (_graph != null)
       {
-        if (_filterInfiniteTee != null)
-        {
-          _graph.RemoveFilter(_filterInfiniteTee);
-        }
-        if (_filterB2c2Adapter != null)
-        {
-          _graph.RemoveFilter(_filterB2c2Adapter);
-        }
+        _graph.RemoveFilter(_filterInfiniteTee);
+        _graph.RemoveFilter(_filterB2c2Adapter);
       }
       Release.ComObject("B2C2 infinite tee", ref _filterInfiniteTee);
       Release.ComObject("B2C2 source filter", ref _filterB2c2Adapter);

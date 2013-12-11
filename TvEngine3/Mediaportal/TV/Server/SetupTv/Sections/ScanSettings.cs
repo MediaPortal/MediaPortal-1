@@ -277,24 +277,15 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
 
       foreach (DsDevice d in devices1)
       {
-        if (d != null)
-        {
-          d.Dispose();
-        }
+        d.Dispose();
       }
       foreach (DsDevice d in devices2)
       {
-        if (d != null)
-        {
-          d.Dispose();
-        }
+        d.Dispose();
       }
       foreach (DsDevice d in devices3)
       {
-        if (d != null)
-        {
-          d.Dispose();
-        }
+        d.Dispose();
       }
     }
 

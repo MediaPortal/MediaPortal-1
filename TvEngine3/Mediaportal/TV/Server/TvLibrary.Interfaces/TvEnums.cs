@@ -86,14 +86,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces
     /// For a tuner that presents a DirectShow/BDA filter interface, dismantle and dispose the graph.
     /// - ultimate compatibility
     /// - minimal power use
-    /// - slowest first (re)tune.
+    /// - slowest first (re)tune
     /// </summary>
     Unload,
     /// <summary>
     /// For a tuner that presents a DirectShow/BDA filter interface, keep the graph running.
     /// - reasonable compatibility
     /// - highest power use
-    /// - fastest possible first (re)tune.
+    /// - fastest possible first (re)tune
     /// </summary>
     [Description("Always On")]
     AlwaysOn

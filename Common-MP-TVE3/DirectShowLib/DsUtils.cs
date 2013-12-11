@@ -1178,7 +1178,9 @@ namespace DirectShowLib
     }
   }
 
-
+  /*
+   * Redefined in MediaPortalCustomisations.
+   * 
   public class DsDevice : IDisposable
   {
 #if USING_NET11
@@ -1386,7 +1388,7 @@ namespace DirectShowLib
       }
       m_Name = null;
     }
-  }
+  }*/
 
 
   public static class DsFindPin

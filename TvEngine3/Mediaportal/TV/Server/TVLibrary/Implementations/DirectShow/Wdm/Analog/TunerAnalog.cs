@@ -176,7 +176,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
 
       InitialiseGraph();
 
-      string hardwareIdentifier = DevicePathUtils.ExtractHardwareIdentifier(_deviceMain.DevicePath);
+      string productInstanceIdentifier = _deviceMain.ProductInstanceIdentifier;
       if (_mainDeviceCategory == FilterCategory.AMKSCrossbar)
       {
         _crossbar = new Crossbar(_deviceMain);
@@ -184,7 +184,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
         if (_crossbar.PinIndexInputTunerVideo >= 0 || _crossbar.PinIndexInputTunerAudio >= 0)
         {
           _tuner = new Tuner();
-          _tuner.PerformLoading(_graph, hardwareIdentifier, _crossbar);
+          _tuner.PerformLoading(_graph, productInstanceIdentifier, _crossbar);
         }
         _capture = new Capture();
       }
@@ -192,10 +192,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       {
         _capture = new Capture(_deviceMain);
       }
-      _capture.PerformLoading(_graph, _captureGraphBuilder, hardwareIdentifier, _crossbar);
+      _capture.PerformLoading(_graph, _captureGraphBuilder, productInstanceIdentifier, _crossbar);
 
       _encoder = new Encoder();
-      _encoder.PerformLoading(_graph, hardwareIdentifier, _capture);
+      _encoder.PerformLoading(_graph, productInstanceIdentifier, _capture);
 
       // Check for and load plugins, adding any additional device filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
