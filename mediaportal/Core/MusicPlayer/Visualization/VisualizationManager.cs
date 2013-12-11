@@ -584,6 +584,7 @@ namespace MediaPortal.Visualization
         case VisualizationInfo.PluginType.Sonique:
           {
             Log.Info("Visualization Manager: Creating new Sonique visualization...");
+            VizRenderWindow.Refresh();
             Viz = new SoniqueViz(vizPluginInfo, VizRenderWindow);
             break;
           }
@@ -591,6 +592,7 @@ namespace MediaPortal.Visualization
         case VisualizationInfo.PluginType.Winamp:
           {
             Log.Info("Visualization Manager: Creating new Winamp visualization...");
+            VizRenderWindow.Refresh();
             Viz = new WinampViz(vizPluginInfo, VizRenderWindow);          
             break;
           }
@@ -598,6 +600,7 @@ namespace MediaPortal.Visualization
         case VisualizationInfo.PluginType.Bassbox:
           {
             Log.Info("Visualization Manager: Creating new Bassbox visualization...");
+            VizRenderWindow.Refresh();
             Viz = new BassboxViz(vizPluginInfo, VizRenderWindow);
             break;
           }
