@@ -25,6 +25,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.CompilerServices;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.guilib;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -111,7 +112,7 @@ namespace MediaPortal.GUI.Library
     private int _maskTexWidth = 0;
     private int _maskTexHeight = 0;
     private Texture _maskTexture = null;
-    private CachedTexture.Frame[] _listTextures = null;
+    private TextureFrame[] _listTextures = null;
 
     //TODO GIF PALLETTE
     //private PaletteEntry						m_pPalette=null;
@@ -151,7 +152,6 @@ namespace MediaPortal.GUI.Library
     private int _packedTextureNo = -1;
     private int _packedBlendableTextureNo = -1;
     private int _packedMaskTextureNo = -1;
-    private static bool logtextures = false;
     private bool _isFullScreenImage = false;
     private bool _reCalculate = false;
     private bool _allocated = false;
@@ -585,7 +585,7 @@ namespace MediaPortal.GUI.Library
         _currentFrameNumber = 0;
       }
 
-      CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
+      TextureFrame frame = _listTextures[_currentFrameNumber];
       // Check the delay.
       int dwDelay = 0;
       if (frame != null)
@@ -687,12 +687,6 @@ namespace MediaPortal.GUI.Library
           fileName = _cachedTextureFileName = GUIPropertyManager.Parse(fileName);
         }
 
-        if (logtextures)
-        {
-          Log.Debug("GUIImage:AllocResources:{0} {1}", fileName, _debugGuid);
-          Log.Debug("stacktrace: {0} ", _debugCaller);
-        }
-
         if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax,
                                                out _textureWidth, out _textureHeight,
                                                out _packedTexture, out _packedTextureNo))
@@ -730,22 +724,23 @@ namespace MediaPortal.GUI.Library
         
         // get each frame of the texture
         int iStartCopy = 0;
-        CachedTexture.Frame[] saveList = null;
+        TextureFrame[] saveList = null;
         if (_listTextures == null)
         {
-          _listTextures = new CachedTexture.Frame[frameCount];
+          _listTextures = new TextureFrame[frameCount];
         }
         else
         {
           int newLength = _listTextures.Length + frameCount;
-          iStartCopy    = _listTextures.Length;
-          var newList   = new CachedTexture.Frame[newLength];
-          saveList      = new CachedTexture.Frame[_listTextures.Length];
+          iStartCopy = _listTextures.Length;
+          var newList = new TextureFrame[newLength];
+          saveList = new TextureFrame[_listTextures.Length];
           _listTextures.CopyTo(saveList, 0);
           _listTextures.CopyTo(newList, 0);
-          _listTextures = new CachedTexture.Frame[newLength];
+          _listTextures = new TextureFrame[newLength];
           newList.CopyTo(_listTextures, 0);
         }
+
         for (int i = 0; i < frameCount; i++)
         {
           _listTextures[i + iStartCopy] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);
@@ -758,7 +753,7 @@ namespace MediaPortal.GUI.Library
             Log.Debug("GUIImage.AllocResources -> Filename={0} i={1} FrameCount={2}", fileName, i, frameCount);
             if (saveList != null)
             {
-              _listTextures = new CachedTexture.Frame[saveList.Length];
+              _listTextures = new TextureFrame[saveList.Length];
               saveList.CopyTo(_listTextures, 0);
             }
             else
@@ -858,11 +853,6 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
-          if (logtextures)
-          {
-            Log.Info("GUIImage:Dispose:{0} {1}", _debugCachedTextureFileName, _debugGuid);
-          }
-
           //base.Dispose(); // breaks fade in/out animations-.
           _allocated = false;
           UnsubscribeOnPropertyChanged();
@@ -889,7 +879,7 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < _listTextures.Length; ++i)
         {
-          CachedTexture.Frame frame = _listTextures[i];
+          TextureFrame frame = _listTextures[i];
           if (frame != null)
           {
             frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);
@@ -905,28 +895,23 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < _listTextures.Length; ++i)
         {
-          CachedTexture.Frame frame = _listTextures[i];
+          TextureFrame frame = _listTextures[i];
           if (frame != null)
           {
             frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);
-            ReleaseTexture(frame.ImageName, frame.Image);
+            ReleaseTexture(frame.ImageName);
           }
         }
       }
       _listTextures = null;
     }
 
-    private void ReleaseTexture(string file, Texture texture)
+    private void ReleaseTexture(string file)
     {
       if (!string.IsNullOrEmpty(file))
       {
-        if (logtextures)
-        {
-          Log.Debug("GUIImage: Dispose - {0}", file);
-        }
         if (GUITextureManager.IsTemporary(file))
         {
-          texture = null;
           GUITextureManager.ReleaseTexture(file);
         }
       }
@@ -935,8 +920,9 @@ namespace MediaPortal.GUI.Library
     private void Cleanup()
     {
       _cachedTextureFileName = "";
-      //m_image = null;
+      
       UnsubscribeListTextures();
+      
       if (_packedTexture != null)
       {
         _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
@@ -950,8 +936,8 @@ namespace MediaPortal.GUI.Library
       _textureHeight = 0;
       _allocated = false;
 
-      ReleaseTexture(_cachedTextureFileName, _packedTexture);
-      ReleaseTexture(_blendableFileName, _blendableTexture);
+      ReleaseTexture(_cachedTextureFileName);
+      ReleaseTexture(_blendableFileName);
 
       _packedBlendableTextureNo = -1;
       _packedTexture = null;
@@ -989,7 +975,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
+        TextureFrame frame = _listTextures[_currentFrameNumber];
         if (frame == null)
         {
           Cleanup();
@@ -1346,10 +1332,6 @@ namespace MediaPortal.GUI.Library
         if (_cachedTextureFileName != fileName || _listTextures == null || 0 == _listTextures.Length)
         {
           // then free our resources, and reload the (new) image
-          if (logtextures)
-          {
-            Log.Debug("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
-          }
           FreeResourcesAndRegEvent();
           _cachedTextureFileName = fileName;
           if (fileName.Length == 0)
@@ -1404,7 +1386,7 @@ namespace MediaPortal.GUI.Library
             // Get the texture and scale its size for the screen.
             int tW;
             int tH;
-            CachedTexture.Frame texture = GUITextureManager.GetTexture(_textureFileNameTag, 0, out tW, out tH);
+            TextureFrame texture = GUITextureManager.GetTexture(_textureFileNameTag, 0, out tW, out tH);
             GUIGraphicsContext.ScaleHorizontal(ref tW);
             GUIGraphicsContext.ScaleVertical(ref tH);
 
@@ -1580,7 +1562,7 @@ namespace MediaPortal.GUI.Library
           if (_listTextures.Length > 0)
           {
             Animate();
-            CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
+            TextureFrame frame = _listTextures[_currentFrameNumber];
             if (frame == null)
             {
               Cleanup();
@@ -1819,8 +1801,8 @@ namespace MediaPortal.GUI.Library
       int cuLeft = 0, cvLeft = 0, cumaxLeft = 0, cvmaxLeft = 0; // Left corner texture coordinates
       int cuRight = 0, cvRight = 0, cumaxRight = 0, cvmaxRight = 0; // Right corner texture coordinates
 
-      CachedTexture.Frame texture = null;
-      CachedTexture.Frame cornerTexture = null;
+      TextureFrame texture = null;
+      TextureFrame cornerTexture = null;
       uint mergedBorderColorKey = GUIGraphicsContext.MergeAlpha((uint)_borderColorKey);
       int itw, ith;
       int ictw, icth;
@@ -2379,11 +2361,6 @@ namespace MediaPortal.GUI.Library
       if (_textureFileNameTag == fileName)
       {
         return; // same file, no need to do anything
-      }
-
-      if (logtextures)
-      {
-        Log.Debug("GUIImage:SetFileName() {0}", fileName);
       }
       _textureFileNameTag = fileName;
       if (_textureFileNameTag.IndexOf("#") >= 0)
