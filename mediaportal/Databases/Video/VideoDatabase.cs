@@ -95,6 +95,31 @@ namespace MediaPortal.Video.Database
       _database.RemoveFilesForMovie(lMovieId);
     }
 
+    public static void AddMovieQueueFile(string filenameAndPath)
+    {
+      _database.AddMovieQueueFile(filenameAndPath);
+    }
+
+    public static void GetMovieQueueFiles(ref ArrayList files)
+    {
+      _database.GetMovieQueueFiles(ref files);
+    }
+
+    public static void DeleteMovieQueueFile(string filenameAndPath)
+    {
+      _database.DeleteMovieQueueFile(filenameAndPath);
+    }
+
+    public static void RenameFile(string oldFilenameAndPath, string newFilenameAndPath)
+    {
+      _database.RenameFile(oldFilenameAndPath, newFilenameAndPath);
+    }
+
+    public static void RenamePath(string oldPath, string newPath)
+    {
+      _database.RenamePath(oldPath, newPath);
+    }
+
     /// <summary>
     /// Returns -1 if file don't exists
     /// </summary>
@@ -686,9 +711,9 @@ namespace MediaPortal.Video.Database
 
     #region nfo handler
 
-    public static void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
+    public static bool ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
+      return _database.ImportNfo(nfoFile, skipExisting, refreshdbOnly);
     }
 
     public static bool MakeNfo (int movieId)
@@ -696,9 +721,9 @@ namespace MediaPortal.Video.Database
       return _database.MakeNfo(movieId);
     }
 
-    public static void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
+    public static bool ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
     {
-      _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
+      return _database.ImportNfoUsingVideoFile(videoFile, skipExisting, refreshdbOnly);
     }
 
     #endregion

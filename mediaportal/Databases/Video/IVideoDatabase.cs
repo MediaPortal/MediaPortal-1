@@ -39,6 +39,11 @@ namespace MediaPortal.Video.Database
     int GetFileId(string strFilenameAndPath);
     void GetFilesForMovie(int lMovieId, ref ArrayList movies);
     void DeleteMoviesInFolder(string strPath);
+    void AddMovieQueueFile(string filenameAndPath);
+    void GetMovieQueueFiles(ref ArrayList files);
+    void DeleteMovieQueueFile(string filenameAndPath);
+    void RenameFile(string oldFilenameAndPath, string newFilenameAndPath);
+    void RenamePath(string oldPath, string newPath);
     
     // Genre
     int AddGenre(string strGenre1);
@@ -170,9 +175,9 @@ namespace MediaPortal.Video.Database
     bool HasMediaInfo(string fileName);
     bool CheckMovieImdbId(string id);
     bool CheckActorImdbId(string id);
-    void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly);
+    bool ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly);
     bool MakeNfo(int movieId);
-    void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly);
+    bool ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly);
     void GetVideoFiles(string path, ref ArrayList availableFiles);
     void FlushTransactionsToDisk();
     void RevertFlushTransactionsToDisk();

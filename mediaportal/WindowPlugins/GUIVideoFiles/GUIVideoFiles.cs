@@ -132,7 +132,7 @@ namespace MediaPortal.GUI.Video
 
     // File menu
     private string _fileMenuDestinationDir = string.Empty;
-    private bool _fileMenuEnabled;
+    private static bool _fileMenuEnabled;
     private string _fileMenuPinCode = string.Empty;
 
     private bool _scanning;
@@ -192,6 +192,7 @@ namespace MediaPortal.GUI.Video
     private static VideosShareWatcherHelper _videoWatcher = null;
 
     private bool _adddDbViewsToShares = false;
+    private static bool _scrapperRunning = false;
 
     #endregion
 
@@ -809,7 +810,7 @@ namespace MediaPortal.GUI.Video
         #region StackEnabled and file is stackable
 
         // Proceed to file stack check if file is stackable
-        if (_mapSettings.Stack && IsFileStackable(movieFileName))
+        if (_mapSettings.Stack && Util.Utils.IsFileStackable(movieFileName))
         {
           IsStacked = true;
           int selectedFileIndex = 0;
@@ -1099,10 +1100,10 @@ namespace MediaPortal.GUI.Video
           return;
         }
       }
-      
-      if (movieDetails.ID < 1 && !_doNotUseDatabase)
-      {
 
+      if (movieDetails.ID < 1 && !_doNotUseDatabase && !ScrapperRunning)
+      {
+        ScrapperRunning = true;
         // Check for nfo file
         if (_useOnlyNfoScraper && File.Exists(movieDetails.MovieNfoFile))
         {
@@ -1113,7 +1114,7 @@ namespace MediaPortal.GUI.Video
         }
         else if (!Win32API.IsConnectedToInternet())
         {
-          if(File.Exists(movieDetails.MovieNfoFile))
+          if (File.Exists(movieDetails.MovieNfoFile))
           {
             // Try nfo file
             VideoDatabase.ImportNfo(movieDetails.MovieNfoFile, false, false);
@@ -1122,13 +1123,15 @@ namespace MediaPortal.GUI.Video
             // Send global message that movie is refreshed/scanned
             GUIMessage msgNfo = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msgNfo);
+            ScrapperRunning = false;
             return;
           }
 
-          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(257);
           dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
           dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          ScrapperRunning = false;
           return;
         }
         else
@@ -1163,10 +1166,11 @@ namespace MediaPortal.GUI.Video
 
             movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
             Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
-                     movieDetails.Path);
+              movieDetails.Path);
 
             if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
             {
+              ScrapperRunning = false;
               return;
             }
           }
@@ -1174,22 +1178,26 @@ namespace MediaPortal.GUI.Video
         // Send global message that movie is refreshed/scanned
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
+        ScrapperRunning = false;
       }
 
-      // Open video info screen
-      GUIVideoInfo videoInfo = (GUIVideoInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_INFO);
-      videoInfo.Movie = movieDetails;
-
-      if (pItem.IsFolder)
+      if (!movieDetails.IsEmpty)
       {
-        videoInfo.FolderForThumbs = pItem.Path;
-      }
-      else
-      {
-        videoInfo.FolderForThumbs = string.Empty;
-      }
+        // Open video info screen
+        GUIVideoInfo videoInfo = (GUIVideoInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_INFO);
+        videoInfo.Movie = movieDetails;
 
-      GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_INFO);
+        if (pItem.IsFolder)
+        {
+          videoInfo.FolderForThumbs = pItem.Path;
+        }
+        else
+        {
+          videoInfo.FolderForThumbs = string.Empty;
+        }
+
+        GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_INFO);
+      }
     }
   
     protected override void SelectCurrentItem()
@@ -1454,35 +1462,42 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-          
-          int currentIndex = facadeLayout.SelectedListItemIndex;
-          ArrayList scanNfoFiles = new ArrayList();
-          GetNfoFiles(item.Path, ref scanNfoFiles);
 
-          if (_useOnlyNfoScraper)
+          if (!ScrapperRunning)
           {
-            IMDBFetcher scanFetcher = new IMDBFetcher(this);
-            scanFetcher.FetchNfo(scanNfoFiles, true, false);
-            // Send global message that movie is refreshed/scanned
-            GUIMessage scanNfoMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(scanNfoMsg);
-            LoadDirectory(_currentFolder, true);
-            facadeLayout.SelectedListItemIndex = currentIndex;
-          }
-          else
-          {
-            // Try nfo files first
-            IMDBFetcher scanFetcher = new IMDBFetcher(this);
-            scanFetcher.FetchNfo(scanNfoFiles, true, false);
-            // Then the rest
-            ArrayList availablePaths = new ArrayList();
-            availablePaths.Add(item.Path);
-            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, _getActors, false);
-            // Send global message that movie is refreshed/scanned
-            GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(scanMsg);
-            LoadDirectory(_currentFolder, true);
-            facadeLayout.SelectedListItemIndex = currentIndex;
+            ScrapperRunning = true;
+            int currentIndex = facadeLayout.SelectedListItemIndex;
+            ArrayList scanNfoFiles = new ArrayList();
+            GetNfoFiles(item.Path, ref scanNfoFiles);
+
+            if (_useOnlyNfoScraper)
+            {
+              IMDBFetcher scanFetcher = new IMDBFetcher(this);
+              scanFetcher.FetchNfo(scanNfoFiles, true, false);
+              // Send global message that movie is refreshed/scanned
+              GUIMessage scanNfoMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0,
+                null);
+              GUIWindowManager.SendMessage(scanNfoMsg);
+              LoadDirectory(_currentFolder, true);
+              facadeLayout.SelectedListItemIndex = currentIndex;
+            }
+            else
+            {
+              // Try nfo files first
+              IMDBFetcher scanFetcher = new IMDBFetcher(this);
+              scanFetcher.FetchNfo(scanNfoFiles, true, false);
+              // Then the rest
+              ArrayList availablePaths = new ArrayList();
+              availablePaths.Add(item.Path);
+              IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, _getActors, false);
+              // Send global message that movie is refreshed/scanned
+              GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+              GUIWindowManager.SendMessage(scanMsg);
+              LoadDirectory(_currentFolder, true);
+              facadeLayout.SelectedListItemIndex = currentIndex;
+            }
+
+            ScrapperRunning = false;
           }
           break;
 
@@ -1515,17 +1530,22 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-          
-          currentIndex = facadeLayout.SelectedListItemIndex;
-          ArrayList nfoFiles = new ArrayList();
-          GetNfoFiles(item.Path, ref nfoFiles);
-          IMDBFetcher fetcher = new IMDBFetcher(this);
-          fetcher.FetchNfo(nfoFiles, true, false);
-          // Send global message that movie is refreshed/scanned
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
-          LoadDirectory(_currentFolder, true);
-          facadeLayout.SelectedListItemIndex = currentIndex;
+
+          if (!ScrapperRunning)
+          {
+            ScrapperRunning = true;
+          	int currentIndex = facadeLayout.SelectedListItemIndex;
+            ArrayList nfoFiles = new ArrayList();
+            GetNfoFiles(item.Path, ref nfoFiles);
+            IMDBFetcher fetcher = new IMDBFetcher(this);
+            fetcher.FetchNfo(nfoFiles, true, false);
+            // Send global message that movie is refreshed/scanned
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msg);
+            LoadDirectory(_currentFolder, true);
+          	facadeLayout.SelectedListItemIndex = currentIndex;
+            ScrapperRunning = false;
+          }
           break;
 
         case 830: // Reset watched status
@@ -1636,8 +1656,9 @@ namespace MediaPortal.GUI.Video
 
           break;
         case 1264: // Get media info (refresh mediainfo and duration)
-          if (item != null)
+          if (item != null && !ScrapperRunning)
           {
+            ScrapperRunning = true;
             string file = item.Path;
             SelectDVDHandler sdh = new SelectDVDHandler();
             SelectBDHandler bdh = new SelectBDHandler();
@@ -1663,6 +1684,7 @@ namespace MediaPortal.GUI.Video
             MovieDuration(files, true);
             IMDBMovie.SetMovieData(item);
             IMDBMovie.SetMovieProperties(item);
+            ScrapperRunning = false;
           }
           break;
       }
@@ -2872,6 +2894,17 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    public static bool FileMenuEnabled
+    {
+      get { return _fileMenuEnabled; }
+    }
+
+    public static bool ScrapperRunning
+    {
+      get { return _scrapperRunning; }
+      set { _scrapperRunning = value; }
+    }
+
     #endregion
 
     #region Private methods
@@ -3224,7 +3257,7 @@ namespace MediaPortal.GUI.Video
       //foreach (string extension in Util.Utils.VideoExtensions)
       //{
         //if (extension.Trim().Equals(Path.GetExtension(filename), StringComparison.InvariantCultureIgnoreCase))
-        if (filename != null && Util.Utils.VideoExtensions.Contains(Path.GetExtension(filename)))
+        if (filename != null && Util.Utils.VideoExtensions.Contains(Path.GetExtension(filename).ToLowerInvariant()))
         {
           return true;
         }
@@ -3685,7 +3718,7 @@ namespace MediaPortal.GUI.Video
       files.Add(strFile);
 
       // Check if file is stackable and get rest of the stack
-      if (IsFileStackable(strFile))
+      if (Util.Utils.IsFileStackable(strFile))
       {
         List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
 
@@ -4189,20 +4222,6 @@ namespace MediaPortal.GUI.Video
         }
       }
       catch (ThreadAbortException) { }
-    }
-
-    private bool IsFileStackable(string filename)
-    {
-      var pattern = Util.Utils.StackExpression();
-
-      for (int i = 0; i < pattern.Length; i++)
-      {
-        if (pattern[i].IsMatch(filename))
-        {
-          return true;
-        }
-      }
-      return false;
     }
 
     private void GetNfoFiles(string path, ref ArrayList nfoFiles)

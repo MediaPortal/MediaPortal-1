@@ -1538,6 +1538,20 @@ namespace MediaPortal.Util
       return true;
     }
 
+    public static bool IsFileStackable(string filename)
+    {
+      var pattern = Util.Utils.StackExpression();
+
+      for (int i = 0; i < pattern.Length; i++)
+      {
+        if (pattern[i].IsMatch(filename))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
     public static bool ShouldStack(string strFile1, string strFile2)
     {
       if (strFile1 == null) return false;

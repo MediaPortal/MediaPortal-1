@@ -226,6 +226,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
+
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeLayout[0];
@@ -239,12 +240,19 @@ namespace MediaPortal.GUI.Video
         }
         return;
       }
+
       if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
       {
         _playClicked = true;
         OnClick(facadeLayout.SelectedListItemIndex);
         return;
       }
+
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM && GUIVideoFiles.FileMenuEnabled)
+      {
+        OnDeleteItem(facadeLayout.SelectedListItem);
+      }
+
       base.OnAction(action);
     }
 
@@ -504,7 +512,7 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (CurrentBaseView == "user groups")
+        if (handler.CurrentLevelWhere == "user groups")
         {
           dlg.AddLocalizedString(1272); //Add new usergroup
 
@@ -639,6 +647,16 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetWatched(movie);
           item.IsPlayed = true;
           break;
+
+        case 1264: // Media info
+          if (File.Exists(movie.VideoFileName) && !GUIVideoFiles.ScrapperRunning)
+          {
+            GUIVideoFiles.ScrapperRunning = true;
+            VideoDatabase.UpdateMediaInfo(movie.VideoFileName);
+            LoadDirectory(currentFolder);
+            GUIVideoFiles.ScrapperRunning = false;
+          }
+          break;
       }
     }
     
@@ -725,7 +743,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // F3 key actor info action
-      if (movie.ActorID >= 0)
+      if (movie.ActorID > 0)
       {
         IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
 
@@ -739,7 +757,7 @@ namespace MediaPortal.GUI.Video
 
           if (DateTime.TryParse(actor.LastUpdate, out lastUpdate))
           {
-            if (searchDate > lastUpdate)
+            if (searchDate > lastUpdate && Win32API.IsConnectedToInternet())
             {
               if (VideoDatabase.CheckActorImdbId(actor.IMDBActorID))
               {
@@ -757,14 +775,17 @@ namespace MediaPortal.GUI.Video
         else
         {
           string actorImdbId = VideoDatabase.GetActorImdbId(movie.ActorID);
-
-          if (VideoDatabase.CheckActorImdbId(actorImdbId))
+          
+          if (Win32API.IsConnectedToInternet())
           {
-            actor = IMDBFetcher.FetchMovieActor(this, movie, actorImdbId, movie.ActorID);
-          }
-          else
-          {
-            actor = IMDBFetcher.FetchMovieActor(this, movie, movie.Actor, movie.ActorID);
+            if (VideoDatabase.CheckActorImdbId(actorImdbId))
+            {
+              actor = IMDBFetcher.FetchMovieActor(this, movie, actorImdbId, movie.ActorID);
+            }
+            else
+            {
+              actor = IMDBFetcher.FetchMovieActor(this, movie, movie.Actor, movie.ActorID);
+            }
           }
 
           if (actor != null)
@@ -1055,59 +1076,65 @@ namespace MediaPortal.GUI.Video
     // Scan for new movies for selected folder in configuration
     protected override void OnSearchNew()
     {
-      int maximumShares = 128;
-      ArrayList availablePaths = new ArrayList();
-      bool _useOnlyNfoScraper = false;
-
-      using (Profile.Settings xmlreader = new MPSettings())
+      if (!GUIVideoFiles.ScrapperRunning)
       {
-        _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+        GUIVideoFiles.ScrapperRunning = true;
+        int maximumShares = 128;
+        ArrayList availablePaths = new ArrayList();
+      	bool _useOnlyNfoScraper = false;
 
-        for (int index = 0; index < maximumShares; index++)
+        using (Profile.Settings xmlreader = new MPSettings())
         {
-          string sharePath = String.Format("sharepath{0}", index);
-          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
-          string shareScan = String.Format("sharescan{0}", index);
-          bool shareScanData = xmlreader.GetValueAsBool("movies", shareScan, true);
+          _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
 
-          if (shareScanData && shareDir != string.Empty)
+          for (int index = 0; index < maximumShares; index++)
           {
-            availablePaths.Add(shareDir);
+            string sharePath = String.Format("sharepath{0}", index);
+            string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+            string shareScan = String.Format("sharescan{0}", index);
+            bool shareScanData = xmlreader.GetValueAsBool("movies", shareScan, true);
+
+            if (shareScanData && shareDir != string.Empty)
+            {
+              availablePaths.Add(shareDir);
+            }
+          }
+
+          if (!_useOnlyNfoScraper)
+          {
+          	IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+          }
+          else
+          {
+            ArrayList nfoFiles = new ArrayList();
+          
+            foreach (string availablePath in availablePaths)
+            {
+              GetNfoFiles(availablePath, ref nfoFiles);
+            }
+          
+            IMDBFetcher fetcher = new IMDBFetcher(this);
+            fetcher.FetchNfo(nfoFiles, true, false);
+          }
+          // Send global message that movie is refreshed/scanned
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
+          currentSelectedItem = facadeLayout.SelectedListItemIndex;
+
+          if (currentSelectedItem > 0)
+          {
+            currentSelectedItem--;
+          }
+
+          LoadDirectory(currentFolder);
+
+          if (currentSelectedItem >= 0)
+          {
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
           }
         }
 
-        if (!_useOnlyNfoScraper)
-        {
-          IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
-        }
-        else
-        {
-          ArrayList nfoFiles = new ArrayList();
-          
-          foreach (string availablePath in availablePaths)
-          {
-            GetNfoFiles(availablePath, ref nfoFiles);
-          }
-          
-          IMDBFetcher fetcher = new IMDBFetcher(this);
-          fetcher.FetchNfo(nfoFiles, true, false);
-        }
-        // Send global message that movie is refreshed/scanned
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
-        currentSelectedItem = facadeLayout.SelectedListItemIndex;
-
-        if (currentSelectedItem > 0)
-        {
-          currentSelectedItem--;
-        }
-
-        LoadDirectory(currentFolder);
-
-        if (currentSelectedItem >= 0)
-        {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, currentSelectedItem);
-        }
+        GUIVideoFiles.ScrapperRunning = false;
       }
     }
 
@@ -1142,7 +1169,7 @@ namespace MediaPortal.GUI.Video
     }
     
     #endregion
-
+    
     private void SetLabel(GUIListItem item)
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
@@ -1589,7 +1616,7 @@ namespace MediaPortal.GUI.Video
     
     private void OnDeleteItem(GUIListItem item)
     {
-      if (item.IsRemote)
+      if (item == null || item.IsRemote || item.IsFolder && !item.IsBdDvdFolder)
       {
         return;
       }
@@ -1607,6 +1634,7 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
+      
       if (null == dlgYesNo)
       {
         return;
@@ -1623,7 +1651,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      DoDeleteItem(item);
+      VideoDatabase.DeleteMovieInfoById(movie.ID);
       currentSelectedItem = facadeLayout.SelectedListItemIndex;
 
       if (currentSelectedItem > 0)

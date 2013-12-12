@@ -510,6 +510,45 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    public void FindSilent(string strMovie)
+    {
+      try
+      {
+        // getting searchstring
+        string strSearch = HttpUtility.UrlEncode(GetSearchString(strMovie));
+        _elements.Clear();
+        
+        // search the desired databases
+        foreach (MovieInfoDatabase db in _databaseList)
+        {
+          // only do a search if requested
+          if (db.Limit <= 0)
+          {
+            continue;
+          }
+          if (db.Grabber == null)
+          {
+            continue;
+          }
+
+          // load the script file as an assembly
+          // if something went wrong it returns false
+          try
+          {
+            db.Grabber.FindFilm(strSearch, db.Limit, _elements);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Movie database lookup FindSilent() - grabber: {0}, message : {1}", db.ID, ex.Message);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Movie database lookup FindSilent() - Exception: {0}", ex.Message);
+      }
+    }
+
     /// <summary>
     /// this method switches between the different databases to fetche the search result into movieDetails
     /// </summary>

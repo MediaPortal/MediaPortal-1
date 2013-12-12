@@ -356,15 +356,22 @@ namespace MediaPortal.GUI.Video
         }
         
         // Movie info active, refresh movie
-        if (_useOnlyNfoScraper && CheckForNfoFile(_currentMovie.VideoFileName)) 
+        if (!GUIVideoFiles.ScrapperRunning)
         {
-          VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName, false, false);
-          VideoDatabase.GetMovieInfo(_currentMovie.VideoFileName, ref _currentMovie);
-          UpdateMovieAfterRefresh();
-        }
-        else if (IMDBFetcher.RefreshIMDB(this, ref _currentMovie, false, false, _addToDatabase))
-        {
-          UpdateMovieAfterRefresh();
+          GUIVideoFiles.ScrapperRunning = true;
+
+          if (_useOnlyNfoScraper && CheckForNfoFile(_currentMovie.VideoFileName))
+          {
+            VideoDatabase.ImportNfoUsingVideoFile(_currentMovie.VideoFileName, false, false);
+            VideoDatabase.GetMovieInfo(_currentMovie.VideoFileName, ref _currentMovie);
+            UpdateMovieAfterRefresh();
+          }
+          else if (IMDBFetcher.RefreshIMDB(this, ref _currentMovie, false, false, _addToDatabase))
+          {
+            UpdateMovieAfterRefresh();
+          }
+
+          GUIVideoFiles.ScrapperRunning = false;
         }
         return;
       }
@@ -392,7 +399,6 @@ namespace MediaPortal.GUI.Video
         titleExt = _currentMovie.Title + "{" + _currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-        
         Util.Utils.FileDelete(coverArtImage);
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
@@ -1146,7 +1152,7 @@ namespace MediaPortal.GUI.Video
 
       if (actor != null)
       {
-        string restriction = "30"; // Refresh every week actor info and movies
+        string restriction = "30"; // Refresh month actor info and movies
 
         TimeSpan ts = new TimeSpan(Convert.ToInt32(restriction), 0, 0, 0);
         DateTime searchDate = DateTime.Today - ts;
@@ -1905,6 +1911,8 @@ namespace MediaPortal.GUI.Video
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
         catch (Exception) { }
+        req.Timeout = 20000;
+        req.ReadWriteTimeout = 20000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 

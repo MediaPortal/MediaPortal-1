@@ -24,6 +24,7 @@ using System.IO;
 using System.Threading;
 using System.Timers;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -48,6 +49,9 @@ namespace MediaPortal.GUI.Video
     private int m_TimerInterval = 2000; // milliseconds
 
     private ArrayList _notReadyFiles = new ArrayList(); // locked (not available files will be placed here until unlock)
+    private Timer _scanMoviesTimer= null;
+    private int _scanMoviesTimerInterval = 5 * (60 * 1000); // 5 min
+    private bool _useOnlyNfoScraper;
 
     #endregion
 
@@ -72,6 +76,12 @@ namespace MediaPortal.GUI.Video
         WorkerThread.IsBackground = true;
         WorkerThread.Name = "VideosShareWatcher";
         WorkerThread.Start();
+
+        _scanMoviesTimer = new Timer();
+        _scanMoviesTimer.Interval = _scanMoviesTimerInterval;
+        _scanMoviesTimer.Elapsed -= new ElapsedEventHandler(OnScanMovieTimerTickEvent);
+        _scanMoviesTimer.Elapsed += new ElapsedEventHandler(OnScanMovieTimerTickEvent);
+        _scanMoviesTimer.Start();
       }
     }
 
@@ -97,6 +107,10 @@ namespace MediaPortal.GUI.Video
           watcher.EnableRaisingEvents = true;
         }
         m_Timer.Start();
+
+        _scanMoviesTimer.Interval = _scanMoviesTimerInterval;
+        _scanMoviesTimer.Elapsed += new ElapsedEventHandler(OnScanMovieTimerTickEvent);
+        _scanMoviesTimer.Start();
         Log.Info("VideosShareWatcher: Monitoring of shares enabled");
       }
       else
@@ -108,6 +122,9 @@ namespace MediaPortal.GUI.Video
         }
         m_Timer.Stop();
         m_Events.Clear();
+
+        _scanMoviesTimer.Elapsed -= new ElapsedEventHandler(OnScanMovieTimerTickEvent);
+        _scanMoviesTimer.Stop();
         Log.Info("VideosShareWatcher: Monitoring of shares disabled");
       }
     }
@@ -193,6 +210,72 @@ namespace MediaPortal.GUI.Video
     #endregion Main
 
     #region EventHandlers
+
+    protected delegate void TimerElapsedDelegate();
+
+    private void OnScanMovieTimerTickEvent(object sender, EventArgs e)
+    {
+      TimerElapsedDelegate scanTimer = new TimerElapsedDelegate(ScanNewMovies);
+      scanTimer.Invoke();
+    }
+
+    private void ScanNewMovies()
+    {
+      _scanMoviesTimer.Stop();
+      // If playing video, do not do anything
+      if (g_Player.Playing && g_Player.IsVideo || GUIVideoFiles.ScrapperRunning)
+      {
+        _scanMoviesTimer.Start();
+        return;
+      }
+
+      GUIVideoFiles.ScrapperRunning = true;
+      ArrayList files = new ArrayList();
+
+      try
+      {
+        VideoDatabase.GetMovieQueueFiles(ref files);
+
+        foreach (string file in files)
+        {
+          IMDBSilentFetcher fetcher = new IMDBSilentFetcher();
+
+          if (fetcher.FindMovie(file))
+          {
+            // Send database view change
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH, 0, 0, 0, 0, 0,
+              null);
+            GUIWindowManager.SendMessage(msg);
+
+            // Send share view change (update item with movie data and thumb, current visible is empty)
+            string strPath = file;
+
+            if (strPath.ToUpperInvariant().Contains(@"\VIDEO_TS"))
+            {
+              strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\VIDEO_TS"));
+            }
+            else if (strPath.ToUpperInvariant().Contains(@"\BDMV"))
+            {
+              strPath = strPath.Substring(0, strPath.ToUpperInvariant().IndexOf(@"\BDMV"));
+            }
+
+            strPath = Path.GetDirectoryName(strPath);
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODIRECTORY_REFRESH, 0, 0, 0, 0, 0,
+              strPath);
+            GUIWindowManager.SendMessage(msg);
+          }
+
+          VideoDatabase.DeleteMovieQueueFile(file);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("VideoShareWatcherHelper ScanNewMovies error: {0}", ex.Message);
+      }
+
+      GUIVideoFiles.ScrapperRunning = false;
+      _scanMoviesTimer.Start();
+    }
 
     // Event handler for Create of a file
     private void OnFileCreated(object source, FileSystemEventArgs e)
@@ -300,10 +383,10 @@ namespace MediaPortal.GUI.Video
     }
 
     // Event handler for Rename of a directory
-    private void OnDirectoryRenamed(object source, FileSystemEventArgs e)
+    private void OnDirectoryRenamed(object source, RenamedEventArgs e)
     {
       Log.Debug("VideosShareWatcher: Rename VideoDirectory Fired: {0}", e.FullPath);
-      m_Events.Add(new VideosShareWatcherEvent(VideosShareWatcherEvent.EventType.RenameDirectory, e.FullPath));
+      m_Events.Add(new VideosShareWatcherEvent(VideosShareWatcherEvent.EventType.RenameDirectory, e.FullPath, e.OldFullPath));
     }
 
     #endregion EventHandlers
@@ -321,6 +404,8 @@ namespace MediaPortal.GUI.Video
           // Lock the Collection, while processing the Events
           lock (m_Events.SyncRoot)
           {
+            bool movieEventFired = false;
+
             #region Affected directories
 
             // Get parent directories where events occured so we can avoid multiple refreshes on
@@ -378,14 +463,35 @@ namespace MediaPortal.GUI.Video
                   // Create video
                   case VideosShareWatcherEvent.EventType.Create:
                   case VideosShareWatcherEvent.EventType.Change:
+                  {
+                    AddVideo(currentEvent.FileName);
+
+                    if (!_useOnlyNfoScraper)
                     {
-                      AddVideo(currentEvent.FileName);
-                      break;
+                      foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (currentEvent.FileName.Contains(mScanShare))
+                        {
+                          VideoDatabase.AddMovieQueueFile(currentEvent.FileName);
+                        }
+                      }
                     }
+                    break;
+                  }
 
                   // Delete video
                   case VideosShareWatcherEvent.EventType.Delete:
                     {
+                      if (!movieEventFired)
+                      {
+                        foreach (string mScanShare in m_ScanShares)
+                        {
+                          if (currentEvent.FileName.Contains(mScanShare))
+                          {
+                            movieEventFired = true;
+                          }
+                        }
+                      }
                       DeleteVideo(currentEvent.FileName);
                       break;
                     }
@@ -411,6 +517,14 @@ namespace MediaPortal.GUI.Video
                   // Delete directory
                   case VideosShareWatcherEvent.EventType.DeleteDirectory:
                     {
+                      foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (!movieEventFired && currentEvent.FileName.Contains(mScanShare))
+                        {
+                          movieEventFired = true;
+                        }
+                      }
+
                       DeleteVideoDirectory(currentEvent.FileName);
                       break;
                     }
@@ -418,8 +532,15 @@ namespace MediaPortal.GUI.Video
                   // Rename directory
                   case VideosShareWatcherEvent.EventType.RenameDirectory:
                     {
-                      Log.Info("VideosShareWatcher: VideoDirectory {0} renamed to {1}", currentEvent.OldFileName,
-                               currentEvent.FileName);
+                      foreach (string mScanShare in m_ScanShares)
+                      {
+                        if (!movieEventFired && currentEvent.FileName.Contains(mScanShare))
+                        {
+                          movieEventFired = true;
+                        }
+                      }
+
+                      RenameVideoDirectory(currentEvent.OldFileName, currentEvent.FileName);
                       break;
                     }
 
@@ -437,8 +558,7 @@ namespace MediaPortal.GUI.Video
             #region Update MyVideos cache and send refresh message
 
             // Force MyVideos cache and db refresh for affected directories
-            bool refreshVideoDatabase = false;
-
+            
             foreach (string directory in refreshDir)
             {
               // Update MyVideos shares cache
@@ -453,25 +573,12 @@ namespace MediaPortal.GUI.Video
                       directory);
                 GUIWindowManager.SendMessage(msg);
               }
-              // Check if one of directories is marked for movies scan and set flag to send message
-              // for database views for refresh if user is there.
-              // Message will be sent only once per events pool.
-              if (!refreshVideoDatabase)
-              {
-                foreach (string mScanShare in m_ScanShares)
-                {
-                  if (Util.Utils.AreEqual(mScanShare, directory))
-                  {
-                    refreshVideoDatabase = true;
-                  }
-                } 
-              }
             }
 
             #endregion
 
-            // Send only one message for database views refresh
-            if (refreshVideoDatabase)
+            // Send only one message for database views refresh (delete)
+            if (movieEventFired)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEODATABASE_REFRESH, 0, 0, 0, 0, 0,
                            null);
@@ -507,6 +614,7 @@ namespace MediaPortal.GUI.Video
     {
       Log.Info("VideosShareWatcher: VideoFile {0} renamed to {1}", oldFilename,
                                newFilename);
+      VideoDatabase.RenameFile(oldFilename, newFilename);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOFILE_RENAMED, 0, 0, 0, 0, 0,
                            (string.Format("{0}|{1}", oldFilename, newFilename)));
       GUIWindowManager.SendMessage(msg);
@@ -550,6 +658,13 @@ namespace MediaPortal.GUI.Video
 
       Log.Info("VideosShareWatcher: Deleted VideoDirectory: {0}", strPath);
     }
+
+    private void RenameVideoDirectory(string oldDirectory, string newDirectory)
+    {
+      VideoDatabase.RenamePath(oldDirectory, newDirectory);
+      Log.Info("VideosShareWatcher: VideoDirectory {0} renamed to {1}", oldDirectory,
+                               newDirectory);
+    }
     
     #endregion
 
@@ -592,6 +707,9 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
+
+      _useOnlyNfoScraper = xmlreader.GetValueAsBool("moviedatabase", "useonlynfoscraper", false);
+      //_doNotUseDatabase = xmlreader.GetValueAsBool("moviedatabase", "donotusedatabase", false);
 
       xmlreader = null;
       return 0;

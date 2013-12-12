@@ -339,6 +339,16 @@ namespace MediaPortal.Video.Database
         
         #endregion
 
+        #region Auto Scan new Movies
+
+        if (DatabaseUtility.TableExists(m_db, "newMoviesQueue") == false)
+        {
+          DatabaseUtility.AddTable(m_db, "newMoviesQueue",
+            "CREATE TABLE newMoviesQueue ( id integer primary key, filename text, filenameNoStack text)");
+        }
+
+        #endregion
+
       }
 
       catch (Exception ex)
@@ -554,6 +564,8 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
       DatabaseUtility.AddTable(m_db, "filesmediainfo",
                                "CREATE TABLE filesmediainfo ( idFile integer primary key, videoCodec text, videoResolution text, aspectRatio text, hasSubtitles bool, audioCodec text, audioChannels text)");
+      DatabaseUtility.AddTable(m_db, "newMoviesQueue",
+                               "CREATE TABLE newMoviesQueue ( id integer primary key, filename text, filenameNoStack text)");
       // Indexes
       // ActorInfo
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
@@ -640,7 +652,7 @@ namespace MediaPortal.Video.Database
         int lFileId = -1;
         strFileName = strFileName.Trim();
         
-        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName = '{2}'",
+        string strSQL = String.Format("SELECT * FROM files WHERE idmovie={0} AND idpath={1} AND strFileName LIKE '{2}'",
                                       lMovieId, lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
         
@@ -718,7 +730,7 @@ namespace MediaPortal.Video.Database
           return -1;
         }
 
-        string strSQL = String.Format("SELECT * FROM files WHERE idpath={0} AND strFilename = '{1}'", lPathId, strFileName);
+        string strSQL = String.Format("SELECT * FROM files WHERE idpath={0} AND strFilename LIKE '{1}'", lPathId, strFileName);
         SQLiteResultSet results = m_db.Execute(strSQL);
         
         if (results.Rows.Count > 0)
@@ -867,7 +879,7 @@ namespace MediaPortal.Video.Database
           strPath = strPath.Replace(strPath.Substring(0, 1), "_");
           cdlabel = GetDVDLabel(strPath);
           DatabaseUtility.RemoveInvalidChars(ref cdlabel);
-          strSQL = String.Format("SELECT * FROM path WHERE strPath = '{0}' AND cdlabel = '{1}'", strPath,
+          strSQL = String.Format("SELECT * FROM path WHERE strPath LIKE '{0}' AND cdlabel LIKE '{1}'", strPath,
                                       cdlabel);
         }
         else
@@ -1027,6 +1039,186 @@ namespace MediaPortal.Video.Database
             strFile = strPath + strFile;
           }
           files.Add(strFile);
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void AddMovieQueueFile(string filenameAndPath)
+    {
+      try
+      {
+        if (string.IsNullOrEmpty(filenameAndPath) || null == m_db)
+        {
+          return;
+        }
+
+        string filename = filenameAndPath;
+        Util.Utils.RemoveStackEndings(ref filename);
+        DatabaseUtility.RemoveInvalidChars(ref filename);
+        DatabaseUtility.RemoveInvalidChars(ref filenameAndPath);
+        string strSQL = String.Format("SELECT filenameNoStack FROM newMoviesQueue WHERE filenameNoStack LIKE '{0}'",
+          filename);
+        SQLiteResultSet results = m_db.Execute(strSQL);
+
+        if (results != null && results.Rows.Count == 0)
+        {
+          strSQL =
+            String.Format("INSERT INTO newMoviesQueue (id, filename, filenameNoStack) VALUES (null, '{0}', '{1}')",
+              filenameAndPath, filename);
+          m_db.Execute(strSQL);
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void GetMovieQueueFiles(ref ArrayList files)
+    {
+      try
+      {
+        if (null == m_db)
+        {
+          return;
+        }
+
+        string strSQL = String.Format("SELECT filename FROM newMoviesQueue");
+        SQLiteResultSet results = m_db.Execute(strSQL);
+
+        if (results != null && results.Rows.Count > 0)
+        {
+          for (int i = 0; i < results.Rows.Count; i++)
+          {
+            string fileName = DatabaseUtility.Get(results, i, "filename");
+            files.Add(fileName);
+          }
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void DeleteMovieQueueFile(string filenameAndPath)
+    {
+      try
+      {
+        if (string.IsNullOrEmpty(filenameAndPath) || null == m_db)
+        {
+          return;
+        }
+
+        DatabaseUtility.RemoveInvalidChars(ref filenameAndPath);
+        string strSQL = String.Format("DELETE FROM newMoviesQueue where filename LIKE '{0}'", filenameAndPath);
+        m_db.Execute(strSQL);
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RenameFile(string oldFilenameAndPath, string newFilenameAndPath)
+    {
+      try
+      {
+        if (null == m_db || 
+            string.IsNullOrEmpty(oldFilenameAndPath) || 
+            string.IsNullOrEmpty(newFilenameAndPath))
+        {
+          return;
+        }
+
+        // Get path and file id
+        int pathId, movieId;
+        GetFile(oldFilenameAndPath, out pathId, out movieId, true);
+        int fileId = GetFileId(oldFilenameAndPath);
+        
+        string oldPathName, oldFileName;
+        DatabaseUtility.Split(oldFilenameAndPath, out oldPathName, out oldFileName);
+        
+        string newPathName, newFileName;
+        DatabaseUtility.Split(newFilenameAndPath, out newPathName, out newFileName);
+        DatabaseUtility.RemoveInvalidChars(ref newFileName);
+        
+        // Case - no path change
+        if (oldPathName.ToLowerInvariant() == newPathName.ToLowerInvariant())
+        {
+          string strSQL = String.Format("UPDATE files SET strFilename='{0}' WHERE idPath = {1} AND idFile = {2}", 
+            newFileName, pathId, fileId);
+          m_db.Execute(strSQL);
+        }
+      }
+      catch (ThreadAbortException)
+      {
+        // Will be logged in thread main code
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public void RenamePath(string oldPath, string newPath)
+    {
+      try
+      {
+        if (null == m_db ||
+            string.IsNullOrEmpty(oldPath) ||
+            string.IsNullOrEmpty(newPath))
+        {
+          return;
+        }
+
+        
+        //int oldPathId = GetPath(oldPath);
+        
+        string oldPathName = oldPath;
+        DatabaseUtility.RemoveInvalidChars(ref oldPathName);
+        string strSQL = String.Format("SELECT idPath, strPath FROM path WHERE strPath LIKE '%{0}%'", oldPathName);
+        SQLiteResultSet results =  m_db.Execute(strSQL);
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          // Get values for old path
+          int pathId = Int32.Parse(DatabaseUtility.Get(results, i, "idPath"));
+          string strPath = DatabaseUtility.Get(results, i, "strPath");
+          // Replace oldpath string with new pathstring
+          strPath = strPath.Replace(strPath, newPath);
+          // Clean string for SQLite forbidden chars
+          string newPathName = strPath;
+          DatabaseUtility.RemoveInvalidChars(ref newPathName);
+          // Update new path string
+          strSQL = String.Format("UPDATE path SET strPath='{0}' WHERE idPath = {1}", newPathName, pathId);
+          m_db.Execute(strSQL);
+
         }
       }
       catch (ThreadAbortException)
@@ -3413,7 +3605,6 @@ namespace MediaPortal.Video.Database
       else
         DeleteSingleMovie(strFilenameAndPath);
     }
-       
 
     public void DeleteMoviesInFolder(string strPath)
     {
@@ -3501,6 +3692,7 @@ namespace MediaPortal.Video.Database
       {
         return -1;
       }
+
       try
       {
         string strPath, strFileName;
@@ -3508,8 +3700,8 @@ namespace MediaPortal.Video.Database
         DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
         DatabaseUtility.RemoveInvalidChars(ref strPath);
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
         int lMovieId = GetMovie(strFilenameAndPath, false);
+
         if (lMovieId < 0)
         {
           int lPathId = AddPath(strPath);
@@ -3519,10 +3711,12 @@ namespace MediaPortal.Video.Database
             return -1;
           }
           int iHasSubs = 0;
+
           if (bHassubtitles)
           {
             iHasSubs = 1;
           }
+
           string strSQL = String.Format(
             "INSERT INTO movie (idMovie, idPath, hasSubtitles, discid) VALUES( NULL, {0}, {1},'')", lPathId, iHasSubs);
 
@@ -3533,10 +3727,12 @@ namespace MediaPortal.Video.Database
         else
         {
           int lPathId = GetPath(strPath);
+
           if (lPathId < 0)
           {
             return -1;
           }
+
           AddFile(lMovieId, lPathId, strFileName);
         }
         return lMovieId;
@@ -3547,6 +3743,39 @@ namespace MediaPortal.Video.Database
         Open();
       }
       return -1;
+    }
+
+    private void AddMovie(int lMovieId, string strFilenameAndPath)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+
+      try
+      {
+        string strPath, strFileName;
+        DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName);
+        DatabaseUtility.RemoveInvalidChars(ref strPath);
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+        if (lMovieId > 0)
+        {
+          int lPathId = GetPath(strPath);
+
+          if (lPathId < 0)
+          {
+            return;
+          }
+
+          AddFile(lMovieId, lPathId, strFileName);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
     }
 
     private int GetMovie(string strFilenameAndPath, bool bExact)
@@ -3658,7 +3887,6 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Fanart add
     public void SetFanartURL(int lMovieId, string fanartURL)
     {
       DatabaseUtility.RemoveInvalidChars(ref fanartURL);
@@ -3747,7 +3975,6 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Changed - added user review
     public void GetMoviesByGenre(string strGenre1, ref ArrayList movies)
     {
       try
@@ -3966,7 +4193,6 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Changed - added user review
     public void GetMoviesByActor(string strActor1, ref ArrayList movies)
     {
       try
@@ -4113,7 +4339,6 @@ namespace MediaPortal.Video.Database
       return titles;
     }
 
-    // Changed - added user review
     public void GetMoviesByYear(string strYear, ref ArrayList movies)
     {
       try
@@ -4340,7 +4565,6 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Changed - added user review
     public void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable, bool movieinfoTable,
                                   bool genreTable, bool usergroupTable)
     {
@@ -4494,7 +4718,7 @@ namespace MediaPortal.Video.Database
       
       try
       {
-        string sql = String.Format("SELECT idPath FROM path WHERE cdlabel = '{0}'", movieDetails.CDLabel);
+        string sql = String.Format("SELECT idPath FROM path WHERE cdlabel LIKE '{0}'", movieDetails.CDLabel);
         SQLiteResultSet results = m_db.Execute(sql);
         int idPath;
         Int32.TryParse(DatabaseUtility.Get(results, 0, "idPath"), out idPath);
@@ -5085,8 +5309,10 @@ namespace MediaPortal.Video.Database
       return true;
     }
 
-    public void ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
+    public bool ImportNfoUsingVideoFile(string videoFile, bool skipExisting, bool refreshdbOnly)
     {
+      bool success = false;
+
       try
       {
         string nfoFile = string.Empty;
@@ -5136,7 +5362,7 @@ namespace MediaPortal.Video.Database
 
         if (!File.Exists(nfoFile))
         {
-          return;
+          return false;
         }
 
         IMDBMovie movie = new IMDBMovie();
@@ -5145,19 +5371,21 @@ namespace MediaPortal.Video.Database
         if (skipExisting && id > 0)
         {
           movie = null;
-          return;
+          return false;
         }
 
-        ImportNfo(nfoFile, skipExisting, refreshdbOnly);
+        success = ImportNfo(nfoFile, skipExisting, refreshdbOnly);
         movie = null;
       }
       catch (Exception ex)
       {
         Log.Error("Error importing nfo for file {0} Error:{1} ", videoFile, ex);
       }
+
+      return success;
     }
 
-    public void ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
+    public bool ImportNfo(string nfoFile, bool skipExisting, bool refreshdbOnly)
     {
       IMDBMovie movie = new IMDBMovie();
       bool isMovieFolder = Util.Utils.IsFolderDedicatedMovieFolder(Path.GetFullPath(nfoFile));
@@ -5184,7 +5412,7 @@ namespace MediaPortal.Video.Database
           if (movieList == null)
           {
             Log.Debug("Movie tag for nfo file:{0} not exist. Nfo skipped.", nfoFile);
-            return;
+            return false;
           }
 
           foreach (XmlNode nodeMovie in movieList)
@@ -5282,12 +5510,12 @@ namespace MediaPortal.Video.Database
                     int pathId = VideoDatabase.AddPath(path);
                     Log.Debug("Import nfo-Adding file: {0}", logFilename);
                     VideoDatabase.AddFile(movieId, pathId, filename);
-                    return;
+                    return false;
                   }
                   catch(Exception ex)
                   {
                     Log.Error("Import nfo error-stack check for path {0} Error: {1}", path, ex.Message);
-                    return;
+                    return false;
                   }
                 }
 
@@ -5311,9 +5539,17 @@ namespace MediaPortal.Video.Database
                 // Check and add to vdb and get movieId
                 if (tmpFile.Equals(nfofileName, StringComparison.InvariantCultureIgnoreCase))
                 {
-                  Log.Debug("Import nfo-Adding file: {0}", logFilename);
-                  id = VideoDatabase.AddMovie(file, true);
-                  movie.ID = id;
+                  if (movie.ID > 0 && Util.Utils.IsFileStackable(file))
+                  {
+                    Log.Debug("Import nfo-Adding stack part file: {0} for movieId {1}", logFilename, movie.ID);
+                    AddMovie(movie.ID, file);
+                  }
+                  else
+                  {
+                    Log.Debug("Import nfo-Adding file: {0}", logFilename);
+                    id = VideoDatabase.AddMovie(file, true);
+                    movie.ID = id;
+                  }
                 }
                 else if (isMovieFolder && tmpPath.Length > 0) // Every movie in it's own folder, compare by folder name
                 {
@@ -5323,9 +5559,17 @@ namespace MediaPortal.Video.Database
 
                     if (tmpPath.Equals(nfofileName, StringComparison.InvariantCultureIgnoreCase) || nfofileName.ToLowerInvariant() == "movie")
                     {
-                      Log.Debug("Import nfo-Adding file: {0}", logFilename);
-                      id = VideoDatabase.AddMovie(file, true);
-                      movie.ID = id;
+                      if (movie.ID > 0 && Util.Utils.IsFileStackable(file))
+                      {
+                        Log.Debug("Import nfo-Adding stack part file: {0} for movieId {1}", logFilename, movie.ID);
+                        AddMovie(movie.ID, file);
+                      }
+                      else
+                      {
+                        Log.Debug("Import nfo-Adding file: {0}", logFilename);
+                        id = VideoDatabase.AddMovie(file, true);
+                        movie.ID = id;
+                      }
                     }
                     else
                     {
@@ -5353,7 +5597,7 @@ namespace MediaPortal.Video.Database
             if (skipExisting && !movie.IsEmpty || refreshdbOnly && movie.IsEmpty || id < 1)
             {
               Log.Debug("Import nfo-Skipping import for movieId = {0}).", id);
-              return;
+              return false;
             }
 
             movie = new IMDBMovie();
@@ -6278,7 +6522,6 @@ namespace MediaPortal.Video.Database
             }
 
             #endregion
-
             
           }
         }
@@ -6286,7 +6529,10 @@ namespace MediaPortal.Video.Database
       catch (Exception ex)
       {
         Log.Error("videodatabase exception error importing nfo file {0}:{1} ", nfoFile, ex.Message);
+        return false;
       }
+
+      return true;
     }
 
     public bool MakeNfo (int movieId)

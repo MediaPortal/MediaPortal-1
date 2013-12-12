@@ -275,6 +275,7 @@
     </Compile>
     <Compile Include="SqlServerUtility.cs" />
     <Compile Include="Video\IMDBFetcher.cs" />
+    <Compile Include="Video\IMDBSilentFetcher.cs" />
     <Compile Include="Video\SqlLite\VideoDatabaseSqlLite.cs">
       <SubType>Code</SubType>
     </Compile>
