@@ -20,7 +20,7 @@
 
 //#define DO_RESAMPLE
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,14 +36,14 @@ namespace MediaPortal.GUI.Library
 {
   public class GUITextureManager
   {
-    private static readonly Dictionary<string, CachedTexture> _cacheTextures = 
-      new Dictionary<string, CachedTexture>();
-    
-    private static readonly Dictionary<string, bool> _persistentTextures = new 
-      Dictionary<string, bool>();
+    private static readonly ConcurrentDictionary<string, CachedTexture> _cacheTextures =
+      new ConcurrentDictionary<string, CachedTexture>();
 
-    private static readonly Dictionary<string, DownloadedImage> _cacheDownload = 
-      new Dictionary<string, DownloadedImage>();
+    private static readonly ConcurrentDictionary<string, bool> _persistentTextures = 
+      new ConcurrentDictionary<string, bool>();
+
+    private static readonly ConcurrentDictionary<string, DownloadedImage> _cacheDownload =
+      new ConcurrentDictionary<string, DownloadedImage>();
 
     private static TexturePacker _packer = new TexturePacker();
 
@@ -494,9 +494,11 @@ namespace MediaPortal.GUI.Library
 
           cached.Disposed -= new EventHandler(cachedTexture_Disposed);
 
-          // remove is fine even if it doesnt exist
-          _persistentTextures.Remove(cacheKey);
-          _cacheTextures.Remove(cacheKey);
+          bool removed;
+          _persistentTextures.TryRemove(cacheKey, out removed);
+          
+          CachedTexture removedItem;
+          _cacheTextures.TryRemove(cacheKey, out removedItem);
         }
       }
     }
@@ -662,7 +664,8 @@ namespace MediaPortal.GUI.Library
           try
           {
             //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                
-            _cacheTextures.Remove(cacheKey);
+            CachedTexture removedItem;
+            _cacheTextures.TryRemove(cacheKey, out removedItem);
             oldImage.SafeDispose();
           }
           catch (Exception ex)
@@ -684,24 +687,16 @@ namespace MediaPortal.GUI.Library
       lock (GUIGraphicsContext.RenderLock)
       {
         Log.Debug("TextureManager: CleanupThumbs()");
-        try
-        {
-          CachedTexture[] textures;
-          lock (_cacheTextures)
-          {
-            textures = _cacheTextures.Values.Where(t => IsTemporary(t.Name)).ToArray();
-          }
+       
+        CachedTexture[] textures =
+          _cacheTextures.Values.Where(t => t.Name != null && IsTemporary(t.Name)).ToArray();
 
-          foreach (CachedTexture texture in textures)
-          {
-            string cacheKey = texture.Name.ToLowerInvariant();
-            _cacheTextures.Remove(cacheKey);
-            texture.SafeDispose();
-          }
-        }
-        catch (Exception ex)
+        foreach (CachedTexture texture in textures)
         {
-          Log.Error("TextureManage: Error cleaning up thumbs - {0}", ex.Message);
+          string cacheKey = texture.Name.ToLowerInvariant();
+          CachedTexture removedItem;
+          _cacheTextures.TryRemove(cacheKey, out removedItem);
+          texture.SafeDispose();
         }
       }
     }
@@ -793,12 +788,9 @@ namespace MediaPortal.GUI.Library
 
     private static void ClearTextureCache()
     {
-      CachedTexture[] textures;
-      lock (_cacheTextures)
-      {
-        textures = _cacheTextures.Values.ToArray();
-        _cacheTextures.Clear();
-      }
+      CachedTexture[] textures = _cacheTextures.Values.ToArray();
+
+      _cacheTextures.Clear();
 
       foreach (CachedTexture texture in textures)
       {
@@ -808,12 +800,9 @@ namespace MediaPortal.GUI.Library
 
     private static void ClearDownloadCache()
     {
-      DownloadedImage[] images;
-      lock (_cacheDownload)
-      {
-        images = _cacheDownload.Values.ToArray();
-        _cacheDownload.Clear();
-      }
+      DownloadedImage[] images = _cacheDownload.Values.ToArray();
+      
+      _cacheDownload.Clear();
 
       foreach (DownloadedImage image in images)
       {
