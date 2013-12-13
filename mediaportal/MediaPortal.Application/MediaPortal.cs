@@ -1648,6 +1648,7 @@ public class MediaPortalApp : D3D, IRender
             case 1:
               Log.Info("Main: The display is on");
               IsDisplayTurnedOn = true;
+              ShowMouseCursor(false);
               break;
             case 2:
               Log.Info("Main: The display is dimmed");
@@ -1663,6 +1664,7 @@ public class MediaPortalApp : D3D, IRender
             case 0:
               Log.Info("Main: User is providing input to the session");
               IsUserPresent = true;
+              ShowMouseCursor(false);
               break;
             case 2:
               Log.Info("Main: The user activity timeout has elapsed with no interaction from the user");
@@ -1847,6 +1849,10 @@ public class MediaPortalApp : D3D, IRender
     {
       SetBounds(GUIGraphicsContext.currentScreen.Bounds.X, GUIGraphicsContext.currentScreen.Bounds.Y, GUIGraphicsContext.currentScreen.Bounds.Width, GUIGraphicsContext.currentScreen.Bounds.Height);
     }
+
+    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+
     msg.Result = (IntPtr)1;
   }
 
@@ -1876,7 +1882,7 @@ public class MediaPortalApp : D3D, IRender
 
     // check if display changes in case no DISPLAYCHANGE message is send by Windows
     Screen screen = Screen.FromControl(this);
-    if (!Equals(screen, GUIGraphicsContext.currentScreen))
+    if (!Equals(screen, GUIGraphicsContext.currentScreen) && !_firstLoadedScreen)
     {
       Log.Info("Main: Screen MP is displayed on changed from {0} to {1}", GetCleanDisplayName(GUIGraphicsContext.currentScreen), GetCleanDisplayName(screen));
       if (screen.Bounds != GUIGraphicsContext.currentScreen.Bounds)
@@ -1922,6 +1928,8 @@ public class MediaPortalApp : D3D, IRender
     }
     Log.Debug("Main: WM_GETMINMAXINFO End (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
           mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
+    // needed to avoid cursor show when MP windows change (for ex when refesh rate is working)
+    _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
   }
 
 
@@ -4019,19 +4027,26 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void OnMouseWheel(MouseEventArgs e)
   {
+    //Update Timer
+    MouseTimeOutTimer = DateTime.Now;
+
     if (e.Delta > 0)
     {
+      base.MouseMoveEvent(e);
       Point p = ScaleCursorPosition(e.Location);
       var action = new Action(Action.ActionType.ACTION_MOVE_UP, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity(); 
       GUIGraphicsContext.OnAction(action);
+      base.MouseMoveEvent(e);
     }
     else if (e.Delta < 0)
     {
+      base.MouseMoveEvent(e);
       Point p = ScaleCursorPosition(e.Location);
       var action = new Action(Action.ActionType.ACTION_MOVE_DOWN, p.X, p.Y) {MouseButton = e.Button};
       GUIGraphicsContext.ResetLastActivity();
       GUIGraphicsContext.OnAction(action);
+      base.MouseMoveEvent(e);
     }
     base.OnMouseWheel(e);
   }
@@ -4043,9 +4058,11 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="e"></param>
   protected override void MouseMoveEvent(MouseEventArgs e)
   {
+    Cursor current = Cursor.Current;
     // Disable first mouse action when mouse was hidden
-    if (!MouseCursor)
+    if (!MouseCursor || current == null)
     {
+      _moveMouseCursorPosition = Cursor.Position;
       base.MouseMoveEvent(e);
     }
     else
@@ -4067,6 +4084,11 @@ public class MediaPortalApp : D3D, IRender
           Point p = ScaleCursorPosition(e.Location);
           var action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y) {MouseButton = e.Button};
           GUIGraphicsContext.OnAction(action);
+          if (MouseCursor && current != null)
+          {
+            MouseTimeOutTimer = DateTime.Now;
+            Cursor.Show();
+          }
         }
       }
     }
@@ -4117,8 +4139,12 @@ public class MediaPortalApp : D3D, IRender
   {
     GUIGraphicsContext.ResetLastActivity();
 
+    // Click event
+    MouseTimeOutTimer = DateTime.Now;
+
     // Disable first mouse action when mouse was hidden
-    if (!MouseCursor)
+    Cursor current = Cursor.Current;
+    if (!MouseCursor || current == null)
     {
       base.MouseClickEvent(e);
     }
@@ -4131,6 +4157,12 @@ public class MediaPortalApp : D3D, IRender
 
       var actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, p.X, p.Y);
       GUIGraphicsContext.OnAction(actionMove);
+
+      if (MouseCursor && current != null)
+      {
+        MouseTimeOutTimer = DateTime.Now;
+        Cursor.Show();
+      }
 
       if (e.Button == MouseButtons.Left)
       {
