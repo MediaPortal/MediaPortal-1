@@ -581,7 +581,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case Action.ActionType.ACTION_PAGE_UP:
           {
-            if (FullScreen)
+            if (FullScreen && CurrentAudioStream != 0)
             {
               Log.Debug("BASS: Switch to Previous Vis");
               VizManager.GetPrevVis();
@@ -591,7 +591,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
-            if (FullScreen)
+            if (FullScreen && CurrentAudioStream != 0)
             {
               Log.Info("BASS: Switch to Next Vis");
               VizManager.GetNextVis();
