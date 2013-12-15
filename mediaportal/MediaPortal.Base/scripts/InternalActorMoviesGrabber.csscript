@@ -65,7 +65,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     _strBody = GetPage(strUrl, "utf-8", out uri);
     string regex = @"Poster"".src=""(?<poster>.*?_V1)";
     thumb = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
-    
+
     if (!string.IsNullOrEmpty(thumb))
     {
       int thumbSize = 400; // pixels size of picture -> horizontal
@@ -77,105 +77,106 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   }
 
   private void GetExtraDataImdb(ref IMDBMovie movie)
+  {
+    //Update title/Year
+    string rxTitleBlock = "<title>.*?</title>";
+    string titleBlock =
+      Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
+    string regex =
+      @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
+    string title =
+      Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
+    int year = 0;
+    int.TryParse(
+      Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim
+        (), out year);
+
+    if (title != string.Empty)
     {
-      //Update title/Year
-      string rxTitleBlock = "<title>.*?</title>";
-      string titleBlock =
-        Regex.Match(_strBody, rxTitleBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value.Trim();
-      string regex =
-        @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})|<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\?{4})";
-      string title =
-        Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieTitle"].Value;
-      int year = 0;
-      int.TryParse(
-        Regex.Match(titleBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["movieYear"].Value.Trim
-          (), out year);
-
-      if (title != string.Empty)
-      {
-        movie.Title = title.Replace("IMDb -", string.Empty).Trim();
-      }
-
-      if (year == 0)
-      {
-        year = DateTime.Today.Year + 3;
-      }
-
-      movie.Year = year;
-
-      // Director
-      string rxDirectorsBlock = @"<h3\sclass=""inline-block"">Director[s]?:</h3>(?<director>.*?)</span>";
-      string directorsBlock =
-        Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
-      regex = @"<span\sitemprop=""name"">(?<director>.*?)</span>";
-      string director = 
-        Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
-
-
-      if (director == string.Empty)
-      {
-        director = Strings.Unknown;
-      }
-      else
-      {
-        movie.WritingCredits = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
-      }
-
-      // Genre
-      regex = @"<h3>Genres</h3>(?<genre>.+?)</section>";
-      string genre =
-        Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
-      genre = HttpUtility.HtmlDecode(Utils.stripHTMLtags(genre.Replace("\n", "")));
-      if (string.IsNullOrEmpty(genre))
-      {
-        genre = Strings.Unknown;
-      }
-      else
-      {
-        genre = genre.Replace(" ", "");
-        genre = genre.Replace("|", ", ");
-      }
-      movie.SingleGenre = genre;
-
-      // Rating
-      regex = @"itemprop=""contentRating""\scontent=""(?<rating>.+?)""";
-      string mpaaRating =
-        Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
-      if (mpaaRating == string.Empty)
-      {
-        mpaaRating = Strings.Unknown;
-      }
-
-      movie.MPARating = mpaaRating;
-
-      // Actors
-      regex = @"itemprop='url'>\s<strong>(?<actor>.*?)</strong>";
-      MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-      string strActor = string.Empty;
-      int actorNo = 0;
-
-      foreach (Match actor in actors)
-      {
-        string tmpActor = actor.Groups["actor"].Value;
-        tmpActor = HttpUtility.HtmlDecode(tmpActor);
-
-        if (tmpActor != string.Empty && actorNo < 4)
-        {
-          strActor += tmpActor + " / ";
-          actorNo ++;
-        }
-      }
-
-      int index = strActor.LastIndexOf(" /");
-
-      if (index > 0)
-      {
-        strActor = strActor.Remove(index);
-      }
-
-      movie.Cast = strActor;
-      _strBody = string.Empty;
+      movie.Title = title.Replace("IMDb -", string.Empty).Trim();
     }
+
+    if (year == 0)
+    {
+      year = DateTime.Today.Year + 3;
+    }
+
+    movie.Year = year;
+
+    // Director
+    string rxDirectorsBlock = @"<h3\sclass=""inline-block"">Director[s]?:</h3>(?<director>.*?)</span>";
+    string directorsBlock =
+      Regex.Match(_strBody, rxDirectorsBlock, RegexOptions.Singleline | RegexOptions.IgnoreCase).Value;
+    regex = @"<span\sitemprop=""name"">(?<director>.*?)</span>";
+    string director =
+      Regex.Match(directorsBlock, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["director"].Value;
+
+
+    if (director == string.Empty)
+    {
+      director = Strings.Unknown;
+    }
+    else
+    {
+      movie.WritingCredits = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
+			if (movie.WritingCredits != null) movie.WritingCredits = movie.WritingCredits.Replace(",", ", ");
+    }
+
+    // Genre
+    regex = @"<h3>Genres</h3>(?<genre>.+?)</section>";
+    string genre =
+      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["genre"].Value.Trim();
+    genre = HttpUtility.HtmlDecode(Utils.stripHTMLtags(genre.Replace("\n", "")));
+    if (string.IsNullOrEmpty(genre))
+    {
+      genre = Strings.Unknown;
+    }
+    else
+    {
+      genre = genre.Replace(" ", "");
+      genre = genre.Replace("|", ", ");
+    }
+    movie.SingleGenre = genre;
+
+    // Rating
+    regex = @"itemprop=""contentRating""\scontent=""(?<rating>.+?)""";
+    string mpaaRating =
+      Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["rating"].Value.Trim();
+    if (mpaaRating == string.Empty)
+    {
+      mpaaRating = Strings.Unknown;
+    }
+
+    movie.MPARating = mpaaRating;
+
+    // Actors
+    regex = @"itemprop='url'>\s<strong>(?<actor>.*?)</strong>";
+    MatchCollection actors = Regex.Matches(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    string strActor = string.Empty;
+    int actorNo = 0;
+
+    foreach (Match actor in actors)
+    {
+      string tmpActor = actor.Groups["actor"].Value;
+      tmpActor = HttpUtility.HtmlDecode(tmpActor);
+
+      if (tmpActor != string.Empty && actorNo < 4)
+      {
+        strActor += tmpActor + " / ";
+        actorNo++;
+      }
+    }
+
+    int index = strActor.LastIndexOf(" /");
+
+    if (index > 0)
+    {
+      strActor = strActor.Remove(index);
+    }
+
+    movie.Cast = strActor;
+    _strBody = string.Empty;
+  }
 
   private string GetPlot(string strUrl, string regex, ref string strBody)
   {
@@ -572,28 +573,26 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     if (writer) actorUrl = string.Format("http://m.imdb.com/name/{0}/filmotype/writer", imdbActor.IMDBActorID);
 
     actorHtml = GetPage(actorUrl, "utf-8", out uri);
-    
     if (string.IsNullOrEmpty(actorHtml)) return;
-    
     HTMLParser parser = new HTMLParser();
     parser.Content = actorHtml;
-    
     // Get films and roles block
-    if (!parser.skipToEndOf(">Filmography</a>"))
+    if (!parser.skipToEndOf("<section id=\"name-filmo-content\">"))
     {
       MediaPortal.GUI.Library.Log.Error("GetActorMovies(): HTMLparser content is empty.");
     }
     else
     {
-      parser.skipToEndOf(">Filmography</a>");
+      parser.skipToEndOf("<section id=\"name-filmo-content\">");
       parser.extractTo("</section>", ref movies);
       parser.Content = movies;
 
       // Parse block for evey film and get year, title and it's imdbID and role
-      while (parser.skipToStartOf("<div class=\"title\"> "))
+      while (parser.skipToStartOf("<div class=\"col-xs-12"))
       {
         if (parser.skipToEndOf("<a href=\""))
         {
+          //HTMLParser movieParser = new HTMLParser(movie);
           string title = string.Empty;
           string strYear = string.Empty;
           string role = string.Empty;
@@ -604,11 +603,12 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
           parser.extractTo("/", ref imdbID);
 
           // Title
-          parser.skipToEndOf("\">");
-          parser.extractTo("</a>", ref title);
+          //movieParser.resetPosition();
+          parser.skipToEndOf("<span class=\"h3\">");
+          parser.extractTo("</span>", ref title);
+
           title = CleanCrlf(title);
 
-          // Extract film type, year and role (they are together in one string in parenthesis)
           parser.extractTo("</div>", ref strYear);
 
           // Skip if it's no movie (year part contain film type)
@@ -625,9 +625,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             // Roles actor
             if (!director && !writer)
             {
-              if (parser.skipToEndOf("<div class=\"detail\">"))
+              if (parser.skipToEndOf("<p class=\"h4 unbold\">"))
               {
-                parser.extractTo("</div>", ref role);
+                parser.extractTo("</p>", ref role);
                 role = CleanCrlf(role);
               }
             }
@@ -639,9 +639,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             {
               string wRole = string.Empty;
 
-              if (parser.skipToEndOf("<div class=\"detail\">"))
+              if (parser.skipToEndOf("<p class=\"h4 unbold\">"))
               {
-                parser.extractTo("</div>", ref wRole);
+                parser.extractTo("</p>", ref wRole);
                 wRole = CleanCrlf(wRole);
               }
 
@@ -952,7 +952,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         req.Timeout = 20000;
-				req.ReadWriteTimeout = 20000;
+        req.ReadWriteTimeout = 20000;
       }
       catch (Exception) { }
       result = req.GetResponse();
