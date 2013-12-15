@@ -284,6 +284,9 @@
       <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="ffmpeg">
+      <HintPath>..\MediaPortal.Base\MovieThumbnailer\ffmpeg.exe</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -1664,6 +1667,9 @@
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

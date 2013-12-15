@@ -479,6 +479,9 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
   File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
