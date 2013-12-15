@@ -1033,12 +1033,26 @@ void CLibBlurayWrapper::LogDiskInfo(const BLURAY_DISC_INFO* pInfo)
     LogDebug("bdplus_handled:         %d", pInfo->bdplus_handled);
     LogDebug("bluray_detected:        %d", pInfo->bluray_detected);
     LogDebug("first_play_supported:   %d", pInfo->first_play_supported);
-    LogDebug("libaacs_detected:       %d", pInfo->libaacs_detected);
-    LogDebug("libbdplus_detected:     %d", pInfo->libbdplus_detected);
     LogDebug("num_bdj_titles:         %d", pInfo->num_bdj_titles);
     LogDebug("num_hdmv_titles:        %d", pInfo->num_hdmv_titles);
     LogDebug("num_unsupported_titles: %d", pInfo->num_unsupported_titles);
     LogDebug("top_menu_supported:     %d", pInfo->top_menu_supported);
+    LogDebug("libaacs_detected:       %d", pInfo->libaacs_detected);
+
+    if (pInfo->libbdplus_detected)
+    {
+      LogDebug("libbdplus_detected:     1");
+      LogDebug("bdplus_date:  d-%02d-%02d", pInfo->bdplus_date >> 16, (pInfo->bdplus_date >> 8) & 0xff, pInfo->bdplus_date & 0xff);
+      LogDebug("bdplus_handled:         %d", pInfo->bdplus_handled);
+    }
+
+    if (pInfo->bdj_supported)
+    {
+      LogDebug("bdj_supported:          1", pInfo->bdj_supported);
+      LogDebug("libjvm_detected:        %d", pInfo->libjvm_detected);
+      LogDebug("bdj_handled:            %d", pInfo->bdj_handled);
+    }
+
     LogDebug("--------------------------");
   }
   else
