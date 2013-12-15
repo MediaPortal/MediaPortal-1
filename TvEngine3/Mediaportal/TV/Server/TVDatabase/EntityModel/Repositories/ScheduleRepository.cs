@@ -8,13 +8,13 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   public class ScheduleRepository : GenericRepository<Model>, IScheduleRepository
   {
-    public ScheduleRepository()    
+    public ScheduleRepository()
     {
     }
 
     public ScheduleRepository(bool trackingEnabled)
       : base(trackingEnabled)
-    {      
+    {
     }
 
     public ScheduleRepository(Model context)
@@ -29,10 +29,9 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
         .Include(s => s.Schedules)
         .Include(s => s.ConflictingSchedules)
         .Include(s => s.Conflicts)
-        .Include(s => s.ParentSchedule)        
-        .Include(s => s.Channel)        
-      ;       
-       
+        .Include(s => s.ParentSchedule)
+        .Include(s => s.Channel);
+
       return includeRelations;
     }
 
@@ -83,5 +82,5 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 
       return query;
     }
-  }  
+  }
 }
