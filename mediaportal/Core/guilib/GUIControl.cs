@@ -651,18 +651,19 @@ namespace MediaPortal.GUI.Library
         if (Focus && !value)
         {
           QueueAnimation(AnimationType.Unfocus);
+          IsFocused = value;
         }
         else if (!Focus && value)
         {
           QueueAnimation(AnimationType.Focus);
 
+          IsFocused = value;
           if (_onfocus.Length != 0)
           {
             GUIPropertyManager.Parse(_onfocus, GUIExpressionManager.ExpressionOptions.EVALUATE_ALWAYS);
           }
         }
         //SetValue(IsFocusedProperty, value);
-        IsFocused = value;
       }
     }
 

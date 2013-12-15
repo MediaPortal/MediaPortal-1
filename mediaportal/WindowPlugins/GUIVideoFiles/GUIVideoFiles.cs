@@ -188,7 +188,6 @@ namespace MediaPortal.GUI.Video
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
 
-    //private static IMDB.InternalActorsScriptGrabber _internalGrabber = new IMDB.InternalActorsScriptGrabber();
     private static VideosShareWatcherHelper _videoWatcher = null;
 
     private bool _adddDbViewsToShares = false;
@@ -1268,7 +1267,6 @@ namespace MediaPortal.GUI.Video
               }
 
               dlg.AddLocalizedString(368); //IMDB
-              dlg.AddLocalizedString(654); //Eject
             }
             // Folder
             else if (item.IsFolder)
@@ -1313,11 +1311,6 @@ namespace MediaPortal.GUI.Video
                     }
                   }
                 }
-              }
-
-              if (Util.Utils.getDriveType(item.Path) == 5)
-              {
-                dlg.AddLocalizedString(654); //Eject            
               }
 
               if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
@@ -1365,20 +1358,47 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
-        if (Util.Utils.IsRemovable(item.Path))
+
+        #region Eject/Load
+
+        // CD/DVD/BD
+        if (Util.Utils.getDriveType(item.Path) == 5)
+        {
+          if (item.Path != null)
+          {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+            // There is no easy way in NET to detect open tray so we will check
+            // if media is inside (load will be visible also in case that tray is closed but
+            // media is not loaded)
+            if (!driveInfo.IsReady)
+            {
+              dlg.AddLocalizedString(607); //Load  
+            }
+
+            dlg.AddLocalizedString(654); //Eject  
+          }
+        }
+        
+        // Removable/USB HDD
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
 
+        #endregion
+
         dlg.AddLocalizedString(1299); // Refresh current directory
-        dlg.AddLocalizedString(1262); // Update grabber scripts
-        dlg.AddLocalizedString(1307); // Update internal grabber scripts
-        dlg.AddLocalizedString(1263); // Set default grabber
-        if (!item.IsFolder)
-        {
-          dlg.AddLocalizedString(1984); // Refresh thumb
-        }
       }
+
+      dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
+     
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(1984); // Refresh thumb
+      }     
 
       dlg.DoModal(GetID);
 
@@ -1403,6 +1423,10 @@ namespace MediaPortal.GUI.Video
 
         case 136: // show playlist
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_PLAYLIST);
+          break;
+
+        case 607: // Load (only CDROM)
+          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
           break;
 
         case 654: // Eject
@@ -1534,7 +1558,7 @@ namespace MediaPortal.GUI.Video
           if (!ScrapperRunning)
           {
             ScrapperRunning = true;
-          	int currentIndex = facadeLayout.SelectedListItemIndex;
+            int currentSelectedIndex = facadeLayout.SelectedListItemIndex;
             ArrayList nfoFiles = new ArrayList();
             GetNfoFiles(item.Path, ref nfoFiles);
             IMDBFetcher fetcher = new IMDBFetcher(this);
@@ -1543,7 +1567,7 @@ namespace MediaPortal.GUI.Video
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(msg);
             LoadDirectory(_currentFolder, true);
-          	facadeLayout.SelectedListItemIndex = currentIndex;
+            facadeLayout.SelectedListItemIndex = currentSelectedIndex;
             ScrapperRunning = false;
           }
           break;
@@ -1571,9 +1595,28 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 831:
-          string message;
-
-          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          string message = string.Empty;
+          
+          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          {
+            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+              pDlgOK.SetLine(2, string.Empty);
+              pDlgOK.SetLine(3, message);
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            else
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+          }
+          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
