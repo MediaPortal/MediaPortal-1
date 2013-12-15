@@ -142,6 +142,7 @@ public:
 
   void LogAction(int pKey);
   void LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent);
+  char* BDErrorAsString(const BD_EVENT& pEvent);
   void LogDiskInfo(const BLURAY_DISC_INFO* pInfo);
   void LogTitleInfo(int pIndex, bool ignoreShort = false);
 

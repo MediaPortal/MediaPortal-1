@@ -906,13 +906,13 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
       LogDebug("    BD_EVENT_NONE - %d", pEvent.param);
     break;
   case BD_EVENT_ERROR:
-    LogDebug("    BD_EVENT_ERROR - %d", pEvent.param);
+    LogDebug("    BD_EVENT_ERROR - %s", BDErrorAsString(pEvent));
     break;
   case BD_EVENT_READ_ERROR:
     LogDebug("    BD_EVENT_READ_ERROR - %d", pEvent.param);
     break;
   case BD_EVENT_ENCRYPTED:
-    LogDebug("    BD_EVENT_ENCRYPTED - %d", pEvent.param);
+    LogDebug("    BD_EVENT_ENCRYPTED - %s", BDErrorAsString(pEvent));
     break;
   case BD_EVENT_ANGLE:
     LogDebug("    BD_EVENT_ANGLE - %d", pEvent.param);
@@ -1001,6 +1001,23 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
 
   default:
     LogDebug("    ERROR - unknown event: %d param %d", pEvent.event, pEvent.param);
+  }
+}
+
+char* CLibBlurayWrapper::BDErrorAsString(const BD_EVENT& pEvent)
+{
+  switch(pEvent.param)
+  {
+  case BD_ERROR_HDMV:
+    return "HDMV";
+  case BD_ERROR_BDJ:
+    return "BD-J";
+  case BD_ERROR_AACS:
+    return "AACS";
+  case BD_ERROR_BDPLUS:
+    return "BDPLUS";
+  default:
+    return "UNKOWN";
   }
 }
 
