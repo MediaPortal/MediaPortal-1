@@ -596,7 +596,27 @@ namespace TvLibrary.Implementations.DVB
         private const int NbcTuningParamsSize = 20;
         private const int TbsAccessParamsSize = 0x218;
         //private static readonly string[] TunersWithCiSlots = new string[] { "TBS 5980 CI Tuner", "TBS DVBC Tuner", "TBS 6991 DVBS/S2 Tuner A", "TBS 6991 DVBS/S2 Tuner B", "TBS 6992 DVBS/S2 Tuner A", "TBS 6992 DVBS/S2 Tuner B", "TBS 6928 DVBS/S2 Tuner", "TBS 5880 DVB-T/T2 Tuner", "TBS 6618 BDA DVBC Tuner", "TBS 5880 DVBC Tuner" };
-        private static readonly string[] TunersWithCiSlots = new string[] { "TBS 5881 DVB-T/T2 Tuner", "TBS 5881 DVBC Tuner", "TBS 6680 BDA DVBC Tuner A", "TBS 6680 BDA DVBC Tuner B", "TBS 5990 DVBS/S2 Tuner A", "TBS 5990 DVBS/S2 Tuner B", "TBS 5680 DVBC Tuner", "TBS 5980 CI Tuner", "TBS DVBC Tuner", "TBS 6991 DVBS/S2 Tuner A", "TBS 6991 DVBS/S2 Tuner B", "TBS 6992 DVBS/S2 Tuner A", "TBS 6992 DVBS/S2 Tuner B", "TBS 6928 DVBS/S2 Tuner", "TBS 5880 DVB-T/T2 Tuner", "TBS 6618 BDA DVBC Tuner",  "TBS 5880 DVBC Tuner"  };
+        private static readonly string[] TunersWithCiSlots = new string[] { "TBS DVBC Tuner",
+                                                                            "TBS 5880 DVB-T/T2 Tuner", 
+                                                                            "TBS 5880 DVBC Tuner",
+                                                                            "TBS 5881 DVB-T/T2 Tuner",
+                                                                            "TBS 5881 DVBC Tuner", 
+                                                                            "TBS 5680 DVBC Tuner", 
+                                                                            "TBS 5980 CI Tuner",   
+                                                                            "TBS 5990 DVBS/S2 Tuner A", 
+                                                                            "TBS 5990 DVBS/S2 Tuner B",
+                                                                            "TBS 6290 DVBT/T2 Tuner A",
+                                                                            "TBS 6290 DVBT/T2 Tuner B",
+                                                                            "TBS 6290 DVBC Tuner A",
+                                                                            "TBS 6290 DVBC Tuner B",
+                                                                            "TBS 6680 BDA DVBC Tuner A", 
+                                                                            "TBS 6680 BDA DVBC Tuner B", 
+                                                                            "TBS 6928 DVBS/S2 Tuner",  
+                                                                            "TBS 6991 DVBS/S2 Tuner A", 
+                                                                            "TBS 6991 DVBS/S2 Tuner B", 
+                                                                            "TBS 6992 DVBS/S2 Tuner A", 
+                                                                            "TBS 6992 DVBS/S2 Tuner B", 
+                                                                            "TBS 6618 BDA DVBC Tuner"  };
 
 
         private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 170, 0x87, 0xb5, 0xe1, 220, 0x41, 0x13);
