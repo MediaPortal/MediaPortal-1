@@ -359,6 +359,11 @@ void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
   area.right = buffer->dirty[BD_OVERLAY_IG].x1;
   area.bottom = buffer->dirty[BD_OVERLAY_IG].y1;
 
+  area.left = 0;
+  area.right = 1920;
+  area.top = 0;
+  area.bottom = 1080;
+
   D3DLOCKED_RECT lockedRect = {};
 
   HRESULT hr = m_pARGBTextures[BD_OVERLAY_IG]->LockRect(0, &lockedRect, &area, 0);
@@ -373,7 +378,7 @@ void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
 
   m_ARGBBuffer.buf[BD_OVERLAY_IG] = (uint32_t*)lockedRect.pBits;
   m_ARGBBuffer.width = lockedRect.Pitch / 4;
-  m_ARGBBuffer.height = height + 1;
+  m_ARGBBuffer.height = height;
 
   AdjustDirtyRect(BD_OVERLAY_IG, area.left, area.top, width, height);
 }
