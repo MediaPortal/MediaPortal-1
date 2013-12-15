@@ -190,6 +190,8 @@ public class MediaPortalApp : D3D, IRender
   private const string ConfigMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
   #pragma warning restore 169
 
+  private ShellNotifications Notifications = new ShellNotifications();
+
   #endregion
 
   #region enumns
@@ -1388,6 +1390,41 @@ public class MediaPortalApp : D3D, IRender
     {
       switch (msg.Msg)
       {
+        case (int)ShellNotifications.WmShnotify:
+          NotifyInfos info = new NotifyInfos((ShellNotifications.SHCNE)(int)msg.LParam);
+          
+          if (Notifications.NotificationReceipt(msg.WParam, msg.LParam, ref info))
+          {
+            if (info.Notification == ShellNotifications.SHCNE.SHCNE_MEDIAINSERTED)
+            {
+              string path = info.Item1;
+
+              if (Utils.IsRemovable(path))
+              {
+                string driveName = Utils.GetDriveName(info.Item1);
+                GUIMessage gmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+                gmsg.Label = info.Item1;
+                gmsg.Label2 = String.Format("({0}) {1}", path, driveName);
+                GUIGraphicsContext.SendMessage(gmsg);
+              }
+            }
+
+            if (info.Notification == ShellNotifications.SHCNE.SHCNE_MEDIAREMOVED)
+            {
+              string path = info.Item1;
+
+              if (Utils.IsRemovable(path))
+              {
+                string driveName = Utils.GetDriveName(info.Item1);
+                GUIMessage gmsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE, 0, 0, 0, 0, 0, 0);
+                gmsg.Label = info.Item1;
+                gmsg.Label2 = String.Format("({0}) {1}", path, driveName);
+                GUIGraphicsContext.SendMessage(gmsg);
+              }
+            }
+          }
+          return;
+
         // power management
         case WM_POWERBROADCAST:
           OnPowerBroadcast(ref msg);
@@ -2383,6 +2420,9 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
+    // Register shell notifications to wndproc
+    Notifications.RegisterChangeNotify(this.Handle, ShellNotifications.CSIDL.CSIDL_DESKTOP, true);
+
     // Initializing input devices...
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(63));
     Log.Info("Main: Initializing Input Devices");
@@ -2686,6 +2726,7 @@ public class MediaPortalApp : D3D, IRender
     }
     UnregisterForDeviceNotification();
     UnregisterForPowerSettingNotitication();
+    Notifications.UnregisterChangeNotify();
   }
 
 
@@ -4402,6 +4443,24 @@ public class MediaPortalApp : D3D, IRender
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED:
           // reset idle timer for consistent timing after end 0f playback
           SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_ADD_REMOVABLE_DRIVE:
+          if (!Utils.IsRemovable(message.Label))
+          {
+            VirtualDirectories.Instance.Movies.AddRemovableDrive(message.Label, message.Label2);
+            VirtualDirectories.Instance.Music.AddRemovableDrive(message.Label, message.Label2);
+            VirtualDirectories.Instance.Pictures.AddRemovableDrive(message.Label, message.Label2);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
+          if (!Utils.IsRemovable(message.Label))
+          {
+            VirtualDirectories.Instance.Movies.Remove(message.Label);
+            VirtualDirectories.Instance.Music.Remove(message.Label);
+            VirtualDirectories.Instance.Pictures.Remove(message.Label);
+          }
           break;
       }
     }
