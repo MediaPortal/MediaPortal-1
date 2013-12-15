@@ -595,32 +595,30 @@ namespace TvLibrary.Implementations.DVB
         private const int MmiResponseBufferSize = 0x800;
         private const int NbcTuningParamsSize = 20;
         private const int TbsAccessParamsSize = 0x218;
-        //private static readonly string[] TunersWithCiSlots = new string[] { "TBS 5980 CI Tuner", "TBS DVBC Tuner", "TBS 6991 DVBS/S2 Tuner A", "TBS 6991 DVBS/S2 Tuner B", "TBS 6992 DVBS/S2 Tuner A", "TBS 6992 DVBS/S2 Tuner B", "TBS 6928 DVBS/S2 Tuner", "TBS 5880 DVB-T/T2 Tuner", "TBS 6618 BDA DVBC Tuner", "TBS 5880 DVBC Tuner" };
         private static readonly string[] TunersWithCiSlots = new string[] { "TBS DVBC Tuner",
-                                                                            "TBS 5880 DVB-T/T2 Tuner", 
-                                                                            "TBS 5880 DVBC Tuner",
-                                                                            "TBS 5881 DVB-T/T2 Tuner",
-                                                                            "TBS 5881 DVBC Tuner", 
-                                                                            "TBS 5680 DVBC Tuner", 
-                                                                            "TBS 5980 CI Tuner",   
-                                                                            "TBS 5990 DVBS/S2 Tuner A", 
-                                                                            "TBS 5990 DVBS/S2 Tuner B",
-                                                                            "TBS 6290 DVBT/T2 Tuner A",
-                                                                            "TBS 6290 DVBT/T2 Tuner B",
-                                                                            "TBS 6290 DVBC Tuner A",
-                                                                            "TBS 6290 DVBC Tuner B",
-                                                                            "TBS 6680 BDA DVBC Tuner A", 
-                                                                            "TBS 6680 BDA DVBC Tuner B", 
-                                                                            "TBS 6928 DVBS/S2 Tuner",  
-                                                                            "TBS 6991 DVBS/S2 Tuner A", 
-                                                                            "TBS 6991 DVBS/S2 Tuner B", 
-                                                                            "TBS 6992 DVBS/S2 Tuner A", 
-                                                                            "TBS 6992 DVBS/S2 Tuner B", 
-                                                                            "TBS 6618 BDA DVBC Tuner"  };
-
+            "TBS 5880 DVB-T/T2 Tuner",
+            "TBS 5880 DVBC Tuner",
+            "TBS 5881 DVB-T/T2 Tuner",
+            "TBS 5881 DVBC Tuner",
+            "TBS 5680 DVBC Tuner",
+            "TBS 5980 CI Tuner", 
+            "TBS 5990 DVBS/S2 Tuner A",
+            "TBS 5990 DVBS/S2 Tuner B",
+            "TBS 6290 DVBT/T2 Tuner A",
+            "TBS 6290 DVBT/T2 Tuner B",
+            "TBS 6290 DVBC Tuner A",
+            "TBS 6290 DVBC Tuner B",
+            "TBS 6680 BDA DVBC Tuner A",
+            "TBS 6680 BDA DVBC Tuner B",
+            "TBS 6928 DVBS/S2 Tuner", 
+            "TBS 6991 DVBS/S2 Tuner A",
+            "TBS 6991 DVBS/S2 Tuner B",
+            "TBS 6992 DVBS/S2 Tuner A",
+            "TBS 6992 DVBS/S2 Tuner B",
+            "TBS 6618 BDA DVBC Tuner" };
 
         private static readonly Guid UsbBdaExtensionPropertySet = new Guid(0xc6efe5eb, 0x855a, 0x4f1b, 0xb7, 170, 0x87, 0xb5, 0xe1, 220, 0x41, 0x13);
-        
+
         private const int MmiHandlerThreadSleepTime = 2000;   // unit = ms
         private const int TbsNBCParamsSize = 20;
         private uint _deviceIndex;
@@ -724,7 +722,7 @@ namespace TvLibrary.Implementations.DVB
         #endregion
 
         #region Constructors
-        
+
         /// <summary>
         /// Turbosight constructor
         /// </summary>
@@ -740,7 +738,7 @@ namespace TvLibrary.Implementations.DVB
             {
                 this._tunerFilterName = FilterGraphTools.GetFilterName(tunerFilter);
                 _deviceIndex = deviceIndex;
-                
+
                 if ((this._tunerFilterName == null) || (!this._tunerFilterName.StartsWith("TBS") && !this._tunerFilterName.StartsWith("QBOX")))
                 {
                     TvLibrary.Log.Log.Debug("Turbosight: tuner filter name does not match", new object[0]);
@@ -814,29 +812,13 @@ namespace TvLibrary.Implementations.DVB
 
         #region Dynamic DLL handling
 
-        private void LoadCIApi_Dynamic()
-        {
-            _apiFileName = string.Format("{0}\\TBSCiApi{1}.dll", Path.GetTempPath(), _deviceIndex);
-            string source = string.Format(
-                "{0}\\TBSCiApi.dll",
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            try
-            {
-                File.Copy(source, _apiFileName, true);
-            }
-            catch (Exception ex)
-            {
-                //File might be in use. Then we skip copy
-            }
-            _apiLibraryHandle = LoadLibraryEx(
-                _apiFileName,
-                IntPtr.Zero,
-                LoadLibraryFlags.LOAD_WITH_ALTERED_SEARCH_PATH);
-        }
-
         private void LoadCIApi()
         {
-            _apiFileName = string.Format("TBSCiApi{1}.dll", Path.GetTempPath(), _deviceIndex);
+            _apiFileName = string.Format("TBSCiApi{0}.dll", _deviceIndex);
+            if (!File.Exists(_apiFileName))
+            {
+                File.Copy("TBSCIApi.dll", _apiFileName);
+            }
             _apiLibraryHandle = LoadLibraryEx(
                 _apiFileName,
                 IntPtr.Zero,
@@ -845,7 +827,6 @@ namespace TvLibrary.Implementations.DVB
             {
                 TvLibrary.Log.Log.Debug(string.Format("Turbosight: unable to load {0}", _apiFileName), new object[0]);
             }
-            _apiFileName = string.Format("{0}\\TBSCiApi{1}.dll", Path.GetTempPath(), _deviceIndex);
         }
 
         #endregion
@@ -1375,7 +1356,7 @@ namespace TvLibrary.Implementations.DVB
             }
             if (!this._isCamPresent)
             {
-                TvLibrary.Log.Log.Debug("Turbosight: the CAM is not present"); 
+                TvLibrary.Log.Log.Debug("Turbosight: the CAM is not present");
                 return false;
             }
             lock (this)
@@ -1450,16 +1431,6 @@ namespace TvLibrary.Implementations.DVB
             // MBU
             _tunerFilter = null;            // MBU
             _isTurbosight = false;          // MBU
-
-            //Try to clean up temp DLLs
-            try
-            {
-                File.Delete(_apiFileName);
-            }
-            catch (Exception)
-            {
-                //Ok we could not delete file.
-            }
 
         }
 

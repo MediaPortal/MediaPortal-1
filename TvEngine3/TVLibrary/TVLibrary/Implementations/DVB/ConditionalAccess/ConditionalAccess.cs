@@ -134,18 +134,19 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
+          Log.Log.WriteFile("Check for TBS");
 
-            Log.Log.WriteFile("Check for TBS");
-
-            uint deviceIndex = (uint)Turbosight.GetDeviceIndex(card);
-            _turbosight = new Turbosight(tunerFilter, deviceIndex);
-            if (_turbosight.IsTurbosight)
-            {
-                this._diSEqCMotor = new DiSEqCMotor(_turbosight);
-                _ciMenu = _turbosight;
-                return;
-            }
-
+          // Lookup device index of current card. only counting KNC cards by device path
+          uint deviceIndex = (uint)Turbosight.GetDeviceIndex(card);
+          _turbosight = new Turbosight(tunerFilter, deviceIndex);
+          if (_turbosight.IsTurbosight)
+          {
+              this._diSEqCMotor = new DiSEqCMotor(_turbosight);
+              _ciMenu = _turbosight;
+              return;
+          }
+          Release.DisposeToNull(ref _turbosight);
+            
           Log.Log.WriteFile("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
@@ -695,6 +696,7 @@ namespace TvLibrary.Implementations.DVB
         {
             return _turbosight.SendPmt(ListManagementType.Only, CommandIdType.Descrambling, context.PMT, context.PMTLength);
         }
+
         if (_winTvCiModule != null)
         {
           int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
