@@ -846,7 +846,7 @@ void CLibBlurayWrapper::IncreaseRefCount(const void* obj)
 
 void CLibBlurayWrapper::DecreaseRefCount(const void* obj)
 {
-  _bd_refcnt_inc(obj);
+  _bd_refcnt_dec(obj);
 }
 
 void CLibBlurayWrapper::LogAction(int pKey)
