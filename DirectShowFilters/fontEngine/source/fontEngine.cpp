@@ -23,8 +23,6 @@
 #include "transformmatrix.h"
 #include "EffectStateManager.h"
 
-#include <streams.h>
-
 using namespace std;
 
 // For more details for memory leak detection see the alloctracing.h header
@@ -114,7 +112,6 @@ struct TEXTURE_DATA_T
   int                     dwNumTriangles;
   D3DSURFACE_DESC         desc;
   bool                    useAlphaBlend;
-  bool                    delayedRemove;
 };
 
 struct TEXTURE_PLACE
@@ -132,8 +129,6 @@ static TEXTURE_PLACE*          texturePlace[MAX_TEXTURES];
 static D3DTEXTUREFILTERTYPE    m_Filter;
 int                            textureCount;
 
-static bool inPresentTextures=false; 
-static vector<int> texturesToBeRemoved;
 bool clipEnabled = false;
 
 TCHAR logFile[MAX_PATH];
@@ -144,8 +139,6 @@ int m_iScreenWidth=0;
 int m_iScreenHeight=0;
 D3DPOOL m_ipoolFormat=D3DPOOL_SYSTEMMEM;
 DWORD   m_d3dUsage=D3DUSAGE_DYNAMIC;
-
-static CCritSec m_csTextureLock;
 
 void Log(char* txt)
 {
@@ -181,9 +174,6 @@ void Log(char* txt)
 
 void Cleanup()
 {
-  {
-    CAutoLock cObjectLock(&m_csTextureLock);
-
     for (int i=0; i < MAX_TEXTURES;++i)
     {
       if (texturePlace[i] != NULL)
@@ -194,7 +184,6 @@ void Cleanup()
     delete[] textureData;
     delete[] fontData;
     delete m_pStateManager;
-  }
 }
 
 //*******************************************************************************************************************
@@ -202,7 +191,7 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
 {
   m_iScreenWidth=screenWidth;
   m_iScreenHeight=screenHeight;
-  //Log("FontEngineInitialize()\n");
+
   textureCount=0;
   static bool initialized=false;
   if (!initialized)
@@ -222,7 +211,6 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
       textureData[i].pTexture=NULL;
       textureData[i].vertices = NULL;
       textureData[i].useAlphaBlend=true;
-      textureData[i].delayedRemove=false;
       textureZ[i]=-1;
       texturePlace[i]=new TEXTURE_PLACE();
       texturePlace[i]->numRect = 0;
@@ -316,76 +304,49 @@ void FontEngineSetClipDisable()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
-  //char log[128];
-  //sprintf(log,"FontEngineRemoveTexture(%d)\n", textureNo);
-  //Log(log);
-  if(!m_pDevice)
-  {
-    return;
-  }
-
-  if(inPresentTextures)
-  {
-    char log[128];
-    sprintf(log,"FontEngineRemoveTexture - called when inPresentTextures = true, using delayed remove for %i\n", textureNo );
-    Log(log);
-    textureData[textureNo].delayedRemove=true;
-    texturesToBeRemoved.push_back(textureNo);
-    return;
-  }
+  if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 
   // Important to set it to NULL otherwise the textures, etc. will not be freed on release
   m_pDevice->SetStreamSource(0, NULL, 0, 0 );
 
-  if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
+  textureData[textureNo].hashCode=-1;
+  textureData[textureNo].dwNumTriangles=0;
+  textureData[textureNo].iv=0;
 
+  if (textureData[textureNo].pIndexBuffer!=NULL)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
-
-    textureData[textureNo].hashCode=-1;
-    textureData[textureNo].dwNumTriangles=0;
-    textureData[textureNo].iv=0;
-
-    if (textureData[textureNo].pIndexBuffer!=NULL)
-    {
-      textureData[textureNo].pIndexBuffer->Release();
-    }
-    textureData[textureNo].pIndexBuffer=NULL;
-
-    if (textureData[textureNo].vertices!=NULL)
-    {
-      delete[] textureData[textureNo].vertices;
-    }
-    textureData[textureNo].vertices=NULL;
-    if ( textureData[textureNo].pTexture!=NULL)
-    {
-      textureData[textureNo].pTexture->Release();
-    }
-    textureData[textureNo].pTexture=NULL;
-    textureData[textureNo].useAlphaBlend=true;
-    textureData[textureNo].delayedRemove=false;
+    textureData[textureNo].pIndexBuffer->Release();
   }
+  textureData[textureNo].pIndexBuffer=NULL;
+
+  if (textureData[textureNo].vertices!=NULL)
+  {
+    delete[] textureData[textureNo].vertices;
+  }
+  textureData[textureNo].vertices=NULL;
+  if ( textureData[textureNo].pTexture!=NULL)
+  {
+    textureData[textureNo].pTexture->Release();
+  }
+  textureData[textureNo].pTexture=NULL;
+  textureData[textureNo].useAlphaBlend=true;
 }
 
 //*******************************************************************************************************************
 int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
   int selected=-1;
-
-  {
-    CAutoLock cObjectLock(&m_csTextureLock);
     
 	for (int i=0; i < MAX_TEXTURES;++i)
+  {
+    if (textureData[i].hashCode==hashCode)
     {
-      if (textureData[i].hashCode==hashCode)
-      {
-        selected=i;
-        break;
-      }
-      if (textureData[i].hashCode==-1)
-      {
-        selected=i;
-      }
+      selected=i;
+      break;
+    }
+    if (textureData[i].hashCode==-1)
+    {
+      selected=i;
     }
   }
 
@@ -395,46 +356,41 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
     return -1;
   }
 
+  textureData[selected].useAlphaBlend=useAlphaBlend;
+  textureData[selected].hashCode=hashCode;
+  textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
+  textureData[selected].pTexture->AddRef();
+
+  if (textureData[selected].vertices==NULL)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
-
-    textureData[selected].useAlphaBlend=useAlphaBlend;
-    textureData[selected].hashCode=hashCode;
-    textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
-    textureData[selected].pTexture->AddRef();
-
-    if (textureData[selected].vertices==NULL)
+    textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
+    for (int i=0; i < MaxNumTextureVertices;++i)
     {
-      textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
-      for (int i=0; i < MaxNumTextureVertices;++i)
-      {
-        textureData[selected].vertices[i].z=0;
-        //textureData[selected].vertices[i].rhw=1;
-      }
+      textureData[selected].vertices[i].z=0;
     }
-    textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
-
-    m_pDevice->CreateIndexBuffer(MaxNumTextureVertices *sizeof(WORD),
-                                 m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
-                                 &textureData[selected].pIndexBuffer, NULL );
-    WORD* pIndices;
-    int triangle=0;
-    textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
-    for (int i=0; i < MaxNumTextureVertices;i+=6)
-    {
-      if (i+5 < MaxNumTextureVertices)
-      {
-        pIndices[i+0]=triangle*4+1;
-        pIndices[i+1]=triangle*4+0;
-        pIndices[i+2]=triangle*4+3;
-        pIndices[i+3]=triangle*4+2;
-        pIndices[i+4]=triangle*4+1;
-        pIndices[i+5]=triangle*4+3;
-      }
-      triangle++;
-    }
-    textureData[selected].pIndexBuffer->Unlock();
   }
+  textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+
+  m_pDevice->CreateIndexBuffer(MaxNumTextureVertices *sizeof(WORD),
+                               m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
+                               &textureData[selected].pIndexBuffer, NULL);
+  WORD* pIndices;
+  int triangle=0;
+  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
+  for (int i=0; i < MaxNumTextureVertices;i+=6)
+  {
+    if (i+5 < MaxNumTextureVertices)
+    {
+      pIndices[i+0]=triangle*4+1;
+      pIndices[i+1]=triangle*4+0;
+      pIndices[i+2]=triangle*4+3;
+      pIndices[i+3]=triangle*4+2;
+      pIndices[i+4]=triangle*4+1;
+      pIndices[i+5]=triangle*4+3;
+    }
+    triangle++;
+  }
+  textureData[selected].pIndexBuffer->Unlock();
 
   return selected;
 }
@@ -442,70 +398,64 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 //*******************************************************************************************************************
 int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
 {
-  //char log[128];
-  //sprintf(log,"FontEngineAddSurface(%x)\n", hashCode);
-  //Log(log);
   int selected=-1;
 
+  for (int i=0; i < MAX_TEXTURES;++i)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
-
-    for (int i=0; i < MAX_TEXTURES;++i)
+    if (textureData[i].hashCode==hashCode)
     {
-      if (textureData[i].hashCode==hashCode)
-      {
-        selected=i;
-        break;
-      }
-      if (textureData[i].hashCode==-1)
-      {
-        selected=i;
-      }
+      selected=i;
+      break;
     }
-    if (selected==-1)
+    if (textureData[i].hashCode==-1)
     {
-      Log("ERROR Fontengine:Ran out of textures!\n");
-      return -1;
+      selected=i;
     }
-    LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
-    void *pContainer = NULL;
-    int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
-
-    textureData[selected].useAlphaBlend=useAlphaBlend;
-    textureData[selected].hashCode=hashCode;
-    textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)pContainer;
-
-    if (textureData[selected].vertices==NULL)
-    {
-      textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
-      for (int i=0; i < MaxNumTextureVertices;++i)
-      {
-        textureData[selected].vertices[i].z=0;
-      }
-    }
-    textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
-
-    m_pDevice->CreateIndexBuffer( MaxNumTextureVertices *sizeof(WORD),
-                                  m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
-                                  &textureData[selected].pIndexBuffer, NULL );
-    WORD* pIndices;
-    int triangle=0;
-    textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
-    for (int i=0; i < MaxNumTextureVertices;i+=6)
-    {
-      if (i+5 < MaxNumTextureVertices)
-      {
-        pIndices[i+0]=triangle*4+1;
-        pIndices[i+1]=triangle*4+0;
-        pIndices[i+2]=triangle*4+3;
-        pIndices[i+3]=triangle*4+2;
-        pIndices[i+4]=triangle*4+1;
-        pIndices[i+5]=triangle*4+3;
-      }
-      triangle++;
-    }
-    textureData[selected].pIndexBuffer->Unlock();
   }
+  if (selected==-1)
+  {
+    Log("ERROR Fontengine:Ran out of textures!\n");
+    return -1;
+  }
+  LPDIRECT3DSURFACE9 pSurface = (LPDIRECT3DSURFACE9)surface;
+  void *pContainer = NULL;
+  int hr=pSurface->GetContainer(IID_IDirect3DTexture9,&pContainer);
+
+  textureData[selected].useAlphaBlend=useAlphaBlend;
+  textureData[selected].hashCode=hashCode;
+  textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)pContainer;
+
+  if (textureData[selected].vertices==NULL)
+  {
+    textureData[selected].vertices = new CUSTOMVERTEX[MaxNumTextureVertices];
+    for (int i=0; i < MaxNumTextureVertices;++i)
+    {
+      textureData[selected].vertices[i].z=0;
+    }
+  }
+  textureData[selected].pTexture->GetLevelDesc(0,&textureData[selected].desc);
+
+  m_pDevice->CreateIndexBuffer(MaxNumTextureVertices *sizeof(WORD),
+                               m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat,
+                               &textureData[selected].pIndexBuffer, NULL);
+  WORD* pIndices;
+  int triangle=0;
+  textureData[selected].pIndexBuffer->Lock(0,0,(VOID**)&pIndices, 0);
+  for (int i=0; i < MaxNumTextureVertices;i+=6)
+  {
+    if (i+5 < MaxNumTextureVertices)
+    {
+      pIndices[i+0]=triangle*4+1;
+      pIndices[i+1]=triangle*4+0;
+      pIndices[i+2]=triangle*4+3;
+      pIndices[i+3]=triangle*4+2;
+      pIndices[i+4]=triangle*4+1;
+      pIndices[i+5]=triangle*4+3;
+    }
+    triangle++;
+  }
+  textureData[selected].pIndexBuffer->Unlock();
+  
   return selected;
 }
 
@@ -542,199 +492,195 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
     }
   }
 
+  TEXTURE_DATA_T* texture;
+  TransformMatrix matrix(m);
+  //1-2-1
+  bool needRedraw=false;
+  bool textureAlreadyDrawn=false;
+  for (int i=0; i < textureCount; ++i)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
-
-    TEXTURE_DATA_T* texture;
-    TransformMatrix matrix(m);
-    //1-2-1
-    bool needRedraw=false;
-    bool textureAlreadyDrawn=false;
-    for (int i=0; i < textureCount; ++i)
+    if (textureZ[i] == textureNo)
     {
-      if (textureZ[i] == textureNo)
+      textureAlreadyDrawn=true;
+    }
+    if (textureAlreadyDrawn && textureZ[i] != textureNo)
+    {
+      //check if textures intersect
+      int count=textureZ[i];
+      D3DRECT rectThis;
+      rectThis.x1=x; rectThis.y1=y;rectThis.x2=x+nw;rectThis.y2=y+nh;
+      for (int r=0; r < texturePlace[count]->numRect;r++)
       {
-        textureAlreadyDrawn=true;
-      }
-      if (textureAlreadyDrawn && textureZ[i] != textureNo)
-      {
-        //check if textures intersect
-        int count=textureZ[i];
-        D3DRECT rectThis;
-        rectThis.x1=x; rectThis.y1=y;rectThis.x2=x+nw;rectThis.y2=y+nh;
-        for (int r=0; r < texturePlace[count]->numRect;r++)
+        D3DRECT rect2=texturePlace[count]->rect[r];
+        if (((rect2.x1 < (rectThis.x2)) && (rectThis.x1 < (rect2.x2))) && (rect2.y1 < (rectThis.y2)))
         {
-          D3DRECT rect2=texturePlace[count]->rect[r];
-          if (((rect2.x1 < (rectThis.x2)) && (rectThis.x1 < (rect2.x2))) && (rect2.y1 < (rectThis.y2)))
+          if (rectThis.y1 < (rect2.y2))
           {
-            if (rectThis.y1 < (rect2.y2))
-            {
-              needRedraw=true;
-            }
+            needRedraw=true;
           }
         }
       }
     }
-
-    if (needRedraw)
-    {
-      FontEnginePresentTextures();
-    }
-
-    texture=&textureData[textureNo];
-    if (texture->iv==0)
-    {
-      textureZ[textureCount]=textureNo;
-      textureCount++;
-    }
-    texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x1=x;
-    texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y1=y;
-    texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x2=x+nw;
-    texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y2=y+nh;
-    texturePlace[textureNo]->numRect = texturePlace[textureNo]->numRect+1;
-    int iv=texture->iv;
-    if (iv+6 >=MaxNumTextureVertices)
-    {
-      Log("ERROR Fontengine:Ran out of texture vertices\n");
-      return;
-    }
-
-    float xpos=x;
-    float xpos2=x+nw;
-    float ypos=y;
-    float ypos2=y+nh;
-
-    float tx1=uoff;
-    float tx2=uoff+umax;
-    float ty1=voff;
-    float ty2=voff+vmax;
-
-    if (clipEnabled)
-    {
-      RECT clipRect;
-      m_pDevice->GetScissorRect(&clipRect);
-  
-      // This clipping is done algorthimically for the texture being drawn.
-      // This texture is maintained in the list of textures managed by the FontEngine.
-      // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
-      // the clipping.
-      if (clipRect.top > 0 || clipRect.left > 0)
-      {
-        float w = xpos2 - xpos;
-        float h = ypos2 - ypos;
-      
-        // Clipping on left side.
-        if (xpos <	clipRect.left)
-        {
-          float off = clipRect.left - xpos;
-          xpos = (float)clipRect.left;
-          tx1 += ((off / w) * umax);
-
-          if (tx1 >= 1.0f)
-          {
-            tx1 = 1.0f;
-          }
-        }
-
-        // Clipping on right side.
-        if (xpos2 >	clipRect.right)
-        {
-          float off = (clipRect.right) - xpos2;
-          xpos2 = clipRect.right;
-          tx2 += ((off / w) * umax); 
-
-          if (tx2 >= 1.0f)
-          {
-            tx2 = 1.0f;
-          }
-        }
-
-        // Clipping top.
-        if (ypos <	clipRect.top)
-        {
-          float off = clipRect.top - ypos;
-          ypos = (float)clipRect.top;
-          ty1 += ((off / h) * vmax);
-        }
-
-        // Clipping bottom.
-        if (ypos2 >	clipRect.bottom)
-        {
-          float off = clipRect.bottom - ypos2;
-          ypos2 = (float)clipRect.bottom;
-          ty2 += ((off / h) * vmax);
-
-          if (ty2 >= 1.0f)
-          {
-            ty2=1.0f;
-          }
-        }
-      }
-    }
-
-    xpos-=0.5f;
-    ypos-=0.5f;
-    xpos2-=0.5f;
-    ypos2-=0.5f;
-
-    //upper left
-    float x1=matrix.ScaleFinalXCoord(xpos,ypos);
-    float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-    float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
-
-    //bottom left
-    float x2=matrix.ScaleFinalXCoord(xpos,ypos2);
-    float y2=matrix.ScaleFinalYCoord(xpos,ypos2);
-    float z2=matrix.ScaleFinalZCoord(xpos,ypos2);
-
-    //bottom right
-    float x3=matrix.ScaleFinalXCoord(xpos2,ypos2);
-    float y3=matrix.ScaleFinalYCoord(xpos2,ypos2);
-    float z3=matrix.ScaleFinalZCoord(xpos2,ypos2);
-
-    //upper right
-    float x4=matrix.ScaleFinalXCoord(xpos2,ypos);
-    float y4=matrix.ScaleFinalYCoord(xpos2,ypos);
-    float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
-
-    //upper left
-    texture->vertices[iv].x=x1 ;  
-    texture->vertices[iv].y=y1 ; 
-    texture->vertices[iv].z=z1;
-    texture->vertices[iv].color=color;
-    texture->vertices[iv].tu=tx1; 
-    texture->vertices[iv].tv=ty1; 
-    iv++;
-
-    //bottom left
-    texture->vertices[iv].x=x2;  
-    texture->vertices[iv].y=y2;
-    texture->vertices[iv].z=z2; 
-    texture->vertices[iv].color=color;
-    texture->vertices[iv].tu=tx1; 
-    texture->vertices[iv].tv=ty2;
-    iv++;
-
-    //bottom right
-    texture->vertices[iv].x=x3;  
-    texture->vertices[iv].y=y3; 
-    texture->vertices[iv].z=z3;
-    texture->vertices[iv].color=color;
-    texture->vertices[iv].tu=tx2; 
-    texture->vertices[iv].tv=ty2;iv++;
-
-    //upper right
-    texture->vertices[iv].x=x4;  
-    texture->vertices[iv].y=y4;
-    texture->vertices[iv].z=z4; 
-    texture->vertices[iv].color=color;
-    texture->vertices[iv].tu=tx2; 
-    texture->vertices[iv].tv=ty1;
-    iv++;
-
-    texture->iv=texture->iv+4;
-    texture->dwNumTriangles=texture->dwNumTriangles+2;
   }
+
+  if (needRedraw)
+  {
+    FontEnginePresentTextures();
+  }
+
+  texture=&textureData[textureNo];
+  if (texture->iv==0)
+  {
+    textureZ[textureCount]=textureNo;
+    textureCount++;
+  }
+  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x1=x;
+  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y1=y;
+  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].x2=x+nw;
+  texturePlace[textureNo]->rect[texture->dwNumTriangles/2].y2=y+nh;
+  texturePlace[textureNo]->numRect = texturePlace[textureNo]->numRect+1;
+  int iv=texture->iv;
+  if (iv+6 >=MaxNumTextureVertices)
+  {
+    Log("ERROR Fontengine:Ran out of texture vertices\n");
+    return;
+  }
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=uoff+umax;
+  float ty1=voff;
+  float ty2=voff+vmax;
+
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+  
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
+    {
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
+      
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
+        }
+      }
+
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+      }
+
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+      }
+    }
+  }
+
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
+
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
+
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos2);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos2);
+  float z2=matrix.ScaleFinalZCoord(xpos,ypos2);
+
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos2,ypos2);
+  float y3=matrix.ScaleFinalYCoord(xpos2,ypos2);
+  float z3=matrix.ScaleFinalZCoord(xpos2,ypos2);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos2,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos2,ypos);
+  float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
+
+  //upper left
+  texture->vertices[iv].x=x1 ;  
+  texture->vertices[iv].y=y1 ; 
+  texture->vertices[iv].z=z1;
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx1; 
+  texture->vertices[iv].tv=ty1; 
+  iv++;
+
+  //bottom left
+  texture->vertices[iv].x=x2;  
+  texture->vertices[iv].y=y2;
+  texture->vertices[iv].z=z2; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx1; 
+  texture->vertices[iv].tv=ty2;
+  iv++;
+
+  //bottom right
+  texture->vertices[iv].x=x3;  
+  texture->vertices[iv].y=y3; 
+  texture->vertices[iv].z=z3;
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx2; 
+  texture->vertices[iv].tv=ty2;iv++;
+
+  //upper right
+  texture->vertices[iv].x=x4;  
+  texture->vertices[iv].y=y4;
+  texture->vertices[iv].z=z4; 
+  texture->vertices[iv].color=color;
+  texture->vertices[iv].tu=tx2; 
+  texture->vertices[iv].tv=ty1;
+  iv++;
+
+  texture->iv=texture->iv+4;
+  texture->dwNumTriangles=texture->dwNumTriangles+2;
 }
 
 
@@ -777,250 +723,246 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
     }
   }
 
+  TransformMatrix matrix(m);
+  FontEnginePresentTextures();
+
+  TEXTURE_DATA_T* texture1;
+  TEXTURE_DATA_T* texture2;
+  texture1=&textureData[textureNo1];
+  texture2=&textureData[textureNo2];
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=umax;
+  float ty1=voff;
+  float ty2=vmax;
+
+  float tx1_2=uoff2;
+  float tx2_2=umax2;
+  float ty1_2=voff2;
+  float ty2_2=vmax2; 
+
+  if (clipEnabled)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
 
-    TransformMatrix matrix(m);
-    FontEnginePresentTextures();
-
-    TEXTURE_DATA_T* texture1;
-    TEXTURE_DATA_T* texture2;
-    texture1=&textureData[textureNo1];
-    texture2=&textureData[textureNo2];
-
-    float xpos=x;
-    float xpos2=x+nw;
-    float ypos=y;
-    float ypos2=y+nh;
-
-    float tx1=uoff;
-    float tx2=umax;
-    float ty1=voff;
-    float ty2=vmax;
-
-    float tx1_2=uoff2;
-    float tx2_2=umax2;
-    float ty1_2=voff2;
-    float ty2_2=vmax2; 
-
-    if (clipEnabled)
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
     {
-      RECT clipRect;
-      m_pDevice->GetScissorRect(&clipRect);
-
-      // This clipping is done algorthimically for the texture being drawn.
-      // This texture is maintained in the list of textures managed by the FontEngine.
-      // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
-      // the clipping.
-      if (clipRect.top > 0 || clipRect.left > 0)
-      {
-        float w = xpos2 - xpos;
-        float h = ypos2 - ypos;
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
       
-        // Clipping on left side.
-        if (xpos <	clipRect.left)
-        {
-          float off = clipRect.left - xpos;
-          xpos = (float)clipRect.left;
-          tx1 += ((off / w) * umax);
-          tx1_2 += ((off / w) * umax);
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
 
-          if (tx1 >= 1.0f)
-          {
-            tx1 = 1.0f;
-          }
-          if (tx1_2 >= 1.0f)
-          {
-            tx1_2 = 1.0f;
-          }
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
         }
-
-        // Clipping on right side.
-        if (xpos2 >	clipRect.right)
+        if (tx1_2 >= 1.0f)
         {
-          float off = (clipRect.right) - xpos2;
-          xpos2 = clipRect.right;
-          tx2 += ((off / w) * umax); 
-          tx2_2 += ((off / w) * umax); 
-
-          if (tx2 >= 1.0f)
-          {
-            tx2 = 1.0f;
-          }
-          if (tx2_2 >= 1.0f)
-          {
-            tx2_2 = 1.0f;
-          }
-        }
-
-        // Clipping top.
-        if (ypos <	clipRect.top)
-        {
-          float off = clipRect.top - ypos;
-          ypos = (float)clipRect.top;
-          ty1 += ((off / h) * vmax);
-          ty1_2 += ((off / h) * vmax);
-        }
-
-        // Clipping bottom.
-        if (ypos2 >	clipRect.bottom)
-        {
-          float off = clipRect.bottom - ypos2;
-          ypos2 = (float)clipRect.bottom;
-          ty2 += ((off / h) * vmax);
-          ty2_2 += ((off / h) * vmax);
-
-          if (ty2 >= 1.0f)
-          {
-            ty2=1.0f;
-          }
-          if (ty2_2 >= 1.0f)
-          {
-            ty2_2=1.0f;
-          }
+          tx1_2 = 1.0f;
         }
       }
-    }
 
-    xpos-=0.5f;
-    ypos-=0.5f;
-    xpos2-=0.5f;
-    ypos2-=0.5f;
-
-    //upper left
-    float x1=matrix.ScaleFinalXCoord(xpos,ypos);
-    float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-    float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
-
-    //bottom left
-    float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
-    float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
-    float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
-
-    //bottom right
-    float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
-    float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
-    float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
-
-    //upper right
-    float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
-    float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
-    float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
-
-    CUSTOMVERTEX2 verts[4];
-    //CUSTOMVERTEX verts[4];
-    verts[0].x = x1; 
-    verts[0].y = y1; 
-    verts[0].z = z1;
-    //verts[0].rhw = 1.0f;
-    verts[0].tu = tx1;//u1;   
-    verts[0].tv = ty1;//v1; 
-    verts[0].tu2 =tx1_2 ;//u1*m_diffuseScaleU; 
-    verts[0].tv2 =ty1_2 ;//v1*m_diffuseScaleV;
-    verts[0].color = color;
-
-    verts[1].x = x2; 
-    verts[1].y = y2; 
-    verts[1].z = z2;
-    //verts[1].rhw = 1.0f;
-    verts[1].tu = tx1;//u2;   
-    verts[1].tv = ty2;//v1; 
-    verts[1].tu2 = tx1_2;//u2*m_diffuseScaleU; 
-    verts[1].tv2 = ty2_2;//v1*m_diffuseScaleV;
-    verts[1].color = color;
-
-    verts[2].x = x3; 
-    verts[2].y = y3; 
-    verts[2].z = z3;
-    //verts[2].rhw = 1.0f;
-    verts[2].tu = tx2;//u2;   
-    verts[2].tv = ty2;//v2; 
-    verts[2].tu2 = tx2_2;//u2*m_diffuseScaleU; 
-    verts[2].tv2 = ty2_2;//v2*m_diffuseScaleV;
-    verts[2].color = color;
-
-    verts[3].x = x4; 
-    verts[3].y = y4;
-    verts[3].z = z4;
-    //verts[3].rhw = 1.0f;
-    verts[3].tu = tx2;//u1;   
-    verts[3].tv = ty1;//v2; 
-    verts[3].tu2 = tx2_2;//u1*m_diffuseScaleU; 
-    verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
-    verts[3].color = color;
-
-    m_pStateManager->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-    m_pStateManager->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
-    m_pStateManager->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-    // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
-    // The caller must have already called SetScissorRect() to set the clipping rectangle.
-    if (clipEnabled)
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-    }
-    else
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-    }
-
-    if (blendMode > BLEND_NONE)
-    {
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-
-      if (blendMode == BLEND_DIFFUSE)
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
       {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      }
-      else if (blendMode == BLEND_OVERLAY)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+        if (tx2_2 >= 1.0f)
+        {
+          tx2_2 = 1.0f;
+        }
       }
 
-      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-
-      if (blendMode == BLEND_DIFFUSE)
+      // Clipping top.
+      if (ypos <	clipRect.top)
       {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      }
-      else if (blendMode == BLEND_OVERLAY)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
       }
 
-      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
 
-      // Disable the remainder of the texture stages.
-      m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
-      m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
+        }
+      }
     }
+  }
 
-    m_pStateManager->SetTexture(0, texture1->pTexture);
-    if (blendMode > BLEND_NONE)
-    {
-      m_pStateManager->SetTexture(1, texture2->pTexture);
-    }
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
 
-    m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
-    m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
-  
-    m_pStateManager->SetTexture(0, NULL);
-    if (blendMode > BLEND_NONE)
-    {
-      m_pStateManager->SetTexture(1, NULL);
-    }
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
 
-    // Important - the scissor test (for clipping) must be disabled before return.
-    // Clipping may not be defined other FontEngine calls that draw textures.
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
+
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
+
+  CUSTOMVERTEX2 verts[4];
+  //CUSTOMVERTEX verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = z1;
+  //verts[0].rhw = 1.0f;
+  verts[0].tu = tx1;//u1;   
+  verts[0].tv = ty1;//v1; 
+  verts[0].tu2 =tx1_2 ;//u1*m_diffuseScaleU; 
+  verts[0].tv2 =ty1_2 ;//v1*m_diffuseScaleV;
+  verts[0].color = color;
+
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = z2;
+  //verts[1].rhw = 1.0f;
+  verts[1].tu = tx1;//u2;   
+  verts[1].tv = ty2;//v1; 
+  verts[1].tu2 = tx1_2;//u2*m_diffuseScaleU; 
+  verts[1].tv2 = ty2_2;//v1*m_diffuseScaleV;
+  verts[1].color = color;
+
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = z3;
+  //verts[2].rhw = 1.0f;
+  verts[2].tu = tx2;//u2;   
+  verts[2].tv = ty2;//v2; 
+  verts[2].tu2 = tx2_2;//u2*m_diffuseScaleU; 
+  verts[2].tv2 = ty2_2;//v2*m_diffuseScaleV;
+  verts[2].color = color;
+
+  verts[3].x = x4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
+  //verts[3].rhw = 1.0f;
+  verts[3].tu = tx2;//u1;   
+  verts[3].tv = ty1;//v2; 
+  verts[3].tu2 = tx2_2;//u1*m_diffuseScaleU; 
+  verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
+  verts[3].color = color;
+
+  m_pStateManager->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+  m_pStateManager->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
+  m_pStateManager->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
     m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
+
+  if (blendMode > BLEND_NONE)
+  {
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+    if (blendMode == BLEND_DIFFUSE)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == BLEND_OVERLAY)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+
+    if (blendMode == BLEND_DIFFUSE)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == BLEND_OVERLAY)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+    // Disable the remainder of the texture stages.
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+  }
+
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  if (blendMode > BLEND_NONE)
+  {
+    m_pStateManager->SetTexture(1, texture2->pTexture);
+  }
+
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
+  
+  m_pStateManager->SetTexture(0, NULL);
+  if (blendMode > BLEND_NONE)
+  {
+    m_pStateManager->SetTexture(1, NULL);
+  }
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -1062,227 +1004,223 @@ void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, flo
     }
   }
 
+  TransformMatrix matrix(m);
+  FontEnginePresentTextures();
+
+  TEXTURE_DATA_T* texture1;
+  TEXTURE_DATA_T* texture2;
+  texture1=&textureData[textureNo1];
+  texture2=&textureData[textureNo2];
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=umax;
+  float ty1=voff;
+  float ty2=vmax;
+
+  float tx1_2=uoff2;
+  float tx2_2=umax2;
+  float ty1_2=voff2;
+  float ty2_2=vmax2;
+
+  if (clipEnabled)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
 
-    TransformMatrix matrix(m);
-    FontEnginePresentTextures();
-
-    TEXTURE_DATA_T* texture1;
-    TEXTURE_DATA_T* texture2;
-    texture1=&textureData[textureNo1];
-    texture2=&textureData[textureNo2];
-
-    float xpos=x;
-    float xpos2=x+nw;
-    float ypos=y;
-    float ypos2=y+nh;
-
-    float tx1=uoff;
-    float tx2=umax;
-    float ty1=voff;
-    float ty2=vmax;
-
-    float tx1_2=uoff2;
-    float tx2_2=umax2;
-    float ty1_2=voff2;
-    float ty2_2=vmax2;
-
-    if (clipEnabled)
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
     {
-      RECT clipRect;
-      m_pDevice->GetScissorRect(&clipRect);
-
-      // This clipping is done algorthimically for the texture being drawn.
-      // This texture is maintained in the list of textures managed by the FontEngine.
-      // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
-      // the clipping.
-      if (clipRect.top > 0 || clipRect.left > 0)
-      {
-        float w = xpos2 - xpos;
-        float h = ypos2 - ypos;
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
       
-        // Clipping on left side.
-        if (xpos <	clipRect.left)
-        {
-          float off = clipRect.left - xpos;
-          xpos = (float)clipRect.left;
-          tx1 += ((off / w) * umax);
-          tx1_2 += ((off / w) * umax);
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
 
-          if (tx1 >= 1.0f)
-          {
-            tx1 = 1.0f;
-          }
-          if (tx1_2 >= 1.0f)
-          {
-            tx1_2 = 1.0f;
-          }
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
         }
-
-        // Clipping on right side.
-        if (xpos2 >	clipRect.right)
+        if (tx1_2 >= 1.0f)
         {
-          float off = (clipRect.right) - xpos2;
-          xpos2 = clipRect.right;
-          tx2 += ((off / w) * umax); 
-          tx2_2 += ((off / w) * umax); 
-
-          if (tx2 >= 1.0f)
-          {
-            tx2 = 1.0f;
-          }
-          if (tx2_2 >= 1.0f)
-          {
-            tx2_2 = 1.0f;
-          }
+          tx1_2 = 1.0f;
         }
+      }
 
-        // Clipping top.
-        if (ypos <	clipRect.top)
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
         {
-          float off = clipRect.top - ypos;
-          ypos = (float)clipRect.top;
-          ty1 += ((off / h) * vmax);
-          ty1_2 += ((off / h) * vmax);
+          tx2 = 1.0f;
         }
-
-        // Clipping bottom.
-        if (ypos2 >	clipRect.bottom)
+        if (tx2_2 >= 1.0f)
         {
-          float off = clipRect.bottom - ypos2;
-          ypos2 = (float)clipRect.bottom;
-          ty2 += ((off / h) * vmax);
-          ty2_2 += ((off / h) * vmax);
+          tx2_2 = 1.0f;
+        }
+      }
 
-          if (ty2 >= 1.0f)
-          {
-            ty2=1.0f;
-          }
-          if (ty2_2 >= 1.0f)
-          {
-            ty2_2=1.0f;
-          }
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
         }
       }
     }
+  }
 
-    xpos-=0.5f;
-    ypos-=0.5f;
-    xpos2-=0.5f;
-    ypos2-=0.5f;
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
 
-    //upper left
-    float x1=matrix.ScaleFinalXCoord(xpos,ypos);
-    float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-    float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
 
-    //bottom left
-    float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
-    float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
-    float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
 
-    //bottom right
-    float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
-    float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
-    float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
 
-    //upper right
-    float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
-    float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
-    float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
 
-    CUSTOMVERTEX2 verts[4];
-    verts[0].x = x1; 
-    verts[0].y = y1; 
-    verts[0].z = z1;
-    verts[0].tu = tx1;
-    verts[0].tv = ty1;
-    verts[0].tu2 = tx1_2;
-    verts[0].tv2 = ty1_2;
-    verts[0].color = color;
+  CUSTOMVERTEX2 verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = z1;
+  verts[0].tu = tx1;
+  verts[0].tv = ty1;
+  verts[0].tu2 = tx1_2;
+  verts[0].tv2 = ty1_2;
+  verts[0].color = color;
 
-    verts[1].x = x2; 
-    verts[1].y = y2; 
-    verts[1].z = z2;
-    verts[1].tu = tx1;
-    verts[1].tv = ty2;
-    verts[1].tu2 = tx1_2;
-    verts[1].tv2 = ty2_2;
-    verts[1].color = color;
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = z2;
+  verts[1].tu = tx1;
+  verts[1].tv = ty2;
+  verts[1].tu2 = tx1_2;
+  verts[1].tv2 = ty2_2;
+  verts[1].color = color;
 
-    verts[2].x = x3; 
-    verts[2].y = y3; 
-    verts[2].z = z3;
-    verts[2].tu = tx2;
-    verts[2].tv = ty2;
-    verts[2].tu2 = tx2_2;
-    verts[2].tv2 = ty2_2;
-    verts[2].color = color;
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = z3;
+  verts[2].tu = tx2;
+  verts[2].tv = ty2;
+  verts[2].tu2 = tx2_2;
+  verts[2].tv2 = ty2_2;
+  verts[2].color = color;
 
-    verts[3].x = x4; 
-    verts[3].y = y4;
-    verts[3].z = z4;
-    verts[3].tu = tx2;
-    verts[3].tv = ty1;
-    verts[3].tu2 = tx2_2;
-    verts[3].tv2 = ty1_2;
-    verts[3].color = color;
+  verts[3].x = x4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
+  verts[3].tu = tx2;
+  verts[3].tv = ty1;
+  verts[3].tu2 = tx2_2;
+  verts[3].tv2 = ty1_2;
+  verts[3].color = color;
 
-    m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-    // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
-    // The caller must have already called SetScissorRect() to set the clipping rectangle.
-    if (clipEnabled)
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-    }
-    else
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-    }
-
-    // This stage simply selects color and alpha from texture1.
-    // Choose the alpha and color from the current texture (texture1).
-    m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-
-    // This stage blends the alpha of texture1 and texture2.
-    // Select the color from the current texture (the output of stage 1) but select the alpha from the new texture (texture2)
-    // and modulate (multiply) the alpha values of the new texture (texture2) and the current texture (output of stage 1).
-    // Alpha values of zero in texture2 (the mask) result in alpha values of zero (transparent pixels) in the output.
-    m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
-    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-
-    // This stage blends the masked resultant texture with the background (the diffuse texture).
-    m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-
-    // Disable the remainder of the texture stages.
-    m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
-    m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-
-    m_pStateManager->SetTexture(0, texture1->pTexture);
-    m_pStateManager->SetTexture(1, texture2->pTexture);
-
-    m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
-    m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
-
-    m_pStateManager->SetTexture(0, NULL);
-    m_pStateManager->SetTexture(1, NULL);
-
-    // Important - the scissor test (for clipping) must be disabled before return.
-    // Clipping may not be defined other FontEngine calls that draw textures.
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
     m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
+
+  // This stage simply selects color and alpha from texture1.
+  // Choose the alpha and color from the current texture (texture1).
+  m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+  m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+  // This stage blends the alpha of texture1 and texture2.
+  // Select the color from the current texture (the output of stage 1) but select the alpha from the new texture (texture2)
+  // and modulate (multiply) the alpha values of the new texture (texture2) and the current texture (output of stage 1).
+  // Alpha values of zero in texture2 (the mask) result in alpha values of zero (transparent pixels) in the output.
+  m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+  // This stage blends the masked resultant texture with the background (the diffuse texture).
+  m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+
+  // Disable the remainder of the texture stages.
+  m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
+  m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  m_pStateManager->SetTexture(1, texture2->pTexture);
+
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
+
+  m_pStateManager->SetTexture(0, NULL);
+  m_pStateManager->SetTexture(1, NULL);
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -1331,299 +1269,288 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
     }
   }
 
+  TransformMatrix matrix(m);
+  FontEnginePresentTextures();
+
+  TEXTURE_DATA_T* texture1;
+  TEXTURE_DATA_T* texture2;
+  TEXTURE_DATA_T* texture3;
+  texture1=&textureData[textureNo1];
+  texture2=&textureData[textureNo2];
+  texture3=&textureData[textureNo3];
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=umax;
+  float ty1=voff;
+  float ty2=vmax;
+
+  float tx1_2=uoff2;
+  float tx2_2=umax2;
+  float ty1_2=voff2;
+  float ty2_2=vmax2; 
+
+  float tx1_3=uoff3;
+  float tx2_3=umax3;
+  float ty1_3=voff3;
+  float ty2_3=vmax3; 
+
+  if (clipEnabled)
   {
-    CAutoLock cObjectLock(&m_csTextureLock);
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
 
-    TransformMatrix matrix(m);
-    FontEnginePresentTextures();
-
-    TEXTURE_DATA_T* texture1;
-    TEXTURE_DATA_T* texture2;
-    TEXTURE_DATA_T* texture3;
-    texture1=&textureData[textureNo1];
-    texture2=&textureData[textureNo2];
-    texture3=&textureData[textureNo3];
-
-    float xpos=x;
-    float xpos2=x+nw;
-    float ypos=y;
-    float ypos2=y+nh;
-
-    float tx1=uoff;
-    float tx2=umax;
-    float ty1=voff;
-    float ty2=vmax;
-
-    float tx1_2=uoff2;
-    float tx2_2=umax2;
-    float ty1_2=voff2;
-    float ty2_2=vmax2; 
-
-    float tx1_3=uoff3;
-    float tx2_3=umax3;
-    float ty1_3=voff3;
-    float ty2_3=vmax3; 
-
-    if (clipEnabled)
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
     {
-      RECT clipRect;
-      m_pDevice->GetScissorRect(&clipRect);
-
-      // This clipping is done algorthimically for the texture being drawn.
-      // This texture is maintained in the list of textures managed by the FontEngine.
-      // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
-      // the clipping.
-      if (clipRect.top > 0 || clipRect.left > 0)
-      {
-        float w = xpos2 - xpos;
-        float h = ypos2 - ypos;
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
       
-        // Clipping on left side.
-        if (xpos <	clipRect.left)
-        {
-          float off = clipRect.left - xpos;
-          xpos = (float)clipRect.left;
-          tx1 += ((off / w) * umax);
-          tx1_2 += ((off / w) * umax);
-          tx1_3 += ((off / w) * umax);
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
+        tx1_3 += ((off / w) * umax);
 
-          if (tx1 >= 1.0f)
-          {
-            tx1 = 1.0f;
-          }
-          if (tx1_2 >= 1.0f)
-          {
-            tx1_2 = 1.0f;
-          }
-          if (tx1_3 >= 1.0f)
-          {
-            tx1_3 = 1.0f;
-          }
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
         }
-
-        // Clipping on right side.
-        if (xpos2 >	clipRect.right)
+        if (tx1_2 >= 1.0f)
         {
-          float off = (clipRect.right) - xpos2;
-          xpos2 = clipRect.right;
-          tx2 += ((off / w) * umax); 
-          tx2_2 += ((off / w) * umax); 
-          tx2_3 += ((off / w) * umax); 
-
-          if (tx2 >= 1.0f)
-          {
-            tx2 = 1.0f;
-          }
-          if (tx2_2 >= 1.0f)
-          {
-            tx2_2 = 1.0f;
-          }
-          if (tx2_3 >= 1.0f)
-          {
-            tx2_3 = 1.0f;
-          }
+          tx1_2 = 1.0f;
         }
-
-        // Clipping top.
-        if (ypos <	clipRect.top)
+        if (tx1_3 >= 1.0f)
         {
-          float off = clipRect.top - ypos;
-          ypos = (float)clipRect.top;
-          ty1 += ((off / h) * vmax);
-          ty1_2 += ((off / h) * vmax);
-          ty1_3 += ((off / h) * vmax);
+          tx1_3 = 1.0f;
         }
+      }
 
-        // Clipping bottom.
-        if (ypos2 >	clipRect.bottom)
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+        tx2_3 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
         {
-          float off = clipRect.bottom - ypos2;
-          ypos2 = (float)clipRect.bottom;
-          ty2 += ((off / h) * vmax);
-          ty2_2 += ((off / h) * vmax);
-          ty2_3 += ((off / h) * vmax);
+          tx2 = 1.0f;
+        }
+        if (tx2_2 >= 1.0f)
+        {
+          tx2_2 = 1.0f;
+        }
+        if (tx2_3 >= 1.0f)
+        {
+          tx2_3 = 1.0f;
+        }
+      }
 
-          if (ty2 >= 1.0f)
-          {
-            ty2=1.0f;
-          }
-          if (ty2_2 >= 1.0f)
-          {
-            ty2_2=1.0f;
-          }
-          if (ty2_3 >= 1.0f)
-          {
-            ty2_3=1.0f;
-          }
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
+        ty1_3 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
+        ty2_3 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
+        }
+        if (ty2_3 >= 1.0f)
+        {
+          ty2_3=1.0f;
         }
       }
     }
+  }
 
-    xpos-=0.5f;
-    ypos-=0.5f;
-    xpos2-=0.5f;
-    ypos2-=0.5f;
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
 
-    //upper left
-    float x1=matrix.ScaleFinalXCoord(xpos,ypos);
-    float y1=matrix.ScaleFinalYCoord(xpos,ypos);
-    float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
 
-    //bottom left
-    float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
-    float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
-    float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
 
-    //bottom right
-    float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
-    float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
-    float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
 
-    //upper right
-    float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
-    float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
-    float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
 
-    CUSTOMVERTEX3 verts[4];
-    verts[0].x = x1; 
-    verts[0].y = y1; 
-    verts[0].z = z1;
-    verts[0].tu = tx1;
-    verts[0].tv = ty1;
-    verts[0].tu2 = tx1_2;
-    verts[0].tv2 = ty1_2;
-    verts[0].tu3 = tx1_3;
-    verts[0].tv3 = ty1_3;
-    verts[0].color = color;
+  CUSTOMVERTEX3 verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = z1;
+  verts[0].tu = tx1;
+  verts[0].tv = ty1;
+  verts[0].tu2 = tx1_2;
+  verts[0].tv2 = ty1_2;
+  verts[0].tu3 = tx1_3;
+  verts[0].tv3 = ty1_3;
+  verts[0].color = color;
 
-    verts[1].x = x2; 
-    verts[1].y = y2; 
-    verts[1].z = z2;
-    verts[1].tu = tx1;
-    verts[1].tv = ty2;
-    verts[1].tu2 = tx1_2;
-    verts[1].tv2 = ty2_2;
-    verts[1].tu3 = tx1_3;
-    verts[1].tv3 = ty2_3;
-    verts[1].color = color;
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = z2;
+  verts[1].tu = tx1;
+  verts[1].tv = ty2;
+  verts[1].tu2 = tx1_2;
+  verts[1].tv2 = ty2_2;
+  verts[1].tu3 = tx1_3;
+  verts[1].tv3 = ty2_3;
+  verts[1].color = color;
 
-    verts[2].x = x3; 
-    verts[2].y = y3; 
-    verts[2].z = z3;
-    verts[2].tu = tx2;
-    verts[2].tv = ty2;
-    verts[2].tu2 = tx2_2;
-    verts[2].tv2 = ty2_2;
-    verts[2].tu3 = tx2_3;
-    verts[2].tv3 = ty2_3;
-    verts[2].color = color;
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = z3;
+  verts[2].tu = tx2;
+  verts[2].tv = ty2;
+  verts[2].tu2 = tx2_2;
+  verts[2].tv2 = ty2_2;
+  verts[2].tu3 = tx2_3;
+  verts[2].tv3 = ty2_3;
+  verts[2].color = color;
 
-    verts[3].x = x4; 
-    verts[3].y = y4;
-    verts[3].z = z4;
-    verts[3].tu = tx2;
-    verts[3].tv = ty1;
-    verts[3].tu2 = tx2_2;
-    verts[3].tv2 = ty1_2;
-    verts[3].tu3 = tx2_3;
-    verts[3].tv3 = ty1_3;
-    verts[3].color = color;
+  verts[3].x = x4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
+  verts[3].tu = tx2;
+  verts[3].tv = ty1;
+  verts[3].tu2 = tx2_2;
+  verts[3].tv2 = ty1_2;
+  verts[3].tu3 = tx2_3;
+  verts[3].tv3 = ty1_3;
+  verts[3].color = color;
 
-    m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  m_pStateManager->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pStateManager->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-    // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
-    // The caller must have already called SetScissorRect() to set the clipping rectangle.
-    if (clipEnabled)
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
-    }
-    else
-    {
-      m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-    }
-
-    if (blendMode > 0)
-    {
-      // This stage blends the color and alpha of the current texture (texture1) with the background (diffuse image).
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-
-      // This stage blends the alpha of result of the last stage with texture2 (our own alpha mask).
-      if (blendMode == 1)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      }
-      else if (blendMode == 2)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
-      }
-
-      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-
-      if (blendMode == 1)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      }
-      else if (blendMode == 2)
-      {
-        m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
-      }
-
-      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
-
-      // This stage selects the color of the mask (arg1 = texture3) and blends it with the result of the
-      // last stage (our alpha adjusted texture).
-      m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-      m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
-      m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-
-      // This stage blends the masked resultant texture with the background (the diffuse texture).
-      m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-      m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-      m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-
-      // Disable the remainder of the texture stages.
-      m_pStateManager->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
-      m_pStateManager->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
-    }
-
-    m_pStateManager->SetTexture(0, texture1->pTexture);
-    m_pStateManager->SetTexture(1, texture2->pTexture);
-    m_pStateManager->SetTexture(2, texture3->pTexture); 
-
-    m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX3);
-    m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX3));
-
-    m_pStateManager->SetTexture(0, NULL);
-    m_pStateManager->SetTexture(1, NULL);
-    m_pStateManager->SetTexture(2, NULL);
-
-    // Important - the scissor test (for clipping) must be disabled before return.
-    // Clipping may not be defined other FontEngine calls that draw textures.
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
     m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
   }
+
+  if (blendMode > 0)
+  {
+    // This stage blends the color and alpha of the current texture (texture1) with the background (diffuse image).
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+    // This stage blends the alpha of result of the last stage with texture2 (our own alpha mask).
+    if (blendMode == 1)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+
+    if (blendMode == 1)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    }
+    else if (blendMode == 2)
+    {
+      m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_BLENDTEXTUREALPHA);
+    }
+
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+    m_pStateManager->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+    // This stage selects the color of the mask (arg1 = texture3) and blends it with the result of the
+    // last stage (our alpha adjusted texture).
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+    // This stage blends the masked resultant texture with the background (the diffuse texture).
+    m_pStateManager->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pStateManager->SetTextureStageState(3, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
+
+    // Disable the remainder of the texture stages.
+    m_pStateManager->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pStateManager->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+  }
+
+  m_pStateManager->SetTexture(0, texture1->pTexture);
+  m_pStateManager->SetTexture(1, texture2->pTexture);
+  m_pStateManager->SetTexture(2, texture3->pTexture); 
+
+  m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX3);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX3));
+
+  m_pStateManager->SetTexture(0, NULL);
+  m_pStateManager->SetTexture(1, NULL);
+  m_pStateManager->SetTexture(2, NULL);
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pStateManager->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
 void FontEnginePresentTextures()
 {
-  if(inPresentTextures)
-  {
-    char log[128];
-    sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() re-entrance\n");
-    Log(log);
-  }
-  inPresentTextures=true;
   try
   {
     if (textureCount > 0)
@@ -1652,44 +1579,42 @@ void FontEnginePresentTextures()
         if (index < 0 || index >= MAX_TEXTURES) continue;
 
         TEXTURE_DATA_T* texture = &(textureData[index]);
-        if( !texture->delayedRemove )
+
+        try
         {
-          try
+          if (texture->dwNumTriangles!=0)
           {
-            if (texture->dwNumTriangles!=0)
-            {
-              m_iTexturesInUse++;
+            m_iTexturesInUse++;
 
-              m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, texture->useAlphaBlend ? 1 : 0);
-              m_pStateManager->SetTexture(0, texture->pTexture);
-              m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
+            m_pStateManager->SetRenderState(D3DRS_ALPHABLENDENABLE, texture->useAlphaBlend ? 1 : 0);
+            m_pStateManager->SetTexture(0, texture->pTexture);
+            m_pStateManager->SetFVF(D3DFVF_CUSTOMVERTEX);
 
-              WORD* pIndices = NULL;
-              texture->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
+            WORD* pIndices = NULL;
+            texture->pIndexBuffer->Lock(0, 0, (VOID**)&pIndices, D3DLOCK_READONLY);
 
-              m_pDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,               // PrimitiveType
-                                                0,                                // MinVertexIndex
-                                                texture->iv,                      // NumVertices
-                                                texture->dwNumTriangles,          // PrimitiveCount
-                                                (const void*)pIndices,            // pIndexData
-                                                D3DFMT_INDEX16,                   // IndexDataFormat
-                                                (const void*)texture->vertices,   // pVertexStreamZeroData
-                                                sizeof(CUSTOMVERTEX));            // VertexStreamZeroStride
+            m_pDevice->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST,               // PrimitiveType
+                                              0,                                // MinVertexIndex
+                                              texture->iv,                      // NumVertices
+                                              texture->dwNumTriangles,          // PrimitiveCount
+                                              (const void*)pIndices,            // pIndexData
+                                              D3DFMT_INDEX16,                   // IndexDataFormat
+                                              (const void*)texture->vertices,   // pVertexStreamZeroData
+                                              sizeof(CUSTOMVERTEX));            // VertexStreamZeroStride
               
-              texture->pIndexBuffer->Unlock();
-            }
+            texture->pIndexBuffer->Unlock();
           }
-          catch(...)
-          {
-            char log[128];
-            sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
-            Log(log);
-          }
-          texture->dwNumTriangles = 0;
-          texture->iv = 0;
-          textureZ[i]=0;
-          texturePlace[index]->numRect = 0;
         }
+        catch(...)
+        {
+          char log[128];
+          sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() exception drawing texture:%d\n", index);
+          Log(log);
+        }
+        texture->dwNumTriangles = 0;
+        texture->iv = 0;
+        textureZ[i]=0;
+        texturePlace[index]->numRect = 0;
       }
     }
     textureCount=0;
@@ -1708,21 +1633,6 @@ void FontEnginePresentTextures()
     sprintf(log,"ERROR Fontengine:FontEnginePresentTextures()\n");
     Log(log);  
   }
-
-  inPresentTextures=false;
-
-  if(texturesToBeRemoved.size() > 0)
-  {
-    for( int i(texturesToBeRemoved.size()-1); i >= 0; i--)
-    {
-      int index(texturesToBeRemoved[i]);
-      FontEngineRemoveTexture(index);
-      texturesToBeRemoved.pop_back();
-      char log[128];
-      sprintf(log,"FontEnginePresentTextures -- delayed texture removal %i\n", index);
-      Log(log);
-    }
-  }
 }
 
 //*******************************************************************************************************************
@@ -1736,7 +1646,6 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
   for (int i=0; i < MaxNumfontVertices;++i)
   {
     fontData[fontNumber].vertices[i].z=0;
-    //fontData[fontNumber].vertices[i].rhw=1;
   }
 
   fontData[fontNumber].iFirstChar    = firstChar;
@@ -1749,9 +1658,9 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
   fontData[fontNumber].iv=0;
   fontData[fontNumber].dwNumTriangles=0;
 
-  m_pDevice->CreateIndexBuffer(	MaxNumfontVertices *sizeof(WORD),
-                                m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat, 
-                                &fontData[fontNumber].pIndexBuffer, NULL ) ;
+  m_pDevice->CreateIndexBuffer(MaxNumfontVertices *sizeof(WORD),
+                               m_d3dUsage, D3DFMT_INDEX16, m_ipoolFormat, 
+                                &fontData[fontNumber].pIndexBuffer, NULL);
   WORD* pIndices;
   int triangle=0;
   fontData[fontNumber].pIndexBuffer->Lock(0,0,(VOID**)&pIndices,0);
@@ -1805,7 +1714,6 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
   {
   if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-  if (m_pDevice==NULL) return;
   if (textVoid==NULL) return;
 
   TransformMatrix matrix(m);
