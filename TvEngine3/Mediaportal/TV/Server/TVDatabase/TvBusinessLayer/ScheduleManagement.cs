@@ -155,6 +155,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
         scheduleRepository.Delete(scheduleToDelete);
         scheduleRepository.UnitOfWork.SaveChanges();
+        scheduleToDelete.MarkAsDeleted();
       }
       ProgramManagement.SynchProgramStates(new ScheduleBLL(scheduleToDelete));
     }

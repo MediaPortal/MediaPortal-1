@@ -973,7 +973,8 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       foreach (var prog in programs)
       {
         var programBll = new ProgramBLL(prog);
-        if (schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(prog)))
+        // If a single "record once" schedule was deleted, reset the pending state.
+        if (schedule.Entity.ChangeTracker.State == ObjectState.Deleted || schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(prog)))
         {
           // program has been cancelled so reset any pending recording flags
           ResetPendingState(programBll);
