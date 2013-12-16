@@ -5,7 +5,7 @@ using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 
 namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Interfaces
 {
-  public interface IProgramRepository : IRepository<Model>, IDisposable
+  public interface IProgramRepository : IRepository<Model>
   {    
     void DeleteAllProgramsWithChannelId(int idChannel);
     IQueryable<Program> FindAllProgramsByChannelId(int idChannel);

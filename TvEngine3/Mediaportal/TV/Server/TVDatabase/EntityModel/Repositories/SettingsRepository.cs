@@ -5,7 +5,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
 {
   public class SettingsRepository : GenericRepository<Model>, ISettingsRepository
   {
-    public SettingsRepository()    
+    public SettingsRepository()
     {
     }
 
@@ -14,15 +14,16 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     {
     }
 
-    public SettingsRepository(bool trackingEnabled) : base(trackingEnabled)
-    {      
+    public SettingsRepository(bool trackingEnabled)
+      : base(trackingEnabled)
+    {
     }
 
     /// <summary>
     /// saves a value to the database table "Setting"
-    /// </summary>    
+    /// </summary>
     public Setting SaveSetting(string tagName, string value)
-    {            
+    {
       Setting setting = First<Setting>(s => s.Tag == tagName);
       if (setting == null)
       {
@@ -45,11 +46,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       {
         return null;
       }
-      if (tagName == null)
-      {
-        return null;
-      }
-      if (tagName == "")
+      if (string.IsNullOrEmpty(tagName))
       {
         return null;
       }
@@ -57,11 +54,11 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
       Setting setting = First<Setting>(s => s.Tag == tagName);
       if (setting == null)
       {
-        setting = new Setting {Value = defaultValue, Tag = tagName};
+        setting = new Setting { Value = defaultValue, Tag = tagName };
         Add(setting);
         UnitOfWork.SaveChanges();
       }
-            
+
       return setting;
     }
 
@@ -71,7 +68,7 @@ namespace Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories
     /// <returns>A Setting object with the stored value, if it doesnt exist a empty string will be the value</returns>
     public Setting GetSetting(string tagName)
     {
-      var setting = GetOrSaveSetting(tagName, "");
+      var setting = GetOrSaveSetting(tagName, string.Empty);
       return setting;
     }
   }
