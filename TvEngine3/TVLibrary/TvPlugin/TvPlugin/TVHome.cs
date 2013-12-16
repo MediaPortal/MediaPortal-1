@@ -568,7 +568,7 @@ namespace TvPlugin
 
     private void AutoTurnOnTv(Channel channel)
     {
-      if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+      if (_autoTurnOnTv && !_playbackStopped)
       {
         if (!wasPrevWinTVplugin())
         {
@@ -1646,6 +1646,13 @@ namespace TvPlugin
 
     private void OnSuspend()
     {
+      // OnSuspend already in progress
+      if (_suspended)
+      {
+        Log.Info("TVHome: Suspend is already in progress");
+        return;
+      }
+
       Log.Debug("TVHome.OnSuspend()");
 
       RemoteControl.OnRemotingDisconnected -=
@@ -1674,6 +1681,12 @@ namespace TvPlugin
 
     private void OnResume()
     {
+      if (!_suspended)
+      {
+        Log.Info("TVHome: Resuming is already in progress");
+        return;
+      }
+
       Log.Debug("TVHome.OnResume()");
       try
       {
@@ -1715,25 +1728,59 @@ namespace TvPlugin
         switch (msg.WParam.ToInt32())
         {
           case PBT_APMSTANDBY:
-            Log.Info("TVHome.WndProc(): Windows is going to standby");
-            OnSuspend();
+            try
+            {
+              Log.Info("TVHome.WndProc(): Windows is going to standby");
+              OnSuspend();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TVHome.WndProc() PBT_APMSTANDBY: Exception {0}", ex.ToString());
+            }
             break;
           case PBT_APMSUSPEND:
-            Log.Info("TVHome.WndProc(): Windows is suspending");
-            OnSuspend();
+            try
+            {
+              Log.Info("TVHome.WndProc(): Windows is suspending");
+              OnSuspend();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TVHome.WndProc()PBT_APMSUSPEND: Exception {0}", ex.ToString());
+            }
             break;
           case PBT_APMQUERYSUSPEND:
           case PBT_APMQUERYSTANDBY:
+            try
+            {
             Log.Info("TVHome.WndProc(): Windows is going into powerstate (hibernation/standby)");
-
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TVHome.WndProc()PBT_APMQUERYSUSPEND or PBT_APMQUERYSTANDBY: Exception {0}", ex.ToString());
+            }
             break;
           case PBT_APMRESUMESUSPEND:
+            try
+            {
             Log.Info("TVHome.WndProc(): Windows has resumed from hibernate mode");
             OnResume();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TVHome.WndProc()PBT_APMRESUMESUSPEND: Exception {0}", ex.ToString());
+            }
             break;
           case PBT_APMRESUMESTANDBY:
+            try
+            {
             Log.Info("TVHome.WndProc(): Windows has resumed from standby mode");
             OnResume();
+            }
+            catch (Exception ex)
+            {
+              Log.Error("TVHome.WndProc()PBT_APMRESUMESTANDBY: Exception {0}", ex.ToString());
+            }
             break;
         }
       }
