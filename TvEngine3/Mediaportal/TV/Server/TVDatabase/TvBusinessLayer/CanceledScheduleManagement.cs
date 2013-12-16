@@ -8,17 +8,16 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
   public static class CanceledScheduleManagement
   {
-
     public static CanceledSchedule SaveCanceledSchedule(CanceledSchedule canceledSchedule)
     {
       using (var canceledScheduleRepository = new GenericRepository<Model>())
       {
         canceledScheduleRepository.AttachEntityIfChangeTrackingDisabled(canceledScheduleRepository.ObjectContext.CanceledSchedules, canceledSchedule);
         canceledScheduleRepository.ApplyChanges(canceledScheduleRepository.ObjectContext.CanceledSchedules, canceledSchedule);
-        canceledScheduleRepository.UnitOfWork.SaveChanges();        
+        canceledScheduleRepository.UnitOfWork.SaveChanges();
         canceledSchedule.AcceptChanges();
       }
-      
+
       Schedule schedule = ScheduleManagement.GetSchedule(canceledSchedule.IdSchedule);
       ProgramManagement.SynchProgramStates(new ScheduleBLL(schedule));
       return canceledSchedule;
