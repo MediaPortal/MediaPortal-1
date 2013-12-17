@@ -186,10 +186,6 @@
       <Project>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</Project>
       <Name>GUIHome</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WindowPlugins\GUIPictures\GUIPictures.csproj">
-      <Project>{AA96B4C9-D471-4F47-B94F-1DF0697FBFDB}</Project>
-      <Name>GUIPictures</Name>
-    </ProjectReference>
     <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>

@@ -569,6 +569,21 @@ namespace MediaPortal.GUI.Pictures
 
     public override void OnAction(Action action)
     {
+      if (action.wID == Action.ActionType.ACTION_STOP)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUISlideShow._slideDirection = 0;
+        }
+      }
+      if (action.wID == Action.ActionType.ACTION_SWITCH_HOME)
+      {
+        if (g_Player.IsPicture)
+        {
+          GUISlideShow._slideDirection = 0;
+          g_Player.Stop();
+        }
+      }
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         if (facadeLayout.Focus)

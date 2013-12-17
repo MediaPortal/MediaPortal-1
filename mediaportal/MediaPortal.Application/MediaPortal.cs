@@ -3459,12 +3459,6 @@ public class MediaPortalApp : D3D, IRender
           }
           var homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           GUIWindowManager.SendThreadMessage(homeMsg);
-          // Stop Video for MyPictures when going to home
-          if (g_Player.IsPicture)
-          {
-            GUISlideShow._slideDirection = 0;
-            g_Player.Stop();
-          }
           break;
 
         case Action.ActionType.ACTION_MPRESTORE:
@@ -3721,10 +3715,6 @@ public class MediaPortalApp : D3D, IRender
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Info("Main: Stopping media");
-              if (g_Player.IsPicture)
-              {
-                GUISlideShow._slideDirection = 0;
-              }
               g_Player.Stop();
             }
             break;
