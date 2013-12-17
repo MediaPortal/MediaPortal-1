@@ -678,9 +678,6 @@ namespace MediaPortal.Plugins.Process
           }
         }
 
-        // Register to get away mode power setting notifications
-        PowerManager.RegisterAwayModeNotification(GUIGraphicsContext.ActiveForm);
-
         // Register as global service provider instance
         if (!GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
         {
@@ -796,9 +793,6 @@ namespace MediaPortal.Plugins.Process
           GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
           Log.Debug("PS: Unregistered IPowerScheduler service from GlobalServiceProvider");
         }
-
-        // Unregister to get away mode power setting notifications
-        PowerManager.UnregisterAwayModeNotification();
 
         // Disable the wakeup timer
         if (_wakeupTimer != null)
