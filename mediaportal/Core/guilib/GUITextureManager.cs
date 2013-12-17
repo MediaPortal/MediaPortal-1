@@ -86,7 +86,6 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception)
             {
-              // FIXME WTF pls
             }
           }
         }

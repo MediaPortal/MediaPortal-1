@@ -32,7 +32,7 @@ namespace MediaPortal.guilib
           _image.Disposing += new EventHandler(D3DTexture_Disposing);
 
           IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
-          _textureNumber = DXNative.FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+          _textureNumber = DXNative.FontEngineAddTextureSync(ptr.ToInt32(), true, (void*)ptr.ToPointer());
         }
       }
     }
@@ -110,7 +110,7 @@ namespace MediaPortal.guilib
     {
       if (_textureNumber >= 0)
       {
-        DXNative.FontEngineRemoveTexture(_textureNumber);
+        DXNative.FontEngineRemoveTextureSync(_textureNumber);
         _textureNumber = -1;
       }
 
@@ -150,7 +150,7 @@ namespace MediaPortal.guilib
       if (_textureNumber >= 0)
       {
         float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-        DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
+        DXNative.FontEngineDrawTextureSync(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, matrix);
       }
     }
 
@@ -178,8 +178,8 @@ namespace MediaPortal.guilib
         TransformMatrix finalTransform = GUIGraphicsContext.GetFinalTransform();
         localTransform = finalTransform.multiply(localTransform);
 
-        DXNative.FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color,
-                                       localTransform.Matrix);
+        DXNative.FontEngineDrawTextureSync(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color,
+                                           localTransform.Matrix);
 
       }
     }
