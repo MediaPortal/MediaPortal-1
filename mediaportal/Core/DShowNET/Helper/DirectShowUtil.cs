@@ -902,77 +902,87 @@ namespace DShowNET.Helper
     {
       if (baseFilter == null)
         return;
-
       int fetched;
       IEnumPins pinEnum;
-      int hr = baseFilter.EnumPins(out pinEnum);
-      DsError.ThrowExceptionForHR(hr);
-      if (hr == 0 && pinEnum != null)
+      try
       {
-        pinEnum.Reset();
-        IPin[] pins = new IPin[1];
-        while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
+        int hr = baseFilter.EnumPins(out pinEnum);
+        DsError.ThrowExceptionForHR(hr);
+        if (hr == 0 && pinEnum != null)
         {
-          PinDirection pinDir;
-          pins[0].QueryDirection(out pinDir);
-          if (pinDir == PinDirection.Output && !HasConnection(pins[0]))
+          pinEnum.Reset();
+          IPin[] pins = new IPin[1];
+          while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
           {
-            FilterInfo i;
-            PinInfo pinInfo;
-            string pinName = string.Empty;
-            if (baseFilter.QueryFilterInfo(out i) == 0)
+            PinDirection pinDir;
+            pins[0].QueryDirection(out pinDir);
+            if (pinDir == PinDirection.Output && !HasConnection(pins[0]))
             {
-              if (pins[0].QueryPinInfo(out pinInfo) == 0)
+              FilterInfo i;
+              PinInfo pinInfo;
+              string pinName = string.Empty;
+              if (baseFilter.QueryFilterInfo(out i) == 0)
               {
-                Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
-                pinName = pinInfo.name;
-                DsUtils.FreePinInfo(pinInfo);
+                if (pins[0].QueryPinInfo(out pinInfo) == 0)
+                {
+                  Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
+                  pinName = pinInfo.name;
+                  DsUtils.FreePinInfo(pinInfo);
+                }
               }
-            }
 
-            ReleaseComObject(i.pGraph);
-            try
-            {
-              if (pinName == "Audio")
+              ReleaseComObject(i.pGraph);
+              try
               {
-                try
+                if (pinName == "Audio")
                 {
+                  try
+                  {
                   #pragma warning disable 168
-                  VolumeHandler vh = VolumeHandler.Instance;
+                    VolumeHandler vh = VolumeHandler.Instance;
                   #pragma warning restore 168
-                  // vh.Volume = 19660500 that means Audio endpoint device are not available.
-                  if (vh.Volume == 19660500) // Check if new audio device is connected
-                  {
-                    VolumeHandler.Dispose();
+                    // vh.Volume = 19660500 that means Audio endpoint device are not available.
+                    if (vh.Volume == 19660500) // Check if new audio device is connected
+                    {
+                      VolumeHandler.Dispose();
                     #pragma warning disable 168
-                    vh = VolumeHandler.Instance;
+                      vh = VolumeHandler.Instance;
                     #pragma warning restore 168
+                    }
+                    if (vh.Volume != 19660500)
+                    {
+                      hr = graphBuilder.Render(pins[0]);
+                    }
                   }
-                  if (vh.Volume != 19660500)
+                  catch (Exception exception)
                   {
-                    hr = graphBuilder.Render(pins[0]);
+                    Log.Warn("DirectShowUtil: Could not initialize volume handler (don't connect Audio Pin) : ",
+                             exception.Message);
                   }
                 }
-                catch (Exception exception)
+                else
                 {
-                  Log.Warn("DirectShowUtil: Could not initialize volume handler (don't connect Audio Pin) : ", exception.Message);
+                  hr = graphBuilder.Render(pins[0]);
                 }
               }
-              else
+              catch (Exception ex)
               {
-                hr = graphBuilder.Render(pins[0]);
+                // Can't handle pin out
+                Log.Error("DirectShowUtil: Can't handle pin out {0]", ex);
+              }
+              if (hr != 0)
+              {
+                Log.Debug("DirectShowUtil: RenderUnconnectedOutputPins Pin {0} - failed", pinName);
               }
             }
-            catch (Exception)
-            {
-              // Can't handle pin out
-            }
-            if (hr != 0)
-              Log.Debug(" - failed");
+            ReleaseComObject(pins[0]);
           }
-          ReleaseComObject(pins[0]);
+          ReleaseComObject(pinEnum);
         }
-        ReleaseComObject(pinEnum);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("DirectShowUtil: Can't RenderUnconnectedOutputPins {0]", ex);
       }
     }
 
