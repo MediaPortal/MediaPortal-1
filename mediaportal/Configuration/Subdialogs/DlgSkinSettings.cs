@@ -999,13 +999,25 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    // Get the MediaPortal genres from the TV server.
+    private void loadGenres()
+    {
+      _mpGenres = TvServerRemote.GetMpGenres();
+    }
+
     public void LoadSettings(string selectedSkin)
     {
-      // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
-      TvServerRemote.HostName = TVRadio.Hostname;
+      if (MediaPortal.Util.Utils.UsingTvServer)
+      {
+        try
+        {
+          // We must specify the hostname of the TV server since MP is not running and their is no active communication with the TV server.
+          TvServerRemote.HostName = TVRadio.Hostname;
 
-      // Get the MediaPortal genres from the TV server.
-      _mpGenres = TvServerRemote.GetMpGenres();
+          loadGenres();
+        }
+        catch (System.IO.FileNotFoundException) {}
+      }
 
       // Load tv guide colors.
       using (Settings xmlreader = new SKSettings())
@@ -1017,18 +1029,18 @@ namespace MediaPortal.Configuration.Sections
         {
           CreateDefaultGenreColors(xmlreader);
         }
-
+        
         PopulateThemesList(selectedTheme);
-
+        
         if (SettingsForm.UseTvServer)
         {
           if (!_guideColorsLoaded)
           {
             _guideColorsLoaded = LoadGuideColors(xmlreader);
           }
-
+          
           PopulateGuideGenreList();
-
+          
           // Need to read skin settings as string and parse to boolean to allow skin settings to have true/false values rather than yes/no values.
           cbColoredGuide.Checked =
             bool.Parse(xmlreader.GetValueAsString("booleansettings", "#skin.tvguide.usecolorsforbuttons", "False"));
@@ -1041,7 +1053,7 @@ namespace MediaPortal.Configuration.Sections
 
           cbGenreColoring.Enabled = cbColoredGuide.Checked;
           cbGenreColorKey.Enabled = cbGenreColoring.Checked;
-
+          
           if (cbColoredGuide.Checked)
           {
             if (!tabControlTvGuideSettings.Controls.Contains(tabPageTvGuideColors))

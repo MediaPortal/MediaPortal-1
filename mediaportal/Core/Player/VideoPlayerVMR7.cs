@@ -245,7 +245,6 @@ namespace MediaPortal.Player
     protected IBaseFilter _AudioSourceFilter = null;
     protected IBaseFilter _AudioExtFilter = null;
     protected IBaseFilter _AudioExtSplitterFilter = null;
-    protected static MediaInfoWrapper _mediaInfo = null;
     protected IBaseFilter _interfaceSourceFilter = null;
     protected IBaseFilter Splitter = null;
     protected bool FileSync = false;

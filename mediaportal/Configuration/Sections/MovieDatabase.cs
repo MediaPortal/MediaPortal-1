@@ -5266,6 +5266,9 @@ namespace MediaPortal.Configuration.Sections
         // open dialog
         if (dlg.ShowDialog(this) == DialogResult.OK)
         {
+          Util.Utils.FileDelete(smallThumb);
+          Util.Utils.FileDelete(largeThumb);
+          
           if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
                                            (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
           {

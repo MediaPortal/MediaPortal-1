@@ -492,6 +492,9 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\WindowPlugins\GUIWeather\bin\${BUILD_TYPE}\GUIWeather.dll"
   File "${git_MP}\WindowPlugins\GUIVideos\bin\${BUILD_TYPE}\GUIVideos.dll"
   File "${git_MP}\WindowPlugins\GUIWikipedia\bin\${BUILD_TYPE}\GUIWikipedia.dll"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"

@@ -47,16 +47,17 @@ namespace WindowPlugins
 
     #region Serialisation
 
-    protected virtual void LoadSettings() { }
+    protected virtual void LoadSettings() {}
 
-    protected virtual void SaveSettings() { }
+    protected virtual void SaveSettings() {}
 
     #endregion
 
     protected int SelectedFacadeItem()
     {
       if (facadeLayout == null) return -1;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeLayout.GetID, 0, 0, null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeLayout.GetID, 0, 0,
+                                      null);
       OnMessage(msg);
       int iItem = (int)msg.Param1;
       return iItem;
@@ -112,9 +113,9 @@ namespace WindowPlugins
       }
       else
       {
-        facadeLayout.CurrentLayout = CurrentLayout;  
+        facadeLayout.CurrentLayout = CurrentLayout;
       }
-      
+
       PresentLayout();
 
       // The layout may be automatically switched via selection of a new view.
@@ -207,8 +208,8 @@ namespace WindowPlugins
           SetLayout((Layout)btnLayouts.SelectedItemValue);
           SelectCurrentItem();
 
-          // Refocus on the layout button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
@@ -216,16 +217,9 @@ namespace WindowPlugins
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
-          
-          // View can switch screen (ie. in my vids from shares to dbviews) so we need to check that 
-          // because selectitem will be done on old screen and that can cause a trouble
-          if (GUIWindowManager.ActiveWindow == GetID)
-          {
-            SelectCurrentItem();  
-          }
-          
-          // Refocus on the view button control.
-          GUIControl.FocusControl(GetID, message.TargetControlId);
+
+          // Refocus facade so item will be selected
+          GUIControl.FocusControl(GetID, facadeLayout.GetID);
 
           msgHandled = true;
         }
@@ -258,7 +252,8 @@ namespace WindowPlugins
         {
           OnQueueItem(SelectedFacadeItem());
         }
-        if (actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN || actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
+        if (actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN ||
+            actionType == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
           OnMessage(msg);
@@ -274,7 +269,7 @@ namespace WindowPlugins
 
     protected virtual void OnQueueItem(int item) {}
 
-    protected virtual void OnSearchNew() { }
+    protected virtual void OnSearchNew() {}
 
     protected virtual void SelectCurrentItem()
     {
@@ -317,8 +312,8 @@ namespace WindowPlugins
     protected virtual void SwitchToNextAllowedLayout(Layout selectedLayout)
     {
       int iSelectedLayout = (int)selectedLayout;
-      int totalLayouts = Enum.GetValues(typeof(Layout)).Length - 1;
-      
+      int totalLayouts = Enum.GetValues(typeof (Layout)).Length - 1;
+
       if (iSelectedLayout > totalLayouts)
         iSelectedLayout = 0;
 

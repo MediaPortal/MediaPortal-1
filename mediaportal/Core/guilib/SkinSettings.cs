@@ -20,6 +20,8 @@
 
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -73,12 +75,14 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static int TranslateSkinString(string line, Kind kind)
     {
+      Log.Debug("SkinSettings: Called TranslateSkinString({0},{1})", line, kind.ToString());
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
       while (enumer.MoveNext())
       {
         SkinString skin = enumer.Current.Value;
         if (skin.Name == line)
         {
+          Log.Debug("SkinSettings: Done TranslateSkinString({0},{1}), Existing Key {2}", line, kind.ToString(), enumer.Current.Key.ToString());
           return enumer.Current.Key;
         }
       }
@@ -98,9 +102,13 @@ namespace MediaPortal.GUI.Library
         newString.Value = GUIPropertyManager.GetProperty(newString.Name);
       }
 
-      int key = _skinStringSettings.Count;
-      _skinStringSettings[key] = newString;
-
+      int key;
+      lock (_skinStringSettings) //Lock the dictionary, it might be getting saved at the moment
+      {
+        key = _skinStringSettings.Count;
+        _skinStringSettings[key] = newString;
+      }
+      Log.Debug("SkinSettings: Done TranslateSkinString({0},{1}), New Key {2}", line, kind.ToString(),key.ToString());
       return key;
     }
 
@@ -141,6 +149,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinString(int key, string newValue)
     {
+      Log.Debug("SkinSettings: Called SetSkinString({0},{1})", key.ToString(),newValue);
       SkinString skin = null;
       if (_skinStringSettings.TryGetValue(key, out skin))
       {
@@ -153,6 +162,7 @@ namespace MediaPortal.GUI.Library
         // Save change to disk immediately.
         Save();
       }
+      Log.Debug("SkinSettings: Done SetSkinString({0},{1})", key.ToString(), newValue);
     }
 
     /// <summary>
@@ -174,6 +184,7 @@ namespace MediaPortal.GUI.Library
     public static int TranslateSkinBool(string setting, Kind kind)
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
+      Log.Debug("SkinSettings: Called TranslateSkinBool({0},{1})", setting, kind.ToString());
       while (enumer.MoveNext())
       {
         SkinBool skin = enumer.Current.Value;
@@ -205,9 +216,13 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      int key = _skinBoolSettings.Count;
-      _skinBoolSettings[key] = newBool;
-
+      int key;
+      lock (_skinBoolSettings) // Lock dictionary, we might be saving, should not alter structre
+      {
+        key = _skinBoolSettings.Count;
+        _skinBoolSettings[key] = newBool;
+      }
+      Log.Debug("SkinSettings: Done TranslateSkinBool({0},{1})", setting, kind.ToString());
       return key;
     }
 
@@ -332,23 +347,26 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        var enumerator = allBooleanSettings.GetEnumerator();
-        if (enumerator != null)
+        lock (_skinBoolSettings)
         {
-          while (enumerator.MoveNext())
+          var enumerator = allBooleanSettings.GetEnumerator();
+          if (enumerator != null)
           {
-            // Create the new boolean setting.
-            SkinBool newBool = new SkinBool();
-            newBool.Name = enumerator.Current.Key;
-            newBool.Value = enumerator.Current.Value;
-            newBool.Kind = Kind.PERSISTENT;
+            while (enumerator.MoveNext())
+            {
+              // Create the new boolean setting.
+              SkinBool newBool = new SkinBool();
+              newBool.Name = enumerator.Current.Key;
+              newBool.Value = enumerator.Current.Value;
+              newBool.Kind = Kind.PERSISTENT;
 
-            // Add the setting to the dictionary.
-            int key = _skinBoolSettings.Count;
-            _skinBoolSettings[key] = newBool;
+              // Add the setting to the dictionary.
+              int key = _skinBoolSettings.Count;
+              _skinBoolSettings[key] = newBool;
 
-            // Create the setting as a property.  The boolean value is converted as a string representation.
-            GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+              // Create the setting as a property.  The boolean value is converted as a string representation.
+              GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+            }
           }
         }
       }
@@ -365,23 +383,26 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        var enumerator = allStringSettings.GetEnumerator();
-        if (enumerator != null)
+        lock (_skinStringSettings)
         {
-          while (enumerator.MoveNext())
+          var enumerator = allStringSettings.GetEnumerator();
+          if (enumerator != null)
           {
-            // Create the new string setting.
-            SkinString newString = new SkinString();
-            newString.Name = enumerator.Current.Key;
-            newString.Value = enumerator.Current.Value;
-            newString.Kind = Kind.PERSISTENT;
+            while (enumerator.MoveNext())
+            {
+              // Create the new string setting.
+              SkinString newString = new SkinString();
+              newString.Name = enumerator.Current.Key;
+              newString.Value = enumerator.Current.Value;
+              newString.Kind = Kind.PERSISTENT;
 
-            // Add the setting to the dictionary.
-            int key = _skinStringSettings.Count;
-            _skinStringSettings[key] = newString;
+              // Add the setting to the dictionary.
+              int key = _skinStringSettings.Count;
+              _skinStringSettings[key] = newString;
 
-            // Create the setting as a property.
-            GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+              // Create the setting as a property.
+              GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+            }
           }
         }
       }
@@ -444,9 +465,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Clear our dictionary.
-      foreach (int key in keysToRemove)
+      lock (_skinBoolSettings)
       {
-        _skinBoolSettings.Remove(key);
+        foreach (int key in keysToRemove)
+        {
+          _skinBoolSettings.Remove(key);
+        }
       }
     }
 
@@ -466,9 +490,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Clear our dictionary.
-      foreach (int key in keysToRemove)
+      lock (_skinStringSettings)
       {
-        _skinStringSettings.Remove(key);
+        foreach (int key in keysToRemove)
+        {
+          _skinStringSettings.Remove(key);
+        }
       }
     }
 
@@ -477,18 +504,56 @@ namespace MediaPortal.GUI.Library
       GUIThemeManager.ClearSettings();
     }
 
+    static IWork _delaySave;
     /// <summary>
-    /// Save all skin settings to disk.
+    /// Schedule saving of all settings in the near future
     /// </summary>
     public static void Save()
     {
+      Log.Debug("SkinSettings: 1 - Called Save");
+      IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
+      if (_delaySave == null)
+      {
+        _delaySave = tp.Add(LazySave, "Wait for saving SkinSettings");
+        Log.Debug("SkinSettings: 2 - Scheduled Save");
+      } 
+      else if (_delaySave.State != WorkState.INPROGRESS && _delaySave.State != WorkState.INQUEUE)
+      {
+        _delaySave = tp.Add(LazySave,"Wait for saving SkinSettings");
+        Log.Debug("SkinSettings: 2 - Scheduled Save");
+      }
+      
+    }
+
+    static void LazySave()
+    {
+      Log.Debug("SkinSettings: 3 - Wait for saving");
+      System.Threading.Thread.Sleep(100); // This combines quick calls to Save into one Save operation
+      IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
+      tp.Add(_Save); // Add the save operation to the thread pool
+      Log.Debug("SkinSettings: 4 - Scheduled save operation");
+    }
+
+    /// <summary>
+    /// Save all skin settings to disk.
+    /// </summary>
+    public static void _Save()
+    {
+      Log.Debug("SkinSettings: 5 - Start saving settings.");
       using (Settings xmlWriter = new SKSettings())
       {
-        SaveBooleanSettings(xmlWriter);
-        SaveStringSettings(xmlWriter);
+        lock (_skinBoolSettings)
+        {
+          SaveBooleanSettings(xmlWriter);
+        }
+        lock (_skinStringSettings)
+        {
+          SaveStringSettings(xmlWriter);
+        }
         SaveDiscreteSettings(xmlWriter);
       }
       Settings.SaveCache();
+      Log.Debug("SkinSettings: 6 - Saved all settings.");
     }
 
     private static void SaveBooleanSettings(Settings xmlWriter)
