@@ -275,14 +275,22 @@ namespace MediaPortal.GUI.Library
       {
         if (GUIGraphicsContext.Overlay != _isOverlayAllowed)
         {
-          GUIGraphicsContext.Overlay = _parentWin.IsOverlayAllowed = _isOverlayAllowed;
+          GUIGraphicsContext.Overlay = _isWinOverlayAllowed && _isOverlayAllowed;
         }
         _imageFocused.Render(timePassed);
         GUIFontManager.Present();
       }
       else
       {
+        if (GUIGraphicsContext.Overlay != _isWinOverlayAllowed)
+        {
+          GUIGraphicsContext.Overlay = _isWinOverlayAllowed;
+        }
         _imageNonFocused.Render(timePassed);
+        if (IsEffectAnimating(AnimationType.Hidden))
+        {
+          GUIFontManager.Present();
+        }
       }
       base.Render(timePassed);
     }
