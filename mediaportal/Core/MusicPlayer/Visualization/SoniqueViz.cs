@@ -99,9 +99,9 @@ namespace MediaPortal.Visualization
     private void PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
                                       BassAudioEngine.PlayState newState)
     {
-      Log.Debug("SoniqueViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
       if (_visParam.VisHandle != 0)
       {
+        Log.Debug("SoniqueViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
         if (newState == BassAudioEngine.PlayState.Playing)
         {
           RenderStarted = false;
