@@ -119,7 +119,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     else
     {
       movie.WritingCredits = HttpUtility.HtmlDecode(director.Replace("\n", string.Empty));
-			if (movie.WritingCredits != null) movie.WritingCredits = movie.WritingCredits.Replace(",", ", ");
+      if (movie.WritingCredits != null) movie.WritingCredits = movie.WritingCredits.Replace(",", ", ");
     }
 
     // Genre
@@ -373,17 +373,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       HTMLParser parser = new HTMLParser(html);
       string strThumb = string.Empty;
       string value = string.Empty;
+      parser.extractTo("<footer class=\"", ref value);
+      parser.Content = value;
+      value = string.Empty;
 
       #region Actor name
 
       // Actor name
-      if (parser.skipToEndOf("<section class=\"overview\">") &&
-          parser.skipToEndOf("<div class=\"title\"><h1>") &&
+      if (parser.skipToEndOf("<section id=\"name-overview\">") &&
+          parser.skipToEndOf("<h1>") &&
           parser.extractTo("</h1>", ref value))
       {
         value = new HTMLUtil().ConvertHTMLToAnsi(value);
         value = Utils.RemoveParenthesis(value).Trim();
-        actor.Name = HttpUtility.HtmlDecode(value.Trim());
+        value = HttpUtility.HtmlDecode(value.Trim());
+        value = Utils.stripHTMLtags(value);
+        actor.Name = value.Replace("\n", "");
       }
 
       if (actor.Name == string.Empty)
@@ -400,17 +405,17 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor photo
 
-      if (parser.skipToStartOf("<section class=\"overview\">") &&
-          parser.skipToEndOf("<div class=\"poster\">") &&
-          parser.extractTo("</div>", ref photoBlock))
+      if (parser.skipToStartOf("<img id=\"name-poster\"") &&
+          parser.skipToEndOf("class=\"media-object\"") &&
+          parser.extractTo("itemprop=\"image\"", ref photoBlock))
       {
         parser.Content = photoBlock;
 
-        if (parser.skipToEndOf("<span") &&
+        if (//parser.skipToEndOf("<span") &&
             parser.skipToEndOf("src=\"") &&
             parser.extractTo("_V1", ref strThumb))
         {
-          actor.ThumbnailUrl = strThumb + "_V1_SX400.jpg";
+          actor.ThumbnailUrl = strThumb + "_V1_SX250.jpg";
         }
         parser.Content = parserTxt;
       }
@@ -420,18 +425,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       #region Actor birth date/place
 
       // Birth date/Place
-      if (parser.skipToEndOf("<h1>Born</h1>"))
+      if (parser.skipToEndOf("<h3>Born</h3>"))
       {
-        if (parser.skipToEndOf("</div>") &&
-            parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("<time datetime=") &&
+            parser.skipToEndOf("itemprop=\"birthDate\">") &&
+            parser.extractTo("</time>", ref value))
         {
+          value = value.Replace("\n", "").Trim();
+          value = value.Replace("  ", "");
+          value = value.Replace(",", ", ");
           actor.DateOfBirth = value;
         }
 
         // Birth place
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("</span><br />") &&
+            parser.skipToEndOf("<span>") &&
+            parser.extractTo("</span>", ref value))
         {
           actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
         }
@@ -442,17 +451,22 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       #region Actor death date/place
 
       // Death date
-      if (parser.skipToEndOf("<h1>Death</h1>"))
+      if (parser.skipToEndOf("<h3>Died</h3>"))
       {
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("<time datetime=") &&
+            parser.skipToEndOf("itemprop=\"deathDate\">") &&
+            parser.extractTo("</time>", ref value))
         {
+          value = value.Replace("\n", "").Trim();
+          value = value.Replace("  ", "");
+          value = value.Replace(",", ", ");
           actor.DateOfDeath = value;
         }
 
         // Death place
-        if (parser.skipToEndOf("<div>") &&
-            parser.extractTo("</div>", ref value))
+        if (parser.skipToEndOf("</span><br />") &&
+            parser.skipToEndOf("<span>") &&
+            parser.extractTo("</span>", ref value))
         {
           actor.PlaceOfDeath = HttpUtility.HtmlDecode(value);
         }
@@ -464,12 +478,29 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor biography
 
-      if (parser.skipToEndOf("<h1>Mini Biography</h1>") &&
-        parser.extractTo("</section>", ref value))
+      parser.resetPosition();
+
+      if (parser.skipToEndOf("<a href=\"bio?ref_=m_mn_ov_bio\" class=\"btn-full\" > <p>") &&
+        parser.extractTo("</p>", ref value))
       {
         value = new HTMLUtil().ConvertHTMLToAnsi(value);
-        actor.Biography = Utils.stripHTMLtags(value).Trim();
-        actor.Biography = HttpUtility.HtmlDecode(actor.Biography);
+        value = Utils.stripHTMLtags(value).Trim();
+        value = HttpUtility.HtmlDecode(value);
+        actor.MiniBiography = value;
+
+        string fullBioUrl = string.Format("http://m.imdb.com/name/{0}/bio?ref_=m_mn_ov_bio", actor.IMDBActorID);
+        html = GetPage(fullBioUrl, "utf-8", out absoluteUri);
+        parser.Content = html;
+
+        if (parser.skipToEndOf(" <section id=\"name-bio\">") &&
+            parser.skipToEndOf("<p>") &&
+            parser.extractTo("</p>", ref value))
+        {
+          value = new HTMLUtil().ConvertHTMLToAnsi(value);
+          value = Utils.stripHTMLtags(value).Trim();
+          value = HttpUtility.HtmlDecode(value);
+          actor.Biography = value;
+        }
       }
 
       #endregion
