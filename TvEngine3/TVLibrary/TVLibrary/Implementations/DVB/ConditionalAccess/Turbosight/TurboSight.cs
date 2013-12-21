@@ -1525,7 +1525,23 @@ namespace TvLibrary.Implementations.DVB
 
         public bool IsCiSlotPresent()
         {
+            // Check whether a CI slot is present.
             TvLibrary.Log.Log.Debug("Turbosight: is CI slot present", new object[0]);
+            int ciAccessProperty = (int)BdaExtensionProperty.CiAccess;
+            if (_isUsb)
+            {
+              ciAccessProperty = (int)UsbBdaExtensionProperty.CiAccess;
+            }
+            KSPropertySupport support;
+            int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
+            if (hr != (int)HResult.Severity.Success || support == 0)
+            {
+              TvLibrary.Log.Log.Debug("Turbosight: device doesn't have a CI slot");
+              return false;
+            }
+            return true;  
+          
+            /*TvLibrary.Log.Log.Debug("Turbosight: is CI slot present", new object[0]);
             string filterName = FilterGraphTools.GetFilterName(this._tunerFilter);
             bool flag = false;
             for (int i = 0; i < TunersWithCiSlots.Length; i++)
@@ -1537,7 +1553,7 @@ namespace TvLibrary.Implementations.DVB
                 }
             }
             TvLibrary.Log.Log.Debug("Turbosight: result = {0}", new object[] { flag });
-            return flag;
+            return flag;*/
         }
 
         /// <summary>
