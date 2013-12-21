@@ -1129,8 +1129,8 @@ Global
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|Mixed Platforms.Build.0 = Release|x86
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.Release|x86.ActiveCfg = Release|Any CPU
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
 		{CD46664D-4161-47B4-B865-65CE68C12EDF}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
