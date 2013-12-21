@@ -53,6 +53,7 @@ namespace MediaPortal.GUI.Library
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
+    private static bool _noTheme;
 
     public const string THEME_SECTION_NAME = "theme";
     public const string THEME_NAME_ENTRY = "name";
@@ -327,6 +328,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the skin to Notheme for watchdog.
+    /// </summary>
+    public static bool NoTheme
+    {
+      get { return _noTheme; }
+      set { _noTheme = value; }
+    }
+
     #region Persistence
 
     private static void LoadBooleanSettings()
@@ -405,8 +415,16 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new SKSettings())
       {
-        // Initialize the theme manager for the selected theme.
-        GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        if (!_noTheme)
+        {
+          // Initialize the theme manager for the selected theme.
+          GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        }
+        else
+        {
+          // Initialize the theme manager for the watchdog.
+          GUIThemeManager.Init(GUIThemeManager.THEME_SKIN_DEFAULT);
+        }
       }
     }
 
