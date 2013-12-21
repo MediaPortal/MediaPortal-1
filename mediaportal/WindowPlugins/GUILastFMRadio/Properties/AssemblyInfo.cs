@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -27,7 +27,7 @@ using MediaPortal.Common.Utils;
 // associated with an assembly.
 //
 
-[assembly: AssemblyTitle("GUIRadioLastFM")]
+[assembly: AssemblyTitle("GUILastFMRadio")]
 [assembly: AssemblyDescription("")]
 
 [assembly: CompatibleVersion("Own")]

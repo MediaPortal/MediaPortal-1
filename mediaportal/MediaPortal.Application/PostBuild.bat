@@ -49,6 +49,7 @@ REM WindowPlugins
 xcopy %1\WindowPlugins\GUIDisc\bin\%2\GUIDisc.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIDVD\bin\%2\GUIDVD.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIHome\bin\%2\GUIHome.* plugins\Windows\ /Y /D
+xcopy %1\WindowPlugins\GUILastFMRadio\bin\%2\GUILastFMRadio.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIMusic\bin\%2\GUIMusic.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUINumberPlace\bin\%2\GUINumberPlace.* plugins\Windows\ /Y /D
 xcopy %1\WindowPlugins\GUIPictures\bin\%2\GUIPictures.* plugins\Windows\ /Y /D

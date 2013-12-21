@@ -6,6 +6,7 @@
   <plugin>GUIDisc.dll</plugin>
   <plugin>GUIDVD.dll</plugin>
   <plugin>GUIHome.dll</plugin>
+  <plugin>GUILastFMRadio.dll</plugin>
   <plugin>GUIMusic.dll</plugin>
   <plugin>GUINumberPlace.dll</plugin>
   <plugin>GUIPictures.dll</plugin>

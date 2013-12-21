@@ -20,7 +20,7 @@ using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 namespace MediaPortal.GUI.LastFMRadio
 {
 
-  [PluginIcons("WindowPlugins.GUILastFMRadio.BallonRadio.gif", "WindowPlugins.GUILastFMRadio.BallonRadioDisabled.gif")]
+  [PluginIcons("GUILastFMRadio.BallonRadio.gif", "GUILastFMRadio.BallonRadioDisabled.gif")]
   public class GUILastFMRadio : GUIWindow, ISetupForm
   {
 
