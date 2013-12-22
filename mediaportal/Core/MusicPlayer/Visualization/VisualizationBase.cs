@@ -230,12 +230,16 @@ namespace MediaPortal.Visualization
       {
         if (_visParam != null)
         {
+          Log.Info("VisualizationBase: Destroy BassVis with {0} viz plugins...", VizPluginInfo.Name);
           BassVis.BASSVIS_Quit(_visParam);
           _visParam = null;
         }
         return true;
       }
-      catch (Exception) {}
+      catch (Exception ex)
+      {
+        Log.Error("VisualizationBase: Failed to destroy BassVis - {0}", ex.ToString());
+      }
       return false;
     }
 
