@@ -162,7 +162,7 @@ namespace MediaPortal.Visualization
         // so i have create a new variable which fix this problem
         if (Bass != null)
         {
-          if (Bass.CurrentFile != _OldCurrentFile)
+          if ((Bass.CurrentFile != _OldCurrentFile) && !Bass.IsRadio)
           {
             trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
             if (trackTag != null)
@@ -177,7 +177,7 @@ namespace MediaPortal.Visualization
           }
 
           // Set Song information, so that the plugin can display it
-          if (trackTag != null)
+          if (trackTag != null && !Bass.IsRadio)
           {
             _mediaInfo.SongTitle = _songTitle;
             _mediaInfo.SongFile = Bass.CurrentFile;
@@ -186,8 +186,27 @@ namespace MediaPortal.Visualization
           }
           else
           {
+            if (Bass.IsRadio)
+            {
+              // Change TrackTag to StreamTag for Radio
+              trackTag = Bass.GetStreamTags();
+              if (trackTag != null)
+              {
+                // Artist and Title show better i think
+                _songTitle = trackTag.Artist + ": " +  trackTag.Title;
+                _mediaInfo.SongTitle = _songTitle;
+              }
+              else
+              {
+                _songTitle = "   ";
+              }
+              _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            }
+            else
+            {
             _mediaInfo.Position = 0;
             _mediaInfo.Duration = 0;
+            }
           }
         }
         
@@ -330,8 +349,21 @@ namespace MediaPortal.Visualization
         visExec.Left = VisualizationWindow.Left;
         visExec.Top = VisualizationWindow.Top;
         visExec.SON_ShowFPS = true;
-        visExec.SON_ShowPrgBar = true;
-        visExec.SON_UseCover = VizPluginInfo.UseCover; 
+        // can not check IsRadio on first start
+        // so ProgressBar and Cover Visible state will hide after change to the next Plugin to
+        if (Bass.IsRadio)
+        {
+          // no duration deactivate ProgressBar
+          visExec.SON_ShowPrgBar = false;
+          // Cover-Support used only on first start if VizPluginInfo.UseCover = true
+          // after or change the plugin in FullScreen, Cover-Support will disable for RadioStreams
+          visExec.SON_UseCover = false; 
+        }
+        else
+        {
+          visExec.SON_ShowPrgBar = true;
+          visExec.SON_UseCover = VizPluginInfo.UseCover; 
+        }
 
         BassVis.BASSVIS_ExecutePlugin(visExec, _visParam);
 

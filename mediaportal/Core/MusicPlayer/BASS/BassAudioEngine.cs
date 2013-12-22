@@ -1883,6 +1883,9 @@ namespace MediaPortal.MusicPlayer.BASS
       // Execute the Stop in a separate thread, so that it doesn't block the Main UI Render thread
       new Thread(() =>
                    {
+                     // First deactivate Viz RenderThread, in HandleSongEnded, it's too late
+                     VizWindow.Run = false;
+
                      MusicStream stream = GetCurrentStream();
                      try
                      {
@@ -2020,7 +2023,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       ShowVisualizationWindow(false);
-      VizWindow.Run = false;
 
       GUIGraphicsContext.IsPlaying = false;
 

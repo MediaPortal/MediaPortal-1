@@ -3518,7 +3518,7 @@ namespace MediaPortal.Player
         return false;
       }
       // are we playing music and got the fancy BassMusicPlayer?
-      if (IsMusic && BassMusicPlayer.IsDefaultMusicPlayer)
+      if ((IsMusic || IsRadio) && BassMusicPlayer.IsDefaultMusicPlayer)
       {
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC)
         {
