@@ -103,7 +103,7 @@ struct FONT_DATA_T
 };
 
 struct TEXTURE_DATA_T
-{	
+{
   int                     hashCode;
   LPDIRECT3DTEXTURE9      pTexture;
   LPDIRECT3DINDEXBUFFER9  pIndexBuffer;
@@ -304,6 +304,11 @@ void FontEngineSetClipDisable()
 //*******************************************************************************************************************
 void FontEngineRemoveTexture(int textureNo)
 {
+  if(!m_pDevice)
+  {
+    return;
+  }
+
   if (textureNo < 0 || textureNo>=MAX_TEXTURES) return;
 
   // Important to set it to NULL otherwise the textures, etc. will not be freed on release
@@ -336,8 +341,8 @@ void FontEngineRemoveTexture(int textureNo)
 int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
   int selected=-1;
-    
-	for (int i=0; i < MAX_TEXTURES;++i)
+
+  for (int i=0; i < MAX_TEXTURES;++i)
   {
     if (textureData[i].hashCode==hashCode)
     {
@@ -455,7 +460,7 @@ int FontEngineAddSurface(int hashCode, bool useAlphaBlend,void* surface)
     triangle++;
   }
   textureData[selected].pIndexBuffer->Unlock();
-  
+
   return selected;
 }
 
@@ -560,7 +565,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   {
     RECT clipRect;
     m_pDevice->GetScissorRect(&clipRect);
-  
+
     // This clipping is done algorthimically for the texture being drawn.
     // This texture is maintained in the list of textures managed by the FontEngine.
     // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
@@ -1714,6 +1719,7 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int yposStart, DWORD intColor, int maxWidth, float m[3][4])
   {
   if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
+  if (m_pDevice==NULL) return;
   if (textVoid==NULL) return;
 
   TransformMatrix matrix(m);

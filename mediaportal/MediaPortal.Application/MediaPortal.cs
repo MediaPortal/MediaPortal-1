@@ -2720,9 +2720,9 @@ public class MediaPortalApp : D3D, IRender
     PluginManager.Stop();
     GUIWindowManager.Clear();
     GUIWaitCursor.Dispose();
-    GUITextureManager.Dispose();
     GUIFontManager.Dispose();
     GUIFontManager.ReleaseUnmanagedResources();
+    GUITextureManager.Dispose();
     GUILocalizeStrings.Dispose();
     TexturePacker.Cleanup();
     VolumeHandler.Dispose();
