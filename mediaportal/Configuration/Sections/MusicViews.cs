@@ -18,12 +18,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class MusicViews : BaseViews
+  public class MusicViews : BaseViewsNew
   {
     private string[] selections = new string[]
                                     {
@@ -85,8 +86,16 @@ namespace MediaPortal.Configuration.Sections
                                   "Times Played"
                                 };
 
+    private Dictionary<string, Dictionary<string, string>> dbTables = new Dictionary<string, Dictionary<string, string>>();
+    private Dictionary<string, string> tracksTable = new Dictionary<string, string>();
+
     public MusicViews()
-      : this("Music Views") {}
+      : this("Music Views")
+    {
+      tracksTable.Add("Artist", "strArtist");
+      tracksTable.Add("AlbumArtist", "strAlbumArtist");
+      dbTables.Add("Tracks", tracksTable);
+    }
 
     public MusicViews(string name)
       : base(name) {}
