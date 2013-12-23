@@ -330,7 +330,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void btAddFilter_Click(object sender, EventArgs e)
     {
-      BaseViewsFilter filterForm = new BaseViewsFilter();
+      BaseViewsFilter filterForm = new BaseViewsFilter(this);
       filterForm.ShowDialog();
     }
 
