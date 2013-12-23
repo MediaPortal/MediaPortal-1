@@ -32,10 +32,9 @@ namespace MediaPortal.GUI.View
   [Serializable]
   public class ViewDefinitionNew
   {
-    protected List<FilterDefinitionNew> _listFilters = new List<FilterDefinitionNew>();
+    protected List<FilterLevels> _listFilterLevels = new List<FilterLevels>();
     protected List<ViewDefinitionNew> _listSubViews = new List<ViewDefinitionNew>();
     private string _name;
-    private string _expertFilter;
 
     public ViewDefinitionNew() {}
 
@@ -46,18 +45,11 @@ namespace MediaPortal.GUI.View
       set { _name = value; }
     }
 
-    [XmlElement("ExpertFilter")]
-    public string ExpertFilter
+    [XmlElement("FilterLevels")]
+    public List<FilterLevels> Levels
     {
-      get { return _expertFilter; }
-      set { _expertFilter = value; }
-    }
-
-    [XmlElement("Filters")]
-    public List<FilterDefinitionNew> Filters
-    {
-      get { return _listFilters; }
-      set { _listFilters = value; }
+      get { return _listFilterLevels; }
+      set { _listFilterLevels = value; }
     }
 
     [XmlElement("SubViews")]

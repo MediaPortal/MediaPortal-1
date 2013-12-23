@@ -29,22 +29,12 @@ namespace MediaPortal.GUI.View
   [Serializable]
   public class FilterDefinitionNew
   {
-    protected bool skipLevel = false;
-    protected string tableName = "";
     protected string whereClause = "";
     protected string sqlOperator = "";
-    protected string whereValue = "*";
-    protected string selectedValue = "";
-    protected string defaultView = "List";
+    protected string whereValue = "";
+    protected string operatorAndOr = "";
 
     public FilterDefinitionNew() {}
-
-    [XmlElement("TableName")]
-    public string TableName
-    {
-      get { return tableName; }
-      set { tableName = value; }
-    }
 
     [XmlElement("Where")]
     public string Where
@@ -67,24 +57,11 @@ namespace MediaPortal.GUI.View
       set { whereValue = value; }
     }
 
-    [XmlElement("SkipLevel")]
-    public bool SkipLevel
+    [XmlElement("AndOr")]
+    public string AndOr
     {
-      get { return skipLevel; }
-      set { skipLevel = value; }
-    }
-
-    [XmlElement("DefaultView")]
-    public string DefaultView
-    {
-      get { return defaultView; }
-      set { defaultView = value; }
-    }
-    
-    public string SelectedValue
-    {
-      get { return selectedValue; }
-      set { selectedValue = value; }
+      get { return operatorAndOr; }
+      set { operatorAndOr = value; }
     }
   }
 }
