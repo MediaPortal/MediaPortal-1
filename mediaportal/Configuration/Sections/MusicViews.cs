@@ -44,20 +44,6 @@ namespace MediaPortal.Configuration.Sections
                                       "disc#"
                                     };
 
-    private string[] sqloperators = new string[]
-                                      {
-                                        "",
-                                        "=",
-                                        ">",
-                                        "<",
-                                        ">=",
-                                        "<=",
-                                        "<>",
-                                        "like",
-                                        "not like",
-                                        "group",
-                                      };
-
     private string[] viewsAs = new string[]
                                  {
                                    "List",
@@ -102,7 +88,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("Music", selections, sqloperators, viewsAs, sortBy);
+      base.LoadSettings("Music", selections, viewsAs, sortBy);
     }
 
     public override void SaveSettings()
