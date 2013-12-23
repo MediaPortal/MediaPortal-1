@@ -262,8 +262,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Plugins.cs" />
-    <Compile Include="Sections\BaseViewsNew.cs" />
-    <Compile Include="Sections\BaseViewsNew.Designer.cs" />
+    <Compile Include="Sections\BaseViewsFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseViewsFilter.Designer.cs">
+      <DependentUpon>BaseViewsFilter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\BaseViewsNew.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseViewsNew.Designer.cs">
+      <DependentUpon>BaseViewsNew.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\Radio.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -606,7 +616,9 @@
     <Compile Include="Sections\MusicSort.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\MusicViews.cs" />
+    <Compile Include="Sections\MusicViews.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\PictureExtensions.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -652,7 +664,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Content Include="Resources\blu-ray_regions.png" />
-    <EmbeddedResource Include="Sections\BaseViewsNew.resx" />
+    <EmbeddedResource Include="Sections\BaseViewsFilter.resx">
+      <DependentUpon>BaseViewsFilter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseViewsNew.resx">
+      <DependentUpon>BaseViewsNew.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\00_plugin_other.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\01_plugin_other_off.png" />
     <EmbeddedResource Include="Sections\Images\Plugins\imageListLargePlugins\02_plugin_window.png" />
