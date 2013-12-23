@@ -46,17 +46,14 @@ namespace MediaPortal.Configuration.Sections
     private bool updating = false;
     public bool settingsChanged = false;
 
-    private List<string> _selections = new List<string>();
+    private Dictionary<string, Dictionary<string, string>> _selections = new Dictionary<string, Dictionary<string, string>>();
     private List<string> _viewsAs = new List<string>();
-    private List<string> _sortBy = new List<string>();
 
     // Drag & Drop
     private int _dragDropCurrentIndex = -1;
     private Rectangle _dragDropRectangle;
     private int _dragDropSourceIndex;
     private int _dragDropTargetIndex;
-    private TreeNode _dragDropSourceNode;
-    private TreeNode _dragDropTagrgetNode;
 
     private string _section = string.Empty;
 
@@ -64,13 +61,13 @@ namespace MediaPortal.Configuration.Sections
 
     #region Properties
 
-    public string[] Selections
+    public Dictionary<string, Dictionary<string, string>> Selections
     {
-      get { return _selections.ToArray(); }
+      get { return _selections; }
       set
       {
         _selections.Clear();
-        _selections.AddRange(value);
+        _selections = value;
       }
     }
 
@@ -81,16 +78,6 @@ namespace MediaPortal.Configuration.Sections
       {
         _viewsAs.Clear();
         _viewsAs.AddRange(value);
-      }
-    }
-
-    public string[] SortBy
-    {
-      get { return _sortBy.ToArray(); }
-      set
-      {
-        _sortBy.Clear();
-        _sortBy.AddRange(value);
       }
     }
 
@@ -135,19 +122,9 @@ namespace MediaPortal.Configuration.Sections
       string[] arrColumnNames = null; //string array variable
 
       // Fill the Combo Values
-      foreach (string strText in Selections)
-      {
-        dgSelection.Items.Add(strText);
-      }
-
       foreach (string strText in ViewsAs)
       {
         dgViewAs.Items.Add(strText);
-      }
-
-      foreach (string strText in SortBy)
-      {
-        dgSortBy.Items.Add(strText);
       }
 
       //Create the String array object, initialize the array with the column
@@ -598,16 +575,14 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="sortBy"></param>
     protected void LoadSettings(
       string mediaType,
-      string[] selections,
-      string[] viewsAs,
-      string[] sortBy
+      Dictionary<string, Dictionary<string, string>> selections,
+      string[] viewsAs
       )
     {
       string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, mediaType + "Views.xml");
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "ViewsNew.xml");
       Selections = selections;
       ViewsAs = viewsAs;
-      SortBy = sortBy;
 
       if (!File.Exists(customViews))
       {

@@ -26,24 +26,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MusicViews : BaseViewsNew
   {
-    private string[] selections = new string[]
-                                    {
-                                      "album",
-                                      "artist",
-                                      "albumartist",
-                                      "title",
-                                      "genre",
-                                      "year",
-                                      "track",
-                                      "timesplayed",
-                                      "rating",
-                                      "favorites",
-                                      "recently added",
-                                      "composer",
-                                      "conductor",
-                                      "disc#"
-                                    };
-
     private string[] viewsAs = new string[]
                                  {
                                    "List",
@@ -54,33 +36,58 @@ namespace MediaPortal.Configuration.Sections
                                    "Albums",
                                  };
 
-    private string[] sortBy = new string[]
-                                {
-                                  "Name",
-                                  "Date",
-                                  "Year",
-                                  "Size",
-                                  "Track",
-                                  "Duration",
-                                  "Title",
-                                  "Artist",
-                                  "Album",
-                                  "Filename",
-                                  "Rating",
-                                  "Disc#",
-                                  "Composer",
-                                  "Times Played"
-                                };
-
     private Dictionary<string, Dictionary<string, string>> dbTables = new Dictionary<string, Dictionary<string, string>>();
     private Dictionary<string, string> tracksTable = new Dictionary<string, string>();
+    private Dictionary<string, string> artistTable = new Dictionary<string, string>();
+    private Dictionary<string, string> albumArtistTable = new Dictionary<string, string>();
+    private Dictionary<string, string> genreTable = new Dictionary<string, string>();
+    private Dictionary<string, string> composerTable = new Dictionary<string, string>();
 
     public MusicViews()
       : this("Music Views")
     {
+      tracksTable.Add("Path", "strPath");
       tracksTable.Add("Artist", "strArtist");
       tracksTable.Add("AlbumArtist", "strAlbumArtist");
+      tracksTable.Add("Album", "strAlbum");
+      tracksTable.Add("Genre", "strGenre");
+      tracksTable.Add("Composer", "strComposer");
+      tracksTable.Add("Conductor", "strConductor");
+      tracksTable.Add("Title", "strTitle");
+      tracksTable.Add("TrackNr", "iTrack");
+      tracksTable.Add("NumTracks", "iNumTracks");
+      tracksTable.Add("Duration", "iDuration");
+      tracksTable.Add("Year", "iYear");
+      tracksTable.Add("TimesPlayed", "iTimesPlayed");
+      tracksTable.Add("Rating", "iRating");
+      tracksTable.Add("Favourite", "iFavorite");
+      tracksTable.Add("ResumeAt", "iResumeAt");
+      tracksTable.Add("DiscNr", "iDisc");
+      tracksTable.Add("NumDiscs", "iNumDisc");
+      tracksTable.Add("Lyrics", "strLyrics");
+      tracksTable.Add("Comment", "strComment");
+      tracksTable.Add("FileType", "strFileType");
+      tracksTable.Add("FullCodec", "strFullCodec");
+      tracksTable.Add("BitRateMode", "strBitRateMode");
+      tracksTable.Add("BPM", "iBPM");
+      tracksTable.Add("Bitrate", "iBitrate");
+      tracksTable.Add("Channels", "iChannels");
+      tracksTable.Add("SampleRate", "iSampleRate");
+      tracksTable.Add("DateLastPlayed", "dateLastPlayed");
+      tracksTable.Add("DateAdded", "dateAdded");
       dbTables.Add("Tracks", tracksTable);
+
+      artistTable.Add("Artist", "strArtist");
+      dbTables.Add("Artist", artistTable);
+
+      albumArtistTable.Add("AlbumArtist", "strAlbumArtist");
+      dbTables.Add("AlbumArtist", albumArtistTable);
+
+      genreTable.Add("Genre", "strGenre");
+      dbTables.Add("Genre", genreTable);
+
+      composerTable.Add("Composer", "strComposer");
+      dbTables.Add("Composer", composerTable);
     }
 
     public MusicViews(string name)
@@ -88,7 +95,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("Music", selections, viewsAs, sortBy);
+      base.LoadSettings("Music", dbTables, viewsAs);
     }
 
     public override void SaveSettings()
