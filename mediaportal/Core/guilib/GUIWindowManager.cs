@@ -132,6 +132,8 @@ namespace MediaPortal.GUI.Library
     private static int _nextWindowID = -1;
     private static bool _startWithBasicHome = false;
     private static readonly Object thisLock = new Object(); // used in Route functions
+    private static DateTime _lastAction;
+    private static bool _validAction = true;
 
     #endregion
 
@@ -341,7 +343,33 @@ namespace MediaPortal.GUI.Library
         {
           if (OnNewAction != null)
           {
-            OnNewAction(list[i]);
+            // Mantis 4483 don't send duplicate ACTION_NEXT_ITEM or ACTION_PREV_ITEM within 2 seconds when video is playing to music to avoid MP hang 
+            if (((list[i].wID == Action.ActionType.ACTION_NEXT_ITEM) ||
+                 (list[i].wID == Action.ActionType.ACTION_PREV_ITEM)) && _validAction)
+            {
+              _lastAction = DateTime.Now;
+              OnNewAction(list[i]);
+              _validAction = false;
+            }
+            else if (((list[i].wID == Action.ActionType.ACTION_NEXT_ITEM) ||
+                 (list[i].wID == Action.ActionType.ACTION_PREV_ITEM)) && !_validAction && g_Player.IsVideo)
+            {
+              var timeSpam = DateTime.Now - _lastAction;
+              if (timeSpam.TotalSeconds >= 2)
+              {
+                _lastAction = DateTime.Now;
+                OnNewAction(list[i]);
+              }
+            }
+            else if ((list[i].wID != Action.ActionType.ACTION_NEXT_ITEM) || (list[i].wID != Action.ActionType.ACTION_PREV_ITEM))
+            {
+              OnNewAction(list[i]);
+            }
+            var timeSpamVerif = DateTime.Now - _lastAction;
+            if (timeSpamVerif.TotalSeconds >= 2)
+            {
+              _validAction = true;
+            }
           }
         }
       }
