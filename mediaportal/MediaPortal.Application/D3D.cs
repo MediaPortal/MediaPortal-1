@@ -123,7 +123,7 @@ namespace MediaPortal
     protected bool                 UseEnhancedVideoRenderer; // should EVR be used?
     protected bool                 ExitToTray;               //
     protected int                  Frames;                   // number of frames since our last update
-    protected int                  Volume;                   // used to save old volume level in case we mute audio
+    protected static int           Volume;                   // used to save old volume level in case we mute audio
     protected PlayListPlayer       PlaylistPlayer;           // 
     protected DateTime             MouseTimeOutTimer;        // tracks the time of the last mouse activity
     protected RECT                 LastRect;                 // tracks last rectangle size for window resizing
@@ -771,7 +771,12 @@ namespace MediaPortal
         // resume player and restore volume
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD)
         {
-          g_Player.Volume = Volume;
+          // Check and Restore sound if g_Player.Volume equal 0
+          if (g_Player.Volume == 0)
+          {
+            g_Player.Volume = Volume;
+          }
+          Log.Debug("D3D: Restoring volume from tray {0}", Volume);
           if (g_Player.Paused)
           {
             g_Player.Pause();
@@ -826,8 +831,13 @@ namespace MediaPortal
         // pause player and mute audio
         if (g_Player.IsVideo || g_Player.IsTV || g_Player.IsDVD || g_Player.IsDVDMenu)
         {
-          Volume = g_Player.Volume;
-          g_Player.Volume = 0;
+          // Only backup sound if g_Player.Volume is different from 0 (to avoid duplicate store and never get sound back)
+          if (g_Player.Volume != 0)
+          {
+            Volume = g_Player.Volume;
+            Log.Debug("D3D: backuping volume to tray {0}", Volume);
+            g_Player.Volume = 0;
+          }
           if (!g_Player.Paused)
           {
             g_Player.Pause();
