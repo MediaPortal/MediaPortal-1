@@ -186,7 +186,7 @@ namespace MediaPortal.Visualization
         // so i have create a new variable which fix this problem
         if (Bass != null)
         {
-          if (Bass.CurrentFile != _OldCurrentFile)
+          if (Bass.CurrentFile != _OldCurrentFile && !Bass.IsRadio)
           {
             trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
             if (trackTag != null)
@@ -201,7 +201,7 @@ namespace MediaPortal.Visualization
           }
 
           // Set Song information, so that the plugin can display it
-          if (trackTag != null)
+          if (trackTag != null && !Bass.IsRadio)
           {
             _playlistPlayer = PlayListPlayer.SingletonPlayer;
             PlayListItem curPlaylistItem = _playlistPlayer.GetCurrentItem();
@@ -217,10 +217,29 @@ namespace MediaPortal.Visualization
           }
           else
           {
-            _mediaInfo.Position = 0;
-            _mediaInfo.Duration = 0;
-            _mediaInfo.PlaylistLen = 0;
-            _mediaInfo.PlaylistPos = 0;
+            if (Bass.IsRadio)
+            {
+              // Change TrackTag to StreamTag for Radio
+              trackTag = Bass.GetStreamTags();
+              if (trackTag != null)
+              {
+                // Artist and Title show better i think
+                _songTitle = trackTag.Artist + ": " + trackTag.Title;
+                _mediaInfo.SongTitle = _songTitle;
+              }
+              else
+              {
+                _songTitle = "   ";
+              }
+              _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            }
+            else
+            {
+              _mediaInfo.Position = 0;
+              _mediaInfo.Duration = 0;
+              _mediaInfo.PlaylistLen = 0;
+              _mediaInfo.PlaylistPos = 0;
+            }
           }
         }
 
