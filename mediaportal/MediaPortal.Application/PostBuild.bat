@@ -39,6 +39,9 @@ REM Plugins
 REM SubtitlePlugin
 xcopy %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\ /Y /D
 
+REM LastFMLibrary
+xcopy %1\LastFMLibrary\bin\%2\LastFMLibrary.* . /Y /D
+
 REM ExternalPlayers
 xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
 
@@ -120,3 +123,9 @@ REM MPE
 xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
 xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
 xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
+
+REM Nuget 
+xcopy %1\Databases\bin\%2\HtmlAgilityPack.* . /Y /D
+
+REM ffmpeg 
+xcopy %1\..\Packages\ffmpeg.2.1.1\ffmpeg.exe MovieThumbnailer\ /Y /D

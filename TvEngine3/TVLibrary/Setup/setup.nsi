@@ -48,6 +48,8 @@
 !define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
 !include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
+# NET4.0 Checking
+!include "${git_InstallScripts}\include\DotNetSearch.nsh"
 
 # additional path definitions
 !define TVSERVER.BASE "${git_TVServer}\TVServer.Base"
@@ -442,7 +444,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\MediaInfo.dll"
 
   ; thumbnail software
-  File "${TVSERVER.BASE}\ffmpeg.exe"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   File "${git_TVServer}\TvThumbnails\bin\${BUILD_TYPE}\TvThumbnails.dll"
   
 
@@ -920,6 +922,8 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  !insertmacro MediaPortalNetFrameworkCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........

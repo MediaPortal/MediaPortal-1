@@ -716,7 +716,8 @@ namespace TvLibrary.Implementations
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
-     
+        IsEpgGrabbing = false;  // stop the EPG grabber
+
         Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");          
         if (SupportsPauseGraph)
         {

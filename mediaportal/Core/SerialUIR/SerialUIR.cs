@@ -193,7 +193,7 @@ namespace MediaPortal.SerialIR
     public bool ReOpen()
     {
       base.Close();
-      if (base.IsPortAvailable(commport) == PortStatus.available)
+      if (InternalCommandsActive && base.IsPortAvailable(commport) == PortStatus.available)
       {
         return base.Open();
       }
@@ -260,7 +260,9 @@ namespace MediaPortal.SerialIR
         {
           LoadValues();
         }
-        base.Open();
+        
+        if (InternalCommandsActive)
+          base.Open();
       }
       catch (Exception)
       {

@@ -1049,7 +1049,7 @@ namespace MediaPortal.GUI.Library
           else
           {
             int index = _listItems.IndexOf(item);
-            if (_listItems[0].Label != "..")
+            if (_listItems.Count > 0 && _listItems[0].Label != "..")
             {
               index++;
             }
@@ -2938,7 +2938,7 @@ namespace MediaPortal.GUI.Library
         strLabel2 = pItem.Label2;
         int index = iItem;
 
-        if (_listItems[0].Label != "..")
+        if (_listItems.Count > 0 && _listItems[0].Label != "..")
         {
           index++;
         }

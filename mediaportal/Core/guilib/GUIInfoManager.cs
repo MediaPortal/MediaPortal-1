@@ -253,12 +253,6 @@ namespace MediaPortal.GUI.Library
     public const int VIDEOPLAYER_PLAYLISTLEN = 262;
     public const int VIDEOPLAYER_PLAYLISTPOS = 263;
 
-    public const int AUDIOSCROBBLER_ENABLED = 300;
-    public const int AUDIOSCROBBLER_CONN_STATE = 301;
-    public const int AUDIOSCROBBLER_SUBMIT_INT = 302;
-    public const int AUDIOSCROBBLER_FILES_CACHED = 303;
-    public const int AUDIOSCROBBLER_SUBMIT_STATE = 304;
-
     public const int LISTITEM_START = 310;
     public const int LISTITEM_THUMB = 310;
     public const int LISTITEM_LABEL = 311;
@@ -1096,29 +1090,6 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "musicpartymode.randomsongspicked")
         {
           ret = MUSICPM_RANDOMSONGSPICKED;
-        }
-      }
-      else if (strCategory == "audioscrobbler")
-      {
-        if (strTest == "audioscrobbler.enabled")
-        {
-          ret = AUDIOSCROBBLER_ENABLED;
-        }
-        else if (strTest == "audioscrobbler.connectstate")
-        {
-          ret = AUDIOSCROBBLER_CONN_STATE;
-        }
-        else if (strTest == "audioscrobbler.submitinterval")
-        {
-          ret = AUDIOSCROBBLER_SUBMIT_INT;
-        }
-        else if (strTest == "audioscrobbler.filescached")
-        {
-          ret = AUDIOSCROBBLER_FILES_CACHED;
-        }
-        else if (strTest == "audioscrobbler.submitstate")
-        {
-          ret = AUDIOSCROBBLER_SUBMIT_STATE;
         }
       }
       else if (strCategory.StartsWith("container"))
@@ -2299,10 +2270,6 @@ namespace MediaPortal.GUI.Library
             break;
           case MUSICPM_ENABLED:
             //bReturn = g_partyModeManager.IsEnabled();
-            bReturn = false;
-            break;
-          case AUDIOSCROBBLER_ENABLED:
-            //bReturn = g_guiSettings.GetBool("lastfm.enable");
             bReturn = false;
             break;
           case VIDEOPLAYER_USING_OVERLAYS:

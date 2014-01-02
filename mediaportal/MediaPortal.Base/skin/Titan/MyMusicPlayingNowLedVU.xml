@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>510</id>
+  <defaultcontrol>6101</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+	<define>#usePlayFanart:Yes</define>
+    <controls>
+      <control>
+        <description>DEFAULT BACKGROUND</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>background.png</texture>
+        <shouldCache>true</shouldCache>
+      </control>
+		
+		  <import>common.music.play.fanart.xml</import>
+		
+      <control>
+        <id>0</id>
+        <type>image</type>
+			  <posX>10</posX>
+			  <posY>644</posY>
+			  <width>1903</width>
+			  <height>398</height>
+			  <texture>panel_now_playing.png</texture>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+				
+      <control Style="smallTitle">
+    		<description>Selected item Label</description>
+    		<type>fadelabel</type>
+    		<id>0</id>
+    		<posX>510</posX>
+    		<posY>1015</posY>
+    		<label>4540</label>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="fade" time="250">WindowClose</animation>
+    	</control>
+    
+    	<control>
+    		<type>label</type>
+    		<id>1</id>
+    		<description>Clock</description>
+    		<posX>1820</posX>
+    		<posY>998</posY>
+    		<width>144</width>
+    		<font>TitanLight12</font>
+    		<align>right</align>
+    		<label>#time</label>
+    		<textcolor>ff000000</textcolor>
+    		<animation effect="fade" time="250">WindowOpen</animation>
+    		<animation effect="fade" time="250">WindowClose</animation>
+    	</control>
+		
+     	<control Style="SettingsCheckButton">
+    		<description>Artist Information</description>
+    		<type>checkbutton</type>
+			  <id>6101</id>
+    		<posX>1453</posX>
+    		<posY>717</posY>
+    		<label>Artist Information</label>
+        <font>TitanLight12</font>	
+    		<selected>#(eq(#skin.mymusic.info,'ArtistInfo'))</selected>
+    		<onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'ArtistInfo'),'None','ArtistInfo')))</onclick>
+    		<onup>6103</onup>
+    		<ondown>6102</ondown>
+        <onright>6101</onright>
+        <onleft>6101</onleft>
+    	  <animation effect="fade" time="250">WindowOpen</animation>
+    	  <animation effect="fade" time="250">WindowClose</animation>
+    	</control>
+      		
+     	<control Style="SettingsCheckButton">
+    		<description>Album Information</description>
+    		<type>checkbutton</type>
+			  <id>6102</id>
+    		<posX>1453</posX>
+    		<posY>782</posY>
+    		<label>Album Information</label>
+        <font>TitanLight12</font>			
+    		<selected>#(eq(#skin.mymusic.info,'AlbumInfo'))</selected>
+    		<onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'AlbumInfo'),'None','AlbumInfo')))</onclick>
+    		<onup>6101</onup>
+    		<ondown>6103</ondown>
+        <onright>6102</onright>
+        <onleft>6102</onleft>
+    	  <animation effect="fade" time="250">WindowOpen</animation>
+    	  <animation effect="fade" time="250">WindowClose</animation>
+    	</control>
+		
+      <control Style="SettingsCheckButton">
+    		<description>Top Albums/Tags</description>
+    		<type>checkbutton</type>
+			  <id>6103</id>
+    		<posX>1453</posX>
+    		<posY>847</posY>
+    		<label>Top Albums/Tags</label>
+        <font>TitanLight12</font>			
+    		<selected>#(eq(#skin.mymusic.info,'TopTags'))</selected>
+    		<onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'TopTags'),'None','TopTags')))</onclick>
+    		<onup>6102</onup>
+    		<ondown>6101</ondown>
+        <onright>6103</onright>
+        <onleft>166</onleft>
+    	  <animation effect="fade" time="250">WindowOpen</animation>
+    	  <animation effect="fade" time="250">WindowClose</animation>
+    	</control>
+      
+      <control>
+        <id>0</id>
+        <description>shadow</description>
+        <type>image</type>
+        <posX>68</posX>
+        <posY>704</posY>
+        <width>284</width>
+        <height>284</height>
+        <texture>music_now_playing_shadow.png</texture>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+  			<animation effect="Fade" time="500">VisibleChange</animation>
+      </control>
+  
+      <control>
+        <id>0</id>
+        <type>image</type>
+        <visible>!control.hasthumb(112)</visible>
+        <posX>87</posX>
+        <posY>717</posY>
+        <width>234</width>
+        <height>234</height>
+        <texture>DefaultAudioBig.png</texture>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+        <animation effect="Fade" time="1000" delay="250">VisibleChange</animation>
+      </control>
+  
+      <control>
+        <id>112</id>
+        <description>album art image</description>
+        <type>image</type>
+        <posX>87</posX>
+        <posY>717</posY>
+        <width>234</width>
+        <height>234</height>
+        <texture>#Play.Current.Thumb</texture>
+  			<keepaspectratio>yes</keepaspectratio>
+  			<centered>yes</centered>	
+  			<zoom>yes</zoom>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+  			<animation effect="Fade" time="500">VisibleChange</animation>
+      </control>
+  					
+      <control>
+        <id>0</id>
+        <description>title label</description>
+        <type>fadelabel</type>
+        <posX>372</posX>
+        <posY>714</posY>
+  			<width>1070</width>
+        <font>fontB20</font>
+        <textcolor>FF00b7ff</textcolor>
+        <label>#Play.Current.Title</label>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  			
+      <control>
+        <id>0</id>
+        <description>artist label</description>
+        <type>fadelabel</type>
+        <posX>372</posX>
+        <posY>779</posY>
+  			<width>1070</width>
+        <font>TitanLight14</font>
+        <textcolor>ff00b7ff</textcolor>
+        <label>#Play.Current.Artist - #Play.Current.Album</label>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <type>label</type>
+        <description>up next label</description>
+        <id>20</id>
+        <posX>-2000</posX>
+        <posY>188</posY>
+        <label>4541</label>
+        <font>font12</font>
+        <align>left</align>
+        <textcolor>ffa9d0f7</textcolor>
+      </control>
+  		
+      <control>
+        <id>0</id>
+        <description>up next label</description>
+        <type>fadelabel</type>
+        <visible>Control.HasText(20)</visible>
+        <posX>372</posX>
+        <posY>855</posY>
+  			<width>1070</width>
+        <font>TitanLight14</font>
+        <textcolor>ff6b6b6b</textcolor>
+        <label>#(L(209)): #Play.Next.Artist - #Play.Next.Title</label>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  	
+      <control>
+        <id>141</id>
+        <description>Rating</description>
+        <type>imagelist</type>
+        <posX>-2000</posX>
+        <posY>845</posY>
+  			<width>185</width>
+  			<height>29</height>
+  			<textureWidth>28</textureWidth>
+  			<textureHeight>27</textureHeight>
+        <percentage>#Play.Current.Rating</percentage>
+        <imagesToDraw>5</imagesToDraw>
+        <orientation>HORIZONTAL</orientation>
+        <align>LEFT</align>
+  			<subitems>
+  			 <subitem>starblue.png</subitem>
+  		   <subitem>starwhite.png</subitem>
+  			</subitems>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <id>117</id>
+        <description>Progress background</description>
+        <type>image</type>
+        <visible>player.hasmedia</visible>
+  			<posX>457</posX>
+  			<posY>926</posY>
+  			<width>737</width>
+  			<height>18</height>
+  			<texture>osd_progress_bg_music.png</texture>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <id>118</id>
+        <description>progress bar</description>
+        <type>progress</type>
+        <posX>-2000</posX>
+      </control>
+  		
+      <control>
+        <id>0</id>
+        <description>progress bar</description>
+        <type>progress</type>
+        <visible>player.hasmedia</visible>
+  			<posX>447</posX>
+  			<posY>928</posY>
+  			<width>751</width>
+  			<height>15</height>
+  			<label>#percentage</label>
+  			<texturebg>-</texturebg>
+  			<lefttexture>osd_progress_left.png</lefttexture>
+  			<midtexture>osd_progress_mid.png</midtexture>
+  			<righttexture>osd_progress_right.png</righttexture>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <id>0</id>
+        <description>track duration label</description>
+        <type>label</type>
+        <visible>player.hasmedia</visible>
+        <posX>374</posX>
+  			<posY>918</posY>
+  			<label>#currentplaytime</label>
+  			<align>left</align>
+  			<font>font11</font>
+        <textcolor>FF00b7ff</textcolor>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <id>0</id>
+        <description>track duration label</description>
+        <type>fadelabel</type>
+        <visible>player.hasmedia</visible>
+        <posX>1272</posX>
+  			<posY>918</posY>
+  			<label>#currentremaining</label>
+  			<align>right</align>
+  			<font>font11</font>
+        <textcolor>FF00b7ff</textcolor>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+  		
+      <control>
+        <description>group element</description>
+        <type>group</type>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+
+  		
+          <control>
+            <id>77</id>
+            <description>unknown rating1</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>610</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbad.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>78</id>
+            <description>unknown rating2</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>580</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbad.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>79</id>
+            <description>unknown rating3</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>628</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>starblue.png</subitem>
+              <subitem>starblue.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>80</id>
+            <description>existent rating1</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>532</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>stargood.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>81</id>
+            <description>existent rating2</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>580</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>stargood.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>82</id>
+            <description>existent rating3</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>628</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>stargood.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>83</id>
+            <description>known rating1</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>532</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbetter.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>84</id>
+            <description>known rating2</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>580</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbetter.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>85</id>
+            <description>known rating3</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>628</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+            <subitem>greystar.png</subitem>
+              <subitem>starbetter.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>87</id>
+            <description>famous rating1</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>532</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack1</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbest.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>88</id>
+            <description>famous rating2</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>580</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack2</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbest.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+  		
+          <control>
+            <id>89</id>
+            <description>famous rating3</description>
+            <type>imagelist</type>
+            <visible>no</visible>
+            <posX>-2595</posX>
+            <posY>628</posY>
+            <width>130</width>
+            <height>32</height>
+            <textureHeight>24</textureHeight>
+            <textureWidth>24</textureWidth>
+            <percentage>#Lastfm.Rating.AlbumTrack3</percentage>
+            <orientation>HORIZONTAL</orientation>
+            <align>LEFT</align>
+            <subitems>
+              <subitem>greystar.png</subitem>
+              <subitem>starbest.png</subitem>
+            </subitems>
+      		  <animation effect="fade" time="250">WindowOpen</animation>
+      		  <animation effect="fade" time="250">WindowClose</animation>
+          </control>
+        </control>
+  		
+        <control>
+          <id>1337</id>
+          <type>imagelist</type>
+          <visible>Control.HasFocus(5101)</visible>
+          <posX>-2700</posX>
+          <posY>425</posY>
+          <width>120</width>
+          <height>24</height>
+          <textureHeight>19</textureHeight>
+          <textureWidth>23</textureWidth>
+          <percentage>#Play.Current.Rating</percentage>
+          <orientation>HORIZONTAL</orientation>
+          <align>LEFT</align>
+          <subitems>
+            <subitem>starblue.png</subitem>
+            <subitem>starwhite.png</subitem>
+           </subitems>
+      		<animation effect="fade" time="250">WindowOpen</animation>
+      		<animation effect="fade" time="250">WindowClose</animation>
+        </control>
+          
+       <control>
+        <id>0</id>
+        <type>image</type>
+  			<posX>10</posX>
+  			<posY>218</posY>
+  			<width>1903</width>
+  			<height>497</height>
+  			<texture>panel_now_playing_info.png</texture>
+  			<visible>string.equals(#skin.mymusic.info,ArtistInfo) | string.equals(#skin.mymusic.info,AlbumInfo)</visible>
+  			<animation effect="fade" start="100" end="0" time="250" reversible="false">Hidden</animation>
+  			<animation effect="fade" start="0" end="100" time="250" reversible="false">Visible</animation>
+      	<animation effect="fade" time="250">WindowOpen</animation>
+      	<animation effect="fade" time="250">WindowClose</animation>
+      </control>
+    
+  <import>MyMusicPlayingNow.albuminfo.xml</import>
+  <import>MyMusicPlayingNow.artistinfo.xml</import>
+  <import>MyMusicPlayingNow.tags.xml</import>
+  
+  		<control>
+        <type>fadelabel</type>
+        <description>best album tracks label</description>
+        <id>29</id>
+        <posX>-2000</posX>
+        <posY>517</posY>
+        <width>497</width>
+        <label>33030</label>
+      </control>
+          
+  		<control>
+        <type>fadelabel</type>
+        <description>best tag tracks label</description>
+        <id>28</id>
+        <posX>-2000</posX>
+        <posY>517</posY>
+        <width>497</width>
+        <label>Top tracks for tag</label>
+      </control>
+
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>87</posX>
+      <posY>1008</posY>
+      <width>406</width>
+      <height>7</height>
+      <texture>Animations\LedVu\vu1.png</texture>
+      <visible>!Player.playing|Player.paused</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>999</id>
+      <posX>87</posX>
+      <posY>1008</posY>
+      <width>406</width>
+      <height>7</height>
+      <imagepath>Animations\LedVu</imagepath>
+      <texture>#VUMeterL</texture>
+      <visible>Player.playing+!Player.paused</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>87</posX>
+      <posY>1017</posY>
+      <width>406</width>
+      <height>7</height>
+      <texture>Animations\LedVu\vu1.png</texture>
+      <visible>!Player.playing|Player.paused</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>998</id>
+      <posX>87</posX>
+      <posY>1017</posY>
+      <width>406</width>
+      <height>7</height>
+      <imagepath>Animations\LedVu</imagepath>
+      <texture>#VUMeterR</texture>
+      <visible>Player.playing+!Player.paused</visible>
+    </control>
+			
+    </controls>
+</window>

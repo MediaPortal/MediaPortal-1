@@ -1830,6 +1830,7 @@
     <String id="34061">Enter username...</String>
     <String id="34062">Enter artist...</String>
     <String id="34063">No artist has been chosen yet</String>
+	<String id="34064">An Internet connection is required\nFor Last.FM Radio</String>
     <String id="40001">Waiting for Standby</String>
     <String id="40002">MediaPortal is unattended but still busy.</String>
     <String id="40003">When all current tasks are finished MediaPortal will go to standby mode.</String>
@@ -2332,5 +2333,6 @@
     <String id="300229">Minimize to tray on focus loss</String>
     <String id="300230">Stop playback on removal of an audio renderer</String>
     <String id="300231">Reduce frame rate when not being in focus</String>
+	<String id="300232">Only update files after {0}</String>
    </Section>
 </Language>

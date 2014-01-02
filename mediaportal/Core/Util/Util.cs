@@ -177,7 +177,7 @@ namespace MediaPortal.Util
         // BassAc3
         ".ac3," +
         // BassAlac
-        ".m4a,.aac,.mp4," +
+        //".m4a,.aac,.mp4," +
         // BassApe
         ".ape,.apl," +
         // BassFlac
@@ -474,12 +474,9 @@ namespace MediaPortal.Util
     {
       try
       {
-        if (aPath.StartsWith(@"http://"))
+        if (aPath.StartsWith(@"http://play.last.fm"))
         {
-          if (aPath.Contains(@"/last.mp3?") || aPath.Contains(@"last.fm/"))
-          {
-            return true;
-          }
+          return true;
         }
       }
       catch (Exception ex)
@@ -1403,6 +1400,28 @@ namespace MediaPortal.Util
       return false;
     }
 
+    public static bool IsUsbHdd(string path)
+    {
+      if (path == null) return false;
+      if (path.Length < 2) return false;
+      List<string> usbHdds = new List<string>();
+      usbHdds = GetAvailableUsbHardDisks();
+      string strDrive = path.Substring(0, 2);
+      if (usbHdds.Contains(strDrive)) return true;
+      return false;
+    }
+
+    public static bool IsRemovableUsbDisk(string path)
+    {
+      if (path == null) return false;
+      if (path.Length < 2) return false;
+      List<string> usbDisks = new List<string>();
+      usbDisks = GetRemovableUsbDisks();
+      string strDrive = path.Substring(0, 2);
+      if (usbDisks.Contains(strDrive)) return true;
+      return false;
+    }
+
     // Check if filename is from mounted ISO image
     public static bool IsISOImage(string fileName)
     {
@@ -1735,7 +1754,12 @@ namespace MediaPortal.Util
 
     public static void EjectCDROM()
     {
-      mciSendString("set cdaudio door open", null, 0, IntPtr.Zero);
+      EjectCDROM(string.Empty);
+    }
+    
+    public static void CloseCDROM(string driveLetter)
+    {
+      mciSendString(string.Format("set CDAudio!{0} door closed", driveLetter), null, 127, IntPtr.Zero);
     }
 
     public static Process StartProcess(ProcessStartInfo procStartInfo, bool bWaitForExit)
@@ -2258,17 +2282,20 @@ namespace MediaPortal.Util
 
     public static bool FileDelete(string strFile)
     {
-      if (String.IsNullOrEmpty(strFile)) return true;
+      if (String.IsNullOrEmpty(strFile)) return false;
       try
       {
         if (!File.Exists(strFile))
-          return true;
+        {
+          return false;
+        }
         File.Delete(strFile);
+        Log.Debug("Util: FileDelete {0} successful.", strFile);
         return true;
       }
       catch (Exception ex)
       {
-        Log.Error("Util: FileDelete(string strFile) error: {0}", ex.Message);
+        Log.Error("Util: FileDelete {0} error: {1}", strFile, ex.Message);
       }
       return false;
     }
@@ -2320,7 +2347,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Info("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
+          Log.Error("Utils: DownLoadImage {1} failed: {0}", ex.Message, strURL);
         }
       }
     }
@@ -2339,8 +2366,12 @@ namespace MediaPortal.Util
         try
         {
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying previously cached image {0} to {1}", file, strFile);
         }
-        catch (Exception) {}
+        catch (Exception ex)
+        {
+          Log.Error("Util DownLoadAndCacheImage: error copying cached image {0} to {1} - {2}", file, strFile, ex.Message);
+        }
         return;
       }
       DownLoadImage(strURL, file);
@@ -2353,10 +2384,11 @@ namespace MediaPortal.Util
           //string strFileL = ConvertToLargeCoverArt(strFile);
           //Util.Picture.CreateThumbnail(file, strFileL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0);
           File.Copy(file, strFile, true);
+          Log.Debug("Util DownLoadAndCacheImage: Copying downloaded image {0} to {1}", file, strFile);
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndCacheImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2376,6 +2408,7 @@ namespace MediaPortal.Util
       string url = String.Format("mpcache-{0}", EncryptLine(strURL));
 
       string file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.InternetCache), url);
+      FileDelete(file);
       DownLoadImage(strURL, file);
       
       if (File.Exists(file))
@@ -2386,7 +2419,7 @@ namespace MediaPortal.Util
         }
         catch (Exception ex)
         {
-          Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
+          Log.Error("Util DownLoadAndOverwriteCachedImage: error copying downloaded image {0} to {1} - {2}", file, strFile, ex.Message);
         }
       }
     }
@@ -2399,7 +2432,7 @@ namespace MediaPortal.Util
       try
       {
         HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(strURL);
-        wr.Timeout = 5000;
+        wr.Timeout = 20000;
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
@@ -2635,6 +2668,7 @@ namespace MediaPortal.Util
       if (bNoStop) Snd_Options += SND_NOSTOP;
       try
       {
+        sndPlaySoundA(null, Snd_Options); // terminate a currently active sound output
         return sndPlaySoundA(sSoundFile, Snd_Options);
       }
       catch (Exception ex)
@@ -4963,6 +4997,94 @@ namespace MediaPortal.Util
       return false;
     }
 
+    /// <summary>
+    /// Returns connected USB hard disk drives letters
+    /// Works only from Vista and above
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetAvailableUsbHardDisks()
+    {
+      List<string> disks = new List<string>();
+      
+      try
+      {
+        // browse all USB WMI physical disks
+        foreach (ManagementObject drive in
+          new ManagementObjectSearcher(
+            "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%hard disk%'").
+            Get())
+        {
+          // associate physical disks with partitions
+          ManagementObject partition = new ManagementObjectSearcher(String.Format(
+            "associators of {{Win32_DiskDrive.DeviceID='{0}'}} where AssocClass = Win32_DiskDriveToDiskPartition",
+            drive["DeviceID"])).First();
+
+          if (partition != null)
+          {
+            // associate partitions with logical disks (drive letter volumes)
+            ManagementObject logical = new ManagementObjectSearcher(String.Format(
+              "associators of {{Win32_DiskPartition.DeviceID='{0}'}} where AssocClass = Win32_LogicalDiskToPartition",
+              partition["DeviceID"])).First();
+
+            if (logical != null)
+            {
+              disks.Add(logical["Name"].ToString());
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+      }
+
+      return disks;
+    }
+
+    /// <summary>
+    /// Returns connected USB removable disk drives letters
+    /// Works only from Vista and above
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> GetRemovableUsbDisks()
+    {
+      List<string> disks = new List<string>();
+
+      try
+      {
+        // browse all USB WMI physical disks
+        foreach (ManagementObject drive in
+          new ManagementObjectSearcher(
+            "select DeviceID, Model from Win32_DiskDrive where InterfaceType='USB' AND MediaType LIKE '%removable%' AND Model LIKE '%disk%'").
+            Get())
+        {
+          // associate physical disks with partitions
+          ManagementObject partition = new ManagementObjectSearcher(String.Format(
+            "associators of {{Win32_DiskDrive.DeviceID='{0}'}} where AssocClass = Win32_DiskDriveToDiskPartition",
+            drive["DeviceID"])).First();
+
+          if (partition != null)
+          {
+            // associate partitions with logical disks (drive letter volumes)
+            ManagementObject logical = new ManagementObjectSearcher(String.Format(
+              "associators of {{Win32_DiskPartition.DeviceID='{0}'}} where AssocClass = Win32_LogicalDiskToPartition",
+              partition["DeviceID"])).First();
+
+            if (logical != null)
+            {
+              disks.Add(logical["Name"].ToString());
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Utils: GetUsbHardDisks Error: {0}", ex.Message);
+      }
+
+      return disks;
+    }
+
     public static string GetTreePath(string filename, int depth, int step)
     {
       string basename = Path.GetFileNameWithoutExtension(filename) ?? "";
@@ -4972,7 +5094,7 @@ namespace MediaPortal.Util
       while ((i-=step)>=0 && depth-->0)
       {
         tree += basename.Substring(i, step) + @"\";
-      }
+  }
       return tree;
     }
 

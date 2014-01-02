@@ -53,5 +53,7 @@ using System.Security.Permissions;
 [assembly: AssemblyKeyName("")]
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
+#pragma warning disable 612,618
+[assembly: SecurityPermission(action: SecurityAction.RequestMinimum, UnmanagedCode = true)]
+#pragma warning restore 612,618
 [assembly: AssemblyFileVersion("2.0.0.0")]

@@ -44,10 +44,7 @@ namespace MediaPortal.Util
   /// </summary>
   public class Picture
   {
-    private static ThumbnailExtractor Extractor = new ThumbnailExtractor();
-    private static ExifOrientations orientation = ExifOrientations.Normal;
-
-        public enum ExifOrientations
+    public enum ExifOrientations
     {
         None = 0,
         Normal = 1,
@@ -957,7 +954,7 @@ namespace MediaPortal.Util
       }
 
       if (string.IsNullOrEmpty(thumbnailImageSource) || string.IsNullOrEmpty(thumbnailImageDest) || aThumbHeight <= 0 ||
-          aThumbHeight <= 0)
+          aThumbWidth <= 0)
       {
         return false;
       }
@@ -971,8 +968,6 @@ namespace MediaPortal.Util
 
       TransformedBitmap thumbnail = null;
       TransformGroup transformGroup = null;
-
-      double angle = 0;
 
       bool result = false;
       int iQuality = (int) Thumbs.Quality;
@@ -1162,7 +1157,7 @@ namespace MediaPortal.Util
         }
 
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         try
         {

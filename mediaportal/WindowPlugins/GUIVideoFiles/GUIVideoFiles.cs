@@ -49,6 +49,19 @@ using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.GUI.Video
 {
+  internal class ComboBoxItemDatabase
+  {
+    public string Database;
+    public string Name;
+    public string Language;
+    public string Limit;
+
+    public override string ToString()
+    {
+      return String.Format("{0}: {1} [{2}]", Language, Name, Database);
+    }
+  }
+
   /// <summary>
   /// MyVideo GUI class when not using DB driven views.
   /// </summary>
@@ -164,8 +177,8 @@ namespace MediaPortal.GUI.Video
     
     // grabber index holds information/urls of available grabbers to download
     private static string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
-    private static string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
-    private static Dictionary<string, IIMDBScriptGrabber> _grabberList;
+    private static string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber_V16.xml";
+    private static Dictionary<string, ComboBoxItemDatabase> _grabberList;
 
     private int _resetCount;
     private string _selectedFilename = string.Empty;
@@ -178,8 +191,6 @@ namespace MediaPortal.GUI.Video
     private bool _useOnlyNfoScraper = false;
     private bool _doNotUseDatabase = false;
     
-    private static IMDB.InternalMovieInfoScraper _internalGrabber = new IMDB.InternalMovieInfoScraper();
-
     #endregion
 
     #region constructors
@@ -231,9 +242,6 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackChanged += OnPlayBackChanged;
       GUIWindowManager.Receivers += GUIWindowManager_OnNewMessage;
 
-      // replace g_player's ShowFullScreenWindowVideoDefault()
-      g_Player.ShowFullScreenWindowVideo = ShowFullScreenWindowVideoHandler;
-
       LoadSettings();
     }
 
@@ -266,19 +274,24 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (!_useOnlyNfoScraper)
+        ArrayList nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
         {
+          GetNfoFiles(availablePath, ref nfoFiles);
+        }
+
+        if (!_useOnlyNfoScraper) // Normal scraper
+        {
+          // First try nfo files
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
+          // Then video files without nfo
           IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
         }
         else
         {
-          ArrayList nfoFiles = new ArrayList();
-
-          foreach (string availablePath in availablePaths)
-          {
-            GetNfoFiles(availablePath, ref nfoFiles);
-          }
-
+          // Only nfo files
           IMDBFetcher fetcher = new IMDBFetcher(this);
           fetcher.FetchNfo(nfoFiles, true, false);
         }
@@ -641,32 +654,32 @@ namespace MediaPortal.GUI.Video
 
       if ((item.IsFolder && !item.IsBdDvdFolder))
       {
-          // Play all in folder
-          if (_playClicked)
+        // Play all in folder
+        if (_playClicked)
+        {
+          if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-              if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-              {
-                  if (!_virtualDirectory.RequestPin(item.Path))
-                  {
-                      _playClicked = false;
-                      return;
-                  }
+            if (!_virtualDirectory.RequestPin(item.Path))
+            {
+              _playClicked = false;
+              return;
+            }
 
-                  OnPlayAll(item.Path);
-                  _playClicked = false;
-              }
+            OnPlayAll(item.Path);
+            _playClicked = false;
           }
-          else
+        }
+        else
+        {
+          _currentSelectedItem = -1;
+
+          if (facadeLayout != null)
           {
-              _currentSelectedItem = -1;
-
-              if (facadeLayout != null)
-              {
-                  _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
-              }
-
-              LoadDirectory(path, true);
+            _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
           }
+
+          LoadDirectory(path, true);
+        }
       }
       else
       {
@@ -767,7 +780,6 @@ namespace MediaPortal.GUI.Video
           // In the list must be at least 2 files so we check stackable movie for resume 
           // (which file have a stop time)
           bool asked = false;
-          //ArrayList newItems = new ArrayList();
           string title = item.Label; // Dlg title
 
           if (movie != null && !movie.IsEmpty)
@@ -1074,7 +1086,8 @@ namespace MediaPortal.GUI.Video
             }
             else
             {
-              movieDetails.SearchString = pItem.Label;
+              // Remove extension from label if exist (when "Do not show file extesnion setting" is inactive)
+              movieDetails.SearchString = Util.Utils.GetFilename(pItem.Label, true);
             }
 
             movieDetails.File = Path.GetFileName(movieDetails.VideoFileName);
@@ -1176,7 +1189,6 @@ namespace MediaPortal.GUI.Video
               }
 
               dlg.AddLocalizedString(368); //IMDB
-              dlg.AddLocalizedString(654); //Eject
             }
             // Folder
             else if (item.IsFolder)
@@ -1221,11 +1233,6 @@ namespace MediaPortal.GUI.Video
                     }
                   }
                 }
-              }
-
-              if (Util.Utils.getDriveType(item.Path) == 5)
-              {
-                dlg.AddLocalizedString(654); //Eject            
               }
 
               if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
@@ -1273,19 +1280,46 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
-        if (Util.Utils.IsRemovable(item.Path))
+
+        #region Eject/Load
+
+        // CD/DVD/BD
+        if (Util.Utils.getDriveType(item.Path) == 5)
+        {
+          if (item.Path != null)
+          {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+            // There is no easy way in NET to detect open tray so we will check
+            // if media is inside (load will be visible also in case that tray is closed but
+            // media is not loaded)
+            if (!driveInfo.IsReady)
+            {
+              dlg.AddLocalizedString(607); //Load  
+            }
+
+            dlg.AddLocalizedString(654); //Eject  
+          }
+        }
+        
+        // Removable/USB HDD
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
 
+        #endregion
+
         dlg.AddLocalizedString(1299); // Refresh current directory
-        dlg.AddLocalizedString(1262); // Update grabber scripts
-        dlg.AddLocalizedString(1307); // Update internal grabber scripts
-        dlg.AddLocalizedString(1263); // Set default grabber
-        if (!item.IsFolder)
-        {
-          dlg.AddLocalizedString(1984); // Refresh thumb
-        }
+      }
+
+      dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
+
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(1984); // Refresh thumb
       }
 
       dlg.DoModal(GetID);
@@ -1313,6 +1347,10 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_PLAYLIST);
           break;
 
+        case 607: // Load (only CDROM)
+          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          break;
+
         case 654: // Eject
           if (Util.Utils.getDriveType(item.Path) != 5)
           {
@@ -1322,6 +1360,7 @@ namespace MediaPortal.GUI.Video
           {
             Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
           }
+
           LoadDirectory(string.Empty);
           break;
 
@@ -1372,11 +1411,11 @@ namespace MediaPortal.GUI.Video
           }
           
           int currentIndex = facadeLayout.SelectedListItemIndex;
+          ArrayList scanNfoFiles = new ArrayList();
+          GetNfoFiles(item.Path, ref scanNfoFiles);
 
           if (_useOnlyNfoScraper)
           {
-            ArrayList scanNfoFiles = new ArrayList();
-            GetNfoFiles(item.Path, ref scanNfoFiles);
             IMDBFetcher scanFetcher = new IMDBFetcher(this);
             scanFetcher.FetchNfo(scanNfoFiles, true, false);
             // Send global message that movie is refreshed/scanned
@@ -1387,9 +1426,13 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
+            // Try nfo files first
+            IMDBFetcher scanFetcher = new IMDBFetcher(this);
+            scanFetcher.FetchNfo(scanNfoFiles, true, false);
+            // Then the rest
             ArrayList availablePaths = new ArrayList();
             availablePaths.Add(item.Path);
-            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, _getActors, false);
             // Send global message that movie is refreshed/scanned
             GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(scanMsg);
@@ -1463,9 +1506,28 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 831:
-          string message;
-
-          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          string message = string.Empty;
+          
+          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          {
+            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+              pDlgOK.SetLine(2, string.Empty);
+              pDlgOK.SetLine(3, message);
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            else
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+          }
+          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
@@ -2435,7 +2497,7 @@ namespace MediaPortal.GUI.Video
       progressDialog.ShowProgressBar(true);
       progressDialog.SetLine(1, GUILocalizeStrings.Get(300031));
       progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
-      progressDialog.SetPercentage(50);
+      progressDialog.SetPercentage(25);
       progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
       if (internalScript)
@@ -2444,13 +2506,15 @@ namespace MediaPortal.GUI.Video
         string parserIndexUrl = @"http://install.team-mediaportal.com/MP1/VDBParserStrings.xml";
         string internalGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalActorMoviesGrabber.csscript");
         string internalGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalActorMoviesGrabber.csscript";
+        string internalMovieImagesGrabberScriptFile = Config.GetFile(Config.Dir.Config, "scripts\\InternalMovieImagesGrabber.csscript");
+        string internalMovieImagesGrabberScriptUrl = @"http://install.team-mediaportal.com/MP1/InternalGrabber/InternalMovieImagesGrabber.csscript";
 
         // VDB parser update
         progressDialog.SetHeading(GUILocalizeStrings.Get(1316)); // Updating internal scripts...
         progressDialog.ShowProgressBar(true);
         progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));// Downloading internal scripts...
         progressDialog.SetLine(2, GUILocalizeStrings.Get(300032)); //Downloading
-        progressDialog.SetPercentage(75);
+        progressDialog.SetPercentage(50);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
         if (DownloadFile(parserIndexFile, parserIndexUrl, Encoding.UTF8) == false)
@@ -2459,12 +2523,12 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        // Internal grabber script update
+        // Internal actors grabber script update
         progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
         progressDialog.ShowProgressBar(true);
         progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
         progressDialog.SetLine(2, GUILocalizeStrings.Get(300032));
-        progressDialog.SetPercentage(100);
+        progressDialog.SetPercentage(75);
         progressDialog.StartModal(GUIWindowManager.ActiveWindow);
 
         if (DownloadFile(internalGrabberScriptFile, internalGrabberScriptUrl, Encoding.Default) == false)
@@ -2473,7 +2537,22 @@ namespace MediaPortal.GUI.Video
           return;
         }
 
-        _internalGrabber.LoadScript();
+        // Internal images grabber script update
+        progressDialog.SetHeading(GUILocalizeStrings.Get(1316));
+        progressDialog.ShowProgressBar(true);
+        progressDialog.SetLine(1, GUILocalizeStrings.Get(1317));
+        progressDialog.SetLine(2, GUILocalizeStrings.Get(300032));
+        progressDialog.SetPercentage(100);
+        progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+
+        if (DownloadFile(internalMovieImagesGrabberScriptFile, internalMovieImagesGrabberScriptUrl, Encoding.Default) == false)
+        {
+          progressDialog.Close();
+          return;
+        }
+
+        IMDB.InternalActorsScriptGrabber.ResetGrabber();
+        Util.InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.ResetGrabber();
         progressDialog.Close();
       }
 
@@ -2611,7 +2690,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
+      _grabberList = new Dictionary<string, ComboBoxItemDatabase>();
 
       Directory.CreateDirectory(IMDB.ScriptDirectory);
       DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
@@ -2623,10 +2702,20 @@ namespace MediaPortal.GUI.Video
       {
         try
         {
-          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
-          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          CSScript.GlobalSettings.AddSearchDir(AppDomain.CurrentDomain.BaseDirectory);
 
-          _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
+          using (AsmHelper script = new AsmHelper(CSScript.Compile(f.FullName), "Temp", true))
+          {
+            script.ProbingDirs = CSScript.GlobalSettings.SearchDirs.Split(';');
+            IIMDBScriptGrabber grabber = (IIMDBScriptGrabber) script.CreateObject("Grabber");
+
+            ComboBoxItemDatabase item = new ComboBoxItemDatabase();
+            item.Database = Path.GetFileNameWithoutExtension(f.FullName);
+            item.Language = grabber.GetLanguage();
+            item.Limit = IMDB.DEFAULT_SEARCH_LIMIT.ToString();
+            item.Name = grabber.GetName();
+            _grabberList.Add(item.Database, item);
+          }
         }
         catch (Exception ex)
         {
@@ -2644,9 +2733,9 @@ namespace MediaPortal.GUI.Video
         dbNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
       }
 
-      foreach (KeyValuePair<string, IIMDBScriptGrabber> grabber in _grabberList)
+      foreach (KeyValuePair<string, ComboBoxItemDatabase> grabber in _grabberList)
       {
-        dlg.Add(grabber.Value.GetName() + " - " + grabber.Value.GetLanguage());
+        dlg.Add(grabber.Value.Name + " - " + grabber.Value.Language);
 
         if (defaultDatabase == grabber.Key)
         {
@@ -2669,7 +2758,7 @@ namespace MediaPortal.GUI.Video
 
       using (Profile.Settings xmlwriter = new MPSettings())
       {
-        KeyValuePair<string, IIMDBScriptGrabber> grabber = _grabberList.ElementAt(dlg.SelectedLabel);
+        KeyValuePair<string, ComboBoxItemDatabase> grabber = _grabberList.ElementAt(dlg.SelectedLabel);
 
 
         if (grabber.Key != "IMDB")
@@ -2680,8 +2769,8 @@ namespace MediaPortal.GUI.Video
           }
           xmlwriter.SetValue("moviedatabase", "number", dbNumber);
           xmlwriter.SetValue("moviedatabase", "database" + 0, grabber.Key);
-          xmlwriter.SetValue("moviedatabase", "title" + 0, grabber.Value.GetName());
-          xmlwriter.SetValue("moviedatabase", "language" + 0, grabber.Value.GetLanguage());
+          xmlwriter.SetValue("moviedatabase", "title" + 0, grabber.Value.Name);
+          xmlwriter.SetValue("moviedatabase", "language" + 0, grabber.Value.Language);
           xmlwriter.SetValue("moviedatabase", "limit" + 0, 25);
         }
         else
@@ -2696,6 +2785,8 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
+
+      IMDB.MovieInfoDatabase.ResetGrabber();
     }
     
     public static void ResetShares()
@@ -2724,12 +2815,7 @@ namespace MediaPortal.GUI.Video
     {
       _virtualDirectory.SetExtensions(extensions);
     }
-
-    public static IMDB.InternalMovieInfoScraper InternalGrabber
-    {
-      get { return _internalGrabber; }
-    }
-
+    
     #endregion
 
     #region Private methods
@@ -2782,7 +2868,7 @@ namespace MediaPortal.GUI.Video
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
-      if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
+      if (!string.IsNullOrEmpty(_currentFolder) && useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
       {
         itemlist = _cachedItems;
         int currentItemIndex = 0;
@@ -3575,8 +3661,8 @@ namespace MediaPortal.GUI.Video
 
       // Reset playlist
       _playlistPlayer.Reset();
-      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
-      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
       tmpPlayList.Clear();
 
       // Do sorting
@@ -4228,66 +4314,6 @@ namespace MediaPortal.GUI.Video
         facadeLayout.Clear();
       }
     }
-
-    /// <summary>
-    /// This function replaces g_player.ShowFullScreenWindowVideoDefault()
-    /// </summary>
-    /// <returns></returns>
-    private static bool ShowFullScreenWindowVideoHandler()
-    {
-      if (g_Player.HasVideo && g_Player.HasChapters)
-      {
-        // Take chapter and jumppoint information to set the optical timeline markers
-        double[] jumppoints = g_Player.JumpPoints;
-        double[] chapters = g_Player.Chapters;
-        double duration = g_Player.Duration;
-
-        string strJumpPoints = string.Empty;
-        string strChapters = string.Empty;
-
-        if (jumppoints != null)
-        {
-          // Set the marker start to indicate the start of commercials
-          foreach (double jump in jumppoints)
-          {
-            double jumpPercent = jump / duration * 100.0d;
-            strJumpPoints += String.Format("{0:0.00}", jumpPercent) + " ";
-          }
-          // Set the marker end to indicate the end of commercials
-          foreach (double chapter in chapters)
-          {
-            double chapterPercent = chapter / duration * 100.0d;
-            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-          }
-        }
-        else
-        {
-          // Set a fixed size marker at the start of each chapter
-          double markerWidth = 0.7d;
-          foreach (double chapter in chapters)
-          {
-            double chapterPercent = chapter / duration * 100.0d;
-            strChapters += String.Format("{0:0.00}", chapterPercent) + " ";
-            chapterPercent = (chapterPercent >= markerWidth) ? chapterPercent - markerWidth : 0.0d;
-            strJumpPoints += String.Format("{0:0.00}", chapterPercent) + " ";
-          }
-        }
-    
-        // Set chapters and jumppoints GUI properties
-        GUIPropertyManager.SetProperty("#chapters", strChapters);
-        GUIPropertyManager.SetProperty("#jumppoints", strJumpPoints);
-        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting chapters: " + strChapters);
-        Log.Debug("GUIVideoFiles.ShowFullScreenWindowVideoHandler: setting jumppoints: " + strJumpPoints);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#chapters", string.Empty);
-        GUIPropertyManager.SetProperty("#jumppoints", string.Empty);
-      }
-
-      // Continue with the default handler
-      return g_Player.ShowFullScreenWindowVideoDefault();
-    }  
 
     #endregion
 
