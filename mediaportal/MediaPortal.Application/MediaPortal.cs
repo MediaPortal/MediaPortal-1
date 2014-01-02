@@ -1516,16 +1516,9 @@ public class MediaPortalApp : D3D, IRender
           PluginManager.WndProc(ref msg);
           break;
 
-        // handle plugins commands
-        case DBT_DEVICEARRIVAL:
-          // forward message to process plugins
-          if (msg.WParam.ToInt32() == 0x18)
-          {
-            if (PluginManager.WndProc(ref msg))
-            {
-              return;
-            }
-          }
+        // handle default commands needed for plugins
+        default:
+          PluginManager.WndProc(ref msg);
           break;
       }
 
