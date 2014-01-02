@@ -747,7 +747,7 @@ namespace TvLibrary.Implementations.DVB
                 {
                     KSPropertySupport support;
                     this._propertySet = tunerFilter as IKsPropertySet;
-                    if ((this._propertySet != null) && (this._propertySet.QuerySupported(UsbBdaExtensionPropertySet, 0x12, out support) == 0))
+                    if ((this._propertySet != null) && (this._propertySet.QuerySupported(UsbBdaExtensionPropertySet, 1, out support) == 0))
                     {
                         TvLibrary.Log.Log.Debug("Turbosight: supported tuner detected (USB interface)", new object[0]);
                         this._isTurbosight = true;
@@ -1534,11 +1534,12 @@ namespace TvLibrary.Implementations.DVB
             }
             KSPropertySupport support;
             int hr = _propertySet.QuerySupported(_propertySetGuid, ciAccessProperty, out support);
-            if (hr != (int)HResult.Severity.Success || support == 0)
+            if (hr != (int)HResult.Serverity.Success || support == 0)
             {
               TvLibrary.Log.Log.Debug("Turbosight: device doesn't have a CI slot");
               return false;
             }
+            TvLibrary.Log.Log.Debug("Turbosight: device does have a CI slot");
             return true;  
           
             /*TvLibrary.Log.Log.Debug("Turbosight: is CI slot present", new object[0]);
