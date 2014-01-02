@@ -1515,6 +1515,18 @@ public class MediaPortalApp : D3D, IRender
           }
           PluginManager.WndProc(ref msg);
           break;
+
+        // handle plugins commands
+        case DBT_DEVICEARRIVAL:
+          // forward message to process plugins
+          if (msg.WParam.ToInt32() == 0x18)
+          {
+            if (PluginManager.WndProc(ref msg))
+            {
+              return;
+            }
+          }
+          break;
       }
 
       // TODO: extract to method and change to correct code
