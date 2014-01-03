@@ -736,15 +736,6 @@ public class MediaPortalApp : D3D, IRender
             screen.WorkingArea.Width, screen.WorkingArea.Height, screen.WorkingArea.X, screen.WorkingArea.Y);
         }
 
-        // log information about available adapters
-        var enumeration = new D3DEnumeration();
-        enumeration.Enumerate();
-        foreach (GraphicsAdapterInfo ai in enumeration.AdapterInfoList)
-        {
-          Log.Debug("Adapter #{0}: {1} - Driver: {2} ({3}) - DeviceName: {4}",
-            ai.AdapterOrdinal, ai.AdapterDetails.Description, ai.AdapterDetails.DriverName, ai.AdapterDetails.DriverVersion, ai.AdapterDetails.DeviceName);
-        }
-
         // Localization strings for new splash screen and for MediaPortal itself
         LoadLanguageString();
 
@@ -781,7 +772,6 @@ public class MediaPortalApp : D3D, IRender
         SplashScreen.Run();
         #endif
 
-        Application.DoEvents(); // process message queue
         
         if (_waitForTvServer)
         {
@@ -859,7 +849,6 @@ public class MediaPortalApp : D3D, IRender
           }
         }
 
-        Application.DoEvents(); // process message queue
 
         if (_startupDelay > 0)
         {
@@ -868,7 +857,6 @@ public class MediaPortalApp : D3D, IRender
           {
             UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(61), i.ToString(CultureInfo.InvariantCulture)));
             Thread.Sleep(1000);
-            Application.DoEvents();
           }
         }
 
@@ -889,7 +877,6 @@ public class MediaPortalApp : D3D, IRender
             return;
           }
 
-          Application.DoEvents(); // process message queue
 
           #if !DEBUG
           // Check TvPlugin version
@@ -921,8 +908,6 @@ public class MediaPortalApp : D3D, IRender
         catch (Exception) {}
         // ReSharper restore EmptyGeneralCatchClause
 
-        Application.DoEvents(); // process message queue
-        
         try
         {
           UpdateSplashScreenMessage(GUILocalizeStrings.Get(62));
