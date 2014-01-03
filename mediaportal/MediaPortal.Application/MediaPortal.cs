@@ -1814,6 +1814,14 @@ public class MediaPortalApp : D3D, IRender
           {
             case DBT_DEVICEREMOVECOMPLETE:
               Log.Info("Main: Audio Renderer {0} removed", deviceName);
+              if (_stopOnLostAudioRenderer)
+              {
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+              }
               try
               {
                 VolumeHandler.Dispose();
@@ -1824,19 +1832,19 @@ public class MediaPortalApp : D3D, IRender
               catch (Exception exception)
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
-              }
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
-                {
-                  Thread.Sleep(100);
-                }
               }
               break;
 
             case DBT_DEVICEARRIVAL:
               Log.Info("Main: Audio Renderer {0} connected", deviceName);
+              if (_stopOnLostAudioRenderer)
+              {
+                g_Player.Stop();
+                while (GUIGraphicsContext.IsPlaying)
+                {
+                  Thread.Sleep(100);
+                }
+              }
               try
               {
                 VolumeHandler.Dispose();
@@ -1847,14 +1855,6 @@ public class MediaPortalApp : D3D, IRender
               catch (Exception exception)
               {
                 Log.Warn("Main: Could not initialize volume handler: ", exception.Message);
-              }
-              if (_stopOnLostAudioRenderer)
-              {
-                g_Player.Stop();
-                while (GUIGraphicsContext.IsPlaying)
-                {
-                  Thread.Sleep(100);
-                }
               }
               break;
           }
