@@ -3371,6 +3371,9 @@ public class MediaPortalApp : D3D, IRender
         GUIGraphicsContext.ResetLastActivity();
       }
 
+      // needed to avoid cursor show when MP windows change (for ex when refesh rate is working / BassVis)
+      _moveMouseCursorPositionRefresh = D3D._lastCursorPosition;
+
       switch (action.wID)
       {
         // record current tv program
