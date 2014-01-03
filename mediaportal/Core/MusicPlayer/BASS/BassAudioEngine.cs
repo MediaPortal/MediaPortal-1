@@ -1434,7 +1434,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="filePath"></param>
     /// <returns></returns>
-    private bool HandleCueFile(ref string filePath)
+    private bool HandleCueFile(ref string filePath, bool endOnly)
     {
       try
       {
@@ -1474,7 +1474,7 @@ namespace MediaPortal.MusicPlayer.BASS
                                  System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
           if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
           {
-            SetCueTrackEndPosition(GetCurrentStream());
+            SetCueTrackEndPosition(GetCurrentStream(), endOnly);
             return true;
           }
           filePath = audioFilePath;
@@ -1498,11 +1498,11 @@ namespace MediaPortal.MusicPlayer.BASS
     /// Sets the End Position for the CUE Track
     /// </summary>
     /// <param name="stream"></param>
-    private void SetCueTrackEndPosition(MusicStream stream)
+    private void SetCueTrackEndPosition(MusicStream stream, bool endOnly)
     {
       if (_currentCueSheet != null)
       {
-        stream.SetCueTrackEndPos(_cueTrackStartPos, _cueTrackEndPos);
+        stream.SetCueTrackEndPos(_cueTrackStartPos, _cueTrackEndPos, endOnly);
       }
     }
 
@@ -1528,7 +1528,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       // Cue support
-      if (HandleCueFile(ref filePath))
+      if (HandleCueFile(ref filePath, true))
       {
         return true;
       }
@@ -1594,7 +1594,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // Enable events, for various Playback Actions to be handled
       stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
-      SetCueTrackEndPosition(stream);
+      SetCueTrackEndPosition(stream, false);
 
       // Plug in the stream into the Mixer
       if (!_mixer.AttachStream(stream))
@@ -1670,7 +1670,7 @@ namespace MediaPortal.MusicPlayer.BASS
           // Cue support
           if ((currentStream != null && currentStream.IsPlaying))
           {
-            if (HandleCueFile(ref filePath))
+            if (HandleCueFile(ref filePath, false))
             {
               return true;
             }
