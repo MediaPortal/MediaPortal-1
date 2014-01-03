@@ -64,7 +64,7 @@ namespace MediaPortal
 
     // http://msdn.microsoft.com/en-us/library/windows/desktop/dd144901(v=vs.85).aspx
     [DllImport("User32.dll", CharSet = CharSet.Auto)]
-    private static extern bool GetMonitorInfo(IntPtr hWnd, ref MonitorInformation info);
+    internal static extern bool GetMonitorInfo(IntPtr hWnd, ref MonitorInformation info);
 
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ms648396(v=vs.85).aspx
     [DllImport("user32.dll")]
@@ -139,7 +139,7 @@ namespace MediaPortal
 
     private readonly Control           _renderTarget;             // render target object
     private readonly PresentParameters _presentParams;            // D3D presentation parameters
-    private readonly D3DEnumeration    _enumerationSettings;      //
+    internal readonly D3DEnumeration   _enumerationSettings;      //
     private readonly bool              _useExclusiveDirectXMode;  // 
     private readonly bool              _disableMouseEvents;       //
     private readonly bool              _doNotWaitForVSync;        // debug setting
@@ -185,7 +185,7 @@ namespace MediaPortal
     private CreateFlags                _createFlags;              //
     internal static Point              _moveMouseCursorPosition;
     internal static Point              _moveMouseCursorPositionRefresh;
-    protected bool                     _firstLoadedScreen;        //
+    protected static bool              _firstLoadedScreen;        //
 
     #endregion
 
@@ -471,74 +471,77 @@ namespace MediaPortal
     /// <summary>
     /// reset device if back buffer does not match skin dimensions (e.g. 16:10 display with 16:9 skin, 720p skin on 1080p display etc.)
     /// </summary>
-    private void RecreateSwapChain()
+    internal void RecreateSwapChain()
     {
-      Log.Debug("Main: RecreateSwapChain()");
-
-      // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
-      if (!GUIGraphicsContext.IsDirectX9ExUsed() && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
+      if (AppActive)
       {
-        g_Player.Stop();
-        while (GUIGraphicsContext.IsPlaying)
+        Log.Debug("Main: RecreateSwapChain()");
+
+        // stop plaback if we are using a a D3D9 device and the device is not lost, meaning we are toggling between fullscreen and windowed mode
+        if (!GUIGraphicsContext.IsDirectX9ExUsed() && g_Player.Playing && !RefreshRateChanger.RefreshRateChangePending)
         {
-          Thread.Sleep(100);
+          g_Player.Stop();
+          while (GUIGraphicsContext.IsPlaying)
+          {
+            Thread.Sleep(100);
+          }
         }
-      }
 
-      // halt rendering
-      AppActive = false;
-      int activeWin = GUIWindowManager.ActiveWindow;
+        // halt rendering
+        AppActive = false;
+        int activeWin = GUIWindowManager.ActiveWindow;
 
-      // stop window manager and dispose resources
-      GUIWindowManager.UnRoute();
-      GUIWindowManager.Dispose();
-      GUIFontManager.Dispose();
-      GUITextureManager.Dispose();
-      GUIGraphicsContext.DX9Device.EvictManagedResources();
+        // stop window manager and dispose resources
+        GUIWindowManager.UnRoute();
+        GUIWindowManager.Dispose();
+        GUIFontManager.Dispose();
+        GUITextureManager.Dispose();
+        GUIGraphicsContext.DX9Device.EvictManagedResources();
 
-      // build new D3D presentation parameters and reset device
-      BuildPresentParams(Windowed);
-      try
-      {
-        GUIGraphicsContext.DX9Device.Reset(_presentParams);
-      }
-      catch (InvalidCallException)
-      {
-        Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
-      }
-      catch (DeviceLostException)
-      {
-        Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
-      }
-      catch (DriverInternalErrorException)
-      {
-        Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
-      }
-      catch (OutOfVideoMemoryException)
-      {
-        Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
-      }
-      catch (OutOfMemoryException)
-      {
-        Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
-      }
+        // build new D3D presentation parameters and reset device
+        BuildPresentParams(Windowed);
+        try
+        {
+          GUIGraphicsContext.DX9Device.Reset(_presentParams);
+        }
+        catch (InvalidCallException)
+        {
+          Log.Error("D3D: D3DERR_INVALIDCALL - presentation parametters might contain an invalid value");
+        }
+        catch (DeviceLostException)
+        {
+          Log.Error("D3D: D3DERR_DEVICELOST - device is lost but cannot be reset at this time");
+        }
+        catch (DriverInternalErrorException)
+        {
+          Log.Error("D3D: D3DERR_DRIVERINTERNALERROR - internal driver error");
+        }
+        catch (OutOfVideoMemoryException)
+        {
+          Log.Error("D3D: D3DERR_OUTOFVIDEOMEMORY - not enough available display memory to perform the operation");
+        }
+        catch (OutOfMemoryException)
+        {
+          Log.Error("D3D: D3DERR_OUTOFMEMORY - could not allocate sufficient memory to complete the call");
+        }
 
-      // load resources
-      GUIGraphicsContext.Load();
-      GUITextureManager.Init();
-      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-      GUIFontManager.InitializeDeviceObjects();
+        // load resources
+        GUIGraphicsContext.Load();
+        GUITextureManager.Init();
+        GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
+        GUIFontManager.InitializeDeviceObjects();
 
-      // restart window manager
-      GUIWindowManager.PreInit();
-      GUIWindowManager.ActivateWindow(activeWin);
-      GUIWindowManager.OnDeviceRestored();
+        // restart window manager
+        GUIWindowManager.PreInit();
+        GUIWindowManager.ActivateWindow(activeWin);
+        GUIWindowManager.OnDeviceRestored();
 
-      // set new device for font manager
-      GUIFontManager.SetDevice();
+        // set new device for font manager
+        GUIFontManager.SetDevice();
 
-      // continue rendering
-      AppActive = true;
+        // continue rendering
+        AppActive = true;
+      }
     }
 
 
@@ -1014,6 +1017,7 @@ namespace MediaPortal
         var rect = Screen.FromRectangle(info.MonitorRectangle).Bounds;
         if (rect.Equals(screen.Bounds))
         {
+          GUIGraphicsContext.currentStartScreen = GUIGraphicsContext.currentScreen;
           return adapterInfo;
         }
       }
