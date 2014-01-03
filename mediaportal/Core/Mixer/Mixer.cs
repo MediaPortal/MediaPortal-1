@@ -92,7 +92,7 @@ namespace MediaPortal.Mixer
     {
       lock (this)
       {
-        _isDigital = isDigital;
+        _waveVolume = isDigital;
         if (isDigital)
         {
           _componentType = MixerComponentType.SourceWave;
@@ -103,57 +103,71 @@ namespace MediaPortal.Mixer
         }
         // not enough to change this..
 
-        if (OSInfo.OSInfo.VistaOrLater())
+        // Use Endpoint Volume API for Vista/Win7 if master volume is selected and always for Win8 to handle muting of master volume
+        if ((OSInfo.OSInfo.VistaOrLater() && _componentType == MixerComponentType.DestinationSpeakers) ||
+            OSInfo.OSInfo.Win8OrLater())
         {
-          _audioDefaultDevice = new AEDev();
-          _audioDefaultDevice.OnVolumeNotification += new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
-
-          _isMuted = _audioDefaultDevice.Muted;
-          _volume = (int)Math.Round(_audioDefaultDevice.MasterVolume * VolumeMaximum);
-
-          if (!isDigital)
+          try
           {
-            return;
+            _audioDefaultDevice = new AEDev();
+            if (_audioDefaultDevice != null)
+            {
+              _audioDefaultDevice.OnVolumeNotification +=
+                new AudioEndpointVolumeNotificationDelegate(AudioEndpointVolume_OnVolumeNotification);
+
+              _isMuted = _audioDefaultDevice.Muted;
+              _volume = (int) Math.Round(_audioDefaultDevice.MasterVolume*VolumeMaximum);
+            }
+          }
+          catch (Exception)
+          {
+            _isMuted = false;
+            _volume = 100;
           }
         }
 
-        if (_mixerEventListener == null)
+        // Use Windows Multimedia mixer functions for XP and for Vista and later if wave volume is selected
+        if (_componentType == MixerComponentType.SourceWave || !OSInfo.OSInfo.VistaOrLater())
         {
-          _mixerEventListener = new MixerEventListener();
-          _mixerEventListener.Start();
+          if (_mixerEventListener == null)
+          {
+            _mixerEventListener = new MixerEventListener();
+            _mixerEventListener.Start();
+          }
+          _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
+          _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
+
+          MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
+
+          mc.Size = 0;
+          mc.ControlId = 0;
+          mc.ControlType = MixerControlType.Volume;
+          mc.fdwControl = 0;
+          mc.MultipleItems = 0;
+          mc.ShortName = string.Empty;
+          mc.Name = string.Empty;
+          mc.Minimum = 0;
+          mc.Maximum = 0;
+          mc.Reserved = 0;
+
+          IntPtr handle = IntPtr.Zero;
+
+          if (
+            MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0,
+                                         MixerFlags.CallbackWindow) !=
+            MixerError.None)
+          {
+            throw new InvalidOperationException();
+          }
+
+          _handle = handle;
+
+          _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
+          _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
+
+          _isMuted = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
+          _volume = (int) GetValue(_componentType, MixerControlType.Volume);
         }
-        _mixerEventListener.LineChanged += new MixerEventHandler(OnLineChanged);
-        _mixerEventListener.ControlChanged += new MixerEventHandler(OnControlChanged);
-
-        MixerNativeMethods.MixerControl mc = new MixerNativeMethods.MixerControl();
-
-        mc.Size = 0;
-        mc.ControlId = 0;
-        mc.ControlType = MixerControlType.Volume;
-        mc.fdwControl = 0;
-        mc.MultipleItems = 0;
-        mc.ShortName = string.Empty;
-        mc.Name = string.Empty;
-        mc.Minimum = 0;
-        mc.Maximum = 0;
-        mc.Reserved = 0;
-
-        IntPtr handle = IntPtr.Zero;
-
-        if (
-          MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow) !=
-          MixerError.None)
-        {
-          throw new InvalidOperationException();
-        }
-
-        _handle = handle;
-
-        _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
-        _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
-
-        _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
-        _volume = (int)GetValue(_componentType, MixerControlType.Volume);
       }
     }
 
@@ -328,7 +342,7 @@ namespace MediaPortal.Mixer
       bool wasMuted = _isMuted;
       int lastVolume = _volume;
       _isMuted = _audioDefaultDevice.Muted;
-      if (_isDigital)
+      if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
       {
         _isMutedVolume = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
       }
@@ -337,7 +351,7 @@ namespace MediaPortal.Mixer
       if (ControlChanged != null && (wasMuted != _isMuted || lastVolume != _volume))
       {
         ControlChanged(null, null);
-        if (_isDigital && OSInfo.OSInfo.VistaOrLater() && (_isMutedVolume != IsMuted))
+        if (_waveVolume && OSInfo.OSInfo.Win8OrLater() && (_isMutedVolume != IsMuted))
         {
           SetValue(_mixerControlDetailsMute, _isMuted);
         }
@@ -357,16 +371,21 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            _audioDefaultDevice.Muted = value;
-            //_isMuted = value;
+            if (_audioDefaultDevice.Muted != null)
+            {
+              _audioDefaultDevice.Muted = value;
+            }
           }
           else
           {
             //SetValue(_mixerControlDetailsMute, _isMuted = value);
             SetValue(_mixerControlDetailsMute, value);
-            if (_isDigital && OSInfo.OSInfo.VistaOrLater())
+            if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              _audioDefaultDevice.Muted = value;
+              if (_audioDefaultDevice.Muted != null)
+              {
+                _audioDefaultDevice.Muted = value;
+              }
             }
           }
         }
@@ -383,19 +402,21 @@ namespace MediaPortal.Mixer
         {
           if (OSInfo.OSInfo.VistaOrLater() && (_componentType == MixerComponentType.DestinationSpeakers))
           {
-            //if (value == 0 & _audioDefaultDevice.MasterVolume !=0)
-            //    value = (int)(_audioDefaultDevice.MasterVolume * this.VolumeMaximum);
-
-            _audioDefaultDevice.MasterVolume = (float)((float)(value) / (float)(this.VolumeMaximum));
-            //_volume = value;
+            if (_audioDefaultDevice.MasterVolume != null)
+            {
+              _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
+            }
           }
           else
           {
             //SetValue(_mixerControlDetailsVolume, _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
             SetValue(_mixerControlDetailsVolume, Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)));
-            if (_isDigital && OSInfo.OSInfo.VistaOrLater())
+            if (_waveVolume && OSInfo.OSInfo.Win8OrLater())
             {
-              _audioDefaultDevice.MasterVolume = (float)((float)(value) / (float)(this.VolumeMaximum));
+              if (_audioDefaultDevice.MasterVolume != null)
+              {
+                _audioDefaultDevice.MasterVolume = (float) ((float) (value)/(float) (this.VolumeMaximum));
+              }
             }
           }
         }
@@ -425,7 +446,7 @@ namespace MediaPortal.Mixer
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsVolume;
     private MixerNativeMethods.MixerControlDetails _mixerControlDetailsMute;
     private AEDev _audioDefaultDevice;
-    private bool _isDigital;
+    private bool _waveVolume;
 
     #endregion Fields
   }

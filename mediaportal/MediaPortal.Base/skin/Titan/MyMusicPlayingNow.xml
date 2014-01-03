@@ -67,7 +67,7 @@
         <font>TitanLight12</font>	
     		<selected>#(eq(#skin.mymusic.info,'ArtistInfo'))</selected>
     		<onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'ArtistInfo'),'None','ArtistInfo')))</onclick>
-    		<onup>6103</onup>
+    		<onup>6104</onup>
     		<ondown>6102</ondown>
         <onright>6101</onright>
         <onleft>6101</onleft>
@@ -99,17 +99,34 @@
 			  <id>6103</id>
     		<posX>1453</posX>
     		<posY>847</posY>
-    		<label>Top Albums/Tags</label>
+    		<label>33011</label>
         <font>TitanLight12</font>			
     		<selected>#(eq(#skin.mymusic.info,'TopTags'))</selected>
     		<onclick>#(skin.setstring('#skin.mymusic.info',iif(eq(#skin.mymusic.info,'TopTags'),'None','TopTags')))</onclick>
     		<onup>6102</onup>
-    		<ondown>6101</ondown>
+    		<ondown>6104</ondown>
         <onright>6103</onright>
-        <onleft>166</onleft>
+        <onleft>155</onleft>
     	  <animation effect="fade" time="250">WindowOpen</animation>
     	  <animation effect="fade" time="250">WindowClose</animation>
     	</control>
+		
+      <control Style="SettingsButton">
+    		<description>playlist</description>
+    		<type>button</type>
+			  <id>6104</id>
+    		<posX>1453</posX>
+    		<posY>912</posY>
+    		<label>4555</label>
+        <font>TitanLight12</font>			
+		<hyperlink>500</hyperlink>
+    		<onup>6103</onup>
+    		<ondown>6101</ondown>
+        <onright>6104</onright>
+        <onleft>6104</onleft>
+    	  <animation effect="fade" time="250">WindowOpen</animation>
+    	  <animation effect="fade" time="250">WindowClose</animation>
+    	</control>		
       
       <control>
         <id>0</id>

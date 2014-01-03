@@ -148,9 +148,6 @@ namespace MediaPortal.Configuration.Sections
       PlayNowJumpToCmbBox.Items.Clear();
       PlayNowJumpToCmbBox.Items.AddRange(JumpToOptions);
 
-      ShowLyricsCmbBox.Items.Clear();
-      ShowLyricsCmbBox.Items.AddRange(ShowLyricsOptions);
-
       // Fill the Upmix Combos
       foreach (string str in MonoUpmix)
       {
@@ -185,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       trackBarBuffering_Scroll(null, null);
       trackBarCrossfade_Scroll(null, null);
       soniqueRenderTiming_Scroll(null, null);
+      winampFFTsensitivity_Scroll(null, null);
       audioPlayerComboBox_SelectedIndexChanged(null, null);
       GaplessPlaybackChkBox_CheckedChanged(null, null);
     }
@@ -306,16 +304,24 @@ namespace MediaPortal.Configuration.Sections
         }
 
         ckUseOpenGL.Checked = xmlreader.GetValueAsBool("musicvisualization", "useOpenGL", true);
+        ckUseCover.Checked = xmlreader.GetValueAsBool("musicvisualization", "useCover", true);
         soniqueRenderTiming.Value = xmlreader.GetValueAsInt("musicvisualization", "renderTiming", 25);
+        winampFFTsensitivity.Value = xmlreader.GetValueAsInt("musicvisualization", "fftSensitivity", 36);
         comboViewPortSizes.SelectedIndex = xmlreader.GetValueAsInt("musicvisualization", "viewPort", 0);
 
         if (vizType == (int) VisualizationInfo.PluginType.Sonique)
         {
           VizPluginInfo.UseOpenGL = ckUseOpenGL.Checked;
+          VizPluginInfo.UseCover = ckUseCover.Checked;
           VizPluginInfo.RenderTiming = soniqueRenderTiming.Value;
           VizPluginInfo.ViewPortSize = comboViewPortSizes.SelectedIndex;
         }
 
+        if (vizType == (int)VisualizationInfo.PluginType.Winamp)
+        {
+          VizPluginInfo.FFTSensitivity = winampFFTsensitivity.Value;
+        }
+        
         int fps = xmlreader.GetValueAsInt("musicvisualization", "fps", 25);
 
         if (fps < (int)VisualizationFpsNud.Minimum)
@@ -404,33 +410,8 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        string showLyrics = xmlreader.GetValueAsString("musicmisc", "lyrics", LyricsValue0);
-
-        switch (showLyrics)
-        {
-          case LyricsValue0:
-            ShowLyricsCmbBox.Text = ShowLyricsOptions[0];
-            break;
-
-          case LyricsValue1:
-            ShowLyricsCmbBox.Text = ShowLyricsOptions[1];
-            break;
-
-          case LyricsValue2:
-            ShowLyricsCmbBox.Text = ShowLyricsOptions[2];
-            break;
-
-          default:
-            ShowLyricsCmbBox.Text = ShowLyricsOptions[0];
-            break;
-        }
-
         ShowVizInNowPlayingChkBox.Checked = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
-        checkBoxDisableCoverLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true));
-        checkBoxDisableAlbumLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true));
-        checkBoxDisableTagLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true));
-        checkBoxSwitchArtistOnLastFMSubmit.Checked = xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit",
-                                                                              false);
+        chkDisableSimilarTrackLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "lookupSimilarTracks", true));
 
         string vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
 
@@ -509,7 +490,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", vizPluginsInfo[selIndex].CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", vizPluginsInfo[selIndex].PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
           xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
@@ -522,7 +505,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", VizPluginInfo.CLSID);
           xmlwriter.SetValue("musicvisualization", "preset", VizPluginInfo.PresetIndex.ToString());
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", ckUseOpenGL.Checked);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", ckUseCover.Checked);
           xmlwriter.SetValue("musicvisualization", "renderTiming", soniqueRenderTiming.Value.ToString());
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", winampFFTsensitivity.Value.ToString());
           xmlwriter.SetValue("musicvisualization", "viewPort", comboViewPortSizes.SelectedIndex.ToString());
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
@@ -534,7 +519,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("musicvisualization", "clsid", "");
           xmlwriter.SetValue("musicvisualization", "preset", "");
           xmlwriter.SetValueAsBool("musicvisualization", "useOpenGL", false);
+          xmlwriter.SetValueAsBool("musicvisualization", "useCover", false);
           xmlwriter.SetValue("musicvisualization", "renderTiming", "");
+          xmlwriter.SetValue("musicvisualization", "fftSensitivity", "");
           xmlwriter.SetValue("musicvisualization", "viewPort", "");
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", false);
         }
@@ -597,30 +584,8 @@ namespace MediaPortal.Configuration.Sections
         }
 
         xmlwriter.SetValue("music", "playnowjumpto", playNowJumpTo);
-
-        string showLyrics = string.Empty;
-
-        switch (ShowLyricsCmbBox.Text)
-        {
-          case LyricsOption0:
-            showLyrics = LyricsValue0;
-            break;
-
-          case LyricsOption1:
-            showLyrics = LyricsValue1;
-            break;
-
-          case LyricsOption2:
-            showLyrics = LyricsValue2;
-            break;
-        }
-
-        xmlwriter.SetValue("musicmisc", "lyrics", showLyrics);
         xmlwriter.SetValueAsBool("musicmisc", "showVisInNowPlaying", ShowVizInNowPlayingChkBox.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmcovers", !checkBoxDisableCoverLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", checkBoxSwitchArtistOnLastFMSubmit.Checked);
+        xmlwriter.SetValueAsBool("musicmisc", "lookupSimilarTracks", !chkDisableSimilarTrackLookups.Checked);
 
         string vuMeter = VUMeterValue0;
 
@@ -1240,6 +1205,11 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
+    private void winampFFTsensitivity_Scroll(object sender, EventArgs e)
+    {
+      winampFFTsensitivityLbl.Text = string.Format("{0} ", winampFFTsensitivity.Value * 32);
+    }
   }
 
   /// <summary>

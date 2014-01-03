@@ -263,69 +263,69 @@ namespace MediaPortal.Player.Subtitles
     private class MpcSubtitles
     {
       //set default subtitle's style (call before LoadSubtitles to take effect)
-      [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
       public static extern void SetDefaultStyle([In] ref SubtitleStyle style, bool overrideUserStyle);
 
       //load subtitles for video file filename, with given (rendered) graph 
-      [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Unicode)]
       public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder,
                                               string paths, int lcidCI);
 
       //set sample time (set from EVR presenter, not used in case of vmr9)
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetTime(long nsSampleTime);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SaveToDisk();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern bool IsModified();
 
       ////
       //subs management functions
       ///
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetCount();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       [return: MarshalAs(UnmanagedType.BStr)]
       public static extern string GetLanguage(int i);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       [return: MarshalAs(UnmanagedType.BStr)]
       public static extern string GetTrackName(int i);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetCurrent();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetCurrent(int current);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern bool GetEnable();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetEnable(bool enable);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void Render(int x, int y, int width, int height);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern int GetDelay();
 
       //in milliseconds
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetDelay(int delay_ms);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void FreeSubtitles();
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex,
                                                    bool disableAnimation);
 
-      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [DllImport("mpcSubs.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
       public static extern void SetShowForcedOnly(bool onlyShowForcedSubs);
     }
   }

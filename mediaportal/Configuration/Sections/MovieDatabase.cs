@@ -173,7 +173,8 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList _nfoFiles = new ArrayList();
 
     private ArrayList _conflictFiles = new ArrayList();
-    private ArrayList notFoundMovie = new ArrayList();
+    private ArrayList _notFoundMovie = new ArrayList();
+    private bool _nfoImdbCombined = false; // False->only nfo import, true->nfo+movie scraper
 
     private List<BaseShares.ShareData> _sharesData = null;
 
@@ -346,6 +347,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       
+      // Use nfo files only (option is selected in configuration)
       if (chbUseNfoScraperOnly.Checked)
       {
         _nfoFiles = new ArrayList();
@@ -361,13 +363,43 @@ namespace MediaPortal.Configuration.Sections
           return;
         }
 
-        ImportNfo();
+        ImportNfo(false);
       }
       else
       {
         _conflictFiles = new ArrayList();
-        IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
+        
+        // To scan only new movies, we will use help of nfo files if they exist, then video files for movies
+        // not added by nfo files
+        if (skipCheckBox.Checked && !refreshdbCheckBox.Checked)
+        {
+          _nfoFiles = new ArrayList();
+
+          // First use nfo files
+          foreach (string availablePath in availablePaths)
+          {
+            GetNfoFiles(availablePath, ref _nfoFiles);
+          }
+
+          if (_nfoFiles.Count > 0)
+          {
+            ImportNfo(true);
+          }
+
+          // Then video files (only not added with nfo)
+          // Close progress dialog from nfo import if exist
+          if (_progressDialog != null)
+          {
+            _progressDialog.CloseProgress();
+          }
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, true,
+                             false);
+        }
+        else // USer wants to scan no matter if movies exist or wants to refresh db, nfo files are not used
+        {
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, skipCheckBox.Checked, true,
                              refreshdbCheckBox.Checked);
+        }
       }
       
       LoadMovies(0);
@@ -395,7 +427,6 @@ namespace MediaPortal.Configuration.Sections
             DeleteVideoThumbs(files, configDir);
             
             // FanArt delete all files
-            FanArt.GetFanArtFolder(out configDir);
             if (useFanartCheckBox.CheckState == CheckState.Checked)
             {
               DialogResult dialogResultFanart = MessageBox.Show("Delete all fanarts (All files in " +
@@ -405,15 +436,8 @@ namespace MediaPortal.Configuration.Sections
                                                                 MessageBoxIcon.Question);
               if (dialogResultFanart == DialogResult.Yes)
               {
-                try
-                {
-                  string[] fileList = Directory.GetFiles(configDir, files);
-                  foreach (string file in fileList)
-                  {
-                    File.Delete(file);
-                  }
-                }
-                catch(Exception){}
+                FanArt.GetFanArtFolder(out configDir);
+                DeleteVideoThumbs(files, configDir);
               }
             }
           }
@@ -4793,12 +4817,13 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      ImportNfo();
+      ImportNfo(false);
     }
 
-    private void ImportNfo()
+    private void ImportNfo(bool nfoImdbCombined)
     {
-      notFoundMovie = new ArrayList();
+      _notFoundMovie = new ArrayList();
+      _nfoImdbCombined = nfoImdbCombined;
 
       // Set refresh status for background worker
       _isRefreshing = true;
@@ -4922,7 +4947,7 @@ namespace MediaPortal.Configuration.Sections
          if(!VideoDatabase.MakeNfo(movie.ID))
          {
            // Movie filenot found
-           notFoundMovie.Add(movie.Title + "\n");
+           _notFoundMovie.Add(movie.Title + "\n");
            Log.Info("Nfo export error: Video file not exists for movie {0}.", movie.Title);
           }
 
@@ -5060,36 +5085,48 @@ namespace MediaPortal.Configuration.Sections
     private void CancelNfoWorker(object sender, RunWorkerCompletedEventArgs e)
     {
       BackgroundWorker bgw = (BackgroundWorker)sender;
-      _progressDialog.CloseProgress();
-      // Show message
-      if (e.Cancelled)
-      {
-        MessageBox.Show("Canceled !");
-      }
-      else if (e.Error != null)
-      {
-        MessageBox.Show("Error: " + e.Error.Message);
-      }
-      else if (notFoundMovie.Count > 0)
-      {
-        string notFoundMovies = string.Empty;
 
-        foreach (string movie in notFoundMovie)
+      // Show message
+      if (!_nfoImdbCombined)
+      {
+        if (_progressDialog != null)
         {
-          notFoundMovies = notFoundMovies + movie;
+          _progressDialog.CloseProgress();
         }
 
-        MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" +  notFoundMovies);
+        if (e.Cancelled)
+        {
+          MessageBox.Show("Canceled nfo import!");
+        }
+        else if (e.Error != null)
+        {
+          MessageBox.Show("Error: " + e.Error.Message);
+        }
+        else if (_notFoundMovie.Count > 0)
+        {
+          string notFoundMovies = string.Empty;
+
+          foreach (string movie in _notFoundMovie)
+          {
+            notFoundMovies = notFoundMovies + movie;
+          }
+
+          MessageBox.Show("Some of movies can't be exported (movie file not exist):\n" + notFoundMovies);
+        }
+        else
+        {
+          MessageBox.Show("Done!");
+        }
       }
-      else
-      {
-        MessageBox.Show("Done!");
-      }
+
       bgw.Dispose();
-      notFoundMovie.Clear();
+      _notFoundMovie.Clear();
       // Refresh all movies
-      LoadMovies(0);
-      cbTitle.SelectedIndex = 0;
+      if (!_nfoImdbCombined)
+      {
+        LoadMovies(0);
+        cbTitle.SelectedIndex = 0;
+      }
       this.Enabled = true;
     }
 
@@ -5229,6 +5266,9 @@ namespace MediaPortal.Configuration.Sections
         // open dialog
         if (dlg.ShowDialog(this) == DialogResult.OK)
         {
+          Util.Utils.FileDelete(smallThumb);
+          Util.Utils.FileDelete(largeThumb);
+          
           if (Util.Picture.CreateThumbnail(dlg.FileName, smallThumb, (int)Thumbs.ThumbResolution,
                                            (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
           {

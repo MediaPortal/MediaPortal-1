@@ -12,3 +12,4 @@ Thumbs.db
 /mediaportal/Setup/uninstall.nsh
 Packages
 *.DotSettings
+/Build/NuGet.exe

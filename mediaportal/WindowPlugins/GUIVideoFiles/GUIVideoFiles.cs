@@ -278,19 +278,24 @@ namespace MediaPortal.GUI.Video
           }
         }
 
-        if (!_useOnlyNfoScraper)
+        ArrayList nfoFiles = new ArrayList();
+
+        foreach (string availablePath in availablePaths)
         {
+          GetNfoFiles(availablePath, ref nfoFiles);
+        }
+
+        if (!_useOnlyNfoScraper) // Normal scraper
+        {
+          // First try nfo files
+          IMDBFetcher fetcher = new IMDBFetcher(this);
+          fetcher.FetchNfo(nfoFiles, true, false);
+          // Then video files without nfo
           IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
         }
         else
         {
-          ArrayList nfoFiles = new ArrayList();
-
-          foreach (string availablePath in availablePaths)
-          {
-            GetNfoFiles(availablePath, ref nfoFiles);
-          }
-
+          // Only nfo files
           IMDBFetcher fetcher = new IMDBFetcher(this);
           fetcher.FetchNfo(nfoFiles, true, false);
         }
@@ -655,32 +660,32 @@ namespace MediaPortal.GUI.Video
 
       if ((item.IsFolder && !item.IsBdDvdFolder))
       {
-          // Play all in folder
-          if (_playClicked)
+        // Play all in folder
+        if (_playClicked)
+        {
+          if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
           {
-              if (!item.IsRemote && item.Label != ".." && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
-              {
-                  if (!_virtualDirectory.RequestPin(item.Path))
-                  {
-                      _playClicked = false;
-                      return;
-                  }
+            if (!_virtualDirectory.RequestPin(item.Path))
+            {
+              _playClicked = false;
+              return;
+            }
 
-                  OnPlayAll(item.Path);
-                  _playClicked = false;
-              }
+            OnPlayAll(item.Path);
+            _playClicked = false;
           }
-          else
+        }
+        else
+        {
+          _currentSelectedItem = -1;
+
+          if (facadeLayout != null)
           {
-              _currentSelectedItem = -1;
-
-              if (facadeLayout != null)
-              {
-                  _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
-              }
-
-              LoadDirectory(path, true);
+            _history.Set(facadeLayout.SelectedListItemIndex.ToString(), _currentFolder);
           }
+
+          LoadDirectory(path, true);
+        }
       }
       else
       {
@@ -781,7 +786,6 @@ namespace MediaPortal.GUI.Video
           // In the list must be at least 2 files so we check stackable movie for resume 
           // (which file have a stop time)
           bool asked = false;
-          //ArrayList newItems = new ArrayList();
           string title = item.Label; // Dlg title
 
           if (movie != null && !movie.IsEmpty)
@@ -1191,7 +1195,6 @@ namespace MediaPortal.GUI.Video
               }
 
               dlg.AddLocalizedString(368); //IMDB
-              dlg.AddLocalizedString(654); //Eject
             }
             // Folder
             else if (item.IsFolder)
@@ -1236,11 +1239,6 @@ namespace MediaPortal.GUI.Video
                     }
                   }
                 }
-              }
-
-              if (Util.Utils.getDriveType(item.Path) == 5)
-              {
-                dlg.AddLocalizedString(654); //Eject            
               }
 
               if (!IsFolderPinProtected(item.Path) && _fileMenuEnabled)
@@ -1288,19 +1286,46 @@ namespace MediaPortal.GUI.Video
         {
           dlg.AddLocalizedString(347); //Unstack
         }
-        if (Util.Utils.IsRemovable(item.Path))
+
+        #region Eject/Load
+
+        // CD/DVD/BD
+        if (Util.Utils.getDriveType(item.Path) == 5)
+        {
+          if (item.Path != null)
+          {
+            var driveInfo = new DriveInfo(Path.GetPathRoot(item.Path));
+
+            // There is no easy way in NET to detect open tray so we will check
+            // if media is inside (load will be visible also in case that tray is closed but
+            // media is not loaded)
+            if (!driveInfo.IsReady)
+            {
+              dlg.AddLocalizedString(607); //Load  
+            }
+
+            dlg.AddLocalizedString(654); //Eject  
+          }
+        }
+        
+        // Removable/USB HDD
+        if (Util.Utils.IsRemovable(item.Path) || Util.Utils.IsUsbHdd(item.Path))
         {
           dlg.AddLocalizedString(831);
         }
 
+        #endregion
+
         dlg.AddLocalizedString(1299); // Refresh current directory
-        dlg.AddLocalizedString(1262); // Update grabber scripts
-        dlg.AddLocalizedString(1307); // Update internal grabber scripts
-        dlg.AddLocalizedString(1263); // Set default grabber
-        if (!item.IsFolder)
-        {
-          dlg.AddLocalizedString(1984); // Refresh thumb
-        }
+      }
+
+      dlg.AddLocalizedString(1262); // Update grabber scripts
+      dlg.AddLocalizedString(1307); // Update internal grabber scripts
+      dlg.AddLocalizedString(1263); // Set default grabber
+
+      if (!item.IsFolder)
+      {
+        dlg.AddLocalizedString(1984); // Refresh thumb
       }
 
       dlg.DoModal(GetID);
@@ -1328,6 +1353,10 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_PLAYLIST);
           break;
 
+        case 607: // Load (only CDROM)
+          Util.Utils.CloseCDROM(Path.GetPathRoot(item.Path));
+          break;
+
         case 654: // Eject
           if (Util.Utils.getDriveType(item.Path) != 5)
           {
@@ -1337,6 +1366,7 @@ namespace MediaPortal.GUI.Video
           {
             Util.Utils.EjectCDROM(Path.GetPathRoot(item.Path));
           }
+
           LoadDirectory(string.Empty);
           break;
 
@@ -1387,11 +1417,11 @@ namespace MediaPortal.GUI.Video
           }
           
           int currentIndex = facadeLayout.SelectedListItemIndex;
+          ArrayList scanNfoFiles = new ArrayList();
+          GetNfoFiles(item.Path, ref scanNfoFiles);
 
           if (_useOnlyNfoScraper)
           {
-            ArrayList scanNfoFiles = new ArrayList();
-            GetNfoFiles(item.Path, ref scanNfoFiles);
             IMDBFetcher scanFetcher = new IMDBFetcher(this);
             scanFetcher.FetchNfo(scanNfoFiles, true, false);
             // Send global message that movie is refreshed/scanned
@@ -1402,9 +1432,13 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
+            // Try nfo files first
+            IMDBFetcher scanFetcher = new IMDBFetcher(this);
+            scanFetcher.FetchNfo(scanNfoFiles, true, false);
+            // Then the rest
             ArrayList availablePaths = new ArrayList();
             availablePaths.Add(item.Path);
-            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
+            IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, true, _getActors, false);
             // Send global message that movie is refreshed/scanned
             GUIMessage scanMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
             GUIWindowManager.SendMessage(scanMsg);
@@ -1478,9 +1512,28 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 831:
-          string message;
-
-          if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+          string message = string.Empty;
+          
+          if (Util.Utils.IsUsbHdd(item.Path) || Util.Utils.IsRemovableUsbDisk(item.Path))
+          {
+            if (!RemovableDriveHelper.EjectDrive(item.Path, out message))
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(832));
+              pDlgOK.SetLine(2, string.Empty);
+              pDlgOK.SetLine(3, message);
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+            else
+            {
+              GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+              pDlgOK.SetHeading(831);
+              pDlgOK.SetLine(1, GUILocalizeStrings.Get(833));
+              pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+            }
+          }
+          else if (!RemovableDriveHelper.EjectMedia(item.Path, out message))
           {
             GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             pDlgOK.SetHeading(831);
@@ -2826,7 +2879,7 @@ namespace MediaPortal.GUI.Video
 
       //Tweak to boost performance when starting/stopping playback
       //For further details see comment in Core\Util\VirtualDirectory.cs
-      if (useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
+      if (!string.IsNullOrEmpty(_currentFolder) && useCache && _cachedDir == _currentFolder && _cachedItems != null && _cachedItems.Count > 0)
       {
         itemlist = _cachedItems;
         int currentItemIndex = 0;

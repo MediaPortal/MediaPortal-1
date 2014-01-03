@@ -454,6 +454,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
   File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
+  File "${git_MP}\databases\bin\${BUILD_TYPE}\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
@@ -478,6 +479,9 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Plugins\Windows"
   File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
   File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  ; ffmpeg
+  SetOutPath "$MPdir.Base\MovieThumbnailer"
+  File "${git_ROOT}\Packages\ffmpeg.2.1.1\ffmpeg.exe"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
@@ -487,6 +491,7 @@ Section "MediaPortal core files (required)" SecCore
   File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
   ; TvLibrary for Genre
   File "${git_TVServer}\TvLibrary.Interfaces\bin\${BUILD_TYPE}\TvLibrary.Interfaces.dll"
+  File "${git_MP}\LastFMLibrary\bin\${BUILD_TYPE}\LastFMLibrary.dll"
   ; MediaPortal.exe
   
   #---------------------------------------------------------------------------
@@ -609,6 +614,7 @@ SectionEnd
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
   Delete "$MPdir.Base\Databases.dll"
+  Delete "$MPdir.Base\\HtmlAgilityPack.dll"
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"

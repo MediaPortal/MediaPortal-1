@@ -1469,9 +1469,16 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                // Default behavior, draw the image texture with no mask.
-                DXNative.FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
-                                               matrix);
+                try
+                {
+                  // Default behavior, draw the image texture with no mask.
+                  DXNative.FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, color,
+                                                 matrix);
+                }
+                catch (Exception)
+                {
+                  // Catch exception to avoid garbage in log.
+                }
               }
             }
 

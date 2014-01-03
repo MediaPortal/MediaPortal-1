@@ -764,7 +764,7 @@ namespace MediaPortal.GUI.Library
           CachedTexture[] textures;
           lock (_cacheTextures)
           {
-            textures = _cacheTextures.Values.Where(t => IsTemporary(t.Name)).ToArray();
+            textures = _cacheTextures.Values.Where(t => t.Name != null && IsTemporary(t.Name)).ToArray();
           }
 
           foreach (CachedTexture texture in textures)

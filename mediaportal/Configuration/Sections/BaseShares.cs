@@ -501,7 +501,7 @@ namespace MediaPortal.Configuration.Sections
           //
           // We have a new selection
           //
-          if (currentlyCheckedItem != null)
+          if (currentlyCheckedItem != null && currentlyCheckedItem.Index != -1)
           {
             currentlyCheckedItem.Checked = false;
           }

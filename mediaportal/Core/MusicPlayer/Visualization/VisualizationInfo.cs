@@ -64,6 +64,8 @@ namespace MediaPortal.Visualization
     private bool _IsDummyPlugin = false;
     private bool _IsBlackListed = false;
     private bool _useOpenGL = false;
+    private bool _useCover = false;
+    private int _fftSensitivity = 0;
     private int _renderTiming = 0;
     private int _viewPortSize = 0;
 
@@ -155,6 +157,18 @@ namespace MediaPortal.Visualization
     {
       get { return _useOpenGL; }
       set { _useOpenGL = value; }
+    }
+
+    public bool UseCover
+    {
+      get { return _useCover; }
+      set { _useCover = value; }
+    }
+
+    public int FFTSensitivity
+    {
+      get { return _fftSensitivity; }
+      set { _fftSensitivity = value; }
     }
 
     public int RenderTiming

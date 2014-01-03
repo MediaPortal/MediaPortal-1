@@ -130,6 +130,8 @@ namespace MediaPortal
     protected Point                LastCursorPosition;       // tracks last cursor position during window moving
     protected static SplashScreen  SplashScreen;             // splash screen object
     protected GraphicsAdapterInfo  AdapterInfo;              // hold adapter info for the selected display on startup of MP
+    protected int MouseTimeOutMP;                            // Mouse activity timeout while in MP in seconds
+    protected int MouseTimeOutFullscreen;                    // Mouse activity timeout while in Fullscreen in seconds
 
     #endregion
 
@@ -178,9 +180,12 @@ namespace MediaPortal
     private PlayListType               _currentPlayListType;      //
     private PlayList                   _currentPlayList;          //
     private Win32API.MSG               _msgApi;                   //
-    private Point                      _lastCursorPosition;       // track cursor position of last move move event
+    internal static Point              _lastCursorPosition;       // track cursor position of last move move event
     private DeviceType                 _deviceType;               //
     private CreateFlags                _createFlags;              //
+    internal static Point              _moveMouseCursorPosition;
+    internal static Point              _moveMouseCursorPositionRefresh;
+    protected bool                     _firstLoadedScreen;        //
 
     #endregion
 
@@ -382,7 +387,7 @@ namespace MediaPortal
 
       // Reset DialogMenu to avoid freeze when going to fullscreen/windowed
       var dialogMenu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dialogMenu != null && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU)
+      if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
       {
         dialogMenu.Dispose();
         GUIWindowManager.UnRoute(); // only unroute if we still the routed window
@@ -802,7 +807,7 @@ namespace MediaPortal
       // only minimize if visible and lost focus in windowed mode or if in fullscreen mode or if exiting to tray
       if (IsVisible && ((Windowed && _lostFocus) || (!Windowed && MinimizeOnFocusLoss)) || ExitToTray)
       {
-        if (dialogMenu != null && GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU)
+        if (dialogMenu != null && (GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_MENU || GUIWindowManager.RoutedWindow == (int)GUIWindow.Window.WINDOW_DIALOG_OK))
         {
           dialogMenu.Reset();
           dialogMenu.Dispose();
@@ -1404,35 +1409,32 @@ namespace MediaPortal
     public void ShowMouseCursor(bool visible)
     {
       int state = 0;
+      Cursor current = Cursor.Current;
 
       switch (visible)
       {
         case true:
-          state = ShowCursor(true);
+          if (current != null)
+          {
+            while (state < 1)
+            {
+              state = ShowCursor(true);
+              Cursor.Show();
+            }
+          }
           break;
         case false:
-          state = ShowCursor(false);
+          if (current != null)
+          {
+            while (state > -1)
+            {
+              state = ShowCursor(false);
+              Cursor.Hide();
+            }
+          }
           break;
       }
-
-      // check if cursor state is balanced
-      if (state >= -1 && state <= 0)
-      {
-        return;
-      }
-
-      // fix unbalanced cursor state
-      int oldState = state;
-      int balance = visible ? 0 : -1;
-      while (state < balance)
-      {
-        state = ShowCursor(true);
-      }
-      while (state > balance)
-      {
-         state = ShowCursor(false);
-      }
-      Log.Debug("D3D: Cursor state balanced from {0} to {1}", oldState, state);
+      Log.Debug("D3D: Cursor ShowMouseCursor state {0}", state);
     }
 
     /// <summary>
@@ -1474,10 +1476,13 @@ namespace MediaPortal
         return;
       }
 
-
       // Hide mouse cursor after three seconds of inactivity
+      // Set timeout Value
+      MouseTimeOutFullscreen = 3;
+      MouseTimeOutMP = 6;
       var timeSpam = DateTime.Now - MouseTimeOutTimer;
-      if (timeSpam.TotalSeconds >= 3)
+      int timeSpamValue = GUIGraphicsContext.IsFullScreenVideo ? MouseTimeOutFullscreen : MouseTimeOutMP;
+      if (timeSpam.TotalSeconds >= timeSpamValue && MouseCursor)
       {
         MouseCursor = false;
       }
@@ -1882,9 +1887,18 @@ namespace MediaPortal
       Activate();
 
       // needed to focus on first run.
+      // First save current MP screen
+      _firstLoadedScreen = true;
+      Screen screenfocus = Screen.FromControl(this);
+
+      // Start Minimize and restore to force MP focus
       this.WindowState = FormWindowState.Minimized;
       this.Show();
       this.WindowState = FormWindowState.Normal;
+      _firstLoadedScreen = false;
+
+      // Restore previous saved screen
+      GUIGraphicsContext.currentScreen = screenfocus;
 
       _isLoaded = true;
     }
@@ -1912,15 +1926,6 @@ namespace MediaPortal
           } while (!SplashScreen.IsStopped());
           SplashScreen = null;
           
-          // force Windows to recognize the imbalanced state we created
-          if (AutoHideMouse)
-          {
-            ShowMouseCursor(false);
-          }
-          else
-          {
-            ShowMouseCursor(false);
-          }
         }
 
         if (MinimizeOnStartup && _firstTimeWindowDisplayed)
@@ -1930,6 +1935,8 @@ namespace MediaPortal
           MinimizeToTray();
           _firstTimeWindowDisplayed = false;
         }
+        // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
+        _lastCursorPosition = Cursor.Position;
       }
     }
 
@@ -2075,20 +2082,20 @@ namespace MediaPortal
     /// <param name="e"></param>
     protected virtual void MouseMoveEvent(MouseEventArgs e)
     {
-      Log.Debug("D3D: MouseMoveEvent()");
+      //Log.Debug("D3D: MouseMoveEvent()");
       // only re-activate mouse cursor when the position really changed between move events
-      if (Cursor.Position != _lastCursorPosition)
+      if (Cursor.Position != _lastCursorPosition || (e.Delta > 0 || e.Delta < 0))
       {
-        if (!_disableMouseEvents)
+        if ((!_disableMouseEvents && (_lastCursorPosition != _moveMouseCursorPosition) || (e.Delta > 0 || e.Delta < 0)) && (_lastCursorPosition != _moveMouseCursorPositionRefresh))
         {
           MouseCursor = true;
         }
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
+        _lastCursorPosition = Cursor.Position;
+        _moveMouseCursorPosition = _lastCursorPosition;
       }
-      _lastCursorPosition = Cursor.Position;
     }
-
 
     /// <summary>
     /// 
@@ -2165,10 +2172,14 @@ namespace MediaPortal
       Log.Debug("D3D: OnGotFocus()");
       if (AutoHideMouse && !Windowed)
       {
-        ShowMouseCursor(false);
+        // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
+        _lastCursorPosition = Cursor.Position;
       }
       _lostFocus = false;
-      _firstTimeActivated = true;
+      if (WindowState == FormWindowState.Minimized)
+      {
+        _firstTimeActivated = true;
+      }
       base.OnGotFocus(e);
     }
 
@@ -2183,7 +2194,8 @@ namespace MediaPortal
       Log.Debug("D3D: OnLostFocus()");
       if (AutoHideMouse && !Windowed)
       {
-        ShowMouseCursor(true);
+        // Set Cursor.Position to avoid mouse cursor show up itself (for ex on video)
+        _lastCursorPosition = Cursor.Position;
       }
       _lostFocus = true;
       base.OnLostFocus(e);

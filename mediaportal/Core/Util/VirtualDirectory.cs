@@ -109,6 +109,42 @@ namespace MediaPortal.Util
           }
           else break;
         }
+
+        List<string> usbHdd = Utils.GetAvailableUsbHardDisks();
+
+        if (usbHdd.Count > 0)
+        {
+          foreach (string drive in usbHdd)
+          {
+            bool driveFound = false;
+            string driveName = Utils.GetDriveName(drive);
+
+            if (driveName.Length == 0)
+            {
+              driveName = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+            }
+            else
+            {
+              driveName = String.Format("({0}:) {1}", drive.Substring(0, 1).ToUpper(), driveName);
+            }
+
+            foreach (var share in m_shares)
+            {
+              if (share.Path == drive)
+              {
+                driveFound = true;
+                break;
+              }
+            }
+
+            if (driveFound == false)
+            {
+              Share removableShare = new Share(driveName, drive);
+              removableShare.RuntimeAdded = true;
+              Add(removableShare);
+            }
+          }
+        }
       }
     }
 

@@ -124,16 +124,17 @@ namespace MediaPortal.GUI.Music
     protected delegate void ReplacePlaylistDelegate(PlayList newPlaylist);
     protected delegate void StartPlayingPlaylistDelegate();
 
+    protected bool _strippedPrefixes;
+    protected string _artistPrefixes;
+
     #endregion
 
     #region SkinControls
 
-    [SkinControl(8)]
-    protected GUIButtonControl btnSearch = null;
-    [SkinControl(12)]
-    protected GUIButtonControl btnPlayCd = null;
-    [SkinControl(10)]
-    protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(8)] protected GUIButtonControl btnSearch = null;
+    [SkinControl(12)] protected GUIButtonControl btnPlayCd = null;
+    [SkinControl(10)] protected GUIButtonControl btnSavedPlaylists = null;
+    [SkinControl(18)] protected GUICheckButton btnAutoDJ;
 
     #endregion
 
@@ -148,6 +149,7 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
 
+      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged); 
       playlistPlayer.PlaylistChanged += playlistPlayer_PlaylistChanged;
       g_Player.PlayBackChanged += OnPlaybackChangedOrStopped;
       g_Player.PlayBackStopped += OnPlaybackChangedOrStopped;
@@ -208,6 +210,7 @@ namespace MediaPortal.GUI.Music
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
+        MusicState.AutoDJEnabled = xmlreader.GetValueAsBool("lastfm:test", "autoDJ", false);
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
@@ -215,6 +218,9 @@ namespace MediaPortal.GUI.Music
         _selectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
         _addAllOnSelect = xmlreader.GetValueAsBool("musicfiles", "addall", true);
         _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
+
+        _strippedPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
 
         for (int i = 0; i < _sortModes.Length; ++i)
         {
@@ -512,6 +518,10 @@ namespace MediaPortal.GUI.Music
       {
         OnShowSavedPlaylists(m_strPlayListPath);
       }
+      if (control == btnAutoDJ)
+      {
+        MusicState.AutoDJEnabled = !MusicState.AutoDJEnabled;
+      }
     }
 
     protected override void UpdateButtonStates()
@@ -673,6 +683,11 @@ namespace MediaPortal.GUI.Music
         btnSortBy.SortChanged += new SortEventHandler(SortChanged);
       }
 
+      if (btnAutoDJ != null)
+      {
+        btnAutoDJ.Selected = MusicState.AutoDJEnabled;
+      }
+
       base.OnPageLoad();
     }
 
@@ -685,6 +700,7 @@ namespace MediaPortal.GUI.Music
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);
+        xmlwriter.SetValueAsBool("lastfm:test", "autoDJ", MusicState.AutoDJEnabled);
       }
       base.OnPageDestroy(newWindowId);
     }
@@ -854,7 +870,7 @@ namespace MediaPortal.GUI.Music
       SelectCurrentItem();
     }
 
-    protected static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
+    public static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
     {
       if (item.MusicTag == null)
       {
@@ -1190,12 +1206,14 @@ namespace MediaPortal.GUI.Music
       var artist = new ArtistInfo();
       var artistInfo = new MusicArtistInfo();
       if (m_database.GetArtistInfo(artistName, ref artist))
-      { // we already have artist info in database so just use that
+      {
+        // we already have artist info in database so just use that
         artistInfo.Set(artist);
         errorEncountered = false;
       }
       else
-      { // lookup artist details
+      {
+        // lookup artist details
 
         if (null != pDlgOK && !Win32API.IsConnectedToInternet())
         {
@@ -1225,7 +1243,8 @@ namespace MediaPortal.GUI.Music
         {
           var selectedMatch = new AllMusicArtistMatch();
           if (artists.Count == 1)
-          { // only have single match so no need to ask user
+          {
+            // only have single match so no need to ask user
             Log.Debug("Single Artist Match Found");
             selectedMatch = artists[0];
             errorEncountered = false;
@@ -1234,18 +1253,18 @@ namespace MediaPortal.GUI.Music
           {
             // need to get user to choose which one to use
             Log.Debug("Muliple Artist Match Found ({0}) prompting user", artists.Count);
-            var pDlg = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
+            var pDlg = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
             if (null != pDlg)
             {
               pDlg.Reset();
               pDlg.SetHeading(GUILocalizeStrings.Get(1303));
               foreach (var i in artists.Select(artistMatch => new GUIListItem
-                                                                {
-                                                                  Label = artistMatch.Artist + " - " + artistMatch.Genre,
-                                                                  Label2 = artistMatch.YearsActive,
-                                                                  Path = artistMatch.ArtistUrl,
-                                                                  IconImage = artistMatch.ImageUrl
-                                                                }))
+                {
+                  Label = artistMatch.Artist + " - " + artistMatch.Genre,
+                  Label2 = artistMatch.YearsActive,
+                  Path = artistMatch.ArtistUrl,
+                  IconImage = artistMatch.ImageUrl
+                }))
               {
                 pDlg.Add(i);
               }
@@ -1272,27 +1291,23 @@ namespace MediaPortal.GUI.Music
               dlgProgress.Progress();
             }
           }
-          string strHtml;
-          if (scraper.GetArtistHtml(selectedMatch, out strHtml))
+          if (null != dlgProgress)
+          {
+            dlgProgress.SetPercentage(60);
+            dlgProgress.Progress();
+          }
+          if (artistInfo.Parse(selectedMatch.ArtistUrl))
           {
             if (null != dlgProgress)
             {
-              dlgProgress.SetPercentage(60);
+              dlgProgress.SetPercentage(80);
               dlgProgress.Progress();
             }
-            if (artistInfo.Parse(strHtml))
-            {
-              if (null != dlgProgress)
-              {
-                dlgProgress.SetPercentage(80);
-                dlgProgress.Progress();
-              }
-              // set values to actual artist to ensure they match track data
-              // rather than values that might be returned from allmusic.com
-              artistInfo.Artist = artistName;
-              m_database.AddArtistInfo(artistInfo.Get());
-              errorEncountered = false;
-            }
+            // set values to actual artist to ensure they match track data
+            // rather than values that might be returned from allmusic.com
+            artistInfo.Artist = artistName;
+            m_database.AddArtistInfo(artistInfo.Get());
+            errorEncountered = false;
           }
         }
       }
@@ -1454,25 +1469,45 @@ namespace MediaPortal.GUI.Music
       }
       else if (song.Album != "")
       {
-        ShowAlbumInfo(song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
+        var artist = song.Artist;
+        if (_strippedPrefixes)
+        {
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+        }
+        ShowAlbumInfo(artist, song.Album);
       }
-      else if (song.Artist != "")
+      else if (!string.IsNullOrEmpty(song.Artist))
       {
-        ShowArtistInfo(song.Artist, song.Album);
+        var artist = song.Artist;
+        if (_strippedPrefixes)
+        {
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.Artist);
+        }
+
+        ShowArtistInfo(artist, song.Album);
       }
-      else if (song.AlbumArtist != "")
+      else if (!string.IsNullOrEmpty(song.AlbumArtist))
       {
-        ShowArtistInfo(song.AlbumArtist, song.Album);
+        var artist = song.AlbumArtist;
+        if (_strippedPrefixes)
+        {
+          //Fix ME
+          //artist = AudioscrobblerBase.UndoArtistPrefix(song.AlbumArtist);
+        }
+
+        ShowArtistInfo(artist, song.Album);
       }
       facadeLayout.RefreshCoverArt();
     }
 
-    protected void ShowAlbumInfo(string artistName, string albumName, string strPath, MusicTag tag)
+    protected void ShowAlbumInfo(string artistName, string albumName)
     {
-      ShowAlbumInfo(GetID, artistName, albumName, strPath, tag);
+      ShowAlbumInfo(GetID, artistName, albumName);
     }
 
-    public void ShowAlbumInfo(int parentWindowID, string artistName, string albumName, string strPath, MusicTag tag)
+    public void ShowAlbumInfo(int parentWindowID, string artistName, string albumName)
     {
       Log.Debug("Searching for album: {0} - {1}", albumName, artistName);
 
@@ -1574,15 +1609,15 @@ namespace MediaPortal.GUI.Music
             }
           }
 
-          string strAlbumHtml;
-          if (scraper.GetAlbumHtml(albumName, selectedMatch.ArtistUrl, out strAlbumHtml))
+          string strAlbumUrl;
+          if (scraper.GetAlbumUrl(albumName, selectedMatch.ArtistUrl, out strAlbumUrl))
           {
             if (null != dlgProgress)
             {
               dlgProgress.SetPercentage(60);
               dlgProgress.Progress();
             }
-            if (albumInfo.Parse(strAlbumHtml))
+            if (albumInfo.Parse(strAlbumUrl))
             {
               if (null != dlgProgress)
               {
@@ -1620,7 +1655,7 @@ namespace MediaPortal.GUI.Music
           if (pDlgAlbumInfo.NeedsRefresh)
           {
             m_database.DeleteAlbumInfo(albumName, artistName);
-            ShowAlbumInfo(parentWindowID, artistName, albumName, strPath, tag);
+            ShowAlbumInfo(parentWindowID, artistName, albumName);
             return;
           }
         }
