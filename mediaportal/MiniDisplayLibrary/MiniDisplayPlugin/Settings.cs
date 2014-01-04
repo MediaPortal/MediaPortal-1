@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -317,6 +317,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading ShuttlePF27...");
       }
       list.Add(new ShuttlePF27());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON VFD...");
+      }
+      list.Add(new ImonVfd());
+      if (this.ExtensiveLogging)
+      {
+        Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading iMON LCD...");
+      }
+      list.Add(new ImonLcd());
       if (this.ExtensiveLogging)
       {
         Log.Info("MiniDisplay.Settings.LoadDrivers(): Loading Debug Display...");
