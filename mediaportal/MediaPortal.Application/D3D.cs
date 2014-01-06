@@ -395,12 +395,20 @@ namespace MediaPortal
       {
         try
         {
-          AdapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
-          Log.Debug("D3D: Starting and find Adapter #{0}: {1} - retry #{2}", AdapterInfo.AdapterOrdinal, AdapterInfo, adapIntCount);
+          Log.Debug("D3D: Starting and find Adapter info - retry #{0}", adapIntCount);
           adapIntCount++;
+          AdapterInfo = FindAdapterForScreen(GUIGraphicsContext.currentScreen);
           if (AdapterInfo == null)
           {
             OnEnumeration();
+          }
+          if (AdapterInfo != null)
+          {
+            Log.Debug("D3D: Starting and find Adapter #{0}: {1} - retry #{2}", AdapterInfo.AdapterOrdinal, AdapterInfo, adapIntCount);
+          }
+          else
+          {
+            Log.Debug("D3D: Adapter info is not detected - retry #{0}", adapIntCount);
           }
         }
         catch (Exception ex)
