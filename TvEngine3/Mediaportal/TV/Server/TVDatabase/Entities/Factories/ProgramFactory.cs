@@ -39,8 +39,13 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
                         StarRating = starRating,
                         Classification = classification,
                         ParentalRating = parentalRating,
-                        ProgramCategory = category
                       };
+      // Note: do not assign the ProgramCategory objects here, as EF state tracking would lead to duplicated programs,
+      // as also the relation to ProgramCategory will be tracked.
+      if (category != null)
+      {
+        program.IdProgramCategory = category.IdProgramCategory;
+      }
       return program;
     }
 

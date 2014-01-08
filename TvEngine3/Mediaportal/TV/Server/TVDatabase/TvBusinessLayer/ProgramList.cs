@@ -199,7 +199,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     /// Removes programs from the list that overlap programs in <paramref name="existingPrograms"/>.
     /// </summary>
     /// <param name="existingPrograms">a list of programs to check against</param>
-    /// <param name="alreadySorted">if <value>true</value> <paramref name="existsinPrograms"/> is assumed to be sorted</param>
+    /// <param name="alreadySorted">if <value>true</value> <paramref name="existingPrograms"/> is assumed to be sorted</param>
     /// <remarks>
     /// The list will be sorted if needed according to <seealso cref="AlreadySorted"/> property.
     /// The <paramref name="existingPrograms"/> list will be sorted if <paramref name="alreadySorted"/> is <value>false</value>.
