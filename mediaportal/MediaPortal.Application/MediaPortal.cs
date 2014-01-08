@@ -4339,6 +4339,26 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="message"></param>
   private void OnMessage(GUIMessage message)
   {
+    if (!_suspended && !ExitToTray && !IsVisible)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW:
+        case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
+          Log.Debug("Main: Setting focus");
+          if (Volume > 0 && (g_Player.IsVideo || g_Player.IsTV))
+          {
+            g_Player.Volume = Volume;
+            if (g_Player.Paused)
+            {
+              g_Player.Pause();
+            }
+          }
+          RestoreFromTray();
+          break;
+      }
+    }
+
     if (!_suspended && AppActive)
     {
       switch (message.Message)
