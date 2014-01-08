@@ -781,6 +781,10 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; MP1-4315 Blow windowplugins dll to separate plugin dlls
+  ${LOG_TEXT} "INFO" "Removing obsolete WindowPlugins.dll"
+  Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
+  
   ; removing old shortcut
   ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
