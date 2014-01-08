@@ -6,7 +6,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
   {
     public static CanceledSchedule Clone(CanceledSchedule source)
     {
-      return CloneHelper.DeepCopy<CanceledSchedule>(source);   
+      return CloneHelper.DeepCopy(source);
     }
 
     public static CanceledSchedule CreateCanceledSchedule(int idForScheduleToCancel, int idChannel, DateTime cancelDateTime)
@@ -18,12 +18,7 @@ namespace Mediaportal.TV.Server.TVDatabase.Entities.Factories
                          CancelDateTime = cancelDateTime
                        };
 
-
       return canceledSchedule;
     }
-
-   
-     
-      
   }
 }

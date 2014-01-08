@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Objects;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
@@ -193,14 +194,14 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       */
 
 
-      foreach (ProgramListPartition partition in deleteProgramRanges)
+      foreach (ProgramListPartition part in deleteProgramRanges)
       {
+        ProgramListPartition partition = part;
         programRepository.Delete<Program>(
           t =>
           t.IdChannel == partition.IdChannel && ((t.EndTime > partition.Start && t.StartTime < partition.End)) ||
           (t.StartTime == t.EndTime && t.StartTime >= partition.Start && t.StartTime <= partition.End));
       }
-
     }
 
     public static void DeleteAllPrograms()
@@ -425,10 +426,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
             // Remove old programs
 
             // Let's update states
-            using (IProgramRepository programRepository = new ProgramRepository())
-            {
-              SynchProgramStatesForAllSchedules(programRepository.GetAll<Schedule>());
-            }
+            SynchProgramStatesForAllSchedules();
             // and exit
             lock (_programInsertsQueue)
             {
@@ -472,13 +470,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
-    public static void SynchProgramStatesForAllSchedules(IEnumerable<Schedule> schedules)
+    public static void SynchProgramStatesForAllSchedules()
     {
       Log.Info("SynchProgramStatesForAllSchedules");
-
+      var schedules = ScheduleManagement.ListAllSchedules(ScheduleIncludeRelationEnum.None);
       if (schedules != null)
       {
-        Parallel.ForEach(schedules, schedule => SynchProgramStates(new ScheduleBLL(schedule)));
+        Parallel.ForEach(schedules, schedule => SynchProgramStates(schedule.IdSchedule));
       }
     }
 
@@ -961,9 +959,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       }
     }
 
+    public static void SynchProgramStates(int idSchedule)
+    {
+      // We need the CanceledSchedules included here to properly update programs state
+      SynchProgramStates(new ScheduleBLL(ScheduleManagement.GetSchedule(idSchedule, ScheduleIncludeRelationEnum.CanceledSchedules)));
+    }
+
     public static void SynchProgramStates(ScheduleBLL schedule)
     {
-      if (schedule == null)
+      if (schedule == null || schedule.Entity == null)
       {
         return;
       }
@@ -1092,11 +1096,13 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static void ResetAllStates()
     {
-      //string sql = "Update Programs set state=0 where state<>0;";
-      //SqlStatement stmt = new SqlStatement(StatementType.Update, Broker.Provider.GetCommand(), sql);
-      //stmt.Execute();
-      //CacheManager.ClearQueryResultsByType(typeof(Program));
-
+      using (IProgramRepository programRepository = new ProgramRepository())
+      {
+        foreach (ProgramBLL program in programRepository.GetQuery<Program>(p => p.State != 0).ToList().Select(p => new ProgramBLL(p)))
+        {
+          ResetPendingState(program);
+        }
+      }
       //TODO implement Future recording as discussed
     }
 
@@ -1234,15 +1240,15 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 
     public static IList<Program> SavePrograms(IEnumerable<Program> programs)
     {
+      IList<Program> progs = programs.ToList();
       using (IProgramRepository programRepository = new ProgramRepository())
       {
-        SynchronizeDateHelpers(programs);
-        programRepository.AttachEntityIfChangeTrackingDisabled(programRepository.ObjectContext.Programs, programs);
-        programRepository.ApplyChanges(programRepository.ObjectContext.Programs, programs);
-        programRepository.UnitOfWork.SaveChanges();
-        programRepository.ObjectContext.AcceptAllChanges();
-        return programs.ToList();
+        SynchronizeDateHelpers(progs);
+        programRepository.AttachEntityIfChangeTrackingDisabled(programRepository.ObjectContext.Programs, progs);
+        programRepository.ApplyChanges(programRepository.ObjectContext.Programs, progs);
+        programRepository.UnitOfWork.SaveChanges(SaveOptions.AcceptAllChangesAfterSave);
       }
+      return progs;
     }
 
     private static void SynchronizeDateHelpers(IEnumerable<Program> programs)

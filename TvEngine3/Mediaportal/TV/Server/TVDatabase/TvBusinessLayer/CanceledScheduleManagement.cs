@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Data.Objects;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.EntityModel.Repositories;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer.Entities;
 
 namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
 {
@@ -14,12 +14,10 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       {
         canceledScheduleRepository.AttachEntityIfChangeTrackingDisabled(canceledScheduleRepository.ObjectContext.CanceledSchedules, canceledSchedule);
         canceledScheduleRepository.ApplyChanges(canceledScheduleRepository.ObjectContext.CanceledSchedules, canceledSchedule);
-        canceledScheduleRepository.UnitOfWork.SaveChanges();
-        canceledSchedule.AcceptChanges();
+        canceledScheduleRepository.UnitOfWork.SaveChanges(SaveOptions.AcceptAllChangesAfterSave);
       }
 
-      Schedule schedule = ScheduleManagement.GetSchedule(canceledSchedule.IdSchedule);
-      ProgramManagement.SynchProgramStates(new ScheduleBLL(schedule));
+      ProgramManagement.SynchProgramStates(canceledSchedule.IdSchedule);
       return canceledSchedule;
     }
 

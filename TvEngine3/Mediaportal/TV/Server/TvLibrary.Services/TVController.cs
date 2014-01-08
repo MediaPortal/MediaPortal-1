@@ -753,7 +753,7 @@ namespace Mediaportal.TV.Server.TVLibrary
             try
             {
               ProgramManagement.ResetAllStates();
-              ProgramManagement.SynchProgramStatesForAllSchedules(ScheduleManagement.ListAllSchedules());
+            ProgramManagement.SynchProgramStatesForAllSchedules();
             }
             catch (Exception e)
             {
@@ -1410,6 +1410,7 @@ namespace Mediaportal.TV.Server.TVLibrary
       return _scheduler.IsTimeToRecord(time);
     }
 
+    /// <summary>
     /// This function checks if a spedific schedule should be recorded at the given time.
     /// </summary>
     /// <param name="time">the time to check for recordings.</param>

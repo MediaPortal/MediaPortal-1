@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mediaportal.TV.Server.TVDatabase.Entities;
@@ -44,7 +43,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
         scheduleRepository.UnitOfWork.SaveChanges();
         schedule.AcceptChanges();
       }
-      ProgramManagement.SynchProgramStates(new ScheduleBLL(schedule));
+      ProgramManagement.SynchProgramStates(schedule.IdSchedule);
       return schedule;
     }
 
@@ -53,6 +52,17 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
         return scheduleRepository.Single<Schedule>(s => s.IdSchedule == idSchedule);
+      }
+    }
+
+    public static Schedule GetSchedule(int idSchedule, ScheduleIncludeRelationEnum includeRelations)
+    {
+      using (IScheduleRepository scheduleRepository = new ScheduleRepository())
+      {
+        var query = scheduleRepository.GetQuery<Schedule>(s => s.IdSchedule == idSchedule);
+        query = scheduleRepository.IncludeAllRelations(query, includeRelations);
+        var schedule = query.FirstOrDefault();
+        return schedule;
       }
     }
 
@@ -80,8 +90,7 @@ namespace Mediaportal.TV.Server.TVDatabase.TVBusinessLayer
     {
       using (IScheduleRepository scheduleRepository = new ScheduleRepository())
       {
-        Schedule schedule =
-          scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId && s.StartTime == startTime);
+        Schedule schedule = scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId && s.StartTime == startTime);
         if (schedule == null)
         {
           schedule = scheduleRepository.First<Schedule>(s => s.IdParentSchedule == parentScheduleId);
