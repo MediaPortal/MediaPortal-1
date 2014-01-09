@@ -100,9 +100,9 @@ namespace MediaPortal.Visualization
     private void PlaybackStateChanged(object sender, BassAudioEngine.PlayState oldState,
                                       BassAudioEngine.PlayState newState)
     {
-      Log.Debug("BassboxViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
       if (_visParam.VisHandle != 0)
       {
+        Log.Debug("BassboxViz: BassPlayer_PlaybackStateChanged from {0} to {1}", oldState.ToString(), newState.ToString());
         if (newState == BassAudioEngine.PlayState.Playing)
         {
           RenderStarted = false;
@@ -162,7 +162,7 @@ namespace MediaPortal.Visualization
         // so i have create a new variable which fix this problem
         if (Bass != null)
         {
-          if (Bass.CurrentFile != _OldCurrentFile)
+          if (Bass.CurrentFile != _OldCurrentFile && !Bass.IsRadio)
           {
             trackTag = TagReader.TagReader.ReadTag(Bass.CurrentFile);
             if (trackTag != null)
@@ -177,16 +177,36 @@ namespace MediaPortal.Visualization
           }
 
           // Set Song information, so that the plugin can display it
-          if (trackTag != null)
+          if (trackTag != null && !Bass.IsRadio)
           {
             _mediaInfo.SongTitle = _songTitle;
+            _mediaInfo.SongFile = Bass.CurrentFile;
             _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
             _mediaInfo.Duration = (int)Bass.Duration;
           }
           else
           {
-            _mediaInfo.Position = 0;
-            _mediaInfo.Duration = 0;
+            if (Bass.IsRadio)
+            {
+              // Change TrackTag to StreamTag for Radio
+              trackTag = Bass.GetStreamTags();
+              if (trackTag != null)
+              {
+                // Artist and Title show better i think
+                _songTitle = trackTag.Artist + ": " + trackTag.Title;
+                _mediaInfo.SongTitle = _songTitle;
+              }
+              else
+              {
+                _songTitle = "   ";
+              }
+              _mediaInfo.Position = (int)(1000 * Bass.CurrentPosition);
+            }
+            else
+            {
+              _mediaInfo.Position = 0;
+              _mediaInfo.Duration = 0;
+            }
           }
         }
 
@@ -314,7 +334,17 @@ namespace MediaPortal.Visualization
         visExec.BB_Flags = BASSVISFlags.BASSVIS_DEFAULT;
         visExec.BB_ParentHandle = VisualizationWindow.Handle;
         visExec.BB_ShowFPS = true;
-        visExec.BB_ShowPrgBar = true;
+        // can not check IsRadio on first start
+        // so ProgressBar Visible State will hide after change to the next Plugin to
+        if (Bass.IsRadio)
+        {
+          // no duration deactivate ProgressBar
+          visExec.BB_ShowPrgBar = false;
+        }
+        else
+        {
+          visExec.BB_ShowPrgBar = true;
+        }
         visExec.Left = 0;
         visExec.Top = 0;
         visExec.Width = VisualizationWindow.Width;

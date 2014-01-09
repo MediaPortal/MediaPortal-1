@@ -284,9 +284,6 @@
       <HintPath>..\MediaPortal.Base\taglib-sharp.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="ffmpeg">
-      <HintPath>..\MediaPortal.Base\MovieThumbnailer\ffmpeg.exe</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">

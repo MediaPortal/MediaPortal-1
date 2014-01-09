@@ -73,6 +73,7 @@ public class MediaPortalApp : D3D, IRender
   private static bool           _useRestartOptions;
   private static bool           _isWinScreenSaverInUse;
   private static bool           _mpCrashed;
+  private static bool           _skinOverrideNoTheme;
   private static bool           _waitForTvServer;
   private static bool           _isRendering;
   #if !DEBUG
@@ -503,6 +504,11 @@ public class MediaPortalApp : D3D, IRender
           _safePluginsList = arg.Remove(0, 10); // remove /?= from the argument
         }
 
+        if (arg == "/NoTheme")
+        {
+          _skinOverrideNoTheme = true;
+        }
+
         #if !DEBUG
         _avoidVersionChecking = arg.ToLowerInvariant() == "/avoidversioncheck";
         #endif
@@ -758,6 +764,7 @@ public class MediaPortalApp : D3D, IRender
 
         Config.SkinName = skin;
         GUIGraphicsContext.Skin = skin;
+        SkinSettings.NoTheme = _skinOverrideNoTheme;
         SkinSettings.Load();
 
         // Send a message that the skin has changed.
@@ -2420,7 +2427,7 @@ public class MediaPortalApp : D3D, IRender
   {
     Log.Info("Main: Starting up");
 
-    // Register shell notifications to wndproc
+  // Register shell notifications to wndproc
     Notifications.RegisterChangeNotify(this.Handle, ShellNotifications.CSIDL.CSIDL_DESKTOP, true);
 
     // Initializing input devices...
@@ -4100,7 +4107,7 @@ public class MediaPortalApp : D3D, IRender
     {
       if (_lastCursorPosition != Cursor.Position)
       {
-        bool cursorMovedFarEnough = (Math.Abs(_lastCursorPosition.X - Cursor.Position.X) > 10) || (Math.Abs(_lastCursorPosition.Y - Cursor.Position.Y) > 10);
+       bool cursorMovedFarEnough = (Math.Abs(_lastCursorPosition.X - Cursor.Position.X) > 10) || (Math.Abs(_lastCursorPosition.Y - Cursor.Position.Y) > 10);
         if (cursorMovedFarEnough)
         {
           GUIGraphicsContext.ResetLastActivity();
