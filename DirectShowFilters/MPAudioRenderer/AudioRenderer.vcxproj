@@ -132,6 +132,9 @@
     <ClCompile Include="AE_mixer\AEChannelInfo.cpp" />
     <ClCompile Include="AE_mixer\AERemap.cpp" />
     <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateLinear.cpp" />
+    <ClCompile Include="SoundTouch\source\InterpolateShannon.cpp" />
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
@@ -189,6 +192,9 @@
     <ClInclude Include="AE_mixer\AEChannelInfo.h" />
     <ClInclude Include="AE_mixer\AERemap.h" />
     <ClInclude Include="AE_mixer\StdString.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateCubic.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateLinear.h" />
+    <ClInclude Include="SoundTouch\source\InterpolateShannon.h" />
     <ClInclude Include="source\AC3EncoderFilter.h" />
     <ClInclude Include="source\BaseAudioSink.h" />
     <ClInclude Include="source\BitDepthAdapter.h" />
