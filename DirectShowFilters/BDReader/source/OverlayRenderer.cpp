@@ -652,7 +652,7 @@ void COverlayRenderer::CloseOverlay(const uint8_t plane)
       if (m_pPlanesBackbuffer[plane]->texture)
         m_pPlanesBackbuffer[plane]->texture->Release();
 
-      delete m_pPlanes[plane];
+      delete m_pPlanesBackbuffer[plane];
       m_pPlanesBackbuffer[plane] = NULL;
     }
   }
