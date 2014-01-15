@@ -240,6 +240,9 @@ Packet* CPlaylistManager::GetNextVideoPacket()
       //LogDebug("playlistManager: setting video playback playlist to %d",(*m_itCurrentVideoPlayBackPlaylist)->nPlaylist);
     }
   }
+  if (!ret)
+    return NULL;
+
   if (firstVideo && ret->rtStart != Packet::INVALID_TIME)
   {
     firstVideo = false;
