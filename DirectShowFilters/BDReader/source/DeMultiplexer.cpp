@@ -21,6 +21,7 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+#include "StdAfx.h"
 #include <afx.h>
 #include <streams.h>
 #include "demultiplexer.h"
