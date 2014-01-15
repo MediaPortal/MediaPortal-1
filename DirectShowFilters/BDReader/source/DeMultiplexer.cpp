@@ -1360,9 +1360,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
       }
       else
       { // full PES header is available.
-        CPcr pts;
-        CPcr dts;
-      
         m_VideoValidPES = true;
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
@@ -1490,9 +1487,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         }
         else
         { // full PES header is available.
-          CPcr pts;
-          CPcr dts;
-
           if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
           {
   #ifdef LOG_DEMUXER_VIDEO_SAMPLES
@@ -1506,7 +1500,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         m_p->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
         m_WaitHeaderPES = -1;
         m_VideoValidPES = true;
-		
+
         if (pts.IsValid)
         {
           m_p->rtStart = CONVERT_90KHz_DS(pts.PcrReferenceBase);
