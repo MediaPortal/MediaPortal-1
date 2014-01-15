@@ -421,6 +421,9 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
   }
 
   BD_OVERLAY_EX *copy = (BD_OVERLAY_EX*)malloc(sizeof(BD_OVERLAY_EX));
+  if (!copy)
+    return;
+
   memcpy(copy, ov, sizeof(*ov));
   copy->scheduled = false;
 
