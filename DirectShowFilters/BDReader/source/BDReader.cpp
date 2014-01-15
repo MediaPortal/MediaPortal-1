@@ -738,6 +738,8 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
 {
   LogDebug("CBDReaderFilter::Load()");
 
+  CheckPointer(pszFileName, E_POINTER);
+
   wcscpy(m_fileName, pszFileName);
   char path[4096];
   WideCharToMultiByte(CP_UTF8, 0, m_fileName, -1, path, 4096, 0, 0);
@@ -1198,13 +1200,13 @@ void CBDReaderFilter::DeliverBeginFlush()
   if (m_pAudioPin && m_pAudioPin->IsConnected())
   {
     m_pAudioPin->DeliverBeginFlush();
-    m_pVideoPin->Stop();
+    m_pAudioPin->Stop();
   }
 
   if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
   {
     m_pSubtitlePin->DeliverBeginFlush();
-    m_pVideoPin->Stop();
+    m_pSubtitlePin->Stop();
   }
 }
 
