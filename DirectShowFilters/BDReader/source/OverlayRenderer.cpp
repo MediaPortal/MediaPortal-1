@@ -380,7 +380,7 @@ void COverlayRenderer::LockARGBSurface(BD_ARGB_BUFFER_EX* buffer)
   m_ARGBBuffer.width = lockedRect.Pitch / 4;
   m_ARGBBuffer.height = height;
 
-  AdjustDirtyRect(BD_OVERLAY_IG, area.left, area.top, width, height);
+  AdjustDirtyRect(BD_OVERLAY_IG, (uint16_t)area.left, (uint16_t)area.top, width, height);
 }
 
 void ARBGUnlock(BD_ARGB_BUFFER* buffer)
