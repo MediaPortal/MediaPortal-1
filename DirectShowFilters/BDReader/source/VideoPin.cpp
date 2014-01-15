@@ -44,7 +44,7 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
   char frameFilename[1024];
   sprintf(frameFilename,"c:\\BDReaderAnalysis\\BDReader\\Frames\\%d.log",iFrameNumber);
   FILE* fp = fopen(filename,"a+");
-  long iSampleSize;
+  long iSampleSize = 0;
 
   if (fp)
   {
