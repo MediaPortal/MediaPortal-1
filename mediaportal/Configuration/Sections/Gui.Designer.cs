@@ -182,7 +182,7 @@
             "Enable skin sound effects",
             "Show special mouse controls (scrollbars, etc)",
             "Reduce frame rate when MediaPortal is not in focus",
-            "Add video files to video database automatically"});
+            "Add media info to the video database for use in share view"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 19);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 109);
