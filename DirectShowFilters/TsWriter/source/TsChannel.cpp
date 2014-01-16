@@ -27,18 +27,22 @@
 #include <initguid.h>
 #include <shlobj.h>
 #include "TsChannel.h"
+#include <cassert>
 
 extern void LogDebug(const char *fmt, ...) ;
 
 CTsChannel::CTsChannel(LPUNKNOWN pUnk, HRESULT *phr,int id) 
 {
 	m_id=id;
+	started=false;
+ 	b_grabCustomPackets=false;
 	m_pVideoAnalyzer = new CVideoAnalyzer(pUnk,phr);
 	m_pPmtGrabber = new CPmtGrabber(pUnk,phr);
 	m_pRecorder = new CDiskRecorder(RecordingMode::Recording);
 	m_pTimeShifting= new CDiskRecorder(RecordingMode::TimeShift);
 	m_pTeletextGrabber= new CTeletextGrabber(pUnk,phr);
-  m_pCaGrabber= new CCaGrabber(pUnk,phr);
+  	m_pCaGrabber= new CCaGrabber(pUnk,phr);
+	m_pCustomDataGrabber= new CCustomDataParser(pUnk,phr);
 }
 
 CTsChannel::~CTsChannel(void)
@@ -79,6 +83,12 @@ CTsChannel::~CTsChannel(void)
 		delete m_pCaGrabber;
 		m_pCaGrabber=NULL;
 	}
+	if (m_pCustomDataGrabber!=NULL)
+	{
+		LogDebug("del m_CustomPacketWriter");
+		delete m_pCustomDataGrabber;
+		m_pCustomDataGrabber=NULL;
+	}
 	LogDebug("del done...");
 }
 
@@ -91,7 +101,11 @@ void CTsChannel::OnTsPacket(byte* tsPacket)
 		m_pRecorder->OnTsPacket(tsPacket);
 		m_pTimeShifting->OnTsPacket(tsPacket);
 		m_pTeletextGrabber->OnTsPacket(tsPacket);
-    m_pCaGrabber->OnTsPacket(tsPacket);
+   		m_pCaGrabber->OnTsPacket(tsPacket);
+		if(b_grabCustomPackets)
+		{
+		m_pCustomDataGrabber->OnTsPacket(tsPacket);
+		}
 	}
 	catch(...)
 	{

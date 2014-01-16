@@ -324,6 +324,26 @@ namespace TvLibrary.Implementations
       return false;
     }
 
+     /// <summary>
+     /// Starts timeshifting. Note card has to be tuned first
+     /// </summary>
+     /// <param name="fileName">filename used for the timeshiftbuffer</param>
+     /// <returns></returns>
+     public bool StartTimeShiftingWithCustom(string fileName,string CustomFileName, List<int> Pids)
+     {
+         try
+         {
+             return OnStartTimeShiftingWithCustom(fileName,CustomFileName,Pids);
+         }
+         catch (Exception e)
+         {
+             //cleanup
+             Log.Log.WriteFile("StartTimeShifting with Custom failed, cleaning up {0}", e.Message);
+             StopTimeShifting();
+         }
+         return false;
+     }
+
     /// <summary>
     /// Stops timeshifting
     /// </summary>
@@ -588,6 +608,12 @@ namespace TvLibrary.Implementations
     /// A derrived class should start here the timeshifting on the tv card. It will be called from StartTimeshifting()
     /// </summary>
     protected abstract bool OnStartTimeShifting(string fileName);
+
+     /// <summary>
+     /// A derrived class should start here the timeshifting on the tv card. It will be called from StartTimeshifting()
+     /// </summary>
+     protected abstract bool OnStartTimeShiftingWithCustom(string fileName,string CustomFileName, List<int> Pids);
+
 
     /// <summary>
     /// A derrived class should stop here the timeshifting on the tv card. It will be called from StopTimeshifting()

@@ -29,6 +29,7 @@
 #include "channellinkagescanner.h"
 #include "tschannel.h"
 #include "videoaudioobserver.h"
+#include "MultiFileWriter.h"
 #include <map>
 #include <vector>
 using namespace std;
@@ -93,6 +94,8 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
       int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
   
     STDMETHOD(TimeShiftSetChannelType)(THIS_ int handle, int channelType)PURE;
+    STDMETHOD(AddPidtoCustomData)(THIS_ int handle, int pid)PURE;
+    STDMETHOD(SetCustomDataFilename)(THIS_ int handle, wchar_t* pwszFileName)PURE;
 };
 
 // Main filter object
@@ -185,8 +188,10 @@ class CMpTs : public CUnknown, public ITSFilter
     CCritSec m_receiveLock;         // Streaming critical section
 public:
     DECLARE_IUNKNOWN
-
-		STDMETHODIMP AddChannel( int* handle);
+    
+    STDMETHODIMP AddChannel( int* handle);
+    STDMETHODIMP AddPidtoCustomData(int handle, int pid);
+    STDMETHODIMP SetCustomDataFilename(int handle, wchar_t* pwszFileName);
     STDMETHODIMP DeleteChannel( int handle);
     STDMETHODIMP DeleteAllChannels();
 

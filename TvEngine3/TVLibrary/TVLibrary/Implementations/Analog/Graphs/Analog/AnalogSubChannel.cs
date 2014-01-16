@@ -145,6 +145,11 @@ namespace TvLibrary.Implementations.Analog
 
     #region Timeshifting - Recording methods
 
+    protected override bool OnStartTimeShiftingWithCustom(string fileName, string CustomFileName, List<int> Pids)
+    {
+         throw new NotImplementedException();
+    }
+
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>

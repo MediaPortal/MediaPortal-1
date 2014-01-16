@@ -31,6 +31,7 @@ using TvLibrary.Implementations.DVB;
 using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
+using System.Collections.Generic;
 
 namespace TvService
 {
@@ -345,6 +346,96 @@ namespace TvService
       }
       return result;
     }
+
+    /// <summary>
+    /// Start timeshifting.
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <param name="fileName">Name of the timeshiftfile.</param>
+    /// <returns>TvResult indicating whether method succeeded</returns>
+    public TvResult StartWithCustom(ref IUser user, ref string fileName, ref string CustomFileName, ref List<int> Pids)
+    {
+        TvResult result = TvResult.UnknownError;
+        try
+        {
+#if DEBUG
+
+        if (File.Exists(@"\failts_" + _cardHandler.DataBaseCard.IdCard))
+        {
+          throw new Exception("failed ts on purpose");
+        }
+#endif
+            if (IsTuneCancelled())
+            {
+                result = TvResult.TuneCancelled;
+                return result;
+            }
+            _eventTimeshift.Reset();
+            if (_cardHandler.DataBaseCard.Enabled)
+            {
+                // Let's verify if hard disk drive has enough free space before we start time shifting. The function automatically handles both local and UNC paths
+                if (!IsTimeShifting(ref user) && !HasFreeDiskSpace(fileName))
+                {
+                    result = TvResult.NoFreeDiskSpace;
+                }
+                else
+                {
+                    Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
+                    var context = _cardHandler.Card.Context as ITvCardContext;
+                    if (context != null)
+                    {
+                        context.GetUser(ref user);
+                        ITvSubChannel subchannel = GetSubChannel(user.SubChannel);
+
+                        if (subchannel != null)
+                        {
+                            _subchannel = subchannel;
+                            Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
+
+                            AttachAudioVideoEventHandler(subchannel);
+                            if (subchannel.IsTimeShifting)
+                            {
+                                result = GetTvResultFromTimeshiftingSubchannel(ref user, context);
+                            }
+                            else
+                            {
+                                bool tsStarted = subchannel.StartTimeShiftingWithCustom(fileName, CustomFileName, Pids);
+                                if (tsStarted)
+                                {
+                                    fileName += ".tsbuffer";
+                                    result = GetTvResultFromTimeshiftingSubchannel(ref user, context);
+                                }
+                                else
+                                {
+                                    result = TvResult.UnableToStartGraph;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                result = TvResult.CardIsDisabled;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Write(ex);
+            result = TvResult.UnknownError;
+        }
+        finally
+        {
+            _eventTimeshift.Set();
+            _cancelled = false;
+            if (result != TvResult.Succeeded)
+            {
+                Stop(ref user);
+            }
+        }
+        return result;
+    }
+
 
     private TvResult GetTvResultFromTimeshiftingSubchannel(ref IUser user, ITvCardContext context)
     {

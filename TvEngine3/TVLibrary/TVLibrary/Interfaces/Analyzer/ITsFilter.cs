@@ -365,5 +365,23 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftSetChannelType(int handle, int channelType);
+
+      /// <summary>
+     /// Adds a Pid to the Custom Data Watcher
+     /// </summary>
+     /// <param name="handle">Handle of the sub channel</param>
+     /// <param name="pid">Pid</param>
+     /// <returns></returns>
+     [PreserveSig]
+     int AddPidtoCustomData(int handle, int pid);
+ 
+           /// <summary>
+     /// Sets the Custom Pid Watcher filename
+     /// </summary>
+     /// <param name="handle">Handle of the sub channel</param>
+     /// <param name="fileName">Filename</param>
+     /// <returns></returns>
+     [PreserveSig]
+     int SetCustomDataFilename(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
   }
 }

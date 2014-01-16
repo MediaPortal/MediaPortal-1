@@ -168,6 +168,7 @@
     <ClCompile Include="source\CaGrabber.cpp" />
     <ClCompile Include="source\ChannelLinkageScanner.cpp" />
     <ClCompile Include="source\ChannelScan.cpp" />
+    <ClCompile Include="source\CustomDataParser.cpp" />
     <ClCompile Include="source\DiskRecorder.cpp" />
     <ClCompile Include="source\EpgScanner.cpp" />
     <ClCompile Include="source\LvctParser.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="source\AtscNitParser.h" />
     <ClInclude Include="source\CaGrabber.h" />
     <ClInclude Include="source\ChannelLinkageScanner.h" />
+    <ClInclude Include="source\CustomDataParser.h" />
     <ClInclude Include="source\ChannelScan.h" />
     <ClInclude Include="source\DiskRecorder.h" />
     <ClInclude Include="source\EpgScanner.h" />
