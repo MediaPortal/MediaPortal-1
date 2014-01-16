@@ -985,7 +985,7 @@ STDMETHODIMP CMpTs::TimeShiftStart( int handle )
   pChannel->m_pCustomDataGrabber->OpenFile();
   LogDebug("Custom Data grabber file created");
   }
-  if (b_dumpRawPakets)
+  if (b_dumpRawPackets)
   {
 	m_pRawPacketWriter->OpenFile();
     LogDebug("Raw packet dump file created. Now dumping raw packets to dump file");
@@ -1008,7 +1008,7 @@ STDMETHODIMP CMpTs::TimeShiftStop( int handle )
   LogDebug("Custom file closed");
   }
 
-  if (b_dumpRawPakets)
+  if (b_dumpRawPackets)
   {
 	  m_pRawPacketWriter->CloseFile();
     LogDebug("Raw packet dump file closed");
@@ -1028,7 +1028,7 @@ STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
     pChannel->m_pCustomDataGrabber->OpenFile();
     LogDebug("custom Data Grabber file reset");
   }
-  if (b_dumpRawPakets)
+  if (b_dumpRawPackets)
   {
     m_pRawPacketWriter->CloseFile();
     m_pRawPacketWriter->OpenFile();
