@@ -683,30 +683,27 @@ namespace MediaPortal.Player
           {
             // 3D output either SBS or TAB
 
-            Surface old = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
             Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
 
             // create texture/surface for preparation for 3D output if they don't exist
 
-            if (GUIGraphicsContext.Auto3DTexture == null)
-              GUIGraphicsContext.Auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
+            Texture auto3DTexture = new Texture(GUIGraphicsContext.DX9Device,
                                                              backbuffer.Description.Width,
                                                              backbuffer.Description.Height, 0, Usage.RenderTarget,
                                                              backbuffer.Description.Format, Pool.Default);
 
-            if (GUIGraphicsContext.Auto3DSurface == null)
-              GUIGraphicsContext.Auto3DSurface = GUIGraphicsContext.Auto3DTexture.GetSurfaceLevel(0);
+            Surface auto3DSurface = auto3DTexture.GetSurfaceLevel(0);
 
             if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.SideBySide)
             {
               // left half
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSLeft, timePassed, backbuffer,
-                              GUIGraphicsContext.Auto3DSurface,
+                              auto3DSurface,
                               new Rectangle(0, 0, backbuffer.Description.Width/2, backbuffer.Description.Height));
 
               // right half
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.SBSRight, timePassed, backbuffer,
-                              GUIGraphicsContext.Auto3DSurface,
+                              auto3DSurface,
                               new Rectangle(backbuffer.Description.Width/2, 0, backbuffer.Description.Width/2,
                                             backbuffer.Description.Height));
             }
@@ -714,12 +711,12 @@ namespace MediaPortal.Player
             {
               // upper half
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABTop, timePassed, backbuffer,
-                              GUIGraphicsContext.Auto3DSurface,
+                              auto3DSurface,
                               new Rectangle(0, 0, backbuffer.Description.Width, backbuffer.Description.Height/2));
 
               // lower half
               RenderFor3DMode(GUIGraphicsContext.eRender3DModeHalf.TABBottom, timePassed, backbuffer,
-                              GUIGraphicsContext.Auto3DSurface,
+                              auto3DSurface,
                               new Rectangle(0, backbuffer.Description.Height/2, backbuffer.Description.Width,
                                             backbuffer.Description.Height/2));
             }
@@ -734,6 +731,9 @@ namespace MediaPortal.Player
 
             GUIGraphicsContext.DX9Device.Present();
             backbuffer.Dispose();
+
+            auto3DSurface.Dispose();
+            auto3DTexture.Dispose();
           }
         }
 
@@ -1042,27 +1042,8 @@ namespace MediaPortal.Player
 
           DrawTexture(_textureAddress, _diffuseColor);
 
-          _destinationRect = originalDestination;
           _sourceRect = originalSource;
-
-          // in TAB-Mode the Video texture is repeated at the bottom. For widescreen material we have to clear this
-
-          if (GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottom ||
-              GUIGraphicsContext.Render3DMode == GUIGraphicsContext.eRender3DMode.TopAndBottomTo2D)
-          {
-            if (originalDestination.Width > 512) // full size mode
-            {
-              Rectangle[] rectTop = {new Rectangle(0, 0, originalDestination.Width, originalDestination.Top)};
-              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0, rectTop);
-
-              Rectangle[] rectBottom =
-                {
-                  new Rectangle(0, originalDestination.Bottom, originalDestination.Width,
-                                GUIGraphicsContext.Height - originalDestination.Bottom + 1)
-                };
-              GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0, rectBottom);
-            }
-          }
+          _destinationRect = originalDestination;
         }
       }
       else
