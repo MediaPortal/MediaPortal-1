@@ -447,7 +447,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           if (channel.Frequency < 30000000)
           {
-            if ((_supportedTuningModes & AMTunerModeType.AMRadio) == 0)
+            if (!_supportedTuningModes.HasFlag(AMTunerModeType.AMRadio))
             {
               this.LogWarn("WDM analog tuner: requested tuning mode AM radio is not supported");
             }
@@ -458,7 +458,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           else
           {
-            if ((_supportedTuningModes & AMTunerModeType.FMRadio) == 0)
+            if (!_supportedTuningModes.HasFlag(AMTunerModeType.FMRadio))
             {
               this.LogWarn("WDM analog tuner: requested tuning mode FM radio is not supported");
             }
@@ -470,7 +470,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         else if (channel.MediaType == MediaTypeEnum.TV)
         {
-          if ((_supportedTuningModes & AMTunerModeType.TV) == 0)
+          if (!_supportedTuningModes.HasFlag(AMTunerModeType.TV))
           {
             this.LogWarn("WDM analog tuner: requested tuning mode analog TV is not supported");
           }
@@ -525,7 +525,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             // TODO: add TV audio mode to analog tuning details
             this.LogDebug("WDM analog tuner: available TV audio modes = {0}", availableTvAudioModes.ToString());
-            if ((availableTvAudioModes & TVAudioMode.Stereo) == 0 || (_supportedTvAudioModes & TVAudioMode.Stereo) == 0)
+            if (!availableTvAudioModes.HasFlag(TVAudioMode.Stereo) || !_supportedTvAudioModes.HasFlag(TVAudioMode.Stereo))
             {
               this.LogWarn("WDM analog tuner: requested TV audio mode is not supported or available");
             }

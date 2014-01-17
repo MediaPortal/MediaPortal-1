@@ -77,6 +77,9 @@
     </Compile>
     <Compile Include="DebugSettings.cs" />
     <Compile Include="Implementations\DirectShow\Pbda\TunerPbdaCableCard.cs" />
+    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpBase.cs" />
+    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpSatellite.cs" />
+    <Compile Include="Implementations\DirectShow\SatIp\TunerSatIpTerrestrial.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Capture.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\ComponentBase.cs" />
     <Compile Include="Implementations\DirectShow\Wdm\Analog\Components\Crossbar.cs" />
@@ -93,14 +96,14 @@
     <Compile Include="Implementations\DiseqcController.cs" />
     <Compile Include="Implementations\DirectShow\TunerDirectShowBase.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowBase.cs" />
-    <Compile Include="Implementations\DirectShow\Stream\ScannerStream.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\ScannerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStream.cs" />
     <Compile Include="Implementations\DirectShow\Stream\TunerStreamElecard.cs" />
     <Compile Include="Implementations\Mpeg2Ts\Mpeg2TunerController.cs" />
     <Compile Include="Implementations\TunerDetector.cs" />
     <Compile Include="Implementations\TvDvbChannel.cs" />
     <Compile Include="Implementations\Helper\DevicesInUse.cs" />
-    <Compile Include="Implementations\DirectShow\Wdm\Analog\ScannerAnalog.cs" />
+    <Compile Include="Implementations\Mpeg2Ts\ScannerAnalog.cs" />
     <Compile Include="Implementations\Mpeg2Ts\ScannerDirectShowAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaAtsc.cs" />
     <Compile Include="Implementations\DirectShow\Bda\TunerBdaCable.cs" />

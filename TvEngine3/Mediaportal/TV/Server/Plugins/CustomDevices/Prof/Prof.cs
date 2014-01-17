@@ -32,9 +32,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
 {
   /// <summary>
-  /// A class for handling DiSEqC for Prof devices, including clones from Satrade and Omicom. The interface
-  /// was originally a customised Conexant interface created by Turbosight, however Turbosight have
-  /// implemented a new unified interface for their products.
+  /// A class for handling DiSEqC for Prof tuners, including clones from Satrade and Omicom. The
+  /// interface was originally a customised Conexant interface created by Turbosight, however
+  /// Turbosight have implemented a new unified interface for their products.
   /// </summary>
   public class Prof : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
@@ -212,7 +212,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -223,8 +223,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -232,7 +233,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Prof: initialising device");
+      this.LogDebug("Prof: initialising");
 
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
@@ -242,7 +243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
       if (_isProf)
       {
-        this.LogDebug("Prof: device is already initialised");
+        this.LogWarn("Prof: extension already initialised");
         return true;
       }
 
@@ -257,35 +258,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage, out support);
       // The original Conexant interface uses the set method; this interface uses the get method.
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Get) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Prof: device does not support the Prof property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Prof: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Prof: supported device detected");
+      this.LogInfo("Prof: extension supported");
       _isProf = true;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("Prof: on before tune callback");
+      this.LogDebug("Prof: on before tune call back");
       action = TunerAction.Default;
 
-      if (!_isProf || _propertySet == null)
+      if (!_isProf)
       {
-        this.LogDebug("Prof: device not initialised or interface not supported");
+        this.LogWarn("Prof: not initialised or interface not supported");
         return;
       }
 
@@ -351,14 +352,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Prof: NBC tuning parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, NBC_TUNING_PARAMS_SIZE);
+      //Dump.DumpBinary(_generalBuffer, NBC_TUNING_PARAMS_SIZE);
 
       hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.NbcParams,
         _generalBuffer, NBC_TUNING_PARAMS_SIZE,
@@ -370,7 +371,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
       else
       {
-        this.LogDebug("Prof: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Prof: failed to set NBC tuning parameters, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
 
@@ -389,9 +390,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     {
       this.LogDebug("Prof: set power state, state = {0}", state);
 
-      if (!_isProf || _propertySet == null)
+      if (!_isProf)
       {
-        this.LogDebug("Prof: device not initialised or interface not supported");
+        this.LogWarn("Prof: not initialised or interface not supported");
         return false;
       }
 
@@ -404,7 +405,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
+      //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
       int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
@@ -418,7 +419,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         return true;
       }
 
-      this.LogDebug("Prof: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof: failed to set power state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -436,9 +437,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     {
       this.LogDebug("Prof: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isProf || _propertySet == null)
+      if (!_isProf)
       {
-        this.LogDebug("Prof: device not initialised or interface not supported");
+        this.LogWarn("Prof: not initialised or interface not supported");
         return false;
       }
 
@@ -463,7 +464,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       }
 
       Marshal.StructureToPtr(command, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
+      //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
       int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
@@ -477,7 +478,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         return true;
       }
 
-      this.LogDebug("Prof: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -490,19 +491,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
     {
       this.LogDebug("Prof: send DiSEqC command");
 
-      if (!_isProf || _propertySet == null)
+      if (!_isProf)
       {
-        this.LogDebug("Prof: device not initialised or interface not supported");
+        this.LogWarn("Prof: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Prof: command not supplied");
+        this.LogError("Prof: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
-        this.LogDebug("Prof: command too long, length = {0}", command.Length);
+        this.LogError("Prof: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -516,7 +517,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
       propertyParams.LnbPower = ProfLnbPower.On;
 
       Marshal.StructureToPtr(propertyParams, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, BDA_EXTENSION_PARAMS_SIZE);
+      //Dump.DumpBinary(_generalBuffer, BDA_EXTENSION_PARAMS_SIZE);
 
       int returnedByteCount = 0;
       int hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.DiseqcMessage,
@@ -530,7 +531,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Prof
         return true;
       }
 
-      this.LogDebug("Prof: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Prof: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <summary>
     /// The source filter's default URL.
     /// </summary>
-    protected string _defaultUrl;
+    protected string _defaultUrl = string.Empty;
 
     /// <summary>
     /// The class ID (CLSID) for the source filter main class.
@@ -73,7 +73,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// <summary>
     /// Initialise a new instance of the <see cref="TunerStream"/> class.
     /// </summary>
-    /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
+    /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     public TunerStream(int sequenceNumber)
       : base("MediaPortal Stream Source " + (sequenceNumber + 1), "MediaPortal Stream Source " + (sequenceNumber + 1))
     {
@@ -84,9 +84,20 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
     /// Initialise a new instance of the <see cref="TunerStream"/> class.
     /// </summary>
     /// <param name="name">A short name or description for the tuner.</param>
-    /// <param name="sequenceNumber">A sequence number or index for this instance.</param>
+    /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
     protected TunerStream(string name, int sequenceNumber)
       : base(name + " " + (sequenceNumber + 1), name + " " + (sequenceNumber + 1))
+    {
+      Init();
+    }
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="TunerStream"/> class.
+    /// </summary>
+    /// <param name="name">The tuner's name.</param>
+    /// <param name="externalIdentifier">The external identifier for the tuner.</param>
+    protected TunerStream(string name, string externalIdentifier)
+      : base(name, externalIdentifier)
     {
       Init();
     }
@@ -131,7 +142,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
         _filterStreamSource = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _sourceFilterClsid, _name);
       }
 
-      // Check for and load plugins, adding any additional device filters to the graph.
+      // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _filterStreamSource;
       LoadPlugins(_filterStreamSource, _graph, ref lastFilter);
 
@@ -171,7 +182,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
-      int hr = (_filterStreamSource as IFileSourceFilter).Load(streamChannel.Url, _sourceMediaType);
+      PerformTuning(streamChannel.Url);
+    }
+
+    /// <summary>
+    /// Actually tune to a channel.
+    /// </summary>
+    /// <param name="url">The URL to tune to.</param>
+    protected void PerformTuning(string url)
+    {
+      int hr = (_filterStreamSource as IFileSourceFilter).Load(url, _sourceMediaType);
       HResult.ThrowException(hr, "Failed to tune channel.");
     }
 

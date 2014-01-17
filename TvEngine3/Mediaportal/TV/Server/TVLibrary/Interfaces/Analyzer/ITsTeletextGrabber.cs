@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// Interface to the Teletext callback 
+  /// Interface to the Teletext call back 
   /// </summary>
   [ComVisible(false), ComImport,
    Guid("540EA3F3-C2E0-4a96-9FC2-071875962911"),
@@ -74,9 +74,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the call back which will be called when teletext has been received.
     /// </summary>
-    /// <param name="callback">The callback.</param>
+    /// <param name="callBack">The call back.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetCallBack(ITeletextCallBack callback);
+    int SetCallBack(ITeletextCallBack callBack);
   }
 }

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
   /// State of ci menu
@@ -44,10 +44,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   /// <summary>
   /// Interface for all DVB cards to support CI menu
   /// </summary>
-  public interface ICiMenuCallbacks
+  public interface IConditionalAccessMenuCallBacks
   {
     /// <summary>
-    /// Callback on opening menu
+    /// Call back on opening menu
     /// </summary>
     /// <param name="lpszTitle">Title</param>
     /// <param name="lpszSubTitle">Subtitle</param>
@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
       int nNumChoices);
 
     /// <summary>
-    /// Callback for each menu entry
+    /// Call back for each menu entry
     /// </summary>
     /// <param name="nChoice">choice number</param>
     /// <param name="lpszText">choice text</param>
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
       string lpszText);
 
     /// <summary>
-    /// Callback on closing display
+    /// Call back on closing display
     /// </summary>
     /// <param name="nDelay">delay in seconds</param>
     /// <returns></returns>
@@ -79,7 +79,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
       int nDelay);
 
     /// <summary>
-    /// Callback on requesting user input (PIN,...)
+    /// Call back on requesting user input (PIN,...)
     /// </summary>
     /// <param name="bBlind">true if password</param>
     /// <param name="nAnswerLength">expected (max) answer length</param>

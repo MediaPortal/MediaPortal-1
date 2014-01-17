@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
 
@@ -336,6 +337,6 @@ namespace Mediaportal.TV.Server.TVService.Interfaces
     /// </summary>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    bool SetCiMenuHandler(ICiMenuCallbacks callbackHandler);
+    bool SetCiMenuHandler(IConditionalAccessMenuCallBacks callbackHandler);
   }
 }

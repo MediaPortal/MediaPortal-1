@@ -106,7 +106,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Set the delegate for the analyser for a subchannel to notify when the encryption state of one of the monitored elementary streams changes.
     /// </summary>
     /// <param name="handle">The subchannel handle.</param>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int AnalyserSetCallBack(int handle, IEncryptionStateChangeCallBack callBack);
@@ -137,7 +137,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Set the delegate for the PMT grabber for a subchannel to notify when a new PMT section is received.
     /// </summary>
     /// <param name="handle">The subchannel handle.</param>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int PmtSetCallBack(int handle, IPmtCallBack callBack);
@@ -192,10 +192,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
                         int pmtLength);
 
     /// <summary>
-    /// Sets the video/audio observer callback for recorder
+    /// Sets the video/audio observer call back for recorder
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="observer">Oberserver callback</param>
+    /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
     int RecorderSetVideoAudioObserver(int handle, IVideoAudioObserver observer);
@@ -285,10 +285,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int TimeShiftGetCurrentFilePosition(int handle, [Out] out long position, [Out] out long bufferId);
 
     /// <summary>
-    /// Sets the video/audio observer callback
+    /// Sets the video/audio observer call back
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="observer">Oberserver callback</param>
+    /// <param name="observer">Oberserver call back</param>
     /// <returns></returns>
     [PreserveSig]
     int SetVideoAudioObserver(int handle, IVideoAudioObserver observer);
@@ -319,13 +319,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int TTxSetTeletextPid(int handle, int teletextPid);
 
     /// <summary>
-    /// Sets the teletext callback on the given sub channel
+    /// Sets the teletext call back on the given sub channel
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="callback">The callback</param>
+    /// <param name="callBack">The call back</param>
     /// <returns></returns>
     [PreserveSig]
-    int TTxSetCallBack(int handle, ITeletextCallBack callback);
+    int TTxSetCallBack(int handle, ITeletextCallBack callBack);
 
     #region CAT grabber
 
@@ -341,7 +341,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// Set the delegate for the CAT grabber for a subchannel to notify when a new CAT section is received.
     /// </summary>
     /// <param name="handle">The subchannel handle.</param>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int CaSetCallBack(int handle, ICaCallBack callBack);

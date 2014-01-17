@@ -109,6 +109,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     /// <summary>
+    /// Get the class ID of the network provider for the tuner type.
+    /// </summary>
+    protected abstract Guid NetworkProviderClsid
+    {
+      get
+      {
+        return typeof(DVBCNetworkProvider).GUID;
+      }
+    }
+
+    /// <summary>
     /// Get the registered name of the BDA tuning space for the tuner type.
     /// </summary>
     protected override string TuningSpaceName

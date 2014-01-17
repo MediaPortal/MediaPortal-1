@@ -112,9 +112,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     /// <returns>language</returns>
     public static string GetLanguageFromCode(string code)
     {
-      if (String.IsNullOrEmpty(code))
+      if (string.IsNullOrEmpty(code))
       {
-        return "";
+        return string.Empty;
       }
       if (code.Length > 3)
       {

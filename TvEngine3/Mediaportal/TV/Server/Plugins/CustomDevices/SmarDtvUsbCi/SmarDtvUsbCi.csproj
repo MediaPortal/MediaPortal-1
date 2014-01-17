@@ -48,7 +48,7 @@
     <Compile Include="SmarDtvUsbCiConfig.Designer.cs">
       <DependentUpon>SmarDtvUsbCiConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="SmarDtvUsbCiProducts.cs" />
+    <Compile Include="SmarDtvUsbCiProduct.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">

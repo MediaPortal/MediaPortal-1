@@ -173,8 +173,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
           short isActive = 0;
           IntPtr ptrIpAdress;
           IntPtr ptrStream;
-          string ipadress = "";
-          string streamName = "";
+          string ipadress = string.Empty;
+          string streamName = string.Empty;
           long ticks;
           StreamGetClientDetail(i, out ptrIpAdress, out ptrStream, ref isActive, out ticks);
           DateTime started = new DateTime(1970, 1, 1, 0, 0, 0);
@@ -188,7 +188,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
           {
             streamName = Marshal.PtrToStringAnsi(ptrStream);
           }
-          string description = "";
+          string description = string.Empty;
 
           if (_streams.ContainsKey(streamName))
           {

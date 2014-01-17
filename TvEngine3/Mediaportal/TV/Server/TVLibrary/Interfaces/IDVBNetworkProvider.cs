@@ -210,7 +210,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider
   } ;
 
   ///<summary>
-  /// Channel scanning callback
+  /// Channel scanning call back
   ///</summary>
   [ComVisible(false), ComImport,
    Guid("4564675E-C69B-4e05-853D-30870988DEB9"),

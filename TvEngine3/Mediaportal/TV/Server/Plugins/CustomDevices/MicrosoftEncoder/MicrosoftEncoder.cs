@@ -41,7 +41,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// </summary>
     /// <param name="parameterId">The unique identifier for the parameter.</param>
     /// <returns>an HRESULT indicating whether the parameter can be manipulated</returns>
-    private delegate int IsParameterSupported(Guid parameterId);
+    private delegate int IsParameterSupportedDelegate(Guid parameterId);
 
     /// <summary>
     /// Get the extents and resolution for a parameter.
@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <param name="resolution">The magnitude of the smallest adjustment that can be applied to
     ///   the parameter. In most cases the value of the parameter should be a multiple of th.</param>
     /// <returns>an HRESULT indicating whether the parameter extents and resolution were successfully retrieved</returns>
-    private delegate int GetParameterRange(Guid parameterId, out object minimum, out object maximum, out object resolution);
+    private delegate int GetParameterRangeDelegate(Guid parameterId, out object minimum, out object maximum, out object resolution);
 
     /// <summary>
     /// Get the accepted/supported values for a parameter.
@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <param name="valuesPtr">A pointer to a buffer containing the possible values that the parameter may take.</param>
     /// <param name="valuesCount">The number of values in the buffer.</param>
     /// <returns>an HRESULT indicating whether the parameter values were successfully retrieved</returns>
-    private delegate int GetParameterValues(Guid parameterId, out IntPtr valuesPtr, out int valuesCount);
+    private delegate int GetParameterValuesDelegate(Guid parameterId, out IntPtr valuesPtr, out int valuesCount);
 
     /// <summary>
     /// Get the default value for a parameter.
@@ -69,7 +69,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <param name="parameterId">The unique identifier for the parameter.</param>
     /// <param name="value">The default value for the parameter.</param>
     /// <returns>an HRESULT indicating whether the default parameter value was successfully retrieved</returns>
-    private delegate int GetParameterDefaultValue(Guid parameterId, out object value);
+    private delegate int GetParameterDefaultValueDelegate(Guid parameterId, out object value);
 
     /// <summary>
     /// Get the current value of a parameter.
@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <param name="parameterId">The unique identifier for the parameter.</param>
     /// <param name="value">The current value of the parameter.</param>
     /// <returns>an HRESULT indicating whether the current parameter value was successfully retrieved</returns>
-    private delegate int GetParameterValue(Guid parameterId, out object value);
+    private delegate int GetParameterValueDelegate(Guid parameterId, out object value);
 
     /// <summary>
     /// Set the value of a parameter.
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <param name="parameterId">The unique identifier for the parameter.</param>
     /// <param name="value">The new value for the parameter.</param>
     /// <returns>an HRESULT indicating whether the parameter value was successfully set</returns>
-    private delegate int SetParameterValue(Guid parameterId, ref object value);
+    private delegate int SetParameterValueDelegate(Guid parameterId, ref object value);
 
     #endregion
 
@@ -96,12 +96,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     private List<IVideoEncoder> _interfacesVideoEncoder = new List<IVideoEncoder>();
     private List<IEncoderAPI> _interfacesEncoderApi = new List<IEncoderAPI>();
 
-    private List<IsParameterSupported> _delegatesIsSupported = new List<IsParameterSupported>();
-    private List<GetParameterRange> _delegatesGetRange = new List<GetParameterRange>();
-    private List<GetParameterValues> _delegatesGetValues = new List<GetParameterValues>();
-    private List<GetParameterDefaultValue> _delegatesGetDefaultValue = new List<GetParameterDefaultValue>();
-    private List<GetParameterValue> _delegatesGetValue = new List<GetParameterValue>();
-    private List<SetParameterValue> _delegatesSetValue = new List<SetParameterValue>();
+    private List<IsParameterSupportedDelegate> _delegatesIsSupported = new List<IsParameterSupportedDelegate>();
+    private List<GetParameterRangeDelegate> _delegatesGetRange = new List<GetParameterRangeDelegate>();
+    private List<GetParameterValuesDelegate> _delegatesGetValues = new List<GetParameterValuesDelegate>();
+    private List<GetParameterDefaultValueDelegate> _delegatesGetDefaultValue = new List<GetParameterDefaultValueDelegate>();
+    private List<GetParameterValueDelegate> _delegatesGetValue = new List<GetParameterValueDelegate>();
+    private List<SetParameterValueDelegate> _delegatesSetValue = new List<SetParameterValueDelegate>();
 
     #endregion
 
@@ -155,8 +155,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -167,8 +167,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -176,7 +177,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Microsoft encoder: initialising device");
+      this.LogDebug("Microsoft encoder: initialising");
 
       IBaseFilter mainFilter = context as IBaseFilter;
       if (mainFilter == null)
@@ -186,7 +187,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
       }
       if (_isMicrosoftEncoder)
       {
-        this.LogDebug("Microsoft encoder: device is already initialised");
+        this.LogWarn("Microsoft encoder: extension already initialised");
         return true;
       }
 
@@ -195,13 +196,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
       int hr = mainFilter.QueryFilterInfo(out filterInfo);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft encoder: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft encoder: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
       if (graph == null)
       {
-        this.LogDebug("Microsoft encoder: failed to get graph reference");
+        this.LogError("Microsoft encoder: failed to get graph reference");
         return false;
       }
 
@@ -212,7 +213,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
         hr = graph.EnumFilters(out enumFilters);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Microsoft encoder: failed to get graph filter enumerator, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft encoder: failed to get graph filter enumerator, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
 
@@ -240,7 +241,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
               hr = filter.EnumPins(out enumPins);
               if (hr != (int)HResult.Severity.Success)
               {
-                this.LogDebug("Microsoft encoder: failed to get filter pin enumerator");
+                this.LogError("Microsoft encoder: failed to get filter pin enumerator");
                 return false;
               }
 
@@ -299,10 +300,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
 
       if (_interfacesCodecApi.Count > 0 || _interfacesVideoEncoder.Count > 0 || _interfacesEncoderApi.Count > 0)
       {
-        this.LogDebug("Microsoft encoder: supported device detected");
+        this.LogInfo("Microsoft encoder: extension supported");
         _isMicrosoftEncoder = true;
         return true;
       }
+
+      this.LogDebug("Microsoft encoder: no supported interfaces found on any filters or pins");
       return false;
     }
 
@@ -318,6 +321,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     public bool IsParameterSupported(Guid parameterId)
     {
       this.LogDebug("Microsoft encoder: is parameter supported, parameter = {0}", parameterId);
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
       {
@@ -349,6 +359,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
       minimum = null;
       maximum = null;
       resolution = null;
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       bool success = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
@@ -364,7 +381,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogDebug("Microsoft encoder: interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter range for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
           }
         }
       }
@@ -385,6 +402,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     {
       this.LogDebug("Microsoft encoder: get parameter values, parameter = {0}", parameterId);
       values = null;
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       bool success = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
@@ -403,7 +427,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogDebug("Microsoft encoder: interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter values for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
           }
         }
       }
@@ -424,6 +448,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     {
       this.LogDebug("Microsoft encoder: get default value, parameter = {0}", parameterId);
       value = null;
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       bool success = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
@@ -439,7 +470,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogDebug("Microsoft encoder: interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter default value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
           }
         }
       }
@@ -460,6 +491,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     {
       this.LogDebug("Microsoft encoder: get value, parameter = {0}", parameterId);
       value = null;
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       bool success = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
@@ -475,7 +513,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogDebug("Microsoft encoder: interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to get parameter value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
           }
         }
       }
@@ -495,6 +533,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
     public bool SetParameterValue(Guid parameterId, object value)
     {
       this.LogDebug("Microsoft encoder: set value, parameter = {0}, value = {1}", parameterId, value);
+
+      if (!_isMicrosoftEncoder)
+      {
+        this.LogWarn("Microsoft encoder: not initialised or interface not supported");
+        return false;
+      }
+
       bool isSupported = false;
       bool success = false;
       for (int i = 0; i < _delegatesIsSupported.Count; i++)
@@ -510,7 +555,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftEncoder
           }
           else
           {
-            this.LogDebug("Microsoft encoder: interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft encoder: failed to set parameter value for interface {0}, hr = 0x{1:x} ({2})", i, hr, HResult.GetDXErrorString(hr));
           }
         }
       }

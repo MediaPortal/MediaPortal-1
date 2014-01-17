@@ -26,6 +26,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Security.Permissions;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TvLibrary.Utils.Util;
 
@@ -99,19 +100,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     /// <param name="graph">The graph.</param>
     /// <param name="device">The device.</param>
-    /// <param name="name">The name or label to use for the filter.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
     /// <returns>the instance of the filter if the method successfully created it, otherwise <c>null</c></returns>
-    public static IBaseFilter AddFilterFromDevice(IFilterGraph2 graph, DsDevice device)
+    public static IBaseFilter AddFilterFromDevice(IFilterGraph2 graph, DsDevice device, string name = null)
     {
       if (device == null || device.Mon == null)
       {
-        throw new TvException("Failed to add filter by device, device or moniker is null.");
+        throw new TvException("Failed to add filter from device, device or moniker is null.");
       }
 
       IBaseFilter filter = null;
       try
       {
-        int hr = graph.AddSourceFilterForMoniker(device.Mon, null, device.Name, out filter);
+        int hr = graph.AddSourceFilterForMoniker(device.Mon, null, name ?? device.Name, out filter);
         HResult.ThrowException(hr, "Failed to add the new filter to the graph.");
       }
       catch
@@ -464,15 +465,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// <param name="device">A DsDevice instance that wraps an IMoniker instance. The filter to add and connect will be instantiated from the IMoniker.</param>
     /// <param name="upstreamFilter">The upstream filter to connect the new filter to. This filter should already be present in the graph.</param>
     /// <param name="graphBuilder">The graph builder, used to render-connect the filters.</param>
+    /// <param name="filterName">The name or label to use for the filter.</param>
     /// <remarks>the filter that was instanciated, added to, and connected into the graph</remarks>
-    public static IBaseFilter AddAndConnectFilterIntoGraph(IFilterGraph2 graph, DsDevice device, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder)
+    public static IBaseFilter AddAndConnectFilterIntoGraph(IFilterGraph2 graph, DsDevice device, IBaseFilter upstreamFilter, ICaptureGraphBuilder2 graphBuilder, string filterName = null)
     {
       if (upstreamFilter == null || device == null || device.Mon == null)
       {
         throw new TvException("Failed to add and connect filter, upstream filter or moniker are null.");
       }
 
-      IBaseFilter newFilter = AddFilterFromDevice(graph, device);
+      IBaseFilter newFilter = AddFilterFromDevice(graph, device, filterName);
 
       try
       {

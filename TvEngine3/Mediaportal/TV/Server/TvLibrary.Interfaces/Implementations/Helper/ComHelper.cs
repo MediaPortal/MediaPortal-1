@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
-namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
+namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper
 {
   /// <summary>
   /// An interface used to create instances of a specific class.

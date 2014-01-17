@@ -26,8 +26,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
 {
   /// <summary>
-  /// This class provides clear QAM tuning support for ATSC/QAM devices that use ViXS chipsets/demodulators, such
-  /// as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
+  /// This class provides clear QAM tuning support for ATSC/QAM tuners that use ViXS
+  /// chipsets/demodulators, such as Saber (DA-1N1-E, DA-1N1-I), VistaView and Asus tuners.
   /// </summary>
   public class ViXS : MicrosoftBda.MicrosoftBda
   {
@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -70,8 +70,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override String Name
     {
@@ -82,8 +82,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -91,11 +92,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("ViXS: initialising device");
+      this.LogDebug("ViXS: initialising");
 
       if (_isVixs)
       {
-        this.LogDebug("ViXS: device is already initialised");
+        this.LogWarn("ViXS: extension already initialised");
         return true;
       }
 
@@ -111,7 +112,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.ViXS
         return false;
       }
 
-      this.LogDebug("ViXS: supported device detected");
+      this.LogInfo("ViXS: extension supported");
       _isVixs = true;
       return true;
     }

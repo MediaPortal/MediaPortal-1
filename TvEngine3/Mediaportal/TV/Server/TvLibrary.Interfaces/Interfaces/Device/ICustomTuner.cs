@@ -29,10 +29,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   public interface ICustomTuner : ICustomDevice
   {
     /// <summary>
-    /// Check if the device implements specialised tuning for a given channel.
+    /// Check if the extension implements specialised tuning for a given channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     bool CanTuneChannel(IChannel channel);
 
     /// <summary>

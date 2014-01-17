@@ -26,6 +26,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVService.Interfaces;
 using Mediaportal.TV.Server.TVService.Interfaces.Enums;
 using Mediaportal.TV.Server.TVService.Interfaces.Services;
@@ -950,7 +951,7 @@ namespace Mediaportal.TV.Server.TVControl.Interfaces.Services
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
     [OperationContract]
-    bool SetCiMenuHandler(int cardId, ICiMenuCallbacks callbackHandler);
+    bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler);
 
     
 

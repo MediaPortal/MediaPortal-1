@@ -51,19 +51,24 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region events
 
     /// <summary>
-    /// New subchannel observer event, fired when a new subchannel is created.
+    /// New subchannel delegate, invoked when a new subchannel is created.
     /// </summary>
-    public event OnNewSubChannelDelegate NewSubChannelEvent;
+    private OnNewSubChannelDelegate _newSubChannelEventDelegate = null;
 
     /// <summary>
-    /// Set the device's new subchannel event handler.
+    /// Set the tuner's new subchannel event handler.
     /// </summary>
     /// <value>the delegate</value>
-    public OnNewSubChannelDelegate OnNewSubChannelEvent
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent
     {
-      set
+      add
       {
-        NewSubChannelEvent += value;
+        _newSubChannelEventDelegate = null;
+        _newSubChannelEventDelegate += value;
+      }
+      remove
+      {
+        _newSubChannelEventDelegate = null;
       }
     }
 
@@ -73,27 +78,31 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="subChannelId">The ID of the new subchannel.</param>
     protected void FireNewSubChannelEvent(int subChannelId)
     {
-      if (NewSubChannelEvent != null)
+      if (_newSubChannelEventDelegate != null)
       {
-        NewSubChannelEvent(subChannelId);
+        _newSubChannelEventDelegate(subChannelId);
       }
     }
 
     /// <summary>
-    /// After tune observer event, fired after tuning is complete.
-    /// </summary>    
-    public event OnAfterTuneDelegate AfterTuneEvent;
+    /// After tune delegate, fired after tuning is complete.
+    /// </summary>
+    private OnAfterTuneDelegate _afterTuneEventDelegate;
 
     /// <summary>
-    /// Set the device's after tune event handler.
+    /// Set the tuner's after tune event handler.
     /// </summary>
     /// <value>the delegate</value>
-    public OnAfterTuneDelegate OnAfterTuneEvent
+    public event OnAfterTuneDelegate OnAfterTuneEvent
     {
-      set
+      add
       {
-        AfterTuneEvent -= value;
-        AfterTuneEvent += value;
+        _afterTuneEventDelegate = null;
+        _afterTuneEventDelegate += value;
+      }
+      remove
+      {
+        _afterTuneEventDelegate = null;
       }
     }
 
@@ -102,9 +111,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     private void FireAfterTuneEvent()
     {
-      if (AfterTuneEvent != null)
+      if (_afterTuneEventDelegate != null)
       {
-        AfterTuneEvent();
+        _afterTuneEventDelegate();
       }
     }
 
@@ -121,11 +130,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// Dictionary of the corresponding sub channels
     /// </summary>
     protected Dictionary<int, ITvSubChannel> _mapSubChannels;
-
-    /// <summary>
-    /// Indicates, if the card is a hybrid one
-    /// </summary>
-    protected bool _isHybrid;
 
     /// <summary>
     /// Context reference
@@ -289,14 +293,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     /// <param name="name">The device name.</param>
     /// <param name="externalId">An identifier for the device. Useful for distinguishing this instance from other devices of the same type.</param>
-    protected TvCardBase(string name, string externalId)
+    protected TvCardBase(string name, string externalIdentifier)
     {
       _mapSubChannels = new Dictionary<int, ITvSubChannel>();
       _parameters = new ScanParameters();
       _epgGrabbing = false;   // EPG grabbing not supported by default.
       _customDeviceInterfaces = new List<ICustomDevice>();
       _name = name;
-      _devicePath = externalId;
+      _devicePath = externalIdentifier;
 
       if (DevicePath != null)
       {
@@ -467,7 +471,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// conditional access is supported.
     /// </summary>
     /// <value><c>null</c> if the device does not support conditional access</value>
-    public ICiMenuActions CaMenuInterface
+    public IConditionalAccessMenuActions CaMenuInterface
     {
       get
       {
@@ -478,7 +482,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         // Return the first interface that implements ICiMenuActions.
         foreach (ICustomDevice d in _customDeviceInterfaces)
         {
-          ICiMenuActions caMenuInterface = d as ICiMenuActions;
+          IConditionalAccessMenuActions caMenuInterface = d as IConditionalAccessMenuActions;
           if (caMenuInterface != null)
           {
             return caMenuInterface;
@@ -510,20 +514,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           DVBBaseChannel digitalService = service as DVBBaseChannel;
           if (digitalService != null)
           {
-            if (!decryptedServices.Contains(digitalService.ServiceId))
-            {
-              decryptedServices.Add(digitalService.ServiceId);
-            }
+            decryptedServices.Add(digitalService.ServiceId);
           }
           else
           {
             AnalogChannel analogService = service as AnalogChannel;
             if (analogService != null)
             {
-              if (!decryptedServices.Contains(analogService.Frequency))
-              {
-                decryptedServices.Add(analogService.Frequency);
-              }
+              decryptedServices.Add(analogService.Frequency);
             }
             else
             {
@@ -550,16 +548,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         return null;
       }
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether this instance is hybrid.
-    /// </summary>
-    /// <value><c>true</c> if this instance is hybrid; otherwise, <c>false</c>.</value>
-    public bool IsHybrid
-    {
-      get { return _isHybrid; }
-      set { _isHybrid = value; }
     }
 
     /// <summary>
@@ -704,10 +692,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           IDirectShowAddOnDevice addOn = d as IDirectShowAddOnDevice;
           if (addOn != null)
           {
-            this.LogDebug("TvCardBase: add-on plugin found");
+            this.LogDebug("TvCardBase: DirectShow add-on plugin found");
             if (!addOn.AddToGraph(graph, ref lastFilter))
             {
-              this.LogDebug("TvCardBase: failed to add device filters to graph");
+              this.LogDebug("TvCardBase: failed to add filters to graph");
               addOn.Dispose();
               continue;
             }
@@ -823,6 +811,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         {
           PerformTunerAction(actualAction);
         }
+      }
+      catch (TvExceptionSWEncoderMissing)
+      {
+        Unload();
+        throw;
       }
       catch (Exception ex)
       {
@@ -1292,9 +1285,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     {
       this.LogDebug("TvCardBase: subchannel {0} cancel tune", subChannelId);
       _cancelTune = true;
-      if (_mapSubChannels.ContainsKey(subChannelId))
+      ITvSubChannel subChannel;
+      if (_mapSubChannels.TryGetValue(subChannelId, out subChannel))
       {
-        _mapSubChannels[subChannelId].CancelTune();
+        subChannel.CancelTune();
       }
     }
 
@@ -1395,8 +1389,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Start grabbing electronic programme guide data (idle EPG grabber).
     /// </summary>
-    /// <param name="callback">The delegate to call when grabbing is complete or canceled.</param>
-    public virtual void GrabEpg(BaseEpgGrabber callback)
+    /// <param name="callBack">The delegate to call when grabbing is complete or canceled.</param>
+    public virtual void GrabEpg(BaseEpgGrabber callBack)
     {
     }
 
@@ -1422,8 +1416,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Starts scanning for linkages.
     /// </summary>
-    /// <param name="callback">The delegate to call when scanning is complete or canceled.</param>
-    public virtual void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    /// <param name="callBack">The delegate to call when scanning is complete or canceled.</param>
+    public virtual void StartLinkageScanner(BaseChannelLinkageScanner callBack)
     {
     }
 
@@ -1463,21 +1457,21 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Free a subchannel.
     /// </summary>
-    /// <param name="id">The ID of the subchannel.</param>
+    /// <param name="id">The subchannel identifier.</param>
     public virtual void FreeSubChannel(int id)
     {
-      this.LogDebug("TvCardBase: free subchannel, ID = {0}, subchannel count = {1}", id, _mapSubChannels.Count);
+      this.LogDebug("TvCardBase: free subchannel, ID = {0}, count = {1}", id, _mapSubChannels.Count);
       ITvSubChannel subChannel;
       if (_mapSubChannels.TryGetValue(id, out subChannel))
       {
         if (subChannel.IsTimeShifting)
         {
-          this.LogDebug("TvCardBase: subchannel is still timeshifting!");
+          this.LogError("TvCardBase: subchannel is still timeshifting!");
           return;
         }
         if (subChannel.IsRecording)
         {
-          this.LogDebug("TvCardBase: subchannel is still recording!");
+          this.LogError("TvCardBase: subchannel is still recording!");
           return;
         }
 
@@ -1497,16 +1491,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       else
       {
-        this.LogDebug("TvCardBase: subchannel not found!");
+        this.LogWarn("TvCardBase: subchannel not found!");
       }
       if (_mapSubChannels.Count == 0)
       {
-        this.LogDebug("TvCardBase: no subchannels present, stopping device");
+        this.LogDebug("TvCardBase: no subchannels present, stopping tuner");
         Stop();
       }
       else
       {
-        this.LogDebug("TvCardBase: subchannels still present, leave device running");
+        this.LogDebug("TvCardBase: subchannels still present, leave tuner running");
       }
     }
 
@@ -1515,7 +1509,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     protected void FreeAllSubChannels()
     {
-      this.LogInfo("tvcard:FreeAllSubChannels");
+      this.LogInfo("TvCardBase: free all subchannels, count = {0}", _mapSubChannels.Count);
       Dictionary<int, ITvSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {
@@ -1531,11 +1525,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <returns></returns>
     public ITvSubChannel GetSubChannel(int id)
     {
-      if (_mapSubChannels != null && _mapSubChannels.ContainsKey(id))
+      ITvSubChannel subChannel = null;
+      if (_mapSubChannels != null)
       {
-        return _mapSubChannels[id];
+        _mapSubChannels.TryGetValue(id, out subChannel);
       }
-      return null;
+      return subChannel;
     }
 
     /// <summary>

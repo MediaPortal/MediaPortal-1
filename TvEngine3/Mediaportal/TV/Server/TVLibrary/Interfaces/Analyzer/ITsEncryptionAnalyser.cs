@@ -42,7 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
   }
 
   /// <summary>
-  /// TsWriter encryption analyser callback interface.
+  /// TsWriter encryption analyser call back interface.
   /// </summary>
   [ComVisible(false), ComImport,
     Guid("7b42a7b1-0f93-44f4-9f0f-57b3a424d882"),
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Set the delegate for the analyser to notify when the encryption state of one of the monitored elementary streams changes.
     /// </summary>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int SetCallBack(IEncryptionStateChangeCallBack callBack);

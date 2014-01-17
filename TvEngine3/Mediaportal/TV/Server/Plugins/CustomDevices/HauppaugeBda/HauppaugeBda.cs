@@ -30,7 +30,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
 {
   /// <summary>
-  /// A class for handling DiSEqC and DVB-S2 tuning for Hauppauge BDA devices.
+  /// A class for handling DiSEqC and DVB-S2 tuning for Hauppauge BDA tuners.
   /// </summary>
   public class HauppaugeBda : Conexant.Conexant
   {
@@ -63,18 +63,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     #endregion
 
     /// <summary>
-    /// Accessor for the property set GUID. This enables easy inheritence from the Conexant base class.
-    /// </summary>
-    /// <value>the GUID for the driver's custom property set</value>
-    protected override Guid BdaExtensionPropertySet
-    {
-      get
-      {
-        return HCW_BDA_EXTENSION_PROPERTY_SET;
-      }
-    }
-
-    /// <summary>
     /// Set the tuner pilot parameter value.
     /// </summary>
     /// <param name="pilot">The pilot parameter value.</param>
@@ -84,15 +72,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       this.LogDebug("Hauppauge BDA: set pilot = {0}", pilot);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.Pilot, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Hauppauge BDA: device does not support pilot property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge BDA: pilot property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return true;  // This is not an error.
       }
 
       Marshal.WriteInt32(_paramBuffer, (int)pilot);
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot,
+      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.Pilot,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -102,7 +90,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogDebug("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -116,15 +104,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
       this.LogDebug("Hauppauge BDA: set roll-off = {0}", rollOff);
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.Pilot, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.Pilot, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Hauppauge BDA: device does not support roll-off property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Hauppauge BDA: roll-off property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return true;  // This is not an error.
       }
 
       Marshal.WriteInt32(_paramBuffer, (int)rollOff);
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.RollOff,
+      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.RollOff,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -134,14 +122,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return true;
       }
 
-      this.LogDebug("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Hauppauge BDA: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -152,8 +140,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -164,8 +152,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -173,14 +162,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Hauppauge BDA: initialising device");
+      this.LogDebug("Hauppauge BDA: initialising");
 
       if (_isHauppaugeBda)
       {
-        this.LogDebug("Hauppauge BDA: device is already initialised");
+        this.LogWarn("Hauppauge BDA: extension already initialised");
         return true;
       }
 
+      _propertySetGuid = HCW_BDA_EXTENSION_PROPERTY_SET;
       bool result = base.Initialise(tunerExternalIdentifier, tunerType, context);
       if (!result)
       {
@@ -188,29 +178,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeBda
         return false;
       }
 
-      this.LogDebug("Hauppauge BDA: supported device detected");
+      this.LogInfo("Hauppauge BDA: extension supported");
       _isHauppaugeBda = true;
       _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("Hauppauge BDA: on before tune callback");
+      this.LogDebug("Hauppauge BDA: on before tune call back");
       action = TunerAction.Default;
 
-      if (!_isHauppaugeBda || _propertySet == null)
+      if (!_isHauppaugeBda)
       {
-        this.LogDebug("Hauppauge BDA: device not initialised or interface not supported");
+        this.LogWarn("Hauppauge BDA: not initialised or interface not supported");
         return;
       }
 

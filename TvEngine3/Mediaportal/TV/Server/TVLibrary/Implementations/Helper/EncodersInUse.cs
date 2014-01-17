@@ -33,8 +33,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class EncodersInUse
   {
-    private static EncodersInUse _instance;
-    private readonly Dictionary<DsDevice, int> _encodersInUse;
+    private static EncodersInUse _instance = new EncodersInUse();
+    private readonly Dictionary<DsDevice, int> _encodersInUse = new Dictionary<DsDevice, int>();
 
     /// <summary>
     /// A static method to access the singleton instance of this class.
@@ -43,13 +43,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     {
       get
       {
-        lock (_instance)
-        {
-          if (_instance == null)
-          {
-            _instance = new EncodersInUse();
-          }
-        }
         return _instance;
       }
     }
@@ -59,7 +52,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     private EncodersInUse()
     {
-      _encodersInUse = new Dictionary<DsDevice, int>();      
     }
 
     /// <summary>
@@ -79,13 +71,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       int reuseLimit = SettingsManagement.GetValue("softwareEncoderReuseLimit", 0);
       lock (_encodersInUse)
       {
-        this.LogDebug("Encoders-in-use: add {0}...", device.Name);
+        this.LogDebug("encoders-in-use: add {0}...", device.Name);
         DsDevice key = null;
         foreach (DsDevice dev in _encodersInUse.Keys)
         {
           if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
           {
-            this.LogDebug("Encoders-in-use: in use, check reuse limit");
+            this.LogDebug("encoders-in-use: in use, check reuse limit");
             key = dev;
             break;
           }
@@ -94,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          this.LogDebug("Encoders-in-use: not yet in use, usable");
+          this.LogDebug("encoders-in-use: not yet in use, usable");
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -102,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          this.LogDebug("Encoders-in-use: unrecognised, assuming usable");
+          this.LogDebug("encoders-in-use: unrecognised, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
@@ -114,13 +106,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
             _encodersInUse[key]++;
-            this.LogDebug("Encoders-in-use: usable, usage = {0}, limit = {1}",
+            this.LogDebug("encoders-in-use: usable, usage = {0}, limit = {1}",
                               _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             return true;
           }
           else
           {
-            this.LogDebug("Encoders-in-use: at reuse limit {0}", reuseLimit);
+            this.LogDebug("encoders-in-use: at reuse limit {0}", reuseLimit);
             return false;
           }
         }
@@ -129,7 +121,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       // If we get to here then the encoder isn't reusable and it is in use,
       // which means the limit has already been reached. The encoder wouldn't
       // be in _encodersInUse if it wasn't in use...
-      this.LogDebug("Encoders-in-use: not reusable");
+      this.LogDebug("encoders-in-use: not reusable");
       return false;
     }
 
@@ -146,13 +138,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       lock (_encodersInUse)
       {
-        this.LogDebug("Encoders-in-use: remove {0}...", device.Name);
+        this.LogDebug("encoders-in-use: remove {0}...", device.Name);
         foreach (DsDevice dev in _encodersInUse.Keys)
         {
           if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
           {
             _encodersInUse[dev]--;
-            this.LogDebug("Encoders-in-use: usage = {0}", _encodersInUse[dev]);
+            this.LogDebug("encoders-in-use: usage = {0}", _encodersInUse[dev]);
             if (_encodersInUse[dev] == 0)
             {
               _encodersInUse.Remove(dev);

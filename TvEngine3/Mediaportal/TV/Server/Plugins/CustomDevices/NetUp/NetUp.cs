@@ -28,6 +28,7 @@ using DirectShowLib;
 using MediaPortal.Common.Utils;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -35,9 +36,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for NetUP devices.
+  /// A class for handling conditional access and DiSEqC for NetUP tuners.
   /// </summary>
-  public class NetUp : BaseCustomDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
+  public class NetUp : BaseCustomDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -73,18 +74,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     #region structs
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct ApplicationInfo    // NETUP_CAM_APPLICATION_INFO
     {
       public MmiApplicationType ApplicationType;
       private byte Padding;
       public ushort Manufacturer;
       public ushort ManufacturerCode;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string RootMenuTitle;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] RootMenuTitle;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct CiStateInfo    // NETUP_CAM_STATUS
     {
       public NetUpCiState CiState;
@@ -93,8 +94,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       // we can query for application info directly.
       public ushort Manufacturer;
       public ushort ManufacturerCode;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string RootMenuTitle;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] RootMenuTitle;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -105,32 +106,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public ushort[] CaSystemIds;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenuEntry
     {
       #pragma warning disable 0649
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string Text;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] Text;
       #pragma warning restore 0649
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenu    // NETUP_CAM_MENU
     {
       [MarshalAs(UnmanagedType.Bool)]
       public bool IsMenu;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string Title;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string SubTitle;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string Footer;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] Title;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] SubTitle;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] Footer;
       [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_CAM_MENU_ENTRIES)]
       public MmiMenuEntry[] Entries;
       public uint EntryCount;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiEnquiry   // NETUP_CAM_MMI_ENQUIRY
     {
       [MarshalAs(UnmanagedType.Bool)]
@@ -138,8 +139,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       public byte ExpectedAnswerLength;
       private byte Padding1;
       private short Padding2;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_STRING_LENGTH)]
-      public string Prompt;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_STRING_LENGTH)]
+      public byte[] Prompt;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -291,13 +292,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
     private const int GENERAL_BUFFER_SIZE = MAX_DISEQC_MESSAGE_LENGTH;
     private static readonly int MMI_BUFFER_SIZE = new int[] { APPLICATION_INFO_SIZE, CA_INFO_SIZE, CI_STATE_INFO_SIZE, MMI_ANSWER_SIZE, MMI_ENQUIRY_SIZE, MMI_MENU_SIZE }.Max();
-    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 2000;   // unit = ms
+    private const int MMI_HANDLER_THREAD_WAIT_TIME = 2000;    // unit = ms
 
     #endregion
 
     #region variables
 
     private bool _isNetUp = false;
+    private bool _isCaInterfaceOpen = false;
     private bool _isCamPresent = false;
 
     // Functions that are called from both the main TV service threads
@@ -308,26 +310,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     private IntPtr _generalBuffer = IntPtr.Zero;
     private IntPtr _mmiBuffer = IntPtr.Zero;
 
+    /// <summary>
+    /// The property set GUID.
+    /// </summary>
+    protected Guid _propertySetGuid = NETUP_BDA_EXTENSION_PROPERTY_SET;
     private IKsPropertySet _propertySet = null;
 
     private Thread _mmiHandlerThread = null;
-    private volatile bool _stopMmiHandlerThread = false;
-    private ICiMenuCallbacks _ciMenuCallbacks = null;
+    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private object _mmiLock = new object();
+    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private object _caMenuCallBackLock = new object();
 
     #endregion
 
+    #region constructors
+
     /// <summary>
-    /// Accessor for the property set GUID. This allows other classes with identical structs but different
-    /// GUIDs to easily inherit the methods defined in this class.
+    /// Constructor for <see cref="NetUp"/> instances.
     /// </summary>
-    /// <value>the GUID for the driver's custom property set</value>
-    protected virtual Guid BdaExtensionPropertySet
+    public NetUp()
     {
-      get
-      {
-        return NETUP_BDA_EXTENSION_PROPERTY_SET;
-      }
     }
+
+    /// <summary>
+    /// Constructor for non-inherited types (eg. <see cref="DvbSky"/>).
+    /// </summary>
+    public NetUp(Guid propertySetGuid)
+    {
+      _propertySetGuid = propertySetGuid;
+    }
+
+    #endregion
 
     /// <summary>
     /// Read the conditional access application information.
@@ -343,7 +357,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.ApplicationInfo, IntPtr.Zero, 0, _mmiBuffer, APPLICATION_INFO_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
 
       if (hr == (int)HResult.Severity.Success && returnedByteCount == APPLICATION_INFO_SIZE)
       {
@@ -351,11 +365,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         this.LogDebug("  type         = {0}", info.ApplicationType);
         this.LogDebug("  manufacturer = 0x{0:x}", info.Manufacturer);
         this.LogDebug("  code         = 0x{0:x}", info.ManufacturerCode);
-        this.LogDebug("  menu title   = {0}", info.RootMenuTitle);
+        this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(info.RootMenuTitle));
       }
       else
       {
-        this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
       return hr;
@@ -375,19 +389,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.ConditionalAccessInfo, IntPtr.Zero, 0, _mmiBuffer, CA_INFO_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       if (hr == (int)HResult.Severity.Success && returnedByteCount == CA_INFO_SIZE)
       {
         CaInfo info = (CaInfo)Marshal.PtrToStructure(_mmiBuffer, typeof(CaInfo));
         this.LogDebug("  # CAS IDs = {0}", info.NumberOfCaSystemIds);
         for (int i = 0; i < info.NumberOfCaSystemIds; i++)
         {
-          this.LogDebug("  {0,-2}        = 0x{1:x4}", i + 1, info.CaSystemIds[i]);
+          this.LogDebug("    {0, -7} = 0x{1:x4}", i + 1, info.CaSystemIds[i]);
         }
       }
       else
       {
-        this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
       return hr;
@@ -411,7 +425,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiStatus, IntPtr.Zero, 0, buffer, CI_STATE_INFO_SIZE);
       int returnedByteCount;
-      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       if (hr == (int)HResult.Severity.Success && returnedByteCount == CI_STATE_INFO_SIZE)
       {
         ciState = (CiStateInfo)Marshal.PtrToStructure(buffer, typeof(CiStateInfo));
@@ -423,37 +437,72 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     #region MMI handler thread
 
     /// <summary>
-    /// Start a thread that will handle interaction with the CAM.
+    /// Start a thread to receive MMI messages from the CAM.
     /// </summary>
     private void StartMmiHandlerThread()
     {
-      // Don't start a thread if there is no purpose for it.
-      if (!_isNetUp)
+      // Don't start a thread if the interface has not been opened.
+      if (!_isCaInterfaceOpen)
       {
         return;
       }
 
-      // Check if an existing thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
+      lock (_mmiLock)
       {
-        this.LogDebug("NetUP: aborting old MMI handler thread");
-        _mmiHandlerThread.Abort();
-        _mmiHandlerThread = null;
-      }
-      if (_mmiHandlerThread == null)
-      {
-        this.LogDebug("NetUP: starting new MMI handler thread");
-        _stopMmiHandlerThread = false;
-        _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
-        _mmiHandlerThread.Name = "NetUP MMI handler";
-        _mmiHandlerThread.IsBackground = true;
-        _mmiHandlerThread.Priority = ThreadPriority.Lowest;
-        _mmiHandlerThread.Start();
+        // Kill the existing thread if it is in "zombie" state.
+        if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
+        {
+          StopMmiHandlerThread();
+        }
+
+        if (_mmiHandlerThread == null)
+        {
+          this.LogDebug("NetUP: starting new MMI handler thread");
+          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
+          _mmiHandlerThread.Name = "NetUP MMI handler";
+          _mmiHandlerThread.IsBackground = true;
+          _mmiHandlerThread.Priority = ThreadPriority.Lowest;
+          _mmiHandlerThread.Start();
+        }
       }
     }
 
     /// <summary>
-    /// Thread function for handling MMI responses from the CAM.
+    /// Stop the thread that receives MMI messages from the CAM.
+    /// </summary>
+    private void StopMmiHandlerThread()
+    {
+      lock (_mmiLock)
+      {
+        if (_mmiHandlerThread != null)
+        {
+          if (!_mmiHandlerThread.IsAlive)
+          {
+            this.LogWarn("NetUP: aborting old MMI handler thread");
+            _mmiHandlerThread.Abort();
+          }
+          else
+          {
+            _mmiHandlerThreadStopEvent.Set();
+            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            {
+              this.LogWarn("NetUP: failed to join MMI handler thread, aborting thread");
+              _mmiHandlerThread.Abort();
+            }
+          }
+          _mmiHandlerThread = null;
+          if (_mmiHandlerThreadStopEvent != null)
+          {
+            _mmiHandlerThreadStopEvent.Close();
+            _mmiHandlerThreadStopEvent = null;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving MMI messages from the CAM.
     /// </summary>
     private void MmiHandler()
     {
@@ -462,15 +511,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       NetUpCiState prevCiState = NetUpCiState.Empty;
       try
       {
-        while (!_stopMmiHandlerThread)
+        while (!_mmiHandlerThreadStopEvent.WaitOne(MMI_HANDLER_THREAD_WAIT_TIME))
         {
-          Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
-
           CiStateInfo info;
           int hr = GetCiStatus(out info);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             continue;
           }
 
@@ -478,26 +525,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           ciState = info.CiState;
           if (ciState != prevCiState)
           {
-            this.LogDebug("NetUP: CI state change");
-            this.LogDebug("  old state    = {0}", prevCiState.ToString());
-            this.LogDebug("  new state    = {0}", ciState.ToString());
+            this.LogInfo("NetUP: CI state change");
+            this.LogInfo("  old state    = {0}", prevCiState.ToString());
+            this.LogInfo("  new state    = {0}", ciState.ToString());
 
             prevCiState = ciState;
-            if (ciState == NetUpCiState.Empty)
-            {
-              _isCamPresent = false;
-            }
-            else
-            {
-              _isCamPresent = true;
-            }
+            _isCamPresent = (ciState != NetUpCiState.Empty);
           }
 
-          if ((ciState & NetUpCiState.MmiEnquiryReady) != 0)
+          if (ciState.HasFlag(NetUpCiState.MmiEnquiryReady))
           {
             HandleEnquiry();
           }
-          if ((ciState & NetUpCiState.MmiMenuReady) != 0)
+          if (ciState.HasFlag(NetUpCiState.MmiMenuReady))
           {
             HandleMenu();
           }
@@ -508,13 +548,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "NetUP: exception in MMI handler thread");
+        this.LogError(ex, "NetUP: MMI handler thread exception");
         return;
       }
     }
 
     /// <summary>
-    /// Read an MMI menu object and invoke callbacks as appropriate.
+    /// Read an MMI menu object and invoke call backs as appropriate.
     /// </summary>
     /// <returns>an HRESULT indicating whether the menu object was successfully handled</returns>
     private int HandleMenu()
@@ -522,7 +562,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       this.LogDebug("NetUP: read menu");
 
       MmiMenu mmi;
-      lock (this)
+      lock (_mmiLock)
       {
         for (int i = 0; i < MMI_MENU_SIZE; i++)
         {
@@ -531,51 +571,42 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetMenu, IntPtr.Zero, 0, _mmiBuffer, MMI_MENU_SIZE);
         int returnedByteCount;
-        int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_MENU_SIZE)
         {
-          this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
         }
         mmi = (MmiMenu)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiMenu));
       }
 
-      if (_ciMenuCallbacks == null)
+      lock (_caMenuCallBackLock)
       {
-        this.LogDebug("NetUP: menu callbacks are not set");
-      }
-
-      this.LogDebug("  is menu   = {0}", mmi.IsMenu);
-      this.LogDebug("  title     = {0}", mmi.Title);
-      this.LogDebug("  sub-title = {0}", mmi.SubTitle);
-      this.LogDebug("  footer    = {0}", mmi.Footer);
-      this.LogDebug("  # entries = {0}", mmi.EntryCount);
-      if (_ciMenuCallbacks != null)
-      {
-        try
+        if (_caMenuCallBacks == null)
         {
-          _ciMenuCallbacks.OnCiMenu(mmi.Title, mmi.SubTitle, mmi.Footer, (int)mmi.EntryCount);
+          this.LogDebug("NetUP: menu call backs are not set");
         }
-        catch (Exception ex)
-        {
-          this.LogError(ex, "NetUP: menu header callback exception");
-          return 1;
-        }
-      }
 
-      for (int i = 0; i < mmi.EntryCount; i++)
-      {
-        this.LogDebug("  entry {0,-2}  = {1}", i + 1, mmi.Entries[i].Text);
-        if (_ciMenuCallbacks != null)
+        string title = DvbTextConverter.Convert(mmi.Title);
+        string subTitle = DvbTextConverter.Convert(mmi.SubTitle);
+        string footer = DvbTextConverter.Convert(mmi.Footer);
+        this.LogDebug("  is menu   = {0}", mmi.IsMenu);
+        this.LogDebug("  title     = {0}", title);
+        this.LogDebug("  sub-title = {0}", subTitle);
+        this.LogDebug("  footer    = {0}", footer);
+        this.LogDebug("  # entries = {0}", mmi.EntryCount);
+        if (_caMenuCallBacks != null)
         {
-          try
+          _caMenuCallBacks.OnCiMenu(title, subTitle, footer, (int)mmi.EntryCount);
+        }
+
+        for (int i = 0; i < mmi.EntryCount; i++)
+        {
+          string entry = DvbTextConverter.Convert(mmi.Entries[i].Text);
+          this.LogDebug("    {0, -7} = {1}", i + 1, entry);
+          if (_caMenuCallBacks != null)
           {
-            _ciMenuCallbacks.OnCiMenuChoice(i, mmi.Entries[i].Text);
-          }
-          catch (Exception ex)
-          {
-            this.LogError(ex, "NetUP: menu choice callback exception");
-            return 1;
+            _caMenuCallBacks.OnCiMenuChoice(i, entry);
           }
         }
       }
@@ -583,7 +614,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     }
 
     /// <summary>
-    /// Read an MMI enquiry object and invoke callbacks as appropriate.
+    /// Read an MMI enquiry object and invoke call backs as appropriate.
     /// </summary>
     /// <returns>an HRESULT indicating whether the enquiry object was successfully handled</returns>
     private int HandleEnquiry()
@@ -591,7 +622,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       this.LogDebug("NetUP: read enquiry");
 
       MmiEnquiry mmi;
-      lock (this)
+      lock (_mmiLock)
       {
         for (int i = 0; i < MMI_ENQUIRY_SIZE; i++)
         {
@@ -600,34 +631,30 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiGetEnquiry, IntPtr.Zero, 0, _mmiBuffer, MMI_ENQUIRY_SIZE);
         int returnedByteCount;
-        int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
         if (hr != (int)HResult.Severity.Success || returnedByteCount != MMI_ENQUIRY_SIZE)
         {
-          this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return hr;
         }
-        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MMI_ENQUIRY_SIZE);
+        //Dump.DumpBinary(_mmiBuffer, MMI_ENQUIRY_SIZE);
         mmi = (MmiEnquiry)Marshal.PtrToStructure(_mmiBuffer, typeof(MmiEnquiry));
       }
 
-      if (_ciMenuCallbacks == null)
+      lock (_caMenuCallBackLock)
       {
-        this.LogDebug("NetUP: menu callbacks are not set");
-      }
-
-      this.LogDebug("  prompt = {0}", mmi.Prompt);
-      this.LogDebug("  length = {0}", mmi.ExpectedAnswerLength);
-      this.LogDebug("  blind  = {0}", mmi.IsBlindAnswer);
-      if (_ciMenuCallbacks != null)
-      {
-        try
+        if (_caMenuCallBacks == null)
         {
-          _ciMenuCallbacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, mmi.Prompt);
+          this.LogDebug("NetUP: menu call backs are not set");
         }
-        catch (Exception ex)
+
+        string prompt = DvbTextConverter.Convert(mmi.Prompt);
+        this.LogDebug("  prompt = {0}", prompt);
+        this.LogDebug("  length = {0}", mmi.ExpectedAnswerLength);
+        this.LogDebug("  blind  = {0}", mmi.IsBlindAnswer);
+        if (_caMenuCallBacks != null)
         {
-          this.LogError(ex, "NetUP: CAM request callback exception");
-          return 1;
+          _caMenuCallBacks.OnCiRequest(mmi.IsBlindAnswer, mmi.ExpectedAnswerLength, prompt);
         }
       }
       return 0; // success
@@ -638,8 +665,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -650,8 +677,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -659,7 +687,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("NetUP: initialising device");
+      this.LogDebug("NetUP: initialising");
 
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
@@ -669,7 +697,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
       if (_isNetUp)
       {
-        this.LogDebug("NetUP: device is already initialised");
+        this.LogWarn("NetUP: extension already initialised");
         return true;
       }
 
@@ -678,7 +706,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       if (_propertySet == null)
       {
         this.LogDebug("NetUP: pin is not a property set");
-        Release.ComObject("NetUP tuner filter output pin", ref _propertySet);
+        Release.ComObject("NetUP tuner filter output pin", ref pin);
         return false;
       }
 
@@ -694,13 +722,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         // We don't need to connect the infinite tee in this case.
         Release.ComObject("NetUP tuner filter connected pin", ref connected);
         KSPropertySupport support;
-        hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
-        if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+        hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
+        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
         {
-          this.LogDebug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
-        this.LogDebug("NetUP: supported device detected");
+        this.LogInfo("NetUP: extension supported");
         _isNetUp = true;
         _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
         return true;
@@ -713,7 +741,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         hr = tunerFilter.QueryFilterInfo(out filterInfo);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("NetUP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("NetUP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
         IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
@@ -731,7 +759,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           hr = graph.AddFilter(infTee, "Temp Infinite Tee");
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("NetUP: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to add inf tee to graph, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
 
@@ -739,28 +767,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
           infTeeInputPin = DsFindPin.ByDirection(infTee, PinDirection.Input, 0);
           if (infTeeInputPin == null)
           {
-            this.LogDebug("NetUP: failed to find the inf tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to find the inf tee input pin, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
           hr = graph.ConnectDirect(pin, infTeeInputPin, null);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("NetUP: failed to connect pins, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("NetUP: failed to connect pins, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
 
           // Check if the NetUP property set is supported.
           KSPropertySupport support;
-          hr = _propertySet.QuerySupported(BdaExtensionPropertySet, 0, out support);
-          if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+          hr = _propertySet.QuerySupported(_propertySetGuid, 0, out support);
+          if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
           {
-            this.LogDebug("NetUP: device does not support the NetUP property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogDebug("NetUP: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             return false;
           }
 
-          this.LogDebug("NetUP: supported device detected");
+          this.LogInfo("NetUP: extension supported");
           _isNetUp = true;
-          _generalBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
+          _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
           return true;
         }
         finally
@@ -782,13 +810,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is started but before
-    /// signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the tuner is started but
+    /// before signal lock is checked.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
     public override void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
@@ -811,21 +839,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       this.LogDebug("NetUP: open conditional access interface");
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isNetUp)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
-      if (_mmiBuffer != IntPtr.Zero)
+      if (_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: interface is already open");
-        return false;
+        this.LogWarn("NetUP: interface is already open");
+        return true;
       }
 
       _mmiBuffer = Marshal.AllocCoTaskMem(MMI_BUFFER_SIZE);
-
       _isCamPresent = IsInterfaceReady();
-
+      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("NetUP: result = success");
@@ -839,19 +866,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     public bool CloseInterface()
     {
       this.LogDebug("NetUP: close conditional access interface");
-      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
-      {
-        _stopMmiHandlerThread = true;
-        // In the worst case scenario it should take approximately
-        // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
-        if (_mmiHandlerThread.IsAlive)
-        {
-          this.LogDebug("NetUP: warning, failed to join MMI handler thread => aborting thread");
-          _mmiHandlerThread.Abort();
-        }
-        _mmiHandlerThread = null;
-      }
+
+      StopMmiHandlerThread();
 
       _isCamPresent = false;
       if (_mmiBuffer != IntPtr.Zero)
@@ -859,6 +875,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         Marshal.FreeCoTaskMem(_mmiBuffer);
         _mmiBuffer = IntPtr.Zero;
       }
+      _isCaInterfaceOpen = false;
 
       this.LogDebug("NetUP: result = success");
       return true;
@@ -867,17 +884,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
+    /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetDevice)
+    public bool ResetInterface(out bool resetTuner)
     {
       this.LogDebug("NetUP: reset conditional access interface");
-      resetDevice = false;
+      resetTuner = false;
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isNetUp)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
 
@@ -885,14 +902,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
 
       NetUpCommand command = new NetUpCommand(NetUpIoControl.CiReset, IntPtr.Zero, 0, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
       }
       else
       {
-        this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
 
@@ -907,9 +924,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       this.LogDebug("NetUP: is conditional access interface ready");
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
 
@@ -917,19 +934,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       int hr = GetCiStatus(out info);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("NetUP: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       this.LogDebug("NetUP: state = {0}", info.CiState.ToString());
 
       // We can only tell whether a CAM is present or not.
-      bool camPresent = false;
+      bool isCamPresent = false;
       if (info.CiState != NetUpCiState.Empty)
       {
-        camPresent = true;
+        isCamPresent = true;
       }
-      this.LogDebug("NetUP: result = {0}", camPresent);
-      return camPresent;
+      this.LogDebug("NetUP: result = {0}", isCamPresent);
+      return isCamPresent;
     }
 
     /// <summary>
@@ -940,31 +957,36 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("NetUP: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamPresent)
+      {
+        this.LogError("NetUP: the CAM is not present");
         return false;
       }
       if (listAction == CaPmtListManagementAction.Add || listAction == CaPmtListManagementAction.Update)
       {
-        this.LogDebug("NetUP: list action {0} is not supported", listAction);
-        return false;
+        this.LogWarn("NetUP: list action {0} is not supported", listAction);
+        return true;
       }
       if (command == CaPmtCommand.NotSelected)
       {
-        this.LogDebug("NetUP: command type {0} is not supported", command);
-        return false;
+        this.LogError("NetUP: command type {0} is not supported", command);
+        return true;
       }
       if (pmt == null)
       {
-        this.LogDebug("NetUP: PMT not supplied");
+        this.LogError("NetUP: PMT not supplied");
         return true;
       }
 
@@ -976,10 +998,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       {
         Marshal.WriteByte(buffer, i, rawPmt[i]);
       }
-      //DVB_MMI.DumpBinary(buffer, 0, rawPmt.Count);
+      //Dump.DumpBinary(buffer, rawPmt.Count);
       NetUpCommand ncommand = new NetUpCommand(code, buffer, rawPmt.Count, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = ncommand.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       Marshal.FreeCoTaskMem(buffer);
       if (hr == (int)HResult.Severity.Success)
       {
@@ -987,58 +1009,56 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     #endregion
 
-    #region ICiMenuActions members
+    #region IConditionalAccessMenuActions members
 
     /// <summary>
-    /// Set the CAM menu callback handler functions.
+    /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
     {
-      if (ciMenuHandler != null)
+      lock (_caMenuCallBackLock)
       {
-        _ciMenuCallbacks = ciMenuHandler;
-        StartMmiHandlerThread();
-        return true;
+        _caMenuCallBacks = callBacks;
       }
-      return false;
+      StartMmiHandlerThread();
     }
 
     /// <summary>
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterCIMenu()
+    public bool EnterMenu()
     {
       this.LogDebug("NetUP: enter menu");
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
+      StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogDebug("NetUP: the CAM is not present");
+        this.LogError("NetUP: the CAM is not present");
         return false;
       }
 
       int hr;
-      lock (this)
+      lock (_mmiLock)
       {
         ReadApplicationInformation();
         ReadConditionalAccessInformation();
 
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiEnterMenu, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1046,7 +1066,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1054,27 +1074,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseCIMenu()
+    public bool CloseMenu()
     {
       this.LogDebug("NetUP: close menu");
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
+      StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogDebug("NetUP: the CAM is not present");
+        this.LogError("NetUP: the CAM is not present");
         return false;
       }
 
       int hr;
-      lock (this)
+      lock (_mmiLock)
       {
         NetUpCommand command = new NetUpCommand(NetUpIoControl.MmiClose, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1082,7 +1103,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1091,28 +1112,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenu(byte choice)
+    public bool SelectMenuEntry(byte choice)
     {
       this.LogDebug("NetUP: select menu entry, choice = {0}", choice);
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
+      StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogDebug("NetUP: the CAM is not present");
+        this.LogError("NetUP: the CAM is not present");
         return false;
       }
 
       int hr;
-      lock (this)
+      lock (_mmiLock)
       {
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiAnswerMenu | choice << 8);
         NetUpCommand command = new NetUpCommand(code, IntPtr.Zero, 0, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1120,39 +1142,40 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     /// <summary>
-    /// Send a response from the user to the CAM.
+    /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the request.</param>
-    /// <param name="answer">The user's response.</param>
-    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, string answer)
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {
         answer = string.Empty;
       }
-      this.LogDebug("NetUP: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      this.LogDebug("NetUP: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
+      StartMmiHandlerThread();
       if (!_isCamPresent)
       {
-        this.LogDebug("NetUP: the CAM is not present");
+        this.LogError("NetUP: the CAM is not present");
         return false;
       }
 
       // We have a limit for the answer string length.
       if (answer.Length > MAX_STRING_LENGTH)
       {
-        this.LogDebug("NetUP: answer too long, length = {0}", answer.Length);
+        this.LogError("NetUP: answer too long, length = {0}", answer.Length);
         return false;
       }
 
@@ -1166,14 +1189,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
       }
 
       int hr;
-      lock (this)
+      lock (_mmiLock)
       {
         Marshal.StructureToPtr(mmi, _mmiBuffer, true);
-        //DVB_MMI.DumpBinary(_mmiBuffer, 0, MMI_ANSWER_SIZE);
+        //Dump.DumpBinary(_mmiBuffer, MMI_ANSWER_SIZE);
         NetUpIoControl code = (NetUpIoControl)((uint)NetUpIoControl.MmiPutAnswer | ((byte)responseType << 8));
         NetUpCommand command = new NetUpCommand(code, _mmiBuffer, MMI_ANSWER_SIZE, IntPtr.Zero, 0);
         int returnedByteCount;
-        hr = command.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+        hr = command.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       }
       if (hr == (int)HResult.Severity.Success)
       {
@@ -1181,7 +1204,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1215,35 +1238,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.NetUp
     {
       this.LogDebug("NetUP: send DiSEqC command");
 
-      if (!_isNetUp || _propertySet == null)
+      if (!_isNetUp)
       {
-        this.LogDebug("NetUP: device not initialised or interface not supported");
+        this.LogWarn("NetUP: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("NetUP: command not supplied");
+        this.LogError("NetUP: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("NetUP: command too long, length = {0}", command.Length);
+        this.LogError("NetUP: command too long, length = {0}", command.Length);
         return false;
       }
 
       Marshal.Copy(command, 0, _generalBuffer, command.Length);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, command.Length);
+      //Dump.DumpBinary(_generalBuffer, command.Length);
 
       NetUpCommand ncommand = new NetUpCommand(NetUpIoControl.Diseqc, _generalBuffer, command.Length, IntPtr.Zero, 0);
       int returnedByteCount;
-      int hr = ncommand.Execute(BdaExtensionPropertySet, _propertySet, out returnedByteCount);
+      int hr = ncommand.Execute(_propertySetGuid, _propertySet, out returnedByteCount);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("NetUP: result = success");
         return true;
       }
 
-      this.LogDebug("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("NetUP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

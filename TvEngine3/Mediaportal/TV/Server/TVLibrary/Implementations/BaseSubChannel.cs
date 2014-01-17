@@ -386,7 +386,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     #region ITeletextCallBack members
 
     /// <summary>
-    /// callback from the TsWriter filter when it received a new teletext packets
+    /// call back from the TsWriter filter when it received a new teletext packets
     /// </summary>
     /// <param name="data">teletext data</param>
     /// <param name="packetCount">number of packets in data</param>
@@ -408,7 +408,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "");
+        this.LogError(ex, "BaseSubChannel: failed to process teletext data");
       }
       return 0;
     }

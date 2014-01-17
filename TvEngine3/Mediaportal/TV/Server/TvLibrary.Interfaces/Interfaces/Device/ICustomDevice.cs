@@ -30,7 +30,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   public interface ICustomDevice : IDisposable
   {
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     /// <remarks>
     /// Custom device loading/detection is done in order of descending priority, and custom devices that
@@ -41,14 +41,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     byte Priority { get; }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     string Name { get; }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -56,62 +57,62 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context);
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked when the device has been successfully loaded.
+    /// This call back is invoked when the tuner has been successfully loaded.
     /// </summary>
     /// <remarks>
     /// Example usage: start or reconfigure the device.
     /// </remarks>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
     void OnLoaded(ITVCard tuner, out TunerAction action);
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
     /// <remarks>
     /// Example usage: tweak tuning parameters or force the device's BDA graph into a particular state before
     /// the tune request is submitted.
-    /// Process: [this callback] -> assemble and submit tune request -> OnAfterTune() -> start device -> OnRunning() -> lock check
+    /// Process: [this call back] -> assemble and submit tune request -> OnAfterTune() -> start device -> OnRunning() -> lock check
     /// </remarks>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action);
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before the device is started.
+    /// This call back is invoked after a tune request is submitted but before the device is started.
     /// </summary>
     /// <remarks>
     /// Example usage: call a function that must be called at this specific stage in the tuning process.
-    /// Process: OnBeforeTune() -> assemble and submit tune request -> [this callback] -> start device -> OnRunning() -> lock check
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> [this call back] -> start device -> OnRunning() -> lock check
     /// </remarks>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     void OnAfterTune(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is started but before
-    /// signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the tuner is started but
+    /// before signal lock is checked.
     /// </summary>
     /// <remarks>
     /// Example usage: call a function that must be called at this specific stage in the tuning process.
-    /// Process: OnBeforeTune() -> assemble and submit tune request -> OnAfterTune() -> start device -> [this callback] -> lock check
+    /// Process: OnBeforeTune() -> assemble and submit tune request -> OnAfterTune() -> start device -> [this call back] -> lock check
     /// </remarks>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
     void OnStarted(ITVCard tuner, IChannel currentChannel);
 
     /// <summary>
-    /// This callback is invoked before the device is stopped.
+    /// This call back is invoked before the tuner is stopped.
     /// </summary>
     /// <remarks>
     /// Example usage: don't allow the device to be stopped to ensure optimal operation or compatibility.
     /// </remarks>
-    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
     void OnStop(ITVCard tuner, ref TunerAction action);
 
@@ -124,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
   public abstract class BaseCustomDevice : ICustomDevice
   {
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public virtual byte Priority
     {
@@ -147,8 +148,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public virtual string Name
     {
@@ -159,8 +160,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// the ICustomDevice instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -172,12 +174,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
       return false;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked when the device has been successfully loaded.
+    /// This call back is invoked when the tuner has been successfully loaded.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
     public virtual void OnLoaded(ITVCard tuner, out TunerAction action)
     {
@@ -185,9 +187,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     }
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
@@ -197,28 +199,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before the device is started.
+    /// This call back is invoked after a tune request is submitted but before the device is started.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     public virtual void OnAfterTune(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is started but before
-    /// signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the tuner is started but
+    /// before signal lock is checked.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
     public virtual void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked before the device is stopped.
+    /// This call back is invoked before the tuner is stopped.
     /// </summary>
-    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
     public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {

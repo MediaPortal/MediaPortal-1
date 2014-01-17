@@ -211,12 +211,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     }
 
     /// <summary>
-    /// Check if the subtitle bit (C6) is set in the teletext page header
+    /// Check if the sub-title bit (C6) is set in the teletext page header
     /// </summary>
     /// <param name="offset">Offset in the data stream</param>
     /// <param name="rowData">Teletext data</param>
-    /// <returns>true, if subtitle bit is set</returns>
-    public static bool IsSubtitleBitSet(int offset, ref byte[] rowData)
+    /// <returns>true, if sub-title bit is set</returns>
+    public static bool IsSubTitleBitSet(int offset, ref byte[] rowData)
     {
       int controlByte = Decode[rowData[offset + SUBTITLE_BYTE_OFFSET]];
       controlByte &= SUBTITLE_BIT;

@@ -21,6 +21,7 @@
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
 {
@@ -36,7 +37,7 @@ namespace Mediaportal.TV.Server.TVService.Interfaces.CardHandler
     IRecorder Recorder { get; }
     ITimeShifter TimeShifter { get; }
     ICardTuner Tuner { get; }
-    ICiMenuActions CiMenuActions { get; }
+    IConditionalAccessMenuActions CiMenuActions { get; }
     bool IsConditionalAccessSupported { get; }
     bool CiMenuSupported { get; }
 

@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using DirectShowLib;
 using Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -34,7 +35,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
   /// <summary>
   /// A class for handling conditional access with the AVerMedia SatGate (A706C).
   /// </summary>
-  public class AVerMedia : MicrosoftBda.MicrosoftBda, IConditionalAccessProvider, ICiMenuActions
+  public class AVerMedia : MicrosoftBda.MicrosoftBda, IConditionalAccessProvider, IConditionalAccessMenuActions
   {
     #region enums
 
@@ -56,7 +57,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     #endregion
 
-    #region callback definitions
+    #region call back definitions
 
     /// <summary>
     /// Called by the CI API COM object when the common interface slot state changes.
@@ -86,21 +87,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     private interface CiInterface
     {
       /// <summary>
-      /// Set the CI slot state change callback.
+      /// Set the CI slot state change call back.
       /// </summary>
       /// <remarks>
-      /// The callback delegate pointer must be a pointer to a pointer to a pointer to the delegate.
+      /// The call back delegate pointer must be a pointer to a pointer to a pointer to the delegate.
       /// </remarks>
       /// <param name="callBackPtr">An indirect reference to an OnAVerMediaCiStateChange delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback was registered successfully</returns>
+      /// <returns>an HRESULT indicating whether the call back was registered successfully</returns>
       [PreserveSig]
       int SetStateChangeCallBack(IntPtr callBackPtr);
 
       /// <summary>
-      /// Open the interface for a specific device.
+      /// Open the interface for a specific tuner.
       /// </summary>
       /// <remarks>
-      /// Only one device can be active at any given time.
+      /// Only one tuner can be active at any given time.
       /// </remarks>
       /// <param name="devicePath">A section of the device path.</param>
       /// <param name="filter1">Not required.</param>
@@ -140,12 +141,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       /// Set the MMI message handler delegate.
       /// </summary>
       /// <remarks>
-      /// The callback delegate pointer must be a pointer to a pointer to a pointer to the delegate.
+      /// The call back delegate pointer must be a pointer to a pointer to a pointer to the delegate.
       /// </remarks>
       /// <param name="callBackPtr">An indirect reference to an OnAVerMediaMmiMessage delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback was registered successfully</returns>
+      /// <returns>an HRESULT indicating whether the call back was registered successfully</returns>
       [PreserveSig]
-      int SetMessageCallback(IntPtr callBackPtr);
+      int SetMessageCallBack(IntPtr callBackPtr);
 
       /// <summary>
       /// Open an MMI session with the CAM and request access to the CAM menu.
@@ -164,14 +165,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       int CloseMenu(byte deviceIndex);
 
       /// <summary>
-      /// Send a response from the user to the CAM.
+      /// Send an answer to an enquiry from the user to the CAM.
       /// </summary>
       /// <param name="deviceIndex">The COM object does not support multiple devices. Must be set to zero.</param>
-      /// <param name="answer">The user's response.</param>
+      /// <param name="answer">The user's answer to the enquiry.</param>
       /// <param name="answerLength">The length of the answer.</param>
       /// <returns>an HRESULT indicating whether the answer was successfully passed to the CAM</returns>
       [PreserveSig]
-      int SendMenuAnswer(byte deviceIndex, [MarshalAs(UnmanagedType.LPStr)] string answer, byte answerLength);
+      int SendEnquiryAnswer(byte deviceIndex, [MarshalAs(UnmanagedType.LPStr)] string answer, byte answerLength);
 
       /// <summary>
       /// Select an entry in the CAM menu.
@@ -224,12 +225,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       public IntPtr PmtPtr;   // Note: if you send normal PMT, do not include the CRC.
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     private struct MmiMenuString
     {
       #pragma warning disable 0649
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public string Text;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+      public byte[] Text;
       #pragma warning restore 0649
     }
 
@@ -274,6 +275,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     #region variables
 
     private bool _isAVerMedia = false;
+    private bool _isCaInterfaceOpen = false;
 
     private object _ciApi = null;
     private CiInterface _ciInterface = null;
@@ -284,24 +286,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     private string _tunerDevicePath = string.Empty;
 
-    private ICiMenuCallbacks _ciMenuCallbacks = null;
+    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private object _caMenuCallBackLock = new object();
 
-    // The interface requires the callback delegate pointers to be passed
+    // The interface requires the call back delegate pointers to be passed
     // with two levels of indirection. This is possibly because they have
-    // classes/interfaces to encapsulate the callbacks. Annoying but necessary.
+    // classes/interfaces to encapsulate the call backs. Annoying but necessary.
     private OnAVerMediaCiStateChange _ciStateChangeDelegate = null;
-    private IntPtr _ciStateChangeCallbackPtr = IntPtr.Zero;
+    private IntPtr _ciStateChangeCallBackPtr = IntPtr.Zero;
     private IntPtr _ciStateChangeIndirectionPtr = IntPtr.Zero;
     private IntPtr _ciStateChangeInterfacePtr = IntPtr.Zero;
 
     private OnAVerMediaMmiMessage _mmiMessageDelegate = null;
-    private IntPtr _mmiMessageCallbackPtr = IntPtr.Zero;
+    private IntPtr _mmiMessageCallBackPtr = IntPtr.Zero;
     private IntPtr _mmiMessageIndirectionPtr = IntPtr.Zero;
     private IntPtr _mmiMessageInterfacePtr = IntPtr.Zero;
 
     #endregion
 
-    #region callback handlers
+    #region call back handlers
 
     /// <summary>
     /// Called by the CI API COM object when the common interface slot state changes.
@@ -313,19 +316,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     {
       if (stateData == IntPtr.Zero)
       {
-        this.LogDebug("AVerMedia: CI state change callback, no state data provided");
+        this.LogInfo("AVerMedia: CI state change call back, no state data provided");
       }
       else
       {
         AVerMediaCiState newState = (AVerMediaCiState)Marshal.ReadByte(stateData, 0);
-        this.LogDebug("AVerMedia: CI state change callback, old state = {0}, new state = {1}", _ciState, newState);
+        this.LogInfo("AVerMedia: CI state change call back, old state = {0}, new state = {1}", _ciState, newState);
         _ciState = newState;
         _isCamReady = (_ciState == AVerMediaCiState.CamReady);
 
         // The other data is state dependent.
         if (_ciState == AVerMediaCiState.CamInitialising)
         {
-          this.LogDebug("  menu title = {0}", Marshal.PtrToStringAnsi(IntPtr.Add(stateData, 2)));
+          this.LogDebug("  menu title = {0}", DvbTextConverter.Convert(IntPtr.Add(stateData, 2)));
         }
         else if (_ciState == AVerMediaCiState.CamReady)
         {
@@ -333,7 +336,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("  # CAS IDs = {0}", casCount);
           for (int i = 0; i < casCount; i++)
           {
-            this.LogDebug("  {0,-2}        = 0x{1:x4}", i + 1, Marshal.ReadInt16(stateData, 4 + (i * 2)));
+            this.LogDebug("    {0, -7} = 0x{1:x4}", i + 1, Marshal.ReadInt16(stateData, 4 + (i * 2)));
           }
         }
       }
@@ -350,7 +353,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     {
       if (messageData == IntPtr.Zero)
       {
-        this.LogDebug("AVerMedia: MMI message callback, no message data provided");
+        this.LogInfo("AVerMedia: MMI message call back, no message data provided");
         return 0;
       }
       if ((short)AVerMediaMmiMessageType.Unknown == Marshal.ReadInt16(messageData, 0))
@@ -358,69 +361,63 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return 0;
       }
 
-      this.LogDebug("AVerMedia: MMI message callback");
+      this.LogInfo("AVerMedia: MMI message call back");
 
-      if (_ciMenuCallbacks == null)
+      lock (_caMenuCallBackLock)
       {
-        this.LogDebug("AVerMedia: menu callbacks are not set");
-      }
-
-      MmiData data = (MmiData)Marshal.PtrToStructure(messageData, typeof(MmiData));
-      this.LogDebug("  message type = {0}", data.MessageType);
-      this.LogDebug("  unknown      = {0}", data.Unknown);
-      this.LogDebug("  is blind     = {0}", data.IsBlindAnswer);
-      this.LogDebug("  string count = {0}", data.StringCount);
-      this.LogDebug("  count        = {0}", data.Count);
-
-      if (data.StringCount >= 3)
-      {
-        this.LogDebug("  title        = {0}", data.Strings[0].Text);
-        this.LogDebug("  sub-title    = {0}", data.Strings[1].Text);
-        this.LogDebug("  footer       = {0}", data.Strings[2].Text);
-        this.LogDebug("  # entries    = {0}", data.Count);
-        try
+        if (_caMenuCallBacks == null)
         {
-          if (_ciMenuCallbacks != null)
+          this.LogDebug("AVerMedia: menu call backs are not set");
+        }
+
+        MmiData data = (MmiData)Marshal.PtrToStructure(messageData, typeof(MmiData));
+        this.LogDebug("  message type = {0}", data.MessageType);
+        this.LogDebug("  unknown      = {0}", data.Unknown);
+        this.LogDebug("  is blind     = {0}", data.IsBlindAnswer);
+        this.LogDebug("  string count = {0}", data.StringCount);
+        this.LogDebug("  count        = {0}", data.Count);
+
+        if (data.StringCount >= 3)
+        {
+          string title = DvbTextConverter.Convert(data.Strings[0].Text);
+          string subTitle = DvbTextConverter.Convert(data.Strings[1].Text);
+          string footer = DvbTextConverter.Convert(data.Strings[2].Text);
+          this.LogDebug("  title        = {0}", title);
+          this.LogDebug("  sub-title    = {0}", subTitle);
+          this.LogDebug("  footer       = {0}", footer);
+          this.LogDebug("  # entries    = {0}", data.Count);
+          if (_caMenuCallBacks != null)
           {
-            _ciMenuCallbacks.OnCiMenu(data.Strings[0].Text, data.Strings[1].Text, data.Strings[2].Text, data.Count);
+            _caMenuCallBacks.OnCiMenu(title, subTitle, footer, data.Count);
           }
           if (data.Count > 0)
           {
             for (int i = 0; i < data.Count; i++)
             {
-              this.LogDebug("  entry {0,-2}     = {1}", i + 1, data.Strings[i + 3].Text);
-              if (_ciMenuCallbacks != null)
+              string entry = DvbTextConverter.Convert(data.Strings[i + 3].Text);
+              this.LogDebug("    {0, -10} = {1}", i + 1, entry);
+              if (_caMenuCallBacks != null)
               {
-                _ciMenuCallbacks.OnCiMenuChoice(i, data.Strings[i + 3].Text);
+                _caMenuCallBacks.OnCiMenuChoice(i, entry);
               }
             }
           }
         }
-        catch (Exception ex)
+        else if (data.MessageType == AVerMediaMmiMessageType.Enquiry)
         {
-          this.LogDebug("AVerMedia: menu callback exception\r\n{0}", ex.ToString());
-        }
-      }
-      else if (data.MessageType == AVerMediaMmiMessageType.Enquiry)
-      {
-        this.LogDebug("  text         = {0}", data.Strings[0].Text);
-        this.LogDebug("  length       = {0}", data.Count);
-        this.LogDebug("  blind        = {0}", data.IsBlindAnswer != 0);
-        if (_ciMenuCallbacks != null)
-        {
-          try
+          string prompt = DvbTextConverter.Convert(data.Strings[0].Text);
+          this.LogDebug("  prompt       = {0}", prompt);
+          this.LogDebug("  length       = {0}", data.Count);
+          this.LogDebug("  blind        = {0}", data.IsBlindAnswer != 0);
+          if (_caMenuCallBacks != null)
           {
-            _ciMenuCallbacks.OnCiRequest(data.IsBlindAnswer != 0, data.Count, data.Strings[0].Text);
-          }
-          catch (Exception ex)
-          {
-            this.LogDebug("AVerMedia: request callback exception\r\n{0}", ex.ToString());
+            _caMenuCallBacks.OnCiRequest(data.IsBlindAnswer != 0, data.Count, prompt);
           }
         }
-      }
-      else
-      {
-        this.LogDebug("AVerMedia: message type not supported");
+        else
+        {
+          this.LogWarn("AVerMedia: message type {0} not supported", data.MessageType);
+        }
       }
 
       return 0;
@@ -431,7 +428,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -442,8 +439,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -454,8 +451,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -463,7 +461,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("AVerMedia: initialising device");
+      this.LogDebug("AVerMedia: initialising");
 
       if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
@@ -472,7 +470,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (_isAVerMedia)
       {
-        this.LogDebug("AVerMedia: device is already initialised");
+        this.LogDebug("AVerMedia: extension already initialised");
         return true;
       }
 
@@ -482,14 +480,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         {
           base.Initialise(tunerExternalIdentifier, tunerType, context);
 
-          this.LogDebug("AVerMedia: supported device detected");
+          this.LogInfo("AVerMedia: extension supported");
           _isAVerMedia = true;
           _tunerDevicePath = tunerExternalIdentifier;
           return true;
         }
       }
 
-      this.LogDebug("AVerMedia: device not supported");
+      this.LogDebug("AVerMedia: tuner not supported");
       return false;
     }
 
@@ -508,13 +506,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
       if (!_isAVerMedia)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
-      if (_ciApi != null)
+      if (_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: interface is already open");
-        return false;
+        this.LogWarn("AVerMedia: interface is already open");
+        return true;
       }
 
       Type t = Type.GetTypeFromCLSID(CI_API_CLSID);
@@ -529,26 +527,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       catch
       {
-        this.LogDebug("AVerMedia: failed to create CI API instance");
+        this.LogError("AVerMedia: failed to create CI API instance");
         return false;
       }
 
       _ciInterface = _ciApi as CiInterface;
       if (_ciInterface == null)
       {
-        this.LogDebug("AVerMedia: failed to obtain CI control interface");
+        this.LogError("AVerMedia: failed to obtain CI control interface");
         return false;
       }
       _mmiInterface = _ciApi as MmiInterface;
       if (_mmiInterface == null)
       {
-        this.LogDebug("AVerMedia: failed to obtain MMI interface");
+        this.LogError("AVerMedia: failed to obtain MMI interface");
         return false;
       }
       _pmtInterface = _ciApi as PmtInterface;
       if (_pmtInterface == null)
       {
-        this.LogDebug("AVerMedia: failed to obtain PMT interface");
+        this.LogError("AVerMedia: failed to obtain PMT interface");
       }
 
       _ciState = AVerMediaCiState.Empty;
@@ -556,16 +554,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
       // Unfortunately this pointer manipulation really is necessary.
       _ciStateChangeDelegate = OnCiStateChange;
-      _ciStateChangeCallbackPtr = Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate);
+      _ciStateChangeCallBackPtr = Marshal.GetFunctionPointerForDelegate(_ciStateChangeDelegate);
       _ciStateChangeIndirectionPtr = Marshal.AllocCoTaskMem(IntPtr.Size);
-      Marshal.WriteIntPtr(_ciStateChangeIndirectionPtr, 0, _ciStateChangeCallbackPtr);
+      Marshal.WriteIntPtr(_ciStateChangeIndirectionPtr, 0, _ciStateChangeCallBackPtr);
       _ciStateChangeInterfacePtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_ciStateChangeInterfacePtr, 0, _ciStateChangeIndirectionPtr);
 
       _mmiMessageDelegate = OnMmiMessage;
-      _mmiMessageCallbackPtr = Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate);
+      _mmiMessageCallBackPtr = Marshal.GetFunctionPointerForDelegate(_mmiMessageDelegate);
       _mmiMessageIndirectionPtr = Marshal.AllocCoTaskMem(IntPtr.Size);
-      Marshal.WriteIntPtr(_mmiMessageIndirectionPtr, 0, _mmiMessageCallbackPtr);
+      Marshal.WriteIntPtr(_mmiMessageIndirectionPtr, 0, _mmiMessageCallBackPtr);
       _mmiMessageInterfacePtr = Marshal.AllocCoTaskMem(IntPtr.Size);
       Marshal.WriteIntPtr(_mmiMessageInterfacePtr, 0, _mmiMessageIndirectionPtr);
 
@@ -579,15 +577,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
 
       int hr = _ciInterface.SetStateChangeCallBack(_ciStateChangeInterfacePtr);
-      hr |= _mmiInterface.SetMessageCallback(_mmiMessageInterfacePtr);
+      hr |= _mmiInterface.SetMessageCallBack(_mmiMessageInterfacePtr);
       hr |= _ciInterface.OpenInterface(devicePathSection, null, null);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
+        _isCaInterfaceOpen = true;
         return true;
       }
 
-      this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -607,7 +606,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
       if (_mmiInterface != null)
       {
-        _mmiInterface.SetMessageCallback(IntPtr.Zero);
+        _mmiInterface.SetMessageCallBack(IntPtr.Zero);
         _mmiInterface = null;
       }
       _pmtInterface = null;
@@ -615,7 +614,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       _mmiInterface = null;
 
       _ciStateChangeDelegate = null;
-      _ciStateChangeCallbackPtr = IntPtr.Zero;
+      _ciStateChangeCallBackPtr = IntPtr.Zero;
       if (_ciStateChangeIndirectionPtr != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_ciStateChangeIndirectionPtr);
@@ -628,7 +627,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
 
       _mmiMessageDelegate = null;
-      _mmiMessageCallbackPtr = IntPtr.Zero;
+      _mmiMessageCallBackPtr = IntPtr.Zero;
       if (_mmiMessageIndirectionPtr != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_mmiMessageIndirectionPtr);
@@ -641,6 +640,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       }
 
       _ciState = AVerMediaCiState.Empty;
+      _isCamReady = false;
+      _isCaInterfaceOpen = false;
 
       this.LogDebug("AVerMedia: result = success");
       return true;
@@ -649,12 +650,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
+    /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetDevice)
+    public bool ResetInterface(out bool resetTuner)
     {
-      resetDevice = false;
+      resetTuner = false;
       return CloseInterface() && OpenInterface();
     }
 
@@ -665,13 +666,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     public bool IsInterfaceReady()
     {
       this.LogDebug("AVerMedia: is conditional access interface ready");
-      if (!_isAVerMedia || _ciApi == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
 
-      // The CI state is updated via callback.
+      // The CI state is updated via call back.
       this.LogDebug("AVerMedia: result = {0}", _isCamReady);
       return _isCamReady;
     }
@@ -684,21 +685,26 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("AVerMedia: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
-      if (!_isAVerMedia || _ciApi == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamReady)
+      {
+        this.LogError("AVerMedia: the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogDebug("AVerMedia: PMT not supplied");
+        this.LogError("AVerMedia: PMT not supplied");
         return true;
       }
 
@@ -722,8 +728,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
       IntPtr structPtr = Marshal.AllocCoTaskMem(AVERMEDIA_PMT_SIZE);
       Marshal.StructureToPtr(averPmt, structPtr, true);
 
-      //DVB_MMI.DumpBinary(structPtr, 0, AVERMEDIA_PMT_SIZE);
-      //DVB_MMI.DumpBinary(averPmt.PmtPtr, 0, caPmt.Length);
+      //Dump.DumpBinary(structPtr, AVERMEDIA_PMT_SIZE);
+      //Dump.DumpBinary(averPmt.PmtPtr, caPmt.Length);
 
       try
       {
@@ -734,7 +740,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
           this.LogDebug("AVerMedia: result = success");
           return true;
         }
-        this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       finally
@@ -746,39 +752,36 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
 
     #endregion
 
-    #region ICiMenuActions members
+    #region IConditionalAccessMenuActions members
 
     /// <summary>
-    /// Set the CAM callback handler functions.
+    /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
     {
-      if (ciMenuHandler != null)
+      lock (_caMenuCallBackLock)
       {
-        _ciMenuCallbacks = ciMenuHandler;
-        return true;
+        _caMenuCallBacks = callBacks;
       }
-      return false;
     }
 
     /// <summary>
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterCIMenu()
+    public bool EnterMenu()
     {
       this.LogDebug("AVerMedia: enter menu");
 
-      if (!_isAVerMedia || _mmiInterface == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: the CAM is not ready");
         return false;
       }
 
@@ -789,7 +792,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -797,18 +800,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseCIMenu()
+    public bool CloseMenu()
     {
       this.LogDebug("AVerMedia: close menu");
 
-      if (!_isAVerMedia || _mmiInterface == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: the CAM is not ready");
         return false;
       }
 
@@ -819,7 +822,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -828,18 +831,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenu(byte choice)
+    public bool SelectMenuEntry(byte choice)
     {
       this.LogDebug("AVerMedia: select menu entry, choice = {0}", choice);
 
-      if (!_isAVerMedia || _mmiInterface == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: the CAM is not ready");
         return false;
       }
 
@@ -850,53 +853,53 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.AVerMedia
         return true;
       }
 
-      this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     /// <summary>
-    /// Send a response from the user to the CAM.
+    /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the request.</param>
-    /// <param name="answer">The user's response.</param>
-    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, string answer)
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {
         answer = string.Empty;
       }
-      this.LogDebug("AVerMedia: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      this.LogDebug("AVerMedia: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
 
-      if (!_isAVerMedia || _mmiInterface == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("AVerMedia: device not initialised or interface not supported");
+        this.LogWarn("AVerMedia: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("AVerMedia: the CAM is not ready");
+        this.LogError("AVerMedia: the CAM is not ready");
         return false;
       }
 
       if (cancel)
       {
-        return SelectMenu(0); // 0 means "go back to the previous menu level"
+        return SelectMenuEntry(0); // 0 means "go back to the previous menu level"
       }
       if (answer.Length > 255)
       {
-        this.LogDebug("AVerMedia: answer too long, length = {0}", answer.Length);
+        this.LogError("AVerMedia: answer too long, length = {0}", answer.Length);
         return false;
       }
 
-      int hr = _mmiInterface.SendMenuAnswer(0, answer, (byte)answer.Length);
+      int hr = _mmiInterface.SendEnquiryAnswer(0, answer, (byte)answer.Length);
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("AVerMedia: result = success");
         return true;
       }
 
-      this.LogDebug("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("AVerMedia: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

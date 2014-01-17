@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     #region variables
 
     private readonly TeletextPage[] _pageCache = new TeletextPage[MAX_PAGE];
-    private string _channelName = "";
+    private string _channelName = string.Empty;
     private DateTime _checkTimer = DateTime.MinValue;
 
     #endregion
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
           _pageCache[pageNr] = null;
         }
       }
-      _channelName = "";
+      _channelName = string.Empty;
     }
 
     /// <summary>

@@ -643,6 +643,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc
   public interface IDiseqcController
   {
     /// <summary>
+    /// Reload the controller's configuration.
+    /// </summary>
+    /// <param name="tunerId">The identifier for the associated tuner.</param>
+    void ReloadConfiguration(int tunerId);
+
+    /// <summary>
     /// Reset a device's microcontroller.
     /// </summary>
     void Reset();

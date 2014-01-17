@@ -281,7 +281,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         {
           if (!FindPinByCategoryOrMediaType(_filterMultiplexer, Guid.Empty, MEDIA_TYPES_CAPTURE, out capturePin))
           {
-            throw new TvExceptionTunerLoadFailed("Failed to locate capture pin on multiplexer filter.");
+            throw new TvException("Failed to locate capture pin on multiplexer filter.");
           }
         }
         else if (_filterEncoderVideo != null || _filterEncoderAudio != null)
@@ -296,11 +296,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             if (_filterEncoderVideo != null && !FindPinByCategoryOrMediaType(_filterEncoderVideo, Guid.Empty, MEDIA_TYPES_VIDEO, out videoPin))
             {
-              throw new TvExceptionTunerLoadFailed("Failed to locate capture or video pin on video encoder filter.");
+              throw new TvException("Failed to locate capture or video pin on video encoder filter.");
             }
             if (_filterEncoderAudio != null && !FindPinByCategoryOrMediaType(_filterEncoderAudio, Guid.Empty, MEDIA_TYPES_AUDIO, out audioPin))
             {
-              throw new TvExceptionTunerLoadFailed("Failed to locate capture or audio pin on audio encoder filter.");
+              throw new TvException("Failed to locate capture or audio pin on audio encoder filter.");
             }
           }
         }
@@ -331,7 +331,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
         }
         if (!AddAndConnectTsMultiplexer(graph, pinsToConnect))
         {
-          throw new TvExceptionTunerLoadFailed("Failed to add and connect TS multiplexer.");
+          throw new TvException("Failed to add and connect TS multiplexer.");
         }
       }
       finally
@@ -403,7 +403,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           {
             // We don't support connecting software audio encoders into
             // hardware multiplexers.
-            throw new TvExceptionTunerLoadFailed("Failed to connect separate audio path into hardware multiplexer filter.");
+            throw new TvException("Failed to connect separate audio path into hardware multiplexer filter.");
           }
         }
       }
@@ -503,14 +503,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       {
         if (!FindPinByCategoryOrMediaType(capture.VideoFilter, Guid.Empty, MEDIA_TYPES_VIDEO, out videoPin))
         {
-          throw new TvExceptionTunerLoadFailed("Failed to locate capture or video pin on video capture filter.");
+          throw new TvException("Failed to locate capture or video pin on video capture filter.");
         }
       }
       if (_filterEncoderAudio == null && capture.AudioFilter != null)
       {
         if (!FindPinByCategoryOrMediaType(capture.AudioFilter, Guid.Empty, MEDIA_TYPES_AUDIO, out audioPin))
         {
-          throw new TvExceptionTunerLoadFailed("Failed to locate capture or audio pin on audio capture filter.");
+          throw new TvException("Failed to locate capture or audio pin on audio capture filter.");
         }
       }
 

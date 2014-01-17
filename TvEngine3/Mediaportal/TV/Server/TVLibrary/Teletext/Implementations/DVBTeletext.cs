@@ -112,7 +112,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
 
     #endregion
 
-    #region event callbacks
+    #region event call backs
 
     private void _pageCache_OnPageUpdated(int pageNumber, int subPageNumber)
     {
@@ -269,7 +269,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     /// </summary>
     public void ClearTeletextChannelName()
     {
-      _pageCache.ChannelName = "";
+      _pageCache.ChannelName = string.Empty;
     }
 
     #endregion

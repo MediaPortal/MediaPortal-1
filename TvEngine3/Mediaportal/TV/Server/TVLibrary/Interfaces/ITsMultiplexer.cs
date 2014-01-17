@@ -44,7 +44,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Multiplexer
     /// <param name="video">Should video streams be multiplexed into the output transport stream.</param>
     /// <param name="audio">Should audio streams be multiplexed into the output transport stream.</param>
     /// <param name="teletext">Should teletext streams be multiplexed into the output transport stream.</param>
-    /// <returns>an HRESULT value indicating whether the function succeeded</returns>
+    /// <returns>an HRESULT indicating whether the function succeeded</returns>
     [PreserveSig]
     int SetActiveComponents([MarshalAs(UnmanagedType.I1)] bool video, [MarshalAs(UnmanagedType.I1)] bool audio, [MarshalAs(UnmanagedType.I1)] bool teletext);
   }

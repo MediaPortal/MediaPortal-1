@@ -421,7 +421,7 @@ namespace Mediaportal.TV.Server.SetupTV.Sections
       UpdateList();
       FormEditCard dlg = new FormEditCard();
       dlg.Card = (Card)item.Tag;
-      dlg.CardType = cardTypes[((Card)item.Tag).DevicePath].ToString();
+      dlg.CardType = cardTypes[((Card)item.Tag).DevicePath];
       if (dlg.ShowDialog() == DialogResult.OK)
       {
         // User clicked save...

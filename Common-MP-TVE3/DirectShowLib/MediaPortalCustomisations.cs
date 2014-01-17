@@ -1217,6 +1217,34 @@ namespace DirectShowLib
   }
 
   /// <summary>
+  /// A partial collection of codec API parameters from codecapi.h.
+  /// </summary>
+  public static class CodecApiParameter
+  {
+    /// <summary> AVAudioSampleRate </summary>
+    public static readonly Guid AV_AUDIO_SAMPLE_RATE = new Guid(0x971d2723, 0x1acb, 0x42e7, 0x85, 0x5c, 0x52, 0x0a, 0x4b, 0x70, 0xa5, 0xf2);
+    /// <summary> AVEncAudioMeanBitRate </summary>
+    public static readonly Guid AV_ENC_AUDIO_MEAN_BIT_RATE = new Guid(0x921295bb, 0x4fca, 0x4679, 0xaa, 0xb8, 0x9e, 0x2a, 0x1d, 0x75, 0x33, 0x84);
+    /// <summary> AVEncCommonMaxBitRate </summary>
+    public static readonly Guid AV_ENC_COMMON_MAX_BIT_RATE = new Guid(0x9651eae4, 0x39b9, 0x4ebf, 0x85, 0xef, 0xd7, 0xf4, 0x44, 0xec, 0x74, 0x65);
+    /// <summary> AVEncCommonMeanBitRate </summary>
+    public static readonly Guid AV_ENC_COMMON_MEAN_BIT_RATE = new Guid(0xf7222374, 0x2144, 0x4815, 0xb5, 0x50, 0xa3, 0x7f, 0x8e, 0x12, 0xee, 0x52);
+    /// <summary> AVEncCommonRateControlMode </summary>
+    public static readonly Guid AV_ENC_COMMON_RATE_CONTROL_MODE = new Guid(0x1c0608e9, 0x370c, 0x4710, 0x8a, 0x58, 0xcb, 0x61, 0x81, 0xc4, 0x24, 0x23);
+  }
+
+  /// <summary>
+  /// Supported values for codec API parameter AVEncCommonRateControlMode.
+  /// </summary>
+  public enum eAVEncCommonRateControlMode
+  {
+    CBR = 0,
+    PeakConstrainedVBR = 1,
+    UnconstrainedVBR = 2,
+    Quality = 3
+  }
+
+  /// <summary>
   /// A collection of MEDIATYPE definitions not found elsewhere in DirectShow.NET.
   /// </summary>
   public static class MpMediaSubType

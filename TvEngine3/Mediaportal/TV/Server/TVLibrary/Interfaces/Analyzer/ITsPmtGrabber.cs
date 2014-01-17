@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// TsWriter PMT grabber callback interface.
+  /// TsWriter PMT grabber call back interface.
   /// </summary>
   [ComVisible(false), ComImport,
     Guid("37a1c1e3-4760-49fe-ab59-6688ada54923"),
@@ -70,7 +70,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Set the delegate for the grabber to notify when a new PMT section is received.
     /// </summary>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int SetCallBack(IPmtCallBack callBack);

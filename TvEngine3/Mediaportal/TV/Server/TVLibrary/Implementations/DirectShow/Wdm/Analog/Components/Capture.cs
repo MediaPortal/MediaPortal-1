@@ -266,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           if (connectionCount == 0)
           {
-            throw new TvExceptionTunerLoadFailed("Failed to connect video capture filter.");
+            throw new TvException("Failed to connect video capture filter.");
           }
           if (connectionCount > 1)
           {
@@ -285,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
           }
           if (connectionCount == 0)
           {
-            throw new TvExceptionTunerLoadFailed("Failed to connect audio capture filter.");
+            throw new TvException("Failed to connect audio capture filter.");
           }
         }
       }
@@ -596,9 +596,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
     #region configure
 
     /// <summary>
-    /// Reload the component configuration.
+    /// Reload the component's configuration.
     /// </summary>
-    /// <param name="tunerId"></param>
+    /// <param name="tunerId">The identifier for the associated tuner.</param>
     public void ReloadConfiguration(int tunerId)
     {
       _tunerId = tunerId;
@@ -684,7 +684,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.
       IAMAnalogVideoDecoder analogVideoDecoder = _filterVideo as IAMAnalogVideoDecoder;
       if (analogVideoDecoder != null)
       {
-        if ((_supportedVideoStandards & videoStandard) == 0)
+        if (!_supportedVideoStandards.HasFlag(videoStandard))
         {
           this.LogWarn("WDM analog capture: requested video standard {0} is not supported", videoStandard);
           return;

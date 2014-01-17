@@ -93,9 +93,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the call back which will be called when links have been received
     /// </summary>
-    /// <param name="callback">The callback.</param>
+    /// <param name="callBack">The call back.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetCallBack(IChannelLinkageCallback callback);
+    int SetCallBack(IChannelLinkageCallBack callBack);
   }
 }

@@ -21,8 +21,8 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
@@ -66,10 +66,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       int GetGeneralInfo([MarshalAs(UnmanagedType.LPStr)] out string info);
     }
 
+    #region variables
+
     private bool _isHauppaugeEcp = false;
     private IMpHcwEcp _interfaceEcp = null;
     private ICodecAPI _interfaceCodecApi = null;
     private IBaseFilter _filter = null;
+
+    #endregion
 
     /// <summary>
     /// Attempt to read the device information from the tuner.
@@ -78,7 +82,6 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     {
       this.LogDebug("Hauppauge ECP: read device information");
 
-      this.LogDebug("Hauppauge ECP: reading model number");
       uint modelNumber = 0;
       int hr = _interfaceEcp.GetModelNumber(ref modelNumber);
       if (hr == (int)HResult.Severity.Success)
@@ -87,10 +90,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       }
       else
       {
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      this.LogDebug("Hauppauge ECP: reading version number");
       uint versionMajor = 0;
       uint versionMinor = 0;
       uint revision = 0;
@@ -98,30 +100,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       hr = _interfaceEcp.GetDriverVersion(ref versionMajor, ref versionMinor, ref revision, ref build);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  version = {0}.{1}.{2}b{3}", versionMajor, versionMinor, revision, build);
+        this.LogDebug("  version      = {0}.{1}.{2}b{3}", versionMajor, versionMinor, revision, build);
       }
       else
       {
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
 
-      this.LogDebug("Hauppauge ECP: reading general info");
       string generalInfo;
       hr = _interfaceEcp.GetGeneralInfo(out generalInfo);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  info = {0}", generalInfo);
+        this.LogDebug("  info         = {0}", generalInfo);
       }
       else
       {
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
 
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -132,8 +133,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -144,8 +145,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -153,7 +155,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Hauppauge ECP: initialising device");
+      this.LogDebug("Hauppauge ECP: initialising");
 
       IBaseFilter mainFilter = context as IBaseFilter;
       if (mainFilter == null)
@@ -163,24 +165,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       }
       if (_isHauppaugeEcp)
       {
-        this.LogDebug("Hauppauge ECP: device is already initialised");
+        this.LogWarn("Hauppauge ECP: extension already initialised");
         return true;
       }
 
-      _interfaceEcp = ComHelper.LoadComObjectFromFile("HauppaugeEcp.dll", typeof(MediaPortalHauppaugeEncoderConfigurationProperties).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
+      try
+      {
+        _interfaceEcp = ComHelper.LoadComObjectFromFile("HauppaugeEcp.dll", typeof(MediaPortalHauppaugeEncoderConfigurationProperties).GUID, typeof(IMpHcwEcp).GUID, true) as IMpHcwEcp;
+      }
+      catch (Exception ex)
+      {
+        this.LogError(ex, "Hauppauge ECP: failed to load ECP interface");
+        return false;
+      }
 
       // We need a reference to the graph.
       FilterInfo filterInfo;
       int hr = mainFilter.QueryFilterInfo(out filterInfo);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Hauppauge ECP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: failed to get filter info, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
       IFilterGraph2 graph = filterInfo.pGraph as IFilterGraph2;
       if (graph == null)
       {
-        this.LogDebug("Hauppauge ECP: failed to get graph reference");
+        this.LogError("Hauppauge ECP: failed to get graph reference");
         return false;
       }
 
@@ -190,7 +200,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
         hr = graph.EnumFilters(out enumFilters);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Hauppauge ECP: failed to get graph filter enumerator, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Hauppauge ECP: failed to get graph filter enumerator, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           return false;
         }
 
@@ -201,19 +211,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           while (enumFilters.Next(1, filters, out countFilters) == (int)HResult.Severity.Success && countFilters == 1)
           {
             IBaseFilter filter = filters[0];
-            string nameFilter = "Unknown";
+            string filterName = "Unknown";
             try
             {
-              FilterInfo infoFilter;
-              if (filter.QueryFilterInfo(out infoFilter) == 0)
+              if (filter.QueryFilterInfo(out filterInfo) == 0)
               {
-                nameFilter = infoFilter.achName;
-                Release.FilterInfo(ref infoFilter);
+                filterName = filterInfo.achName;
+                Release.FilterInfo(ref filterInfo);
               }
-              this.LogDebug("Hauppauge ECP: filter {0}", nameFilter);
+              this.LogDebug("Hauppauge ECP: filter {0}", filterName);
               if (_interfaceEcp.Initialise(filter) == (int)HResult.Severity.Success)
               {
-                this.LogDebug("Hauppauge ECP: supported device detected");
+                this.LogInfo("Hauppauge ECP: extension supported");
                 _isHauppaugeEcp = true;
                 _interfaceCodecApi = _interfaceEcp as ICodecAPI;
                 _filter = filter;
@@ -230,7 +239,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
             {
               if (_filter == null)
               {
-                Release.ComObject(string.Format("Hauppauge ECP graph filter {0}", nameFilter), ref filter);
+                Release.ComObject(string.Format("Hauppauge ECP graph filter {0}", filterName), ref filter);
               }
             }
           }
@@ -260,6 +269,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     public bool IsParameterSupported(Guid parameterId)
     {
       this.LogDebug("Hauppauge ECP: is parameter supported, parameter = {0}", parameterId);
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         this.LogDebug("Hauppauge ECP: supported");
@@ -284,6 +300,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
       minimum = null;
       maximum = null;
       resolution = null;
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         int hr = _interfaceCodecApi.GetParameterRange(parameterId, out minimum, out maximum, out resolution);
@@ -292,7 +315,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, minimum = {0}, maximum = {1}, resolution = {2}", minimum, maximum, resolution);
           return true;
         }
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -311,6 +334,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     {
       this.LogDebug("Hauppauge ECP: get parameter values, parameter = {0}", parameterId);
       values = null;
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         IntPtr valuesPtr;
@@ -322,7 +352,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, values = {0}", string.Join(", ", values));
           return true;
         }
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -341,6 +371,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     {
       this.LogDebug("Hauppauge ECP: get default value, parameter = {0}", parameterId);
       value = null;
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         int hr = _interfaceCodecApi.GetDefaultValue(parameterId, out value);
@@ -349,7 +386,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, value = {0}", value);
           return true;
         }
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -368,6 +405,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     {
       this.LogDebug("Hauppauge ECP: get value, parameter = {0}", parameterId);
       value = null;
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         int hr = _interfaceCodecApi.GetValue(parameterId, out value);
@@ -376,7 +420,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success, value = {0}", value);
           return true;
         }
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {
@@ -394,6 +438,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
     public bool SetParameterValue(Guid parameterId, object value)
     {
       this.LogDebug("Hauppauge ECP: set value, parameter = {0}, value = {1}", parameterId, value);
+
+      if (!_isHauppaugeEcp)
+      {
+        this.LogWarn("Hauppauge ECP: not initialised or interface not supported");
+        return false;
+      }
+
       if (_interfaceCodecApi.IsSupported(parameterId) == (int)HResult.Severity.Success)
       {
         int hr = _interfaceCodecApi.SetValue(parameterId, ref value);
@@ -402,7 +453,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.HauppaugeEcp
           this.LogDebug("Hauppauge ECP: result = success");
           return true;
         }
-        this.LogDebug("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Hauppauge ECP: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
       else
       {

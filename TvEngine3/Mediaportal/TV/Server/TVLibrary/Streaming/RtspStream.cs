@@ -51,7 +51,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Streaming
     {
       _streamName = streamName;
       _fileName = fileName;
-      _recording = "";
+      _recording = string.Empty;
       _card = card;
       _mediaType = mediaType;
     }

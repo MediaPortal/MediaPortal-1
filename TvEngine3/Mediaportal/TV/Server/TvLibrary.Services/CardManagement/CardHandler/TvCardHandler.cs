@@ -49,7 +49,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     private readonly Recorder _recorder;
     private readonly TimeShifter _timerShifter;
     private readonly CardTuner _tuner;
-    private ICiMenuActions _ciMenu;    
+    private IConditionalAccessMenuActions _ciMenu;    
 
     private static ScanParameters _settings;
     private static object _settingsLock = new object();
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     {
       get
       {
-        ICiMenuActions menuInterface = _card.CaMenuInterface;
+        IConditionalAccessMenuActions menuInterface = _card.CaMenuInterface;
         if (menuInterface == null)
         {
           return false;
@@ -104,7 +104,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     /// Gets the ConditionalAccess handler.
     /// </summary>
     /// <value>ConditionalAccess</value>
-    public ICiMenuActions CiMenuActions
+    public IConditionalAccessMenuActions CiMenuActions
     {
       get { return _ciMenu; }
     }

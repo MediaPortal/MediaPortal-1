@@ -93,36 +93,41 @@ CDvbUtil::~CDvbUtil(void)
 
 void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
 {
+  if (buf == NULL || bufLen < 1 || text == NULL || textLen < 2)
+  {
+    return;
+  }
   BYTE c;
   WORD w;
 
-	int bufIndex = 0, textIndex = 0;
+	int bufIndex = 0;
+  int textIndex = 0;
 
-  if (buf == NULL) return;
-  if (bufLen < 1) return;
-  if (text == NULL) return;
-  if (textLen < 2) return;
-
-  // reserve place for terminating 0
+  // Reserve a byte for NULL termination.
   textLen--;
   c = buf[bufIndex++];
   if (c != 0x11)
   {
-    bufIndex--; // need to start from 1st byte
-    // check for character coding info byte
-    if (c == 0x10)
+    if (c > 0 && c <= 0x15)
     {
-      // three byte encoding
-      if (textLen >= 3)
+      // Encoding indicator byte - EN 300 468 Annex A table A.3 or A.4.
+      if (c == 0x10)  // Table A.4.
       {
+        if (bufLen < 3 || textLen < 3)
+        {
+          text[0] = 0;
+          return;
+        }
         text[textIndex++] = 0x10;
         text[textIndex++] = buf[2];
-        text[textIndex] = 0;
         bufIndex += 2;
       }
-      else
-        return;
+      else            // Table A.3.
+      {
+        text[textIndex++] = c;
+      }
     }
+
     while ((bufIndex < bufLen) && (textIndex < textLen))
     {
       c = buf[bufIndex++];
@@ -130,39 +135,58 @@ void CDvbUtil::getString468A(BYTE *buf, int bufLen, char *text, int textLen)
       {
         c = '\r';
       }
-      else if (((c > 0x05) && (c <= 0x1F)) || ((c >= 0x80) && (c < 0x9F))) //0x1-0x5 = choose character set, must keep this byte!
+      else if (c <= 0x1F || (c >= 0x80 && c < 0x9F))
+      {
         c = 0; // ignore
+      }
 
       if (c != 0)
+      {
         text[textIndex++] = c;
+      }
     }
   }
   else
   {
-    // process 2 byte unicode characters by reencoding it 
-    // to UTF-8 to avoid zero bytes inside string
+    // Re-encode 2 byte Unicode characters to UTF-8 to avoid premature NULL termination.
     text[textIndex++] = 0x15;
-    text[textIndex] = 0;
     while (bufIndex + 1 < bufLen)
     {
       w = (buf[bufIndex++] << 8);
       w |= buf[bufIndex++];
       if (w == 0xE08A)
+      {
         w = '\r';
-      else if (((w > 0x05) && (w <= 0x1F)) || ((w >= 0xE080) && (w < 0xE09F)))
+      }
+      else if (w <= 0x1F || (w >= 0xE080 && w < 0xE09F))
+      {
         w = 0;
+      }
+
       if (w != 0)
       {
+        // How many bytes does this character require, and do we have enough buffer?
         if (w < 0x80)
+        {
           c = 1;
+        }
         else if (w < 0x800)
+        {
           c = 2;
+        }
         else
+        {
           c = 3;
-        if (textIndex + c >= textLen)
+        }
+        if (textIndex + c > textLen)
+        {
           break;
+        }
+
         if (w < 0x80)
+        {
           text[textIndex++] = (char)w;
+        }
         else if (w < 0x800)
         {
           text[textIndex++] = (char)((w >> 6) | 0xC0);

@@ -214,7 +214,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       AutoRecordWithPlay
     }
 
-    private enum B2c2PvrCallbackState
+    private enum B2c2PvrCallBackState
     {
       EndOfFile = 0,
       FileError       // Indicates file access or disk space issues.
@@ -950,14 +950,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       #region IB2c2Mpeg2DataCtrl5
 
       /// <summary>
-      /// Register a callback delegate that the interface can use to pass raw transport stream packets
+      /// Register a call back delegate that the interface can use to pass raw transport stream packets
       /// directly to the application. The packets passed correspond with the transport stream class PIDs
       /// registered with the interface.
       /// </summary>
-      /// <param name="callback">A pointer to the callback delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
+      /// <param name="callBack">A pointer to the call back delegate.</param>
+      /// <returns>an HRESULT indicating whether the call back delegate was successfully registered</returns>
       [PreserveSig]
-      int SetCallbackForTransportStream(OnB2c2TsData callback);
+      int SetCallbackForTransportStream(OnB2c2TsData callBack);
 
       #endregion
 
@@ -1011,13 +1011,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       #region IB2c2Mpeg2AVCtrl2
 
       /// <summary>
-      /// Register a callback delegate that the interface can use to notify the application about video
+      /// Register a call back delegate that the interface can use to notify the application about video
       /// stream information.
       /// </summary>
-      /// <param name="callback">A pointer to the callback delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
+      /// <param name="callBack">A pointer to the call back delegate.</param>
+      /// <returns>an HRESULT indicating whether the call back delegate was successfully registered</returns>
       [PreserveSig]
-      int SetCallbackForVideoMode(OnB2c2VideoInfo callback);
+      int SetCallbackForVideoMode(OnB2c2VideoInfo callBack);
 
       /// <summary>
       /// Deregister the current audio and/or video PID(s) when they are no longer of interest to the
@@ -1162,13 +1162,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       int GetFilePosition([Out] out long filePosition);
 
       /// <summary>
-      /// Register a callback delegate that the interface can use to notify the application about critical
+      /// Register a call back delegate that the interface can use to notify the application about critical
       /// playback/recording state changes.
       /// </summary>
-      /// <param name="callback">A pointer to the callback delegate.</param>
-      /// <returns>an HRESULT indicating whether the callback delegate was successfully registered</returns>
+      /// <param name="callBack">A pointer to the call back delegate.</param>
+      /// <returns>an HRESULT indicating whether the call back delegate was successfully registered</returns>
       [PreserveSig]
-      int SetCallback(OnB2c2TimeShiftState callback);
+      int SetCallback(OnB2c2TimeShiftState callBack);
     }
 
     #endregion
@@ -1310,7 +1310,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     #endregion
     #pragma warning restore 1591
 
-    #region callback definitions
+    #region call back definitions
 
     /// <summary>
     /// Called by the data interface to pass raw transport stream packet data to the application.
@@ -1340,7 +1340,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <param name="state">The current timeshifting interface state.</param>
     /// <returns>???</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate uint OnB2c2TimeShiftState(B2c2PvrCallbackState state);
+    private delegate uint OnB2c2TimeShiftState(B2c2PvrCallBackState state);
 
     #endregion
 
@@ -1420,7 +1420,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     protected override void PerformLoading()
     {
-      this.LogDebug("TunerB2c2Base: perform loading");
+      this.LogDebug("B2C2 base: perform loading");
       InitialiseGraph();
 
       // Create, add and initialise the B2C2 source filter.
@@ -1439,16 +1439,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       _interfaceTuner.CheckLock();
 
       // The source filter has multiple output pins, and connecting to the right one is critical.
-      // Plugins can't handle this automatically, so we add an extra infinite tee in between the source
-      // filter and any plugin filters.
+      // Extensions can't handle this automatically, so we add an extra infinite tee in between the
+      // source filter and any extension filters.
       _filterInfiniteTee = (IBaseFilter)new InfTee();
       FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", _filterB2c2Adapter, 2, 0);
 
-      // Load and open plugins.
+      // Load and open extensions.
       IBaseFilter lastFilter = _filterInfiniteTee;
       LoadPlugins(_filterB2c2Adapter, _graph, ref lastFilter);
 
-      // This class implements the plugin interface and should be considered as the main plugin.
+      // This class implements the extension interface and should be treated as the main extension.
       _customDeviceInterfaces.Add(this);
 
       // Complete the graph.
@@ -1458,6 +1458,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       SetFilterState(null, new HashSet<ushort>(), false);
 
       ReadTunerInfo();
+      ReadPidFilterInfo();
     }
 
     /// <summary>
@@ -1465,7 +1466,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     protected override void PerformUnloading()
     {
-      this.LogDebug("TunerB2c2Base: perform unloading");
+      this.LogDebug("B2C2 base: perform unloading");
       _interfaceData = null;
       _interfaceTuner = null;
 
@@ -1488,7 +1489,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns>an enumerable collection of <see cref="T:TvLibrary.Interfaces.ITVCard"/></returns>
     public static IEnumerable<ITVCard> DetectTuners()
     {
-      Log.Debug("TunerB2c2Base: detect tuners");
+      Log.Debug("B2C2 base: detect tuners");
       List<ITVCard> tuners = new List<ITVCard>();
 
       // Instanciate a data interface so we can check how many tuners are installed.
@@ -1499,7 +1500,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       }
       catch (Exception ex)
       {
-        Log.Error(ex, "TunerB2c2Base: failed to create source filter instance");
+        Log.Error(ex, "B2C2 base: failed to create source filter instance");
         return tuners;
       }
 
@@ -1508,7 +1509,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         IB2c2Mpeg2DataCtrl6 dataInterface = b2c2Source as IB2c2Mpeg2DataCtrl6;
         if (dataInterface == null)
         {
-          Log.Debug("TunerB2c2Base: failed to find B2C2 data interface on filter");
+          Log.Debug("B2C2 base: failed to find B2C2 data interface on filter");
           Release.ComObject("B2C2 source filter", ref b2c2Source);
           return tuners;
         }
@@ -1526,15 +1527,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
           int hr = dataInterface.GetDeviceList(structurePtr, ref size, ref deviceCount);
           if (hr != (int)HResult.Severity.Success)
           {
-            Log.Debug("TunerB2c2Base: failed to get device list, hr = 0x{0:x}", hr);
+            Log.Debug("B2C2 base: failed to get device list, hr = 0x{0:x}", hr);
           }
           else
           {
-            //DVB_MMI.DumpBinary(tempBuffer, 0, size);
-            Log.Debug("TunerB2c2Base: device count = {0}", deviceCount);
+            //Dump.DumpBinary(tempBuffer, size);
+            Log.Debug("B2C2 base: device count = {0}", deviceCount);
             for (int i = 0; i < deviceCount; i++)
             {
-              Log.Debug("TunerB2c2Base: device {0}", i + 1);
+              Log.Debug("B2C2 base: device {0}", i + 1);
               DeviceInfo d = (DeviceInfo)Marshal.PtrToStructure(structurePtr, typeof(DeviceInfo));
               Log.Debug("  device ID           = {0}", d.DeviceId);
               Log.Debug("  MAC address         = {0}", BitConverter.ToString(d.MacAddress.Address).ToLowerInvariant());
@@ -1563,13 +1564,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
                   break;
                 default:
                   // The tuner may not be redetected properly after standby in some cases.
-                  Log.Warn("TunerB2c2Base: unknown tuner type, cannot use this tuner");
+                  Log.Warn("B2C2 base: unknown tuner type, cannot use this tuner");
                   break;
               }
 
               structurePtr = IntPtr.Add(structurePtr, DEVICE_INFO_SIZE);
             }
-            Log.Debug("TunerB2c2Base: result = success");
+            Log.Debug("B2C2 base: result = success");
           }
         }
         finally
@@ -1590,16 +1591,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// </summary>
     private void ReadTunerInfo()
     {
-      this.LogDebug("TunerB2c2Base: read tuner information");
+      this.LogDebug("B2C2 base: read tuner information");
 
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("TunerB2c2Base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
         return;
       }
 
-      this.LogDebug("TunerB2c2Base: reading capabilities");
       IntPtr buffer = Marshal.AllocCoTaskMem(TUNER_CAPABILITIES_SIZE);
       try
       {
@@ -1611,11 +1611,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         hr = _interfaceTuner.GetTunerCapabilities(buffer, ref returnedByteCount);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("TunerB2c2Base: result = failure, hr = 0x{0:x}", hr);
+          this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
         }
         else
         {
-          //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+          //Dump.DumpBinary(_generalBuffer, returnedByteCount);
           TunerCapabilities capabilities = (TunerCapabilities)Marshal.PtrToStructure(buffer, typeof(TunerCapabilities));
           this.LogDebug("  tuner type                = {0}", capabilities.TunerType);
           this.LogDebug("  set constellation?        = {0}", capabilities.ConstellationSupported);
@@ -1636,43 +1636,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       {
         Marshal.FreeCoTaskMem(buffer);
       }
+    }
 
-      this.LogDebug("TunerB2c2Base: reading max PID counts");
+    private void ReadPidFilterInfo()
+    {
+      this.LogDebug("B2C2 base: read PID filter information");
+
+      int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
+      if (hr != (int)HResult.Severity.Success)
+      {
+        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
+        return;
+      }
+
       int count = 0;
       hr = _interfaceData.GetMaxGlobalPIDCount(out count);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  global max                = {0}", count);
+        this.LogDebug("  global max PID count = {0}", count);
       }
       else
       {
-        this.LogDebug("TunerB2c2Base: result = failure, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
       }
       hr = _interfaceData.GetMaxIpPIDCount(out count);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  IP max                    = {0}", count);
+        this.LogDebug("  IP max PID count     = {0}", count);
       }
       else
       {
-        this.LogDebug("TunerB2c2Base: result = failure, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
       }
       hr = _interfaceData.GetMaxPIDCount(out count);
       if (hr == (int)HResult.Severity.Success)
       {
-        this.LogDebug("  TS max                    = {0}", count);
+        this.LogDebug("  TS max PID count     = {0}", count);
         _maxPidCount = count;
       }
       else
       {
-        this.LogDebug("TunerB2c2Base: result = failure, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: result = failure, hr = 0x{0:x}", hr);
       }
     }
 
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public byte Priority
     {
@@ -1683,8 +1694,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1696,12 +1708,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked when the device has been successfully loaded.
+    /// This call back is invoked when the tuner has been successfully loaded.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">The action to take, if any.</param>
     public virtual void OnLoaded(ITVCard tuner, out TunerAction action)
     {
@@ -1709,9 +1721,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
@@ -1721,28 +1733,28 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted but before the device is started.
+    /// This call back is invoked after a tune request is submitted but before the device is started.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner has been tuned to.</param>
     public virtual void OnAfterTune(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is started but before
-    /// signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the tuner is started but
+    /// before signal lock is checked.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
     public virtual void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
     }
 
     /// <summary>
-    /// This callback is invoked before the device is stopped.
+    /// This call back is invoked before the tuner is stopped.
     /// </summary>
-    /// <param name="tuner">The device instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="action">As an input, the action that TV Server wants to take; as an output, the action to take.</param>
     public virtual void OnStop(ITVCard tuner, ref TunerAction action)
     {
@@ -1763,14 +1775,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     /// <returns><c>true</c> if the PID filter is configured successfully, otherwise <c>false</c></returns>
     public bool SetFilterState(IChannel tuningDetail, ICollection<ushort> pids, bool forceEnable)
     {
-      this.LogDebug("TunerB2c2Base: set PID filter state, force enable = {0}", forceEnable);
+      this.LogDebug("B2C2 base: set PID filter state, force enable = {0}", forceEnable);
       bool fullTransponder = true;
       bool success = true;
 
       int hr = _interfaceData.SelectDevice(_deviceInfo.DeviceId);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("TunerB2c2Base: failed to select device, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: failed to select device, hr = 0x{0:x}", hr);
         return false;
       }
 
@@ -1786,7 +1798,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         )
       )
       {
-        this.LogDebug("TunerB2c2Base: disabling PID filter");
+        this.LogDebug("B2C2 base: disabling PID filter");
       }
       else
       {
@@ -1795,18 +1807,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         fullTransponder = false;
         if (pids.Count > _maxPidCount)
         {
-          this.LogDebug("TunerB2c2Base: too many PIDs, hardware limit = {0}, actual count = {1}", _maxPidCount, pids.Count);
+          this.LogDebug("B2C2 base: too many PIDs, hardware limit = {0}, actual count = {1}", _maxPidCount, pids.Count);
           // When the forceEnable flag is set, we just set as many PIDs as possible.
           if (!forceEnable)
           {
-            this.LogDebug("TunerB2c2Base: disabling PID filter");
+            this.LogDebug("B2C2 base: disabling PID filter");
             fullTransponder = true;
           }
         }
 
         if (!fullTransponder)
         {
-          this.LogDebug("TunerB2c2Base: enabling PID filter");
+          this.LogDebug("B2C2 base: enabling PID filter");
           fullTransponder = false;
         }
       }
@@ -1820,13 +1832,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       hr = _interfaceData.GetTsState(out openPidCount, out runningPidCount, ref totalPidCount, currentPids);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("TunerB2c2Base: failed to retrieve current PIDs, hr = 0x{0:x}", hr);
+        this.LogDebug("B2C2 base: failed to retrieve current PIDs, hr = 0x{0:x}", hr);
         fullTransponder = true;
         success = false;
       }
       else
       {
-        this.LogDebug("TunerB2c2Base: current PID details (before update)");
+        this.LogDebug("B2C2 base: current PID details (before update)");
         this.LogDebug("  open count     = {0}", openPidCount);
         this.LogDebug("  running count  = {0}", runningPidCount);
         this.LogDebug("  returned count = {0}", totalPidCount);
@@ -1834,7 +1846,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         {
           for (int i = 0; i < totalPidCount; i++)
           {
-            this.LogDebug("  {0,-2}             = {1} (0x{1:x})", i + 1, currentPids[i]);
+            this.LogDebug("  {0, -14} = {1} (0x{1:x})", i + 1, currentPids[i]);
           }
         }
         availablePidCount = _maxPidCount - totalPidCount;
@@ -1850,7 +1862,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
             if (hr != (int)HResult.Severity.Success)
             {
-              this.LogDebug("TunerB2c2Base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
+              this.LogDebug("B2C2 base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
               success = false;
             }
             else
@@ -1872,7 +1884,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
               hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { en.Current }, 0);
               if (hr != (int)HResult.Severity.Success)
               {
-                this.LogDebug("TunerB2c2Base: failed to add PID {0} (0x{0:x}), hr = 0x{1:x}", en.Current, hr);
+                this.LogDebug("B2C2 base: failed to add PID {0} (0x{0:x}), hr = 0x{1:x}", en.Current, hr);
                 success = false;
               }
               else
@@ -1894,7 +1906,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
             hr = _interfaceData.DeletePIDsFromPin(1, new int[1] { currentPids[i] }, 0);
             if (hr != (int)HResult.Severity.Success)
             {
-              this.LogDebug("TunerB2c2Base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
+              this.LogDebug("B2C2 base: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x}", currentPids[i], hr);
               success = false;
             }
             else
@@ -1907,7 +1919,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         hr = _interfaceData.AddPIDsToPin(ref changingPidCount, new int[1] { (int)B2c2PidFilterMode.AllExcludingNull }, 0);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("TunerB2c2Base: failed to enable all PIDs, hr = 0x{0:x}", hr);
+          this.LogDebug("B2C2 base: failed to enable all PIDs, hr = 0x{0:x}", hr);
           success = false;
         }
         else
@@ -1918,7 +1930,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       if (success)
       {
-        this.LogDebug("TunerB2c2Base: updates complete, result = success");
+        this.LogDebug("B2C2 base: updates complete, result = success");
       }
 
       return success;

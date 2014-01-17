@@ -29,6 +29,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -36,9 +37,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 {
   /// <summary>
-  /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere devices.
+  /// A class for handling conditional access, DiSEqC and PID filtering for Digital Everywhere tuners.
   /// </summary>
-  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IMpeg2PidFilter, ICustomTuner, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
+  public class DigitalEverywhere : BaseCustomDevice, IPowerDevice, IMpeg2PidFilter, ICustomTuner, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -525,13 +526,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         FIRMWARE_VERSION_INFO_SIZE, FRONT_END_STATUS_INFO_SIZE, LNB_COMMAND_SIZE, LNB_PARAM_INFO_SIZE,
         TEMPERATURE_INFO_SIZE
       }.Max();
-    private const int MMI_HANDLER_THREAD_SLEEP_TIME = 500;    // unit = ms
+    private const int MMI_HANDLER_THREAD_WAIT_TIME = 500;     // unit = ms
 
     #endregion
 
     #region variables
 
     private bool _isDigitalEverywhere = false;
+    private bool _isCaInterfaceOpen = false;
     #pragma warning disable 0414
     private bool _isCamPresent = false;
     #pragma warning restore 0414
@@ -545,8 +547,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     private CardType _tunerType = CardType.Unknown;
 
     private Thread _mmiHandlerThread = null;
-    private volatile bool _stopMmiHandlerThread = false;
-    private ICiMenuCallbacks _ciMenuCallbacks = null;
+    private AutoResetEvent _mmiHandlerThreadStopEvent = null;
+    private object _mmiLock = new object();
+    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private object _caMenuCallBackLock = new object();
 
     #endregion
 
@@ -576,7 +580,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           responsebuffer, bufferSize,
           out returnedByteCount
         );
-        if (hr == (int)HResult.Severity.Success && returnedByteCount == 2)
+        if (hr == (int)HResult.Severity.Success && returnedByteCount == bufferSize)
         {
           ciState = (DeCiState)Marshal.ReadInt16(responsebuffer, 0);
         }
@@ -595,36 +599,41 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <returns><c>true</c> if the message is successfully sent, otherwise <c>false</c></returns>
     private bool SendMmi(CaData data)
     {
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
+      StartMmiHandlerThread();
       if (!_isCamReady)
       {
-        this.LogDebug("Digital Everywhere: the CAM is not ready");
+        this.LogError("Digital Everywhere: the CAM is not ready");
         return false;
       }
 
-      Marshal.StructureToPtr(data, _mmiBuffer, true);
-      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
-        _mmiBuffer, CA_DATA_SIZE,
-        _mmiBuffer, CA_DATA_SIZE
-      );
+      int hr;
+      lock (_mmiLock)
+      {
+        Marshal.StructureToPtr(data, _mmiBuffer, true);
+        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
+          _mmiBuffer, CA_DATA_SIZE,
+          _mmiBuffer, CA_DATA_SIZE
+        );
+      }
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     #region hardware/software information
 
     /// <summary>
-    /// Attempt to read the driver information from the device.
+    /// Attempt to read the driver information from the tuner.
     /// </summary>
     private void ReadDriverInfo()
     {
@@ -641,16 +650,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != DRIVER_VERSION_INFO_SIZE)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, returnedByteCount);
+      //Dump.DumpBinary(_generalBuffer, returnedByteCount);
       this.LogDebug("  driver version   = {0}", Marshal.PtrToStringAnsi(_generalBuffer));
     }
 
     /// <summary>
-    /// Attempt to read the hardware and firmware information from the device.
+    /// Attempt to read the hardware and firmware information from the tuner.
     /// </summary>
     private void ReadHardwareInfo()
     {
@@ -667,7 +676,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != FIRMWARE_VERSION_INFO_SIZE)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -679,7 +688,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     }
 
     /// <summary>
-    /// Attempt to read the temperature from the device.
+    /// Attempt to read the temperature from the tuner.
     /// </summary>
     private void ReadTemperature()
     {
@@ -696,7 +705,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != TEMPERATURE_INFO_SIZE)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
@@ -705,11 +714,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       //   hardware version = 1.24.04
       //   firmware version = 1.5.02
       //   firmware build # = 30740
-      DVB_MMI.DumpBinary(_generalBuffer, 0, TEMPERATURE_INFO_SIZE);
+      Dump.DumpBinary(_generalBuffer, TEMPERATURE_INFO_SIZE);
     }
 
     /// <summary>
-    /// Attempt to read the front end status from the device.
+    /// Attempt to read the front end status from the tuner.
     /// </summary>
     private void ReadFrontEndStatus()
     {
@@ -726,12 +735,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != FRONT_END_STATUS_INFO_SIZE)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
       // Most of this info is not very useful.
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, FRONT_END_STATUS_INFO_SIZE);
+      //Dump.DumpBinary(_generalBuffer, FRONT_END_STATUS_INFO_SIZE);
       FrontEndStatusInfo status = (FrontEndStatusInfo)Marshal.PtrToStructure(_generalBuffer, typeof(FrontEndStatusInfo));
       this.LogDebug("  frequency        = {0} kHz", status.Frequency);
       this.LogDebug("  bit error rate   = {0}", status.BitErrorRate);
@@ -760,7 +769,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return;
       }
 
@@ -777,14 +786,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Digital Everywhere: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
         return;
       }
 
       data = (CaData)Marshal.PtrToStructure(_generalBuffer, typeof(CaData));
       this.LogDebug("  manufacturer = 0x{0:x}{1:x}", data.Data[0], data.Data[1]);
       this.LogDebug("  code         = 0x{0:x}{1:x}", data.Data[2], data.Data[3]);
-      this.LogDebug("  menu title   = {0}", System.Text.Encoding.ASCII.GetString(data.Data, 5, data.Data[4]));
+      this.LogDebug("  menu title   = {0}", DvbTextConverter.Convert(data.Data, data.Data[4], 5));
     }
 
     #endregion
@@ -792,37 +801,72 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region MMI handler thread
 
     /// <summary>
-    /// Start a thread that will handle interaction with the CAM.
+    /// Start a thread to receive MMI messages from the CAM.
     /// </summary>
     private void StartMmiHandlerThread()
     {
-      // Don't start a thread if there is no purpose for it.
-      if (!_isDigitalEverywhere)
+      // Don't start a thread if the interface has not been opened.
+      if (!_isCaInterfaceOpen)
       {
         return;
       }
 
-      // Check if an existing thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
-      if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
+      lock (_mmiLock)
       {
-        this.LogDebug("Digital Everywhere: aborting old MMI handler thread");
-        _mmiHandlerThread.Abort();
-        _mmiHandlerThread = null;
-      }
-      if (_mmiHandlerThread == null)
-      {
-        this.LogDebug("Digital Everywhere: starting new MMI handler thread");
-        _stopMmiHandlerThread = false;
-        _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
-        _mmiHandlerThread.Name = "Digital Everywhere MMI handler";
-        _mmiHandlerThread.IsBackground = true;
-        _mmiHandlerThread.Priority = ThreadPriority.Lowest;
-        _mmiHandlerThread.Start();
+        // Kill the existing thread if it is in "zombie" state.
+        if (_mmiHandlerThread != null && !_mmiHandlerThread.IsAlive)
+        {
+          StopMmiHandlerThread();
+        }
+
+        if (_mmiHandlerThread == null)
+        {
+          this.LogDebug("Digital Everywhere: starting new MMI handler thread");
+          _mmiHandlerThreadStopEvent = new AutoResetEvent(false);
+          _mmiHandlerThread = new Thread(new ThreadStart(MmiHandler));
+          _mmiHandlerThread.Name = "Digital Everywhere MMI handler";
+          _mmiHandlerThread.IsBackground = true;
+          _mmiHandlerThread.Priority = ThreadPriority.Lowest;
+          _mmiHandlerThread.Start();
+        }
       }
     }
 
     /// <summary>
-    /// Thread function for handling message passing to and from the CAM.
+    /// Stop the thread that receives MMI messages from the CAM.
+    /// </summary>
+    private void StopMmiHandlerThread()
+    {
+      lock (_mmiLock)
+      {
+        if (_mmiHandlerThread != null)
+        {
+          if (!_mmiHandlerThread.IsAlive)
+          {
+            this.LogWarn("Digital Everywhere: aborting old MMI handler thread");
+            _mmiHandlerThread.Abort();
+          }
+          else
+          {
+            _mmiHandlerThreadStopEvent.Set();
+            if (!_mmiHandlerThread.Join(MMI_HANDLER_THREAD_WAIT_TIME * 2))
+            {
+              this.LogWarn("Digital Everywhere: failed to join MMI handler thread, aborting thread");
+              _mmiHandlerThread.Abort();
+            }
+          }
+          _mmiHandlerThread = null;
+          if (_mmiHandlerThreadStopEvent != null)
+          {
+            _mmiHandlerThreadStopEvent.Close();
+            _mmiHandlerThreadStopEvent = null;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Thread function for receiving MMI messages from the CAM.
     /// </summary>
     private void MmiHandler()
     {
@@ -832,32 +876,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       try
       {
-        while (!_stopMmiHandlerThread)
+        while (!_mmiHandlerThreadStopEvent.WaitOne(MMI_HANDLER_THREAD_WAIT_TIME))
         {
-          Thread.Sleep(MMI_HANDLER_THREAD_SLEEP_TIME);
-
           int hr = GetCiStatus(out ciState);
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             continue;
           }
 
           // Handle CI slot state changes.
           if (ciState != prevCiState)
           {
-            this.LogDebug("Digital Everywhere: CI state change");
-            this.LogDebug("  old state = {0}", prevCiState.ToString());
-            this.LogDebug("  new state = {0}", ciState.ToString());
+            this.LogInfo("Digital Everywhere: CI state change");
+            this.LogInfo("  old state = {0}", prevCiState.ToString());
+            this.LogInfo("  new state = {0}", ciState.ToString());
             prevCiState = ciState;
 
-            if ((ciState & DeCiState.CamPresent) != 0 &&
-              (ciState & DeCiState.CamIsDvb) != 0)
+            if (ciState.HasFlag(DeCiState.CamPresent | DeCiState.CamIsDvb))
             {
               _isCamPresent = true;
-              if ((ciState & DeCiState.CamError) == 0 &&
-                (ciState & DeCiState.CamReady) != 0 &&
-                (ciState & DeCiState.ApplicationInfoAvailable) != 0)
+              if (!ciState.HasFlag(DeCiState.CamError) &&
+                ciState.HasFlag(DeCiState.CamReady | DeCiState.ApplicationInfoAvailable))
               {
                 _isCamReady = true;
               }
@@ -869,6 +909,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
             else
             {
               _isCamPresent = false;
+              _isCamReady = false;
             }
           }
 
@@ -880,43 +921,52 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           }
 
           // Check for MMI responses and requests.
-          if ((ciState & DeCiState.MmiRequest) != 0)
+          if (ciState.HasFlag(DeCiState.MmiRequest))
           {
             this.LogDebug("Digital Everywhere: MMI data available, sending request");
             CaData data = new CaData(DeCiMessageTag.Mmi);
-            Marshal.StructureToPtr(data, _mmiBuffer, true);
-            hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
-              _mmiBuffer, CA_DATA_SIZE,
-              _mmiBuffer, CA_DATA_SIZE
-            );
+            lock (_mmiLock)
+            {
+              Marshal.StructureToPtr(data, _mmiBuffer, true);
+              hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+                _mmiBuffer, CA_DATA_SIZE,
+                _mmiBuffer, CA_DATA_SIZE
+              );
+            }
             if (hr != (int)HResult.Severity.Success)
             {
-              this.LogDebug("Digital Everywhere: request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              this.LogError("Digital Everywhere: request failed, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
               continue;
             }
 
             this.LogDebug("Digital Everywhere: retrieving data");
-            for (int i = 0; i < CA_DATA_SIZE; i++)
+            lock (_mmiLock)
             {
-              Marshal.WriteByte(_mmiBuffer, i, 0);
-            }
-            int returnedByteCount;
-            hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
-              _mmiBuffer, CA_DATA_SIZE,
-              _mmiBuffer, CA_DATA_SIZE,
-              out returnedByteCount
-            );
-            if (hr != (int)HResult.Severity.Success)
-            {
-              this.LogDebug("Digital Everywhere: failed to retrieve data, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-              continue;
-            }
+              for (int i = 0; i < CA_DATA_SIZE; i++)
+              {
+                Marshal.WriteByte(_mmiBuffer, i, 0);
+              }
+              int returnedByteCount;
+              hr = _propertySet.Get(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiCamToHost,
+                _mmiBuffer, CA_DATA_SIZE,
+                _mmiBuffer, CA_DATA_SIZE,
+                out returnedByteCount
+              );
+              if (hr != (int)HResult.Severity.Success || returnedByteCount != CA_DATA_SIZE)
+              {
+                this.LogError("Digital Everywhere: failed to retrieve data, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
+                continue;
+              }
 
-            this.LogDebug("Digital Everywhere: handling data");
-            data = (CaData)Marshal.PtrToStructure(_mmiBuffer, typeof(CaData));
+              this.LogDebug("Digital Everywhere: handling data");
+              data = (CaData)Marshal.PtrToStructure(_mmiBuffer, typeof(CaData));
+            }
             byte[] objectData = new byte[data.DataLength];
             Array.Copy(data.Data, objectData, data.DataLength);
-            DvbMmiHandler.HandleMmiData(objectData, ref _ciMenuCallbacks);
+            lock (_caMenuCallBackLock)
+            {
+              DvbMmiHandler.HandleMmiData(objectData, ref _caMenuCallBacks);
+            }
           }
         }
       }
@@ -925,7 +975,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Digital Everywhere: exception in MMI handler thread");
+        this.LogError(ex, "Digital Everywhere: MMI handler thread exception");
         return;
       }
     }
@@ -935,8 +985,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -947,8 +997,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -956,7 +1007,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Digital Everywhere: initialising device");
+      this.LogDebug("Digital Everywhere: initialising");
 
       if (context == null)
       {
@@ -965,7 +1016,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       if (_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device is already initialised");
+        this.LogWarn("Digital Everywhere: extension already initialised");
         return true;
       }
 
@@ -981,11 +1032,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Digital Everywhere: device does not support the Digital Everywhere property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Digital Everywhere: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Digital Everywhere: supported device detected");
+      this.LogInfo("Digital Everywhere: extension supported");
       _isDigitalEverywhere = true;
       _tunerType = tunerType;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
@@ -997,23 +1048,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("Digital Everywhere: on before tune callback");
+      this.LogDebug("Digital Everywhere: on before tune call back");
       action = TunerAction.Default;
 
       if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return;
       }
 
@@ -1071,10 +1122,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     }
 
     /// <summary>
-    /// This callback is invoked after a tune request is submitted, when the device is started but before
-    /// signal lock is checked.
+    /// This call back is invoked after a tune request is submitted, when the tuner is started but
+    /// before signal lock is checked.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is tuned to.</param>
     public override void OnStarted(ITVCard tuner, IChannel currentChannel)
     {
@@ -1097,9 +1148,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: set power state, state = {0}", state);
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1108,7 +1159,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // supply might be turned on or off.
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbPower, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Digital Everywhere: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -1132,7 +1183,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1151,9 +1202,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: set PID filter state, force enable = {0}", forceEnable);
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1194,7 +1245,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         fullTransponder = false;
         if (pids.Count > MAX_PID_FILTER_PIDS)
         {
-          this.LogDebug("Digital Everywhere: too many PIDs, hardware limit = {0}, actual count = {1}", MAX_PID_FILTER_PIDS, pids.Count);
+          this.LogError("Digital Everywhere: too many PIDs, hardware limit = {0}, actual count = {1}", MAX_PID_FILTER_PIDS, pids.Count);
           // When the forceEnable flag is set, we just set as many PIDs as possible.
           if (!forceEnable)
           {
@@ -1239,7 +1290,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         Marshal.StructureToPtr(filter, _generalBuffer, true);
       }
 
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, bufferSize);
+      //Dump.DumpBinary(_generalBuffer, bufferSize);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)property,
         _generalBuffer, bufferSize,
@@ -1251,7 +1302,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1260,10 +1311,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     #region ICustomTuner members
 
     /// <summary>
-    /// Check if the device implements specialised tuning for a given channel.
+    /// Check if the extension implements specialised tuning for a given channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
       // Tuning of DVB-S/2 and DVB-T/2 channels is supported with an appropriate tuner. DVB-C tuning may also be
@@ -1284,9 +1335,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: tune to channel");
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1307,7 +1358,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         lnbParams.LnbParams[0].HighBandLof = (ushort)(dvbsChannel.LnbType.HighBandFrequency / 1000);
 
         Marshal.StructureToPtr(lnbParams, _generalBuffer, true);
-        //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_PARAM_INFO_SIZE);
+        //Dump.DumpBinary(_generalBuffer, LNB_PARAM_INFO_SIZE);
 
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SetLnbParams,
           _generalBuffer, LNB_PARAM_INFO_SIZE,
@@ -1315,7 +1366,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Digital Everywhere: failed to apply LNB settings, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
 
         DvbsMultiplexParams tuneRequest = new DvbsMultiplexParams();
@@ -1359,7 +1410,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         }
 
         Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
-        //DVB_MMI.DumpBinary(_generalBuffer, 0, DVBS_MULTIPLEX_PARAMS_SIZE);
+        //Dump.DumpBinary(_generalBuffer, DVBS_MULTIPLEX_PARAMS_SIZE);
 
         hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbS,
           _generalBuffer, DVBS_MULTIPLEX_PARAMS_SIZE,
@@ -1390,7 +1441,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
           tuneRequest.Hierarchy = DeOfdmHierarchy.Auto;
 
           Marshal.StructureToPtr(tuneRequest, _generalBuffer, true);
-          DVB_MMI.DumpBinary(_generalBuffer, 0, DVBT_MULTIPLEX_PARAMS_SIZE);
+          Dump.DumpBinary(_generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE);
           hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.SelectMultiplexDvbT,
             _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE,
             _generalBuffer, DVBT_MULTIPLEX_PARAMS_SIZE
@@ -1409,7 +1460,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1426,25 +1477,27 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: open conditional access interface");
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
-      if (_mmiBuffer != IntPtr.Zero)
+      if (_isCaInterfaceOpen)
       {
-        this.LogDebug("Digital Everywhere: interface is already open");
-        return false;
+        this.LogWarn("Digital Everywhere: interface is already open");
+        return true;
       }
 
       _mmiBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _pmtBuffer = Marshal.AllocCoTaskMem(CA_DATA_SIZE);
       _isCamReady = IsInterfaceReady();
+      _isCamPresent = _isCamReady;
       if (_isCamReady)
       {
         ReadApplicationInformation();
       }
 
+      _isCaInterfaceOpen = true;
       StartMmiHandlerThread();
 
       this.LogDebug("Digital Everywhere: result = success");
@@ -1458,21 +1511,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     public bool CloseInterface()
     {
       this.LogDebug("Digital Everywhere: close conditional access interface");
-      if (_mmiHandlerThread != null && _mmiHandlerThread.IsAlive)
-      {
-        _stopMmiHandlerThread = true;
-        // In the worst case scenario it should take approximately
-        // twice the thread sleep time to cleanly stop the thread.
-        _mmiHandlerThread.Join(MMI_HANDLER_THREAD_SLEEP_TIME * 2);
-        if (_mmiHandlerThread.IsAlive)
-        {
-          this.LogDebug("Digital Everywhere: warning, failed to join MMI handler thread => aborting thread");
-          _mmiHandlerThread.Abort();
-        }
-        _mmiHandlerThread = null;
-      }
 
-      _isCamReady = false;
+      StopMmiHandlerThread();
+
       if (_mmiBuffer != IntPtr.Zero)
       {
         Marshal.FreeCoTaskMem(_mmiBuffer);
@@ -1484,6 +1525,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         _pmtBuffer = IntPtr.Zero;
       }
 
+      _isCamPresent = false;
+      _isCamReady = false;
+      _isCaInterfaceOpen = false;
+
       this.LogDebug("Digital Everywhere: result = success");
       return true;
     }
@@ -1491,18 +1536,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
+    /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetDevice)
+    public bool ResetInterface(out bool resetTuner)
     {
       this.LogDebug("Digital Everywhere: reset conditional access interface");
 
-      resetDevice = false;
+      resetTuner = false;
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogDebug("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1513,7 +1558,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       data.Data[0] = (byte)DeResetType.ForcedHardwareReset;
 
       Marshal.StructureToPtr(data, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, CA_DATA_SIZE);
+      //Dump.DumpBinary(_generalBuffer, CA_DATA_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
         _generalBuffer, CA_DATA_SIZE,
@@ -1525,7 +1570,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       }
       else
       {
-        this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
       return success && OpenInterface();
@@ -1539,9 +1584,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: is conditional access interface ready");
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogDebug("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1549,22 +1594,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       int hr = GetCiStatus(out ciState);
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Digital Everywhere: failed to get CI status, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
       this.LogDebug("Digital Everywhere: CI state = {0}", ciState.ToString());
-      bool camReady = false;
-      if ((ciState & DeCiState.CamPresent) != 0 &&
-        (ciState & DeCiState.CamIsDvb) != 0 &&
-        (ciState & DeCiState.CamError) == 0 &&
-        (ciState & DeCiState.CamReady) != 0 &&
-        (ciState & DeCiState.ApplicationInfoAvailable) != 0)
+      bool isCamReady = false;
+      if (ciState.HasFlag(DeCiState.CamPresent | DeCiState.CamIsDvb | DeCiState.CamReady | DeCiState.ApplicationInfoAvailable) &&
+        !ciState.HasFlag(DeCiState.CamError))
       {
-        camReady = true;
+        isCamReady = true;
       }
-      this.LogDebug("Digital Everywhere: result = {0}", camReady);
-      return camReady;
+      this.LogDebug("Digital Everywhere: result = {0}", isCamReady);
+      return isCamReady;
     }
 
     /// <summary>
@@ -1575,28 +1617,33 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("Digital Everywhere: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
+        return false;
+      }
+      if (!_isCamReady)
+      {
+        this.LogError("Digital Everywhere: the CAM is not ready");
         return false;
       }
       if (pmt == null)
       {
-        this.LogDebug("Digital Everywhere: PMT not supplied");
+        this.LogError("Digital Everywhere: PMT not supplied");
         return true;
       }
 
       ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
       if (rawPmt.Count > MAX_PMT_LENGTH - 2)
       {
-        this.LogDebug("Digital Everywhere: buffer capacity too small");
+        this.LogError("Digital Everywhere: buffer capacity too small");
         return false;
       }
 
@@ -1607,17 +1654,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       rawPmt.CopyTo(data.Data, 2);
 
-      int hr;
-      lock (this)
-      {
-        Marshal.StructureToPtr(data, _pmtBuffer, true);
-        //DVB_MMI.DumpBinary(_pmtBuffer, 0, CA_DATA_SIZE);
+      Marshal.StructureToPtr(data, _pmtBuffer, true);
+      //Dump.DumpBinary(_pmtBuffer, CA_DATA_SIZE);
 
-        hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
-          _pmtBuffer, CA_DATA_SIZE,
-          _pmtBuffer, CA_DATA_SIZE
-        );
-      }
+      int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.MmiHostToCam,
+        _pmtBuffer, CA_DATA_SIZE,
+        _pmtBuffer, CA_DATA_SIZE
+      );
       if (hr == (int)HResult.Severity.Success)
       {
         this.LogDebug("Digital Everywhere: result = success");
@@ -1626,35 +1669,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
 
       // Failure indicates a Firewire communication problem.
       // Success does *not* indicate that the service will be descrambled.
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
     #endregion
 
-    #region ICiMenuActions members
+    #region IConditionalAccessMenuActions members
 
     /// <summary>
-    /// Set the CAM callback handler functions.
+    /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
     {
-      if (ciMenuHandler != null)
+      lock (_caMenuCallBackLock)
       {
-        _ciMenuCallbacks = ciMenuHandler;
-        StartMmiHandlerThread();
-        return true;
+        _caMenuCallBacks = callBacks;
       }
-      return false;
+      StartMmiHandlerThread();
     }
 
     /// <summary>
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterCIMenu()
+    public bool EnterMenu()
     {
       this.LogDebug("Digital Everywhere: enter menu");
       CaData data = new CaData(DeCiMessageTag.EnterMenu);
@@ -1665,7 +1705,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseCIMenu()
+    public bool CloseMenu()
     {
       this.LogDebug("Digital Everywhere: close menu");
       CaData data = new CaData(DeCiMessageTag.Mmi);
@@ -1680,7 +1720,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenu(byte choice)
+    public bool SelectMenuEntry(byte choice)
     {
       this.LogDebug("Digital Everywhere: select menu entry, choice = {0}", choice);
       CaData data = new CaData(DeCiMessageTag.Mmi);
@@ -1691,18 +1731,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     }
 
     /// <summary>
-    /// Send a response from the user to the CAM.
+    /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the request.</param>
-    /// <param name="answer">The user's response.</param>
-    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, string answer)
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {
         answer = string.Empty;
       }
-      this.LogDebug("Digital Everywhere: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      this.LogDebug("Digital Everywhere: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
 
       CaData data = new CaData(DeCiMessageTag.Mmi);
       MmiResponseType responseType = MmiResponseType.Answer;
@@ -1732,9 +1772,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       // the driver will accept commands with no DiSEqC messages.
       this.LogDebug("Digital Everywhere: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
 
@@ -1757,7 +1797,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       lnbCommand.NumberOfMessages = 0;
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_COMMAND_SIZE);
+      //Dump.DumpBinary(_generalBuffer, LNB_COMMAND_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,
         _generalBuffer, LNB_COMMAND_SIZE,
@@ -1769,7 +1809,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -1782,19 +1822,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
     {
       this.LogDebug("Digital Everywhere: send DiSEqC command");
 
-      if (!_isDigitalEverywhere || _propertySet == null)
+      if (!_isDigitalEverywhere)
       {
-        this.LogDebug("Digital Everywhere: device not initialised or interface not supported");
+        this.LogWarn("Digital Everywhere: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Digital Everywhere: command not supplied");
+        this.LogError("Digital Everywhere: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("Digital Everywhere: command too long, length = {0}", command.Length);
+        this.LogError("Digital Everywhere: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -1809,7 +1849,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
       Buffer.BlockCopy(command, 0, lnbCommand.DiseqcMessages[0].Message, 0, command.Length);
 
       Marshal.StructureToPtr(lnbCommand, _generalBuffer, true);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, LNB_COMMAND_SIZE);
+      //Dump.DumpBinary(_generalBuffer, LNB_COMMAND_SIZE);
 
       int hr = _propertySet.Set(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.LnbControl,
         _generalBuffer, LNB_COMMAND_SIZE,
@@ -1821,7 +1861,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalEverywhere
         return true;
       }
 
-      this.LogDebug("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Digital Everywhere: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

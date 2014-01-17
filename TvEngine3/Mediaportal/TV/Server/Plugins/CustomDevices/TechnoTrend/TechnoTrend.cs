@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -28,6 +29,7 @@ using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
@@ -35,9 +37,10 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 {
   /// <summary>
-  /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series devices.
+  /// A class for handling conditional access and DiSEqC for TechnoTrend Budget and Connect series
+  /// tuners.
   /// </summary>
-  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, ICiMenuActions, IDiseqcDevice
+  public class TechnoTrend : BaseCustomDevice, ICustomTuner, IPowerDevice, IConditionalAccessProvider, IConditionalAccessMenuActions, IDiseqcDevice
   {
     #region enums
 
@@ -53,7 +56,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       DebugString = 0,
       Message,
       OutputMessage,
-      Psi                 // programme specific information
+      Psi                 // program specific information
     }
 
     private enum TtDeviceCategory //DEVICE_CAT
@@ -99,7 +102,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       CloseFilter,
       PsiComplete,
       CamReady,
-      SwitchProgrammeReply,
+      SwitchProgramReply,
       TextMore
     }
 
@@ -321,10 +324,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// A structure for holding the full set of callback function and context pointers.
+    /// A structure for holding the full set of call back function and context pointers.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct TtFullCiCallbacks
+    private struct TtFullCiCallBacks
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -370,10 +373,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// A structure for holding a minimal ("slim") set of callback function and context pointers.
+    /// A structure for holding a minimal ("slim") set of call back function and context pointers.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    private struct TtSlimCiCallbacks
+    private struct TtSlimCiCallBacks
     {
       public OnTtSlotStatus OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -671,38 +674,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region open/close the conditional access interface
 
     /// <summary>
-    /// Initialise the conditional access interface. In this case the full set of callback delegates are specified.
+    /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
-    /// <param name="callbacks">Full callback structure pointer.</param>
+    /// <param name="callBacks">Full call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCI(IntPtr device, TtFullCiCallbacks callbacks);
+    private static extern TtApiResult bdaapiOpenCI(IntPtr device, TtFullCiCallBacks callBacks);
 
     /// <summary>
-    /// Initialise the conditional access interface. In this case the full set of callback delegates are specified.
+    /// Initialise the conditional access interface. In this case the full set of call back delegates are specified.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
-    /// <param name="callbacks">Full callback structure pointer.</param>
+    /// <param name="callBacks">Full call back structure pointer.</param>
     /// <param name="ciMessageHandler">A delegate for handling raw messages from the interface.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCIext(IntPtr device, TtFullCiCallbacks callbacks, OnTtCiMessage ciMessageHandler);
+    private static extern TtApiResult bdaapiOpenCIext(IntPtr device, TtFullCiCallBacks callBacks, OnTtCiMessage ciMessageHandler);
 
     /// <summary>
-    /// Initialise the conditional access interface. In this case a minimal set of callback delegates are specified.
+    /// Initialise the conditional access interface. In this case a minimal set of call back delegates are specified.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
-    /// <param name="callbacks">Minimal callback structure pointer.</param>
+    /// <param name="callBacks">Minimal call back structure pointer.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
     [DllImport("Resources\\ttBdaDrvApi_Dll.dll", CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
-    private static extern TtApiResult bdaapiOpenCISlim(IntPtr device, TtSlimCiCallbacks callbacks);
+    private static extern TtApiResult bdaapiOpenCISlim(IntPtr device, TtSlimCiCallBacks callBacks);
 
     /// <summary>
-    /// Initialise the conditional access interface. In this case callback delegates are not specified.
+    /// Initialise the conditional access interface. In this case call back delegates are not specified.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
     /// <returns><c>TtApiResult.Success</c> if a CI slot is present/connected, otherwise <c>TtApiResult.Error</c></returns>
@@ -763,7 +766,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private static extern TtApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slotIndex);
 
     /// <summary>
-    /// Request a CI status update. This request will be answered via the OnCiStatus() callback.
+    /// Request a CI status update. This request will be answered via the OnCiStatus() call back.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -773,7 +776,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     private static extern TtApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slotIndex);
 
     /// <summary>
-    /// Send a response from the user to the CAM.
+    /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
     /// <param name="device">The handle allocated to this device.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
@@ -810,7 +813,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
     #endregion
 
-    #region callback definitions
+    #region call back definitions
 
     /// <summary>
     /// Called when a signal from the remote is detected by the IR receiver.
@@ -846,21 +849,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="text">The request context text from the CAM.</param>
-    /// <param name="textLength">The length of the context text in bytes.</param>
+    /// <param name="prompt">A buffer containing the request prompt text from the CAM.</param>
+    /// <param name="promptByteCount">The number of bytes in the prompt buffer.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr text, short textLength);
+    private delegate void OnTtDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount);
 
     /// <summary>
     /// Called by the tuner driver when a menu or list from the CAM is available.
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="numEntries">The number of entries in the menu/list.</param>
+    /// <param name="entryCount">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, short numEntries, IntPtr entries, short totalMenuLength);
+    private delegate void OnTtDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength);
 
     /// <summary>
     /// Called by the tuner driver when the CAM wants to close the menu.
@@ -892,7 +895,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void OnTtCiMessage(byte slotIndex, TtCiMessageHandlerTag tag, IntPtr buffer, short bufferSize);
 
-    #region low speed communication interface callback definitions
+    #region low speed communication interface call back definitions
 
     /// <summary>
     /// ???
@@ -1011,6 +1014,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region variables
 
     private bool _isTechnoTrend = false;
+    private bool _isCaInterfaceOpen = false;
     private bool _isCiSlotPresent = false;
     #pragma warning disable 0414
     private bool _isCamPresent = false;
@@ -1025,14 +1029,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
 
     private IntPtr _deviceHandle = IntPtr.Zero;
     private IntPtr _serviceBuffer = IntPtr.Zero;
+    private IntPtr _pmtBuffer = IntPtr.Zero;
     private IntPtr _generalBuffer = IntPtr.Zero;
 
-    private TtFullCiCallbacks _callbacks;
-    private ICiMenuCallbacks _ciMenuCallbacks = null;
+    private TtFullCiCallBacks _ciCallBacks;
+    private IConditionalAccessMenuCallBacks _caMenuCallBacks = null;
+    private object _caMenuCallBackLock = new object();
 
-    // When the CAM asks for input (via callback), the input request context (description) is provided
-    // by a separate callback. We use this variable to cache it.
-    private string _camInputRequestContext = string.Empty;
+    // When the CAM asks for input (via call back), the input request prompt is provided
+    // by a separate call back. We use this variable to cache it.
+    private string _camInputRequestPrompt = string.Empty;
 
     private HashSet<ushort> _descrambledServices = null;
 
@@ -1177,7 +1183,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        this.LogDebug("TechnoTrend: failed to read the device details, result = {0}", result);
+        this.LogWarn("TechnoTrend: failed to read the device details, result = {0}", result);
       }
       Marshal.FreeCoTaskMem(info);
 
@@ -1190,7 +1196,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        this.LogDebug("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
+        this.LogWarn("TechnoTrend: failed to determine the product (re)seller, result = {0}", result);
       }
 
       // Driver version.
@@ -1205,7 +1211,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        this.LogDebug("TechnoTrend: failed to read the driver version, result = {0}", result);
+        this.LogWarn("TechnoTrend: failed to read the driver version, result = {0}", result);
       }
 
       // MAC address.
@@ -1223,7 +1229,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       else
       {
-        this.LogDebug("TechnoTrend: failed to read the MAC address, result = {0}", result);
+        this.LogWarn("TechnoTrend: failed to read the MAC address, result = {0}", result);
       }
 
       // USB speed.
@@ -1237,7 +1243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         }
         else
         {
-          this.LogDebug("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
+          this.LogWarn("TechnoTrend: failed to determine whether USB high speed is supported, result = {0}", result);
         }
       }
     }
@@ -1251,11 +1257,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       TtApiResult result = bdaapiCIGetSlotStatus(_deviceHandle, _slotIndex);
       if (result != TtApiResult.Success)
       {
-        this.LogDebug("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
+        this.LogError("TechnoTrend: bdaapiCIGetSlotStatus failed, result = {0}", result);
       }
     }
 
-    #region callback handlers
+    #region call back handlers
 
     /// <summary>
     /// Called by the tuner driver when the state of the CI slot changes.
@@ -1266,15 +1272,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotInfo">A pointer to a CiSlotInfo struct containing extended information about the interface state.</param>
     private void OnSlotStatus(IntPtr context, byte slotIndex, TtCiState state, IntPtr slotInfo)
     {
-      this.LogDebug("TechnoTrend: CI slot status callback, slot = {0}", slotIndex);
+      this.LogInfo("TechnoTrend: CI slot status call back, slot = {0}", slotIndex);
       if (state == _ciState)
       {
         // Don't be too verbose - we don't need to print the CAS IDs all the time.
-        this.LogDebug("TechnoTrend: CI state = {0}", _ciState);
+        this.LogInfo("TechnoTrend: CI state = {0}", _ciState);
         return;
       }
 
-      this.LogDebug("TechnoTrend: CI state change, old state = {0}, new state = {1}", _ciState, state);
+      this.LogInfo("TechnoTrend: CI state change, old state = {0}, new state = {1}", _ciState, state);
       if (state == TtCiState.CamOkay || state == TtCiState.ApplicationOk)
       {
         _isCamPresent = true;
@@ -1317,12 +1323,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         this.LogDebug("  # CAS IDs  = {0}", info.NumberOfCaSystemIds);
         for (int i = 0; i < info.NumberOfCaSystemIds; i++)
         {
-          this.LogDebug("  {0,-2}         = 0x{1:x4}", i + 1, Marshal.ReadInt16(info.CaSystemIds, i * 2));
+          this.LogDebug("    {0, -8} = 0x{1:x4}", i + 1, Marshal.ReadInt16(info.CaSystemIds, i * 2));
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TechnoTrend: CI slot status callback exception");
+        this.LogError(ex, "TechnoTrend: CI slot status call back exception");
       }
     }
 
@@ -1335,7 +1341,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="error">An error message from the CAM.</param>
     private void OnCaStatus(IntPtr context, byte slotIndex, TtMmiMessage reply, TtCiError error)
     {
-      this.LogDebug("TechnoTrend: CA status callback, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
+      this.LogInfo("TechnoTrend: CA status call back, slot = {0}, reply = {1}, error = {2}", slotIndex, reply, error);
       try
       {
         // NoCaResource generally seems to indicate a smartcard or CAM error. The TechnoTrend
@@ -1344,13 +1350,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         // seems to resolve the problem.
         if (error == TtCiError.NoCaResource)
         {
-          bool resetDevice;
-          ResetInterface(out resetDevice);
+          bool resetTuner;
+          ResetInterface(out resetTuner);
         }
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TechnoTrend: CA status callback exception");
+        this.LogError(ex, "TechnoTrend: CA status call back exception");
       }
     }
 
@@ -1360,18 +1366,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="text">The request context text from the CAM.</param>
-    /// <param name="textLength">The length of the context text in bytes.</param>
-    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr text, short textLength)
+    /// <param name="prompt">A buffer containing the request prompt text from the CAM.</param>
+    /// <param name="promptByteCount">The number of bytes in the prompt buffer.</param>
+    private void OnDisplayString(IntPtr context, byte slotIndex, IntPtr prompt, short promptByteCount)
     {
       try
       {
-        _camInputRequestContext = Marshal.PtrToStringAnsi(text, textLength);
-        this.LogDebug("TechnoTrend: display string callback, slot = {0}, string = {1}", slotIndex, _camInputRequestContext);
+        _camInputRequestPrompt = DvbTextConverter.Convert(prompt, promptByteCount);
+        this.LogDebug("TechnoTrend: display string call back, slot = {0}, prompt = {1}", slotIndex, _camInputRequestPrompt);
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "TechnoTrend: display string callback exception");
+        this.LogError(ex, "TechnoTrend: display string call back exception");
       }
     }
 
@@ -1380,67 +1386,62 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="context">The optional context passed to the interface when the interface was opened.</param>
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
-    /// <param name="numEntries">The number of entries in the menu/list.</param>
+    /// <param name="entryCount">The number of entries in the menu/list.</param>
     /// <param name="entries">The menu/list entries. Each entry is NULL terminated.</param>
     /// <param name="totalMenuLength">The length of the menu (ie. the sum of the lengths of all entries) in bytes.</param>
-    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, short numEntries, IntPtr entries, short totalMenuLength)
+    private void OnDisplayMenuOrList(IntPtr context, byte slotIndex, short entryCount, IntPtr entries, short totalMenuLength)
     {
-      try
-      {
-        this.LogDebug("TechnoTrend: display menu/list callback, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
+      this.LogInfo("TechnoTrend: display menu/list call back, slot = {0}, total menu length = {1}", slotIndex, totalMenuLength);
 
-        if (_ciMenuCallbacks == null)
+      lock (_caMenuCallBackLock)
+      {
+        if (_caMenuCallBacks == null)
         {
-          this.LogDebug("TechnoTrend: menu callbacks are not set");
+          this.LogDebug("TechnoTrend: menu call backs are not set");
         }
 
-        // Construct menu/list strings for callback.
-        StringBuilder[] strings = new StringBuilder[numEntries];
-        int idx = 0;
-        byte charChode;
-        for (int i = 0; i < totalMenuLength - 1; i++)   // There is an extra NULL character to indicate the end of the menu.
+        // Decode menu/list strings for call back.
+        List<string> entryStrings = new List<string>();
+        IntPtr entryPtr = entries;
+        string entry;
+        int decodedByteCount;
+        int totalDecodedByteCount = 0;
+        for (int i = 0; i < entryCount && totalDecodedByteCount < totalMenuLength; i++)
         {
-          charChode = Marshal.ReadByte(IntPtr.Add(entries, i));
-          // Start of a new entry?
-          if (strings[idx] == null)
+          entry = DvbTextConverter.Convert(entryPtr, -1, 0, out decodedByteCount);
+          if (decodedByteCount == 0)
           {
-            strings[idx] = new StringBuilder();
+            this.LogWarn("TechnoTrend: failed to decode menu/list entry {0} of {1}", i + 1, entryCount);
+            break;
           }
-
-          if (charChode != 0)
-          {
-            strings[idx].Append((char)charChode);
-            continue;
-          }
-
-          // End of an entry. Is the meta-data complete?
-          if (idx == 2)
-          {
-            this.LogDebug("  title     = {0}", strings[0].ToString());
-            this.LogDebug("  sub-title = {0}", strings[1].ToString());
-            this.LogDebug("  footer    = {0}", strings[2].ToString());
-            this.LogDebug("  # entries = {0}", numEntries - 3);
-            if (_ciMenuCallbacks != null)
-            {
-              _ciMenuCallbacks.OnCiMenu(strings[0].ToString(), strings[1].ToString(), strings[2].ToString(), numEntries - 3);
-            }
-          }
-          else if (idx > 2)
-          {
-            this.LogDebug("  entry {0,-2}  = {1}", idx - 2, strings[idx].ToString());
-            if (_ciMenuCallbacks != null)
-            {
-              _ciMenuCallbacks.OnCiMenuChoice(idx - 3, strings[idx].ToString());
-            }
-          }
-
-          // Start new entry.
-          idx++;
+          totalDecodedByteCount += decodedByteCount;
+          entryStrings.Add(entry);
+          entryPtr = IntPtr.Add(entryPtr, decodedByteCount);
         }
-      }
-      catch (Exception ex)
-      {
-        this.LogError(ex, "TechnoTrend: display menu/list callback exception");
+
+        if (entryStrings.Count < 3 || entryCount != entryStrings.Count)
+        {
+          this.LogError("TechnoTrend: actual menu entry count {0} does not match expected entry count {1}", entryStrings.Count, entryCount);
+          Dump.DumpBinary(entries, totalMenuLength);
+          return;
+        }
+        this.LogDebug("  title     = {0}", entryStrings[0]);
+        this.LogDebug("  sub-title = {0}", entryStrings[1]);
+        this.LogDebug("  footer    = {0}", entryStrings[2]);
+        this.LogDebug("  # entries = {0}", entryCount - 3);
+        if (_caMenuCallBacks != null)
+        {
+          _caMenuCallBacks.OnCiMenu(entryStrings[0], entryStrings[1], entryStrings[2], entryCount - 3);
+        }
+
+        for (int i = 3; i < entryCount; i++)
+        {
+          this.LogDebug("    {0, -7} = {1}", i - 2, entryStrings[i]);
+          if (_caMenuCallBacks != null)
+          {
+            _caMenuCallBacks.OnCiMenuChoice(i - 3, entryStrings[i]);
+          }
+        }
       }
     }
 
@@ -1451,21 +1452,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnSwitchOsdOff(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: switch OSD off callback, slot = {0}", slotIndex);
-      if (_ciMenuCallbacks != null)
+      this.LogInfo("TechnoTrend: switch OSD off call back, slot = {0}", slotIndex);
+      lock (_caMenuCallBackLock)
       {
-        try
+        if (_caMenuCallBacks != null)
         {
-          _ciMenuCallbacks.OnCiCloseDisplay(0);
+          _caMenuCallBacks.OnCiCloseDisplay(0);
         }
-        catch (Exception ex)
+        else
         {
-          this.LogError(ex, "TechnoTrend: switch OSD off callback exception");
+          this.LogDebug("TechnoTrend: menu call backs are not set");
         }
-      }
-      else
-      {
-        this.LogDebug("TechnoTrend: menu callbacks are not set");
       }
     }
 
@@ -1479,28 +1476,24 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="keyMask"></param>
     private void OnInputRequest(IntPtr context, byte slotIndex, bool blind, byte answerLength, short keyMask)
     {
-      this.LogDebug("TechnoTrend: input request callback, slot = {0}", slotIndex);
+      this.LogInfo("TechnoTrend: input request call back, slot = {0}", slotIndex);
       this.LogDebug("  length   = {0}", answerLength);
       this.LogDebug("  blind    = {0}", blind);
       this.LogDebug("  key mask = {0:x4}", keyMask);
-      if (_ciMenuCallbacks != null)
+      lock (_caMenuCallBackLock)
       {
-        try
+        if (_caMenuCallBacks != null)
         {
-          _ciMenuCallbacks.OnCiRequest(blind, answerLength, _camInputRequestContext);
+          _caMenuCallBacks.OnCiRequest(blind, answerLength, _camInputRequestPrompt);
         }
-        catch (Exception ex)
+        else
         {
-          this.LogError(ex, "TechnoTrend: input request callback exception");
+          this.LogDebug("TechnoTrend: menu call backs are not set");
         }
-      }
-      else
-      {
-        this.LogDebug("TechnoTrend: menu callbacks are not set");
       }
     }
 
-    #region low speed communication callbacks
+    #region low speed communication call backs
 
     /// <summary>
     /// ???
@@ -1510,7 +1503,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="descriptor">???</param>
     private void OnLscSetDescriptor(IntPtr context, byte slotIndex, IntPtr descriptor)
     {
-      this.LogDebug("TechnoTrend: OnLscSetDescriptor callback, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: OnLscSetDescriptor call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1520,7 +1513,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscConnect(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscConnect callback, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: OnLscConnect call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1530,7 +1523,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscDisconnect(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscDisconnect callback, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: OnLscDisconnect call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1542,7 +1535,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="timeout">A timeout in units of ten milliseconds.</param>
     private void OnLscSetParams(IntPtr context, byte slotIndex, byte bufferSize, byte timeout)
     {
-      this.LogDebug("TechnoTrend: OnLscSetParams callback, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
+      this.LogDebug("TechnoTrend: OnLscSetParams call back, slot = {0}, buffer size = {1}, timeout = {2}", slotIndex, bufferSize, timeout);
     }
 
     /// <summary>
@@ -1552,7 +1545,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="slotIndex">The index of the CI slot containing the CAM.</param>
     private void OnLscEnquireStatus(IntPtr context, byte slotIndex)
     {
-      this.LogDebug("TechnoTrend: OnLscEnquireStatus callback, slot = {0}", slotIndex);
+      this.LogDebug("TechnoTrend: OnLscEnquireStatus call back, slot = {0}", slotIndex);
     }
 
     /// <summary>
@@ -1563,7 +1556,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="phaseId"></param>
     private void OnLscGetNextBuffer(IntPtr context, byte slotIndex, byte phaseId)
     {
-      this.LogDebug("TechnoTrend: OnLscGetNextBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
+      this.LogDebug("TechnoTrend: OnLscGetNextBuffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
     }
 
     /// <summary>
@@ -1576,8 +1569,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <param name="bufferSize"></param>
     private void OnLscTransmitBuffer(IntPtr context, byte slotIndex, byte phaseId, IntPtr buffer, short bufferSize)
     {
-      this.LogDebug("TechnoTrend: OnLscTransmitBuffer callback, slot = {0}, phase = {1}", slotIndex, phaseId);
-      DVB_MMI.DumpBinary(buffer, 0, bufferSize);
+      this.LogDebug("TechnoTrend: OnLscTransmitBuffer call back, slot = {0}, phase = {1}", slotIndex, phaseId);
+      Dump.DumpBinary(buffer, bufferSize);
     }
 
     #endregion
@@ -1587,8 +1580,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -1599,8 +1592,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -1608,7 +1602,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("TechnoTrend: initialising device");
+      this.LogDebug("TechnoTrend: initialising");
 
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
@@ -1618,7 +1612,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       }
       if (_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device is already initialised");
+        this.LogWarn("TechnoTrend: extension already initialised");
         return true;
       }
 
@@ -1639,12 +1633,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       _deviceHandle = bdaapiOpenHWIdx(_deviceCategory, (uint)deviceId);
       if (_deviceHandle == IntPtr.Zero || _deviceHandle.ToInt64() == -1)
       {
-        this.LogDebug("TechnoTrend: hardware interface could not be opened");
+        this.LogError("TechnoTrend: hardware interface could not be opened");
         _deviceHandle = IntPtr.Zero;
         return false;
       }
 
-      this.LogDebug("TechnoTrend: supported device detected, category = {0}, id = {1}", _deviceCategory, deviceId);
+      this.LogDebug("TechnoTrend: extension supported, category = {0}, id = {1}", _deviceCategory, deviceId);
       _isTechnoTrend = true;
       _tunerType = tunerType;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
@@ -1654,29 +1648,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         TtApiResult result = bdaapiSetDVBTAutoOffsetMode(_deviceHandle, false);
         if (result != TtApiResult.Success)
         {
-          this.LogDebug("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
+          this.LogWarn("TechnoTrend: failed to turn off auto offset mode, result = {0}", result);
         }
       }
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("TechnoTrend: on before tune callback");
+      this.LogDebug("TechnoTrend: on before tune call back");
       action = TunerAction.Default;
 
       if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return;
       }
 
@@ -1713,9 +1707,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     {
       this.LogDebug("TechnoTrend: set power state, state = {0}", state);
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
       if (_tunerType != CardType.DvbT)
@@ -1734,10 +1728,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     #region ICustomTuner members
 
     /// <summary>
-    /// Check if the device implements specialised tuning for a given channel.
+    /// Check if the extension implements specialised tuning for a given channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
       // Tuning of DVB-C, DVB-S/2 and DVB-T/2 channels is supported with an appropriate tuner.
@@ -1759,9 +1753,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     {
       this.LogDebug("TechnoTrend: tune to channel");
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
 
@@ -1819,13 +1813,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
           }
           else
           {
-            this.LogDebug("TechnoTrend: tuning is not supported for this channel");
+            this.LogError("TechnoTrend: tuning is not supported for this channel");
             return false;
           }
         }
       }
 
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, TUNE_REQUEST_SIZE);
+      //Dump.DumpBinary(_generalBuffer, TUNE_REQUEST_SIZE);
       TtApiResult result = bdaapiTune(_deviceHandle, _generalBuffer);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
@@ -1844,56 +1838,58 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     {
       this.LogDebug("TechnoTrend: open conditional access interface");
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
-      if (_descrambledServices != null || _serviceBuffer != IntPtr.Zero)
+      if (_isCaInterfaceOpen)
       {
-        this.LogDebug("TechnoTrend: interface is already open");
-        return false;
+        this.LogWarn("TechnoTrend: interface is already open");
+        return true;
       }
 
-      // Callback contexts.
-      _callbacks.OnSlotStatusContext = _deviceHandle;
-      _callbacks.OnCaStatusContext = _deviceHandle;
-      _callbacks.OnDisplayStringContext = _deviceHandle;
-      _callbacks.OnDisplayMenuContext = _deviceHandle;
-      _callbacks.OnDisplayListContext = _deviceHandle;
-      _callbacks.OnSwitchOsdOffContext = _deviceHandle;
-      _callbacks.OnInputRequestContext = _deviceHandle;
-      _callbacks.OnLscSetDescriptorContext = _deviceHandle;
-      _callbacks.OnLscConnectContext = _deviceHandle;
-      _callbacks.OnLscDisconnectContext = _deviceHandle;
-      _callbacks.OnLscSetParamsContext = _deviceHandle;
-      _callbacks.OnLscEnquireStatusContext = _deviceHandle;
-      _callbacks.OnLscGetNextBufferContext = _deviceHandle;
-      _callbacks.OnLscTransmitBufferContext = _deviceHandle;
+      // Call back contexts.
+      _ciCallBacks.OnSlotStatusContext = _deviceHandle;
+      _ciCallBacks.OnCaStatusContext = _deviceHandle;
+      _ciCallBacks.OnDisplayStringContext = _deviceHandle;
+      _ciCallBacks.OnDisplayMenuContext = _deviceHandle;
+      _ciCallBacks.OnDisplayListContext = _deviceHandle;
+      _ciCallBacks.OnSwitchOsdOffContext = _deviceHandle;
+      _ciCallBacks.OnInputRequestContext = _deviceHandle;
+      _ciCallBacks.OnLscSetDescriptorContext = _deviceHandle;
+      _ciCallBacks.OnLscConnectContext = _deviceHandle;
+      _ciCallBacks.OnLscDisconnectContext = _deviceHandle;
+      _ciCallBacks.OnLscSetParamsContext = _deviceHandle;
+      _ciCallBacks.OnLscEnquireStatusContext = _deviceHandle;
+      _ciCallBacks.OnLscGetNextBufferContext = _deviceHandle;
+      _ciCallBacks.OnLscTransmitBufferContext = _deviceHandle;
 
-      // Callback functions.
-      _callbacks.OnSlotStatus = OnSlotStatus;
-      _callbacks.OnCaStatus = OnCaStatus;
-      _callbacks.OnDisplayString = OnDisplayString;
-      _callbacks.OnDisplayMenu = OnDisplayMenuOrList;
-      _callbacks.OnDisplayList = OnDisplayMenuOrList;
-      _callbacks.OnSwitchOsdOff = OnSwitchOsdOff;
-      _callbacks.OnInputRequest = OnInputRequest;
-      _callbacks.OnLscSetDescriptor = OnLscSetDescriptor;
-      _callbacks.OnLscConnect = OnLscConnect;
-      _callbacks.OnLscDisconnect = OnLscDisconnect;
-      _callbacks.OnLscSetParams = OnLscSetParams;
-      _callbacks.OnLscEnquireStatus = OnLscEnquireStatus;
-      _callbacks.OnLscGetNextBuffer = OnLscGetNextBuffer;
-      _callbacks.OnLscTransmitBuffer = OnLscTransmitBuffer;
+      // Call back functions.
+      _ciCallBacks.OnSlotStatus = OnSlotStatus;
+      _ciCallBacks.OnCaStatus = OnCaStatus;
+      _ciCallBacks.OnDisplayString = OnDisplayString;
+      _ciCallBacks.OnDisplayMenu = OnDisplayMenuOrList;
+      _ciCallBacks.OnDisplayList = OnDisplayMenuOrList;
+      _ciCallBacks.OnSwitchOsdOff = OnSwitchOsdOff;
+      _ciCallBacks.OnInputRequest = OnInputRequest;
+      _ciCallBacks.OnLscSetDescriptor = OnLscSetDescriptor;
+      _ciCallBacks.OnLscConnect = OnLscConnect;
+      _ciCallBacks.OnLscDisconnect = OnLscDisconnect;
+      _ciCallBacks.OnLscSetParams = OnLscSetParams;
+      _ciCallBacks.OnLscEnquireStatus = OnLscEnquireStatus;
+      _ciCallBacks.OnLscGetNextBuffer = OnLscGetNextBuffer;
+      _ciCallBacks.OnLscTransmitBuffer = OnLscTransmitBuffer;
 
-      TtApiResult result = bdaapiOpenCI(_deviceHandle, _callbacks);
+      TtApiResult result = bdaapiOpenCI(_deviceHandle, _ciCallBacks);
       if (result == TtApiResult.Success)
       {
         this.LogDebug("TechnoTrend: result = {0}", result);
         _isCiSlotPresent = true;
         _serviceBuffer = Marshal.AllocCoTaskMem(SERVICE_BUFFER_SIZE);
+        _pmtBuffer = Marshal.AllocCoTaskMem(Pmt.MAX_SIZE);
         _descrambledServices = new HashSet<ushort>();
+        _isCaInterfaceOpen = true;
       }
       else
       {
@@ -1901,7 +1897,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         this.LogDebug("TechnoTrend: CI slot not present, result = {0}", result);
         _isCiSlotPresent = false;
       }
-      return _isCiSlotPresent;
+      return _isCaInterfaceOpen;
     }
 
     /// <summary>
@@ -1921,11 +1917,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         Marshal.FreeCoTaskMem(_serviceBuffer);
         _serviceBuffer = IntPtr.Zero;
       }
+      if (_pmtBuffer != IntPtr.Zero)
+      {
+        Marshal.FreeCoTaskMem(_pmtBuffer);
+        _pmtBuffer = IntPtr.Zero;
+      }
       _descrambledServices = null;
-      _camInputRequestContext = string.Empty;
+      _camInputRequestPrompt = string.Empty;
       _isCiSlotPresent = false;
       _isCamPresent = false;
       _isCamReady = false;
+      _isCaInterfaceOpen = false;
       this.LogDebug("TechnoTrend: result = success");
       return true;
     }
@@ -1933,12 +1935,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// <summary>
     /// Reset the conditional access interface.
     /// </summary>
-    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
+    /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    public bool ResetInterface(out bool resetDevice)
+    public bool ResetInterface(out bool resetTuner)
     {
-      resetDevice = false;
+      resetTuner = false;
       return CloseInterface() && OpenInterface();
     }
 
@@ -1965,39 +1967,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat)
     {
       this.LogDebug("TechnoTrend: send conditional access command, list action = {0}, command = {1}", listAction, command);
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
-      if (!_isCiSlotPresent)
+      if (!_isCamReady)
       {
-        this.LogDebug("TechnoTrend: CI slot not present");
-        // Don't retry - a restart is required for the CI slot to be connected.
-        return true;
+        this.LogError("TechnoTrend: the CAM is not ready");
+        return false;
       }
       if (command == CaPmtCommand.OkMmi || command == CaPmtCommand.Query)
       {
-        this.LogDebug("TechnoTrend: command type {0} is not supported", command);
-        return false;
+        this.LogError("TechnoTrend: command type {0} is not supported", command);
+        return true;
       }
       if (pmt == null)
       {
-        this.LogDebug("TechnoTrend: PMT not supplied");
+        this.LogError("TechnoTrend: PMT not supplied");
         return true;
       }
 
       this.LogDebug("TechnoTrend: service ID is {0} (0x{0:x})", pmt.ProgramNumber);
       if (pmt.ProgramNumber == 0)
       {
-        this.LogDebug("TechnoTrend: service 0 cannot be descrambled");
+        this.LogError("TechnoTrend: service 0 cannot be descrambled");
         return false;
       }
 
@@ -2016,10 +2017,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         listAction == CaPmtListManagementAction.More ||
         listAction == CaPmtListManagementAction.Last)
       {
-        if (!_descrambledServices.Contains(pmt.ProgramNumber))
-        {
-          _descrambledServices.Add(pmt.ProgramNumber);
-        }
+        _descrambledServices.Add(pmt.ProgramNumber);
       }
       else if (listAction == CaPmtListManagementAction.Only ||
         listAction == CaPmtListManagementAction.First)
@@ -2035,63 +2033,73 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
         return true;
       }
 
-      if (_descrambledServices.Count > MAX_SERVICE_COUNT)
+      TtApiResult result = TtApiResult.Success;
+      if (_descrambledServices.Count == 1)
       {
-        this.LogDebug("TechnoTrend: not able to descramble {0} services, limit is {1}", _descrambledServices.Count, MAX_SERVICE_COUNT);
-        return false;
+        ReadOnlyCollection<byte> rawPmt = pmt.GetRawPmt();
+        for (int i = 0; i < rawPmt.Count; i++)
+        {
+          Marshal.WriteByte(_pmtBuffer, i, rawPmt[i]);
+        }
+        result = bdaapiCIReadPSIFastWithPMT(_deviceHandle, _pmtBuffer, (ushort)rawPmt.Count);
+      }
+      else
+      {
+        if (_descrambledServices.Count > MAX_SERVICE_COUNT)
+        {
+          this.LogError("TechnoTrend: not able to descramble {0} services, limit is {1}", _descrambledServices.Count, MAX_SERVICE_COUNT);
+          return false;
+        }
+
+        // Send the updated list to the CAM.
+        this.LogDebug("TechnoTrend: service list");
+        int i = 0;
+        HashSet<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
+        while (en.MoveNext())
+        {
+          this.LogDebug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
+          Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en.Current);
+          i++;
+        }
+        result = bdaapiCIMultiDecode(_deviceHandle, _serviceBuffer, i);
       }
 
-      // Send the updated list to the CAM.
-      this.LogDebug("TechnoTrend: service list");
-      int i = 0;
-      HashSet<ushort>.Enumerator en = _descrambledServices.GetEnumerator();
-      while (en.MoveNext())
-      {
-        this.LogDebug("  {0} = {1} (0x{1:x4})", i + 1, en.Current);
-        Marshal.WriteInt16(_serviceBuffer, 2 * i, (short)en.Current);
-        i++;
-      }
-
-      TtApiResult result = bdaapiCIMultiDecode(_deviceHandle, _serviceBuffer, i);
       this.LogDebug("TechnoTrend: result = {0}", result);
       return (result == TtApiResult.Success);
     }
 
     #endregion
 
-    #region ICiMenuActions members
+    #region IConditionalAccessMenuActions members
 
     /// <summary>
-    /// Set the CAM callback handler functions.
+    /// Set the menu call back delegate.
     /// </summary>
-    /// <param name="ciMenuHandler">A set of callback handler functions.</param>
-    /// <returns><c>true</c> if the handlers are set, otherwise <c>false</c></returns>
-    public bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler)
+    /// <param name="callBacks">The call back delegate.</param>
+    public void SetCallBacks(IConditionalAccessMenuCallBacks callBacks)
     {
-      if (ciMenuHandler != null)
+      lock (_caMenuCallBackLock)
       {
-        _ciMenuCallbacks = ciMenuHandler;
-        return true;
+        _caMenuCallBacks = callBacks;
       }
-      return false;
     }
 
     /// <summary>
     /// Send a request from the user to the CAM to open the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool EnterCIMenu()
+    public bool EnterMenu()
     {
       this.LogDebug("TechnoTrend: enter menu");
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: the CAM is not ready");
         return false;
       }
 
@@ -2104,7 +2112,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// Send a request from the user to the CAM to close the menu.
     /// </summary>
     /// <returns><c>true</c> if the request is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool CloseCIMenu()
+    public bool CloseMenu()
     {
       this.LogDebug("TechnoTrend: close menu (not implemented)");
       return true;
@@ -2115,18 +2123,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     /// </summary>
     /// <param name="choice">The index of the selection as an unsigned byte value.</param>
     /// <returns><c>true</c> if the selection is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SelectMenu(byte choice)
+    public bool SelectMenuEntry(byte choice)
     {
       this.LogDebug("TechnoTrend: select menu entry, choice = {0}", choice);
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: the CAM is not ready");
         return false;
       }
 
@@ -2136,32 +2144,32 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     }
 
     /// <summary>
-    /// Send a response from the user to the CAM.
+    /// Send an answer to an enquiry from the user to the CAM.
     /// </summary>
-    /// <param name="cancel"><c>True</c> to cancel the request.</param>
-    /// <param name="answer">The user's response.</param>
-    /// <returns><c>true</c> if the response is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
-    public bool SendMenuAnswer(bool cancel, string answer)
+    /// <param name="cancel"><c>True</c> to cancel the enquiry.</param>
+    /// <param name="answer">The user's answer to the enquiry.</param>
+    /// <returns><c>true</c> if the answer is successfully passed to and processed by the CAM, otherwise <c>false</c></returns>
+    public bool AnswerEnquiry(bool cancel, string answer)
     {
       if (answer == null)
       {
         answer = string.Empty;
       }
-      this.LogDebug("TechnoTrend: send menu answer, answer = {0}, cancel = {1}", answer, cancel);
+      this.LogDebug("TechnoTrend: answer enquiry, answer = {0}, cancel = {1}", answer, cancel);
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isCaInterfaceOpen)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
       if (!_isCamReady)
       {
-        this.LogDebug("TechnoTrend: the CAM is not ready");
+        this.LogError("TechnoTrend: the CAM is not ready");
         return false;
       }
       if (answer.Length > 255)
       {
-        this.LogDebug("TechnoTrend: answer too long, length = {0}", answer.Length);
+        this.LogError("TechnoTrend: answer too long, length = {0}", answer.Length);
         return false;
       }
 
@@ -2189,9 +2197,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
       // TODO: this function needs to be tested. I'm uncertain whether the driver will accept commands with no DiSEqC messages.
       this.LogDebug("TechnoTrend: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
 
@@ -2219,25 +2227,25 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TechnoTrend
     {
       this.LogDebug("TechnoTrend: send DiSEqC command");
 
-      if (!_isTechnoTrend || _deviceHandle == IntPtr.Zero)
+      if (!_isTechnoTrend)
       {
-        this.LogDebug("TechnoTrend: device not initialised or interface not supported");
+        this.LogWarn("TechnoTrend: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("TechnoTrend: command not supplied");
+        this.LogError("TechnoTrend: command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MAX_DISEQC_COMMAND_LENGTH)
       {
-        this.LogDebug("TechnoTrend: command too long, length = {0}", command.Length);
+        this.LogError("TechnoTrend: command too long, length = {0}", command.Length);
         return false;
       }
       Marshal.Copy(command, 0, _generalBuffer, length);
-      //DVB_MMI.DumpBinary(_generalBuffer, 0, length);
+      //Dump.DumpBinary(_generalBuffer, length);
 
       // It is okay to use any polarisation. We chose one that will supply 18 Volts to the LNB because it
       // moves dish motors faster.

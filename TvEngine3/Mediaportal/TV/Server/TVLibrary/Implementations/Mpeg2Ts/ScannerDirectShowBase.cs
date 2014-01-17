@@ -29,6 +29,7 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using BroadcastStandard = Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer.BroadcastStandard;
@@ -179,8 +180,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                           out targetRegionCount, out targetRegionBuffer,
                           out availableInCountryCount, out availableInCountryBuffer, out unavailableInCountryCount, out unavailableInCountryBuffer);
 
-            string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
-            string providerName = DvbTextConverter.Convert(providerNamePtr, "");
+            string serviceName = DvbTextConverter.Convert(serviceNamePtr);
+            string providerName = DvbTextConverter.Convert(providerNamePtr);
             string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
             this.LogDebug("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, ONID = 0x{4:x4}, TSID = 0x{5:x4}, SID = 0x{6:x4}, PMT PID = 0x{7:x4}, previous ONID = 0x{8:x4}, previous TSID = 0x{9:x4}, previous SID = 0x{10:x4}",
                             i + 1, serviceName, providerName, logicalChannelNumber, originalNetworkId, transportStreamId, serviceId, pmtPid, previousOriginalNetworkId, previousTransportStreamId, previousServiceId);
@@ -193,7 +194,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int nid in networkIds)
             {
               _analyser.GetNetworkName(nid, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", nid));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", nid));
             }
             this.LogDebug("    network ID count = {0}, network IDs = {1}", networkIdCount, string.Join(", ", details.ToArray()));
 
@@ -202,7 +203,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int bid in bouquetIds)
             {
               _analyser.GetBouquetName(bid, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", bid));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", bid));
             }
             this.LogDebug("    bouquet ID count = {0}, bouquet IDs = {1}", bouquetIdCount, string.Join(", ", details.ToArray()));
 
@@ -219,7 +220,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int regionId in targetRegionIds)
             {
               _analyser.GetTargetRegionName(regionId, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", regionId));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", regionId));
             }
             this.LogDebug("    target region count = {0}, regions = {1}", targetRegionCount, string.Join(", ", details.ToArray()));
 
@@ -521,8 +522,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
                           out targetRegionCount, out targetRegionBuffer,
                           out availableInCountryCount, out availableInCountryBuffer, out unavailableInCountryCount, out unavailableInCountryBuffer);
 
-            string serviceName = DvbTextConverter.Convert(serviceNamePtr, "");
-            string providerName = DvbTextConverter.Convert(providerNamePtr, "");
+            string serviceName = DvbTextConverter.Convert(serviceNamePtr);
+            string providerName = DvbTextConverter.Convert(providerNamePtr);
             string logicalChannelNumber = Marshal.PtrToStringAnsi(logicalChannelNumberPtr);
             this.LogDebug("{0}) {1,-32} provider = {2,-16}, LCN = {3,-7}, ONID = 0x{4:x4}, TSID = 0x{5:x4}, SID = 0x{6:x4}, PMT PID = 0x{7:x4}, previous ONID = 0x{8:x4}, previous TSID = 0x{9:x4}, previous SID = 0x{10:x4}",
                             i + 1, serviceName, providerName, logicalChannelNumber, originalNetworkId, transportStreamId, serviceId, pmtPid, previousOriginalNetworkId, previousTransportStreamId, previousServiceId);
@@ -535,7 +536,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int nid in networkIds)
             {
               _analyser.GetNetworkName(nid, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", nid));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", nid));
             }
             this.LogDebug("    network ID count = {0}, network IDs = {1}", networkIdCount, string.Join(", ", details.ToArray()));
 
@@ -544,7 +545,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int bid in bouquetIds)
             {
               _analyser.GetBouquetName(bid, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", bid));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", bid));
             }
             this.LogDebug("    bouquet ID count = {0}, bouquet IDs = {1}", bouquetIdCount, string.Join(", ", details.ToArray()));
 
@@ -561,7 +562,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             foreach (int regionId in targetRegionIds)
             {
               _analyser.GetTargetRegionName(regionId, out name);
-              details.Add(DvbTextConverter.Convert(name, "") + string.Format(" (0x{0:x4})", regionId));
+              details.Add(DvbTextConverter.Convert(name) + string.Format(" (0x{0:x4})", regionId));
             }
             this.LogDebug("    target region count = {0}, regions = {1}", targetRegionCount, string.Join(", ", details.ToArray()));
 

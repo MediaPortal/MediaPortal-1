@@ -62,7 +62,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     private bool _transparentMode;
     private bool _fullscreenMode;
 
-    private string _selectedPageText = "";
+    private string _selectedPageText = string.Empty;
 
     private int _pageRenderWidth = 1920;
     private int _pageRenderHeight = 1080;
@@ -344,7 +344,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       get { return _selectedPageText; }
       set
       {
-        _selectedPageText = "";
+        _selectedPageText = string.Empty;
         if (value.Length == 3)
         {
           _selectedPageText = value;
@@ -594,7 +594,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
               // If still not drawn than it's a text and we draw the string
               if (charReady == false)
               {
-                string text = "" + chr2;
+                string text = string.Empty + chr2;
                 graph.FillRectangle(backBrush, x, y, w, h);
                 SizeF width = graph.MeasureString(text, _fontTeletext);
                 PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), y);
@@ -775,10 +775,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
           txtLanguage = 1;
           break;
       }
-      // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
-      bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
+      // Detect if it's a boxed page. Boxed Page = sub-title and/or newsflash bit is set
+      bool isSubTitlePage = Hamming.IsSubTitleBitSet(0, ref byPage);
       bool isNewsflash = Hamming.IsNewsflash(0, ref byPage);
-      bool isBoxed = isNewsflash | isSubtitlePage;
+      bool isBoxed = isNewsflash | isSubTitlePage;
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (_selectedPageText.IndexOf("-") != -1)
@@ -1174,7 +1174,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
         _fontTeletext = null;
       }
       return _pageBitmap;
-      // send the bitmap to the callback
+      // send the bitmap to the call back
     }
 
     /// <summary>

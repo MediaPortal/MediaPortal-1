@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   ///<summary>
-  /// TsWriter channel scanner callback interface.
+  /// TsWriter channel scanner call back interface.
   ///</summary>
   [ComVisible(false), ComImport,
     Guid("ce141670-1840-4188-8a40-618ba3a5a1c3"),
@@ -74,7 +74,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Set the delegate for the scanner to notify when scanning is complete.
     /// </summary>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int SetCallBack(IChannelScanCallBack callBack);
@@ -138,8 +138,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <param name="networkIds">A buffer containing the Int32 identifiers of each network that the service is included in.</param>
     /// <param name="bouquetIdCount">The number of bouquets that the service is included in.</param>
     /// <param name="bouquetIds">A buffer containing the Int32 identifiers of each bouquet that the service is included in.</param>
-    /// <param name="languageCount">The distinct number of audio and subtitle languages that are transmitted as part of the service.</param>
-    /// <param name="languages">A buffer containing the ISO 639 3 byte language codes associated with the audio and subtitle stream languages.</param>
+    /// <param name="languageCount">The distinct number of audio and sub-title languages that are transmitted as part of the service.</param>
+    /// <param name="languages">A buffer containing the ISO 639 3 byte language codes associated with the audio and sub-title stream languages.</param>
     /// <param name="availableInCellCount">The number of cells in which the service may be received.</param>
     /// <param name="availableInCells">A buffer containing the Int32 identifiers of each cell in which the service may be received.</param>
     /// <param name="unavailableInCellCount">The number of cells in which the service may not be received.</param>

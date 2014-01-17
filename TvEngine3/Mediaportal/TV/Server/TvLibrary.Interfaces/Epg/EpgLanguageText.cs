@@ -75,7 +75,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     public string Language
     {
       get { return _language; }
-      set { _language = value ?? ""; }
+      set { _language = value ?? string.Empty; }
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     public string Title
     {
       get { return _title; }
-      set { _title = value ?? ""; }
+      set { _title = value ?? string.Empty; }
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     public string Description
     {
       get { return _description; }
-      set { _description = value ?? ""; }
+      set { _description = value ?? string.Empty; }
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     public string Genre
     {
       get { return _genre; }
-      set { _genre = value ?? ""; }
+      set { _genre = value ?? string.Empty; }
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Epg
     public string Classification
     {
       get { return _classification; }
-      set { _classification = value ?? ""; }
+      set { _classification = value ?? string.Empty; }
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
   public partial class FormEditCard : Form
   {
     private Card _card;
-    private string _cardType;
+    private CardType _cardType;
 
     public FormEditCard()
     {
@@ -45,7 +45,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       set { _card = value; }
     }
 
-    public String CardType
+    public CardType CardType
     {
       set { _cardType = value; }
     }
@@ -55,13 +55,13 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       mpTextBoxDeviceName.Text = _card.Name;
 
       // Analog tuners and capture devices don't have many of these settings.
-      bool isAnalogDevice = _cardType.Equals("Analog");
+      bool isAnalogDevice = _cardType == CardType.Analog;
       checkBoxAllowEpgGrab.Enabled = !isAnalogDevice;
       checkBoxConditionalAccessEnabled.Enabled = !isAnalogDevice;
       numericUpDownDecryptLimit.Enabled = !isAnalogDevice;
       mpComboBoxMultiChannelDecryptMode.Enabled = !isAnalogDevice;
       mpComboBoxCamType.Enabled = !isAnalogDevice;
-      if (_cardType.Equals("DvbS"))
+      if (_cardType == CardType.DvbS)
       {
         checkBoxAlwaysSendDiseqcCommands.Enabled = true;
         numericUpDownDiseqcCommandRepeatCount.Enabled = true;
@@ -105,7 +105,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
 
       checkBoxUseCustomTuning.Checked = _card.UseCustomTuning;
 
-      if (isAnalogDevice || _cardType.Equals("DvbIP"))
+      if (isAnalogDevice || _cardType == CardType.DvbIP || _card.DevicePath.StartsWith("uuid"))
       {
         comboBoxNetworkProvider.Enabled = false;
       }
@@ -113,15 +113,16 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       {
         comboBoxNetworkProvider.Enabled = true;
 
-        // Add available network providers based on device type and operating system.
-        comboBoxNetworkProvider.Items.Add(Enum.Parse(typeof(DbNetworkProvider), _cardType));
-        // The generic network provider is available only on XP MCE 2005 + Update Rollup 2,
-        // Windows Vista [Home Premium and Ultimate], and Windows 7 [Home Premium, Ultimate,
-        // Professional, and Enterprise]
+        // Add available network providers based on tuner type and operating system.
+        // The generic network provider is available only on XP MCE 2005 + Update Rollup 2 and
+        // newer.
         if (FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
         {
           comboBoxNetworkProvider.Items.Add(DbNetworkProvider.Generic);
         }
+        comboBoxNetworkProvider.Items.Add(DbNetworkProvider.Specific);
+        comboBoxNetworkProvider.Items.Add(DbNetworkProvider.MediaPortal);
+
         comboBoxNetworkProvider.SelectedItem = (DbNetworkProvider)_card.NetProvider;
       }
     }
@@ -130,7 +131,7 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
     {
       if (mpTextBoxDeviceName.Text.Trim().Length == 0)
       {
-        MessageBox.Show("Please enter a name for the device.");
+        MessageBox.Show("Please enter a name for the tuner.");
         return;
       }
 
@@ -143,12 +144,12 @@ namespace Mediaportal.TV.Server.SetupTV.Dialogs
       _card.IdleMode = (int)Enum.Parse(typeof(IdleMode), (String)mpComboBoxIdleMode.SelectedItem);
 
       // Careful here! The selected items will be null for certain device types.
-      if (!_cardType.Equals("Analog"))
+      if (_cardType != CardType.Analog)
       {
         _card.MultiChannelDecryptMode = (int)Enum.Parse(typeof(MultiChannelDecryptMode), (String)mpComboBoxMultiChannelDecryptMode.SelectedItem);
         _card.CamType = (int)Enum.Parse(typeof(CamType), (String)mpComboBoxCamType.SelectedItem);
         _card.PidFilterMode = (int)Enum.Parse(typeof(PidFilterMode), (String)mpComboBoxPidFilterMode.SelectedItem);
-        if (!_cardType.Equals("DvbIP"))
+        if (comboBoxNetworkProvider.Enabled)
         {
           _card.NetProvider = (int)(DbNetworkProvider)comboBoxNetworkProvider.SelectedItem;
         }

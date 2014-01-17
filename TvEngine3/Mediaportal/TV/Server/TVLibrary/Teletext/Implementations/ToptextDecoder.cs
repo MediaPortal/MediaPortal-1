@@ -189,8 +189,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       int decimalPage = mag * 100 + tens * 10 + units;
 
       Clear();
-      nextGroup = "";
-      nextBlock = "";
+      nextGroup = string.Empty;
+      nextBlock = string.Empty;
       redPage = greenPage = yellowPage = bluePage = -1;
 
       if (!DecodeBasicPage(cache))

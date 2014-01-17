@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 {
@@ -33,6 +34,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     public static string Convert(IntPtr ptr)
     {
+      // TODO could this class be removed? DvbTextConverter should handle ISO-6937.
       int i = 0;
       string output = string.Empty;
       byte b = Marshal.ReadByte(ptr, 0);
@@ -40,9 +42,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
       {
         // ISO 6937 encoding must start with character between 0x20 and 0xFF
         // otherwise it is dfferent encoding table
-        // for example 0x05 means encoding table 8859-9
-        // here is just fallback to system ANSI
-        return Marshal.PtrToStringAnsi(ptr);
+        return DvbTextConverter.Convert(ptr);
       }
       while (b != 0)
       {

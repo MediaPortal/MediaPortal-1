@@ -24,6 +24,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
 {
@@ -80,37 +81,54 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     #region events
 
     /// <summary>
-    /// Set the device's new subchannel event handler.
+    /// Set the tuner's new subchannel event handler.
     /// </summary>
     /// <value>the delegate</value>
-    public OnNewSubChannelDelegate OnNewSubChannelEvent
+    public event OnNewSubChannelDelegate OnNewSubChannelEvent
     {
-      set
+      add
       {
-        TvCardBase internalDevice = _internalCard as TvCardBase;
-        if (internalDevice == null)
+        TvCardBase tuner = _internalCard as TvCardBase;
+        if (tuner == null)
         {
-          throw new TvException("HybridCard: failed to set new subchannel event handler for device type " + _internalCard.CardType);
+          throw new TvException("HybridCard: failed to add new subchannel event handler for tuner type " + _internalCard.CardType);
         }
-        internalDevice.NewSubChannelEvent += value;
+        tuner.OnNewSubChannelEvent += value;
+      }
+      remove
+      {
+        TvCardBase tuner = _internalCard as TvCardBase;
+        if (tuner == null)
+        {
+          throw new TvException("HybridCard: failed to remove new subchannel event handler for tuner type " + _internalCard.CardType);
+        }
+        tuner.OnNewSubChannelEvent -= value;
       }
     }
 
     /// <summary>
-    /// Set the device's after tune event handler.
+    /// Set the tuner's after tune event handler.
     /// </summary>
     /// <value>the delegate</value>
-    public OnAfterTuneDelegate OnAfterTuneEvent
+    public event OnAfterTuneDelegate OnAfterTuneEvent
     {
-      set
+      add
       {
-        TvCardBase internalDevice = _internalCard as TvCardBase;
-        if (internalDevice == null)
+        TvCardBase tuner = _internalCard as TvCardBase;
+        if (tuner == null)
         {
-          throw new TvException("HybridCard: failed to set after tune event handler for device type " + _internalCard.CardType);
+          throw new TvException("HybridCard: failed to add after tune event handler for tuner type " + _internalCard.CardType);
         }
-        internalDevice.AfterTuneEvent -= value;
-        internalDevice.AfterTuneEvent += value;
+        tuner.OnAfterTuneEvent += value;
+      }
+      remove
+      {
+        TvCardBase tuner = _internalCard as TvCardBase;
+        if (tuner == null)
+        {
+          throw new TvException("HybridCard: failed to remove after tune event handler for tuner type " + _internalCard.CardType);
+        }
+        tuner.OnAfterTuneEvent -= value;
       }
     }
 
@@ -126,8 +144,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     {
       set
       {
-        (_internalCard as TvCardBase).AfterTuneEvent -= value;
-        (_internalCard as TvCardBase).AfterTuneEvent += value;
+        (_internalCard as TvCardBase).OnAfterTuneEvent -= value;
+        (_internalCard as TvCardBase).OnAfterTuneEvent += value;
       }
     }
 
@@ -154,7 +172,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// conditional access is supported.
     /// </summary>
     /// <value><c>null</c> if the device does not support conditional access</value>
-    public ICiMenuActions CaMenuInterface
+    public IConditionalAccessMenuActions CaMenuInterface
     {
       get { return _internalCard.CaMenuInterface; }
     }
@@ -181,15 +199,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     #endregion
 
     #region ITVCard Members
-
-    /// <summary>
-    /// Returns if the tuner belongs to a hybrid card
-    /// </summary>
-    public bool IsHybrid
-    {
-      get { return false; }
-      set { }
-    }
 
     /// <summary>
     /// Gets/sets the card name
@@ -292,9 +301,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    public void StartLinkageScanner(BaseChannelLinkageScanner callBack)
     {
-      _group.StartLinkageScanner(callback);
+      _group.StartLinkageScanner(callBack);
     }
 
     /// <summary>
@@ -316,10 +325,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// <summary>
     /// Grabs the epg.
     /// </summary>
-    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback)
+    /// <param name="callBack">The call back which gets called when epg is received or canceled.</param>
+    public void GrabEpg(BaseEpgGrabber callBack)
     {
-      _group.GrabEpg(callback);
+      _group.GrabEpg(callBack);
     }
 
     /// <summary>

@@ -22,9 +22,6 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
@@ -88,22 +85,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       : base(info)
     {
       _tunerType = CardType.DvbS;
-
-      if (DevicePath != null)
-      {
-        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
-        if (d != null)
-        {
-          _alwaysSendDiseqcCommands = d.AlwaysSendDiseqcCommands;
-          _diseqcCommandRepeatCount = (ushort)d.DiseqcCommandRepeatCount;
-          if (_diseqcCommandRepeatCount > 5)
-          {
-            // It would be rare that commands would need to be repeated more than twice. Five times
-            // is a more than reasonable practical limit.
-            _diseqcCommandRepeatCount = 5;
-          }
-        }
-      }
     }
 
     /// <summary>
@@ -113,8 +94,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
     {
       base.PerformLoading();
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_BUFFER_SIZE);
-      _isRawDiseqcSupported = (_capabilities.AcquisitionCapabilities & B2c2AcquisionCapability.RawDiseqc) != B2c2AcquisionCapability.None;
-      _diseqcController = new DiseqcController(this, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
+      _isRawDiseqcSupported = _capabilities.AcquisitionCapabilities.HasFlag(B2c2AcquisionCapability.RawDiseqc);
+      _diseqcController = new DiseqcController(this);
+      _diseqcController.ReloadConfiguration(_cardId);
     }
 
     /// <summary>
@@ -128,6 +110,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
         _diseqcBuffer = IntPtr.Zero;
       }
       base.PerformUnloading();
+    }
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+      if (_diseqcController != null)
+      {
+        _diseqcController.ReloadConfiguration(_cardId);
+      }
     }
 
     /// <summary>
@@ -250,7 +244,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
       this.LogDebug("B2C2 satellite: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
       if (_interfaceTuner == null)
       {
-        this.LogDebug("B2C2 satellite: device not initialised or interface not supported");
+        this.LogDebug("B2C2 satellite: not initialised or interface not supported");
       }
 
       bool success = true;
@@ -309,7 +303,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2
 
       if (_interfaceTuner == null)
       {
-        this.LogDebug("B2C2 satellite: device not initialised or interface not supported");
+        this.LogDebug("B2C2 satellite: not initialised or interface not supported");
       }
       if (command == null || command.Length == 0)
       {

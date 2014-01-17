@@ -20,6 +20,9 @@
 
 using System;
 using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVDatabase.Entities;
+using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -28,20 +31,36 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
   /// <summary>
-  /// Class which handles DiSEqC motors
+  /// A controller class for DiSEqC devices. This controller is able to control positioners and
+  /// switches.
   /// </summary>
   public class DiseqcController : IDiseqcController
   {
-
     #region variables
 
     private IDiseqcDevice _device = null;
     private DVBSChannel _previousChannel = null;
-    // My experiments with a wide variety of tuners suggest that only TeVii tuners require this setting to be
-    // enabled.
+
+    /// <summary>
+    /// Enable or disable always sending DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// DiSEqC commands are usually only sent when changing to a channel on a different switch port
+    /// or at a different positioner location. Enabling this option will cause DiSEqC commands to
+    /// be sent on each channel change. My experiments with a wide variety of tuners suggest that
+    /// only TeVii tuners require this setting to be enabled.
+    /// </remarks>
     private bool _alwaysSendCommands = false;
-    private ushort _repeatCount = 0;
-    private ushort _commandDelay = 100;
+
+    /// <summary>
+    /// The number of times to repeat DiSEqC commands.
+    /// </summary>
+    /// <remarks>
+    /// When set to zero, commands are sent once; when set to one, commands are sent twice... etc.
+    /// </remarks>
+    private int _repeatCount = 0;
+
+    private int _commandDelay = 100;
     private int _currentPosition = -1;  // Ensure that we always send motor commands on first tune.
     private int _currentStepsAzimuth;
     private int _currentStepsElevation;
@@ -51,19 +70,41 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <summary>
     /// Initialise a new instance of the <see cref="DiseqcController"/> class.
     /// </summary>
-    /// <param name="device">A device's DiSEqC control interface.</param>
-    /// <param name="alwaysSendCommands">Set <c>true</c> to always send commands when changing channel, even when
-    ///   the switch and/or positioner are thought to be configured correctly.</param>
-    /// <param name="repeatCount">The number of times to repeat each command.</param>
-    public DiseqcController(IDiseqcDevice device, bool alwaysSendCommands, ushort repeatCount)
+    /// <param name="device">A tuner's DiSEqC control interface.</param>
+    public DiseqcController(IDiseqcDevice device)
     {
       _device = device;
       if (device == null)
       {
-        throw new ArgumentException("DiSEqC Controller: device is null");
+        throw new ArgumentException("DiSEqC: device is null");
       }
-      _alwaysSendCommands = alwaysSendCommands;
-      _repeatCount = repeatCount;
+    }
+
+    /// <summary>
+    /// Reload the controller's configuration.
+    /// </summary>
+    /// <param name="tunerId">The identifier for the associated tuner.</param>
+    public void ReloadConfiguration(int tunerId)
+    {
+      Card tuner = CardManagement.GetCard(tunerId, CardIncludeRelationEnum.None);
+      if (tuner != null)
+      {
+        _alwaysSendCommands = tuner.AlwaysSendDiseqcCommands;
+        _repeatCount = tuner.DiseqcCommandRepeatCount;
+        if (_repeatCount > 5)
+        {
+          // It would be rare that commands would need to be repeated more than twice. Five times
+          // is a more than reasonable practical limit.
+          _repeatCount = 5;
+        }
+        _commandDelay = SettingsManagement.GetValue("tuner" + tunerId + "DiseqcCommandDelay", 100);
+      }
+      else
+      {
+        _alwaysSendCommands = false;
+        _repeatCount = 0;
+        _commandDelay = 100;
+      }
     }
 
     /// <summary>
@@ -75,35 +116,35 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // the reset is not applied to "any" device, but it might be to prevent loosing all
       // stored positions in a positioner or something like that.
       byte[] cmd = new byte[3];
-      this.LogDebug("DiSEqC Controller: clear reset");
+      this.LogDebug("DiSEqC: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      this.LogDebug("DiSEqC Controller: power on");
+      this.LogDebug("DiSEqC: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      this.LogDebug("DiSEqC Controller: reset");
+      this.LogDebug("DiSEqC: reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.Reset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      this.LogDebug("DiSEqC Controller: clear reset");
+      this.LogDebug("DiSEqC: clear reset");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.ClearReset;
       _device.SendCommand(cmd);
       System.Threading.Thread.Sleep(_commandDelay);
 
-      this.LogDebug("DiSEqC Controller: power on");
+      this.LogDebug("DiSEqC: power on");
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnySwitch;
       cmd[2] = (byte)DiseqcCommand.PowerOn;
@@ -126,13 +167,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       // There is a well defined order in which commands may be sent:
       // "raw" DiSEqC commands -> DiSEqC 1.0 (committed) -> tone burst (simple DiSEqC) -> 22 kHz tone on/off
-      this.LogDebug("DiSEqC Controller: switch to channel");
+      this.LogDebug("DiSEqC: switch to channel");
 
       // We send a "power on" command before anything else if the previous channel is not set. This is
       // sometimes necessary to wake the switch.
       if (_previousChannel == null)
       {
-        this.LogDebug("DiSEqC Controller: power on");
+        this.LogDebug("DiSEqC: power on");
         byte[] command = new byte[3];
         command[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
         command[1] = (byte)DiseqcAddress.Any;
@@ -176,7 +217,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (!sendCommand)
       {
-        this.LogDebug("DiSEqC Controller: no need to send switch command");
+        this.LogDebug("DiSEqC: no need to send switch command");
       }
       else
       {
@@ -190,7 +231,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           channel.Diseqc == DiseqcPort.PortC ||
           channel.Diseqc == DiseqcPort.PortD)
         {
-          this.LogDebug("DiSEqC Controller: DiSEqC 1.0 switch command");
+          this.LogDebug("DiSEqC: DiSEqC 1.0 switch command");
           command[2] = (byte)DiseqcCommand.WriteN0;
           bool isHorizontal = channel.Polarisation == Polarisation.LinearH || channel.Polarisation == Polarisation.CircularL;
           command[3] |= (byte)(isHighBand ? 1 : 0);
@@ -199,7 +240,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else
         {
-          this.LogDebug("DiSEqC Controller: DiSEqC 1.1 switch command");
+          this.LogDebug("DiSEqC: DiSEqC 1.1 switch command");
           command[2] = (byte)DiseqcCommand.WriteN1;
           command[3] |= (byte)(portNumber - 1);
         }
@@ -221,11 +262,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       if (!sendCommand)
       {
-        this.LogDebug("DiSEqC Controller: no need to send positioner command");
+        this.LogDebug("DiSEqC: no need to send positioner command");
       }
       else
       {
-        this.LogDebug("DiSEqC Controller: positioner command(s)");
+        this.LogDebug("DiSEqC: positioner command(s)");
         GotoPosition((byte)channel.SatelliteIndex);
       }
 
@@ -299,7 +340,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void Stop()
     {
-      this.LogDebug("DiSEqC Controller: stop positioner");
+      this.LogDebug("DiSEqC: stop positioner");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AnyPositioner;
@@ -313,7 +354,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void SetEastLimit()
     {
-      this.LogDebug("DiSEqC Controller: set east limit");
+      this.LogDebug("DiSEqC: set east limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -327,7 +368,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void SetWestLimit()
     {
-      this.LogDebug("DiSEqC Controller: set west limit");
+      this.LogDebug("DiSEqC: set west limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
       cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -345,7 +386,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (value)
         {
-          this.LogDebug("DiSEqC Controller: enable limits");
+          this.LogDebug("DiSEqC: enable limits");
           byte[] cmd = new byte[4];
           cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -356,7 +397,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         else
         {
-          this.LogDebug("DiSEqC Controller: disable limits");
+          this.LogDebug("DiSEqC: disable limits");
           byte[] cmd = new byte[3];
           cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
           cmd[1] = (byte)DiseqcAddress.AzimuthPositioner;
@@ -374,7 +415,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="steps">The number of position steps to move.</param>
     public void DriveMotor(DiseqcDirection direction, byte steps)
     {
-      this.LogDebug("DiSEqC Controller: drive motor {0} for {1} steps", direction.ToString(), steps);
+      this.LogDebug("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
       if (steps == 0)
       {
         return;
@@ -420,10 +461,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="position">The identifier to use for the position.</param>
     public void StorePosition(byte position)
     {
-      this.LogDebug("DiSEqC Controller: store current position as position {0}", position);
+      this.LogDebug("DiSEqC: store current position as position {0}", position);
       if (position <= 0)
       {
-        throw new ArgumentException("DiSEqC Controller: position cannot be less than or equal to zero");
+        throw new ArgumentException("DiSEqC: position cannot be less than or equal to zero");
       }
 
       byte[] cmd = new byte[4];
@@ -445,7 +486,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// </summary>
     public void GotoReferencePosition()
     {
-      this.LogDebug("DiSEqC Controller: go to reference position");
+      this.LogDebug("DiSEqC: go to reference position");
 
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiseqcFrame.CommandFirstTransmissionNoReply;
@@ -467,10 +508,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
     /// <param name="position">The position to drive to.</param>
     public void GotoPosition(byte position)
     {
-      this.LogDebug("DiSEqC Controller: go to position {0}", position);
+      this.LogDebug("DiSEqC: go to position {0}", position);
       if (position <= 0)
       {
-        throw new ArgumentException("DiSEqC Controller: position cannot be less than or equal to zero");
+        throw new ArgumentException("DiSEqC: position cannot be less than or equal to zero");
       }
 
       byte[] cmd = new byte[4];

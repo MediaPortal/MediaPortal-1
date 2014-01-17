@@ -77,7 +77,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
                 {
                   if (!pidSet.Contains(pid))
                   {
-                    this.LogDebug("  {0,-2} = {1} (0x{1:x})", count++, pid);
+                    this.LogDebug("  {0, -2} = {1} (0x{1:x})", count++, pid);
                     pidSet.Add(pid);
                   }
                 }

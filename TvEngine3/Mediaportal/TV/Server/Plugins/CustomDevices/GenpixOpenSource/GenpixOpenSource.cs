@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
 {
   /// <summary>
-  /// A class for handling DiSEqC Genpix devices using the open source BDA driver available from
+  /// A class for handling DiSEqC Genpix tuners using the open source BDA driver available from
   /// http://sourceforge.net/projects/genpixskywalker/ and http://sourceforge.net/projects/bdaskywalker/.
   /// </summary>
   public class GenpixOpenSource : BaseCustomDevice, IDiseqcDevice
@@ -84,8 +84,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     #region ICustomDevice members
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -96,8 +96,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -105,7 +106,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Genpix open source: initialising device");
+      this.LogDebug("Genpix open source: initialising");
 
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
@@ -115,7 +116,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
       }
       if (_isGenpixOpenSource)
       {
-        this.LogDebug("Genpix open source: device is already initialised");
+        this.LogWarn("Genpix open source: extension already initialised");
         return true;
       }
 
@@ -129,13 +130,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_PROPERTY_SET, (int)BdaExtensionProperty.Diseqc, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Genpix open source: device does not support the Genpix property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Genpix open source: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Genpix open source: supported device detected");
+      this.LogInfo("Genpix open source: extension supported");
       _isGenpixOpenSource = true;
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_SIZE);
       _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
@@ -160,9 +161,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     {
       this.LogDebug("Genpix open source: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isGenpixOpenSource || _propertySet == null)
+      if (!_isGenpixOpenSource)
       {
-        this.LogDebug("Genpix open source: device not initialised or interface not supported");
+        this.LogWarn("Genpix open source: not initialised or interface not supported");
         return false;
       }
 
@@ -197,7 +198,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogDebug("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -210,19 +211,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
     {
       this.LogDebug("Genpix open source: send DiSEqC command");
 
-      if (!_isGenpixOpenSource || _propertySet == null)
+      if (!_isGenpixOpenSource)
       {
-        this.LogDebug("Genpix open source: device not initialised or interface not supported");
+        this.LogWarn("Genpix open source: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Genpix open source: command not supplied");
+        this.LogError("Genpix open source: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("Genpix open source: command too long, length = {0}", command.Length);
+        this.LogError("Genpix open source: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -242,7 +243,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.GenpixOpenSource
         return true;
       }
 
-      this.LogDebug("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Genpix open source: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

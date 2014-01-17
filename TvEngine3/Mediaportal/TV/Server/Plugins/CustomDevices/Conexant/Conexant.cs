@@ -29,7 +29,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
 {
   /// <summary>
-  /// A base class for handling DiSEqC for various Conexant-based devices including Hauppauge, Geniatech
+  /// A base class for handling DiSEqC for various Conexant-based tuners including Hauppauge, Geniatech
   /// and DVBSky.
   /// </summary>
   public class Conexant : BaseCustomDevice, IDiseqcDevice
@@ -37,7 +37,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     #region enums
 
     /// <summary>
-    /// The custom/extended properties supported by Conexant devices.
+    /// The custom/extended properties supported by Conexant tuners.
     /// </summary>
     protected enum BdaExtensionProperty
     {
@@ -111,7 +111,8 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     private bool _isConexant = false;
 
     /// <summary>
-    /// Buffer for the instance parameter when setting properties.
+    /// A buffer that can be used as the instance parameter when getting or
+    /// setting properties.
     /// </summary>
     protected IntPtr _instanceBuffer = IntPtr.Zero;
 
@@ -120,54 +121,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// </summary>
     protected IKsPropertySet _propertySet = null;
 
+    /// <summary>
+    /// The property set GUID.
+    /// </summary>
+    protected Guid _propertySetGuid = CONEXANT_BDA_EXTENSION_PROPERTY_SET;
+
     // Buffer for property parameters.
     private IntPtr _diseqcBuffer = IntPtr.Zero;
-    private Guid _propertySetGuid = Guid.Empty;
 
     #endregion
-
-    #region constructors
-
-    /// <summary>
-    /// Regular constructor for Conexant instances.
-    /// </summary>
-    public Conexant()
-    {
-      _propertySetGuid = CONEXANT_BDA_EXTENSION_PROPERTY_SET;
-    }
-
-    /// <summary>
-    /// Alternate constructor for Conexant instances. This constructor provides an additional way to use
-    /// the functionality defined in this class without directly inheriting from the class.
-    /// </summary>
-    /// <param name="propertySetGuid">The BDA extension property set GUID to use when setting properties.</param>
-    public Conexant(Guid propertySetGuid)
-    {
-      _propertySetGuid = propertySetGuid;
-    }
-
-    #endregion
-
-    /// <summary>
-    /// Accessor for the property set GUID. This allows other classes with identical structs but different
-    /// GUIDs to easily inherit the methods defined in this class.
-    /// </summary>
-    /// <value>the GUID for the driver's custom property set</value>
-    protected virtual Guid BdaExtensionPropertySet
-    {
-      get
-      {
-        // When the default constructor is used, the GUID returned will be the default Conexant GUID. The
-        // GUID may be overriden via inheritence (overriding this property) or changed without inheritance
-        // using the alternate constructor.
-        return _propertySetGuid;
-      }
-    }
 
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -178,8 +145,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -187,7 +155,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Conexant: initialising device");
+      this.LogDebug("Conexant: initialising");
 
       IBaseFilter tunerFilter = context as IBaseFilter;
       if (tunerFilter == null)
@@ -197,7 +165,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       }
       if (_isConexant)
       {
-        this.LogDebug("Conexant: device is already initialised");
+        this.LogWarn("Conexant: extension already initialised");
         return true;
       }
 
@@ -210,14 +178,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Conexant: device does not support the Conexant property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Conexant: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Conexant: supported device detected");
+      this.LogInfo("Conexant: extension supported");
       _isConexant = true;
       _instanceBuffer = Marshal.AllocCoTaskMem(INSTANCE_SIZE);
       _diseqcBuffer = Marshal.AllocCoTaskMem(DISEQC_MESSAGE_PARAMS_SIZE);
@@ -242,9 +210,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     {
       this.LogDebug("Conexant: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isConexant || _propertySet == null)
+      if (!_isConexant)
       {
-        this.LogDebug("Conexant: device not initialised or interface not supported");
+        this.LogWarn("Conexant: not initialised or interface not supported");
         return false;
       }
 
@@ -271,9 +239,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       message.IsLastMessage = true;
 
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
-      DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
+      //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
+      int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage,
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
@@ -284,7 +252,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogDebug("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -297,21 +265,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
     {
       this.LogDebug("Conexant: send DiSEqC command");
 
-      if (!_isConexant || _propertySet == null)
+      if (!_isConexant)
       {
-        this.LogDebug("Conexant: device not initialised or interface not supported");
+        this.LogWarn("Conexant: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Conexant: command not supplied");
+        this.LogError("Conexant: command not supplied");
         return true;
       }
 
       int length = command.Length;
       if (length > MAX_DISEQC_TX_MESSAGE_LENGTH)
       {
-        this.LogDebug("Conexant: command too long, length = {0}", command.Length);
+        this.LogError("Conexant: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -337,9 +305,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
       message.IsLastMessage = true;
 
       Marshal.StructureToPtr(message, _diseqcBuffer, true);
-      //DVB_MMI.DumpBinary(_diseqcBuffer, 0, DISEQC_MESSAGE_PARAMS_SIZE);
+      //Dump.DumpBinary(_diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE);
 
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.DiseqcMessage,
+      int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.DiseqcMessage,
         _instanceBuffer, INSTANCE_SIZE,
         _diseqcBuffer, DISEQC_MESSAGE_PARAMS_SIZE
       );
@@ -349,7 +317,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Conexant
         return true;
       }
 
-      this.LogDebug("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Conexant: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

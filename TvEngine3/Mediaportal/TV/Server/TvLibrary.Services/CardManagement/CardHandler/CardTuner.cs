@@ -59,7 +59,7 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
     public CardTuner(ITvCardHandler cardHandler)
     {
       _cardHandler = cardHandler;
-      _cardHandler.Card.OnNewSubChannelEvent = new OnNewSubChannelDelegate(Card_OnNewSubChannelEvent);
+      _cardHandler.Card.OnNewSubChannelEvent += new OnNewSubChannelDelegate(Card_OnNewSubChannelEvent);
     }
 
     private void Card_OnNewSubChannelEvent(int id)
@@ -472,7 +472,8 @@ namespace Mediaportal.TV.Server.TVLibrary.CardManagement.CardHandler
         OnBeforeTuneEvent(_cardHandler);
       }
 
-      _cardHandler.Card.OnAfterTuneEvent = new Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
+      _cardHandler.Card.OnAfterTuneEvent -= new Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
+      _cardHandler.Card.OnAfterTuneEvent += new Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces.OnAfterTuneDelegate(CardTuner_OnAfterTuneEvent);
 
       result = TvResult.Succeeded;
       return true;

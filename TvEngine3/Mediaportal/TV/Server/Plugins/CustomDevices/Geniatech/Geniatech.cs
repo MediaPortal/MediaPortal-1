@@ -31,7 +31,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
 {
   /// <summary>
-  /// A class for handling DiSEqC and DVB-S2 tuning for Geniatech devices.
+  /// A class for handling DiSEqC and DVB-S2 tuning for Geniatech tuners.
   /// </summary>
   public class Geniatech : Conexant.Conexant, IPowerDevice
   {
@@ -110,24 +110,20 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
       get
       {
-        // TeVii, Hauppauge, Geniatech, Turbosight, DVBSky, Prof and possibly others all use or implement the
-        // same Conexant property set for DiSEqC support, often adding custom extensions. In order to ensure
-        // that the full device functionality is available for all hardware we use the following priority
-        // hierarchy:
-        // TeVii [75] > Hauppauge, DVBSky, Turbosight [70] > Prof (USB) [65] > Prof (PCI, PCIe) [60] > Geniatech [50] > Conexant [40]
         return 50;
       }
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -135,11 +131,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Geniatech: initialising device");
+      this.LogDebug("Geniatech: initialising");
 
       if (_isGeniatech)
       {
-        this.LogDebug("Geniatech: device is already initialised");
+        this.LogWarn("Geniatech: extension already initialised");
         return true;
       }
 
@@ -151,36 +147,36 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.NbcParams, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
-        this.LogDebug("Geniatech: device does not support the NBC parameter property, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Geniatech: NBC parameter property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Geniatech: supported device detected");
+      this.LogInfo("Geniatech: extension supported");
       _isGeniatech = true;
       _paramBuffer = Marshal.AllocCoTaskMem(PARAM_BUFFER_SIZE);
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("Geniatech: on before tune callback");
+      this.LogDebug("Geniatech: on before tune call back");
       action = TunerAction.Default;
 
-      if (!_isGeniatech || _propertySet == null)
+      if (!_isGeniatech)
       {
-        this.LogDebug("Geniatech: device not initialised or interface not supported");
+        this.LogWarn("Geniatech: not initialised or interface not supported");
         return;
       }
 
@@ -231,13 +227,13 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       this.LogDebug("  roll-off   = {0}", nbcParams.RollOff);
 
       Marshal.StructureToPtr(nbcParams, _paramBuffer, true);
-      int hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.NbcParams,
+      int hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.NbcParams,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, NBC_PARAMS_SIZE
       );
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Geniatech: failed to set pilot and roll-off, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
     }
 
@@ -256,15 +252,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
     {
       this.LogDebug("Geniatech: set power state, state = {0}", state);
 
-      if (!_isGeniatech || _propertySet == null)
+      if (!_isGeniatech)
       {
-        this.LogDebug("Geniatech: device not initialised or interface not supported");
+        this.LogWarn("Geniatech: not initialised or interface not supported");
         return false;
       }
 
       KSPropertySupport support;
-      int hr = _propertySet.QuerySupported(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      int hr = _propertySet.QuerySupported(_propertySetGuid, (int)BdaExtensionProperty.LnbPower, out support);
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Geniatech: LNB power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -277,7 +273,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
       {
         Marshal.WriteInt32(_paramBuffer, 0, 0);
       }
-      hr = _propertySet.Set(BdaExtensionPropertySet, (int)BdaExtensionProperty.LnbPower,
+      hr = _propertySet.Set(_propertySetGuid, (int)BdaExtensionProperty.LnbPower,
         _instanceBuffer, INSTANCE_SIZE,
         _paramBuffer, sizeof(int)
       );
@@ -287,7 +283,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Geniatech
         return true;
       }
 
-      this.LogDebug("Geniatech: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Geniatech: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

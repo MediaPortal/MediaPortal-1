@@ -28,6 +28,9 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
 {
+  /// <summary>
+  /// A class for handling DiSEqC for Compro tuners.
+  /// </summary>
   public class Compro : BaseCustomDevice, IPowerDevice, IDiseqcDevice
   {
     #region enums
@@ -90,14 +93,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     #endregion
 
     /// <summary>
-    /// Attempt to read the device information from the tuner.
+    /// Attempt to read the MAC address from the tuner.
     /// </summary>
-    private void ReadDeviceInfo()
+    private void ReadMacAddress()
     {
-      this.LogDebug("Compro: read device information");
-
-      // MAC address.
-      this.LogDebug("Compro: reading MAC address");
+      this.LogDebug("Compro: read MAC address");
       for (int i = 0; i < MAC_ADDRESS_LENGTH; i++)
       {
         Marshal.WriteByte(_generalBuffer, i, 0);
@@ -110,24 +110,22 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       );
       if (hr != (int)HResult.Severity.Success || returnedByteCount != MAC_ADDRESS_LENGTH)
       {
-        this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogWarn("Compro: result = failure, hr = 0x{0:x} ({1}), byte count = {2}", hr, HResult.GetDXErrorString(hr), returnedByteCount);
       }
       else
       {
-        string address = string.Empty;
-        for (int i = 0; i < returnedByteCount; i++)
-        {
-          address += string.Format("{0:x2}-", Marshal.ReadByte(_generalBuffer, i));
-        }
-        this.LogDebug("  MAC address = {0}", address.Substring(0, (returnedByteCount * 3) - 1));
+        byte[] address = new byte[MAC_ADDRESS_LENGTH];
+        Marshal.Copy(_generalBuffer, address, 0, MAC_ADDRESS_LENGTH);
+        this.LogDebug("  MAC address = {0}", BitConverter.ToString(address).ToLowerInvariant());
       }
     }
 
     #region ICustomDevice members
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -135,7 +133,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Compro: initialising device");
+      this.LogDebug("Compro: initialising");
 
       if (context == null)
       {
@@ -144,7 +142,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       }
       if (_isCompro)
       {
-        this.LogDebug("Compro: device is already initialised");
+        this.LogWarn("Compro: extension already initialised");
         return true;
       }
 
@@ -157,17 +155,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcRaw, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Get) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Get))
       {
-        this.LogDebug("Compro: device does not support the Compro property set, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogDebug("Compro: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
       }
 
-      this.LogDebug("Compro: supported device detected");
+      this.LogInfo("Compro: extension supported");
       _isCompro = true;
       _generalBuffer = Marshal.AllocCoTaskMem(GENERAL_BUFFER_SIZE);
       _commandBuffer = Marshal.AllocCoTaskMem(MAX_DISEQC_MESSAGE_LENGTH);
-      ReadDeviceInfo();
+      ReadMacAddress();
       return true;
     }
 
@@ -184,15 +182,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     {
       this.LogDebug("Compro: set power state, state = {0}", state);
 
-      if (!_isCompro || _propertySet == null)
+      if (!_isCompro)
       {
-        this.LogDebug("Compro: device not initialised or interface not supported");
+        this.LogWarn("Compro: not initialised or interface not supported");
         return false;
       }
 
       KSPropertySupport support;
       int hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Compro: property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         return false;
@@ -217,7 +215,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 
@@ -235,9 +233,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     {
       this.LogDebug("Compro: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isCompro || _propertySet == null)
+      if (!_isCompro)
       {
-        this.LogDebug("Compro: device not initialised or interface not supported");
+        this.LogWarn("Compro: not initialised or interface not supported");
         return false;
       }
 
@@ -249,7 +247,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
       {
         hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.DiseqcBasic,
                                     out support);
-        if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+        if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
         {
           this.LogDebug("Compro: DiSEqC basic property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         }
@@ -270,7 +268,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
           );
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Compro: failed to set tone state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             success = false;
           }
         }
@@ -278,7 +276,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
 
       hr = _propertySet.QuerySupported(BDA_EXTENSION_DISEQC_PROPERTY_SET, (int)BdaExtensionDiseqcProperty.TonePower,
                                   out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Compro: tone/power property not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       }
@@ -298,7 +296,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         );
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Compro: failed to set 22 kHz state, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
@@ -319,19 +317,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
     {
       this.LogDebug("Compro: send DiSEqC command");
 
-      if (!_isCompro || _propertySet == null)
+      if (!_isCompro)
       {
-        this.LogDebug("Compro: device not initialised or interface not supported");
+        this.LogWarn("Compro: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Compro: command not supplied");
+        this.LogError("Compro: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("Compro: command too long, length = {0}", command.Length);
+        this.LogError("Compro: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -353,7 +351,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.Compro
         return true;
       }
 
-      this.LogDebug("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+      this.LogError("Compro: result = failure, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

@@ -274,7 +274,6 @@ void CPmtGrabber::OnNewSection(CSection& section)
         {
           LogDebug("PmtGrabber: callback is NULL");
         }
-        return;
       }
       return;
     }

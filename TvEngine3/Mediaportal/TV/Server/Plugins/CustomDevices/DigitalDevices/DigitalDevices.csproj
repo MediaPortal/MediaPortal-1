@@ -41,7 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DigitalDevices.cs" />
-    <Compile Include="DigitalDevicesCiSlots.cs" />
+    <Compile Include="DigitalDevicesCiSlotConfig.cs" />
+    <Compile Include="DigitalDevicesCiSlot.cs" />
     <Compile Include="DigitalDevicesConfig.cs">
       <SubType>UserControl</SubType>
     </Compile>

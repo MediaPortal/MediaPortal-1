@@ -21,9 +21,6 @@
 using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVDatabase.Entities;
-using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
@@ -48,24 +45,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// </summary>
     private IDiseqcController _diseqcController = null;
 
-    /// <summary>
-    /// Enable or disable always sending DiSEqC commands.
-    /// </summary>
-    /// <remarks>
-    /// DiSEqC commands are usually only sent when changing to a channel on a different switch port or at a
-    /// different positioner location. Enabling this option will cause DiSEqC commands to be sent on each
-    /// channel change.
-    /// </remarks>
-    private bool _alwaysSendDiseqcCommands = false;
-
-    /// <summary>
-    /// The number of times to repeat DiSEqC commands.
-    /// </summary>
-    /// <remarks>
-    /// When set to zero, commands are sent once; when set to one, commands are sent twice... etc.
-    /// </remarks>
-    private ushort _diseqcCommandRepeatCount = 0;
-
     #endregion
 
     #region constructor
@@ -78,21 +57,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       : base(device, device.DevicePath + "S")
     {
       _tunerType = CardType.DvbS;
-      if (DevicePath != null)
-      {
-        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);        
-        if (d != null)
-        {
-          _alwaysSendDiseqcCommands = d.AlwaysSendDiseqcCommands;
-          _diseqcCommandRepeatCount = (ushort)d.DiseqcCommandRepeatCount;
-          if (_diseqcCommandRepeatCount > 5)
-          {
-            // It would be rare that commands would need to be repeated more than twice. Five times
-            // is a more than reasonable practical limit.
-            _diseqcCommandRepeatCount = 5;
-          }
-        }
-      }
     }
 
     #endregion
@@ -107,14 +71,15 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA satellite: perform loading");
       base.PerformLoading();
 
-      // Check if one of the supported interfaces is capable of sending DiSEqC commands.
-      foreach (ICustomDevice deviceInterface in _customDeviceInterfaces)
+      // Check if one of the supported extensions is capable of sending DiSEqC commands.
+      foreach (ICustomDevice extensionInterface in _customDeviceInterfaces)
       {
-        IDiseqcDevice diseqcDevice = deviceInterface as IDiseqcDevice;
+        IDiseqcDevice diseqcDevice = extensionInterface as IDiseqcDevice;
         if (diseqcDevice != null)
         {
           this.LogDebug("BDA satellite: found DiSEqC command interface");
-          _diseqcController = new DiseqcController(diseqcDevice, _alwaysSendDiseqcCommands, _diseqcCommandRepeatCount);
+          _diseqcController = new DiseqcController(diseqcDevice);
+          _diseqcController.ReloadConfiguration(_cardId);
           break;
         }
       }
@@ -178,6 +143,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       finally
       {
         Release.ComObject("BDA satellite tuner tuning space container", ref systemTuningSpaces);
+      }
+    }
+
+    /// <summary>
+    /// Get the class ID of the network provider for the tuner type.
+    /// </summary>
+    protected abstract Guid NetworkProviderClsid
+    {
+      get
+      {
+        return typeof(DVBSNetworkProvider).GUID;
       }
     }
 
@@ -346,6 +322,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     #endregion
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+      if (_diseqcController != null)
+      {
+        _diseqcController.ReloadConfiguration(_cardId);
+      }
+    }
 
     /// <summary>
     /// Get the tuner's DiSEqC control interface. This interface is only applicable for satellite tuners.

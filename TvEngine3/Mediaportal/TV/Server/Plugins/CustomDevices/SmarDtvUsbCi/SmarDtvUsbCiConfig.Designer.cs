@@ -72,7 +72,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         gb.Text = _products[i].ProductName;
 
         // CI product install state label.
-        Label installStateLabel = new Label();
+        MPLabel installStateLabel = new MPLabel();
         installStateLabel.Font = new Font("Microsoft Sans Serif", 7.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
         installStateLabel.Location = new Point(6, 22);
         installStateLabel.Name = "installStateLabel" + i;
@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
         _installStateLabels[i] = installStateLabel;
 
         // Tuner selection label.
-        Label tunerSelectionLabel = new Label();
+        MPLabel tunerSelectionLabel = new MPLabel();
         tunerSelectionLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         tunerSelectionLabel.Location = new Point(6, 45);
         tunerSelectionLabel.Name = "tunerSelectionLabel" + i;
@@ -121,7 +121,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       }
 
       // "Tips" section heading.
-      Label tipHeadingLabel = new Label();
+      MPLabel tipHeadingLabel = new MPLabel();
       tipHeadingLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
       tipHeadingLabel.ForeColor = Color.Black;
       tipHeadingLabel.Location = new Point(11, _products.Count * (groupHeight + groupPadding));
@@ -132,7 +132,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
       this.Controls.Add(tipHeadingLabel);
 
       // Tips.
-      Label tipsLabel = new Label();
+      MPLabel tipsLabel = new MPLabel();
       tipsLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
       tipsLabel.ForeColor = Color.Black;
       tipsLabel.Location = new Point(11, (_products.Count * (groupHeight + groupPadding)) + 20);

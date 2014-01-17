@@ -76,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 
     public static void LogError(this object caller, Exception exception)
     {      
-      Log.Error(caller.GetType(), exception, "");
+      Log.Error(caller.GetType(), exception, string.Empty);
     }
   }
 }

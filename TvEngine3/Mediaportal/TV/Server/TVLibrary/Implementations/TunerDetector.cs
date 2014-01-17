@@ -18,34 +18,40 @@
 
 #endregion
 
-using UPnP.Infrastructure.CP;
-using System.Collections.Generic;
-using System.Management;
+using Microsoft.Win32;
 using System;
-using UPnP.Infrastructure.CP.SSDP;
+using System.Collections.Generic;
+using System.IO;
+using System.Management;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Xml;
+using System.Xml.XPath;
 using DirectShowLib;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
-using UPnP.Infrastructure;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
-using Mediaportal.TV.Server.TVLibrary.Interfaces;
-using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
-using System.Threading;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2;
-using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
-using UPnP.Infrastructure.CP.Description;
-using Microsoft.Win32;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
-using System.IO;
-using System.Text.RegularExpressions;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components;
 using Mediaportal.TV.Server.TVDatabase.Entities;
 using Mediaportal.TV.Server.TVDatabase.Entities.Enums;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog.Components;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.B2c2;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Upnp;
+using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
+using UPnP.Infrastructure;
+using UPnP.Infrastructure.CP;
+using UPnP.Infrastructure.CP.Description;
+using UPnP.Infrastructure.CP.SSDP;
+
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp;
 
 namespace Mediaportal.TV.Server.TVLibrary.Implementations
 {
@@ -66,7 +72,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     // network providers
     private bool _isMicrosoftGenericNpAvailable = false;
-    private bool _isMediaPortalNpAvailable = false;
     private IBaseFilter _atscNp = null;
     private IBaseFilter _dvbcNp = null;
     private IBaseFilter _dvbsNp = null;
@@ -123,7 +128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogCritical(ex, "Detector: failed to initialise the DirectShow tuner detection graph");
+        this.LogCritical(ex, "detector: failed to initialise the DirectShow tuner detection graph");
         throw;
       }
       _systemDeviceChangeEventWatcher = new ManagementEventWatcher();
@@ -135,10 +140,19 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     public void Start()
     {
-      this.LogInfo("Detector: starting tuner detection...");
+      this.LogInfo("detector: starting tuner detection...");
       // Start detecting tuners connected directly to the system.
       DetectSystemTuners();
-      _systemDeviceChangeEventWatcher.Start();
+
+      try
+      {
+        _systemDeviceChangeEventWatcher.Start();
+      }
+      catch
+      {
+        // Fails on Windows Media Center 2005 (ManagementException "unsupported", despite MS documentation).
+        this.LogWarn("detector: failed to start device change event watcher, you'll have to restart TV Server to detect new tuners");
+      }
 
       // Start detecting UPnP tuners.
       // IMPORTANT: this parameter must be set to allow devices with many sub-devices
@@ -151,6 +165,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       _upnpControlPoint.Start();
       _upnpAgent.Start();
       _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("schemas-opencable-com:service:Tuner", "1", null);
+      _upnpAgent.SharedControlPointData.SSDPController.SearchDeviceByDeviceTypeVersion("urn:ses-com:device:SatIPServer", "1", null);
     }
 
     public void Reset()
@@ -165,7 +180,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     public void Stop()
     {
-      this.LogInfo("Detector: stopping tuner detection...");
+      this.LogInfo("detector: stopping tuner detection...");
       _upnpAgent.Close();
       _upnpControlPoint.Close();
       _systemDeviceChangeEventWatcher.Stop();
@@ -279,7 +294,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void InitDirectShowDetectionGraph()
     {
-      this.LogDebug("Detector: initialise DirectShow detection graph");
+      this.LogDebug("detector: initialise DirectShow detection graph");
       _graph = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graph);
 
@@ -291,8 +306,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       // longer and longer and longer.
       // MS generic, MCE 2005 roll-up 2 or better
       _isMicrosoftGenericNpAvailable = FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID);
-      // MediaPortal private network provider, in testing - contact MisterD
-      _isMediaPortalNpAvailable = File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax"));
 
       try
       {
@@ -377,7 +390,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       }
       catch (Exception ex)
       {
-        this.LogError(ex, "Detector: failed to add and configure specific Microsoft network provider(s), is BDA installed?");
+        this.LogError(ex, "detector: failed to add and configure specific Microsoft network provider(s), is BDA installed?");
       }
     }
 
@@ -432,8 +445,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         info.IsFirstDetection = true;
         tuner = new Card
         {
-          TimeshiftingFolder = "",
-          RecordingFolder = "",
+          TimeshiftingFolder = string.Empty,
+          RecordingFolder = string.Empty,
           DevicePath = info.Tuner.DevicePath,
           Name = info.Tuner.Name,
           Priority = 1,
@@ -644,60 +657,61 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void DetectSupportedLegacyAmFilters(ref HashSet<string> knownTuners)
     {
-      this.LogDebug("Detector: detect legacy AM filters");
+      this.LogDebug("detector: detect legacy AM filters");
 
       int streamTunerCount = SettingsManagement.GetValue("iptvCardCount", 1);
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
       foreach (DsDevice device in devices)
       {
-        string name = device.Name;
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(device.DevicePath))
+        try
         {
-          device.Dispose();
-          continue;
-        }
+          string name = device.Name;
+          if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(device.DevicePath))
+          {
+            continue;
+          }
 
-        if (name.Equals("B2C2 MPEG-2 Source"))
-        {
-          this.LogInfo("Detector: detected B2C2 root device");
-          IEnumerable<ITVCard> b2c2Tuners = TunerB2c2Base.DetectTuners();
-          foreach (ITVCard tuner in b2c2Tuners)
+          if (name.Equals("B2C2 MPEG-2 Source"))
           {
-            knownTuners.Add(tuner.DevicePath);
-            if (!_knownTunerInfo.ContainsKey(tuner.DevicePath))
+            this.LogInfo("detector: detected B2C2 root device");
+            IEnumerable<ITVCard> b2c2Tuners = TunerB2c2Base.DetectTuners();
+            foreach (ITVCard tuner in b2c2Tuners)
             {
-              TunerInfo info = new TunerInfo();
-              info.Tuner = tuner;
-              OnTunerDetected(info);
-            }
-            else
-            {
-              tuner.Dispose();
+              knownTuners.Add(tuner.DevicePath);
+              if (!_knownTunerInfo.ContainsKey(tuner.DevicePath))
+              {
+                TunerInfo info = new TunerInfo();
+                info.Tuner = tuner;
+                OnTunerDetected(info);
+              }
+              else
+              {
+                tuner.Dispose();
+              }
             }
           }
-          device.Dispose();
-        }
-        else if (name.Equals("Elecard NWSource-Plus"))
-        {
-          this.LogInfo("Detector: detected Elecard stream source");
-          for (int i = 0; i < streamTunerCount; i++)
+          else if (name.Equals("Elecard NWSource-Plus"))
           {
-            ITVCard tuner = new TunerStreamElecard(i);
-            knownTuners.Add(tuner.DevicePath);
-            if (!_knownTunerInfo.ContainsKey(tuner.DevicePath))
+            this.LogInfo("detector: detected Elecard stream source");
+            for (int i = 0; i < streamTunerCount; i++)
             {
-              TunerInfo info = new TunerInfo();
-              info.Tuner = tuner;
-              OnTunerDetected(info);
-            }
-            else
-            {
-              tuner.Dispose();
+              ITVCard tuner = new TunerStreamElecard(i);
+              knownTuners.Add(tuner.DevicePath);
+              if (!_knownTunerInfo.ContainsKey(tuner.DevicePath))
+              {
+                TunerInfo info = new TunerInfo();
+                info.Tuner = tuner;
+                OnTunerDetected(info);
+              }
+              else
+              {
+                tuner.Dispose();
+              }
             }
           }
         }
-        else
+        finally
         {
           device.Dispose();
         }
@@ -705,7 +719,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
       if (File.Exists(PathManager.BuildAssemblyRelativePath("MPIPTVSource.ax")))
       {
-        this.LogInfo("Detector: detected MediaPortal stream source");
+        this.LogInfo("detector: detected MediaPortal stream source");
         for (int i = 0; i < streamTunerCount; i++)
         {
           ITVCard tuner = new TunerStream(i);
@@ -726,7 +740,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void DetectSupportedAmKsCrossbarDevices(ref HashSet<string> knownTuners)
     {
-      this.LogDebug("Detector: detect AM KS crossbar devices");
+      this.LogDebug("detector: detect AM KS crossbar devices");
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
       foreach (DsDevice device in devices)
       {
@@ -779,7 +793,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         catch (Exception ex)
         {
-          this.LogWarn(ex, "Detector: caught exception while attempting to determine tuner instance ID for {0}", name);
+          this.LogWarn(ex, "detector: caught exception while attempting to determine tuner instance ID for {0}", name);
         }
         finally
         {
@@ -793,7 +807,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void DetectSupportedAmKsCaptureDevices(ref HashSet<string> knownTuners)
     {
-      this.LogDebug("Detector: detect AM KS capture devices");
+      this.LogDebug("detector: detect AM KS capture devices");
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
       foreach (DsDevice device in devices)
       {
@@ -847,7 +861,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
     private void DetectSupportedBdaSources(ref HashSet<string> knownTuners)
     {
-      this.LogDebug("Detector: detect BDA sources");
+      this.LogDebug("detector: detect BDA sources");
 
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       foreach (DsDevice device in devices)
@@ -874,7 +888,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
         catch (Exception ex)
         {
-          this.LogError(ex, "Detector: failed to add BDA source filter to determine tuner type for {0} {1}", name, devicePath);
+          this.LogError(ex, "detector: failed to add BDA source filter to determine tuner type for {0} {1}", name, devicePath);
           device.Dispose();
           continue;
         }
@@ -891,7 +905,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
 
           // If we couldn't detect the type with the topology info, try network
           // providers starting with the MediaPortal network provider.
-          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial && _isMediaPortalNpAvailable)
+          if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
           {
             this.LogDebug("  check type with MediaPortal network provider");
             DetectBdaSourceTypeMediaPortalNetworkProvider(tunerFilter, devicePath, out isAtsc, out isCable, out isSatellite, out isTerrestrial);
@@ -911,7 +925,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
           }
           if (!isAtsc && !isCable && !isSatellite && !isTerrestrial)
           {
-            this.LogError("Detector: failed to determine tuner type for {0} {1}", name, devicePath);
+            this.LogError("detector: failed to determine tuner type for {0} {1}", name, devicePath);
             device.Dispose();
             continue;
           }
@@ -1070,11 +1084,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
         }
 
         this.LogDebug("  tuning types = {0}, hash = {1}", tuningTypes, hash);
-        if ((tuningTypes & TuningType.Atsc) != 0)
+        if (tuningTypes.HasFlag(TuningType.Atsc))
         {
           isAtsc = true;
         }
-        if ((tuningTypes & TuningType.DvbC) != 0)
+        if (tuningTypes.HasFlag(TuningType.DvbC))
         {
           if (filter is IBDA_ConditionalAccess)
           {
@@ -1085,11 +1099,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
             isCable = true;
           }
         }
-        if ((tuningTypes & TuningType.DvbT & TuningType.IsdbT) != 0)
+        if (tuningTypes.HasFlag(TuningType.DvbT) || tuningTypes.HasFlag(TuningType.IsdbT))
         {
           isTerrestrial = true;
         }
-        if ((tuningTypes & TuningType.DvbS & TuningType.DvbS2 & TuningType.IsdbS) != 0)
+        if (tuningTypes.HasFlag(TuningType.DvbS) || tuningTypes.HasFlag(TuningType.DvbS2) || tuningTypes.HasFlag(TuningType.IsdbS))
         {
           isSatellite = true;
         }
@@ -1248,79 +1262,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (_knownUpnpRootDevices.Contains(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
-          this.LogWarn("Detector: re-detecting known root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
+          this.LogWarn("detector: re-detecting known root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
         }
         else
         {
           _knownUpnpRootDevices.Add(rootDescriptor.SSDPRootEntry.RootDeviceUUID);
         }
 
-        DeviceDescriptor deviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
-        IEnumerator<DeviceEntry> childDeviceEn = rootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
-        bool isFirst = true;
-        while (childDeviceEn.MoveNext())
+        DeviceDescriptor rootDeviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
+        bool isSatIpTuner = IsSatIpTuner(rootDeviceDescriptor);
+        bool isOcurTuner = false;
+        if (isSatIpTuner)
         {
-          foreach (string serviceUrn in childDeviceEn.Current.Services)
+          this.LogInfo("detector: SAT>IP tuner added");
+        }
+        else
+        {
+          isOcurTuner = IsOcurTuner(rootDeviceDescriptor);
+          if (!isOcurTuner)
           {
-            // Supported device?
-            if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
-            {
-              if (isFirst)
-              {
-                isFirst = false;
-                this.LogInfo("Detector: OCUR/DRI tuner added {0} {1}", deviceDescriptor.FriendlyName, rootDescriptor.SSDPRootEntry.RootDeviceUUID);
-              }
-
-              // Find the corresponding DeviceDescriptor.
-              IEnumerator<DeviceDescriptor> childDeviceDescriptorEn = deviceDescriptor.ChildDevices.GetEnumerator();
-              while (childDeviceDescriptorEn.MoveNext())
-              {
-                if (childDeviceDescriptorEn.Current.DeviceUUID == childDeviceEn.Current.UUID)
-                {
-                  break;
-                }
-              }
-
-              TunerInfo info;
-              if (_knownTunerInfo.TryGetValue(childDeviceDescriptorEn.Current.DeviceUDN, out info))
-              {
-                OnTunerRemoved(info);
-              }
-
-              info = new TunerInfo();
-              info.Tuner = new TunerDri(childDeviceDescriptorEn.Current, _upnpControlPoint);
-              string name = info.Tuner.Name;
-              if (name.Contains("Ceton"))
-              {
-                // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
-                Match m = Regex.Match(name, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
-                if (m.Success)
-                {
-                  info.ProductInstanceId = m.Groups[1].Captures[0].Value;
-                  info.TunerInstanceId = m.Groups[2].Captures[0].Value;
-                }
-              }
-              else
-              {
-                // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
-                Match m = Regex.Match(name, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
-                if (m.Success)
-                {
-                  info.ProductInstanceId = m.Groups[1].Captures[0].Value;
-                  info.TunerInstanceId = m.Groups[2].Captures[0].Value;
-                }
-              }
-              // To handle any other future tuners...
-              if (string.IsNullOrEmpty(info.ProductInstanceId))
-              {
-                info.ProductInstanceId = info.Tuner.DevicePath.Substring(5).ToLowerInvariant();
-                info.TunerInstanceId = info.ProductInstanceId;
-              }
-
-              OnTunerDetected(info);
-              break;
-            }
+            return;
           }
+          this.LogInfo("detector: OCUR/DRI tuner added");
+        }
+
+        LogUpnpDeviceInfo(rootDeviceDescriptor);
+        if (isSatIpTuner)
+        {
+          DetectSatIpTunerArrival(rootDeviceDescriptor);
+        }
+        else
+        {
+          DetectOcurTunerArrival(rootDeviceDescriptor);
         }
       }
     }
@@ -1336,43 +1309,337 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         if (!_knownUpnpRootDevices.Remove(rootDescriptor.SSDPRootEntry.RootDeviceUUID))
         {
-          this.LogWarn("Detector: detecting removal of unknown root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
+          this.LogWarn("detector: detecting removal of unknown root device {0}", rootDescriptor.SSDPRootEntry.RootDeviceUUID);
         }
-        DeviceDescriptor deviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
-        IEnumerator<DeviceEntry> childDeviceEn = rootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
-        bool isFirst = true;
-        while (childDeviceEn.MoveNext())
-        {
-          foreach (string serviceUrn in childDeviceEn.Current.Services)
-          {
-            if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
-            {
-              if (isFirst)
-              {
-                isFirst = false;
-                this.LogInfo("Detector: OCUR/DRI tuner removed {0} {1}", deviceDescriptor.FriendlyName, rootDescriptor.SSDPRootEntry.RootDeviceUUID);
-              }
 
-              IEnumerator<DeviceDescriptor> childDeviceDescriptorEn = deviceDescriptor.ChildDevices.GetEnumerator();
-              while (childDeviceDescriptorEn.MoveNext())
+        DeviceDescriptor rootDeviceDescriptor = DeviceDescriptor.CreateRootDeviceDescriptor(rootDescriptor);
+        bool isSatIpTuner = IsSatIpTuner(rootDeviceDescriptor);
+        bool isOcurTuner = false;
+        if (isSatIpTuner)
+        {
+          this.LogInfo("detector: SAT>IP tuner removed");
+        }
+        else
+        {
+          isOcurTuner = IsOcurTuner(rootDeviceDescriptor);
+          if (!isOcurTuner)
+          {
+            return;
+          }
+          this.LogInfo("detector: OCUR/DRI tuner removed");
+        }
+
+        LogUpnpDeviceInfo(rootDeviceDescriptor);
+        if (isSatIpTuner)
+        {
+          DetectSatIpTunerRemoval(rootDeviceDescriptor);
+        }
+        else
+        {
+          DetectOcurTunerRemoval(rootDeviceDescriptor);
+        }
+      }
+    }
+
+    private void LogUpnpDeviceInfo(DeviceDescriptor rootDeviceDescriptor)
+    {
+      this.LogInfo("  friendly name = {0}", rootDeviceDescriptor.FriendlyName);
+      this.LogInfo("  UUID          = {0}", rootDeviceDescriptor.DeviceUUID);
+
+      XmlNamespaceManager nm = new XmlNamespaceManager(rootDeviceDescriptor.DeviceNavigator.NameTable);
+      nm.AddNamespace("d", UPnPConsts.NS_DEVICE_DESCRIPTION);
+      XPathNavigator nav = rootDeviceDescriptor.DeviceNavigator;
+      this.LogDebug("  manufacturer");
+      this.LogDebug("    name        = {0}", nav.SelectSingleNode("d:manufacturer/text()", nm).Value);
+      XPathNodeIterator it = nav.Select("d:manufacturerURL/text()", nm);
+      if (it.MoveNext())
+      {
+        this.LogDebug("    URL         = {0}", it.Current.Value);
+      }
+
+      this.LogDebug("  model");
+      string[] propertyDescriptions = new string[] { "name", "number", "description", "URL" };
+      string[] propertyNames = new string[] { "modelName", "modelNumber", "modelDescription", "modelURL" };
+      for (int i = 0; i < propertyDescriptions.Length; i++)
+      {
+        it = nav.Select("d:" + propertyNames[i] + "/text()", nm);
+        if (it.MoveNext())
+        {
+          this.LogDebug("    {0, -11} = {1}", propertyDescriptions[i], it.Current.Value);
+        }
+      }
+
+      it = nav.Select("d:serialNumber/text()", nm);
+      if (it.MoveNext())
+      {
+        this.LogDebug("  serial number = {0}", it.Current.Value);
+      }
+      it = nav.Select("d:UPC/text()", nm);
+      if (it.MoveNext())
+      {
+        this.LogDebug("  UPC           = {0}", it.Current.Value);
+      }
+    }
+
+    #region SAT>IP tuner detection
+
+    private bool IsSatIpTuner(DeviceDescriptor rootDeviceDescriptor)
+    {
+      return rootDeviceDescriptor.TypeVersion_URN.Equals("urn:ses-com:device:SatIPServer:1");
+    }
+
+    private void DetectSatIpTunerArrival(DeviceDescriptor rootDeviceDescriptor)
+    {
+      int satelliteFrontEndCount = 0;
+      int terrestrialFrontEndCount = 0;
+      string host = new Uri(rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.PreferredLink.DescriptionLocation).Host;
+
+      // SAT>IP servers may have more than one tuner, but their descriptors
+      // only ever have one device node. We have to find out how many tuners
+      // are available and what type they are.
+      XmlNamespaceManager nm = new XmlNamespaceManager(rootDeviceDescriptor.DeviceNavigator.NameTable);
+      nm.AddNamespace("s", "urn:ses-com:satip");
+      XPathNodeIterator it = rootDeviceDescriptor.DeviceNavigator.Select("s:X_SATIPCAP/text()");
+      if (it.MoveNext())
+      {
+        // The easiest way to get the information we need is from X_SATIPCAP,
+        // but unfortunately that element is optional.
+        this.LogDebug("detector: get capabilites from X_SATIPCAP");
+        string[] sections = it.Current.Value.Split(',');
+        foreach (string section in sections)
+        {
+          Match m = Regex.Match(section, @"^([^-]+)-(\d+)$", RegexOptions.IgnoreCase);
+          if (m.Success)
+          {
+            string msys = m.Groups[1].Captures[0].Value;
+            if (msys.Equals("DVBS2"))
+            {
+              satelliteFrontEndCount += int.Parse(m.Groups[2].Captures[0].Value);
+            }
+            else if (msys.Equals("DVBT") || msys.Equals("DVBT2"))
+            {
+              terrestrialFrontEndCount += int.Parse(m.Groups[2].Captures[0].Value);
+            }
+            else
+            {
+              this.LogWarn("detector: unsupported SAT>IP msys {0} found in SAT>IP X_SATIPCAP {1}, section {2}", msys, it.Current.Value, section);
+            }
+          }
+          else
+          {
+            this.LogWarn("detector: failed to interpret SAT>IP X_SATIPCAP {0}, section {1}", it.Current.Value, section);
+          }
+        }
+      }
+      else
+      {
+        // X_SATIPCAP is not available. Try an RTSP DESCRIBE.
+        this.LogDebug("detector: attempt to get capabilities using RTSP DESCRIBE");
+        bool requestSucceeded = true;
+        StringBuilder rtspDescribeResponse = new StringBuilder();
+        try
+        {
+          StringBuilder rtspDescribeRequest = new StringBuilder();
+          rtspDescribeRequest.Append("DESCRIBE rtsp://").Append(host).Append(":554/ RTSP/1.0\r\n");
+          rtspDescribeRequest.Append("CSeq: 1\r\n");
+          rtspDescribeRequest.Append("Accept: application/sdp\r\n");
+          rtspDescribeRequest.Append("Connection:close\r\n\r\n");
+          TcpClient client = new TcpClient(host, 554);
+          NetworkStream stream = client.GetStream();
+          byte[] requestBytes = System.Text.Encoding.ASCII.GetBytes(rtspDescribeRequest.ToString());
+          stream.Write(requestBytes, 0, requestBytes.Length);
+          byte[] responseBytes = new byte[client.ReceiveBufferSize];
+          while (stream.DataAvailable)
+          {
+            int byteCount = stream.Read(responseBytes, 0, responseBytes.Length);
+            rtspDescribeResponse.Append(System.Text.Encoding.ASCII.GetString(responseBytes, 0, byteCount));
+          }
+          stream.Close();
+          client.Close();
+        }
+        catch (Exception ex)
+        {
+          this.LogWarn(ex, "detector: SAT>IP RTSP DESCRIBE request failed");
+          requestSucceeded = false;
+        }
+        if (requestSucceeded)
+        {
+          Match m = Regex.Match(rtspDescribeResponse.ToString(), @"s=SatIPServer:1\s+([^\s]+)\s+", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+          if (m.Success)
+          {
+            string frontEndInfo = m.Groups[1].Captures[0].Value;
+            try
+            {
+              string[] frontEndCounts = frontEndInfo.Split(',');
+              if (frontEndCounts.Length >= 2)
               {
-                if (childDeviceDescriptorEn.Current.DeviceUUID == childDeviceEn.Current.UUID)
+                satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
+                terrestrialFrontEndCount = int.Parse(frontEndCounts[1]);
+                if (frontEndCounts.Length > 2)
                 {
-                  break;
+                  this.LogWarn("detector: SAT>IP RTSP DESCRIBE response contains more than 2 front end counts, not supported");
                 }
               }
-
-              TunerInfo info;
-              if (_knownTunerInfo.TryGetValue(childDeviceDescriptorEn.Current.DeviceUDN, out info))
+              else
               {
-                OnTunerRemoved(info);
+                satelliteFrontEndCount = int.Parse(frontEndCounts[0]);
               }
-              break;
             }
+            catch (Exception ex)
+            {
+              this.LogWarn(ex, "detector: failed to interpret SAT>IP RTSP DESCRIBE response SatIPServer section {0}", frontEndInfo);
+            }
+          }
+          else
+          {
+            this.LogWarn("detector: failed to interpret SAT>IP RTSP DESCRIBE response");
+          }
+        }
+      }
+
+      if (satelliteFrontEndCount == 0 && terrestrialFrontEndCount == 0)
+      {
+        this.LogWarn("detector: failed to gather SAT>IP front end information, assuming 2 satellite front ends");
+        satelliteFrontEndCount = 2;
+      }
+
+      this.LogInfo("  sat FE count  = {0}", satelliteFrontEndCount);
+      this.LogInfo("  terr FE count = {0}", terrestrialFrontEndCount);
+
+      for (int i = 1; i <= satelliteFrontEndCount; i++)
+      {
+        TunerInfo info = new TunerInfo();
+        info.Tuner = new TunerSatIpSatellite(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info.ProductInstanceId = null;
+        info.TunerInstanceId = null;
+        OnTunerDetected(info);
+      }
+      for (int i = 1; i <= terrestrialFrontEndCount; i++)
+      {
+        // TODO add DVB-C tuner support
+        TunerInfo info = new TunerInfo();
+        info.Tuner = new TunerSatIpTerrestrial(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info.ProductInstanceId = null;
+        info.TunerInstanceId = null;
+        OnTunerDetected(info);
+      }
+    }
+
+    private void DetectSatIpTunerRemoval(DeviceDescriptor rootDeviceDescriptor)
+    {
+      // Find the devices that we're going to remove.
+      List<string> keys = new List<string>();
+      foreach (string key in _knownTunerInfo.Keys)
+      {
+        if (key.StartsWith(rootDeviceDescriptor.DeviceUUID))
+        {
+          keys.Add(key);
+        }
+      }
+      foreach (string key in keys)
+      {
+        TunerInfo info;
+        if (_knownTunerInfo.TryGetValue(key, out info))
+        {
+          OnTunerRemoved(info);
+        }
+      }
+    }
+
+    #endregion
+
+    #region OCUR/DRI (CableCARD) tuner detection
+
+    private bool IsOcurTuner(DeviceDescriptor rootDeviceDescriptor)
+    {
+      IEnumerator<DeviceEntry> childDeviceEn = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
+      while (childDeviceEn.MoveNext())
+      {
+        foreach (string serviceUrn in childDeviceEn.Current.Services)
+        {
+          if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    private void DetectOcurTunerArrival(DeviceDescriptor rootDeviceDescriptor)
+    {
+      IEnumerator<DeviceEntry> childDeviceEn = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
+      while (childDeviceEn.MoveNext())
+      {
+        // Have to check for the tuner service to avoid Ceton tuning adaptor devices.
+        foreach (string serviceUrn in childDeviceEn.Current.Services)
+        {
+          if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
+          {
+            TunerInfo info;
+            if (_knownTunerInfo.TryGetValue(childDeviceEn.Current.UUID, out info))
+            {
+              OnTunerRemoved(info);
+            }
+
+            info = new TunerInfo();
+            info.Tuner = new TunerDri(rootDeviceDescriptor.FindDevice(childDeviceEn.Current.UUID), _upnpControlPoint);
+            if (info.Tuner.Name.Contains("Ceton"))
+            {
+              // Example: Ceton InfiniTV PCIe (00-80-75-05) Tuner 1 (00-00-22-00-00-80-75-05)
+              Match m = Regex.Match(info.Tuner.Name, @"\s+\(([^\s]+)\)\s+Tuner\s+(\d+)", RegexOptions.IgnoreCase);
+              if (m.Success)
+              {
+                info.ProductInstanceId = m.Groups[1].Captures[0].Value;
+                info.TunerInstanceId = m.Groups[2].Captures[0].Value;
+              }
+            }
+            else
+            {
+              // Examples: HDHomeRun Prime Tuner 1316890F-1, Hauppauge OpenCable Receiver 201200AA-1
+              Match m = Regex.Match(info.Tuner.Name, @"\s+([^\s]+)-(\d)$", RegexOptions.IgnoreCase);
+              if (m.Success)
+              {
+                info.ProductInstanceId = m.Groups[1].Captures[0].Value;
+                info.TunerInstanceId = m.Groups[2].Captures[0].Value;
+              }
+            }
+            // To handle any other future tuners...
+            if (string.IsNullOrEmpty(info.ProductInstanceId))
+            {
+              info.ProductInstanceId = info.Tuner.DevicePath.Substring(5).ToLowerInvariant();
+              info.TunerInstanceId = info.ProductInstanceId;
+            }
+
+            OnTunerDetected(info);
+            break;
           }
         }
       }
     }
+
+    private void DetectOcurTunerRemoval(DeviceDescriptor rootDeviceDescriptor)
+    {
+      IEnumerator<DeviceEntry> childDeviceEn = rootDeviceDescriptor.RootDescriptor.SSDPRootEntry.Devices.Values.GetEnumerator();
+      while (childDeviceEn.MoveNext())
+      {
+        // Have to check for the tuner service to avoid Ceton tuning adaptor devices.
+        foreach (string serviceUrn in childDeviceEn.Current.Services)
+        {
+          if (serviceUrn.Equals("urn:schemas-opencable-com:service:Tuner:1"))
+          {
+            TunerInfo info;
+            if (_knownTunerInfo.TryGetValue(childDeviceEn.Current.UUID, out info))
+            {
+              OnTunerRemoved(info);
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
   }

@@ -52,7 +52,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
     private int _pmtPid = -1;
 
     /// <summary>
-    /// Set by the TsWriter OnPmtReceived() callback. Indicates whether the service
+    /// Set by the TsWriter OnPmtReceived() call back. Indicates whether the service
     /// that this subchannel represents is currently active.
     /// </summary>
     private bool _isServiceRunning = false;
@@ -121,11 +121,13 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
       if (_eventPmt != null)
       {
         _eventPmt.Close();
+        _eventPmt = null;
       }
 
       if (_eventCat != null)
       {
         _eventCat.Close();
+        _eventCat = null;
       }
     }
 
@@ -264,7 +266,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
         OnAfterTuneEvent();
 
-        // Do this as late as possible. Any PMT that arrives between when the PMT callback was set and
+        // Do this as late as possible. Any PMT that arrives between when the PMT call back was set and
         // when we start waiting for PMT will cause us to miss or mess up the PMT handling.
         _pmtPid = -1;
         _isServiceRunning = false;
@@ -596,7 +598,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
             _pids.Add(es.Pid);
             _tsFilterInterface.AnalyserAddPid(_subChannelIndex, es.Pid);
           }
-          else if (es.LogicalStreamType == LogicalStreamType.Subtitles)
+          else if (es.LogicalStreamType == LogicalStreamType.SubTitles)
           {
             _pids.Add(es.Pid);
           }
@@ -833,7 +835,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
     #endregion
 
-    #region tswriter callback handlers
+    #region TsWriter call back handlers
 
     #region ICaCallBack members
 

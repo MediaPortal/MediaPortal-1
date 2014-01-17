@@ -61,7 +61,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       _pageCache = cache;
       for (int i = 0; i < MAX_MAGAZINE + 2; ++i)
       {
-        _vbiLine[i] = "";
+        _vbiLine[i] = string.Empty;
         byte[] page = new byte[2100];
         _workingPage.Add(page);
       }
@@ -81,7 +81,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       {
         _magazineCurrentPageNr[i] = -1;
         _magazineLastRow[i] = -1;
-        _vbiLine[i] = "";
+        _vbiLine[i] = string.Empty;
       }
       _pageCache.Clear();
     }
@@ -94,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
     /// <param name="rows">The rows.</param>
     public void Decode(byte[] rowData, int startOff, int rows)
     {
-      _line = "";
+      _line = string.Empty;
       try
       {
         int line;
@@ -150,7 +150,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
             }
              */
             //this.LogDebug("Packet Number:{0}, type:{1}", packetNumber, type);
-            string channelName = "";
+            string channelName = string.Empty;
             for (int i = 0; i < 20; i++)
             {
               char char1 = (char)(rowData[off + 22 + i] & 127);
@@ -347,7 +347,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
         //        this.LogDebug(Log.LogType.Error,true,"Exception while decoding teletext");
-        //        this.LogError(ex, "");
+        //        this.LogError(ex, string.Empty);
       }
       //System.Diagnostics.Trace.WriteLine(_line);
       //Log.this.LogDebug(_line);
@@ -367,7 +367,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Teletext.Implementations
         _pageCache.PageReceived(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine],
                                 _workingPage[magazine], _vbiLine[magazine]);
       }
-      _vbiLine[magazine] = "";
+      _vbiLine[magazine] = string.Empty;
       _magazineCurrentPageNr[magazine] = -1;
       _magazineCurrentSubPage[magazine] = -1;
       _magazineLastRow[magazine] = -1;

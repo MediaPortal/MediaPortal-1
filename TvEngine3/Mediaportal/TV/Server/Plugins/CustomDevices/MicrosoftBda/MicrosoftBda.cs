@@ -33,8 +33,8 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 {
   /// <summary>
-  /// This class provides a base implementation of PID filtering, DiSEqC and clear QAM tuning support
-  /// for devices that support Microsoft BDA interfaces and de-facto standards.
+  /// This class provides a base implementation of PID filtering, DiSEqC and clear QAM tuning
+  /// support for tuners that support Microsoft BDA interfaces and de-facto standards.
   /// </summary>
   public class MicrosoftBda : BaseCustomDevice, IMpeg2PidFilter, IDiseqcDevice
   {
@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       IPin pin = DsFindPin.ByDirection(filter, PinDirection.Input, 0);
       if (pin == null)
       {
-        this.LogDebug("Microsoft BDA: failed to find input pin");
+        this.LogError("Microsoft BDA: failed to find input pin");
         return null;
       }
 
@@ -113,7 +113,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
       KSPropertySupport support;
       int hr = ps.QuerySupported(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Microsoft BDA: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         Release.ComObject("Microsoft DiSEqC property set", ref ps);
@@ -173,7 +173,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       IPin pin = DsFindPin.ByDirection(filter, PinDirection.Output, 0);
       if (pin == null)
       {
-        this.LogDebug("Microsoft BDA: failed to find output pin");
+        this.LogError("Microsoft BDA: failed to find output pin");
         return null;
       }
 
@@ -190,7 +190,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       // filter then the output pin(s) won't be connected yet.
       KSPropertySupport support;
       int hr = ps.QuerySupported(ModulationPropertyClass, (int)BdaDemodulatorProperty.ModulationType, out support);
-      if (hr != (int)HResult.Severity.Success || (support & KSPropertySupport.Set) == 0)
+      if (hr != (int)HResult.Severity.Success || !support.HasFlag(KSPropertySupport.Set))
       {
         this.LogDebug("Microsoft BDA: property set not supported, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         Release.ComObject("Microsoft QAM property set", ref pin);
@@ -222,21 +222,21 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
       get
       {
-        // This is the most generic ICustomDevice implementation. It should only be used as a last resort
-        // when more specialised interfaces are not suitable.
+        // This is the most generic <see cref="ICustomDevice"/> implementation. It should only be
+        // used as a last resort when more specialised interfaces are not suitable.
         return 1;
       }
     }
 
     /// <summary>
-    /// A human-readable name for the device. This could be a manufacturer or reseller name, or even a model
-    /// name/number.
+    /// A human-readable name for the extension. This could be a manufacturer or reseller name, or
+    /// even a model name and/or number.
     /// </summary>
     public override string Name
     {
@@ -263,8 +263,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -272,11 +273,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("Microsoft BDA: initialising device");
+      this.LogDebug("Microsoft BDA: initialising");
 
       if (_isMicrosoftBda)
       {
-        this.LogDebug("Microsoft BDA: device is already initialised");
+        this.LogWarn("Microsoft BDA: extension already initialised");
         return true;
       }
       IBaseFilter tunerFilter = context as IBaseFilter;
@@ -293,7 +294,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         _diseqcPropertySet = CheckBdaDiseqcSupport(tunerFilter);
         if (_diseqcPropertySet != null)
         {
-          this.LogDebug("Microsoft BDA: supported device detected (IBDA_DiseqCommand DiSEqC)");
+          this.LogInfo("Microsoft BDA: extension supported (IBDA_DiseqCommand DiSEqC)");
           _isMicrosoftBda = true;
         }
         else
@@ -302,7 +303,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
           _oldDiseqcInterface = (IBDA_FrequencyFilter)CheckPutRangeDiseqcSupport(tunerFilter);
           if (_oldDiseqcInterface != null)
           {
-            this.LogDebug("Microsoft BDA: supported device detected (IBDA_FrequencyFilter.put_Range() DiSEqC)");
+            this.LogInfo("Microsoft BDA: extension supported (IBDA_FrequencyFilter.put_Range() DiSEqC)");
             _isMicrosoftBda = true;
           }
         }
@@ -313,7 +314,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         _qamPropertySet = CheckQamTuningSupport(tunerFilter);
         if (_qamPropertySet != null)
         {
-          this.LogDebug("Microsoft BDA: supported device detected (QAM tuning)");
+          this.LogInfo("Microsoft BDA: extension supported (QAM tuning)");
           _isMicrosoftBda = true;
         }
       }
@@ -322,7 +323,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       _pidFilterInterface = CheckBdaPidFilterSupport(tunerFilter);
       if (_pidFilterInterface != null)
       {
-        this.LogDebug("Microsoft BDA: supported device detected (PID filtering)");
+        this.LogInfo("Microsoft BDA: extension supported (PID filtering)");
         _isMicrosoftBda = true;
       }
 
@@ -338,23 +339,23 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       return true;
     }
 
-    #region device state change callbacks
+    #region device state change call backs
 
     /// <summary>
-    /// This callback is invoked before a tune request is assembled.
+    /// This call back is invoked before a tune request is assembled.
     /// </summary>
-    /// <param name="tuner">The tuner instance that this device instance is associated with.</param>
+    /// <param name="tuner">The tuner instance that this extension instance is associated with.</param>
     /// <param name="currentChannel">The channel that the tuner is currently tuned to..</param>
     /// <param name="channel">The channel that the tuner will been tuned to.</param>
     /// <param name="action">The action to take, if any.</param>
     public override void OnBeforeTune(ITVCard tuner, IChannel currentChannel, ref IChannel channel, out TunerAction action)
     {
-      this.LogDebug("Microsoft BDA: on before tune callback");
+      this.LogDebug("Microsoft BDA: on before tune call back");
       action = TunerAction.Default;
 
       if (!_isMicrosoftBda)
       {
-        this.LogDebug("Microsoft BDA: device not initialised or interface not supported");
+        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
         return;
       }
 
@@ -387,7 +388,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
           int hr = _qamPropertySet.Set(ModulationPropertyClass, (int)BdaDemodulatorProperty.ModulationType, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Microsoft BDA: failed to set QAM modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft BDA: failed to set QAM modulation, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           }
           else
           {
@@ -416,7 +417,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
       if (!_isMicrosoftBda || _pidFilterInterface == null)
       {
-        this.LogDebug("Microsoft BDA: device not initialised or interface not supported");
+        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
         return false;
       }
 
@@ -442,7 +443,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       byte i = 1;
       while (en.MoveNext())
       {
-        this.LogDebug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+        this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
         i++;
         if (!pids.Contains(en.Current))
         {
@@ -462,12 +463,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
           hr = _pidFilterInterface.UnmapPID(1, new int[1] { en.Current });
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Microsoft BDA: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft BDA: failed to remove PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
             success = false;
           }
           else
           {
-            this.LogDebug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+            this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
             _currentPids.Remove(en.Current);
           }
           i++;
@@ -487,12 +488,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         hr = _pidFilterInterface.MapPID(1, new int[1] { en.Current }, MediaSampleContent.ElementaryStream);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Microsoft BDA: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA: failed to add PID {0} (0x{0:x}), hr = 0x{1:x} ({2})", en.Current, hr, HResult.GetDXErrorString(hr));
           success = false;
         }
         else
         {
-          this.LogDebug("  {0,-2}    = {1} (0x{1:x})", i, en.Current);
+          this.LogDebug("  {0, -5} = {1} (0x{1:x})", i, en.Current);
         }
         i++;
       }
@@ -525,7 +526,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
       if (!_isMicrosoftBda)
       {
-        this.LogDebug("Microsoft BDA: device not initialised or interface not supported");
+        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
         return false;
       }
       if (_diseqcPropertySet == null)
@@ -577,17 +578,17 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
       if (!_isMicrosoftBda || _deviceControl == null || (_diseqcPropertySet == null && _oldDiseqcInterface == null))
       {
-        this.LogDebug("Microsoft BDA: device not initialised or interface not supported");
+        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("Microsoft BDA: command not supplied");
+        this.LogError("Microsoft BDA: command not supplied");
         return true;
       }
       if (command.Length > MAX_DISEQC_MESSAGE_LENGTH)
       {
-        this.LogDebug("Microsoft BDA: command too long, length = {0}", command.Length);
+        this.LogError("Microsoft BDA: command too long, length = {0}", command.Length);
         return false;
       }
 
@@ -606,7 +607,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       }
       if (_oldDiseqcInterface != null && portNumber == -1)
       {
-        this.LogDebug("Microsoft BDA: command not supported");
+        this.LogError("Microsoft BDA: command not supported");
         return false;
       }
 
@@ -615,72 +616,81 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
       int hr = _deviceControl.StartChanges();
       if (hr != (int)HResult.Severity.Success)
       {
-        this.LogDebug("Microsoft BDA: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+        this.LogError("Microsoft BDA: failed to start device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
         success = false;
       }
 
       // IBDA_DiseqCommand interface
-      if (_diseqcPropertySet != null)
+      if (_diseqcPropertySet != null && success)
       {
         // This property has to be set for each command sent for some tuners (eg. TBS).
         Marshal.WriteInt32(_paramBuffer, 0, 1);
         hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Enable, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Microsoft BDA: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA: failed to enable DiSEqC commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
 
         // Disable command repeats for optimal performance. We set this for each command for "safety",
         // assuming that if DiSEqC must be enabled for each command then the same may apply to repeats.
-        Marshal.WriteInt32(_paramBuffer, 0, 0);
-        hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
-        if (hr != (int)HResult.Severity.Success)
+        if (success)
         {
-          this.LogDebug("Microsoft BDA: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          success = false;
+          Marshal.WriteInt32(_paramBuffer, 0, 0);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Repeats, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
+          if (hr != (int)HResult.Severity.Success)
+          {
+            this.LogError("Microsoft BDA: failed to disable DiSEqC command repeats, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            success = false;
+          }
         }
 
         // Disable tone burst messages - it seems that many drivers don't support them, and setting the correct
         // tone state is inconvenient with the IBDA_DiseqCommand implementation.
-        Marshal.WriteInt32(_paramBuffer, 0, 0);
-        hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
-        if (hr != (int)HResult.Severity.Success)
+        if (success)
         {
-          this.LogDebug("Microsoft BDA: failed to disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-          success = false;
-        }
-
-        LNB_Source lnbSource = (LNB_Source)portNumber++;
-        if (lnbSource != LNB_Source.NOT_SET)
-        {
-          Marshal.WriteInt32(_paramBuffer, 0, (int)lnbSource);
-          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
+          Marshal.WriteInt32(_paramBuffer, 0, 0);
+          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.UseToneBurst, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
           if (hr != (int)HResult.Severity.Success)
           {
-            this.LogDebug("Microsoft BDA: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+            this.LogError("Microsoft BDA: failed to disable tone burst commands, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
             success = false;
           }
         }
-        else
+
+        if (success)
         {
-          BdaDiseqcMessage message = new BdaDiseqcMessage();
-          message.RequestId = _requestId++;
-          message.PacketLength = (uint)command.Length;
-          message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
-          Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
-          Marshal.StructureToPtr(message, _paramBuffer, true);
-          //DVB_MMI.DumpBinary(_paramBuffer, 0, BDA_DISEQC_MESSAGE_SIZE);
-          hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
-          if (hr != (int)HResult.Severity.Success)
+          LNB_Source lnbSource = (LNB_Source)portNumber++;
+          if (lnbSource != LNB_Source.NOT_SET)
           {
-            this.LogDebug("Microsoft BDA: failed to send command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-            success = false;
+            Marshal.WriteInt32(_paramBuffer, 0, (int)lnbSource);
+            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.LnbSource, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, sizeof(int));
+            if (hr != (int)HResult.Severity.Success)
+            {
+              this.LogError("Microsoft BDA: failed to set LNB source, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              success = false;
+            }
+          }
+          else
+          {
+            BdaDiseqcMessage message = new BdaDiseqcMessage();
+            message.RequestId = _requestId++;
+            message.PacketLength = (uint)command.Length;
+            message.PacketData = new byte[MAX_DISEQC_MESSAGE_LENGTH];
+            Buffer.BlockCopy(command, 0, message.PacketData, 0, command.Length);
+            Marshal.StructureToPtr(message, _paramBuffer, true);
+            //Dump.DumpBinary(_paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
+            hr = _diseqcPropertySet.Set(typeof(IBDA_DiseqCommand).GUID, (int)BdaDiseqcProperty.Send, _instanceBuffer, INSTANCE_SIZE, _paramBuffer, BDA_DISEQC_MESSAGE_SIZE);
+            if (hr != (int)HResult.Severity.Success)
+            {
+              this.LogError("Microsoft BDA: failed to send DiSEqC command, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+              success = false;
+            }
           }
         }
       }
       // IBDA_FrequencyFilter interface
-      else if (_oldDiseqcInterface != null)
+      else if (_oldDiseqcInterface != null && success)
       {
         // The two rightmost bytes encode option and position respectively.
         if (portNumber > 1)
@@ -692,23 +702,29 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         hr = _oldDiseqcInterface.put_Range((ulong)portNumber);
         if (hr != (int)HResult.Severity.Success)
         {
-          this.LogDebug("Microsoft BDA: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          this.LogError("Microsoft BDA: failed to put range, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
           success = false;
         }
       }
 
       // Finalise (send) the command.
-      hr = _deviceControl.CheckChanges();
-      if (hr != (int)HResult.Severity.Success)
+      if (success)
       {
-        this.LogDebug("Microsoft BDA: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        success = false;
+        hr = _deviceControl.CheckChanges();
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("Microsoft BDA: failed to check device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
       }
-      hr = _deviceControl.CommitChanges();
-      if (hr != (int)HResult.Severity.Success)
+      if (success)
       {
-        this.LogDebug("Microsoft BDA: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
-        success = false;
+        hr = _deviceControl.CommitChanges();
+        if (hr != (int)HResult.Severity.Success)
+        {
+          this.LogError("Microsoft BDA: failed to commit device control changes, hr = 0x{0:x} ({1})", hr, HResult.GetDXErrorString(hr));
+          success = false;
+        }
       }
 
       this.LogDebug("Microsoft BDA: result = {0}", success);
@@ -728,12 +744,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
 
       if (!_isMicrosoftBda)
       {
-        this.LogDebug("Microsoft BDA: device not initialised or interface not supported");
+        this.LogWarn("Microsoft BDA: not initialised or interface not supported");
         return false;
       }
       if (_diseqcPropertySet == null)
       {
-        this.LogDebug("Microsoft BDA: the interface does not support reading DiSEqC responses");
+        this.LogError("Microsoft BDA: the interface does not support reading DiSEqC responses");
         return false;
       }
 
@@ -749,7 +765,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         BdaDiseqcMessage message = (BdaDiseqcMessage)Marshal.PtrToStructure(_paramBuffer, typeof(BdaDiseqcMessage));
         if (message.PacketLength > MAX_DISEQC_MESSAGE_LENGTH)
         {
-          this.LogDebug("Microsoft BDA: response length is out of bounds, response length = {0}", message.PacketLength);
+          this.LogError("Microsoft BDA: response length is out of bounds, response length = {0}", message.PacketLength);
           return false;
         }
         this.LogDebug("Microsoft BDA: result = success");
@@ -758,7 +774,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.MicrosoftBda
         return true;
       }
 
-      this.LogDebug("Microsoft BDA: result = failure, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
+      this.LogError("Microsoft BDA: failed to read DiSEqC response, response length = {0}, hr = 0x{1:x} ({2})", returnedByteCount, hr, HResult.GetDXErrorString(hr));
       return false;
     }
 

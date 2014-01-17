@@ -23,12 +23,12 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
-  /// callback interface for the ChannelLinkageScanner
+  /// call back interface for the ChannelLinkageScanner
   /// </summary>
   [ComVisible(true), ComImport,
    Guid("F8A86679-C80A-42fd-A148-20D681A67024"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IChannelLinkageCallback
+  public interface IChannelLinkageCallBack
   {
     /// <summary>
     /// Called when channel linkages are received.
@@ -41,7 +41,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   /// <summary>
   /// Base class used for channel linkage grabbing
   /// </summary>
-  public abstract class BaseChannelLinkageScanner : IChannelLinkageCallback
+  public abstract class BaseChannelLinkageScanner : IChannelLinkageCallBack
   {
     /// <summary>
     /// Gets called when linkage infos have been received

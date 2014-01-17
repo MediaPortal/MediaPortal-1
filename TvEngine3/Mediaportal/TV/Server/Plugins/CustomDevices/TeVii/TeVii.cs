@@ -31,7 +31,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 {
   /// <summary>
-  /// A class for handling DiSEqC and tuning for TeVii devices.
+  /// A class for handling DiSEqC and tuning for TeVii tuners.
   /// </summary>
   public class TeVii : BaseCustomDevice, ICustomTuner, IDiseqcDevice
   {
@@ -145,11 +145,11 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// devices simultaneously.
     /// </remarks>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="captureCallback">An optional pointer to a function that will be executed when raw stream packets are received.</param>
-    /// <param name="context">An optional pointer that will be passed as a paramter to the capture callback.</param>
+    /// <param name="captureCallBack">An optional pointer to a function that will be executed when raw stream packets are received.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the capture call back.</param>
     /// <returns><c>true</c> if the device access is successfully established, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool OpenDevice(int index, IntPtr captureCallback, IntPtr context);
+    private static extern bool OpenDevice(int index, IntPtr captureCallBack, IntPtr context);
 
     /// <summary>
     /// Close access to a specific TeVii device.
@@ -202,15 +202,15 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     private static extern bool SendDiSEqC(int index, byte[] message, int length, int repeatCount, [MarshalAs(UnmanagedType.Bool)] bool repeatFlag);
 
     /// <summary>
-    /// Set the remote control receiver callback function.
+    /// Set the remote control receiver call back function.
     /// </summary>
     /// <param name="index">The zero-based device index (0 &lt;= index &lt; FindDevices()).</param>
-    /// <param name="remoteKeyCallback">An optional pointer to a function that will be called when remote keypress events are detected.</param>
-    /// <param name="context">An optional pointer that will be passed as a paramter to the remote key callback.</param>
-    /// <returns><c>true</c> if the callback function is successfully set, otherwise <c>false</c></returns>
+    /// <param name="remoteKeyCallBack">An optional pointer to a function that will be called when remote keypress events are detected.</param>
+    /// <param name="context">An optional pointer that will be passed as a paramter to the remote key call back.</param>
+    /// <returns><c>true</c> if the call back function is successfully set, otherwise <c>false</c></returns>
     [DllImport("Resources\\TeVii.dll", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SetRemoteControl(int index, IntPtr remoteKeyCallback, IntPtr context);
+    private static extern bool SetRemoteControl(int index, IntPtr remoteKeyCallBack, IntPtr context);
 
     #endregion
 
@@ -348,7 +348,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     #region ICustomDevice members
 
     /// <summary>
-    /// The loading priority for this device type.
+    /// The loading priority for this extension.
     /// </summary>
     public override byte Priority
     {
@@ -359,8 +359,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     }
 
     /// <summary>
-    /// Attempt to initialise the device-specific interfaces supported by the class. If initialisation fails,
-    /// the ICustomDevice instance should be disposed immediately.
+    /// Attempt to initialise the extension-specific interfaces used by the class. If
+    /// initialisation fails, the <see ref="ICustomDevice"/> instance should be disposed
+    /// immediately.
     /// </summary>
     /// <param name="tunerExternalIdentifier">The external identifier for the tuner.</param>
     /// <param name="tunerType">The tuner type (eg. DVB-S, DVB-T... etc.).</param>
@@ -368,7 +369,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     /// <returns><c>true</c> if the interfaces are successfully initialised, otherwise <c>false</c></returns>
     public override bool Initialise(string tunerExternalIdentifier, CardType tunerType, object context)
     {
-      this.LogDebug("TeVii: initialising device");
+      this.LogDebug("TeVii: initialising");
 
       if (string.IsNullOrEmpty(tunerExternalIdentifier))
       {
@@ -377,7 +378,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       if (_isTeVii)
       {
-        this.LogDebug("TeVii: device is already initialised");
+        this.LogWarn("TeVii: extension already initialised");
         return true;
       }
 
@@ -413,10 +414,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
 
       if (!OpenDevice(_deviceIndex, IntPtr.Zero, IntPtr.Zero))
       {
-        this.LogDebug("TeVii: failed to open device");
+        this.LogError("TeVii: failed to open device");
         return false;
       }
-      this.LogDebug("TeVii: supported device detected");
+      this.LogInfo("TeVii: extension supported");
       _isTeVii = true;
       _tunerType = tunerType;
       return true;
@@ -427,10 +428,10 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     #region ICustomTuner members
 
     /// <summary>
-    /// Check if the device implements specialised tuning for a given channel.
+    /// Check if the extension implements specialised tuning for a given channel.
     /// </summary>
     /// <param name="channel">The channel to check.</param>
-    /// <returns><c>true</c> if the device supports specialised tuning for the channel, otherwise <c>false</c></returns>
+    /// <returns><c>true</c> if the extension supports specialised tuning for the channel, otherwise <c>false</c></returns>
     public bool CanTuneChannel(IChannel channel)
     {
       // Tuning of DVB-S/S2 channels is supported with an appropriate tuner.
@@ -450,14 +451,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     {
       this.LogDebug("TeVii: tune to channel");
 
-      if (!_isTeVii || _deviceIndex < 0)
+      if (!_isTeVii)
       {
-        this.LogDebug("TeVii: device not initialised or interface not supported");
+        this.LogWarn("TeVii: not initialised or interface not supported");
         return false;
       }
       if (!CanTuneChannel(channel))
       {
-        this.LogDebug("TeVii: tuning is not supported for this channel");
+        this.LogError("TeVii: tuning is not supported for this channel");
         return false;
       }
 
@@ -488,7 +489,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
       }
       else
       {
-        this.LogDebug("TeVii: result = failure");
+        this.LogError("TeVii: failed to tune");
       }
 
       // Reset the tone state to auto. SetToneState() must be called again to override the default logic.
@@ -514,9 +515,9 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     {
       this.LogDebug("TeVii: set tone state, burst = {0}, 22 kHz = {1}", toneBurstState, tone22kState);
 
-      if (!_isTeVii || _deviceIndex < 0)
+      if (!_isTeVii)
       {
-        this.LogDebug("TeVii: device not initialised or interface not supported");
+        this.LogWarn("TeVii: not initialised or interface not supported");
         return false;
       }
 
@@ -534,14 +535,14 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
     {
       this.LogDebug("TeVii: send DiSEqC command");
 
-      if (!_isTeVii || _deviceIndex < 0)
+      if (!_isTeVii)
       {
-        this.LogDebug("TeVii: device not initialised or interface not supported");
+        this.LogWarn("TeVii: not initialised or interface not supported");
         return false;
       }
       if (command == null || command.Length == 0)
       {
-        this.LogDebug("TeVii: command not supplied");
+        this.LogError("TeVii: command not supplied");
         return true;
       }
 
@@ -552,7 +553,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.TeVii
         return true;
       }
 
-      this.LogDebug("TeVii: result = failure");
+      this.LogError("TeVii: failed to send DiSEqC command");
       return false;
     }
 

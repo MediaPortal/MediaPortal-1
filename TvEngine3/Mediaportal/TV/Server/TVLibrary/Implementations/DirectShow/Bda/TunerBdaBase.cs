@@ -33,6 +33,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.NetworkProvider;
@@ -88,6 +89,11 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     #endregion
 
     /// <summary>
+    /// The configured network provider class identifier.
+    /// </summary>
+    private Guid _networkProviderClsid = typeof(NetworkProvider).GUID;
+
+    /// <summary>
     /// A pre-configured tuning space, used to speed up the tuning process. 
     /// </summary>
     private ITuningSpace _tuningSpace = null;
@@ -96,11 +102,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// Tuner and demodulator signal statistic interfaces.
     /// </summary>
     private IList<IBDA_SignalStatistics> _signalStatisticsInterfaces = new List<IBDA_SignalStatistics>();
-
-    /// <summary>
-    /// Enable or disable the use of the MediaPortal network provider.
-    /// </summary>
-    private bool _usingMediaPortalNetworkProvider = false;
 
     #endregion
 
@@ -118,6 +119,48 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     }
 
     #endregion
+
+    /// <summary>
+    /// Reload the tuner's configuration.
+    /// </summary>
+    public override void ReloadConfiguration()
+    {
+      base.ReloadConfiguration();
+
+      bool save = false;
+      Card tuner = CardManagement.GetCard(_cardId, CardIncludeRelationEnum.None);
+      _networkProviderClsid = Guid.Empty; // specific network provider
+      if (tuner.NetProvider == (int)DbNetworkProvider.MediaPortal)
+      {
+        if (!File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax")))
+        {
+          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft generic network provider");
+          tuner.NetProvider = (int)DbNetworkProvider.Generic;
+          save = true;
+        }
+        else
+        {
+          _networkProviderClsid = typeof(MediaPortalNetworkProvider).GUID;
+        }
+      }
+      if (tuner.NetProvider == (int)DbNetworkProvider.Generic)
+      {
+        if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
+        {
+          this.LogWarn("BDA base: MediaPortal network provider is not available, try Microsoft specific network provider");
+          tuner.NetProvider = (int)DbNetworkProvider.Specific;
+          save = true;
+        }
+        else
+        {
+          _networkProviderClsid = typeof(NetworkProvider).GUID;
+        }
+      }
+      if (save)
+      {
+        CardManagement.SaveCard(tuner);
+      }
+    }
 
     #region tuning & scanning
 
@@ -144,7 +187,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     protected override void PerformTuning(IChannel channel)
     {
       int hr = 0;
-      if (_usingMediaPortalNetworkProvider)
+      if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
         this.LogDebug("BDA base: perform tuning, MediaPortal network provider tuning");
         IDvbNetworkProvider networkProviderInterface = _filterNetworkProvider as IDvbNetworkProvider;
@@ -202,7 +245,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       AddNetworkProviderFilterToGraph();
 
       int hr = 0;
-      if (!_usingMediaPortalNetworkProvider)
+      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID)
       {
         // Some Microsoft network providers won't connect to the tuner filter
         // unless you set a tuning space.
@@ -227,12 +270,12 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       IBaseFilter lastFilter = _filterMain;
       AddAndConnectCaptureFilterIntoGraph(ref lastFilter);
 
-      // Check for and load plugins, adding any additional device filters to the graph.
+      // Check for and load extensions, adding any additional filters to the graph.
       LoadPlugins(_filterMain, _graph, ref lastFilter);
 
       // If using a Microsoft network provider and configured to do so, add an infinite
       // tee, MPEG 2 demultiplexer and transport information filter.
-      if (!_usingMediaPortalNetworkProvider && _addCompatibilityFilters)
+      if (_networkProviderClsid != typeof(MediaPortalNetworkProvider).GUID && _addCompatibilityFilters)
       {
         _filterInfiniteTee = (IBaseFilter)new InfTee();
         FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, _filterInfiniteTee, "Infinite Tee", lastFilter, _captureGraphBuilder);
@@ -257,71 +300,38 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       this.LogDebug("BDA base: add network provider filter");
 
       string filterName = string.Empty;
-      Guid npClsid = Guid.Empty;
-      _usingMediaPortalNetworkProvider = File.Exists(PathManager.BuildAssemblyRelativePath("NetworkProvider.ax"));
-      if (_usingMediaPortalNetworkProvider)
+      if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
         filterName = "MediaPortal Network Provider";
-        npClsid = typeof(MediaPortalNetworkProvider).GUID;
+      }
+      else if (_networkProviderClsid == typeof(NetworkProvider).GUID)
+      {
+        filterName = "Generic Network Provider";
       }
       else
       {
-        DbNetworkProvider npSetting = DbNetworkProvider.Generic;
-        switch (_tunerType)
-        {
-          case CardType.DvbT:
-            filterName = "DVB-T Network Provider";
-            npClsid = typeof(DVBTNetworkProvider).GUID;
-            npSetting = DbNetworkProvider.DvbT;
-            break;
-          case CardType.DvbS:
-            filterName = "DVB-S Network Provider";
-            npClsid = typeof(DVBSNetworkProvider).GUID;
-            npSetting = DbNetworkProvider.DvbS;
-            break;
-          case CardType.DvbC:
-            filterName = "DVB-C Network Provider";
-            npClsid = typeof(DVBCNetworkProvider).GUID;
-            npSetting = DbNetworkProvider.DvbC;
-            break;
-          case CardType.Atsc:
-            filterName = "ATSC Network Provider";
-            npClsid = typeof(ATSCNetworkProvider).GUID;
-            npSetting = DbNetworkProvider.ATSC;
-            break;
-        }
-        // If the generic network provider is preferred for this tuner then check if it is installed. The
-        // generic NP is set as default, however it is only available on MCE 2005 Update Rollup 2 and newer.
-        // We gracefully fall back to using one of the specific network providers if necessary.      
-        Card d = CardManagement.GetCardByDevicePath(DevicePath, CardIncludeRelationEnum.None);
-        if (d.NetProvider == (int)DbNetworkProvider.Generic)
-        {
-          if (!FilterGraphTools.IsThisComObjectInstalled(typeof(NetworkProvider).GUID))
-          {
-            // The generic network provider is not installed. Amend configuration and fall back...
-            this.LogWarn("BDA base: configuration requested unavailable Microsoft generic network provider");
-            d.NetProvider = (int)npSetting;
-            CardManagement.SaveCard(d);
-          }
-          else
-          {
-            filterName = "Generic Network Provider";
-            npClsid = typeof(NetworkProvider).GUID;
-          }
-        }
+        filterName = "Specific Network Provider";
+        _networkProviderClsid = NetworkProviderClsid;
       }
-
       this.LogDebug("BDA base: using {0}", filterName);
-      if (_usingMediaPortalNetworkProvider)
+      if (_networkProviderClsid == typeof(MediaPortalNetworkProvider).GUID)
       {
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromFile(_graph, "NetworkProvider.ax", npClsid, "MediaPortal Network Provider");
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromFile(_graph, "NetworkProvider.ax", _networkProviderClsid, filterName);
         IDvbNetworkProvider internalNpInterface = _filterNetworkProvider as IDvbNetworkProvider;
         internalNpInterface.ConfigureLogging(MediaPortalNetworkProvider.GetFileName(DevicePath), MediaPortalNetworkProvider.GetHash(DevicePath), LogLevelOption.Debug);
       }
       else
       {
-        _filterNetworkProvider = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, npClsid, filterName);
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromRegisteredClsid(_graph, _networkProviderClsid, filterName);
       }
+    }
+
+    /// <summary>
+    /// Get the class ID of the network provider for the tuner type.
+    /// </summary>
+    protected abstract Guid NetworkProviderClsid
+    {
+      get;
     }
 
     /// <summary>
@@ -424,18 +434,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
             if (hr == (int)HResult.Severity.Success)
             {
               int mediumCount = Marshal.ReadInt32(ksMultiple, sizeof(int));
-              IntPtr mediumPointer = IntPtr.Add(ksMultiple, 8);
+              IntPtr mediumPtr = IntPtr.Add(ksMultiple, 8);
               int regPinMediumSize = Marshal.SizeOf(typeof(RegPinMedium));
               for (int i = 0; i < mediumCount; i++)
               {
-                RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(mediumPointer, typeof(RegPinMedium));
+                RegPinMedium rpm = (RegPinMedium)Marshal.PtrToStructure(mediumPtr, typeof(RegPinMedium));
                 if (rpm.clsMedium != Guid.Empty && rpm.clsMedium != MediaPortalGuid.KS_MEDIUM_SET_ID_STANDARD)
                 {
                   this.LogDebug("BDA base: capture filter required");
                   isCaptureFilterRequired = true;
                   break;
                 }
-                mediumPointer = IntPtr.Add(mediumPointer, regPinMediumSize);
+                mediumPtr = IntPtr.Add(mediumPtr, regPinMediumSize);
               }
             }
           }
@@ -474,16 +484,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
               continue;
             }
             string devicePath = device.DevicePath;
+            string deviceName = device.Name;
             if (devicePath.Contains("root#system#") ||
               (matchProductInstanceIdentifier && !tunerProductInstanceIdentifier.Equals(device.ProductInstanceIdentifier))
             )
             {
               continue;
             }
-            this.LogDebug("BDA base: try {0} {1}", device.Name, devicePath);
+            this.LogDebug("BDA base: try {0} {1}", deviceName, devicePath);
             try
             {
-              _filterCapture = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMain, _captureGraphBuilder);
+              // The filter needs a unique name.
+              if (deviceName.Equals(_deviceMain.Name))
+              {
+                deviceName += " Capture";
+              }
+              _filterCapture = FilterGraphTools.AddAndConnectFilterIntoGraph(_graph, device, _filterMain, _captureGraphBuilder, deviceName);
               this.LogDebug("BDA base: connected!");
               _deviceCapture = device;
               lastFilter = _filterCapture;
@@ -496,7 +512,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
           }
           if (!matchProductInstanceIdentifier)
           {
-            this.LogWarn("BDA base: failed to add and connect capture filter, assuming plugin required to complete graph");
+            this.LogWarn("BDA base: failed to add and connect capture filter, assuming extension required to complete graph");
             break;
           }
           matchProductInstanceIdentifier = false;
@@ -749,10 +765,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public override void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    public override void StartLinkageScanner(BaseChannelLinkageScanner callBack)
     {
       ITsChannelLinkageScanner linkageScanner = _filterTsWriter as ITsChannelLinkageScanner;
-      linkageScanner.SetCallBack(callback);
+      linkageScanner.SetCallBack(callBack);
       linkageScanner.Start();
     }
 
@@ -804,7 +820,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                 lChannel.NetworkId = nid;
                 lChannel.TransportId = tid;
                 lChannel.ServiceId = sid;
-                lChannel.Name = Marshal.PtrToStringAnsi(ptrName);
+                lChannel.Name = DvbTextConverter.Convert(ptrName);
                 if ((!SameAsPortalChannel(pChannel, lChannel)) && (IsNewLinkedChannel(pChannel, lChannel)))
                   pChannel.LinkedChannels.Add(lChannel);
               }
@@ -830,16 +846,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     /// <summary>
     /// Start grabbing the epg
     /// </summary>
-    public override void GrabEpg(BaseEpgGrabber callback)
+    public override void GrabEpg(BaseEpgGrabber callBack)
     {
-      _epgGrabberCallback = callback;
+      _epgGrabberCallBack = callBack;
       this.LogDebug("dvb:grab epg...");
       ITsEpgScanner epgGrabber = _filterTsWriter as ITsEpgScanner;
       if (epgGrabber == null)
       {
         return;
       }
-      epgGrabber.SetCallBack(callback);
+      epgGrabber.SetCallBack(callBack);
       epgGrabber.GrabEPG();
       epgGrabber.GrabMHW();
       _epgGrabbing = true;
@@ -862,9 +878,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
     {
       if (_epgGrabbing && value == false)
       {
-        if (_epgGrabberCallback != null)
+        if (_epgGrabberCallBack != null)
         {
-          _epgGrabberCallback.OnEpgCancelled();
+          _epgGrabberCallBack.OnEpgCancelled();
         }
         (_filterTsWriter as ITsEpgScanner).Reset();
       }
@@ -946,18 +962,18 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                                                  out ptrChannelName);
               epgGrabber.GetMHWSummary(programid, out ptrSummary);
               epgGrabber.GetMHWTheme(themeid, out ptrTheme);
-              string channelName = DvbTextConverter.Convert(ptrChannelName, "");
-              string title = DvbTextConverter.Convert(ptrTitle, "");
-              string summary = DvbTextConverter.Convert(ptrSummary, "");
-              string theme = DvbTextConverter.Convert(ptrTheme, "");
+              string channelName = DvbTextConverter.Convert(ptrChannelName);
+              string title = DvbTextConverter.Convert(ptrTitle);
+              string summary = DvbTextConverter.Convert(ptrSummary);
+              string theme = DvbTextConverter.Convert(ptrTheme);
               if (channelName == null)
-                channelName = "";
+                channelName = string.Empty;
               if (title == null)
-                title = "";
+                title = string.Empty;
               if (summary == null)
-                summary = "";
+                summary = string.Empty;
               if (theme == null)
-                theme = "";
+                theme = string.Empty;
               channelName = channelName.Trim();
               title = title.Trim();
               summary = summary.Trim();
@@ -1001,7 +1017,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                 minVal += 604800;
               programStartTime = programStartTime.AddSeconds(minVal);
               EpgProgram program = new EpgProgram(programStartTime, programStartTime.AddMinutes(duration));
-              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme, 0, "", -1);
+              EpgLanguageText epgLang = new EpgLanguageText("ALL", title, summary, theme, 0, string.Empty, -1);
               program.Text.Add(epgLang);
               epgChannel.Programs.Add(program);
             }
@@ -1040,8 +1056,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
 
                 epgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC,
                                                  out duration, out ptrGenre, out starRating, out ptrClassification);
-                string genre = DvbTextConverter.Convert(ptrGenre, "");
-                string classification = DvbTextConverter.Convert(ptrClassification, "");
+                string genre = DvbTextConverter.Convert(ptrGenre);
+                string classification = DvbTextConverter.Convert(ptrClassification);
 
                 if (starRating < 1 || starRating > 7)
                   starRating = 0;
@@ -1100,33 +1116,22 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
                     int parentalRating;
                     epgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
                                                         out parentalRating);
-                    //title = DvbTextConverter.Convert(ptrTitle,"");
-                    //description = DvbTextConverter.Convert(ptrDesc,"");
                     string language = string.Empty;
                     language += (char)((languageId >> 16) & 0xff);
                     language += (char)((languageId >> 8) & 0xff);
                     language += (char)((languageId) & 0xff);
-                    //allows czech epg
-                    if (language.ToUpperInvariant() == "CZE" || language.ToUpperInvariant() == "CES")
-                    {
-                      title = Iso6937ToUnicode.Convert(ptrTitle);
-                      description = Iso6937ToUnicode.Convert(ptrDesc);
-                    }
-                    else
-                    {
-                      title = DvbTextConverter.Convert(ptrTitle, "");
-                      description = DvbTextConverter.Convert(ptrDesc, "");
-                    }
+                    title = DvbTextConverter.Convert(ptrTitle);
+                    description = DvbTextConverter.Convert(ptrDesc);
                     if (title == null)
-                      title = "";
+                      title = string.Empty;
                     if (description == null)
-                      description = "";
+                      description = string.Empty;
                     if (string.IsNullOrEmpty(language))
-                      language = "";
+                      language = string.Empty;
                     if (genre == null)
-                      genre = "";
+                      genre = string.Empty;
                     if (classification == null)
-                      classification = "";
+                      classification = string.Empty;
                     title = title.Trim();
                     description = description.Trim();
                     language = language.Trim();

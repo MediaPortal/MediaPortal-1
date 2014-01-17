@@ -34,12 +34,16 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 {
   public partial class DigitalDevicesConfig : SectionSettings
   {
-    private List<DigitalDevicesCiSlot> _ciSlots = null;
-    private NumericUpDown[] _decryptLimits = null;
-    private MPTextBox[] _providerLists = null;
-    private bool _isFirstActivation = true;
+    private class CiContext
+    {
+      public string CamMenuTitle;
+      public DigitalDevicesCiSlotConfig Config;
+      public NumericUpDown DecryptLimitControl;
+      public MPTextBox ProviderListControl;
+    }
 
-    private readonly ISettingService _settingServiceAgent = ServiceAgents.Instance.SettingServiceAgent;
+    private List<CiContext> _ciContexts = null;
+    private bool _isFirstActivation = true;
 
     public DigitalDevicesConfig()
       : this("Digital Devices CI")
@@ -52,112 +56,101 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
       this.LogDebug("Digital Devices config: constructing");
 
       // Get the details for the slots we've seen in the past.
-      Dictionary<String, DigitalDevicesCiSlot> dbSlots = DigitalDevicesCiSlots.GetDatabaseSettings();
+      IDictionary<string, DigitalDevicesCiSlotConfig> dbConfig = DigitalDevicesCiSlotConfig.ReadAllSettings();
 
       // Now read the details for the currently available slots and merge settings from the DB
       // to fill the _ciSlots list.
-      _ciSlots = new List<DigitalDevicesCiSlot>();
+      _ciContexts = new List<CiContext>();
       DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
       Guid baseFilterGuid = typeof(IBaseFilter).GUID;
       foreach (DsDevice device in captureDevices)
       {
         try
         {
-          if (!DigitalDevicesCiSlots.IsDigitalDevicesCiDevice(device))
+          if (!DigitalDevicesCiSlot.IsDigitalDevicesCiDevice(device))
           {
             continue;
           }
           string devicePath = device.DevicePath;
-          this.LogDebug("Digital Devices config: device {0} ({1})...", device.Name, devicePath);
-          DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(devicePath);
-          if (dbSlots.ContainsKey(devicePath))
+          string deviceName = device.Name;
+          this.LogDebug("Digital Devices config: slot {0} {1}...", deviceName, devicePath);
+          CiContext context = new CiContext();
+          if (dbConfig.TryGetValue(devicePath, out context.Config))
           {
             this.LogDebug("  found existing configuration");
-            slot = dbSlots[devicePath];
           }
           else
           {
             this.LogDebug("  new configuration");
+            context.Config = new DigitalDevicesCiSlotConfig(devicePath, deviceName);
           }
-          slot.DeviceName = device.Name;
-          this.LogDebug("  decrypt limit  = {0}", slot.DecryptLimit);
-          String[] providerList = new String[slot.Providers.Count];
-          slot.Providers.CopyTo(providerList);
-          this.LogDebug("  provider list  = {0}", String.Join(", ", providerList));
+
+          this.LogDebug("  decrypt limit  = {0}", context.Config.DecryptLimit);
+          string[] providerList = new string[context.Config.Providers.Count];
+          context.Config.Providers.CopyTo(providerList);
+          this.LogDebug("  provider list  = {0}", string.Join(", ", providerList));
 
           // If possible, read the root menu title for the CAM in the slot.
           object obj = null;
           try
           {
             device.Mon.BindToObject(null, null, ref baseFilterGuid, out obj);
+            IBaseFilter ciFilter = obj as IBaseFilter;
+            if (ciFilter != null)
+            {
+              DigitalDevicesCiSlot slot = new DigitalDevicesCiSlot(ciFilter);
+              int hr = slot.GetCamMenuTitle(out context.CamMenuTitle);
+              if (hr != (int)HResult.Severity.Success)
+              {
+                context.CamMenuTitle = "(empty)";
+              }
+              ciFilter = null;
+            }
           }
           catch (Exception)
           {
           }
-          IBaseFilter ciFilter = obj as IBaseFilter;
-          if (ciFilter != null)
+          finally
           {
-            String menuTitle;
-            int hr = DigitalDevicesCiSlots.GetMenuTitle(ciFilter, out menuTitle);
-            if (hr == (int)HResult.Severity.Success)
-            {
-              slot.CamRootMenuTitle = menuTitle;
-            }
-            ciFilter = null;
+            Release.ComObject("Digital Devices config device object", ref obj);
           }
-          Release.ComObject("Digital Devices config device object", ref obj);
-          this.LogDebug("  CAM name/title = {0}", slot.CamRootMenuTitle);
+          this.LogDebug("  CAM name/title = {0}", context.CamMenuTitle);
 
-          _ciSlots.Add(slot);
+          _ciContexts.Add(context);
         }
         finally
         {
           device.Dispose();
         }
       }
-      _ciSlots.Sort(
-        delegate(DigitalDevicesCiSlot slot1, DigitalDevicesCiSlot slot2)
+      _ciContexts.Sort(
+        delegate(CiContext context1, CiContext context2)
         {
-          return slot1.DeviceName.CompareTo(slot2.DeviceName);
+          return context1.Config.DeviceName.CompareTo(context2.Config.DeviceName);
         }
       );
 
-      _decryptLimits = new NumericUpDown[_ciSlots.Count];
-      _providerLists = new MPTextBox[_ciSlots.Count];
-
       // Now that we have the details, we can build the user interface.
       InitializeComponent();
-      this.LogDebug("Digital Devices config: constructed, slot count = {0}", _ciSlots.Count);
+      this.LogDebug("Digital Devices config: constructed, slot count = {0}", _ciContexts.Count);
     }
 
     public override void SaveSettings()
     {
-      this.LogDebug("Digital Devices config: saving settings, slot count = {0}", _ciSlots.Count);
+      this.LogDebug("Digital Devices config: saving settings, slot count = {0}", _ciContexts.Count);
       
-      byte i = 0;
-      foreach (DigitalDevicesCiSlot slot in _ciSlots)
+      foreach (CiContext context in _ciContexts)
       {
-        this.LogDebug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
-        _settingServiceAgent.SaveValue("digitalDevicesCiDeviceName" + i, slot.DeviceName);
-        // Persist the slot related settings. The other struct properties are dynamic.
-        this.LogDebug("  device name   = {0}", slot.DeviceName);
+        context.Config.DecryptLimit = (int)context.DecryptLimitControl.Value;
+        context.Config.Providers = new HashSet<string>(Regex.Split(context.ProviderListControl.Text.Trim(), @"\s*,\s*"));
 
-        _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, slot.DevicePath);
-        this.LogDebug("  device path   = {0}", slot.DevicePath);
+        this.LogDebug("Digital Devices config: slot {0} {1}...", context.Config.DeviceName, context.Config.DevicePath);
+        this.LogDebug("  decrypt limit  = {0}", context.Config.DecryptLimit);
+        this.LogDebug("  provider list  = {0}", string.Join(", ", context.Config.Providers));
+        this.LogDebug("  CAM name/title = {0}", context.CamMenuTitle);
 
-        int decryptLimitValue = (int) _decryptLimits[i].Value;
-        _settingServiceAgent.SaveValue("digitalDevicesCiDecryptLimit" + i, decryptLimitValue);
-        this.LogDebug("  decrypt limit = {0}", decryptLimitValue);
-
-        string digitalDevicesCiProviderList = String.Join("|", Regex.Split(_providerLists[i].Text.Trim(), @"\s*,\s*"));
-        _settingServiceAgent.SaveValue("digitalDevicesCiProviderList" + i, digitalDevicesCiProviderList);
-        this.LogDebug("  provider list = {0}", digitalDevicesCiProviderList);
-
-        i++;
+        context.Config.SaveSettings();
       }
-
-      // Invalidate any other settings in the DB.
-      _settingServiceAgent.SaveValue("digitalDevicesCiDevicePath" + i, String.Empty);
 
       base.SaveSettings();
     }
@@ -166,35 +159,28 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
     {
       this.LogDebug("Digital Devices config: activated");
 
-      // On first load in the constructor we merge details from the database with details for the
-      // currently installed and registered CI slots, then construct the UI. The UI remains static
-      // after that. On first deactivation the settings are saved back to the DB, so the number of
-      // CI setting sets in the DB matches the UI. After that, we read the settings from the
-      // database each time the section is activated to avoid potential issues with the number of
-      // registered slots not matching the number of sets of settings in the UI.
-      if (!_isFirstActivation)
+      // On first load in the constructor we merge configuration from the database with details for
+      // the currently installed and registered CI slots, then construct the UI. The UI remains
+      // static after that. On first deactivation the settings are saved back to the DB, so the
+      // number of CI slots in the DB matches the UI. After that, we read the settings from the DB
+      // each time the section is activated to avoid potential issues with the number of registered
+      // slots not matching the number of sets of settings in the UI.
+      foreach (CiContext context in _ciContexts)
       {
-        _ciSlots = null;
-        IEnumerator<DigitalDevicesCiSlot> en = DigitalDevicesCiSlots.GetDatabaseSettings().Values.GetEnumerator();
-        while (en.MoveNext())
+        if (!_isFirstActivation)
         {
-          _ciSlots.Add(en.Current);
+          context.Config.LoadSettings();
         }
+
+        context.DecryptLimitControl.Value = context.Config.DecryptLimit;
+        context.ProviderListControl.Text = string.Join(", ", context.Config.Providers);
+
+        this.LogDebug("Digital Devices config: slot {0} {1}...", context.Config.DeviceName, context.Config.DevicePath);
+        this.LogDebug("  decrypt limit  = {0}", context.Config.DecryptLimit);
+        this.LogDebug("  provider list  = {0}", context.ProviderListControl.Text);
+        this.LogDebug("  CAM name/title = {0}", context.CamMenuTitle);
       }
 
-      int i = 0;
-      this.LogDebug("Digital Devices config: slot count = {0}", _ciSlots.Count);
-      foreach (DigitalDevicesCiSlot slot in _ciSlots)
-      {
-        this.LogDebug("Digital Devices config: slot {0}...", slot.CamRootMenuTitle);
-        _decryptLimits[i].Value = slot.DecryptLimit;
-        this.LogDebug("  decrypt limit = {0}", slot.DecryptLimit);
-        String[] providers = new String[slot.Providers.Count];
-        slot.Providers.CopyTo(providers);
-        _providerLists[i].Text = String.Join(", ", providers);
-        this.LogDebug("  provider list = {0}", String.Join("|", providers));
-        i++;
-      }
       base.OnSectionActivated();
       _isFirstActivation = false;
     }

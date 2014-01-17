@@ -7,7 +7,7 @@ using Mediaportal.TV.Server.TVLibrary.Services;
 
 namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
 {
-  public class CiMenuManager : EventDispatcher, ICiMenuCallbacks
+  public class CiMenuManager : EventDispatcher, IConditionalAccessMenuCallBacks
   {
 
 
@@ -72,7 +72,14 @@ namespace Mediaportal.TV.Server.TVLibrary.EventDispatchers
           {
             foreach (var user in usersCopy.Keys)
             {
-              EventService.CallbackCiMenuEvent(user, _curMenu);
+              try
+              {
+                EventService.CallbackCiMenuEvent(user, _curMenu);
+              }
+              catch (Exception ex)
+              {
+                this.LogError(ex, "CI menu manager: failed to perform CI menu callback for user {0}", user);
+              }
             }
             return;
           }

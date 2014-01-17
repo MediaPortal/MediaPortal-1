@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
 {
   /// <summary>
-  /// TsWriter CAT grabber callback interface.
+  /// TsWriter CAT grabber call back interface.
   /// </summary>
   [ComVisible(false), ComImport,
     Guid("38536ab6-7a41-404f-917F-c47dd8b639c7"),
@@ -57,7 +57,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Set the delegate for the grabber to notify when a new CAT section is received.
     /// </summary>
-    /// <param name="callBack">The delegate callback interface.</param>
+    /// <param name="callBack">The delegate call back interface.</param>
     /// <returns>an HRESULT indicating whether the delegate was successfully registered</returns>
     [PreserveSig]
     int SetCallBack(ICaCallBack callBack);

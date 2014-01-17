@@ -99,7 +99,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Logging
 
     public static void Error(Exception exception)
     {
-      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Error("", exception);
+      GlobalServiceProvider.Instance.Get<IIntegrationProvider>().Logger.Error(string.Empty, exception);
     }
 
     public static void Error(Type callerType, Exception exception, string message, params object[] args)

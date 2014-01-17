@@ -82,7 +82,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Pbda
       }
       catch (Exception ex)
       {
-        throw new TvExceptionTunerLoadFailed("Failed to add PBDA PT filter, are you using Windows 7+?", ex);
+        throw new TvException("Failed to add PBDA PT filter, are you using Windows 7+?", ex);
       }
 
       int hr = _captureGraphBuilder.RenderStream(null, null, lastFilter, null, _filterPbdaPt);

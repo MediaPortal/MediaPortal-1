@@ -1100,7 +1100,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Services
     /// <param name="cardId"></param>
     /// <param name="callbackHandler"></param>
     /// <returns></returns>
-    public bool SetCiMenuHandler(int cardId, ICiMenuCallbacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
     {
       return Service.SetCiMenuHandler(cardId, callbackHandler);
     }

@@ -25,12 +25,12 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
   /// <summary>
-  /// callback interface for the EPG
+  /// call back interface for the EPG
   /// </summary>
   [ComVisible(true), ComImport,
    Guid("FFAB5D98-2309-4d90-9C71-E4B2F490CF5A"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  public interface IEpgCallback
+  public interface IEpgCallBack
   {
     /// <summary>
     /// Called when epg is received.
@@ -43,7 +43,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   /// <summary>
   /// Base class used for dvb epg-grabbing
   /// </summary>
-  public abstract class BaseEpgGrabber : IEpgCallback
+  public abstract class BaseEpgGrabber : IEpgCallBack
   {
     /// <summary>
     /// Gets called when epg has been cancelled
@@ -71,7 +71,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// Starts the EPG grabber.
     /// When the epg has been received the OnEpgReceived event will be fired
     /// </summary>
-    void GrabEpg(BaseEpgGrabber callback);
+    void GrabEpg(BaseEpgGrabber callBack);
 
     /// <summary>
     /// returns a list of all epg data for each channel found.

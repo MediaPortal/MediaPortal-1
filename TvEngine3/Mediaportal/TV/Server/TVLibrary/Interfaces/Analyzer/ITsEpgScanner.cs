@@ -194,7 +194,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     int Reset();
 
     /// <summary>
-    /// Aborts grabbing and calls the callback function
+    /// Aborts grabbing and calls the call back function
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
@@ -203,9 +203,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer
     /// <summary>
     /// Sets the call back which will be called when MHW has been received
     /// </summary>
-    /// <param name="callback">The callback.</param>
+    /// <param name="callBack">The call back.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetCallBack(IEpgCallback callback);
+    int SetCallBack(IEpgCallBack callBack);
   }
 }

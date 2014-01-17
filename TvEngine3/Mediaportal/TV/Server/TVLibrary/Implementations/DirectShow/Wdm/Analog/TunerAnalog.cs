@@ -197,7 +197,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Wdm.Analog
       _encoder = new Encoder();
       _encoder.PerformLoading(_graph, productInstanceIdentifier, _capture);
 
-      // Check for and load plugins, adding any additional device filters to the graph.
+      // Check for and load extensions, adding any additional filters to the graph.
       IBaseFilter lastFilter = _encoder.TsMultiplexerFilter;
       LoadPlugins(_filterMain, _graph, ref lastFilter);
       AddAndConnectTsWriterIntoGraph(lastFilter);

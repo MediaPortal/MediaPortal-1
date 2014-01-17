@@ -58,36 +58,38 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
 
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DigitalDevicesConfig));
       this.SuspendLayout();
-      for (int i = 0; i < _ciSlots.Count; i++)
+      for (int i = 0; i < _ciContexts.Count; i++)
       {
+        int tabIndexBase = i * componentCount;
+
         // Groupbox wrapper for each CI slot.
-        GroupBox gb = new GroupBox();
+        MPGroupBox gb = new MPGroupBox();
         gb.SuspendLayout();
         gb.Location = new Point(3, 3 + (i * (groupHeight + groupPadding)));
         gb.Name = "groupBox" + i;
         gb.Size = new Size(446, groupHeight);
-        gb.TabIndex = (i * componentCount) + 1;
+        gb.TabIndex = tabIndexBase + 1;
         gb.TabStop = false;
         gb.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-        gb.Text = "CI Slot " + (i + 1) + " - " + _ciSlots[i].DeviceName;
+        gb.Text = "CI Slot " + (i + 1) + " - " + _ciContexts[i].Config.DeviceName;
 
         // CAM name.
-        Label camNameLabel = new Label();
+        MPLabel camNameLabel = new MPLabel();
         camNameLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         camNameLabel.Location = new Point(6, 22);
         camNameLabel.Name = "camName" + i;
         camNameLabel.Size = new Size(412, 20);
-        camNameLabel.TabIndex = (i * componentCount) + 2;
-        camNameLabel.Text = "CAM Name: " + _ciSlots[i].CamRootMenuTitle;
+        camNameLabel.TabIndex = tabIndexBase + 2;
+        camNameLabel.Text = "CAM Name: " + _ciContexts[i].CamMenuTitle;
         gb.Controls.Add(camNameLabel);
 
         // Decrypt limit label.
-        Label decryptLimitLabel = new Label();
+        MPLabel decryptLimitLabel = new MPLabel();
         decryptLimitLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         decryptLimitLabel.Location = new Point(6, 46);
         decryptLimitLabel.Name = "decryptLimitLabel" + i;
         decryptLimitLabel.Size = new Size(71, 13);
-        decryptLimitLabel.TabIndex = (i * componentCount) + 3;
+        decryptLimitLabel.TabIndex = tabIndexBase + 3;
         decryptLimitLabel.Text = "Decrypt Limit:";
         gb.Controls.Add(decryptLimitLabel);
 
@@ -98,19 +100,19 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         decryptLimitControl.Location = new Point(83, 43);
         decryptLimitControl.Name = "decryptLimitControl" + i;
         decryptLimitControl.Size = new Size(44, 20);
-        decryptLimitControl.TabIndex = (i * componentCount) + 4;
+        decryptLimitControl.TabIndex = tabIndexBase + 4;
         decryptLimitControl.TextAlign = HorizontalAlignment.Center;
         ((ISupportInitialize)decryptLimitControl).EndInit();
         gb.Controls.Add(decryptLimitControl);
-        _decryptLimits[i] = decryptLimitControl;
+        _ciContexts[i].DecryptLimitControl = decryptLimitControl;
 
         // Provider list label.
-        Label providerLabel = new Label();
+        MPLabel providerLabel = new MPLabel();
         providerLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         providerLabel.Location = new Point(150, 46);
         providerLabel.Name = "providerListLabel" + i;
         providerLabel.Size = new Size(60, 13);
-        providerLabel.TabIndex = (i * componentCount) + 5;
+        providerLabel.TabIndex = tabIndexBase + 5;
         providerLabel.Text = "Provider(s):";
         gb.Controls.Add(providerLabel);
 
@@ -120,18 +122,18 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.DigitalDevices
         providerListControl.Location = new Point(216, 43);
         providerListControl.Name = "providerListControl" + i;
         providerListControl.Size = new Size(212, 20);
-        providerListControl.TabIndex = (i * componentCount) + 6;
+        providerListControl.TabIndex = tabIndexBase + 6;
         gb.Controls.Add(providerListControl);
-        _providerLists[i] = providerListControl;
+        _ciContexts[i].ProviderListControl = providerListControl;
 
         gb.ResumeLayout(false);
         gb.PerformLayout();
         this.Controls.Add(gb);
       }
 
-      if (_ciSlots.Count == 0)
+      if (_ciContexts.Count == 0)
       {
-        Label noSlotsLabel = new Label();
+        MPLabel noSlotsLabel = new MPLabel();
         noSlotsLabel.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
         noSlotsLabel.Location = new Point(6, 5);
         noSlotsLabel.Name = "noSlotsLabel";

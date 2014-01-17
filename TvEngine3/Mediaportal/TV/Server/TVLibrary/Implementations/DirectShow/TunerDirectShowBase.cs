@@ -21,8 +21,8 @@
 using System;
 using DirectShowLib;
 using MediaPortal.Common.Utils;
-using Mediaportal.TV.Server.TVLibrary.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Helper;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -217,7 +217,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow
 
         // Now check if there are any filters remaining in the graph.
         // Presence of such filters indicate there are badly behaved
-        // classes or plugins present.
+        // classes or extensions present.
         IEnumFilters enumFilters = null;
         int hr = _graph.EnumFilters(out enumFilters);
         if (hr != (int)HResult.Severity.Success)

@@ -29,8 +29,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
   /// </summary>
   public class DevicesInUse
   {
-    private static DevicesInUse _instance;
-    private readonly List<DsDevice> _devicesInUse;
+    private static DevicesInUse _instance = new DevicesInUse();
+    private readonly List<DsDevice> _devicesInUse = new List<DsDevice>();
 
     /// <summary>
     /// A static method to access the singleton instance of this class.
@@ -39,13 +39,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     {
       get
       {
-        lock (_instance)
-        {
-          if (_instance == null)
-          {
-            _instance = new DevicesInUse();
-          }
-        }
         return _instance;
       }
     }
@@ -55,7 +48,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
     /// </summary>
     private DevicesInUse()
     {
-      _devicesInUse = new List<DsDevice>();
     }
 
     /// <summary>
@@ -73,16 +65,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       lock (_devicesInUse)
       {
-        this.LogDebug("Devices-in-use: add {0}...", device.Name);
+        this.LogDebug("devices-in-use: add {0}...", device.Name);
         foreach (DsDevice dev in _devicesInUse)
         {
           if (dev.Name.Equals(device.Name) && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath.Equals(device.DevicePath))
           {
-            this.LogDebug("Devices-in-use: in use, can't be used");
+            this.LogDebug("devices-in-use: in use, can't be used");
             return false;
           }
         }
-        this.LogDebug("Devices-in-use: not yet in use, usable");
+        this.LogDebug("devices-in-use: not yet in use, usable");
         _devicesInUse.Add(device);
       }
       return true;
@@ -102,7 +94,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Helper
 
       lock (_devicesInUse)
       {
-        this.LogDebug("Devices-in-use: remove {0}...", device.Name);
+        this.LogDebug("devices-in-use: remove {0}...", device.Name);
         for (int i = 0; i < _devicesInUse.Count; ++i)
         {
           DsDevice dev = _devicesInUse[i];

@@ -118,6 +118,8 @@
     <Compile Include="DvbConditionalAccess.cs" />
     <Compile Include="HResult.cs" />
     <Compile Include="Implementations\Helper\ComHelper.cs" />
+    <Compile Include="Implementations\Helper\Dump.cs" />
+    <Compile Include="Implementations\Helper\DvbMmiHandler.cs" />
     <Compile Include="Instantiator.cs" />
     <Compile Include="Integration\IntegrationProviderHelper.cs" />
     <Compile Include="Interfaces\Device\IEncoder.cs" />
@@ -130,11 +132,10 @@
     <Compile Include="Interfaces\Device\IMpeg2PidFilter.cs" />
     <Compile Include="Interfaces\Device\IPowerDevice.cs" />
     <Compile Include="Interfaces\ICiMenuEventCallback.cs" />
-    <Compile Include="DvbTextConverter.cs" />
+    <Compile Include="Implementations\Helper\DvbTextConverter.cs" />
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
-    <Compile Include="Interfaces\ICiMenuActions.cs" />
-    <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
-    <Compile Include="Interfaces\ILnbType.cs" />
+    <Compile Include="Interfaces\Device\IConditionalAccessMenuActions.cs" />
+    <Compile Include="Interfaces\Device\IConditionalAccessMenuCallBacks.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />

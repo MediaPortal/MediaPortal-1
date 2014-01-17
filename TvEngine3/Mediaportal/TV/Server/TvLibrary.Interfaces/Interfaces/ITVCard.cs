@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
 {
@@ -46,17 +47,16 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
   public interface ITVCard
   {
     #region events
-    // Note: events are handled as set-only properties to enable clean hybrid tuner handling.
 
     /// <summary>
-    /// Set the device's new subchannel event handler.
+    /// Set the tuner's new subchannel event handler.
     /// </summary>
-    OnNewSubChannelDelegate OnNewSubChannelEvent { set; }
+    event OnNewSubChannelDelegate OnNewSubChannelEvent;
 
     /// <summary>
-    /// Set the device's after tune event handler.
+    /// Set the tuner's after tune event handler.
     /// </summary>
-    OnAfterTuneDelegate OnAfterTuneEvent { set; }
+    event OnAfterTuneDelegate OnAfterTuneEvent;
 
     #endregion
 
@@ -126,7 +126,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// conditional access is supported.
     /// </summary>
     /// <value><c>null</c> if the device does not support conditional access</value>
-    ICiMenuActions CaMenuInterface { get; }
+    IConditionalAccessMenuActions CaMenuInterface { get; }
 
     /// <summary>
     /// Get a count of the number of services that the device is currently decrypting.
@@ -141,7 +141,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    void StartLinkageScanner(BaseChannelLinkageScanner callback);
+    void StartLinkageScanner(BaseChannelLinkageScanner callBack);
 
     /// <summary>
     /// Stops/Resets the linkage scanner
@@ -160,8 +160,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     /// <summary>
     /// Grabs the epg.
     /// </summary>
-    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    void GrabEpg(BaseEpgGrabber callback);
+    /// <param name="callBack">The call back which gets called when epg is received or canceled.</param>
+    void GrabEpg(BaseEpgGrabber callBack);
 
     /// <summary>
     /// Start grabbing the epg while timeshifting
@@ -169,7 +169,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     void GrabEpg();
 
     /// <summary>
-    /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
+    /// Aborts grabbing the epg. This also triggers the OnEpgReceived call back.
     /// </summary>
     void AbortGrabbing();
 
@@ -228,11 +228,6 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces
     void ReloadConfiguration();
 
     #region properties
-
-    /// <summary>
-    /// Returns if the tuner belongs to a hybrid card
-    /// </summary>
-    bool IsHybrid { get; set; }
 
     /// <summary>
     /// When the tuner is locked onto a signal this property will return true

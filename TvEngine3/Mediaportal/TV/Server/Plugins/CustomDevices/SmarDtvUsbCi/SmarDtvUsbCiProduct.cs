@@ -26,57 +26,9 @@ using System.Runtime.InteropServices;
 namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 {
   /// <summary>
-  /// A struct that is capable of holding the relevant details for a product that this plugin supports.
+  /// This class is used to hold and provide the relevant details for products that this plugin supports.
   /// </summary>
   public struct SmarDtvUsbCiProduct
-  {
-    /// <summary>
-    /// The official name of the product.
-    /// </summary>
-    public readonly String ProductName;
-
-    /// <summary>
-    /// The name of the device registered by the product's WDM driver (for example: WinTVCIUSB).
-    /// </summary>
-    public readonly String WdmDeviceName;
-
-    /// <summary>
-    /// The name of the device registered by the product's BDA driver (for example: WinTVCIUSBBDA Source).
-    /// </summary>
-    public readonly String BdaDeviceName;
-
-    /// <summary>
-    /// The name of the TV Server database setting that holds the product tuner association.
-    /// </summary>
-    public readonly String DbSettingName;
-
-    /// <summary>
-    /// The COM interface used to interact with the CI.
-    /// </summary>
-    public readonly Type ComInterface;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="name">The official name of the product.</param>
-    /// <param name="wdmDeviceName">The name of the device registered by the product's WDM driver.</param>
-    /// <param name="bdaDeviceName">The name of the device registered by the product's BDA driver.</param>
-    /// <param name="dbSettingName">The name of the TV Server database setting that holds the product tuner association.</param>
-    /// <param name="comInterface">The COM interface used to interact with the CI.</param>
-    public SmarDtvUsbCiProduct(String name, String wdmDeviceName, String bdaDeviceName, String dbSettingName, Type comInterface)
-    {
-      ProductName = name;
-      WdmDeviceName = wdmDeviceName;
-      BdaDeviceName = bdaDeviceName;
-      DbSettingName = dbSettingName;
-      ComInterface = comInterface;
-    }
-  }
-
-  /// <summary>
-  /// This class is used to provide a single source of details for each of the products that this plugin supports.
-  /// </summary>
-  public static class SmarDtvUsbCiProducts
   {
     #region COM imports
 
@@ -90,12 +42,12 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private interface ITerraTecCinergyCiUsb
     {
       /// <summary>
-      /// Initialise the CI interface. The callback delegate parameters are all optional.
+      /// Initialise the CI interface. The call back delegate parameters are all optional.
       /// </summary>
-      /// <param name="callbacks">A buffer containing a SmarDtvUsbCiCallbacks structure instance.</param>
+      /// <param name="callBacks">A buffer containing a SmarDtvUsbCiCallBacks structure instance.</param>
       /// <returns>an HRESULT indicating whether the interface was successfully initialised</returns>
       [PreserveSig]
-      Int32 USB2CI_Init([In] IntPtr callbacks);
+      Int32 USB2CI_Init([In] IntPtr callBacks);
 
       /// <summary>
       /// Open an MMI session with the CAM.
@@ -143,7 +95,7 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     private interface IHauppaugeWinTvCi
     {
       [PreserveSig]
-      Int32 USB2CI_Init([In] IntPtr callbacks);
+      Int32 USB2CI_Init([In] IntPtr callBacks);
 
       [PreserveSig]
       Int32 USB2CI_OpenMMI();
@@ -160,7 +112,49 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
 
     #endregion
 
-    private static List<SmarDtvUsbCiProduct> _products = null;
+    /// <summary>
+    /// The official name of the product.
+    /// </summary>
+    public readonly string ProductName;
+
+    /// <summary>
+    /// The name of the device registered by the product's WDM driver (for example: WinTVCIUSB).
+    /// </summary>
+    public readonly string WdmDeviceName;
+
+    /// <summary>
+    /// The name of the device registered by the product's BDA driver (for example: WinTVCIUSBBDA Source).
+    /// </summary>
+    public readonly string BdaDeviceName;
+
+    /// <summary>
+    /// The name of the TV Server database setting that holds the product tuner association.
+    /// </summary>
+    public readonly string DbSettingName;
+
+    /// <summary>
+    /// The COM interface used to interact with the CI.
+    /// </summary>
+    public readonly Type ComInterface;
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="name">The official name of the product.</param>
+    /// <param name="wdmDeviceName">The name of the device registered by the product's WDM driver.</param>
+    /// <param name="bdaDeviceName">The name of the device registered by the product's BDA driver.</param>
+    /// <param name="dbSettingName">The name of the TV Server database setting that holds the product tuner association.</param>
+    /// <param name="comInterface">The COM interface used to interact with the CI.</param>
+    public SmarDtvUsbCiProduct(string name, string wdmDeviceName, string bdaDeviceName, string dbSettingName, Type comInterface)
+    {
+      ProductName = name;
+      WdmDeviceName = wdmDeviceName;
+      BdaDeviceName = bdaDeviceName;
+      DbSettingName = dbSettingName;
+      ComInterface = comInterface;
+    }
+
+    private static ReadOnlyCollection<SmarDtvUsbCiProduct> _products = null;
 
     /// <summary>
     /// Get a list of the USB CI products that this plugin supports and which are based on the SmarDTV
@@ -170,33 +164,35 @@ namespace Mediaportal.TV.Server.Plugins.TunerExtension.SmarDtvUsbCi
     public static ReadOnlyCollection<SmarDtvUsbCiProduct> GetProductList()
     {
       // We use a basic cache here.
-      if (_products == null)
+      if (_products != null)
       {
-        _products = new List<SmarDtvUsbCiProduct>();
-
-        // Hauppauge WinTV-CI
-        // http://www.hauppauge.de/site/products/data_ci.html
-        SmarDtvUsbCiProduct p = new SmarDtvUsbCiProduct(
-          "Hauppauge WinTV-CI",
-          "WinTVCIUSB",
-          "WinTVCIUSBBDA Source",
-          "winTvCiTuner",
-          typeof(IHauppaugeWinTvCi)
-        );
-        _products.Add(p);
-
-        // TerraTec Cinergy CI USB
-        // http://www.terratec.net/en/products/Cinergy_CI_USB_2296.html
-        p = new SmarDtvUsbCiProduct(
-          "TerraTec Cinergy CI USB",
-          "US2CIBDA",
-          "Cinergy CI USB Capture",
-          "cinergyCiUsbTuner",
-          typeof(ITerraTecCinergyCiUsb)
-        );
-        _products.Add(p);
+        return _products;
       }
-      return new ReadOnlyCollection<SmarDtvUsbCiProduct>(_products);
+
+      List<SmarDtvUsbCiProduct> products = new List<SmarDtvUsbCiProduct>();
+
+      // Hauppauge WinTV-CI
+      // http://www.hauppauge.de/site/products/data_ci.html
+      products.Add(new SmarDtvUsbCiProduct(
+        "Hauppauge WinTV-CI",
+        "WinTVCIUSB",
+        "WinTVCIUSBBDA Source",
+        "winTvCiTuner",
+        typeof(IHauppaugeWinTvCi)
+      ));
+
+      // TerraTec Cinergy CI USB
+      // http://www.terratec.net/en/products/Cinergy_CI_USB_2296.html
+      products.Add(new SmarDtvUsbCiProduct(
+        "TerraTec Cinergy CI USB",
+        "US2CIBDA",
+        "Cinergy CI USB Capture",
+        "cinergyCiUsbTuner",
+        typeof(ITerraTecCinergyCiUsb)
+      ));
+
+      _products = new ReadOnlyCollection<SmarDtvUsbCiProduct>(products);
+      return _products;
     }
   }
 }

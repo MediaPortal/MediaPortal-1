@@ -55,6 +55,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Epg;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension;
 using Mediaportal.TV.Server.TVLibrary.Scheduler;
 using Mediaportal.TV.Server.TVLibrary.Services;
 using Mediaportal.TV.Server.TVLibrary.Streaming;
@@ -75,7 +76,7 @@ namespace Mediaportal.TV.Server.TVLibrary
   /// correct slave servers
   /// </summary>
   public class 
-      TvController : IInternalControllerService, IDisposable, ITvServerEvent, ICiMenuCallbacks
+      TvController : IInternalControllerService, IDisposable, ITvServerEvent, IConditionalAccessMenuCallBacks
   {
 
 
@@ -232,7 +233,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (_cards[cardId].CiMenuActions != null)
           {
             _ciMenuManager.IsCiMenuInteractive = true; // user action
-            checkCardPresent = _cards[cardId].CiMenuActions.EnterCIMenu();
+            checkCardPresent = _cards[cardId].CiMenuActions.EnterMenu();
           }  
         }
       }
@@ -258,7 +259,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         this.LogDebug("SelectCiMenu called");
         if (ValidateTvControllerParams(cardId, false))
         {
-          checkCardPresent = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SelectMenu(choice);  
+          checkCardPresent = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SelectMenuEntry(choice);  
         }                  
       }
       catch (Exception e)
@@ -284,7 +285,7 @@ namespace Mediaportal.TV.Server.TVLibrary
           if (_cards[cardId].CiMenuActions != null)
           {
             _ciMenuManager.IsCiMenuInteractive = false; // user action ended by wanted close
-            closeMenu = _cards[cardId].CiMenuActions.CloseCIMenu();
+            closeMenu = _cards[cardId].CiMenuActions.CloseMenu();
           }
         }
       }
@@ -310,7 +311,7 @@ namespace Mediaportal.TV.Server.TVLibrary
         this.LogDebug("SendMenuAnswer called");
         if (ValidateTvControllerParams(cardId, false))
         {
-          sendMenuAnswer = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SendMenuAnswer(cancel, answer);
+          sendMenuAnswer = _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.AnswerEnquiry(cancel, answer);
         }
       }
       catch (Exception e)
@@ -326,7 +327,7 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <param name="cardId">card</param>
     /// <param name="callbackHandler">null, not required</param>
     /// <returns>true is successful</returns>
-    public bool SetCiMenuHandler(int cardId, ICiMenuCallbacks callbackHandler)
+    public bool SetCiMenuHandler(int cardId, IConditionalAccessMenuCallBacks callbackHandler)
     {
       // register tvservice itself as handler
       try
@@ -347,14 +348,14 @@ namespace Mediaportal.TV.Server.TVLibrary
     /// <returns>true is successful</returns>
     public bool EnableCiMenuHandler(int cardId)
     {
-      bool enableCiMenuHandler = false;
+      bool enableCiMenuHandler = true;
       this.LogDebug("TvController: EnableCiMenuHandler called");
       if (ValidateTvControllerParams(cardId, false))
       {
         if (_cards[cardId].CiMenuActions != null)
         {
           _ciMenuManager.ActiveCiMenuCard = cardId;
-          enableCiMenuHandler = _cards[cardId].CiMenuActions.SetCiMenuHandler(this);
+          _cards[cardId].CiMenuActions.SetCallBacks(this);
           this.LogDebug("TvController: SetCiMenuHandler: result {0}", enableCiMenuHandler);
         }
       }
@@ -588,7 +589,6 @@ namespace Mediaportal.TV.Server.TVLibrary
           {
             if (localcards.ContainsKey(card.IdCard))
             {
-              localcards[card.IdCard].IsHybrid = true;
               this.LogDebug("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
               HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
               localcards[card.IdCard] = hybridCard;

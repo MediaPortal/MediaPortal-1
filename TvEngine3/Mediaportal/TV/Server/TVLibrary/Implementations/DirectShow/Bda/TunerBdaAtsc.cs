@@ -22,6 +22,7 @@ using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
@@ -114,6 +115,17 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Bda
       finally
       {
         Release.ComObject("BDA ATSC tuner tuning space container", ref systemTuningSpaces);
+      }
+    }
+
+    /// <summary>
+    /// Get the class ID of the network provider for the tuner type.
+    /// </summary>
+    protected abstract Guid NetworkProviderClsid
+    {
+      get
+      {
+        return typeof(ATSCNetworkProvider).GUID;
       }
     }
 

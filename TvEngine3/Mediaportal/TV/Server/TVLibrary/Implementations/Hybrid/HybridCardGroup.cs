@@ -126,9 +126,9 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
+    public void StartLinkageScanner(BaseChannelLinkageScanner callBack)
     {
-      _cards[_currentCardIndex].StartLinkageScanner(callback);
+      _cards[_currentCardIndex].StartLinkageScanner(callBack);
     }
 
     /// <summary>
@@ -150,10 +150,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.Hybrid
     /// <summary>
     /// Grabs the epg.
     /// </summary>
-    /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback)
+    /// <param name="callBack">The call back which gets called when epg is received or canceled.</param>
+    public void GrabEpg(BaseEpgGrabber callBack)
     {
-      _cards[_currentCardIndex].GrabEpg(callback);
+      _cards[_currentCardIndex].GrabEpg(callBack);
     }
 
     /// <summary>

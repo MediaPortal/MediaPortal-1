@@ -47,7 +47,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.ChannelLinkage
       _networkId = 0;
       _transportId = 0;
       _serviceId = 0;
-      _name = "";
+      _name = string.Empty;
     }
 
     #endregion

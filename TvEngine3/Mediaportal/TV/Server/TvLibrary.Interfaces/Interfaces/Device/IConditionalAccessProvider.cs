@@ -23,7 +23,7 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
 {
   /// <summary>
-  /// An interface for devices that implement conditional access features (most commonly service decryption).
+  /// An interface for tuners that implement conditional access features (most commonly service decryption).
   /// </summary>
   public interface IConditionalAccessProvider : ICustomDevice
   {
@@ -57,10 +57,10 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     /// <remarks>
     /// This might be necessary after an error condition is detected.
     /// </remarks>
-    /// <param name="resetDevice">This parameter will be set to <c>true</c> if the device must be reset
+    /// <param name="resetTuner">This parameter will be set to <c>true</c> if the tuner must be reset
     ///   for the interface to be completely and successfully reset.</param>
     /// <returns><c>true</c> if the interface is successfully reset, otherwise <c>false</c></returns>
-    bool ResetInterface(out bool resetDevice);
+    bool ResetInterface(out bool resetTuner);
 
     /// <summary>
     /// Determine whether the conditional access interface is ready to receive commands.
@@ -86,7 +86,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Interfaces.TunerExtension
     ///   simultaneously. This parameter gives the interface an indication of the number of services that it
     ///   will be expected to manage.</param>
     /// <param name="command">The type of command.</param>
-    /// <param name="pmt">The programme map table for the service.</param>
+    /// <param name="pmt">The program map table for the service.</param>
     /// <param name="cat">The conditional access table for the service.</param>
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     bool SendCommand(IChannel channel, CaPmtListManagementAction listAction, CaPmtCommand command, Pmt pmt, Cat cat);
