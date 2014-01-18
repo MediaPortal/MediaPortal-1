@@ -281,7 +281,6 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader7;
     private MPGroupBox grpTsReader;
     private MPCheckBox cbRelaxTsReader;
-    private ListViewColumnSorter _columnSorter;
     private MPLabel labelShowEpisodeinfo;
     private MPComboBox comboboxShowEpisodeInfo;
     private MPCheckBox cbContinuousScrollGuide;

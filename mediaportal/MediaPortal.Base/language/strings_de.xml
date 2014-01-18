@@ -2328,5 +2328,6 @@
     <String id="300229">In Tray minimieren bei Fokuswechsel</String>
     <String id="300230">Wiedergabe stoppen bei Entfernen eines Audio-Renderers</String>
     <String id="300231">Wiederholfrequenz senken wenn MP keinen Fokus hat</String>
+	<String id="300232">Nur Dateien nach {0} ändern</String>
   </Section>
 </Language>

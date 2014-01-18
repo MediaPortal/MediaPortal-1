@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.DeployTool.InstallationChecks;
 using Microsoft.Win32;
 
 namespace MediaPortal.DeployTool.Sections

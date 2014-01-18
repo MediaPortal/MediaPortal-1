@@ -20,11 +20,6 @@
 
 using System;
 using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Net;
-using System.Web;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
@@ -46,7 +41,7 @@ namespace MediaPortal.Util
       get
       {
         if (index < 0 || index >= _imageList.Count) return string.Empty;
-        return (string)_imageList[index];
+        return (string) _imageList[index];
       }
     }
 
@@ -65,177 +60,37 @@ namespace MediaPortal.Util
         return;
       }
 
-      string[] vdbParserStr = VdbParserStringPoster();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 5)
-      {
-        return;
-      }
-
       _imageList.Clear();
 
-      if (!string.IsNullOrEmpty(imdbMovieID) && imdbMovieID.StartsWith("tt"))
+      try
       {
-        // Use IDMB ID - no wild goose chase
-        //string defaultPosterPageLinkUrl =
-        //  "http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + imdbMovieID;
-        string defaultPosterPageLinkUrl = vdbParserStr[0] + imdbMovieID;
-        string strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
-        //string posterBlock = Regex.Match(strBodyTMDB, "<poster.*</poster>", RegexOptions.Singleline).Value;
-        string posterBlock = Regex.Match(strBodyTMDB, vdbParserStr[1], RegexOptions.Singleline).Value;
-        // Get all cover links and put it in the "cover" group
-        //MatchCollection covers = Regex.Matches(posterBlock, @"<image\surl=""(?<cover>http://cf2.imgobject.com/t/p/w500/.*?)""");
-        MatchCollection covers = Regex.Matches(posterBlock, vdbParserStr[2]);
-        
-        if (covers.Count == 0)
-        {
-          return;
-        }
-
-        foreach (Match cover in covers)
-        {
-          // Get cover - using mid quality cover
-          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLowerInvariant().Contains("mid.jpg"))
-          //{
-          _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
-          //}
-        }
-        return;
+        _imageList =
+          InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetTmdbCoverImages(movieTitle,
+            imdbMovieID);
       }
-      if (!string.IsNullOrEmpty(movieTitle))
+      catch (Exception ex)
       {
-        //string defaultPosterPageLinkUrl =
-        //  "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + movieTitle;
-        string defaultPosterPageLinkUrl = vdbParserStr[3] + movieTitle;
-        string strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
-
-        // Get all cover links and put it in the "cover" group
-        //MatchCollection covers = Regex.Matches(strBodyTMDB,
-        //                                       @"<image\stype=""poster""\surl=""(?<cover>http://cf2.imgobject.com/t/p/w500/.*?jpg)""");
-        MatchCollection covers = Regex.Matches(strBodyTMDB, vdbParserStr[4]);
-
-        foreach (Match cover in covers)
-        {
-          // Get cover - using mid quality cover
-          //if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLowerInvariant().Contains("mid.jpg"))
-          //{
-          _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
-          //}
-        }
+        Log.Error("Util TMDBCoverSearch error: {0}", ex.Message);
       }
     }
 
     public void SearchActorImage(string actorName, ref ArrayList actorThumbs)
     {
-      if (!Win32API.IsConnectedToInternet())
-      {
-        return;
-      }
-
-      string[] vdbParserStr = VdbParserStringActorImage();
-
-      if (vdbParserStr == null || vdbParserStr.Length != 2)
+      if (!Win32API.IsConnectedToInternet() || string.IsNullOrEmpty(actorName))
       {
         return;
       }
 
       actorThumbs.Clear();
-
-      if (!string.IsNullOrEmpty(actorName))
-      {
-        // Use IDMB ID - no wild goose chase
-        //string defaultPosterPageLinkUrl =
-        //  "http://api.themoviedb.org/2.1/Person.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + actorName;
-        string defaultPosterPageLinkUrl = vdbParserStr[0] + actorName;
-        string strXml = GetPage(defaultPosterPageLinkUrl, "utf-8");
-
-        // Get all cover links and put it in the "cover" group
-        //MatchCollection actorImages = Regex.Matches(strXml, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
-        MatchCollection actorImages = Regex.Matches(strXml, vdbParserStr[1]);
-        
-        if (actorImages.Count == 0)
-        {
-          return; 
-        }
-
-        foreach (Match actorImage in actorImages)
-        {
-          // Get cover - using mid quality cover
-          if (HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value).ToLowerInvariant().Contains("original"))
-          {
-            actorThumbs.Add(HttpUtility.HtmlDecode(actorImage.Groups["cover"].Value));
-          }
-        }
-        return;
-      }
-    }
-
-    private string[] VdbParserStringPoster()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("TMDBPosters");
-      return vdbParserStr;
-    }
-
-    private string[] VdbParserStringActorImage()
-    {
-      string[] vdbParserStr = VideoDatabaseParserStrings.GetParserStrings("TMDBActorImages");
-      return vdbParserStr;
-    }
-
-    // Get HTML Page
-    private string GetPage(string strUrl, string strEncode)
-    {
-      string strBody = "";
-
-      Stream receiveStream = null;
-      StreamReader sr = null;
-      WebResponse result = null;
+      
       try
       {
-        // Make the Webrequest
-        //Log.Info("IMDB: get page:{0}", strURL);
-        WebRequest req = WebRequest.Create(strUrl);
-        req.Timeout = 10000;
-        result = req.GetResponse();
-        receiveStream = result.GetResponseStream();
-
-        // Encoding: depends on selected page
-        Encoding encode = System.Text.Encoding.GetEncoding(strEncode);
-        sr = new StreamReader(receiveStream, encode);
-        strBody = sr.ReadToEnd();
+        actorThumbs = InternalCSScriptGrabbersLoader.Movies.ImagesGrabber.MovieImagesGrabber.GetTmdbActorImage(actorName);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        Log.Info("TMDBCoverSearch: {0} unavailable.", strUrl);
+        Log.Error("Util TMDBSearchActorImage error: {0}", ex.Message);
       }
-      finally
-      {
-        if (sr != null)
-        {
-          try
-          {
-            sr.Close();
-          }
-          catch (Exception) {}
-        }
-        if (receiveStream != null)
-        {
-          try
-          {
-            receiveStream.Close();
-          }
-          catch (Exception) {}
-        }
-        if (result != null)
-        {
-          try
-          {
-            result.Close();
-          }
-          catch (Exception) {}
-        }
-      }
-      return strBody;
     }
   }
 }

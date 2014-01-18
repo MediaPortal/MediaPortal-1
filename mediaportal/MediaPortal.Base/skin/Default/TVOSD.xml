@@ -78,8 +78,8 @@
       <label>#TV.Record.percent1</label>
       <label1>#TV.Record.percent2</label1>
       <label2>#TV.Record.percent3</label2>
-      <labelmarkerstarts>#TV.Record.jumppoints</labelmarkerstarts>
-      <labelmarkerends>#TV.Record.chapters</labelmarkerends>
+      <labelmarkerstarts>#jumppoints</labelmarkerstarts>
+      <labelmarkerends>#chapters</labelmarkerends>
       <startlabel />
       <endlabel />
       <toplabel />

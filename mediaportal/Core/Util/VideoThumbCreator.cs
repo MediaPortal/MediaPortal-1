@@ -135,6 +135,8 @@ namespace MediaPortal.Util
 
       int TimeToSeek = 3;
 
+      int Duration = 0;
+
       // intRnd is used if user refresh the thumbnail from context menu
       int intRnd = 0;
       if (aOmitCredits)
@@ -149,11 +151,14 @@ namespace MediaPortal.Util
 
       MediaInfo = new MediaPortal.Player.MediaInfoWrapper(aVideoPath);
 
-      int Duration = MediaInfo.VideoDuration / 1000;
-     
+      if (MediaInfo != null)
+      {
+        Duration = MediaInfo.VideoDuration/1000;
+      }
+
       if (preGapSec > Duration)
       {
-        preGapSec = Duration / 100 * 20;
+        preGapSec = ( Duration / 100 ) * 20; // 20% of the duration
       }
 
       TimeBetweenThumbs = (Duration - preGapSec) / ((PreviewColumns * PreviewRows) + 1);
@@ -175,7 +180,7 @@ namespace MediaPortal.Util
         string ShareThumbTemp = Path.GetTempPath() + Path.GetFileName(ShareThumb);
         // ffmpeg
         string ffmpegFallbackArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile={0}x{1}", PreviewColumns, PreviewRows);
-        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}.jpg\"", 5, aVideoPath, TimeToSeek, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
+        string ExtractorFallbackArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}.jpg\"", 5, aVideoPath, TimeToSeek, ffmpegFallbackArgs, strFilenamewithoutExtensionTemp);
         
         if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb))
             // No thumb in share although it should be there 
@@ -201,7 +206,7 @@ namespace MediaPortal.Util
             TimeOffset = preGapSec + i * TimeBetweenThumbs;
 
             ffmpegArgs = string.Format("yadif=0:-1:0,scale=600:337,setsar=1:1,tile=1x1");
-            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
+            ExtractorArgs = string.Format("-loglevel quiet -ss {0} -i \"{1}\" -y -ss {2} -vf {3} -vframes 1 -vsync 0 -an \"{4}_{5}.jpg\"", TimeOffset, aVideoPath, TimeToSeek, ffmpegArgs, strFilenamewithoutExtensionTemp, i);
             Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 120000, true, GetMtnConditions());
             Log.Debug("VideoThumbCreator: thumb creation {0}", ExtractorArgs);
             if (!Success)

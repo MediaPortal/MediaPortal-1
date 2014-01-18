@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Settings
                                                                      btnTreatFolderAsAlbum.Selected);
         btnMonitorShares.Selected = xmlreader.GetValueAsBool("musicfiles", "monitorShares", false);
         btnUpdateSinceLastImport.Selected = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", true);
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
         btnStripartistprefixes.Selected = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.Settings
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _updateSinceLastImport = String.Format("Only update files after {0}",
+        _updateSinceLastImport = String.Format(GUILocalizeStrings.Get(300232),
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }

@@ -20,6 +20,8 @@
 
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
+using MediaPortal.Services;
+using MediaPortal.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,6 +53,7 @@ namespace MediaPortal.GUI.Library
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
+    private static bool _noTheme;
 
     public const string THEME_SECTION_NAME = "theme";
     public const string THEME_NAME_ENTRY = "name";
@@ -98,9 +101,12 @@ namespace MediaPortal.GUI.Library
         newString.Value = GUIPropertyManager.GetProperty(newString.Name);
       }
 
-      int key = _skinStringSettings.Count;
-      _skinStringSettings[key] = newString;
-
+      int key;
+      lock (_skinStringSettings) //Lock the dictionary, it might be getting saved at the moment
+      {
+        key = _skinStringSettings.Count;
+        _skinStringSettings[key] = newString;
+      }
       return key;
     }
 
@@ -205,9 +211,12 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      int key = _skinBoolSettings.Count;
-      _skinBoolSettings[key] = newBool;
-
+      int key;
+      lock (_skinBoolSettings) // Lock dictionary, we might be saving, should not alter structre
+      {
+        key = _skinBoolSettings.Count;
+        _skinBoolSettings[key] = newBool;
+      }
       return key;
     }
 
@@ -319,6 +328,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the skin to Notheme for watchdog.
+    /// </summary>
+    public static bool NoTheme
+    {
+      get { return _noTheme; }
+      set { _noTheme = value; }
+    }
+
     #region Persistence
 
     private static void LoadBooleanSettings()
@@ -332,23 +350,26 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        var enumerator = allBooleanSettings.GetEnumerator();
-        if (enumerator != null)
+        lock (_skinBoolSettings)
         {
-          while (enumerator.MoveNext())
+          var enumerator = allBooleanSettings.GetEnumerator();
+          if (enumerator != null)
           {
-            // Create the new boolean setting.
-            SkinBool newBool = new SkinBool();
-            newBool.Name = enumerator.Current.Key;
-            newBool.Value = enumerator.Current.Value;
-            newBool.Kind = Kind.PERSISTENT;
+            while (enumerator.MoveNext())
+            {
+              // Create the new boolean setting.
+              SkinBool newBool = new SkinBool();
+              newBool.Name = enumerator.Current.Key;
+              newBool.Value = enumerator.Current.Value;
+              newBool.Kind = Kind.PERSISTENT;
 
-            // Add the setting to the dictionary.
-            int key = _skinBoolSettings.Count;
-            _skinBoolSettings[key] = newBool;
+              // Add the setting to the dictionary.
+              int key = _skinBoolSettings.Count;
+              _skinBoolSettings[key] = newBool;
 
-            // Create the setting as a property.  The boolean value is converted as a string representation.
-            GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+              // Create the setting as a property.  The boolean value is converted as a string representation.
+              GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+            }
           }
         }
       }
@@ -365,23 +386,26 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        var enumerator = allStringSettings.GetEnumerator();
-        if (enumerator != null)
+        lock (_skinStringSettings)
         {
-          while (enumerator.MoveNext())
+          var enumerator = allStringSettings.GetEnumerator();
+          if (enumerator != null)
           {
-            // Create the new string setting.
-            SkinString newString = new SkinString();
-            newString.Name = enumerator.Current.Key;
-            newString.Value = enumerator.Current.Value;
-            newString.Kind = Kind.PERSISTENT;
+            while (enumerator.MoveNext())
+            {
+              // Create the new string setting.
+              SkinString newString = new SkinString();
+              newString.Name = enumerator.Current.Key;
+              newString.Value = enumerator.Current.Value;
+              newString.Kind = Kind.PERSISTENT;
 
-            // Add the setting to the dictionary.
-            int key = _skinStringSettings.Count;
-            _skinStringSettings[key] = newString;
+              // Add the setting to the dictionary.
+              int key = _skinStringSettings.Count;
+              _skinStringSettings[key] = newString;
 
-            // Create the setting as a property.
-            GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+              // Create the setting as a property.
+              GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+            }
           }
         }
       }
@@ -391,8 +415,16 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new SKSettings())
       {
-        // Initialize the theme manager for the selected theme.
-        GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        if (!_noTheme)
+        {
+          // Initialize the theme manager for the selected theme.
+          GUIThemeManager.Init(xmlReader.GetValueAsString(THEME_SECTION_NAME, THEME_NAME_ENTRY, GUIThemeManager.THEME_SKIN_DEFAULT));
+        }
+        else
+        {
+          // Initialize the theme manager for the watchdog.
+          GUIThemeManager.Init(GUIThemeManager.THEME_SKIN_DEFAULT);
+        }
       }
     }
 
@@ -444,9 +476,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Clear our dictionary.
-      foreach (int key in keysToRemove)
+      lock (_skinBoolSettings)
       {
-        _skinBoolSettings.Remove(key);
+        foreach (int key in keysToRemove)
+        {
+          _skinBoolSettings.Remove(key);
+        }
       }
     }
 
@@ -466,9 +501,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Clear our dictionary.
-      foreach (int key in keysToRemove)
+      lock (_skinStringSettings)
       {
-        _skinStringSettings.Remove(key);
+        foreach (int key in keysToRemove)
+        {
+          _skinStringSettings.Remove(key);
+        }
       }
     }
 
@@ -477,18 +515,50 @@ namespace MediaPortal.GUI.Library
       GUIThemeManager.ClearSettings();
     }
 
+    static IWork _delaySave;
     /// <summary>
-    /// Save all skin settings to disk.
+    /// Schedule saving of all settings in the near future
     /// </summary>
     public static void Save()
     {
+      IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
+      if (_delaySave == null)
+      {
+        _delaySave = tp.Add(LazySave, "Wait for saving SkinSettings");
+      } 
+      else if (_delaySave.State != WorkState.INPROGRESS && _delaySave.State != WorkState.INQUEUE)
+      {
+        _delaySave = tp.Add(LazySave,"Wait for saving SkinSettings");
+      }
+      
+    }
+
+    static void LazySave()
+    {
+      System.Threading.Thread.Sleep(100); // This combines quick calls to Save into one Save operation
+      IThreadPool tp = GlobalServiceProvider.Get<IThreadPool>();
+      tp.Add(_Save); // Add the save operation to the thread pool
+    }
+
+    /// <summary>
+    /// Save all skin settings to disk.
+    /// </summary>
+    public static void _Save()
+    {
       using (Settings xmlWriter = new SKSettings())
       {
-        SaveBooleanSettings(xmlWriter);
-        SaveStringSettings(xmlWriter);
+        lock (_skinBoolSettings)
+        {
+          SaveBooleanSettings(xmlWriter);
+        }
+        lock (_skinStringSettings)
+        {
+          SaveStringSettings(xmlWriter);
+        }
         SaveDiscreteSettings(xmlWriter);
       }
       Settings.SaveCache();
+      Log.Debug("SkinSettings: Saved all settings.");
     }
 
     private static void SaveBooleanSettings(Settings xmlWriter)

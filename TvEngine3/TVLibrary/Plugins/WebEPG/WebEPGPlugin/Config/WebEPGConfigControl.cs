@@ -207,9 +207,10 @@ namespace SetupTv.Sections
       }
 
       XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-      TextWriter w = new StreamWriter(confFile);
-      s.Serialize(w, _configFile);
-      w.Close();
+      using (TextWriter w = new StreamWriter(confFile))
+      {
+        s.Serialize(w, _configFile);
+      }
 
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting setting = layer.GetSetting("webepgDestination", "db");
@@ -410,19 +411,15 @@ namespace SetupTv.Sections
         Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
 
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
-        TextReader r = null;
         try
         {
-          r = new StreamReader(_configFileDir + "\\WebEPG.xml");
-          _configFile = (WebepgConfigFile)s.Deserialize(r);
-          r.Close();
+          using (TextReader r = new StreamReader(_configFileDir + "\\WebEPG.xml"))
+          {
+            _configFile = (WebepgConfigFile)s.Deserialize(r);
+          }
         }
         catch (InvalidOperationException ex)
         {
-          if (r != null)
-          {
-            r.Close();
-          }
           Log.Error("WebEPG: Error loading config {0}: {1}", _configFileDir + "\\WebEPG.xml",
                     ex.Message);
           LoadOldConfigFile();
@@ -561,12 +558,14 @@ namespace SetupTv.Sections
           Log.Debug("WebEPG Config: File: {0}", file.Name);
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
-          TextReader r = new StreamReader(file.FullName);
-          grabberXml = (GrabberConfigFile)s.Deserialize(r);
+          using (TextReader r = new StreamReader(file.FullName))
+          {
+            grabberXml = (GrabberConfigFile)s.Deserialize(r);
+          }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-          Log.Info("WebEPG Config: File open failed - XML error");
+          Log.Info("WebEPG Config: File open failed - XML error: " + e.ToString());
           return;
         }
 

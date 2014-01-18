@@ -132,6 +132,7 @@ namespace MediaPortal.Playlists
     private PlayList _emptyPlayList = new PlayList();
     private PlayList _musicVideoPlayList = new PlayList();
     private PlayList _radioStreamPlayList = new PlayList();
+    private PlayList _lastFMPlaylist = new PlayList();
     private bool _repeatPlayList = true;
     private string _currentPlaylistName = string.Empty;
 
@@ -170,6 +171,7 @@ namespace MediaPortal.Playlists
       _musicVideoPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _radioStreamPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
       _emptyPlayList.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
+      _lastFMPlaylist.OnChanged += new PlayList.OnChangedDelegate(NotifyChange);
     }
 
     private void NotifyChange(PlayList playlist)
@@ -188,6 +190,8 @@ namespace MediaPortal.Playlists
           nPlaylist = PlayListType.PLAYLIST_MUSIC_VIDEO;
         else if (_radioStreamPlayList == playlist)
           nPlaylist = PlayListType.PLAYLIST_RADIO_STREAMS;
+        else if (_lastFMPlaylist == playlist)
+          nPlaylist = PlayListType.PLAYLIST_LAST_FM;
         else
           nPlaylist = PlayListType.PLAYLIST_NONE;
 
@@ -222,10 +226,11 @@ namespace MediaPortal.Playlists
           }
           break;
 
-          // SV Allows BassMusicPlayer to continuously play
+          // Allows a Musicplayer to continuously play
+          // Note: BASS Player uses a different technique now, because of Gapless Playback
+          // The handling of the message is left for backward compatibility with 3rd party plugins
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING:
           {
-            // This message is only sent by BASS in gapless/crossfading mode
             PlayNext();
           }
           break;
@@ -381,6 +386,23 @@ namespace MediaPortal.Playlists
 
       PlayListItem item = playlist[iSong];
       return item;
+    }
+
+    public string GetNextSong()
+    {
+      PlayListItem item = GetNextItem();
+      if (item == null)
+      {
+        return string.Empty;
+      }
+
+      _currentItem++; 
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS, 0, 0, 0, _currentItem, 0, null);
+      msg.Label = item.FileName;
+      GUIGraphicsContext.SendMessage(msg);
+
+      return item.FileName;
     }
 
     public string GetNext()
@@ -576,6 +598,7 @@ namespace MediaPortal.Playlists
           {
             case PlayListType.PLAYLIST_MUSIC:
             case PlayListType.PLAYLIST_MUSIC_TEMP:
+            case PlayListType.PLAYLIST_LAST_FM:
               playResult = g_Player.Play(item.FileName, MediaPortal.Player.g_Player.MediaType.Music);
               break;
             case PlayListType.PLAYLIST_VIDEO:
@@ -704,6 +727,9 @@ namespace MediaPortal.Playlists
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           _radioStreamPlayList = playlist;
           break;
+        case PlayListType.PLAYLIST_LAST_FM:
+          _lastFMPlaylist = playlist;
+          break;
         default:
           _emptyPlayList = playlist;
           break;
@@ -728,6 +754,8 @@ namespace MediaPortal.Playlists
           return _musicVideoPlayList;
         case PlayListType.PLAYLIST_RADIO_STREAMS:
           return _radioStreamPlayList;
+        case PlayListType.PLAYLIST_LAST_FM:
+          return _lastFMPlaylist;
         default:
           _emptyPlayList.Clear();
           return _emptyPlayList;
