@@ -786,6 +786,12 @@ namespace MediaPortal
         MouseCursor = false;
         MouseTimeOutTimer = DateTime.Now;
         UpdateMouseCursor();
+
+        // Restore GUIGraphicsContext.State when we recover from minimize
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.SUSPENDING)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+        }
       }
     }
 
@@ -850,6 +856,12 @@ namespace MediaPortal
         if (AutoHideMouse)
         {
           ShowMouseCursor(true);
+        }
+
+        // Suspending when we are on minimize (otherwise MP can stay freezed if notification windows show up while minimize)
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
         }
 
         ExitToTray = false;
