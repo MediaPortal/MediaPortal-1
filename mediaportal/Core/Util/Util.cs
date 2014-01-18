@@ -694,10 +694,10 @@ namespace MediaPortal.Util
         }
 
         string[] thumbs = {
+                            Util.Utils.GetVideosThumbPathname(item.Path),
                             Path.ChangeExtension(item.Path, ".jpg"),
                             Path.ChangeExtension(item.Path, ".tbn"),
-                            Path.ChangeExtension(item.Path, ".png"),
-                            Util.Utils.GetVideosThumbPathname(item.Path)
+                            Path.ChangeExtension(item.Path, ".png")
                           };
 
         bool foundVideoThumb = false;
@@ -796,6 +796,7 @@ namespace MediaPortal.Util
         if (FileExistsInCache(strThumb) && strThumb != item.ThumbnailImage)
         {
           item.ThumbnailImage = strThumb;
+          item.IconImageBig = strThumb;
         }
       }
     }
