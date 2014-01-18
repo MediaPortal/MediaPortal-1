@@ -66,12 +66,21 @@
     <align>right</align>
   </style>
   <style Name="detailsTitle">
-    <width>1005</width>
-    <font>fontB20</font>
+    <width>800</width>
+    <font>fontB16</font>
     <textcolor>FF00b7ff</textcolor>
     <shadowAngle>120</shadowAngle>
     <shadowDistance>2</shadowDistance>
     <shadowColor>FF000000</shadowColor>
+  </style>
+  <style Name="detailsButton">
+    <width>385</width>
+    <height>58</height>
+    <textXOff>32</textXOff>
+    <textYOff>12</textYOff>
+    <font>font12</font>
+		<textcolor>FF000000</textcolor>
+		<textcolorNoFocus>ffffffff</textcolorNoFocus>
   </style>
   <style Name="textBox">
     <width>555</width>
