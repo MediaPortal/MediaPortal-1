@@ -26,8 +26,9 @@ namespace MediaPortal.DeployTool.Sections
 {
   public partial class UpgradeDlg : DeployDialog
   {
-    private bool rbFreshChecked;
+    public static bool rbFreshChecked;
     private bool rbReinstallChecked;
+    public static bool MySQL56 = false;
     public static bool reInstallForce = false;
     public static bool freshForce = true; // Set to true by default (needed for fresh installation)
 
@@ -39,6 +40,11 @@ namespace MediaPortal.DeployTool.Sections
       bFresh.Image = Images.Choose_button_on;
       rbFreshChecked = true;
       rbReinstallChecked = false;
+      // Check if MySQL need to be upgraded
+      IInstallationPackage package = new MySQLChecker();
+      CheckResult resultMySQL56 = package.CheckStatus();
+      CheckResult resultMySQL51 = MySQLChecker.CheckStatusMySQL51();
+      MySQL56 = resultMySQL56.state == CheckState.NOT_INSTALLED;
       UpdateUI();
     }
 
@@ -174,6 +180,10 @@ namespace MediaPortal.DeployTool.Sections
 
     public override DeployDialog GetNextDialog()
     {
+      if (MySQL56 && rbUpdate.Enabled)
+      {
+        return DialogFlowHandler.Instance.GetDialogInstance(DialogType.MysqlUpgrade);
+      }
       if (rbFreshChecked)
       {
         // Normal deploy...
