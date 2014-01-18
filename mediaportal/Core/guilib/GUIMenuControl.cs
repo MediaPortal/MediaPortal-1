@@ -39,79 +39,36 @@ namespace MediaPortal.GUI.Library
   {
     #region Properties (Skin)
 
-    [XMLSkinElement("spaceBetweenButtons")]
-    protected int _spaceBetweenButtons = 8;
+    [XMLSkinElement("spaceBetweenButtons")] protected int _spaceBetweenButtons = 8;
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textColorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
+    [XMLSkinElement("textAlign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("buttonWidth")] protected int _buttonWidth = 60;
+    [XMLSkinElement("buttonHeight")] protected int _buttonHeight = 30;
+    [XMLSkinElement("buttonTextXOff")] protected int _buttonTextXOffset = 10;
+    [XMLSkinElement("buttonTextYOff")] protected int _buttonTextYOffset = 8;
+    [XMLSkinElement("buttonOffset")] protected int _buttonOffset = 25; // offset from the border to the buttons
+    [XMLSkinElement("buttonFont")] protected string _buttonFont = "font16";
+    [XMLSkinElement("numberOfButtons")] protected int _numberOfButtons = 5;
+    [XMLSkinElement("textureBackground")] protected string _textureBackground = string.Empty;
+    [XMLSkinElement("textureButtonFocus")] protected string _textureButtonFocus = string.Empty;
+    [XMLSkinElement("textureButtonNoFocus")] protected string _textureButtonNoFocus = string.Empty;
+    [XMLSkinElement("textureHoverNoFocus")] protected string _textureHoverNoFocus = string.Empty;
+    [XMLSkinElement("hoverX")] protected int _hoverPositionX = 0;
+    [XMLSkinElement("hoverY")] protected int _hoverPositionY = 0;
+    [XMLSkinElement("hoverWidth")] protected int _hoverWidth = 0;
+    [XMLSkinElement("hoverHeight")] protected int _hoverHeight = 0;
+    [XMLSkinElement("hoverKeepAspectratio")] protected bool _hoverKeepAspectRatio = true;
+    [XMLSkinElement("horizontal")] protected bool _horizontal = false;
+    [XMLSkinElement("showAllHover")] protected bool _showAllHover = false;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
 
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("textColorNoFocus")]
-    protected long _textColorNoFocus = 0xFFFFFFFF;
-
-    [XMLSkinElement("textAlign")]
-    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
-
-    [XMLSkinElement("buttonWidth")]
-    protected int _buttonWidth = 60;
-    [XMLSkinElement("buttonHeight")]
-    protected int _buttonHeight = 30;
-
-    [XMLSkinElement("buttonTextXOff")]
-    protected int _buttonTextXOffset = 10;
-    [XMLSkinElement("buttonTextYOff")]
-    protected int _buttonTextYOffset = 8;
-
-    [XMLSkinElement("buttonOffset")]
-    protected int _buttonOffset = 25; // offset from the border to the buttons
-
-    [XMLSkinElement("buttonFont")]
-    protected string _buttonFont = "font16";
-
-    [XMLSkinElement("textureBackground")]
-    protected string _textureBackground = string.Empty;
-
-    [XMLSkinElement("textureButtonFocus")]
-    protected string _textureButtonFocus = string.Empty;
-    [XMLSkinElement("textureButtonNoFocus")]
-    protected string _textureButtonNoFocus = string.Empty;
-
-    [XMLSkinElement("textureHoverNoFocus")]
-    protected string _textureHoverNoFocus = string.Empty;
-
-    [XMLSkinElement("hoverX")]
-    protected int _hoverPositionX = 0;
-    [XMLSkinElement("hoverY")]
-    protected int _hoverPositionY = 0;
-
-    [XMLSkinElement("hoverWidth")]
-    protected int _hoverWidth = 0;
-    [XMLSkinElement("hoverHeight")]
-    protected int _hoverHeight = 0;
-
-    [XMLSkinElement("hoverKeepAspectratio")]
-    protected bool _hoverKeepAspectRatio = true;
-
-    [XMLSkinElement("horizontal")]
-    protected bool _horizontal = false;
-
-    [XMLSkinElement("showAllHover")]
-    protected bool _showAllHover = false;
-
-    [XMLSkinElement("shadowAngle")]
-    protected int _shadowAngle = 0;
-    [XMLSkinElement("shadowDistance")]
-    protected int _shadowDistance = 0;
-    [XMLSkinElement("shadowColor")]
-    protected long _shadowColor = 0xFF000000;
-
-    [XMLSkinElement("onclick")]
-    protected string _onclick = "";
-
-    [XMLSkin("hover", "flipX")]
-    protected bool _flipX = false;
-    [XMLSkin("hover", "flipY")]
-    protected bool _flipY = false;
-    [XMLSkin("hover", "diffuse")]
-    protected string _diffuseFileName = "";
+    [XMLSkin("hover", "flipX")] protected bool _flipX = false;
+    [XMLSkin("hover", "flipY")] protected bool _flipY = false;
+    [XMLSkin("hover", "diffuse")] protected string _diffuseFileName = "";
 
     #endregion
 
