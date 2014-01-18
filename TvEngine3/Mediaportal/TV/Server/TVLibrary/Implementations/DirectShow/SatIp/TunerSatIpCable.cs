@@ -22,6 +22,8 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using DirectShowLib.BDA;
+using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.Channels;
@@ -31,24 +33,24 @@ using Mediaportal.TV.Server.TVLibrary.Interfaces.Logging;
 namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
 {
   /// <summary>
-  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP DVB-T
-  /// and DVB-T2 tuners.
+  /// An implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles SAT>IP DVB-C
+  /// tuners.
   /// </summary>
-  public class TunerSatIpTerrestrial : TunerSatIpBase
+  public class TunerSatIpCable : TunerSatIpBase
   {
     #region constructor
 
     /// <summary>
-    /// Initialise a new instance of the <see cref="TunerSatIpTerrestrial"/> class.
+    /// Initialise a new instance of the <see cref="TunerSatIpCable"/> class.
     /// </summary>
     /// <param name="name">The SAT>IP server's name.</param>
     /// <param name="uuid">A unique identifier for the SAT>IP server.</param>
     /// <param name="ipAddress">The SAT>IP server's current IP address.</param>
     /// <param name="sequenceNumber">A unique sequence number or index for this instance.</param>
-    public TunerSatIpTerrestrial(string name, string uuid, string ipAddress, int sequenceNumber)
-      : base(name + " T/T2 Tuner " + sequenceNumber, uuid + "T" + sequenceNumber, ipAddress, sequenceNumber)
+    public TunerSatIpCable(string name, string uuid, string ipAddress, int sequenceNumber)
+      : base(name + " C Tuner " + sequenceNumber, uuid + "C" + sequenceNumber, ipAddress, sequenceNumber)
     {
-      _tunerType = CardType.DvbT;
+      _tunerType = CardType.DvbC;
       _uuid = uuid;
     }
 
@@ -62,19 +64,59 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <param name="channel">The channel to tune to.</param>
     protected override void PerformTuning(IChannel channel)
     {
-      this.LogDebug("SAT>IP terrestrial: construct URL");
-      DVBTChannel terrestrialChannel = channel as DVBTChannel;
-      if (terrestrialChannel == null)
+      this.LogDebug("SAT>IP cable: construct URL");
+      DVBCChannel cableChannel = channel as DVBCChannel;
+      if (cableChannel == null)
       {
         throw new TvException("Received request to tune incompatible channel.");
       }
 
       StringBuilder url = new StringBuilder();
       // TODO remove pids=all when PID filter support can be added
-      // TODO add DVB-T2 support when we can distinguish DVB-T and DVB-T2
-      url.Append("rtsp://").Append(_ipAddress).Append(":554/pids=all&msys=dvbt");
-      url.Append("&freq=").Append((int)(terrestrialChannel.Frequency / 1000));
-      url.Append("&bw=").Append(terrestrialChannel.Bandwidth / 1000);
+      url.Append("rtsp://").Append(_ipAddress).Append(":554/pids=all&msys=dvbc");
+      url.Append("&freq=").Append((int)(cableChannel.Frequency / 1000));
+      url.Append("&sr=").Append(cableChannel.SymbolRate);
+      if (cableChannel.ModulationType == ModulationType.Mod64Qam)
+      {
+        url.Append("&mtype=64qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod80Qam)
+      {
+        url.Append("&mtype=80qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod96Qam)
+      {
+        url.Append("&mtype=96qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod112Qam)
+      {
+        url.Append("&mtype=112qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod128Qam)
+      {
+        url.Append("&mtype=128qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod160Qam)
+      {
+        url.Append("&mtype=160qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod192Qam)
+      {
+        url.Append("&mtype=192qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod224Qam)
+      {
+        url.Append("&mtype=224qam");
+      }
+      else if (cableChannel.ModulationType == ModulationType.Mod256Qam)
+      {
+        url.Append("&mtype=256qam");
+      }
+      else
+      {
+        this.LogWarn("SAT>IP cable: unsupported modulation type {0}, assuming 256 QAM", cableChannel.ModulationType);
+        url.Append("&mtype=256qam");
+      }
 
       PerformTuning(url.ToString());
     }
@@ -86,7 +128,7 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <returns><c>true</c> if the tuner can tune to the channel, otherwise <c>false</c></returns>
     public override bool CanTune(IChannel channel)
     {
-      return channel is DVBTChannel;
+      return channel is DVBCChannel;
     }
 
     #endregion
@@ -97,8 +139,8 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
     /// <param name="onlyUpdateLock"><c>True</c> to only update lock status.</param>
     protected override void PerformSignalStatusUpdate(bool onlyUpdateLock)
     {
-      DVBTChannel terrestrialChannel = _currentTuningDetail as DVBTChannel;
-      if (terrestrialChannel == null)
+      DVBCChannel cableChannel = _currentTuningDetail as DVBCChannel;
+      if (cableChannel == null)
       {
         _isSignalPresent = false;
         _isSignalLocked = false;
@@ -107,13 +149,14 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.SatIp
         return;
       }
 
-      PerformSignalStatusUpdate(((int)(terrestrialChannel.Frequency / 1000)).ToString() + "," + (terrestrialChannel.Bandwidth / 1000).ToString());
+      // TODO add more tuning details here to avoid any possibility of selecting an incorrect stream
+      PerformSignalStatusUpdate(((int)(cableChannel.Frequency / 1000)).ToString());
     }
 
     // TODO: remove this method, it should not be required and it is bad style!
     protected override DVBBaseChannel CreateChannel()
     {
-      return new DVBTChannel();
+      return new DVBCChannel();
     }
   }
 }

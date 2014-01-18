@@ -1510,18 +1510,25 @@ namespace Mediaportal.TV.Server.TVLibrary.Implementations
       {
         TunerInfo info = new TunerInfo();
         info.Tuner = new TunerSatIpSatellite(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
-        info.ProductInstanceId = null;
+        info.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
         info.TunerInstanceId = null;
         OnTunerDetected(info);
       }
       for (int i = 1; i <= terrestrialFrontEndCount; i++)
       {
-        // TODO add DVB-C tuner support
-        TunerInfo info = new TunerInfo();
-        info.Tuner = new TunerSatIpTerrestrial(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
-        info.ProductInstanceId = null;
-        info.TunerInstanceId = null;
-        OnTunerDetected(info);
+        // Currently the Digital Devices Octopus Net is the only SAT>IP product
+        // to support DVB-T/T2. The DVB-T tuners also support DVB-C.
+        TunerInfo info1 = new TunerInfo();
+        info1.Tuner = new TunerSatIpTerrestrial(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info1.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
+        info1.TunerInstanceId = i.ToString();
+        OnTunerDetected(info1);
+
+        TunerInfo info2 = new TunerInfo();
+        info2.Tuner = new TunerSatIpCable(rootDeviceDescriptor.FriendlyName, rootDeviceDescriptor.DeviceUUID, host, i);
+        info2.ProductInstanceId = rootDeviceDescriptor.DeviceUUID;
+        info2.TunerInstanceId = i.ToString();
+        OnTunerDetected(info2);
       }
     }
 

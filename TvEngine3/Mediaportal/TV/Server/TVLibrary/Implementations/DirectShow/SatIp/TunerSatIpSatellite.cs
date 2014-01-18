@@ -21,7 +21,6 @@
 using System;
 using System.Text;
 using DirectShowLib.BDA;
-using Mediaportal.TV.Server.TVLibrary.Implementations.DirectShow.Stream;
 using Mediaportal.TV.Server.TVLibrary.Interfaces;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Analyzer;
 using Mediaportal.TV.Server.TVLibrary.Interfaces.Diseqc;
